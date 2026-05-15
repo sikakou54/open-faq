@@ -1,0 +1,6 @@
+# macOS
+.DS_Store
+
+# Legacy PDF output locations (now unified under pdf_output/)
+01_main/pdf/
+02_admin/pdf/

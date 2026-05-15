@@ -1,0 +1,4163 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+  <meta name="generator" content="HTML Tidy for Mac OS X (vers 31 October 2006 - Apple Inc. build 11418), see www.w3.org">
+  <meta charset="UTF-8">
+
+  <title>FAQ AIウィジェット SaaS - 顧客管理システム 画面設計書(operator console v2.3)</title>
+  <style type="text/css">
+@page { size: A4 landscape; margin: 10mm; } * { box-sizing: border-box; } html, body { margin: 0; padding: 0; font-family: "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif; color: #222; background: #fff; font-size: 11px; line-height: 1.4; } /* ====== 表紙・目次 ====== */ .cover { page-break-after: always; padding: 60px 40px; text-align: center; } .cover h1 { font-size: 28px; margin: 40px 0 12px; } .cover .subtitle { font-size: 14px; color: #666; margin-bottom: 40px; } .cover .meta { display: inline-block; text-align: left; border: 1px solid #ccc; padding: 16px 24px; margin-top: 20px; font-size: 12px; } .cover .meta div { margin: 4px 0; } .toc { page-break-after: always; padding: 30px 40px; } .toc h2 { font-size: 18px; border-bottom: 2px solid #333; padding-bottom: 6px; } .toc ul { columns: 2; -webkit-columns: 2; column-gap: 30px; padding-left: 20px; } .toc li { margin: 4px 0; font-size: 11px; break-inside: avoid; } .toc .toc-group { font-weight: bold; color: #4a3674; margin-top: 8px; } .legend { page-break-after: always; padding: 30px 40px; font-size: 11px; } .legend h2 { font-size: 16px; border-bottom: 2px solid #333; padding-bottom: 6px; } .legend table { width: 100%; border-collapse: collapse; margin-top: 10px; } .legend th, .legend td { border: 1px solid #aaa; padding: 5px 8px; text-align: left; font-size: 10px; vertical-align: top; } .legend th { background: #eee; } /* ====== 画面ブロック ====== */ .screen { page-break-after: always; padding: 12px; border: 1px solid #ddd; margin: 0; min-height: 180mm; } .screen:last-child { page-break-after: auto; } .screen-header { border-bottom: 2px solid #333; padding-bottom: 6px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: baseline; } .screen-header .scr-id { font-weight: bold; font-size: 14px; background: #333; color: #fff; padding: 2px 8px; margin-right: 10px; } .screen-header .scr-id.operator { background: #6b4ea0; } .screen-header .scr-name { font-size: 14px; font-weight: bold; } .screen-header .scr-user { font-size: 10px; color: #666; text-align: right; max-width: 60%; } /* ====== 管理画面レイアウト ====== */ .app-layout { display: grid; grid-template-columns: 200px 1fr; grid-template-rows: 40px 1fr; gap: 0; border: 1px solid #888; min-height: 540px; } .app-header { grid-column: 1 / 3; border-bottom: 1px solid #888; background: #f5f5f5; padding: 0 12px; display: flex; align-items: center; justify-content: space-between; font-size: 10px; } .app-header.operator { background: #f3eef8; border-bottom-color: #6b4ea0; } .app-header .left { display: flex; align-items: center; gap: 12px; } .app-header .logo { font-weight: bold; border: 1px solid #888; padding: 2px 8px; background: #fff; } .app-header.operator .logo { background: #6b4ea0; color: #fff; border-color: #4a3674; } .app-header .right { display: flex; align-items: center; gap: 12px; } .bell { border: 1px solid #888; padding: 2px 6px; background: #fff; position: relative; } .bell .badge { position: absolute; top: -5px; right: -5px; background: #c33; color: #fff; font-size: 8px; border-radius: 50%; width: 14px; height: 14px; text-align: center; line-height: 14px; } .user-menu { border: 1px solid #888; padding: 2px 8px; background: #fff; } .mfa-badge { border: 1px solid #393; padding: 2px 6px; background: #e0f0e0; color: #060; font-size: 9px; } .app-sidebar { border-right: 1px solid #888; background: #fafafa; padding: 8px 0; font-size: 10px; } .app-sidebar .group { color: #888; font-size: 9px; padding: 8px 10px 2px; text-transform: uppercase; } .app-sidebar .item { padding: 4px 10px; border-left: 3px solid transparent; display: flex; justify-content: space-between; align-items: center; gap: 4px; } .app-sidebar .item.active { background: #efe6f7; border-left: 3px solid #6b4ea0; font-weight: bold; } .app-sidebar .item .badge { background: #c33; color: #fff; font-size: 8px; border-radius: 8px; padding: 0 5px; min-width: 14px; text-align: center; } .app-sidebar .item .badge.yellow { background: #c93; } .app-sidebar .item .badge.purple { background: #6b4ea0; } .app-main { padding: 12px; overflow: hidden; } /* ====== フォーム共通 ====== */ .field { margin-bottom: 8px; } .field label { display: block; font-size: 10px; margin-bottom: 2px; color: #444; } .field label .req { color: #c33; } .input, .textarea, .select { width: 100%; border: 1px solid #888; background: #fff; padding: 4px 6px; font-size: 10px; color: #555; min-height: 22px; } .input .placeholder, .textarea .placeholder, .select .placeholder { color: #aaa; } .textarea { min-height: 50px; } .textarea.rich { min-height: 90px; border-top-width: 18px; position: relative; } .textarea.rich::before { content: "B I U • 1. link </>"; position: absolute; top: -18px; left: 0; right: 0; height: 18px; padding: 2px 6px; background: #eee; border: 1px solid #888; border-bottom: 0; font-size: 9px; font-family: monospace; color: #555; } .checkbox { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; } .checkbox::before { content: ""; display: inline-block; width: 12px; height: 12px; border: 1px solid #555; background: #fff; } .checkbox.checked::before { background: #6b4ea0; } .btn { display: inline-block; border: 1px solid #333; padding: 4px 12px; background: #fff; font-size: 10px; margin-right: 6px; cursor: default; } .btn.primary { background: #333; color: #fff; } .btn.danger { border-color: #c33; color: #c33; } .btn.danger.primary { background: #c33; color: #fff; } .btn.small { padding: 2px 6px; font-size: 9px; } .btn.hardgate { background: #fff; border: 2px solid #6b4ea0; color: #4a3674; font-weight: bold; } .btn.hardgate::before { content: "⚠ 承認 "; font-size: 9px; color: #c33; } .btn[disabled], .btn.disabled { opacity: 0.4; background: #eee; } .link { color: #06c; text-decoration: underline; font-size: 10px; } .helper { color: #888; font-size: 9px; margin-top: 2px; } /* ====== テーブル ====== */ table.wf { width: 100%; border-collapse: collapse; font-size: 10px; } table.wf th, table.wf td { border: 1px solid #aaa; padding: 4px 6px; text-align: left; vertical-align: top; } table.wf th { background: #eee; font-size: 9px; } table.wf tr.system-row td { background: #fafafa; color: #555; font-style: italic; } /* ====== バッジ ====== */ .badge-pill { display: inline-block; padding: 1px 6px; border: 1px solid #555; border-radius: 8px; font-size: 9px; background: #fff; } .badge-pill.green { background: #e0f0e0; border-color: #393; color: #060; } .badge-pill.blue { background: #e0e8f5; border-color: #36c; color: #036; } .badge-pill.orange { background: #fbe6cc; border-color: #c63; color: #963; } .badge-pill.gray { background: #eee; border-color: #888; color: #555; } .badge-pill.red { background: #f5e0e0; border-color: #c33; color: #c33; } .badge-pill.purple { background: #efe6f7; border-color: #6b4ea0; color: #4a3674; } .badge-pill.yellow { background: #fdf6cc; border-color: #c93; color: #963; } .badge-pill.dlq { background: #f5e0e0; border-color: #c33; color: #c33; font-weight: bold; } /* ====== カード/パネル ====== */ .panel { border: 1px solid #888; padding: 8px; background: #fff; margin-bottom: 8px; } .panel-title { font-weight: bold; font-size: 11px; border-bottom: 1px solid #aaa; padding-bottom: 3px; margin-bottom: 6px; } .summary-card { border: 1px solid #888; padding: 6px 8px; background: #fff; } .summary-card .label { font-size: 9px; color: #666; } .summary-card .value { font-size: 16px; font-weight: bold; margin: 2px 0; } .summary-card .delta { font-size: 9px; color: #888; } .summary-card.red { border-color: #c33; background: #fdf3f3; } .summary-card.yellow { border-color: #c93; background: #fffbe6; } .summary-card.purple { border-color: #6b4ea0; background: #f8f3fa; } .summary-card.green { border-color: #393; background: #f0f7f0; } /* ====== グリッド ====== */ .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; } .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; } .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; } /* ====== フィルタ ====== */ .filter-bar { background: #f8f8f8; border: 1px solid #ccc; padding: 6px 8px; margin-bottom: 8px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; } .filter-bar .filter-item { font-size: 10px; display: inline-flex; align-items: center; gap: 4px; } .filter-bar .filter-item .input, .filter-bar .filter-item .select { display: inline-block; width: auto; min-height: 18px; padding: 2px 6px; } /* ====== タブ ====== */ .tab-bar { display: flex; border-bottom: 1px solid #888; margin-bottom: 8px; } .tab-bar .tab { padding: 4px 12px; border: 1px solid #888; border-bottom: 0; background: #eee; font-size: 10px; margin-right: 2px; } .tab-bar .tab.active { background: #fff; font-weight: bold; } /* ====== スライダ(信頼度・関連度) ====== */ .slider { border: 1px solid #888; background: #fff; height: 18px; position: relative; padding: 0 6px; } .slider .track { background: #ccc; height: 4px; margin-top: 7px; position: relative; } .slider .knob { position: absolute; top: -4px; width: 12px; height: 12px; background: #6b4ea0; border: 1px solid #4a3674; border-radius: 50%; } .slider-value { font-size: 10px; font-weight: bold; margin-left: 6px; font-family: monospace; } /* ====== JSON diff ====== */ .diff { font-family: monospace; font-size: 9px; border: 1px solid #aaa; padding: 6px; background: #fafafa; white-space: pre-wrap; line-height: 1.5; } .diff .add { background: #e0f0e0; display: inline-block; width: 100%; } .diff .del { background: #f5e0e0; display: inline-block; width: 100%; } .diff .ignore { color: #aaa; text-decoration: line-through; } /* ====== プリチェック (a)-(g) ====== */ .precheck-table { border: 1px solid #aaa; } .precheck-row { display: grid; grid-template-columns: 30px 1fr 140px 100px; border-bottom: 1px solid #ddd; padding: 4px 6px; align-items: center; font-size: 10px; } .precheck-row:last-child { border-bottom: 0; } .precheck-row .ok { color: #393; font-weight: bold; } .precheck-row .ng { color: #c33; font-weight: bold; } .precheck-row .info { color: #666; } /* ====== タイマー ====== */ .timer { display: inline-block; padding: 1px 6px; border: 1px solid #888; font-family: monospace; font-size: 10px; background: #fff; } .timer.warn { background: #fdf6cc; border-color: #c93; color: #963; } .timer.over { background: #f5e0e0; border-color: #c33; color: #c33; font-weight: bold; } /* ====== アラートバー ====== */ .alert-bar { border: 1px solid #c33; background: #fdf3f3; padding: 6px 8px; font-size: 10px; margin-bottom: 8px; } .alert-bar.info { border-color: #36c; background: #eef4fb; } .alert-bar.warn { border-color: #c93; background: #fffbe6; } /* ====== モーダル ====== */ .modal-overlay { border: 1px dashed #888; background: #fafafa; padding: 10px; margin: 10px 0; } .modal-card { border: 2px solid #333; background: #fff; padding: 14px; max-width: 560px; margin: 0 auto; } .modal-card.danger { border-color: #c33; } .modal-card.hardgate { border-color: #6b4ea0; } .modal-card .modal-title { font-weight: bold; font-size: 12px; border-bottom: 2px solid #333; padding-bottom: 4px; margin-bottom: 8px; } .modal-card.danger .modal-title { border-bottom-color: #c33; color: #c33; } .modal-card.hardgate .modal-title { border-bottom-color: #6b4ea0; color: #4a3674; } /* ====== 認証画面 ====== */ .auth-page { border: 1px solid #888; min-height: 540px; background: #f8f8fa; display: flex; align-items: center; justify-content: center; padding: 30px; } .auth-card { background: #fff; border: 1px solid #6b4ea0; padding: 24px; max-width: 380px; width: 100%; } .auth-card h3 { margin: 0 0 12px; font-size: 14px; color: #4a3674; border-bottom: 2px solid #6b4ea0; padding-bottom: 4px; } /* ====== ページャ ====== */ .pager { font-size: 10px; margin-top: 6px; color: #666; } .pager .pg { display: inline-block; border: 1px solid #888; padding: 1px 5px; background: #fff; margin: 0 1px; } .pager .pg.active { background: #6b4ea0; color: #fff; } /* ====== フットノート / ノート ====== */ .note { background: #f3eef8; border-left: 3px solid #6b4ea0; padding: 4px 8px; font-size: 9px; color: #4a3674; margin-top: 6px; } /* ====== フロー図 ====== */ .flow-page { padding: 14px; } .flow-grid { display: grid; gap: 10px; } .flow-node { border: 1px solid #6b4ea0; background: #f8f3fa; padding: 6px 10px; font-size: 10px; text-align: center; min-width: 100px; } .flow-node.auth { border-color: #393; background: #f0f7f0; } .flow-node.hub { border-color: #c93; background: #fffbe6; font-weight: bold; } .flow-node.scr { border-color: #6b4ea0; } .flow-arrow { font-size: 14px; text-align: center; color: #555; } .flow-row { display: flex; align-items: center; gap: 8px; margin: 6px 0; } /* ====== 画面設計書フォーマット ====== */ .legend { page-break-after: always; padding: 30px 40px; font-size: 11px; } .legend h2 { font-size: 18px; border-bottom: 2px solid #333; padding-bottom: 6px; } .legend h3 { font-size: 12px; margin: 14px 0 6px; } .legend table { width: 100%; border-collapse: collapse; margin-top: 8px; } .legend th, .legend td { border: 1px solid #aaa; padding: 5px 8px; text-align: left; font-size: 10px; vertical-align: top; } .legend th { background: #eee; }
+  </style>
+</head>
+
+<body>
+  <!-- ============= 表紙 ============= -->
+
+  <div class="cover">
+    <h1>FAQ AIウィジェット SaaS</h1>
+
+    <div class="subtitle">
+      顧客管理システム(運営者コンソール) 画面設計書 v2.3
+    </div>
+
+    <div class="subtitle">
+      open-faq / Admin Console / 13 画面 + 共通 UI
+    </div>
+
+    <div class="meta">
+      <div>
+        <strong>文書種別:</strong> 画面設計書
+      </div>
+
+      <div>
+        <strong>版:</strong> v2.3
+      </div>
+
+      <div>
+        <strong>対象システム:</strong> FAQ AIウィジェット SaaS / 顧客管理システム
+      </div>
+
+      <div>
+        <strong>対象画面:</strong> 13 画面 + 共通 UI
+      </div>
+
+      <div>
+        <strong>対象利用者:</strong> サービス運営者
+      </div>
+
+      <div>
+        <strong>作成日:</strong> 2026-05-11<strong>最終改訂日:</strong> 2026-05-13
+      </div>
+    </div>
+  </div><!-- ============= 目次 ============= -->
+
+  <div class="toc">
+    <h2>目次</h2>
+
+    <ul>
+      <li class="toc-group">前付け</li>
+
+      <li>表紙</li>
+
+      <li>目次</li>
+
+      <li class="toc-group">認証・共通画面(3 枚)</li>
+
+      <li>運営者ログイン</li>
+
+      <li>ホームダッシュボード(KPI ハイライト・バッジ集約)</li>
+
+      <li>承認待ち一覧</li>
+
+      <li class="toc-group">運営機能画面</li>
+
+      <li>削除データ参照(運営者)</li>
+
+      <li>削除データ復元(副作用 (a)〜(g) プリチェック)</li>
+
+      <li>AI 推論パラメータ設定</li>
+
+      <li>テナント別レート/予算上書き管理</li>
+
+      <li>お知らせ作成・配信(運営者)</li>
+
+      <li>個人情報削除の対応ダッシュボード</li>
+
+      <li>運営者活動ダッシュボード(監査)</li>
+
+      <li>課金 Webhook リプレイ・DLQ 操作</li>
+
+      <li>PII 誤検出報告管理</li>
+
+      <li>Webhook ペイロード差分検出一覧</li>
+
+      <li class="toc-group">共通モーダル</li>
+
+      <li>共通モーダル</li>
+
+      </ul>
+  </div><!-- ============= 凡例 ============= --><!-- ============= 運営者ログイン ============= -->
+
+  <div class="screen">
+    <div class="screen-header">
+      <div>
+        <span class="scr-id operator">SCR-AUTH</span> <span class="scr-name">運営者ログイン画面</span>
+      </div>
+
+      <div class="scr-user">
+        利用者: サービス運営者(service_operator)
+      </div>
+    </div>
+
+    <div class="auth-page">
+      <div class="auth-card">
+        <h3>open-faq Admin Console / 運営者ログイン</h3>
+
+
+
+        <div class="field">
+          <label>メールアドレス <span class="req">*</span></label>
+
+          <div class="input">
+            <span class="placeholder">operator-sample@open-faq.example</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>パスワード <span class="req">*</span></label>
+
+          <div class="input">
+            <span class="placeholder">••••••••</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>MFA TOTP コード <span class="req">*</span></label>
+
+          <div class="input" style="font-family:monospace; letter-spacing:6px;">
+            <span class="placeholder">_ _ _ _ _ _</span>
+          </div>
+
+
+        </div><button class="btn primary" style="width:100%;">ログイン</button>
+
+        <div style="border-top:1px solid #ddd; margin-top:12px; padding-top:10px;">
+          <a class="link">パスワードを忘れた場合</a>
+
+
+        </div>
+
+
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:8px;">
+      <div class="panel-title">
+        MFA 初回セットアップフロー(初回ログイン時のみ)
+      </div>
+
+      <div class="grid-3">
+        <div class="field">
+          <label>① セットアップトークン</label>
+
+          <div class="input">
+            SAMPLE_MFA_SETUP_TOKEN(有効期限 72h)
+          </div>
+
+
+        </div>
+
+        <div class="field">
+          <label>② QR コード</label>
+
+          <div class="panel" style="background:#fafafa; height:80px; text-align:center; line-height:80px; font-size:9px; color:#888;">
+            [QR コード表示エリア]
+          </div>
+        </div>
+
+        <div class="field">
+          <label>③ 回復コード(10 個生成)</label>
+
+          <div class="textarea" style="font-family:monospace; font-size:9px;">
+            SAMPLE-RECOVERY-001<br>
+            SAMPLE-RECOVERY-002<br>
+            ... (8 行省略) ...<br>
+            SAMPLE-RECOVERY-010
+          </div>
+        </div>
+      </div><button class="btn primary">セットアップ完了</button>
+    </div>
+  </div><!-- ============= ホームダッシュボード ============= -->
+
+  <div class="screen">
+    <div class="screen-header">
+      <div>
+        <span class="scr-id operator">SCR-HOME</span> <span class="scr-name">ホームダッシュボード</span>
+      </div>
+
+      <div class="scr-user">
+        利用者: サービス運営者
+      </div>
+    </div>
+
+    <div class="app-layout">
+      <div class="app-header operator">
+        <div class="left">
+          <span class="logo">open-faq Admin Console</span> <span class="badge-pill purple">サービス運営者プレーン</span>
+        </div>
+
+        <div class="right">
+          <span class="mfa-badge">MFA: 有効</span> <span class="badge-pill gray">IP: 許可済み</span> <span class="bell">inbox <span class="badge">3</span></span> <span class="user-menu">op-SAMPLE-01 ▼</span>
+        </div>
+      </div>
+
+      <div class="app-sidebar">
+        <div class="group">
+          運営機能
+        </div>
+
+        <div class="item active">
+          ホーム
+        </div>
+
+        <div class="item">
+          削除データ参照
+        </div>
+
+        <div class="item">
+          削除データ復元
+        </div>
+
+        <div class="item">
+          AI 推論パラメータ <span class="badge purple">2</span>
+        </div>
+
+        <div class="item">
+          レート/予算上書き
+        </div>
+
+        <div class="item">
+          お知らせ配信 <span class="badge">1</span>
+        </div>
+
+        <div class="item">
+          削除依頼対応 <span><span class="badge yellow">5d:3</span> <span class="badge">7d:1</span></span>
+        </div>
+
+        <div class="item">
+          Webhook リプレイ <span class="badge">DLQ 1h:5</span>
+        </div>
+
+        <div class="item">
+          PII 誤検出報告 <span class="badge">4</span>
+        </div>
+
+        <div class="item">
+          ペイロード差分 <span class="badge">2</span>
+        </div>
+
+        <div class="item">
+          運営者活動
+        </div>
+
+        <div class="group">
+          承認・通知
+        </div>
+
+        <div class="item">
+          承認待ち一覧 <span class="badge purple">3</span>
+        </div>
+
+        <div class="item">
+          運営者 inbox <span class="badge">3</span>
+        </div>
+
+        <div class="item">
+          ログアウト
+        </div>
+      </div>
+
+      <div class="app-main">
+        <div class="panel">
+          <div class="panel-title">
+            KPI ハイライト
+          </div>
+
+          <div class="grid-4">
+            <div class="summary-card">
+              <div class="label">
+                アクティブテナント数
+              </div>
+
+              <div class="value">
+                SAMPLE 128
+              </div>
+
+              <div class="delta">
+                前週比 +3 / 上限 200
+              </div>
+            </div>
+
+            <div class="summary-card green">
+              <div class="label">
+                全テナント MAU
+              </div>
+
+              <div class="value">
+                SAMPLE 12,400
+              </div>
+
+              <div class="delta">
+                直近 30 日 / 解決率 78%
+              </div>
+            </div>
+
+            <div class="summary-card">
+              <div class="label">
+                通知バウンス率
+              </div>
+
+              <div class="value">
+                SAMPLE 0.8%
+              </div>
+
+              <div class="delta">
+                正常
+              </div>
+            </div>
+
+            <div class="summary-card yellow">
+              <div class="label">
+                通知苦情率
+              </div>
+
+              <div class="value">
+                SAMPLE 0.05%
+              </div>
+
+              <div class="delta">
+                正常
+              </div>
+            </div>
+
+            <div class="summary-card">
+              <div class="label">
+                対応中の削除依頼
+              </div>
+
+              <div class="value">
+                SAMPLE 12 件
+              </div>
+
+              <div class="delta">
+                受付済み + 本人確認中 + 削除対応中
+              </div>
+            </div>
+
+            <div class="summary-card">
+              <div class="label">
+                進行中障害チケット
+              </div>
+
+              <div class="value">
+                SAMPLE 1
+              </div>
+
+              <div class="delta">
+                P2
+              </div>
+            </div>
+
+            <div class="summary-card green">
+              <div class="label">
+                Webhook 受信成功率
+              </div>
+
+              <div class="value">
+                SAMPLE 99.8%
+              </div>
+
+              <div class="delta">
+                直近 1h
+              </div>
+            </div>
+
+            <div class="summary-card green">
+              <div class="label">
+                ハッシュチェーン検証
+              </div>
+
+              <div class="value">
+                SAMPLE OK
+              </div>
+
+              <div class="delta">
+                直近 2026-05-11 02:00
+              </div>
+            </div>
+
+            <div class="summary-card red">
+              <div class="label">
+                削除依頼の期限超過率
+              </div>
+
+              <div class="value">
+                SAMPLE 0.7%
+              </div>
+
+              <div class="delta">
+                7 営業日超過 1 件
+              </div>
+            </div>
+
+            <div class="summary-card">
+              <div class="label">
+                運営者操作頻度異常
+              </div>
+
+              <div class="value">
+                SAMPLE 0
+              </div>
+
+              <div class="delta">
+                直近 1h
+              </div>
+            </div>
+
+            <div class="summary-card">
+              <div class="label">
+                AI 推論品質劣化
+              </div>
+
+              <div class="value">
+                SAMPLE 正常
+              </div>
+
+              <div class="delta">
+                回答可能率 7d 平均比 -2pt
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-top:8px;">
+          <div class="panel">
+            <div class="panel-title">
+              注意が必要な項目(バッジ集約)
+            </div>
+
+            <table class="wf">
+              <tr>
+                <td>削除依頼の対応期限超過</td>
+
+                <td><span class="badge-pill red">7営業日超過 1 件</span></td>
+
+                <td><a class="link"></a></td>
+              </tr>
+
+              <tr>
+                <td>対応期限が近い削除依頼</td>
+
+                <td><span class="badge-pill yellow">3 件</span></td>
+
+                <td><a class="link"></a></td>
+              </tr>
+
+              <tr>
+                <td>DLQ 滞留(1 時間以上)</td>
+
+                <td><span class="badge-pill dlq">5 件</span></td>
+
+                <td><a class="link"></a></td>
+              </tr>
+
+              <tr>
+                <td>Webhook ペイロード差分検出</td>
+
+                <td><span class="badge-pill red">2 件</span></td>
+
+                <td><a class="link"></a></td>
+              </tr>
+
+              <tr>
+                <td>PII 誤検出報告 3 営業日経過</td>
+
+                <td><span class="badge-pill yellow">1 件</span></td>
+
+                <td><a class="link"></a></td>
+              </tr>
+
+              <tr>
+                <td>承認待ち(4-eyes)</td>
+
+                <td><span class="badge-pill purple">3 件</span></td>
+
+                <td><a class="link"></a></td>
+              </tr>
+            </table>
+          </div>
+
+          <div class="panel">
+            <div class="panel-title">
+              直近運営者操作
+            </div>
+
+            <table class="wf">
+              <thead>
+                <tr>
+                  <th>時刻</th>
+
+                  <th>operator</th>
+
+                  <th>action</th>
+
+                  <th>target</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr>
+                  <td>10:32</td>
+
+                  <td>op-SAMPLE-02</td>
+
+                  <td>tenant.restore</td>
+
+                  <td>ten_SAMPLE_01HZZZZ</td>
+                </tr>
+
+                <tr>
+                  <td>09:15</td>
+
+                  <td>op-SAMPLE-03</td>
+
+                  <td>ai_parameter.update</td>
+
+                  <td>tenant: ten_SAMPLE_01HAAAA</td>
+                </tr>
+
+                <tr>
+                  <td>08:00</td>
+
+                  <td>system</td>
+
+                  <td>deletion_request.complete</td>
+
+                  <td>dr_SAMPLE_001</td>
+                </tr>
+
+                <tr>
+                  <td>07:42</td>
+
+                  <td>op-SAMPLE-02</td>
+
+                  <td>webhook.replay</td>
+
+                  <td>evt_SAMPLE_01HXXXX</td>
+                </tr>
+              </tbody>
+            </table><a class="link"></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- ============= 承認待ち一覧 ============= -->
+
+  <div class="screen">
+    <div class="screen-header">
+      <div>
+        <span class="scr-id operator">SCR-APPROVALS</span> <span class="scr-name">承認待ち一覧(4-eyes)</span>
+      </div>
+
+      <div class="scr-user">
+        利用者: サービス運営者(申請者・承認者双方)
+      </div>
+    </div>
+
+    <div class="app-layout">
+      <div class="app-header operator">
+        <div class="left">
+          <span class="logo">open-faq Admin Console</span> <span class="badge-pill purple">承認待ち一覧</span>
+        </div>
+
+        <div class="right">
+          <span class="mfa-badge">MFA: 有効</span> <span class="bell">inbox <span class="badge">3</span></span> <span class="user-menu">op-SAMPLE-01 ▼</span>
+        </div>
+      </div>
+
+      <div class="app-sidebar">
+        <div class="group">
+          運営機能
+        </div>
+
+        <div class="item">
+          ホーム
+        </div>
+
+        <div class="item">
+          削除データ参照
+        </div>
+
+        <div class="item">
+          削除データ復元
+        </div>
+
+        <div class="item">
+          AI 推論パラメータ
+        </div>
+
+        <div class="item">
+          レート/予算上書き
+        </div>
+
+        <div class="item">
+          お知らせ配信
+        </div>
+
+        <div class="item">
+          削除依頼対応
+        </div>
+
+        <div class="item">
+          Webhook リプレイ
+        </div>
+
+        <div class="item">
+          PII 誤検出報告
+        </div>
+
+        <div class="item">
+          ペイロード差分
+        </div>
+
+        <div class="item">
+          運営者活動
+        </div>
+
+        <div class="group">
+          承認・通知
+        </div>
+
+        <div class="item active">
+          承認待ち一覧 <span class="badge purple">3</span>
+        </div>
+
+        <div class="item">
+          運営者 inbox <span class="badge">3</span>
+        </div>
+
+        <div class="item">
+          ログアウト
+        </div>
+      </div>
+
+      <div class="app-main">
+        <!-- フィルタ -->
+
+        <div class="filter-bar">
+          <div class="filter-item">
+            役割: <span class="select">▼ 申請者(自分) / 承認待ち(他者依頼) / 全件</span>
+          </div>
+
+          <div class="filter-item">
+            状態: <span class="select">▼ requested / reviewing / approved / executed / rejected / expired</span>
+          </div>
+
+          <div class="filter-item">
+            action_code: <span class="input" style="width:140px;"><span class="placeholder">例: ai_parameter.update</span></span>
+          </div>
+
+          <div class="filter-item">
+            期間: <span class="input" style="width:90px;">2026-05-04</span>〜<span class="input" style="width:90px;">2026-05-11</span>
+          </div><button class="btn small primary">検索</button>
+        </div>
+
+        <table class="wf">
+          <thead>
+            <tr>
+              <th>申請 ID</th>
+
+              <th>申請者</th>
+
+              <th>action_code</th>
+
+              <th>target</th>
+
+              <th>変更内容</th>
+
+              <th>state</th>
+
+              <th>残時間</th>
+
+              <th>承認者</th>
+
+              <th>操作</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td>apv_SAMPLE_01H001</td>
+
+              <td>op-SAMPLE-02</td>
+
+              <td>ai_parameter.update <span class="badge-pill purple">ハードゲート</span></td>
+
+              <td>ten_SAMPLE_01HAAAA</td>
+
+              <td>変更あり</td>
+
+              <td><span class="badge-pill yellow">requested</span></td>
+
+              <td><span class="timer">61h:24m</span></td>
+
+              <td>-</td>
+
+              <td><button class="btn small primary">承認画面</button> <button class="btn small danger" disabled>却下</button></td>
+            </tr>
+
+            <tr>
+              <td>apv_SAMPLE_01H002</td>
+
+              <td>op-SAMPLE-03</td>
+
+              <td>tenant.physical_delete <span class="badge-pill purple">ハードゲート</span></td>
+
+              <td>ten_SAMPLE_01HBBBB</td>
+
+              <td>変更あり</td>
+
+              <td><span class="badge-pill blue">reviewing</span></td>
+
+              <td><span class="timer warn">2h:10m</span></td>
+
+              <td>op-SAMPLE-04</td>
+
+              <td><button class="btn small primary">承認画面</button> <button class="btn small danger">却下</button></td>
+            </tr>
+
+            <tr>
+              <td>apv_SAMPLE_01H003</td>
+
+              <td>op-SAMPLE-01(自分)</td>
+
+              <td>master_key.rotate <span class="badge-pill purple">ハードゲート</span></td>
+
+              <td>global</td>
+
+              <td>変更あり</td>
+
+              <td><span class="badge-pill green">approved</span></td>
+
+              <td>承認後 71h:30m</td>
+
+              <td>op-SAMPLE-02</td>
+
+              <td><button class="btn small primary">実行</button></td>
+            </tr>
+
+            <tr class="system-row">
+              <td>apv_SAMPLE_01H000</td>
+
+              <td>op-SAMPLE-05</td>
+
+              <td>ai_parameter.update</td>
+
+              <td>tenant: ten_SAMPLE_01HCCCC</td>
+
+              <td>変更あり</td>
+
+              <td><span class="badge-pill gray">expired</span></td>
+
+              <td>72h 経過</td>
+
+              <td>-</td>
+
+              <td><span class="helper">再申請が必要</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="pager">
+          SAMPLE 14 件中 1-4 件表示 <span class="pg">‹</span><span class="pg active">1</span><span class="pg">2</span><span class="pg">›</span>
+        </div>
+
+        <div class="grid-2" style="margin-top:8px;">
+          <div class="panel">
+            <div class="panel-title">
+              承認内容の確認
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">
+            承認状態遷移図
+          </div>
+          <pre style="font-family:monospace; font-size:10px; background:#fafafa; padding:6px; border:1px solid #aaa;">
+[*] → requested(申請) └→ reviewing(別運営者が確認開始) ├→ approved(承認) │ ├→ executed │ └→ expired(承認後 72h 未実行で自動) ├→ rejected(却下) └→ expired(72h 経過で自動)
+</pre>
+        </div>
+      </div>
+    </div>
+  </div><!-- ============= 削除データ参照 ============= -->
+
+  <div class="screen">
+    <div class="screen-header">
+      <div>
+        <span class="scr-id operator">SCR-090</span> <span class="scr-name">削除データ参照(運営者)</span>
+      </div>
+
+      <div class="scr-user">
+        利用者: サービス運営者
+      </div>
+    </div>
+
+    <div class="app-layout">
+      <div class="app-header operator">
+        <div class="left">
+          <span class="logo">open-faq Admin Console</span> <span class="badge-pill purple">サービス運営者プレーン</span>
+        </div>
+
+        <div class="right">
+          <span class="mfa-badge">MFA: 有効</span> <span class="bell">inbox <span class="badge">3</span></span> <span class="user-menu">op-SAMPLE-01 ▼</span>
+        </div>
+      </div>
+
+      <div class="app-sidebar">
+        <div class="group">
+          運営機能
+        </div>
+
+        <div class="item">
+          ホーム
+        </div>
+
+        <div class="item active">
+          削除データ参照
+        </div>
+
+        <div class="item">
+          削除データ復元
+        </div>
+
+        <div class="item">
+          AI 推論パラメータ
+        </div>
+
+        <div class="item">
+          レート/予算上書き
+        </div>
+
+        <div class="item">
+          お知らせ配信
+        </div>
+
+        <div class="item">
+          削除依頼対応
+        </div>
+
+        <div class="item">
+          Webhook リプレイ
+        </div>
+
+        <div class="item">
+          PII 誤検出報告
+        </div>
+
+        <div class="item">
+          ペイロード差分
+        </div>
+
+        <div class="item">
+          運営者活動
+        </div>
+
+        <div class="group">
+          承認・通知
+        </div>
+
+        <div class="item">
+          承認待ち一覧
+        </div>
+
+        <div class="item">
+          運営者 inbox
+        </div>
+
+        <div class="item">
+          ログアウト
+        </div>
+      </div>
+
+      <div class="app-main">
+        <div class="filter-bar">
+          <div class="filter-item">
+            テナント検索: <span class="input" style="width:180px;"><span class="placeholder">ID/名前 部分一致 最大 100 文字</span></span>
+          </div>
+
+          <div class="filter-item">
+            リソース種別(複数可): <span class="select" style="width:240px;">▼ tenant / project / faq / account / announcement</span>
+          </div>
+
+          <div class="filter-item">
+            削除種別(複数可): <span class="select" style="width:220px;">▼ 削除済み / 無効化 / 削除予定</span>
+          </div>
+
+          <div class="filter-item">
+            削除日範囲: <span class="input" style="width:90px;">2026-04-11</span>〜<span class="input" style="width:90px;">2026-05-11</span> <span class="helper">(最大期間 1 年)</span>
+          </div><button class="btn small primary">検索</button> <button class="btn small">クリア</button>
+        </div>
+
+        <table class="wf">
+          <thead>
+            <tr>
+              <th>リソース ID</th>
+
+              <th>テナント ID / スラグ</th>
+
+              <th>種別</th>
+
+              <th>削除日時</th>
+
+              <th>削除種別</th>
+
+              <th>操作</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td><code>fq_SAMPLE_01HXXXX</code></td>
+
+              <td>SAMPLE-tenant-001 / acme-sample</td>
+
+              <td><span class="badge-pill">faq</span></td>
+
+              <td>2026-05-08 14:30 JST</td>
+
+              <td><span class="badge-pill yellow">削除予定</span></td>
+
+              <td><button class="btn small primary">復元</button></td>
+            </tr>
+
+            <tr>
+              <td><code>ten_SAMPLE_01HZZZZ</code></td>
+
+              <td>SAMPLE-tenant-002 / beta-sample</td>
+
+              <td><span class="badge-pill">tenant</span></td>
+
+              <td>2026-05-05 10:00 JST</td>
+
+              <td><span class="badge-pill yellow">削除予定</span></td>
+
+              <td><button class="btn small primary">復元</button></td>
+            </tr>
+
+            <tr>
+              <td><code>prj_SAMPLE_01HYYYY</code></td>
+
+              <td>SAMPLE-tenant-003 / gamma-sample</td>
+
+              <td><span class="badge-pill">project</span></td>
+
+              <td>2026-05-03 16:00 JST</td>
+
+              <td><span class="badge-pill gray">無効化</span></td>
+
+              <td><button class="btn small primary">復元</button></td>
+            </tr>
+
+            <tr>
+              <td><code>acc_SAMPLE_01HWWWW</code></td>
+
+              <td>SAMPLE-tenant-001 / acme-sample</td>
+
+              <td><span class="badge-pill">account</span></td>
+
+              <td>2026-05-02 09:15 JST</td>
+
+              <td><span class="badge-pill gray">無効化</span></td>
+
+              <td><button class="btn small primary">復元</button></td>
+            </tr>
+
+            <tr>
+              <td><code>fq_SAMPLE_01HVVVV</code></td>
+
+              <td>SAMPLE-tenant-004 / delta-sample</td>
+
+              <td><span class="badge-pill">faq</span></td>
+
+              <td>2025-04-10 12:00 JST</td>
+
+              <td><span class="badge-pill gray">削除済み(物理削除済)</span></td>
+
+              <td><button class="btn small" disabled>復元不可</button></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="pager">
+          SAMPLE 42 件中 1-5 件表示 <span class="pg">‹</span><span class="pg active">1</span><span class="pg">2</span><span class="pg">3</span><span class="pg">›</span>
+        </div>
+
+        <div class="panel" style="margin-top:8px;">
+          <div class="panel-title">
+            詳細(選択中: <code>fq_SAMPLE_01HXXXX</code>)
+          </div>
+
+          <div class="grid-2">
+            <div>
+              <div class="field">
+                <label>直前の内容</label>
+
+                <div class="input">
+                  title: "SAMPLE 返品ポリシー" / project_id: prj_SAMPLE_001 / category: SAMPLE_CATEGORY / status_before_delete: published
+                </div>
+
+                <div class="alert-bar warn">
+                  ⚠ <strong>により本文は非表示</strong>。属性メタデータのみ表示。<br>
+                  運営者は平常時に FAQ 本文・質問ログ本文・チャット本文を閲覧不可。
+                </div>
+              </div>
+
+              <div class="field">
+                <label>物理削除予定日(削除予定のみ)</label>
+
+                <div class="input">
+                  2026-06-07 14:30 JST(削除日時 + 30 日)
+                </div>
+
+
+              </div>
+            </div>
+
+            <div>
+              <div class="field">
+                <label>復元操作</label> <button class="btn primary">遷移し復元実行</button>
+
+
+              </div>
+
+              <div class="field">
+                <label>関連操作履歴</label> <a class="link"></a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </div><!-- ============= 削除データ復元 ============= -->
+
+  <div class="screen">
+    <div class="screen-header">
+      <div>
+        <span class="scr-id operator">SCR-091</span> <span class="scr-name">削除データ復元</span>
+      </div>
+
+      <div class="scr-user">
+        利用者: サービス運営者
+      </div>
+    </div>
+
+    <div class="app-layout">
+      <div class="app-header operator">
+        <div class="left">
+          <span class="logo">open-faq Admin Console</span> <span class="badge-pill purple">サービス運営者プレーン</span>
+        </div>
+
+        <div class="right">
+          <span class="mfa-badge">MFA: 有効</span> <span class="badge-pill green">再認証済(残 4m 38s)</span> <span class="bell">inbox <span class="badge">3</span></span> <span class="user-menu">op-SAMPLE-01 ▼</span>
+        </div>
+      </div>
+
+      <div class="app-sidebar">
+        <div class="group">
+          運営機能
+        </div>
+
+        <div class="item">
+          ホーム
+        </div>
+
+        <div class="item">
+          削除データ参照
+        </div>
+
+        <div class="item active">
+          削除データ復元
+        </div>
+
+        <div class="item">
+          AI 推論パラメータ
+        </div>
+
+        <div class="item">
+          レート/予算上書き
+        </div>
+
+        <div class="item">
+          お知らせ配信
+        </div>
+
+        <div class="item">
+          削除依頼対応
+        </div>
+
+        <div class="item">
+          Webhook リプレイ
+        </div>
+
+        <div class="item">
+          PII 誤検出報告
+        </div>
+
+        <div class="item">
+          ペイロード差分
+        </div>
+
+        <div class="item">
+          運営者活動
+        </div>
+
+        <div class="group">
+          承認・通知
+        </div>
+
+        <div class="item">
+          承認待ち一覧
+        </div>
+
+        <div class="item">
+          運営者 inbox
+        </div>
+
+        <div class="item">
+          ログアウト
+        </div>
+      </div>
+
+      <div class="app-main">
+
+
+        <div class="grid-2">
+          <div class="panel">
+            <div class="panel-title">
+              復元対象
+            </div>
+
+            <div class="field">
+              <label>復元対象 ID</label>
+
+              <div class="input">
+                <code>fq_SAMPLE_01HXXXX</code>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>テナント</label>
+
+              <div class="input">
+                SAMPLE-tenant-001 / acme-sample
+              </div>
+            </div>
+
+            <div class="field">
+              <label>削除日時 / 種別</label>
+
+              <div class="input">
+                2026-05-08 14:30 JST<span class="badge-pill yellow">削除予定</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>復元先ステータス(自動判定)</label>
+
+              <div class="input">
+                faq → (復元後の遷移先)
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-title">
+              復元理由・チケット ID
+            </div>
+
+            <div class="field">
+              <label>復元理由 <span class="req">*</span></label>
+
+              <div class="textarea">
+                <span class="placeholder">最大 1000 文字 / 自由記述 / 操作履歴に保存</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>対応チケット ID</label>
+
+              <div class="input">
+                <span class="placeholder">例: INC-SAMPLE-001(任意・最大 64 文字)</span>
+              </div>
+
+
+            </div>
+
+            <div class="field">
+              <label>再認証</label>
+
+              <div class="input">
+                <span class="badge-pill green">過去 5 分以内に実施済(残 4m 38s)</span>
+              </div>
+
+
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">
+            副作用ロールバックプリチェック (a)〜(g)
+          </div>
+
+          <div class="precheck-table">
+            <div class="precheck-row" style="background:#eee; font-weight:bold;">
+              <div>
+                #
+              </div>
+
+              <div>
+                項目
+              </div>
+
+              <div>
+                状態
+              </div>
+
+              <div>
+                備考
+              </div>
+            </div>
+
+            <div class="precheck-row">
+              <div>
+                (a)
+              </div>
+
+              <div>
+                課金状態の再開可否
+              </div>
+
+              <div>
+                <span class="ok">✓ OK</span>
+              </div>
+
+              <div class="info">
+                resume_at: 2026-05-11T11:00Z
+              </div>
+            </div>
+
+            <div class="precheck-row">
+              <div>
+                (b)
+              </div>
+
+              <div>
+                未処理イベントの再処理可否
+              </div>
+
+              <div>
+                <span class="ok">✓ OK</span>
+              </div>
+
+              <div class="info">
+                滞留 0 件
+              </div>
+            </div>
+
+            <div class="precheck-row">
+              <div>
+                (c)
+              </div>
+
+              <div>
+                お知らせ受信箱配信の再開(削除予定中の保留分)
+              </div>
+
+              <div>
+                <span class="ok">✓ OK</span>
+              </div>
+
+              <div class="info">
+                保留 2 件 → 再キュー予定
+              </div>
+            </div>
+
+            <div class="precheck-row">
+              <div>
+                (d)
+              </div>
+
+              <div>
+                ウィジェット稼働再有効化 + CDN purge_by_tag
+              </div>
+
+              <div>
+                <span class="ok">✓ OK</span>
+              </div>
+
+              <div class="info">
+                CDN tag: t-SAMPLE-001
+              </div>
+            </div>
+
+            <div class="precheck-row">
+              <div>
+                (e)
+              </div>
+
+              <div>
+                Stripe customer_id 整合性チェック
+              </div>
+
+              <div>
+                <span class="ok">✓ OK</span>
+              </div>
+
+              <div class="info">
+                cus_SAMPLE_01
+              </div>
+            </div>
+
+            <div class="precheck-row">
+              <div>
+                (f)
+              </div>
+
+              <div>
+                進行中の招待・再入室トークン失効/再発行判定
+              </div>
+
+              <div>
+                <span class="ng">⚠ 注意</span>
+              </div>
+
+              <div class="info">
+                招待 1 件 → 再発行推奨
+              </div>
+            </div>
+
+            <div class="precheck-row">
+              <div>
+                (g)
+              </div>
+
+              <div>
+                関連ログ確認
+              </div>
+
+              <div>
+                <span class="ok">✓ OK</span>
+              </div>
+
+              <div class="info">
+                ログ参照: 整合
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">
+            操作
+          </div><button class="btn hardgate">承認申請</button> <button class="btn danger primary">復元を実行(は単独実行可)</button> <button class="btn">キャンセル</button>
+
+
+        </div>
+
+
+      </div>
+    </div>
+  </div><!-- ============= AI 推論パラメータ設定 ============= -->
+
+  <div class="screen">
+    <div class="screen-header">
+      <div>
+        <span class="scr-id operator">SCR-092</span> <span class="scr-name">AI 推論パラメータ設定(テナント別上書き)</span>
+      </div>
+
+      <div class="scr-user">
+        利用者: サービス運営者
+      </div>
+    </div>
+
+    <div class="app-layout">
+      <div class="app-header operator">
+        <div class="left">
+          <span class="logo">open-faq Admin Console</span> <span class="badge-pill purple">サービス運営者プレーン</span>
+        </div>
+
+        <div class="right">
+          <span class="mfa-badge">MFA: 有効</span> <span class="bell">inbox <span class="badge">3</span></span> <span class="user-menu">op-SAMPLE-01 ▼</span>
+        </div>
+      </div>
+
+      <div class="app-sidebar">
+        <div class="group">
+          運営機能
+        </div>
+
+        <div class="item">
+          ホーム
+        </div>
+
+        <div class="item">
+          削除データ参照
+        </div>
+
+        <div class="item">
+          削除データ復元
+        </div>
+
+        <div class="item active">
+          AI 推論パラメータ <span class="badge purple">2</span>
+        </div>
+
+        <div class="item">
+          レート/予算上書き
+        </div>
+
+        <div class="item">
+          お知らせ配信
+        </div>
+
+        <div class="item">
+          削除依頼対応
+        </div>
+
+        <div class="item">
+          Webhook リプレイ
+        </div>
+
+        <div class="item">
+          PII 誤検出報告
+        </div>
+
+        <div class="item">
+          ペイロード差分
+        </div>
+
+        <div class="item">
+          運営者活動
+        </div>
+
+        <div class="group">
+          承認・通知
+        </div>
+
+        <div class="item">
+          承認待ち一覧
+        </div>
+
+        <div class="item">
+          運営者 inbox
+        </div>
+
+        <div class="item">
+          ログアウト
+        </div>
+      </div>
+
+      <div class="app-main">
+
+
+        <div class="tab-bar">
+          <div class="tab">
+            グローバル
+          </div>
+
+          <div class="tab active">
+            テナント別
+          </div>
+
+          <div class="tab">
+            プロジェクト別(`ai-params:project:&lt;id&gt;`)
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="panel">
+            <div class="panel-title">
+              対象テナント選択
+            </div>
+
+            <div class="field">
+              <label>テナント検索</label>
+
+              <div class="input">
+                <span class="placeholder">ID/名前 部分一致</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>選択中</label>
+
+              <div class="input">
+                ten_SAMPLE_01HAAAA / SAMPLE-tenant-001 / acme-sample
+              </div>
+            </div>
+
+            <div class="field">
+              <label>適用優先順位の可視化</label>
+
+              <div class="panel" style="background:#fafafa; padding:8px;">
+                <div style="font-size:10px; font-family:monospace;">
+                  プロジェクト値 &nbsp;&gt;&nbsp; <strong>テナント値(編集中)</strong> &nbsp;&gt;&nbsp; グローバル値
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-title">
+              しきい値設定(0.00〜1.00、0.01 刻み)
+            </div>
+
+            <div class="field">
+              <label>信頼度しきい値 <span class="req">*</span></label>
+
+              <div class="slider">
+                <div class="track">
+                  <div class="knob" style="left:60%;"></div>
+                </div>
+              </div><span class="slider-value">0.60</span> <span class="helper">グローバル値: 0.60 / 現在テナント値: <strong>0.60 → 0.75</strong></span>
+
+
+            </div>
+
+            <div class="field">
+              <label>関連度しきい値 <span class="req">*</span></label>
+
+              <div class="slider">
+                <div class="track">
+                  <div class="knob" style="left:50%;"></div>
+                </div>
+              </div><span class="slider-value">0.50</span> <span class="helper">グローバル値: 0.50 / 現在テナント値: <strong>0.50 → 0.55</strong></span>
+
+
+            </div>
+
+            <div class="field">
+              <label>使用モデル</label>
+
+              <div class="select">
+                ▼ @cf/meta/llama-3.1-8b-instruct(デフォルト) / SAMPLE-model-v2 / SAMPLE-model-v3
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">
+            段階ロールアウト
+          </div>
+
+          <div class="filter-bar" style="background:#fff;">
+            <span class="filter-item">現在: <strong>10% ロールアウト中(残 50% / 100% 未開始)</strong></span> <button class="btn small">0% ロールバック</button> <button class="btn small primary">10% で継続</button> <button class="btn small">50% へ拡大</button> <button class="btn small">100% へ完全切替</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">
+            変更履歴
+          </div>
+
+          <table class="wf">
+            <thead>
+              <tr>
+                <th>変更日時</th>
+
+                <th>operator</th>
+
+                <th>before</th>
+
+                <th>after</th>
+
+                <th>ticket_id</th>
+
+                <th>承認者</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td>2026-05-10 11:00 JST</td>
+
+                <td>op-SAMPLE-03</td>
+
+                <td>confidence: 0.55<br>
+                relevance: 0.45</td>
+
+                <td>confidence: 0.60<br>
+                relevance: 0.50</td>
+
+                <td>INC-SAMPLE-088</td>
+
+                <td>op-SAMPLE-01</td>
+              </tr>
+
+              <tr>
+                <td>2026-04-22 15:30 JST</td>
+
+                <td>op-SAMPLE-01</td>
+
+                <td>model: @cf/meta/llama-3.0-8b</td>
+
+                <td>model: @cf/meta/llama-3.1-8b-instruct</td>
+
+                <td>INC-SAMPLE-072</td>
+
+                <td>op-SAMPLE-02</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">
+            操作
+          </div><button class="btn">対応チケット ID 入力</button> <button class="btn">再認証</button> <button class="btn hardgate">承認申請を送信</button> <button class="btn primary" disabled>変更を実行(承認後活性化)</button> <button class="btn">キャンセル</button>
+        </div>
+      </div>
+    </div>
+  </div><!-- ============= テナント別レート/予算上書き管理 ============= -->
+
+  <div class="screen">
+    <div class="screen-header">
+      <div>
+        <span class="scr-id operator">SCR-093</span> <span class="scr-name">テナント別レート制限・予算上書き管理</span>
+      </div>
+
+      <div class="scr-user">
+        利用者: サービス運営者
+      </div>
+    </div>
+
+    <div class="app-layout">
+      <div class="app-header operator">
+        <div class="left">
+          <span class="logo">open-faq Admin Console</span> <span class="badge-pill purple">サービス運営者プレーン</span>
+        </div>
+
+        <div class="right">
+          <span class="mfa-badge">MFA: 有効</span> <span class="bell">inbox <span class="badge">3</span></span> <span class="user-menu">op-SAMPLE-01 ▼</span>
+        </div>
+      </div>
+
+      <div class="app-sidebar">
+        <div class="group">
+          運営機能
+        </div>
+
+        <div class="item">
+          ホーム
+        </div>
+
+        <div class="item">
+          削除データ参照
+        </div>
+
+        <div class="item">
+          削除データ復元
+        </div>
+
+        <div class="item">
+          AI 推論パラメータ
+        </div>
+
+        <div class="item active">
+          レート/予算上書き
+        </div>
+
+        <div class="item">
+          お知らせ配信
+        </div>
+
+        <div class="item">
+          削除依頼対応
+        </div>
+
+        <div class="item">
+          Webhook リプレイ
+        </div>
+
+        <div class="item">
+          PII 誤検出報告
+        </div>
+
+        <div class="item">
+          ペイロード差分
+        </div>
+
+        <div class="item">
+          運営者活動
+        </div>
+
+        <div class="group">
+          承認・通知
+        </div>
+
+        <div class="item">
+          承認待ち一覧
+        </div>
+
+        <div class="item">
+          運営者 inbox
+        </div>
+
+        <div class="item">
+          ログアウト
+        </div>
+      </div>
+
+      <div class="app-main">
+        <div class="filter-bar">
+          <div class="filter-item">
+            テナント検索: <span class="input" style="width:200px;"><span class="placeholder">ID/名前 部分一致</span></span>
+          </div><button class="btn small primary">検索</button>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">
+            テナント別現在値(SAMPLE-tenant-001 / acme-sample 選択中)
+          </div>
+
+          <table class="wf">
+            <thead>
+              <tr>
+                <th>項目</th>
+
+                <th>デフォルト</th>
+
+                <th>現在の上書き値</th>
+
+                <th>変更先</th>
+
+                <th>反映</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td>/widget/ask レート制限</td>
+
+                <td>60 req/min</td>
+
+                <td><span class="badge-pill purple">120 req/min</span></td>
+
+                <td>
+                  <div class="input" style="width:80px;">
+                    <span class="placeholder">1〜10000</span>
+                  </div>req/min
+                </td>
+
+                <td><span class="badge-pill green">即時</span></td>
+              </tr>
+
+              <tr>
+                <td>チャット投稿(お問い合わせ利用者側)</td>
+
+                <td>3 秒に 1 / 30 通/分</td>
+
+                <td>同左</td>
+
+                <td>
+                  <div class="input" style="width:40px;display:inline-block;">
+                    3
+                  </div>秒に 1
+
+                  <div class="input" style="width:40px;display:inline-block;">
+                    30
+                  </div>通/分
+                </td>
+
+                <td>-</td>
+              </tr>
+
+              <tr>
+                <td>チャット投稿(担当者側)</td>
+
+                <td>1 秒に 1 / 60 通/分</td>
+
+                <td>同左</td>
+
+                <td>
+                  <div class="input" style="width:40px;display:inline-block;">
+                    1
+                  </div>秒に 1
+
+                  <div class="input" style="width:40px;display:inline-block;">
+                    60
+                  </div>通/分
+                </td>
+
+                <td>-</td>
+              </tr>
+
+              <tr>
+                <td>月次予算上書き(円)</td>
+
+                <td>運営者推奨デフォルト</td>
+
+                <td><span class="badge-pill purple">¥500,000</span></td>
+
+                <td>
+                  <div class="input" style="width:120px;">
+                    <span class="placeholder">1 円刻み</span>
+                  </div>
+                </td>
+
+                <td><span class="badge-pill green">即時</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">
+            上書き理由・チケット ID
+          </div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label>上書き理由 <span class="req">*</span></label>
+
+              <div class="textarea">
+                <span class="placeholder">最大 1000 文字 / 操作履歴 before_value / after_value に保存((c))</span>
+              </div>
+            </div>
+
+            <div>
+              <div class="field">
+                <label>対応チケット ID <span class="req">*</span></label>
+
+                <div class="input">
+                  <span class="placeholder">例: INC-SAMPLE-005</span>
+                </div>
+              </div>
+
+              <div class="field">
+                <label>再認証</label>
+
+                <div class="input">
+                  <span class="badge-pill green">過去 5 分以内に実施済</span>
+                </div>
+              </div>
+            </div>
+          </div><button class="btn primary">保存(単独実行 + 承認ログ)</button> <button class="btn hardgate" disabled>承認申請</button> <button class="btn">キャンセル</button>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">
+            サプレスリスト復帰承認
+          </div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label>個別アドレス検索</label>
+
+              <div class="input">
+                <span class="placeholder">end-user-sample@example.com</span>
+              </div>
+
+
+            </div>
+
+            <div>
+              <div class="field">
+                <label>状態</label>
+
+                <div class="input">
+                  SAMPLE: hard_bounce(2026-04-15 発生 / Resend イベント受領)
+                </div>
+              </div>
+
+              <div class="field">
+                <label>復帰承認</label> <button class="btn">承認して再有効化</button>
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- ============= お知らせ作成・配信 ============= -->
+
+  <div class="screen">
+    <div class="screen-header">
+      <div>
+        <span class="scr-id operator">SCR-094</span> <span class="scr-name">お知らせ作成・配信(運営者)</span>
+      </div>
+
+      <div class="scr-user">
+        利用者: サービス運営者
+      </div>
+    </div>
+
+    <div class="app-layout">
+      <div class="app-header operator">
+        <div class="left">
+          <span class="logo">open-faq Admin Console</span> <span class="badge-pill purple">サービス運営者プレーン</span>
+        </div>
+
+        <div class="right">
+          <span class="mfa-badge">MFA: 有効</span> <span class="bell">inbox <span class="badge">3</span></span> <span class="user-menu">op-SAMPLE-01 ▼</span>
+        </div>
+      </div>
+
+      <div class="app-sidebar">
+        <div class="group">
+          運営機能
+        </div>
+
+        <div class="item">
+          ホーム
+        </div>
+
+        <div class="item">
+          削除データ参照
+        </div>
+
+        <div class="item">
+          削除データ復元
+        </div>
+
+        <div class="item">
+          AI 推論パラメータ
+        </div>
+
+        <div class="item">
+          レート/予算上書き
+        </div>
+
+        <div class="item active">
+          お知らせ配信 <span class="badge">1</span>
+        </div>
+
+        <div class="item">
+          削除依頼対応
+        </div>
+
+        <div class="item">
+          Webhook リプレイ
+        </div>
+
+        <div class="item">
+          PII 誤検出報告
+        </div>
+
+        <div class="item">
+          ペイロード差分
+        </div>
+
+        <div class="item">
+          運営者活動
+        </div>
+
+        <div class="group">
+          承認・通知
+        </div>
+
+        <div class="item">
+          承認待ち一覧
+        </div>
+
+        <div class="item">
+          運営者 inbox
+        </div>
+
+        <div class="item">
+          ログアウト
+        </div>
+      </div>
+
+      <div class="app-main">
+        <div class="grid-2">
+          <div class="panel">
+            <div class="panel-title">
+              お知らせ作成
+            </div>
+
+            <div class="field">
+              <label>種別 <span class="req">*</span></label>
+
+              <div class="select">
+                ▼ announcement(運営お知らせ) / system(運用イベント)
+              </div>
+
+
+            </div>
+
+            <div class="grid-2">
+              <div class="field">
+                <label>重要度 <span class="req">*</span></label>
+
+                <div class="select">
+                  ▼ low / normal / high
+                </div>
+              </div>
+
+              <div class="field">
+                <label>オプトアウト可否</label> <span class="checkbox">お問い合わせ利用者側オプトアウトを許可</span>
+
+
+              </div>
+            </div>
+
+            <div class="field">
+              <label>宛先範囲 <span class="req">*</span></label>
+
+              <div class="select">
+                ▼ 全テナント / 特定テナント(複数) / 特定ユーザー種別(admin / operator)
+              </div>
+
+
+            </div>
+
+            <div class="field">
+              <label>件名 <span class="req">*</span></label>
+
+              <div class="input">
+                <span class="placeholder">最大 200 文字</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>本文 <span class="req">*</span></label>
+
+              <div class="textarea rich">
+                <span class="placeholder">最大 10000 文字</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>送信予定日時 <span class="req">*</span></label>
+
+              <div class="input">
+                2026-05-15 10:00 JST
+              </div>
+
+
+            </div>
+
+            <div class="field">
+              <label>対応チケット ID <span class="req">*</span> / 再認証</label>
+
+              <div class="grid-2">
+                <div class="input">
+                  <span class="placeholder">INC-SAMPLE-010</span>
+                </div>
+
+                <div class="input">
+                  <span class="badge-pill green">過去 5 分以内に実施済</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-title">
+              プレビュー
+            </div>
+
+            <div class="panel" style="background:#fafafa; padding:8px;">
+              <div style="font-size:11px; font-weight:bold; margin-bottom:6px;">
+                [SAMPLE 件名] メンテナンスのお知らせ(5月20日 1:00〜3:00 JST)
+              </div>
+
+              <div style="font-size:10px;">
+                SAMPLE 本文。お客様各位、平素より open-faq をご利用いただきありがとうございます。 5 月 20 日 1:00〜3:00 JST にメンテナンスを実施します。
+              </div>
+            </div>
+
+            <div class="field">
+              <label>宛先範囲・想定配信件数</label>
+
+              <table class="wf">
+                <tr>
+                  <td>対象テナント</td>
+
+                  <td>SAMPLE 3 件(ten_SAMPLE_01HAAAA / 01HBBBB / 01HCCCC)</td>
+                </tr>
+
+                <tr>
+                  <td>対象ユーザー種別</td>
+
+                  <td>admin + operator</td>
+                </tr>
+
+                <tr>
+                  <td>想定配信件数</td>
+
+                  <td>SAMPLE 8 名(inbox 8 件 + メール 8 通)</td>
+                </tr>
+
+                <tr>
+                  <td>配信方法</td><td>アプリ内通知 + メール</td>
+                </tr>
+              </table>
+            </div>
+
+            <div class="field">
+              <label>状態</label> <span class="badge-pill blue">preview</span> → <span class="badge-pill yellow">scheduled</span> → <span class="badge-pill purple">sending</span> → <span class="badge-pill green">sent</span>
+
+
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">
+            操作
+          </div><button class="btn">テスト送信(運営者本人宛)</button> <button class="btn primary">配信予約</button> <button class="btn danger">配信予約取消(scheduled_at - 5 分以内は不可)</button> <button class="btn">訂正告知発行(配信開始後のみ・別 SERVICE_ANNOUNCEMENT 新規発行)</button> <button class="btn">下書きとして保存</button> <button class="btn">キャンセル</button>
+        </div>
+
+
+
+        <div class="panel">
+          <div class="panel-title">
+            配信予約一覧(本人作成分)
+          </div>
+
+          <table class="wf">
+            <thead>
+              <tr>
+                <th>announce_id</th>
+
+                <th>件名</th>
+
+                <th>種別/重要度</th>
+
+                <th>宛先</th>
+
+                <th>scheduled_at</th>
+
+                <th>状態</th>
+
+                <th>取消</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td>ann_SAMPLE_01HAAAA</td>
+
+                <td>メンテナンスのお知らせ(5/20)</td>
+
+                <td>announcement / high</td>
+
+                <td>全テナント</td>
+
+                <td>2026-05-15 10:00</td>
+
+                <td><span class="badge-pill yellow">scheduled</span></td>
+
+                <td><button class="btn small danger">取消(残 3d 22h)</button></td>
+              </tr>
+
+              <tr>
+                <td>ann_SAMPLE_01HBBBB</td>
+
+                <td>規約改定のご案内(v3.0)</td>
+
+                <td>announcement / high(強制送信)</td>
+
+                <td>全テナント / admin</td>
+
+                <td>2026-05-20 00:00</td>
+
+                <td><span class="badge-pill yellow">scheduled</span></td>
+
+                <td><button class="btn small danger">取消(残 8d)</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div><!-- ============= 個人情報削除の対応ダッシュボード ============= -->
+
+  <div class="screen">
+    <div class="screen-header">
+      <div>
+        <span class="scr-id operator">SCR-095</span> <span class="scr-name">個人情報削除の対応ダッシュボード</span>
+      </div>
+
+      <div class="scr-user">
+        利用者: サービス運営者
+      </div>
+    </div>
+
+    <div class="app-layout">
+      <div class="app-header operator">
+        <div class="left">
+          <span class="logo">open-faq Admin Console</span> <span class="badge-pill purple">サービス運営者プレーン</span>
+        </div>
+
+        <div class="right">
+          <span class="mfa-badge">MFA: 有効</span> <span class="bell">inbox <span class="badge">3</span></span> <span class="user-menu">op-SAMPLE-01 ▼</span>
+        </div>
+      </div>
+
+      <div class="app-sidebar">
+        <div class="group">
+          運営機能
+        </div>
+
+        <div class="item">
+          ホーム
+        </div>
+
+        <div class="item">
+          削除データ参照
+        </div>
+
+        <div class="item">
+          削除データ復元
+        </div>
+
+        <div class="item">
+          AI 推論パラメータ
+        </div>
+
+        <div class="item">
+          レート/予算上書き
+        </div>
+
+        <div class="item">
+          お知らせ配信
+        </div>
+
+        <div class="item active">
+          削除依頼対応 <span><span class="badge yellow">5d:3</span> <span class="badge">7d:1</span></span>
+        </div>
+
+        <div class="item">
+          Webhook リプレイ
+        </div>
+
+        <div class="item">
+          PII 誤検出報告
+        </div>
+
+        <div class="item">
+          ペイロード差分
+        </div>
+
+        <div class="item">
+          運営者活動
+        </div>
+
+        <div class="group">
+          承認・通知
+        </div>
+
+        <div class="item">
+          承認待ち一覧
+        </div>
+
+        <div class="item">
+          運営者 inbox
+        </div>
+
+        <div class="item">
+          ログアウト
+        </div>
+      </div>
+
+      <div class="app-main">
+        <div class="panel">
+          <div class="panel-title">
+            対応状況サマリー
+          </div>
+
+          <div class="grid-4">
+            <div class="summary-card">
+              <div class="label">
+                受付済み
+              </div>
+
+              <div class="value">
+                SAMPLE 4
+              </div>
+
+              <div class="delta">
+                受付済み
+              </div>
+            </div>
+
+            <div class="summary-card">
+              <div class="label">
+                本人確認中
+              </div>
+
+              <div class="value">
+                SAMPLE 6
+              </div>
+
+              <div class="delta">
+                本人確認中
+              </div>
+            </div>
+
+            <div class="summary-card">
+              <div class="label">
+                削除対応中
+              </div>
+
+              <div class="value">
+                SAMPLE 2
+              </div>
+
+              <div class="delta">
+                削除対応中
+              </div>
+            </div>
+
+            <div class="summary-card green">
+              <div class="label">
+                完了
+              </div>
+
+              <div class="value">
+                SAMPLE 38
+              </div>
+
+              <div class="delta">
+                直近 30 日
+              </div>
+            </div>
+
+            <div class="summary-card yellow">
+              <div class="label">
+                5 営業日経過リマインド
+              </div>
+
+              <div class="value">
+                SAMPLE 3
+              </div>
+
+              <div class="delta">
+                運営者 inbox へ通知済
+              </div>
+            </div>
+
+            <div class="summary-card red">
+              <div class="label">
+                7 営業日超過
+              </div>
+
+              <div class="value">
+                SAMPLE 1
+              </div>
+
+              <div class="delta">
+                運営者 inbox へ緊急通知
+              </div>
+            </div>
+
+            <div class="summary-card">
+              <div class="label">
+                期限切れ
+              </div>
+
+              <div class="value">
+                SAMPLE 2
+              </div>
+
+              <div class="delta">
+                本人確認が14日間未完了
+              </div>
+            </div>
+
+            <div class="summary-card">
+              <div class="label">
+                取り消し済み
+              </div>
+
+              <div class="value">
+                SAMPLE 1
+              </div>
+
+              <div class="delta">
+                依頼者が取り消し
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-bar">
+          <div class="filter-item">
+            状態: <span class="select">▼ すべて / 受付済み / 本人確認中 / 削除対応中 / 完了 / 期限切れ / 取り消し済み</span>
+          </div>
+
+          <div class="filter-item">
+            テナント: <span class="input" style="width:140px;"><span class="placeholder">部分一致</span></span>
+          </div>
+
+          <div class="filter-item">
+            期限: <span class="select">▼ すべて / 5 営業日経過 / 7 営業日超過</span>
+          </div><button class="btn small primary">検索</button>
+        </div>
+
+        <table class="wf">
+          <thead>
+            <tr>
+              <th>受付ID</th>
+
+              <th>依頼者メール(一部非表示)</th>
+
+              <th>テナント</th>
+
+              <th>状態</th>
+
+              <th>受付日時</th>
+
+              <th>対応期限</th>
+
+              <th>経過営業日</th>
+
+              <th>操作</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td>dr_SAMPLE_001</td>
+
+              <td>end-***@example.com</td>
+
+              <td>ten_SAMPLE_01HAAAA</td>
+
+              <td><span class="badge-pill yellow">受付済み</span></td>
+
+              <td>2026-05-09 10:00 JST</td>
+
+              <td>2026-05-20 23:59 JST</td>
+
+              <td><span class="timer">2 / 7 営業日</span></td>
+
+              <td><button class="btn small">本人確認へ</button> <button class="btn small primary">確認メール送信</button></td>
+            </tr>
+
+            <tr>
+              <td>dr_SAMPLE_002</td>
+
+              <td>buyer-***@sample.jp</td>
+
+              <td>ten_SAMPLE_01HBBBB</td>
+
+              <td><span class="badge-pill blue">本人確認中</span></td>
+
+              <td>2026-05-04 14:30 JST</td>
+
+              <td>2026-05-13 23:59 JST</td>
+
+              <td><span class="timer warn">5 / 7 営業日(お知らせ済み)</span></td>
+
+              <td><button class="btn small primary">確認メール再送</button></td>
+            </tr>
+
+            <tr>
+              <td>dr_SAMPLE_003</td>
+
+              <td>user-***@example.org</td>
+
+              <td>ten_SAMPLE_01HCCCC</td>
+
+              <td><span class="badge-pill blue">本人確認中</span></td>
+
+              <td>2026-04-28 09:00 JST</td>
+
+              <td>2026-05-08 23:59 JST</td>
+
+              <td><span class="timer over">8 / 7 営業日 期限超過</span></td>
+
+              <td><button class="btn small danger">至急対応中</button></td>
+            </tr>
+
+            <tr>
+              <td>dr_SAMPLE_004</td>
+
+              <td>x-***@example.com</td>
+
+              <td>ten_SAMPLE_01HDDDD</td>
+
+              <td><span class="badge-pill purple">削除対応中</span></td>
+
+              <td>2026-05-06 11:00 JST</td>
+
+              <td>2026-05-15 23:59 JST</td>
+
+              <td><span class="timer">3 / 7 営業日</span></td>
+
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="grid-2" style="margin-top:8px;">
+          <div class="panel">
+            <div class="panel-title">
+              本人確認メールの送信
+            </div>
+
+            <div class="field">
+              <label>対象の依頼</label>
+
+              <div class="input">
+                dr_SAMPLE_001 / end-***@example.com
+              </div>
+            </div>
+
+            <div class="field">
+              <label>確認リンク</label>
+
+              <div class="input">
+                24 時間有効の確認リンク
+              </div>
+            </div>
+
+            <div class="field">
+              <label>送信先</label>
+
+              <div class="input">
+                end-***@example.com(メール送信後、リンクを1回開くと確認完了)
+              </div>
+            </div><button class="btn primary">確認メールを送る</button> <button class="btn">再送</button>
+
+
+          </div>
+
+          <div class="panel">
+            <div class="panel-title">
+              祝日マスタ参照
+            </div>
+
+            <table class="wf">
+              <thead>
+                <tr>
+                  <th>date</th>
+
+                  <th>name</th>
+
+                  <th>kind</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr>
+                  <td>2026-05-03</td>
+
+                  <td>憲法記念日</td>
+
+                  <td><span class="badge-pill">national_holiday</span></td>
+                </tr>
+
+                <tr>
+                  <td>2026-05-04</td>
+
+                  <td>みどりの日</td>
+
+                  <td><span class="badge-pill">national_holiday</span></td>
+                </tr>
+
+                <tr>
+                  <td>2026-05-05</td>
+
+                  <td>こどもの日</td>
+
+                  <td><span class="badge-pill">national_holiday</span></td>
+                </tr>
+
+                <tr>
+                  <td>2026-05-06</td>
+
+                  <td>振替休日</td>
+
+                  <td><span class="badge-pill blue">substitute</span></td>
+                </tr>
+
+                <tr>
+                  <td>2026-12-29〜2027-01-03</td>
+
+                  <td>年末年始(固定除外)</td>
+
+                  <td><span class="badge-pill orange">special</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">
+            詳細(選択中: dr_SAMPLE_002)
+          </div>
+
+          <div class="grid-3">
+            <div class="field">
+              <label>確認メール送信履歴</label>
+
+              <table class="wf">
+                <tr>
+                  <td>2026-05-04 14:35</td>
+
+                  <td>送信</td>
+                </tr>
+
+                <tr>
+                  <td>2026-05-06 09:20</td>
+
+                  <td>再送(前回未確認)</td>
+                </tr>
+
+                <tr>
+                  <td>2026-05-09 10:00</td>
+
+                  <td>再送(期限切れ後)</td>
+                </tr>
+              </table>
+            </div>
+
+            <div class="field">
+              <label>対応状況の履歴</label>
+
+              <div style="font-size:10px; font-family:monospace; background:#fafafa; border:1px solid #aaa; padding:6px;">
+                受付済み (2026-05-04 14:30)<br>
+                → 本人確認中 (2026-05-04 14:35)<br>
+                ⚠ 14 日経過で 自動期限切れ(残 9 日)
+              </div>
+            </div>
+
+            <div class="field">
+              <label>操作履歴を見る</label> <a class="link"></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- ============= 運営者活動ダッシュボード(監査) ============= -->
+
+  <div class="screen">
+    <div class="screen-header">
+      <div>
+        <span class="scr-id operator">SCR-096</span> <span class="scr-name">運営者活動ダッシュボード(監査)</span>
+      </div>
+
+      <div class="scr-user">
+        利用者: サービス運営者(参照)・エクスポート時のみ記録
+      </div>
+    </div>
+
+    <div class="app-layout">
+      <div class="app-header operator">
+        <div class="left">
+          <span class="logo">open-faq Admin Console</span> <span class="badge-pill purple">サービス運営者プレーン</span>
+        </div>
+
+        <div class="right">
+          <span class="mfa-badge">MFA: 有効</span> <span class="bell">inbox <span class="badge">3</span></span> <span class="user-menu">op-SAMPLE-01 ▼</span>
+        </div>
+      </div>
+
+      <div class="app-sidebar">
+        <div class="group">
+          運営機能
+        </div>
+
+        <div class="item">
+          ホーム
+        </div>
+
+        <div class="item">
+          削除データ参照
+        </div>
+
+        <div class="item">
+          削除データ復元
+        </div>
+
+        <div class="item">
+          AI 推論パラメータ
+        </div>
+
+        <div class="item">
+          レート/予算上書き
+        </div>
+
+        <div class="item">
+          お知らせ配信
+        </div>
+
+        <div class="item">
+          削除依頼対応
+        </div>
+
+        <div class="item">
+          Webhook リプレイ
+        </div>
+
+        <div class="item">
+          PII 誤検出報告
+        </div>
+
+        <div class="item">
+          ペイロード差分
+        </div>
+
+        <div class="item active">
+          運営者活動
+        </div>
+
+        <div class="group">
+          承認・通知
+        </div>
+
+        <div class="item">
+          承認待ち一覧
+        </div>
+
+        <div class="item">
+          運営者 inbox
+        </div>
+
+        <div class="item">
+          ログアウト
+        </div>
+      </div>
+
+      <div class="app-main">
+        <div class="panel">
+          <div class="panel-title">
+            KPI ハイライト
+          </div>
+
+          <div class="grid-4">
+            <div class="summary-card">
+              <div class="label">
+                アクティブテナント数
+              </div>
+
+              <div class="value">
+                SAMPLE 128
+              </div>
+            </div>
+
+            <div class="summary-card red">
+              <div class="label">
+                削除依頼の期限超過率
+              </div>
+
+              <div class="value">
+                0.7%
+              </div>
+
+              <div class="delta">
+                7営業日超過 1 件
+              </div>
+            </div>
+
+            <div class="summary-card">
+              <div class="label">
+                運営者操作頻度異常
+              </div>
+
+              <div class="value">
+                0
+              </div>
+
+              <div class="delta">
+                直近 1h
+              </div>
+            </div>
+
+            <div class="summary-card green">
+              <div class="label">
+                全テナント横断 MAU・解決率
+              </div>
+
+              <div class="value">
+                12,400 / 78%
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-bar">
+          <div class="filter-item">
+            action(部分一致): <span class="input" style="width:130px;"><span class="placeholder">tenant.restore</span></span> <span class="helper">&lt;resource&gt;.&lt;verb&gt;</span>
+          </div>
+
+          <div class="filter-item">
+            actor_id(完全一致): <span class="input" style="width:120px;"><span class="placeholder">op-SAMPLE-01</span></span>
+          </div>
+
+          <div class="filter-item">
+            actor_type: <span class="select" style="width:160px;">▼ service_operator / admin / operator / お問い合わせ利用者 / system</span>
+          </div>
+
+          <div class="filter-item">
+            target: <span class="input" style="width:100px;"><span class="placeholder">target_id</span></span> <span class="select" style="width:80px;">▼ type</span>
+          </div>
+
+          <div class="filter-item">
+            occurred_at: <span class="input" style="width:90px;">2025-05-11</span>〜<span class="input" style="width:90px;">2026-05-11</span> <span class="helper">最大 1 年</span>
+          </div>
+
+          <div class="filter-item">
+            tenant_id(横断): <span class="input" style="width:100px;"><span class="placeholder">全テナント可</span></span>
+          </div>
+
+          <div class="filter-item">
+            ip_masked: <span class="input" style="width:110px;"><span class="placeholder">203.0.113.*</span></span>
+          </div>
+
+          <div class="filter-item">
+            保持区分: <span class="select">▼ 1y / 5y / 7y / 全部</span>
+          </div>
+
+          <div class="filter-item">
+            ticket_id: <span class="input" style="width:100px;"><span class="placeholder">INC-SAMPLE</span></span>
+          </div><button class="btn small primary">検索</button>
+        </div>
+
+        <table class="wf">
+          <thead>
+            <tr>
+              <th>occurred_at</th>
+
+              <th>actor_type / actor_id</th>
+
+              <th>action</th>
+
+              <th>target_type / target_id</th>
+
+              <th>ip_masked</th>
+
+              <th>ticket_id</th>
+
+              <th>保持区分</th>
+
+              <th>詳細</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td>2026-05-11 10:32 JST</td>
+
+              <td>service_operator / op-SAMPLE-01</td>
+
+              <td>tenant.restore</td>
+
+              <td>tenant / ten_SAMPLE_01HZZZZ</td>
+
+              <td>203.0.113.0</td>
+
+              <td>INC-SAMPLE-001</td>
+
+              <td><span class="badge-pill purple">5y</span></td>
+
+              <td><a class="link">JSON diff 表示</a></td>
+            </tr>
+
+            <tr>
+              <td>2026-05-11 09:15 JST</td>
+
+              <td>service_operator / op-SAMPLE-02</td>
+
+              <td>ai_parameter.update</td>
+
+              <td>tenant / ten_SAMPLE_01HAAAA</td>
+
+              <td>198.51.100.0</td>
+
+              <td>INC-SAMPLE-002</td>
+
+              <td><span class="badge-pill purple">5y</span></td>
+
+              <td><a class="link">JSON diff 表示</a></td>
+            </tr>
+
+            <tr class="system-row">
+              <td>2026-05-11 08:00 JST</td>
+
+              <td>system / 削除処理</td>
+
+              <td>deletion_request.complete</td>
+
+              <td>deletion_request / dr_SAMPLE_001</td>
+
+              <td>-</td>
+
+              <td>-</td>
+
+              <td><span class="badge-pill orange">7y</span></td>
+
+              <td><a class="link">JSON diff 表示</a></td>
+            </tr>
+
+            <tr>
+              <td>2026-05-11 02:00 JST</td>
+
+              <td>system / 整合性確認</td>
+
+              <td>改ざん検証: 正常</td>
+
+              <td>system / -</td>
+
+              <td>-</td>
+
+              <td>-</td>
+
+              <td><span class="badge-pill purple">5y</span></td>
+
+              <td><a class="link">日次検証ログ</a></td>
+            </tr>
+
+            <tr>
+              <td>2026-05-11 00:05 JST</td>
+
+              <td>service_operator / op-SAMPLE-03</td>
+
+              <td>billing.cron.run</td>
+
+              <td>billing / 2026-04</td>
+
+              <td>-</td>
+
+              <td>-</td>
+
+              <td><span class="badge-pill orange">7y</span></td>
+
+              <td><a class="link">JSON diff 表示</a></td>
+            </tr>
+
+            <tr>
+              <td>2026-05-10 16:42 JST</td>
+
+              <td>admin / acc_SAMPLE_01HMMMM</td>
+
+              <td>faq.publish</td>
+
+              <td>faq / fq_SAMPLE_01HXXXX</td>
+
+              <td>2001:db8:1234:5678:0:0:0:0</td>
+
+              <td>-</td>
+
+              <td><span class="badge-pill blue">1y</span></td>
+
+              <td><a class="link">JSON diff 表示</a></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="pager">
+          SAMPLE 12,403 件中 1-6 件表示(カーソル方式 100 件/ページ) <span class="pg">‹</span><span class="pg">›</span>
+        </div>
+
+
+
+        <div class="panel" style="margin-top:8px;">
+          <div class="panel-title">
+            詳細: tenant.restore(操作者 op-SAMPLE-01 / 2026-05-11 10:32)
+          </div>
+
+          <div class="grid-2">
+            <div>
+              <label>before_value</label>
+
+              <div class="diff">
+                <span class="del">- status: "削除予定"</span> tenant_id: "ten_SAMPLE_01HZZZZ" deleted_at: "2026-05-05T10:00Z"
+              </div>
+            </div>
+
+            <div>
+              <label>after_value</label>
+
+              <div class="diff">
+                <span class="add">+ status: "active"</span> tenant_id: "ten_SAMPLE_01HZZZZ" <span class="add">+ deleted_at: null</span> <span class="add">+ restored_by: "op-SAMPLE-01"</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top:8px;">
+          <div class="panel-title">
+            エクスポート
+          </div>
+
+          <div class="grid-3">
+            <div class="field">
+              <label>形式 <span class="req">*</span></label>
+
+              <div class="select">
+                ▼ CSV / JSON Lines
+              </div>
+            </div>
+
+            <div class="field">
+              <label>1 ファイル最大行数</label>
+
+              <div class="input">
+                100,000 行(超過は自動分割)
+              </div>
+            </div>
+
+            <div class="field">
+              <label>署名</label>
+
+              <div class="input">
+                署名付きトークン/ ファイル末尾 <code>signature</code> 行
+              </div>
+            </div>
+          </div><button class="btn primary">エクスポート実行</button> <button class="btn">検証ツール(別途 Runbook で配布)</button>
+
+
+        </div>
+
+        <div class="alert-bar" style="margin-top:8px;">
+          <strong>運営者操作頻度異常検知((c)):</strong> 同一運営者の短時間大量操作を強調表示(現在: 異常なし / 閾値: 直近 5 分で 30 操作超 → 全運営者へ high 通知)
+        </div>
+
+
+      </div>
+    </div>
+  </div><!-- ============= 課金 Webhook リプレイ・DLQ 操作 ============= -->
+
+  <div class="screen">
+    <div class="screen-header">
+      <div>
+        <span class="scr-id operator">SCR-097</span> <span class="scr-name">課金 Webhook リプレイ・DLQ 操作画面</span>
+      </div>
+
+      <div class="scr-user">
+        利用者: サービス運営者
+      </div>
+    </div>
+
+    <div class="app-layout">
+      <div class="app-header operator">
+        <div class="left">
+          <span class="logo">open-faq Admin Console</span> <span class="badge-pill purple">サービス運営者プレーン</span>
+        </div>
+
+        <div class="right">
+          <span class="mfa-badge">MFA: 有効</span> <span class="bell">inbox <span class="badge">3</span></span> <span class="user-menu">op-SAMPLE-01 ▼</span>
+        </div>
+      </div>
+
+      <div class="app-sidebar">
+        <div class="group">
+          運営機能
+        </div>
+
+        <div class="item">
+          ホーム
+        </div>
+
+        <div class="item">
+          削除データ参照
+        </div>
+
+        <div class="item">
+          削除データ復元
+        </div>
+
+        <div class="item">
+          AI 推論パラメータ
+        </div>
+
+        <div class="item">
+          レート/予算上書き
+        </div>
+
+        <div class="item">
+          お知らせ配信
+        </div>
+
+        <div class="item">
+          削除依頼対応
+        </div>
+
+        <div class="item active">
+          Webhook リプレイ <span class="badge">DLQ 1h:5</span>
+        </div>
+
+        <div class="item">
+          PII 誤検出報告
+        </div>
+
+        <div class="item">
+          ペイロード差分
+        </div>
+
+        <div class="item">
+          運営者活動
+        </div>
+
+        <div class="group">
+          承認・通知
+        </div>
+
+        <div class="item">
+          承認待ち一覧
+        </div>
+
+        <div class="item">
+          運営者 inbox
+        </div>
+
+        <div class="item">
+          ログアウト
+        </div>
+      </div>
+
+      <div class="app-main">
+        <div class="panel">
+          <div class="panel-title">
+            DLQ サマリ
+          </div>
+
+          <div class="grid-4">
+            <div class="summary-card red">
+              <div class="label">
+                DLQ 滞留 1h 以上
+              </div>
+
+              <div class="value">
+                5
+              </div>
+
+              <div class="delta">
+                運営者 high alert 発火済
+              </div>
+            </div>
+
+            <div class="summary-card red">
+              <div class="label">
+                DLQ 滞留 24h 以上
+              </div>
+
+              <div class="value">
+                2
+              </div>
+
+              <div class="delta">
+                手動リプレイ判断必要
+              </div>
+            </div>
+
+            <div class="summary-card">
+              <div class="label">
+                直近 1h 受信失敗率
+              </div>
+
+              <div class="value">
+                SAMPLE 3.2%
+              </div>
+
+              <div class="delta">
+                閾値 5% 内
+              </div>
+            </div>
+
+            <div class="summary-card green">
+              <div class="label">
+                直近 24h 成功率
+              </div>
+
+              <div class="value">
+                SAMPLE 99.5%
+              </div>
+
+              <div class="delta">
+                範囲内
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-bar">
+          <div class="filter-item">
+            状態フィルタ: <span class="select" style="width:280px;">▼ received / processing / succeeded / failed / dlq_retrying / dlq_manual_replay / dlq_archived / duplicate_*</span>
+          </div>
+
+          <div class="filter-item">
+            event_id: <span class="input" style="width:150px;"><span class="placeholder">evt_SAMPLE_*</span></span>
+          </div>
+
+          <div class="filter-item">
+            期間(直近 30 日): <span class="input" style="width:90px;">2026-04-11</span>〜<span class="input" style="width:90px;">2026-05-11</span>
+          </div><button class="btn small primary">検索</button>
+        </div>
+
+        <table class="wf">
+          <thead>
+            <tr>
+              <th>event_id</th>
+
+              <th>received_at</th>
+
+              <th>state</th>
+
+              <th>tenant_id</th>
+
+              <th>attempt_count</th>
+
+              <th>自動 BO 残時間</th>
+
+              <th>退避済み</th>
+
+              <th>操作</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td><code>evt_SAMPLE_01HAAAA</code></td>
+
+              <td>2026-05-11 10:00 JST</td>
+
+              <td><span class="badge-pill yellow">dlq_retrying</span></td>
+
+              <td>ten_SAMPLE_01HAAAA</td>
+
+              <td>2 / 3</td>
+
+              <td><span class="timer">残 32m 14s</span></td>
+
+              <td>dlq-stripe-events<br>
+              evt_SAMPLE_01HAAAA.json</td>
+
+              <td><button class="btn small" disabled>自動 BO 中</button></td>
+            </tr>
+
+            <tr>
+              <td><code>evt_SAMPLE_01HBBBB</code></td>
+
+              <td>2026-05-11 08:30 JST</td>
+
+              <td><span class="badge-pill red">dlq_manual_replay</span></td>
+
+              <td>ten_SAMPLE_01HBBBB</td>
+
+              <td>3 / 3</td>
+
+              <td>1h 経過済</td>
+
+              <td>dlq-stripe-events<br>
+              evt_SAMPLE_01HBBBB.json</td>
+
+              <td><button class="btn small danger primary">手動リプレイ</button></td>
+            </tr>
+
+            <tr>
+              <td><code>evt_SAMPLE_01HCCCC</code></td>
+
+              <td>2026-05-09 11:00 JST</td>
+
+              <td><span class="badge-pill blue">duplicate_skipped_hash_match</span></td>
+
+              <td>ten_SAMPLE_01HCCCC</td>
+
+              <td>1 / 1</td>
+
+              <td>-</td>
+
+              <td>-</td>
+
+              <td><span class="helper">スキップ済(ハッシュ一致)</span></td>
+            </tr>
+
+            <tr>
+              <td><code>evt_SAMPLE_01HDDDD</code></td>
+
+              <td>2026-05-09 09:00 JST</td>
+
+              <td><span class="badge-pill red">duplicate_diff_detected_high_alert</span></td>
+
+              <td>ten_SAMPLE_01HDDDD</td>
+
+              <td>1</td>
+
+              <td>-</td>
+
+              <td>-</td>
+
+              <td><a class="link"></a></td>
+            </tr>
+
+            <tr class="system-row">
+              <td><code>evt_SAMPLE_01HEEEE</code></td>
+
+              <td>2026-04-12 14:30 JST</td>
+
+              <td><span class="badge-pill gray">dlq_archived</span></td>
+
+              <td>ten_SAMPLE_01HEEEE</td>
+
+              <td>3 / 3</td>
+
+              <td>30 日経過</td>
+
+              <td>dlq-stripe-events<br>
+              evt_SAMPLE_01HEEEE.json</td>
+
+              <td><span class="helper">archived(リプレイ不可)</span></td>
+            </tr>
+
+            <tr>
+              <td><code>evt_SAMPLE_01HFFFF</code></td>
+
+              <td>2026-05-11 07:42 JST</td>
+
+              <td><span class="badge-pill green">succeeded</span></td>
+
+              <td>ten_SAMPLE_01HFFFF</td>
+
+              <td>1</td>
+
+              <td>-</td>
+
+              <td>-</td>
+
+              <td><span class="helper">処理済</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="pager">
+          SAMPLE 3,250 件中 1-6 件表示 <span class="pg">‹</span><span class="pg active">1</span><span class="pg">2</span><span class="pg">›</span>
+        </div>
+
+        <div class="panel" style="margin-top:8px;">
+          <div class="panel-title">
+            詳細(選択中: evt_SAMPLE_01HBBBB)
+          </div>
+
+          <div class="grid-2">
+            <div>
+              <label>Webhook ペイロード</label>
+
+              <div class="diff">
+                { "id": "evt_SAMPLE_01HBBBB", "type": "invoice.payment_failed", "data": { "object": { "id": "in_SAMPLE_01H", "amount_due": 50000, "customer": "cus_SAMPLE_02" } }, "created": 1715430000, "livemode": false }
+              </div>
+
+
+            </div>
+
+            <div>
+              <label>過去のリプレイ履歴(dlq_replay_log)</label>
+
+              <table class="wf">
+                <thead>
+                  <tr>
+                    <th>時刻</th>
+
+                    <th>operator</th>
+
+                    <th>結果</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr>
+                    <td>08:30</td>
+
+                    <td>system(自動 BO #1)</td>
+
+                    <td>失敗(5xx)</td>
+                  </tr>
+
+                  <tr>
+                    <td>08:35</td>
+
+                    <td>system(自動 BO #2)</td>
+
+                    <td>失敗(timeout)</td>
+                  </tr>
+
+                  <tr>
+                    <td>09:30</td>
+
+                    <td>system(自動 BO #3)</td>
+
+                    <td>失敗(5xx)</td>
+                  </tr>
+
+                  <tr>
+                    <td>-</td>
+
+                    <td>運営者リプレイ待ち</td>
+
+                    <td>-</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">
+            手動リプレイ操作
+          </div>
+
+          <div class="grid-3">
+            <div class="field">
+              <label>対象 event_id</label>
+
+              <div class="input">
+                <code>evt_SAMPLE_01HBBBB</code>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>対応チケット ID <span class="req">*</span></label>
+
+              <div class="input">
+                <span class="placeholder">INC-SAMPLE-RB001</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>再認証</label>
+
+              <div class="input">
+                <span class="badge-pill green">過去 5 分以内に実施済</span>
+              </div>
+            </div>
+          </div><button class="btn danger primary">手動リプレイを実行</button> <button class="btn">キャンセル</button>
+
+
+        </div>
+
+
+      </div>
+    </div>
+  </div><!-- ============= PII 誤検出報告管理 ============= -->
+
+  <div class="screen">
+    <div class="screen-header">
+      <div>
+        <span class="scr-id operator">SCR-098</span> <span class="scr-name">PII 誤検出報告管理</span>
+      </div>
+
+      <div class="scr-user">
+        利用者: サービス運営者
+      </div>
+    </div>
+
+    <div class="app-layout">
+      <div class="app-header operator">
+        <div class="left">
+          <span class="logo">open-faq Admin Console</span> <span class="badge-pill purple">サービス運営者プレーン</span>
+        </div>
+
+        <div class="right">
+          <span class="mfa-badge">MFA: 有効</span> <span class="bell">inbox <span class="badge">3</span></span> <span class="user-menu">op-SAMPLE-01 ▼</span>
+        </div>
+      </div>
+
+      <div class="app-sidebar">
+        <div class="group">
+          運営機能
+        </div>
+
+        <div class="item">
+          ホーム
+        </div>
+
+        <div class="item">
+          削除データ参照
+        </div>
+
+        <div class="item">
+          削除データ復元
+        </div>
+
+        <div class="item">
+          AI 推論パラメータ
+        </div>
+
+        <div class="item">
+          レート/予算上書き
+        </div>
+
+        <div class="item">
+          お知らせ配信
+        </div>
+
+        <div class="item">
+          削除依頼対応
+        </div>
+
+        <div class="item">
+          Webhook リプレイ
+        </div>
+
+        <div class="item active">
+          PII 誤検出報告 <span class="badge">4</span>
+        </div>
+
+        <div class="item">
+          ペイロード差分
+        </div>
+
+        <div class="item">
+          運営者活動
+        </div>
+
+        <div class="group">
+          承認・通知
+        </div>
+
+        <div class="item">
+          承認待ち一覧
+        </div>
+
+        <div class="item">
+          運営者 inbox
+        </div>
+
+        <div class="item">
+          ログアウト
+        </div>
+      </div>
+
+      <div class="app-main">
+        <div class="panel">
+          <div class="panel-title">
+            3 営業日判定タイマー
+          </div>
+
+          <div class="grid-4">
+            <div class="summary-card">
+              <div class="label">
+                reported
+              </div>
+
+              <div class="value">
+                SAMPLE 2
+              </div>
+            </div>
+
+            <div class="summary-card yellow">
+              <div class="label">
+                under_review(タイマー作動中)
+              </div>
+
+              <div class="value">
+                SAMPLE 1
+              </div>
+            </div>
+
+            <div class="summary-card red">
+              <div class="label">
+                3 営業日経過(運営者 inbox 督促済)
+              </div>
+
+              <div class="value">
+                SAMPLE 1
+              </div>
+            </div>
+
+            <div class="summary-card green">
+              <div class="label">
+                archived(直近 30 日)
+              </div>
+
+              <div class="value">
+                SAMPLE 14
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-bar">
+          <div class="filter-item">
+            state: <span class="select" style="width:260px;">▼ all / reported / under_review / ruled_false_positive / ruled_correct_detection / rule_updated / archived</span>
+          </div>
+
+          <div class="filter-item">
+            報告元: <span class="select" style="width:200px;">▼ (担当者) / (管理者) / (運営者)</span>
+          </div>
+
+          <div class="filter-item">
+            検出層: <span class="select" style="width:200px;">▼ 第 1 層(正規表現) / 第 2 層(NER) / 第 3 層(FAQ 整合性)</span>
+          </div><button class="btn small primary">検索</button>
+        </div>
+
+        <table class="wf">
+          <thead>
+            <tr>
+              <th>report_id</th>
+
+              <th>報告元</th>
+
+              <th>検出層</th>
+
+              <th>state</th>
+
+              <th>報告日時</th>
+
+              <th>3 営業日タイマー</th>
+
+              <th>操作</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td>pii_SAMPLE_01H001</td>
+
+              <td>担当者</td>
+
+              <td><span class="badge-pill">第 1 層(正規表現)</span></td>
+
+              <td><span class="badge-pill yellow">reported</span></td>
+
+              <td>2026-05-11 09:00 JST</td>
+
+              <td><span class="helper">未開始</span></td>
+
+              <td><button class="btn small primary">under_review 開始</button></td>
+            </tr>
+
+            <tr>
+              <td>pii_SAMPLE_01H002</td>
+
+              <td>管理者</td>
+
+              <td><span class="badge-pill">第 2 層(NER)</span></td>
+
+              <td><span class="badge-pill blue">under_review</span></td>
+
+              <td>2026-05-09 14:30 JST</td>
+
+              <td><span class="timer warn">残 0d 18h(3 営業日中)</span></td>
+
+              <td><button class="btn small">ruled_false_positive</button> <button class="btn small">ruled_correct_detection</button></td>
+            </tr>
+
+            <tr>
+              <td>pii_SAMPLE_01H003</td>
+
+              <td>運営者</td>
+
+              <td><span class="badge-pill">第 1 層(正規表現)</span></td>
+
+              <td><span class="badge-pill purple">ruled_false_positive</span></td>
+
+              <td>2026-05-04 10:00 JST</td>
+
+              <td>-</td>
+
+              <td><button class="btn small primary">検出ルール更新へ</button></td>
+            </tr>
+
+            <tr>
+              <td>pii_SAMPLE_01H004</td>
+
+              <td>担当者</td>
+
+              <td><span class="badge-pill">第 3 層(FAQ 整合性)</span></td>
+
+              <td><span class="badge-pill red">3 営業日経過</span></td>
+
+              <td>2026-05-06 11:00 JST</td>
+
+              <td><span class="timer over">超過 +1d 6h</span></td>
+
+              <td><button class="btn small danger primary">優先判定</button></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="grid-2" style="margin-top:8px;">
+          <div class="panel">
+            <div class="panel-title">
+              報告内容(選択中: pii_SAMPLE_01H003)
+            </div>
+
+            <div class="field">
+              <label>検出器が判定したマスキング対象文字列(機密表示制限)</label>
+
+              <div class="diff">
+                SAMPLE_DETECTION_TEXT: "ご担当者の田中様" SAMPLE_MASKED: "ご担当者の[氏名]様" SAMPLE_REPORTED_BY: 担当者 SAMPLE_REPORT_REASON: "田中"は商品名であり氏名ではない
+              </div>
+            </div>
+
+            <div class="field">
+              <label>関連質問ログ ID(参照のみ、本文非表示)</label>
+
+              <div class="input">
+                SAMPLE: ql_SAMPLE_01HXXXX
+              </div>
+            </div>
+          </div>
+
+          <div class="panel hardgate">
+            <div class="panel-title">
+              検出ルール更新(再認証 + チケット ID 必須)
+            </div>
+
+            <div class="alert-bar warn">
+              ⚠ <strong>過去データは修正しない</strong>((d))。ルール更新は今後の検出のみに適用。
+            </div>
+
+            <div class="field">
+              <label>更新対象ルール ▼ 正規表現ルール / 分類ルール</label>
+
+              <div class="select">
+                ▼ pii-rules:regex(第 1 層) / pii-rules:classifier(第 2 層)
+              </div>
+            </div>
+
+            <div class="field">
+              <label>パラメータ変更内容</label>
+
+              <div class="textarea">
+                <span class="placeholder">SAMPLE: "田中" を氏名除外リスト(商品名候補)に追加</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>対応チケット ID <span class="req">*</span> / 再認証</label>
+
+              <div class="grid-2">
+                <div class="input">
+                  <span class="placeholder">INC-SAMPLE-PII-005</span>
+                </div>
+
+                <div class="input">
+                  <span class="badge-pill green">過去 5 分以内に実施済</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>段階ロールアウト</label> <button class="btn small">0% ロールバック</button> <button class="btn small primary">10% で開始</button> <button class="btn small">50% へ拡大</button> <button class="btn small">100% へ完全切替</button>
+            </div><button class="btn primary">検出ルール更新を実行</button>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </div><!-- ============= Webhook ペイロード差分検出一覧 ============= -->
+
+  <div class="screen">
+    <div class="screen-header">
+      <div>
+        <span class="scr-id operator">SCR-099</span> <span class="scr-name">Webhook ペイロード差分検出一覧</span>
+      </div>
+
+      <div class="scr-user">
+        利用者: サービス運営者
+      </div>
+    </div>
+
+    <div class="app-layout">
+      <div class="app-header operator">
+        <div class="left">
+          <span class="logo">open-faq Admin Console</span> <span class="badge-pill purple">サービス運営者プレーン</span>
+        </div>
+
+        <div class="right">
+          <span class="mfa-badge">MFA: 有効</span> <span class="bell">inbox <span class="badge">3</span></span> <span class="user-menu">op-SAMPLE-01 ▼</span>
+        </div>
+      </div>
+
+      <div class="app-sidebar">
+        <div class="group">
+          運営機能
+        </div>
+
+        <div class="item">
+          ホーム
+        </div>
+
+        <div class="item">
+          削除データ参照
+        </div>
+
+        <div class="item">
+          削除データ復元
+        </div>
+
+        <div class="item">
+          AI 推論パラメータ
+        </div>
+
+        <div class="item">
+          レート/予算上書き
+        </div>
+
+        <div class="item">
+          お知らせ配信
+        </div>
+
+        <div class="item">
+          削除依頼対応
+        </div>
+
+        <div class="item">
+          Webhook リプレイ
+        </div>
+
+        <div class="item">
+          PII 誤検出報告
+        </div>
+
+        <div class="item active">
+          ペイロード差分 <span class="badge">2</span>
+        </div>
+
+        <div class="item">
+          運営者活動
+        </div>
+
+        <div class="group">
+          承認・通知
+        </div>
+
+        <div class="item">
+          承認待ち一覧
+        </div>
+
+        <div class="item">
+          運営者 inbox
+        </div>
+
+        <div class="item">
+          ログアウト
+        </div>
+      </div>
+
+      <div class="app-main">
+
+
+        <div class="filter-bar">
+          <div class="filter-item">
+            state: <span class="select">▼ all / detected / reviewed / reprocessed_manually / dismissed_no_action</span>
+          </div>
+
+          <div class="filter-item">
+            event_id: <span class="input" style="width:150px;"><span class="placeholder">evt_SAMPLE_*</span></span>
+          </div>
+
+          <div class="filter-item">
+            tenant_id: <span class="input" style="width:140px;"><span class="placeholder">部分一致</span></span>
+          </div>
+
+          <div class="filter-item">
+            期間: <span class="input" style="width:90px;">2026-04-11</span>〜<span class="input" style="width:90px;">2026-05-11</span>
+          </div><button class="btn small primary">検索</button>
+        </div>
+
+        <table class="wf">
+          <thead>
+            <tr>
+              <th>diff_id</th>
+
+              <th>event_id</th>
+
+              <th>tenant_id</th>
+
+              <th>detected_at</th>
+
+              <th>state</th>
+
+              <th>操作</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td>diff_SAMPLE_01H001</td>
+
+              <td><code>evt_SAMPLE_01HDDDD</code></td>
+
+              <td>ten_SAMPLE_01HDDDD</td>
+
+              <td>2026-05-09 09:00 JST</td>
+
+              <td><span class="badge-pill red">detected</span></td>
+
+              <td><button class="btn small primary">確認(diff 表示)</button></td>
+            </tr>
+
+            <tr>
+              <td>diff_SAMPLE_01H002</td>
+
+              <td><code>evt_SAMPLE_01HEEEE</code></td>
+
+              <td>ten_SAMPLE_01HEEEE</td>
+
+              <td>2026-05-07 14:30 JST</td>
+
+              <td><span class="badge-pill blue">reviewed</span></td>
+
+              <td><button class="btn small primary">手動再処理</button> <button class="btn small">dismiss</button></td>
+            </tr>
+
+            <tr class="system-row">
+              <td>diff_SAMPLE_01H000</td>
+
+              <td><code>evt_SAMPLE_01HFFFF</code></td>
+
+              <td>ten_SAMPLE_01HFFFF</td>
+
+              <td>2026-04-30 10:00 JST</td>
+
+              <td><span class="badge-pill green">reprocessed_manually</span></td>
+
+              <td><span class="helper">処理済</span></td>
+            </tr>
+
+            <tr class="system-row">
+              <td>diff_SAMPLE_01HXXX</td>
+
+              <td><code>evt_SAMPLE_01HGGGG</code></td>
+
+              <td>ten_SAMPLE_01HGGGG</td>
+
+              <td>2026-04-28 16:00 JST</td>
+
+              <td><span class="badge-pill gray">dismissed_no_action</span></td>
+
+              <td><span class="helper">無視可と判断</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="panel" style="margin-top:8px;">
+          <div class="panel-title">
+            JSON diff 表示(選択中: diff_SAMPLE_01H001 / event_id: evt_SAMPLE_01HDDDD)
+          </div>
+
+          <div class="grid-2">
+            <div>
+              <label>既処理ペイロード(初回受信時)</label>
+
+              <div class="diff">
+                { "id": "evt_SAMPLE_01HDDDD", "type": "invoice.payment_succeeded", "data": { "object": { "id": "in_SAMPLE_01H", <span class="del">- "amount_paid": 50000,</span> "customer": "cus_SAMPLE_04" } }, <span class="ignore">"created": 1715430000, "request": {"id": "req_SAMPLE_01"}, "livemode": false</span> }
+              </div>
+            </div>
+
+            <div>
+              <label>新ペイロード(再受信時)</label>
+
+              <div class="diff">
+                { "id": "evt_SAMPLE_01HDDDD", "type": "invoice.payment_succeeded", "data": { "object": { "id": "in_SAMPLE_01H", <span class="add">+ "amount_paid": 60000,</span> "customer": "cus_SAMPLE_04" } }, <span class="ignore">"created": 1715431500, "request": {"id": "req_SAMPLE_02"}, "livemode": false</span> }
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+
+
+
+        <div class="panel">
+          <div class="panel-title">
+            手動再処理 / 対応不要判断
+          </div>
+
+          <div class="grid-2">
+            <div>
+              <label>手動再処理</label> <button class="btn danger primary">手動再処理を選択</button>
+
+
+            </div>
+
+            <div>
+              <label>対応不要と判断</label>
+
+              <div class="textarea">
+                <span class="placeholder">理由(必須、最大 1000 文字)</span>
+              </div><button class="btn">対応不要にする</button>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </div><!-- ============= M-COMMON 共通モーダル集約 ============= -->
+
+  <div class="screen">
+    <div class="screen-header">
+      <div>
+        <span class="scr-id operator">M-COMMON</span> <span class="scr-name">共通 UI 部品(モーダル群)</span>
+      </div>
+
+      <div class="scr-user"></div>
+    </div>
+
+    <div class="app-main">
+      <!-- 対応チケットID入力モーダル -->
+
+      <h3 style="font-size:13px; margin-top:14px; border-bottom: 1px solid #888; padding-bottom: 4px;">対応チケット ID 入力モーダル</h3>
+
+      <div class="modal-overlay">
+        <div class="modal-card">
+          <div class="modal-title">
+            対応チケット ID 入力
+          </div>
+
+          <div class="field">
+            <label>対応チケット ID <span class="req">*</span></label>
+
+            <div class="input">
+              <span class="placeholder">例: INC-SAMPLE-001(任意文字列、最大 64 文字)</span>
+            </div>
+
+
+          </div>
+
+          <div class="field">
+            <label>操作種別(自動表示)</label>
+
+            <div class="input">
+              SAMPLE: <code>ai_parameter.update</code><code>tenant.restore</code><code>webhook.replay</code> 等
+            </div>
+
+
+          </div><button class="btn primary">次へ(再認証へ)</button> <button class="btn">キャンセル</button>
+        </div>
+      </div><!-- 再認証モーダル -->
+
+      <h3 style="font-size:13px; margin-top:14px; border-bottom: 1px solid #888; padding-bottom: 4px;">再認証モーダル</h3>
+
+      <div class="modal-overlay">
+        <div class="modal-card danger">
+          <div class="modal-title">
+            再認証
+          </div>
+
+          <div class="alert-bar">
+            ⚠ 高権限操作のため再認証が必要です。<br>
+            5 分以内・操作 1 回限り。
+          </div>
+
+          <div class="field">
+            <label>パスワード(現在のセッションと同一アカウント) <span class="req">*</span></label>
+
+            <div class="input">
+              <span class="placeholder">••••••••</span>
+            </div>
+          </div><button class="btn primary">再認証</button> <button class="btn">キャンセル</button>
+
+
+        </div>
+      </div><!-- 承認申請モーダル -->
+
+      <h3 style="font-size:13px; margin-top:14px; border-bottom: 1px solid #888; padding-bottom: 4px;">承認申請モーダル</h3>
+
+      <div class="modal-overlay">
+        <div class="modal-card hardgate">
+          <div class="modal-title">
+            承認申請
+          </div>
+
+          <div class="alert-bar warn">
+            ⚠ この操作は 4-eyes ハードゲート対象です。<br>
+            申請後、全運営者の inbox に通知 → 別運営者(<code>申請者と承認者が異なること</code>)が 承認 → 申請者が実行。 承認待ち期限: <strong>72 時間</strong>。
+          </div>
+
+          <div class="field">
+            <label>申請理由 <span class="req">*</span></label>
+
+            <div class="textarea">
+              <span class="placeholder">最大 1000 文字 / 操作履歴 before_value に保存</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>変更内容</label>
+
+            <div class="diff">
+              tenant_id: "ten_SAMPLE_01HAAAA" confidence_threshold: 0.60 → 0.75 relevance_threshold: 0.50 → 0.55 model: "@cf/meta/llama-3.1-8b-instruct"
+            </div>
+          </div>
+
+          <div class="field">
+            <label>対応チケット ID <span class="req">*</span></label>
+
+            <div class="input">
+              <span class="placeholder">例: INC-SAMPLE-002</span>
+            </div>
+          </div><button class="btn hardgate">承認申請を送信</button> <button class="btn">キャンセル</button>
+
+
+        </div>
+      </div><!-- 承認モーダル -->
+
+      <h3 style="font-size:13px; margin-top:14px; border-bottom: 1px solid #888; padding-bottom: 4px;">承認モーダル</h3>
+
+      <div class="modal-overlay">
+        <div class="modal-card hardgate">
+          <div class="modal-title">
+            承認
+          </div>
+
+          <div class="alert-bar warn">
+            ⚠ 自己承認禁止: システム側で <code>申請者と承認者が異なること</code> を二重検証。<br>
+            承認後に内容が変わった場合は実行できません。
+          </div>
+
+          <div class="field">
+            <label>申請者</label>
+
+            <div class="input">
+              op-SAMPLE-02(申請日時: 2026-05-11 10:00 JST、残時間 71h:24m)
+            </div>
+          </div>
+
+          <div class="field">
+            <label>対象操作 / 対象 / 変更内容</label>
+
+            <div class="diff">
+              action_code: "ai_parameter.update" target_type: "tenant" target_id: "ten_SAMPLE_01HAAAA"  申請理由: "信頼度を 0.75 に引き上げ、本番テナント T01HAAAA で品質向上 PoC" ticket_id: "INC-SAMPLE-002"
+            </div>
+          </div>
+
+          <div class="field">
+            <label>承認/却下コメント</label>
+
+            <div class="textarea">
+              <span class="placeholder">任意 / 操作履歴に保存</span>
+            </div>
+          </div><button class="btn primary">承認</button> <button class="btn danger">却下</button> <button class="btn">キャンセル</button>
+
+
+        </div>
+      </div>
+
+
+    </div>
+  </div><!-- ============= FLOW 画面遷移図 ============= -->
+</body>
+</html>
