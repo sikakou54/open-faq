@@ -1932,6 +1932,127 @@ D-12 の確定形:
 | 申請者の承認禁止 | サーバ + クライアント両方でガード |
 | 緊急例外 | 発動条件: メイン要件 §6.2.1 緊急区分(重大障害 / 全員ロックアウト / セキュリティインシデント / 法令対応即応)のいずれかが発動し、かつ §6.2.2 発動条件 4 項目の (2) 2 名承認が成立不能な場合のみ。**MVP**: マスター鍵保管庫からの紙ベース回復コード使用 + 2 名立会・記録、`master_key.emergency_bypass` action コード(5y)で記録、5 営業日以内ポストモーテム公開(詳細は RB-014) |
 
+### 6.AUTH-M1 SCR-AUTH-M1 MFA 初回セットアップ
+
+画面項目(表示・入力・操作・主要制約)は本書 §5.3.15 SCR-AUTH-M1 を正本とする。本節では、当該画面の実装に関する Zod スキーマ・呼出 API・トークン処理を記載する。
+
+#### 6.AUTH-M1.1 バリデーション(Zod)
+
+```ts
+import { z } from 'zod';
+
+export const mfaSetupSchema = z.object({
+  setupToken: z.string().min(1).max(256),       // 招待時 72h トークン
+  totpCode: z.string().regex(/^[0-9]{6}$/),     // 初回 TOTP コード
+});
+```
+
+#### 6.AUTH-M1.2 呼出 API
+
+- `GET /admin/v1/auth/mfa/setup?token=...`(トークン検証 → TOTP 秘密鍵 + QR + 回復コード 10 個を発行 / 表示)
+- `POST /admin/v1/auth/mfa/setup`(再認証不要、body: `mfaSetupSchema`、限定セッション必須)
+  - サーバ処理: (1) `access_tokens.kind='admin_mfa_setup'` 検証(72h TTL、`used_at` なし)、(2) 初回 TOTP 検証、(3) `accounts.mfa_secret` を AES-GCM で保存、(4) 回復コード 10 個を Argon2id でハッシュ化保存、(5) トークンを `used_at` で失効、(6) 通常セッションへ昇格、(7) `auth.mfa.setup` 監査(5y)。
+  - 失敗時: `TOKEN_EXPIRED` / `TOTP_INVALID` / `TOKEN_ALREADY_USED`。
+
+#### 6.AUTH-M1.3 関連参照
+
+> FR-220 / RB-014 / NFR-311 / 本書 §10.3 / §10.5
+
+### 6.5 共通モーダル基盤(再認証 / 対応チケット ID 入力)
+
+運営者高権限操作は、各操作画面のボタンクリックから「**対応チケット ID 入力 → 再認証 → 操作実行(または 4-eyes 申請)**」の 3 ステップ共通フローを経由する。MVP では UI 上の独立 SCR は付与せず、各呼出元画面のボタンクリック後にインラインのモーダルチェインとして提示する(CLAUDE.md「単純な確認ダイアログ / 再認証チャレンジは独立 SCR にしない」に該当)。
+
+#### 6.5.1 対応チケット ID 入力
+
+| 要素 | 仕様 |
+|---|---|
+| 適用範囲 | SCR-091 / SCR-092 / SCR-093 / SCR-094 / SCR-097 / SCR-098 / SCR-099 の保存・実行操作、および SCR-APPROVALS-M1 申請(FR-231) |
+| 入力 | `ticket_id`(必須、最大 64 文字、任意文字列、空白前後トリム) |
+| 表示 | 親画面の `action_code` を併記(自動表示) |
+| バリデーション | 必須・空白除外・最大 64 文字 |
+| 永続化 | 後続の API 呼出時に `ticket_id` をリクエストヘッダまたは body として送信、`audit_logs.ticket_id` へ保存 |
+| 監査連携 | 監査ログから対応チケットへ逆引き可能(FR-231)|
+
+#### 6.5.2 再認証
+
+| 要素 | 仕様 |
+|---|---|
+| 適用範囲 | FR-222 対象操作および SCR-APPROVALS-M2 の承認 / 却下 / 自己取下げ |
+| 入力 | 現在のセッションと同一アカウントのパスワード(MVP)。MFA 必須運営者は MFA も合わせて要求(NFR-311) |
+| 有効期間 | 操作 1 回限りかつ 5 分以内(メイン要件 FR-005 と整合) |
+| 失敗時 | 最大 5 回失敗で 15 分ロック、`auth.reauth.failed`(`retention_class='5y'`)監査 |
+| 成功時 | 即座に次ステップ(操作実行または 4-eyes 申請 / 承認 API)へ遷移、`auth.reauth.success`(5y)監査 |
+
+#### 6.5.3 呼出 API
+
+- `POST /admin/v1/me/reauth`(body: `{ password, mfaToken? }`、成功時に短期セッションフラグを発行)
+
+### 6.APPROVALS-M1 SCR-APPROVALS-M1 4-eyes 承認申請モーダル
+
+画面項目(表示・入力・操作・主要制約)は本書 §5.3.12 SCR-APPROVALS-M1 を正本とする。本節では、当該モーダルの実装に関する Zod スキーマ・呼出 API・モード分岐を記載する。
+
+#### 6.APPROVALS-M1.1 バリデーション(Zod)
+
+```ts
+import { z } from 'zod';
+
+export const approvalRequestSchema = z.object({
+  actionCode: z.string().min(1).max(64),          // 親画面から自動連携
+  targetType: z.string().min(1).max(32),
+  targetId: z.string().min(1).max(64),
+  payloadJson: z.unknown(),                       // 操作種別ごとの payload
+  payloadHash: z.string().regex(/^[0-9a-f]{64}$/),
+  payloadPreview: z.string().max(2000),
+  reason: z.string().trim().min(1).max(1000),     // 申請理由
+  ticketId: z.string().trim().min(1).max(64),    // 対応チケット ID(FR-231)
+});
+```
+
+`payloadHash` はクライアント側で SHA-256(canonical_json(payloadJson)) を算出。サーバ側でも再計算して一致確認、不一致なら 409(`PAYLOAD_HASH_MISMATCH`)。`ticketId` は §6.5.1 共通入力で取得。
+
+#### 6.APPROVALS-M1.2 呼出 API
+
+- `POST /admin/v1/approvals`(再認証必須、body: `approvalRequestSchema`)
+  - サーバ処理: (1) `operator_approvals(state='requested', expires_at=now+72h)` INSERT、(2) 全運営者 inbox 通知(critical 重要度、メール送信 + 受信箱)、(3) 申請レコードを返却。
+  - 自己重複申請防止: 同一 `(requested_by, action_code, target_id, payload_hash)` で 5 分以内の二重 POST は 409(`DUPLICATE_REQUEST`)。
+
+#### 6.APPROVALS-M1.3 関連参照
+
+> FR-226 / FR-231 / 要件 §6.2.3 / 本書 §6.4 / §6.5
+
+### 6.APPROVALS-M2 SCR-APPROVALS-M2 4-eyes 承認 / 却下モーダル
+
+画面項目(表示・入力・操作・主要制約)は本書 §5.3.13 SCR-APPROVALS-M2 を正本とする。本節では、当該モーダルの実装に関する Zod スキーマ・呼出 API・操作分岐を記載する。
+
+#### 6.APPROVALS-M2.1 バリデーション(Zod)
+
+```ts
+import { z } from 'zod';
+
+export const approvalDecisionSchema = z.object({
+  decision: z.enum(['approve', 'reject', 'withdraw']),
+  comment: z.string().trim().max(1000).optional(),
+});
+```
+
+#### 6.APPROVALS-M2.2 呼出 API(操作別)
+
+| 操作 | エンドポイント | 認可条件 |
+|---|---|---|
+| 承認 | `POST /admin/v1/approvals/{id}/approve` | 別運営者(`approver != requested_by`)、再認証 |
+| 却下 | `POST /admin/v1/approvals/{id}/reject` | 別運営者、再認証 |
+| 自己取下げ | `POST /admin/v1/approvals/{id}/withdraw` | 申請者本人(`withdrawer == requested_by`)、再認証 |
+
+サーバ側ガード:
+- 自己承認禁止 / 自己却下禁止: DB CHECK 制約 + アプリ層ガード(§6.4)
+- 期限切れ: `expires_at < now` の場合は 410(`APPROVAL_EXPIRED`)。
+- payload 改ざん検知: 承認実行直前に `payload_hash` を再計算し、申請時の値と異なれば 409(`PAYLOAD_HASH_MISMATCH`)。
+- 状態遷移: `requested` / `reviewing` 以外からの承認 / 却下 / 取下げは 409(`INVALID_STATE_TRANSITION`)。
+
+#### 6.APPROVALS-M2.3 関連参照
+
+> FR-226 / 要件 §6.2.3 / 本書 §6.4 / §6.5
+
 ### 6.6 Webhook ペイロード差分検出方式(FR-302 異常系, D-06)
 
 | 項目 | 仕様 |

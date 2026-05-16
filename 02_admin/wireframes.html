@@ -150,41 +150,60 @@
       </div>
     </div>
 
-    <div class="panel" style="margin-top:8px;">
-      <div class="panel-title">
-        MFA 初回セットアップフロー(初回ログイン時のみ)
+  </div>
+
+  <div class="screen">
+    <div class="screen-header">
+      <div>
+        <span class="scr-id operator">SCR-AUTH-M1</span> <span class="scr-name">MFA 初回セットアップ</span>
       </div>
 
-      <div class="grid-3">
-        <div class="field">
-          <label>① セットアップトークン</label>
+      <div class="scr-user">
+        利用者: サービス運営者(招待 72h トークン保持・限定セッション)
+      </div>
+    </div>
 
-          <div class="input">
-            SAMPLE_MFA_SETUP_TOKEN(有効期限 72h)
+    <div class="auth-page">
+      <div class="auth-card" style="max-width: 520px;">
+        <h3>MFA 初回セットアップ</h3>
+
+        <div class="grid-3">
+          <div class="field">
+            <label>① セットアップトークン</label>
+
+            <div class="input">
+              SAMPLE_MFA_SETUP_TOKEN
+            </div>
           </div>
 
+          <div class="field">
+            <label>② QR コード</label>
 
+            <div class="panel" style="background:#fafafa; height:80px; text-align:center; line-height:80px; font-size:9px; color:#888;">
+              [QR コード表示エリア]
+            </div>
+          </div>
+
+          <div class="field">
+            <label>③ 回復コード(10 個生成)</label>
+
+            <div class="textarea" style="font-family:monospace; font-size:9px;">
+              SAMPLE-RECOVERY-001<br>
+              SAMPLE-RECOVERY-002<br>
+              ...<br>
+              SAMPLE-RECOVERY-010
+            </div>
+          </div>
         </div>
 
         <div class="field">
-          <label>② QR コード</label>
+          <label>初回 TOTP コード <span class="req">*</span></label>
 
-          <div class="panel" style="background:#fafafa; height:80px; text-align:center; line-height:80px; font-size:9px; color:#888;">
-            [QR コード表示エリア]
+          <div class="input" style="font-family:monospace; letter-spacing:6px;">
+            <span class="placeholder">_ _ _ _ _ _</span>
           </div>
-        </div>
-
-        <div class="field">
-          <label>③ 回復コード(10 個生成)</label>
-
-          <div class="textarea" style="font-family:monospace; font-size:9px;">
-            SAMPLE-RECOVERY-001<br>
-            SAMPLE-RECOVERY-002<br>
-            ... (8 行省略) ...<br>
-            SAMPLE-RECOVERY-010
-          </div>
-        </div>
-      </div><button class="btn primary">セットアップ完了</button>
+        </div><button class="btn primary" style="width:100%;">セットアップ完了</button>
+      </div>
     </div>
   </div><!-- ============= ホームダッシュボード ============= -->
 
@@ -289,7 +308,7 @@
               </div>
 
               <div class="value">
-                SAMPLE 128
+                128
               </div>
 
               <div class="delta">
@@ -303,7 +322,7 @@
               </div>
 
               <div class="value">
-                SAMPLE 12,400
+                12,400
               </div>
 
               <div class="delta">
@@ -317,7 +336,7 @@
               </div>
 
               <div class="value">
-                SAMPLE 0.8%
+                0.8%
               </div>
 
               <div class="delta">
@@ -331,7 +350,7 @@
               </div>
 
               <div class="value">
-                SAMPLE 0.05%
+                0.05%
               </div>
 
               <div class="delta">
@@ -345,7 +364,7 @@
               </div>
 
               <div class="value">
-                SAMPLE 12 件
+                12 件
               </div>
 
               <div class="delta">
@@ -359,7 +378,7 @@
               </div>
 
               <div class="value">
-                SAMPLE 1
+                1
               </div>
 
               <div class="delta">
@@ -373,7 +392,7 @@
               </div>
 
               <div class="value">
-                SAMPLE 99.8%
+                99.8%
               </div>
 
               <div class="delta">
@@ -387,7 +406,7 @@
               </div>
 
               <div class="value">
-                SAMPLE OK
+                OK
               </div>
 
               <div class="delta">
@@ -401,7 +420,7 @@
               </div>
 
               <div class="value">
-                SAMPLE 0.7%
+                0.7%
               </div>
 
               <div class="delta">
@@ -415,7 +434,7 @@
               </div>
 
               <div class="value">
-                SAMPLE 0
+                0
               </div>
 
               <div class="delta">
@@ -429,7 +448,7 @@
               </div>
 
               <div class="value">
-                SAMPLE 正常
+                正常
               </div>
 
               <div class="delta">
@@ -663,7 +682,7 @@
           </div>
 
           <div class="filter-item">
-            action_code: <span class="input" style="width:140px;"><span class="placeholder">例: ai_parameter.update</span></span>
+            操作種別: <span class="input" style="width:140px;"><span class="placeholder">例: ai_parameter.update</span></span>
           </div>
 
           <div class="filter-item">
@@ -678,7 +697,7 @@
 
               <th>申請者</th>
 
-              <th>action_code</th>
+              <th>操作種別</th>
 
               <th>target</th>
 
@@ -778,25 +797,9 @@
         </table>
 
         <div class="pager">
-          SAMPLE 14 件中 1-4 件表示 <span class="pg">‹</span><span class="pg active">1</span><span class="pg">2</span><span class="pg">›</span>
+          14 件中 1-4 件表示 <span class="pg">‹</span><span class="pg active">1</span><span class="pg">2</span><span class="pg">›</span>
         </div>
 
-        <div class="grid-2" style="margin-top:8px;">
-          <div class="panel">
-            <div class="panel-title">
-              承認内容の確認
-            </div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="panel-title">
-            承認状態遷移図
-          </div>
-          <pre style="font-family:monospace; font-size:10px; background:#fafafa; padding:6px; border:1px solid #aaa;">
-[*] → requested(申請) └→ reviewing(別運営者が確認開始) ├→ approved(承認) │ ├→ executed │ └→ expired(承認後 72h 未実行で自動) ├→ rejected(却下) └→ expired(72h 経過で自動)
-</pre>
-        </div>
       </div>
     </div>
   </div><!-- ============= 削除データ参照 ============= -->
@@ -999,7 +1002,7 @@
         </table>
 
         <div class="pager">
-          SAMPLE 42 件中 1-5 件表示 <span class="pg">‹</span><span class="pg active">1</span><span class="pg">2</span><span class="pg">3</span><span class="pg">›</span>
+          42 件中 1-5 件表示 <span class="pg">‹</span><span class="pg active">1</span><span class="pg">2</span><span class="pg">3</span><span class="pg">›</span>
         </div>
 
         <div class="panel" style="margin-top:8px;">
@@ -1013,12 +1016,11 @@
                 <label>直前の内容</label>
 
                 <div class="input">
-                  title: "SAMPLE 返品ポリシー" / project_id: prj_SAMPLE_001 / category: SAMPLE_CATEGORY / status_before_delete: published
+                  title: "返品ポリシー" / project_id: prj_SAMPLE_001 / category: SAMPLE_CATEGORY / status_before_delete: published
                 </div>
 
                 <div class="alert-bar warn">
-                  ⚠ <strong>により本文は非表示</strong>。属性メタデータのみ表示。<br>
-                  運営者は平常時に FAQ 本文・質問ログ本文・チャット本文を閲覧不可。
+                  ⚠ プライバシー方針により本文は表示されません。属性メタデータのみ表示します。
                 </div>
               </div>
 
@@ -1026,7 +1028,7 @@
                 <label>物理削除予定日(削除予定のみ)</label>
 
                 <div class="input">
-                  2026-06-07 14:30 JST(削除日時 + 30 日)
+                  2026-06-07 14:30 JST
                 </div>
 
 
@@ -1177,7 +1179,7 @@
               <label>復元先ステータス(自動判定)</label>
 
               <div class="input">
-                faq → (復元後の遷移先)
+                faq → published
               </div>
             </div>
           </div>
@@ -1191,7 +1193,7 @@
               <label>復元理由 <span class="req">*</span></label>
 
               <div class="textarea">
-                <span class="placeholder">最大 1000 文字 / 自由記述 / 操作履歴に保存</span>
+                <span class="placeholder">最大 1000 文字</span>
               </div>
             </div>
 
@@ -1374,7 +1376,7 @@
         <div class="panel">
           <div class="panel-title">
             操作
-          </div><button class="btn hardgate">承認申請</button> <button class="btn danger primary">復元を実行(は単独実行可)</button> <button class="btn">キャンセル</button>
+          </div><button class="btn hardgate">承認申請</button> <button class="btn danger primary">復元を実行</button> <button class="btn">キャンセル</button>
 
 
         </div>
@@ -1485,7 +1487,7 @@
           </div>
 
           <div class="tab">
-            プロジェクト別(`ai-params:project:&lt;id&gt;`)
+            プロジェクト別
           </div>
         </div>
 
@@ -1555,7 +1557,7 @@
               <label>使用モデル</label>
 
               <div class="select">
-                ▼ @cf/meta/llama-3.1-8b-instruct(デフォルト) / SAMPLE-model-v2 / SAMPLE-model-v3
+                ▼ @cf/meta/llama-3.1-8b-instruct(デフォルト) / model-v2 / model-v3
               </div>
             </div>
           </div>
@@ -1587,7 +1589,7 @@
 
                 <th>after</th>
 
-                <th>ticket_id</th>
+                <th>対応チケット</th>
 
                 <th>承認者</th>
               </tr>
@@ -1630,7 +1632,7 @@
         <div class="panel">
           <div class="panel-title">
             操作
-          </div><button class="btn">対応チケット ID 入力</button> <button class="btn">再認証</button> <button class="btn hardgate">承認申請を送信</button> <button class="btn primary" disabled>変更を実行(承認後活性化)</button> <button class="btn">キャンセル</button>
+          </div><button class="btn">対応チケット ID 入力</button> <button class="btn">再認証</button> <button class="btn hardgate">承認申請を送信</button> <button class="btn primary" disabled>変更を実行</button> <button class="btn">キャンセル</button>
         </div>
       </div>
     </div>
@@ -1837,7 +1839,7 @@
               <label>上書き理由 <span class="req">*</span></label>
 
               <div class="textarea">
-                <span class="placeholder">最大 1000 文字 / 操作履歴 before_value / after_value に保存((c))</span>
+                <span class="placeholder">最大 1000 文字</span>
               </div>
             </div>
 
@@ -1858,7 +1860,7 @@
                 </div>
               </div>
             </div>
-          </div><button class="btn primary">保存(単独実行 + 承認ログ)</button> <button class="btn hardgate" disabled>承認申請</button> <button class="btn">キャンセル</button>
+          </div><button class="btn primary">保存</button> <button class="btn hardgate" disabled>承認申請</button> <button class="btn">キャンセル</button>
         </div>
 
         <div class="panel">
@@ -2077,11 +2079,11 @@
 
             <div class="panel" style="background:#fafafa; padding:8px;">
               <div style="font-size:11px; font-weight:bold; margin-bottom:6px;">
-                [SAMPLE 件名] メンテナンスのお知らせ(5月20日 1:00〜3:00 JST)
+                メンテナンスのお知らせ(5月20日 1:00〜3:00 JST)
               </div>
 
               <div style="font-size:10px;">
-                SAMPLE 本文。お客様各位、平素より open-faq をご利用いただきありがとうございます。 5 月 20 日 1:00〜3:00 JST にメンテナンスを実施します。
+                お客様各位、平素より open-faq をご利用いただきありがとうございます。 5 月 20 日 1:00〜3:00 JST にメンテナンスを実施します。
               </div>
             </div>
 
@@ -2092,7 +2094,7 @@
                 <tr>
                   <td>対象契約</td>
 
-                  <td>SAMPLE 3 件(own_SAMPLE_01HAAAA / 01HBBBB / 01HCCCC)</td>
+                  <td>3 件(own_SAMPLE_01HAAAA / 01HBBBB / 01HCCCC)</td>
                 </tr>
 
                 <tr>
@@ -2104,7 +2106,7 @@
                 <tr>
                   <td>想定配信件数</td>
 
-                  <td>SAMPLE 8 名(inbox 8 件 + メール 8 通)</td>
+                  <td>8 名(inbox 8 件 + メール 8 通)</td>
                 </tr>
 
                 <tr>
@@ -2113,18 +2115,13 @@
               </table>
             </div>
 
-            <div class="field">
-              <label>状態</label> <span class="badge-pill blue">preview</span> → <span class="badge-pill yellow">scheduled</span> → <span class="badge-pill purple">sending</span> → <span class="badge-pill green">sent</span>
-
-
-            </div>
           </div>
         </div>
 
         <div class="panel">
           <div class="panel-title">
             操作
-          </div><button class="btn">テスト送信(運営者本人宛)</button> <button class="btn primary">配信予約</button> <button class="btn danger">配信予約取消(scheduled_at - 5 分以内は不可)</button> <button class="btn">訂正告知発行(配信開始後のみ・別 SERVICE_ANNOUNCEMENT 新規発行)</button> <button class="btn">下書きとして保存</button> <button class="btn">キャンセル</button>
+          </div><button class="btn">テスト送信(運営者本人宛)</button> <button class="btn primary">配信予約</button> <button class="btn danger">配信予約取消</button> <button class="btn">訂正告知発行</button> <button class="btn">下書きとして保存</button> <button class="btn">キャンセル</button>
         </div>
 
 
@@ -2145,7 +2142,7 @@
 
                 <th>宛先</th>
 
-                <th>scheduled_at</th>
+                <th>配信予定日時</th>
 
                 <th>状態</th>
 
@@ -2175,7 +2172,7 @@
 
                 <td>規約改定のご案内(v3.0)</td>
 
-                <td>announcement / high(強制送信)</td>
+                <td>announcement / high</td>
 
                 <td>全契約 / admin</td>
 
@@ -2199,7 +2196,7 @@
       </div>
 
       <div class="scr-user">
-        利用者: サービス運営者(参照)・エクスポート時のみ記録
+        利用者: サービス運営者(参照)
       </div>
     </div>
 
@@ -2293,7 +2290,7 @@
               </div>
 
               <div class="value">
-                SAMPLE 128
+                128
               </div>
             </div>
 
@@ -2327,7 +2324,7 @@
 
             <div class="summary-card green">
               <div class="label">
-                全全契約横断 MAU・解決率
+                全契約横断 MAU・解決率
               </div>
 
               <div class="value">
@@ -2347,7 +2344,7 @@
           </div>
 
           <div class="filter-item">
-            actor_type: <span class="select" style="width:160px;">▼ service_operator / admin / operator / お問い合わせ利用者 / system</span>
+            操作主体: <span class="select" style="width:160px;">▼ service_operator / admin / operator / お問い合わせ利用者 / system</span>
           </div>
 
           <div class="filter-item">
@@ -2355,15 +2352,15 @@
           </div>
 
           <div class="filter-item">
-            occurred_at: <span class="input" style="width:90px;">2025-05-11</span>〜<span class="input" style="width:90px;">2026-05-11</span> <span class="helper">最大 1 年</span>
+            発生日時: <span class="input" style="width:90px;">2025-05-11</span>〜<span class="input" style="width:90px;">2026-05-11</span> <span class="helper">最大 1 年</span>
           </div>
 
           <div class="filter-item">
-            owner_account_id(横断): <span class="input" style="width:100px;"><span class="placeholder">全契約可</span></span>
+            オーナーアカウント(横断): <span class="input" style="width:100px;"><span class="placeholder">全契約可</span></span>
           </div>
 
           <div class="filter-item">
-            ip_masked: <span class="input" style="width:110px;"><span class="placeholder">203.0.113.*</span></span>
+            マスク済み IP: <span class="input" style="width:110px;"><span class="placeholder">203.0.113.*</span></span>
           </div>
 
           <div class="filter-item">
@@ -2371,24 +2368,24 @@
           </div>
 
           <div class="filter-item">
-            ticket_id: <span class="input" style="width:100px;"><span class="placeholder">INC-SAMPLE</span></span>
+            対応チケット ID: <span class="input" style="width:100px;"><span class="placeholder">INC-SAMPLE</span></span>
           </div><button class="btn small primary">検索</button>
         </div>
 
         <table class="wf">
           <thead>
             <tr>
-              <th>occurred_at</th>
+              <th>発生日時</th>
 
-              <th>actor_type / actor_id</th>
+              <th>操作主体(種別 / ID)</th>
 
               <th>action</th>
 
-              <th>target_type / target_id</th>
+              <th>対象(種別 / ID)</th>
 
-              <th>ip_masked</th>
+              <th>マスク済み IP</th>
 
-              <th>ticket_id</th>
+              <th>対応チケット</th>
 
               <th>保持区分</th>
 
@@ -2508,7 +2505,7 @@
         </table>
 
         <div class="pager">
-          SAMPLE 12,403 件中 1-6 件表示(カーソル方式 100 件/ページ) <span class="pg">‹</span><span class="pg">›</span>
+          12,403 件中 1-6 件表示(カーソル方式 100 件/ページ) <span class="pg">‹</span><span class="pg">›</span>
         </div>
 
 
@@ -2520,7 +2517,7 @@
 
           <div class="grid-2">
             <div>
-              <label>before_value</label>
+              <label>変更前</label>
 
               <div class="diff">
                 <span class="del">- status: "削除予定"</span> owner_account_id: "own_SAMPLE_01HZZZZ" deleted_at: "2026-05-05T10:00Z"
@@ -2528,7 +2525,7 @@
             </div>
 
             <div>
-              <label>after_value</label>
+              <label>変更後</label>
 
               <div class="diff">
                 <span class="add">+ status: "active"</span> owner_account_id: "own_SAMPLE_01HZZZZ" <span class="add">+ deleted_at: null</span> <span class="add">+ restored_by: "op-SAMPLE-01"</span>
@@ -2566,13 +2563,13 @@
                 署名付きトークン/ ファイル末尾 <code>signature</code> 行
               </div>
             </div>
-          </div><button class="btn primary">エクスポート実行</button> <button class="btn">検証ツール(別途 Runbook で配布)</button>
+          </div><button class="btn primary">エクスポート実行</button> <button class="btn">検証ツール</button>
 
 
         </div>
 
         <div class="alert-bar" style="margin-top:8px;">
-          <strong>運営者操作頻度異常検知((c)):</strong> 同一運営者の短時間大量操作を強調表示(現在: 異常なし / 閾値: 直近 5 分で 30 操作超 → 全運営者へ high 通知)
+          運営者操作頻度に異常はありません
         </div>
 
 
@@ -2709,7 +2706,7 @@
               </div>
 
               <div class="value">
-                SAMPLE 3.2%
+                3.2%
               </div>
 
               <div class="delta">
@@ -2723,7 +2720,7 @@
               </div>
 
               <div class="value">
-                SAMPLE 99.5%
+                99.5%
               </div>
 
               <div class="delta">
@@ -2739,7 +2736,7 @@
           </div>
 
           <div class="filter-item">
-            event_id: <span class="input" style="width:150px;"><span class="placeholder">evt_SAMPLE_*</span></span>
+            イベント ID: <span class="input" style="width:150px;"><span class="placeholder">evt_SAMPLE_*</span></span>
           </div>
 
           <div class="filter-item">
@@ -2750,15 +2747,15 @@
         <table class="wf">
           <thead>
             <tr>
-              <th>event_id</th>
+              <th>イベント ID</th>
 
               <th>received_at</th>
 
               <th>state</th>
 
-              <th>owner_account_id</th>
+              <th>オーナーアカウント</th>
 
-              <th>attempt_count</th>
+              <th>リトライ回数</th>
 
               <th>自動 BO 残時間</th>
 
@@ -2883,7 +2880,7 @@
         </table>
 
         <div class="pager">
-          SAMPLE 3,250 件中 1-6 件表示 <span class="pg">‹</span><span class="pg active">1</span><span class="pg">2</span><span class="pg">›</span>
+          3,250 件中 1-6 件表示 <span class="pg">‹</span><span class="pg active">1</span><span class="pg">2</span><span class="pg">›</span>
         </div>
 
         <div class="panel" style="margin-top:8px;">
@@ -2903,7 +2900,7 @@
             </div>
 
             <div>
-              <label>過去のリプレイ履歴(dlq_replay_log)</label>
+              <label>過去のリプレイ履歴</label>
 
               <table class="wf">
                 <thead>
@@ -2961,7 +2958,7 @@
 
           <div class="grid-3">
             <div class="field">
-              <label>対象 event_id</label>
+              <label>対象イベント ID</label>
 
               <div class="input">
                 <code>evt_SAMPLE_01HBBBB</code>
@@ -3094,27 +3091,27 @@
               </div>
 
               <div class="value">
-                SAMPLE 2
+                2
               </div>
             </div>
 
             <div class="summary-card yellow">
               <div class="label">
-                under_review(タイマー作動中)
+                under_review
               </div>
 
               <div class="value">
-                SAMPLE 1
+                1
               </div>
             </div>
 
             <div class="summary-card red">
               <div class="label">
-                3 営業日経過(運営者 inbox 督促済)
+                3 営業日経過
               </div>
 
               <div class="value">
-                SAMPLE 1
+                1
               </div>
             </div>
 
@@ -3124,7 +3121,7 @@
               </div>
 
               <div class="value">
-                SAMPLE 14
+                14
               </div>
             </div>
           </div>
@@ -3237,7 +3234,7 @@
             </div>
 
             <div class="field">
-              <label>検出器が判定したマスキング対象文字列(機密表示制限)</label>
+              <label>検出器が判定したマスキング対象文字列</label>
 
               <div class="diff">
                 SAMPLE_DETECTION_TEXT: "ご担当者の田中様" SAMPLE_MASKED: "ご担当者の[氏名]様" SAMPLE_REPORTED_BY: 担当者 SAMPLE_REPORT_REASON: "田中"は商品名であり氏名ではない
@@ -3245,7 +3242,7 @@
             </div>
 
             <div class="field">
-              <label>関連質問ログ ID(参照のみ、本文非表示)</label>
+              <label>関連質問ログ ID</label>
 
               <div class="input">
                 SAMPLE: ql_SAMPLE_01HXXXX
@@ -3255,18 +3252,18 @@
 
           <div class="panel hardgate">
             <div class="panel-title">
-              検出ルール更新(再認証 + チケット ID 必須)
+              検出ルール更新
             </div>
 
             <div class="alert-bar warn">
-              ⚠ <strong>過去データは修正しない</strong>((d))。ルール更新は今後の検出のみに適用。
+              ⚠ <strong>過去データは修正しない</strong>。ルール更新は今後の検出のみに適用。
             </div>
 
             <div class="field">
-              <label>更新対象ルール ▼ 正規表現ルール / 分類ルール</label>
+              <label>更新対象ルール</label>
 
               <div class="select">
-                ▼ pii-rules:regex(第 1 層) / pii-rules:classifier(第 2 層)
+                ▼ 正規表現ルール(第 1 層) / 分類ルール(第 2 層)
               </div>
             </div>
 
@@ -3400,11 +3397,11 @@
           </div>
 
           <div class="filter-item">
-            event_id: <span class="input" style="width:150px;"><span class="placeholder">evt_SAMPLE_*</span></span>
+            イベント ID: <span class="input" style="width:150px;"><span class="placeholder">evt_SAMPLE_*</span></span>
           </div>
 
           <div class="filter-item">
-            owner_account_id: <span class="input" style="width:140px;"><span class="placeholder">部分一致</span></span>
+            オーナーアカウント: <span class="input" style="width:140px;"><span class="placeholder">部分一致</span></span>
           </div>
 
           <div class="filter-item">
@@ -3417,9 +3414,9 @@
             <tr>
               <th>diff_id</th>
 
-              <th>event_id</th>
+              <th>イベント ID</th>
 
-              <th>owner_account_id</th>
+              <th>オーナーアカウント</th>
 
               <th>detected_at</th>
 
@@ -3490,7 +3487,7 @@
 
         <div class="panel" style="margin-top:8px;">
           <div class="panel-title">
-            JSON diff 表示(選択中: diff_SAMPLE_01H001 / event_id: evt_SAMPLE_01HDDDD)
+            JSON diff 表示(選択中: diff_SAMPLE_01H001 / イベント ID: evt_SAMPLE_01HDDDD)
           </div>
 
           <div class="grid-2">
@@ -3546,72 +3543,13 @@
   <div class="screen">
     <div class="screen-header">
       <div>
-        <span class="scr-id operator">M-COMMON</span> <span class="scr-name">共通 UI 部品(モーダル群)</span>
+        <span class="scr-id operator">SCR-APPROVALS-M1</span> <span class="scr-name">4-eyes 承認申請モーダル</span>
       </div>
 
-      <div class="scr-user"></div>
+      <div class="scr-user">利用者: サービス運営者(申請者)</div>
     </div>
 
     <div class="app-main">
-      <!-- 対応チケットID入力モーダル -->
-
-      <h3 style="font-size:13px; margin-top:14px; border-bottom: 1px solid #888; padding-bottom: 4px;">対応チケット ID 入力モーダル</h3>
-
-      <div class="modal-overlay">
-        <div class="modal-card">
-          <div class="modal-title">
-            対応チケット ID 入力
-          </div>
-
-          <div class="field">
-            <label>対応チケット ID <span class="req">*</span></label>
-
-            <div class="input">
-              <span class="placeholder">例: INC-SAMPLE-001(任意文字列、最大 64 文字)</span>
-            </div>
-
-
-          </div>
-
-          <div class="field">
-            <label>操作種別(自動表示)</label>
-
-            <div class="input">
-              SAMPLE: <code>ai_parameter.update</code><code>owner.restore</code><code>webhook.replay</code> 等
-            </div>
-
-
-          </div><button class="btn primary">次へ(再認証へ)</button> <button class="btn">キャンセル</button>
-        </div>
-      </div><!-- 再認証モーダル -->
-
-      <h3 style="font-size:13px; margin-top:14px; border-bottom: 1px solid #888; padding-bottom: 4px;">再認証モーダル</h3>
-
-      <div class="modal-overlay">
-        <div class="modal-card danger">
-          <div class="modal-title">
-            再認証
-          </div>
-
-          <div class="alert-bar">
-            ⚠ 高権限操作のため再認証が必要です。<br>
-            5 分以内・操作 1 回限り。
-          </div>
-
-          <div class="field">
-            <label>パスワード(現在のセッションと同一アカウント) <span class="req">*</span></label>
-
-            <div class="input">
-              <span class="placeholder">••••••••</span>
-            </div>
-          </div><button class="btn primary">再認証</button> <button class="btn">キャンセル</button>
-
-
-        </div>
-      </div><!-- 承認申請モーダル -->
-
-      <h3 style="font-size:13px; margin-top:14px; border-bottom: 1px solid #888; padding-bottom: 4px;">承認申請モーダル</h3>
-
       <div class="modal-overlay">
         <div class="modal-card hardgate">
           <div class="modal-title">
@@ -3619,15 +3557,15 @@
           </div>
 
           <div class="alert-bar warn">
-            ⚠ この操作は 4-eyes ハードゲート対象です。<br>
-            申請後、全運営者の inbox に通知 → 別運営者(<code>申請者と承認者が異なること</code>)が 承認 → 申請者が実行。 承認待ち期限: <strong>72 時間</strong>。
+            ⚠ この操作は 4-eyes 対象です。<br>
+            承認待ち期限: <strong>72 時間</strong>
           </div>
 
           <div class="field">
-            <label>申請理由 <span class="req">*</span></label>
+            <label>操作種別</label>
 
-            <div class="textarea">
-              <span class="placeholder">最大 1000 文字 / 操作履歴 before_value に保存</span>
+            <div class="input">
+              <code>ai_parameter.update</code>
             </div>
           </div>
 
@@ -3640,35 +3578,50 @@
           </div>
 
           <div class="field">
-            <label>対応チケット ID <span class="req">*</span></label>
+            <label>申請理由 <span class="req">*</span></label>
 
-            <div class="input">
-              <span class="placeholder">例: INC-SAMPLE-002</span>
+            <div class="textarea">
+              <span class="placeholder">最大 1000 文字</span>
             </div>
-          </div><button class="btn hardgate">承認申請を送信</button> <button class="btn">キャンセル</button>
-
-
-        </div>
-      </div><!-- 承認モーダル -->
-
-      <h3 style="font-size:13px; margin-top:14px; border-bottom: 1px solid #888; padding-bottom: 4px;">承認モーダル</h3>
-
-      <div class="modal-overlay">
-        <div class="modal-card hardgate">
-          <div class="modal-title">
-            承認
-          </div>
-
-          <div class="alert-bar warn">
-            ⚠ 自己承認禁止: システム側で <code>申請者と承認者が異なること</code> を二重検証。<br>
-            承認後に内容が変わった場合は実行できません。
           </div>
 
           <div class="field">
-            <label>申請者</label>
+            <label>対応チケット ID <span class="req">*</span></label>
 
             <div class="input">
-              op-SAMPLE-02(申請日時: 2026-05-11 10:00 JST、残時間 71h:24m)
+              <span class="placeholder">INC-SAMPLE-002</span>
+            </div>
+          </div><button class="btn hardgate">承認申請を送信</button> <button class="btn">キャンセル</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen">
+    <div class="screen-header">
+      <div>
+        <span class="scr-id operator">SCR-APPROVALS-M2</span> <span class="scr-name">4-eyes 承認 / 却下モーダル</span>
+      </div>
+
+      <div class="scr-user">利用者: サービス運営者(承認者 / 申請者本人による自己取下げ)</div>
+    </div>
+
+    <div class="app-main">
+      <div class="modal-overlay">
+        <div class="modal-card hardgate">
+          <div class="modal-title">
+            承認 / 却下
+          </div>
+
+          <div class="alert-bar warn">
+            ⚠ 自己承認はできません。
+          </div>
+
+          <div class="field">
+            <label>申請者 / 残時間</label>
+
+            <div class="input">
+              op-SAMPLE-02 / 申請日時 2026-05-11 10:00 JST / 残 71:24:00
             </div>
           </div>
 
@@ -3676,23 +3629,35 @@
             <label>対象操作 / 対象 / 変更内容</label>
 
             <div class="diff">
-              action_code: "ai_parameter.update" target_type: "owner" target_id: "own_SAMPLE_01HAAAA"  申請理由: "信頼度を 0.75 に引き上げ、本番契約 T01HAAAA で品質向上 PoC" ticket_id: "INC-SAMPLE-002"
+              action_code: "ai_parameter.update" target_type: "owner" target_id: "own_SAMPLE_01HAAAA"
             </div>
           </div>
 
           <div class="field">
-            <label>承認/却下コメント</label>
+            <label>申請理由</label>
+
+            <div class="input">
+              信頼度を 0.75 に引き上げ、本番契約 T01HAAAA で品質向上検証
+            </div>
+          </div>
+
+          <div class="field">
+            <label>対応チケット ID</label>
+
+            <div class="input">
+              INC-SAMPLE-002
+            </div>
+          </div>
+
+          <div class="field">
+            <label>承認 / 却下コメント</label>
 
             <div class="textarea">
-              <span class="placeholder">任意 / 操作履歴に保存</span>
+              <span class="placeholder">任意</span>
             </div>
-          </div><button class="btn primary">承認</button> <button class="btn danger">却下</button> <button class="btn">キャンセル</button>
-
-
+          </div><button class="btn primary">承認</button> <button class="btn danger">却下</button> <button class="btn" disabled>自己取下げ</button> <button class="btn">キャンセル</button>
         </div>
       </div>
-
-
     </div>
   </div><!-- ============= FLOW 画面遷移図 ============= -->
 </body>

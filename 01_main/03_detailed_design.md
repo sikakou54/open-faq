@@ -2059,13 +2059,33 @@ export const ipAllowlistSchema = z.object({
 
 > FR-009 / FR-125 / FR-162 / FR-167 / FR-179 / FR-330 / AC-016
 
-### 6.17 SCR-017 ユーザー管理（オーナー + メンバー）
+### 6.17 SCR-017 ユーザー管理（一覧）
 
-画面項目（表示・入力・操作・主要制約）はメイン基本設計 §5.4.11 SCR-017 を正本とする。本節では、当該画面の実装に関する Zod スキーマ・正規表現の実装値・エラーコード・呼出 API・ハンドラ実装方針のみを記載する。本画面はオーナーおよび `users:manage` 権限フラグ保持メンバーのみアクセス可。
+画面項目（表示・操作・主要制約）はメイン基本設計 §5.4.11 SCR-017 を正本とする。本節では、当該画面の実装に関する呼出 API・行アクションの遷移方針のみを記載する。本画面はオーナーおよび `users:manage` 権限フラグ保持メンバーのみアクセス可。メンバーの招待 / 編集 / 状態操作はすべて §6.17a SCR-017-M1 を参照。
 
-#### 6.17.1 招待・権限変更フォーム（Zod）
+#### 6.17.1 呼出 API
 
-基本設計 §5.4.11 に従い、メールアドレス・氏名・通知設定・付与権限フラグ・利用状態を受け付ける。招待時は `accounts.role='admin'`、`accounts.is_owner=0`、`accounts.status='pending_activation'` で作成し、招待リンクの有効期限は 7 日（FR-016 / FR-020）。アクティベーション完了時に `account_permissions` の予約行を有効化する（FR-016a / FR-016c）。
+- `GET /api/v1/members`（一覧。オーナー / メンバー区別、保持権限フラグ、割当プロジェクト、状態、最終ログイン、招待有効期限を返却）
+
+#### 6.17.2 行アクションの遷移
+
+- 「+ メンバーを招待」のクリックは SCR-017-M1 を招待モードで開く（クライアント側ルーティング）。
+- 行「編集」のクリックは SCR-017-M1 を編集モードで開く。サーバ呼出は SCR-017-M1 の保存 / 状態操作時に行う。
+- 行「削除」のクリックは確認ダイアログ + 再認証ののち、対象状態に応じて以下を呼び分ける:
+  - `pending_activation` 行: `POST /api/v1/members/{id}/invitation/revoke`（招待取消）
+  - `active` / `disabled` 行: `DELETE /api/v1/members/{id}`（論理削除）
+
+#### 6.17.3 関連参照
+
+> FR-017 / FR-021a〜c / FR-333 / BR-013
+
+### 6.17a SCR-017-M1 メンバー招待 / 編集モーダル
+
+画面項目（表示・入力・操作・主要制約）はメイン基本設計 §5.4.11a SCR-017-M1 を正本とする。本節では、当該モーダルの実装に関する Zod スキーマ・呼出 API・モード分岐・状態操作の遷移方針を記載する。
+
+#### 6.17a.1 バリデーション（Zod）
+
+基本設計 §5.4.11a に従い、メールアドレス・氏名・通知設定・付与権限フラグ・割当プロジェクト・利用状態を受け付ける。招待モードでは `accounts.role='admin'`、`accounts.is_owner=0`、`accounts.status='pending_activation'` で作成し、招待リンクの有効期限は 7 日（FR-016 / FR-020）。アクティベーション完了時に `account_permissions` の予約行を有効化する（FR-016a / FR-016c）。
 
 ```ts
 import { z } from 'zod';
@@ -2082,10 +2102,10 @@ export const memberInviteSchema = z.object({
     importantAnnouncement: z.boolean().default(true),
   }).partial().default({}),
   permissions: z.array(permissionKindSchema).max(5).default([]),
+  projectIds: z.array(z.string()).max(100).default([]),
 });
 
 export const memberUpdateSchema = z.object({
-  email: z.string().trim().email().max(254).optional(),
   name: z.string().trim().min(1).max(100).optional(),
   notificationPreferences: z.record(z.boolean()).optional(),
   status: z.enum(['active', 'disabled']).optional(),
@@ -2094,30 +2114,47 @@ export const memberUpdateSchema = z.object({
 export const memberPermissionsUpdateSchema = z.object({
   permissions: z.array(permissionKindSchema).max(5),  // 完全置換セット
 });
+
+export const memberProjectGrantsUpdateSchema = z.object({
+  projectIds: z.array(z.string()).max(100),  // 完全置換セット
+});
 ```
 
-招待・権限変更・停止・削除・招待再送・取消の各操作は再認証必須（FR-005 / §4.3）。オーナー行に対するこれら操作は API 層で 403（`OWNER_PROTECTED`）。自分自身の `users:manage` 自己剥奪は 409（`CANNOT_SELF_REVOKE_USERS_MANAGE`、§4.2.8）。
+招待・属性更新・権限変更・割当変更・停止・停止解除・強制ログアウト・招待再送・招待取消の各操作は再認証必須（FR-005 / §4.3）。オーナー行に対するこれら操作は API 層で 403（`OWNER_PROTECTED`）。自分自身の `users:manage` 自己剥奪は 409（`CANNOT_SELF_REVOKE_USERS_MANAGE`、§4.2.8）。
 
-#### 6.17.2 呼出 API
+#### 6.17a.2 呼出 API（モード別）
 
-- `GET /api/v1/members`（一覧。オーナー / メンバー区別、保持権限フラグ、割当プロジェクト、状態を返却）
-- `GET /api/v1/members/{id}`（詳細）
-- `POST /api/v1/members/invite`（再認証、`users:manage` または owner、body に `projectIds: string[]` を含めて初期割当を指定）
-- `PATCH /api/v1/members/{id}`（再認証、属性更新。オーナー属性更新はオーナー本人のみ）
-- `POST /api/v1/members/{id}/permissions`（再認証、完全置換セットで権限を更新）
-- `POST /api/v1/members/{id}/project-grants`（再認証、プロジェクト割当の追加。body: `{ projectId: string }`）
-- `DELETE /api/v1/members/{id}/project-grants/{projectId}`（再認証、プロジェクト割当の剥奪）
-- `POST /api/v1/members/{id}/disable`（再認証、メンバー対象のみ）
-- `DELETE /api/v1/members/{id}`（再認証、メンバー対象のみ）
-- `POST /api/v1/members/{id}/invitation/resend`（再認証、`pending_activation` 対象のみ）
-- `POST /api/v1/members/{id}/invitation/revoke`（再認証、`pending_activation` 対象のみ）
-- `POST /api/v1/members/activations/{token}`（招待トークンによる本人アクティベーション）
+- 招待モード:
+  - `POST /api/v1/members/invite`（再認証、`users:manage` または owner、body に `projectIds: string[]` を含めて初期割当を指定）
+- 編集モード:
+  - `GET /api/v1/members/{id}`（モーダルオープン時の初期値ロード）
+  - `PATCH /api/v1/members/{id}`（再認証、属性更新。オーナー属性更新はオーナー本人のみ）
+  - `POST /api/v1/members/{id}/permissions`（再認証、完全置換セットで権限を更新）
+  - `POST /api/v1/members/{id}/project-grants`（再認証、プロジェクト割当の追加。body: `{ projectId: string }`）
+  - `DELETE /api/v1/members/{id}/project-grants/{projectId}`（再認証、プロジェクト割当の剥奪）
+  - `POST /api/v1/members/{id}/disable`（再認証、メンバー対象のみ）
+  - `POST /api/v1/members/{id}/enable`（再認証、メンバー対象のみ）
+  - `POST /api/v1/members/{id}/sessions/revoke-all`（再認証、強制ログアウト。`users:manage` または owner）
+  - `POST /api/v1/members/{id}/invitation/resend`（再認証、`pending_activation` 対象のみ）
+- SCR-017 一覧からの呼出（参考、§6.17.2 を正本とする）:
+  - `DELETE /api/v1/members/{id}`（再認証、メンバー対象のみ。`active` / `disabled` 行の削除）
+  - `POST /api/v1/members/{id}/invitation/revoke`（再認証、`pending_activation` 対象のみ。招待取消）
+- 共通:
+  - `POST /api/v1/members/activations/{token}`（招待トークンによる本人アクティベーション、SCR-026 から呼ばれる）
 
 `project-grants` の追加・剥奪は、「ユーザー管理」保持メンバーが他メンバーへ割当できる範囲を自分の `projectGrants` に限る（FR-018c）。オーナーは自オーナー配下の全プロジェクトに対し割当を追加・剥奪できる。
 
-#### 6.17.3 関連参照
+#### 6.17a.3 状態別の操作可否
 
-> FR-015〜021 / FR-015a〜c / FR-016a〜c / FR-018a〜b / FR-021a〜c / FR-333〜338 / BR-013 / BR-013a〜c / AC-018 / AC-018a〜h
+| 状態 | 招待メール再送 | 招待取消 | 停止 | 停止解除 | 強制ログアウト |
+|---|:---:|:---:|:---:|:---:|:---:|
+| `pending_activation` | ○ | ○（SCR-017 削除と等価） | - | - | - |
+| `active` | - | - | ○ | - | ○ |
+| `disabled` | - | - | - | ○ | - |
+
+#### 6.17a.4 関連参照
+
+> FR-015〜021 / FR-015a〜d / FR-016a〜c / FR-018a〜c / FR-021c / FR-333〜338 / BR-013 / BR-013a〜c / AC-018 / AC-018a〜h
 
 ### 6.18 SCR-018 プライバシーポリシー / 利用規約閲覧
 
@@ -8358,10 +8395,10 @@ PR テンプレート (`.github/pull_request_template.md`):
 | PUT | `/me/notification-preferences` | 要 | FR-149b |
 | PATCH | `/me/ip-allowlist` | 要 + 再認証 | SCR-016 / FR-179 |
 | GET | `/admin-users` | 要 (admin) | SCR-017 / FR-015 |
-| POST | `/admin-users` | 要 + 再認証 | SCR-017 / FR-015 |
-| POST | `/admin-users/{id}/activation-email` | 要 + 再認証 | FR-019 |
-| GET | `/admin-users/{id}` | 要 (admin) | SCR-017 / FR-017 |
-| PATCH | `/admin-users/{id}` | 要 + 再認証 | SCR-017 / FR-018 |
+| POST | `/admin-users` | 要 + 再認証 | SCR-017-M1 / FR-015 |
+| POST | `/admin-users/{id}/activation-email` | 要 + 再認証 | SCR-017-M1 / FR-019 |
+| GET | `/admin-users/{id}` | 要 (admin) | SCR-017-M1 / FR-017 |
+| PATCH | `/admin-users/{id}` | 要 + 再認証 | SCR-017-M1 / FR-018 |
 | POST | `/admin-users/{id}/disable` | 要 + 再認証 | FR-020 |
 | DELETE | `/admin-users/{id}` | 要 + 再認証 | FR-019 |
 | POST | `/admin-users/activations/{token}` | トークン | FR-016 |
