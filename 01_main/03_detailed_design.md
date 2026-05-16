@@ -1651,6 +1651,535 @@ function shouldShowBanner(account: OwnerAccount): boolean {
 
 > **a11y 補足**: dismiss ボタンは `aria-label` を必須化し、フォーカス順序は banner 内の主要 CTA (「支払い方法を登録」リンク) → 「閉じる」の順とする (CTA を先に読み上げ、誤って閉じる前にアクションを案内)。
 
+#### 6.2.7 UI/UX 共通要件で追加する部品(参照: 基本設計 §5.3.2)
+
+##### 6.2.7.1 Breadcrumb / PageHeader
+
+```tsx
+// app/admin/src/components/Breadcrumb.tsx
+type Crumb = { label: string; href?: string };
+export function Breadcrumb({ items }: { items: Crumb[] }) {
+  return (
+    <nav aria-label="現在位置" className="breadcrumb">
+      {items.map((c, i) => {
+        const isLast = i === items.length - 1;
+        return (
+          <span key={i}>
+            {c.href && !isLast ? <a href={c.href}>{c.label}</a> : <span aria-current={isLast ? 'page' : undefined}>{c.label}</span>}
+            {!isLast && <span aria-hidden="true"> / </span>}
+          </span>
+        );
+      })}
+    </nav>
+  );
+}
+
+// app/admin/src/components/PageHeader.tsx
+export function PageHeader({ title, description, actions }: { title: string; description?: string; actions?: React.ReactNode }) {
+  return (
+    <header className="page-header">
+      <div>
+        <h1>{title}</h1>
+        {description && <p className="page-description">{description}</p>}
+      </div>
+      {actions && <div className="page-actions">{actions}</div>}
+    </header>
+  );
+}
+```
+
+- パンくずは最大 3 段、ホームを起点(FR-370)。Tab で順次フォーカス可能。
+- 画面タイトルは `<h1>` を 1 画面に 1 つだけ配置(WCAG 1.3.1)。
+
+##### 6.2.7.2 QuickFilterChips / AppliedFilterChips
+
+```tsx
+// app/admin/src/components/QuickFilterChips.tsx
+type QuickFilter = { id: string; label: string; count?: number; query: Record<string, string> };
+export function QuickFilterChips({ filters, active, onSelect }: { filters: QuickFilter[]; active: string; onSelect: (id: string) => void }) {
+  return (
+    <div role="tablist" className="quick-filter-chips">
+      {filters.map(f => (
+        <button
+          key={f.id}
+          role="tab"
+          aria-selected={active === f.id}
+          className={`chip ${active === f.id ? 'active' : ''}`}
+          onClick={() => onSelect(f.id)}
+        >
+          {f.label}{f.count !== undefined && ` ${f.count}`}
+        </button>
+      ))}
+    </div>
+  );
+}
+```
+
+- URL クエリパラメータ(`?qf=my-open` 等)で状態保持、ブックマーク・共有可能。
+- 件数表示は集計 API(キャッシュ 60 秒)で取得。詳細フィルタ折り畳みは別コンポーネント `<DetailFilterPanel collapsed />`。
+
+##### 6.2.7.3 BulkActionBar
+
+```tsx
+// app/admin/src/components/BulkActionBar.tsx
+export function BulkActionBar({ selectedCount, actions, onClear }: {
+  selectedCount: number;
+  actions: { id: string; label: string; danger?: boolean; onClick: () => void }[];
+  onClear: () => void;
+}) {
+  if (selectedCount === 0) return null;
+  return (
+    <div role="region" aria-label="一括操作" className="bulk-action-bar">
+      <span>{selectedCount}件選択中</span>
+      {actions.map(a => (
+        <button key={a.id} className={`btn ${a.danger ? 'btn-danger' : ''}`} onClick={a.onClick}>
+          {a.label}
+        </button>
+      ))}
+      <button className="btn-link" onClick={onClear}>クリア</button>
+    </div>
+  );
+}
+```
+
+- 一括操作上限は FR-323 を準用(お知らせ既読 100 件、FAQ 状態変更 50 件)。
+- 選択中は画面下部スティッキー固定、ESC でクリア。
+
+##### 6.2.7.4 SummaryCard
+
+```tsx
+// app/admin/src/components/SummaryCard.tsx
+export function SummaryCard({ label, value, unit, bar, state }: {
+  label: string;
+  value: number | string;
+  unit?: string;
+  bar?: { current: number; max: number; warn?: boolean };
+  state?: 'warning' | 'danger';
+}) {
+  return (
+    <div className={`summary-card ${state ?? ''}`} role="group" aria-label={`${label} ${value}${unit ?? ''}`}>
+      <div className="label">{label}</div>
+      <div className="value">{value.toLocaleString()}{unit && <span className="unit">{unit}</span>}</div>
+      {bar && <UsageBar current={bar.current} free={bar.max} hard={bar.max * 1.25} />}
+    </div>
+  );
+}
+```
+
+##### 6.2.7.5 Timeline
+
+```tsx
+// app/admin/src/components/Timeline.tsx
+type Step = { id: string; label: string; date?: string; state: 'done' | 'current' | 'future' };
+export function Timeline({ steps }: { steps: Step[] }) {
+  return (
+    <ol className="timeline" role="list">
+      {steps.map(s => (
+        <li
+          key={s.id}
+          className={`step ${s.state}`}
+          aria-current={s.state === 'current' ? 'step' : undefined}
+        >
+          <span className="marker" aria-hidden="true">{s.state === 'done' ? '●' : s.state === 'current' ? '◉' : '○'}</span>
+          <div>
+            <div className="step-label">{s.label}</div>
+            {s.date && <div className="step-date">{s.date}</div>}
+          </div>
+        </li>
+      ))}
+    </ol>
+  );
+}
+```
+
+##### 6.2.7.6 AutosaveIndicator
+
+```tsx
+// app/admin/src/components/AutosaveIndicator.tsx
+type SaveState = 'idle' | 'saving' | 'saved' | 'error';
+export function AutosaveIndicator({ state, lastSavedAt }: { state: SaveState; lastSavedAt?: Date }) {
+  const text = state === 'saving' ? '保存中…'
+    : state === 'error' ? '保存できませんでした'
+    : state === 'saved' && lastSavedAt ? `${formatRelative(lastSavedAt)}に保存しました`
+    : '';
+  const color = state === 'saving' ? 'yellow' : state === 'error' ? 'red' : 'green';
+  return (
+    <span className={`autosave-indicator ${color}`} role="status" aria-live="polite">
+      <span className="dot" aria-hidden="true" />{text}
+    </span>
+  );
+}
+```
+
+##### 6.2.7.7 UnsavedChangesGuard
+
+```tsx
+// app/admin/src/hooks/useUnsavedChangesGuard.ts
+export function useUnsavedChangesGuard(dirty: boolean) {
+  useEffect(() => {
+    if (!dirty) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = ''; // 多くのブラウザで既定文言「変更が保存されない可能性があります」が表示される
+    };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [dirty]);
+}
+```
+
+- ブラウザ内ナビゲーション(SPA 遷移)では `Route Guard` パターンで独自確認ダイアログを表示(FR-373)。
+
+##### 6.2.7.8 PermissionTooltip
+
+```tsx
+// app/admin/src/components/PermissionTooltip.tsx
+export function PermissionTooltip({ requiredPermission, children }: { requiredPermission: string; children: React.ReactElement }) {
+  const principal = usePrincipal();
+  const hasPermission = checkPermission(principal, requiredPermission);
+  if (hasPermission) return children;
+  return (
+    <span title={`${requiredPermission}権限が必要です`} className="permission-disabled">
+      {React.cloneElement(children, { disabled: true, 'aria-disabled': true, onClick: undefined })}
+    </span>
+  );
+}
+```
+
+- 完全非表示はサイドメニュー除外時のみ(基本設計 §5.6.4)。それ以外はグレーアウト + tooltip 表示で操作不能の理由を可視化(FR-356)。
+
+##### 6.2.7.9 LoadingSkeleton
+
+```tsx
+// app/admin/src/components/LoadingSkeleton.tsx
+export function TableSkeleton({ rows = 5, cols = 5 }: { rows?: number; cols?: number }) {
+  return (
+    <div aria-busy="true" aria-label="読み込み中" className="skeleton-table">
+      {Array.from({ length: rows }).map((_, r) => (
+        <div key={r} className="skeleton-row">
+          {Array.from({ length: cols }).map((_, c) => <span key={c} className="skeleton-cell" />)}
+        </div>
+      ))}
+    </div>
+  );
+}
+export function CardSkeleton({ count = 6 }: { count?: number }) {
+  return (
+    <div aria-busy="true" aria-label="読み込み中" className="skeleton-cards">
+      {Array.from({ length: count }).map((_, i) => <div key={i} className="skeleton-card" />)}
+    </div>
+  );
+}
+```
+
+##### 6.2.7.10 ProgressText / ReauthBadge
+
+```tsx
+// app/admin/src/components/ProgressText.tsx
+export function ProgressText({ stage, total, label }: { stage: number; total: number; label: string }) {
+  return (
+    <div role="status" aria-live="polite">
+      {label}…(<span aria-label="進捗">{stage}/{total}</span> 段階)
+    </div>
+  );
+}
+
+// app/admin/src/components/ReauthBadge.tsx
+export function ReauthBadge() {
+  return <span className="reauth-badge" aria-label="再認証が必要" title="この操作は再認証が必要です">🛡</span>;
+}
+```
+
+- ProgressText は API 応答時間が 3 秒超になりうる操作(エクスポート、AI 推論等)で必須(FR-381)。
+- ReauthBadge は Primary ボタン横に配置し、押下後に再認証モーダルを経由する仕様(詳細設計 §4.3 再認証必須操作一覧)。
+
+#### 6.2.8 文言テンプレ集(参照: 基本設計 §5.3.3)
+
+本節は **管理画面全体の文言の正本** とする。SCR 別の個別文言は §6.4〜§6.25 で SCR 単位の補足を行うが、横断的な文言ルールおよびテンプレは本節で固定する。
+
+##### 6.2.8.1 禁則語と推奨置換
+
+| 禁則語(単独使用不可) | 推奨置換 | 適用箇所 |
+|---|---|---|
+| 「OK」 | 「{動詞}する」「閉じる」 | 全ボタン |
+| 「実行」 | 「{操作名}する」(「削除する」等) | 全ボタン |
+| 「処理する」 | 「{具体動詞}」(「集計する」「再試行する」等) | ボタン・本文 |
+| 「確定」 | 「{動詞}する」(「予約を確定」等) | ボタン |
+| 「送信」(単独) | 「{対象}を送信」(「招待メールを送信」等) | ボタン |
+| 「こちら」 | 「以下のリンク」「{画面名}を開く」 | リンク・本文 |
+| 「エラーが発生しました」 | 「{原因}のため{操作}できませんでした。{解決策}」 | エラー帯・トースト |
+| 「不正な値です」 | 「{項目}は{形式}で入力してください(例: ○○)」 | バリデーション |
+| 「失敗しました」(単独) | 「{操作名}に失敗しました。{解決策}」 | API エラー |
+| 「お願いします」 | 機能的記述に置換 | ヘルプ・本文 |
+| 「してください」(単独) | 「{操作}すると{結果}になります」 | ヘルプ |
+
+##### 6.2.8.2 ボタン文言テンプレ
+
+```tsx
+// app/admin/src/i18n/buttonLabels.ts
+export const ButtonLabels = {
+  // 保存・更新
+  save: '保存する',
+  saveChanges: '変更を保存',
+  saveDraft: '下書き保存',
+
+  // 削除・破棄
+  delete: '削除する',
+  cancel: 'キャンセル',
+  discard: '変更を破棄',
+
+  // 公開・状態変更
+  publish: '公開する',
+  unpublish: '非公開化する',
+  close: '閉じる',
+
+  // 招待・送信
+  inviteMember: '招待メールを送信',
+  resendInvite: '招待を再送',
+  revokeInvite: '招待を取り消す',
+  resendEmail: 'メールを再送',
+
+  // 認証
+  login: 'ログインする',
+  logout: 'ログアウト',
+  reauth: '再認証する',
+  forgotPassword: 'パスワードを忘れた場合',
+
+  // 退会・サスペンション
+  withdraw: '退会を申請する',
+  suspend: 'メンバーを停止',
+  unsuspend: '停止を解除',
+  forceLogout: '強制ログアウト',
+
+  // エクスポート・インポート
+  exportCsv: 'CSV をエクスポート',
+  importCsv: 'CSV をインポート',
+  downloadPdf: 'PDF をダウンロード',
+
+  // ナビゲーション
+  backToList: '一覧へ戻る',
+  backToHome: 'ホームへ戻る',
+} as const;
+```
+
+- 上記の値は文言の **正本**。コード内では `ButtonLabels.save` のように参照し、ベタ書きを禁止する。
+- 言語拡張(将来の多言語化)時はキーを保ち value のみ差し替える。
+
+##### 6.2.8.3 確認モーダル文言テンプレ
+
+```tsx
+// app/admin/src/i18n/confirmDialogs.ts
+export const ConfirmDialogs = {
+  // 削除系(取り消し不可)
+  deleteFaq: {
+    title: 'FAQ を削除しますか?',
+    body: '削除すると元に戻せません(運営者への復元依頼が必要です)。',
+    primary: '削除する',
+    secondary: 'キャンセル',
+    requiresReauth: false, // FR-005 対象外。確認ダイアログのみで二段ガード
+  },
+  deleteMember: {
+    title: 'メンバーを削除しますか?',
+    body: '削除すると元に戻せません。アクセス権が即時失われ、再招待が必要になります。',
+    primary: '削除する',
+    secondary: 'キャンセル',
+    requiresReauth: true,
+  },
+  deleteProject: {
+    title: 'プロジェクトを削除しますか?',
+    body: '削除するとプロジェクト配下の FAQ・未解決質問・チャットも削除されます。元に戻せません。',
+    primary: '削除する',
+    secondary: 'キャンセル',
+    requiresReauth: true,
+  },
+
+  // 公開系
+  publishFaq: {
+    title: 'FAQ を公開しますか?',
+    body: '公開するとウィジェット利用者(エンドユーザー)に表示されます。誤公開時は同画面から「非公開化」できます。',
+    primary: '公開する',
+    secondary: 'キャンセル',
+    requiresReauth: false, // FR-005 対象外。確認ダイアログのみ
+  },
+
+  // 案件状態
+  closeInquiry: {
+    title: '対応不要として終了しますか?',
+    body: '終了するとエンドユーザーに通知が送信され、再オープンには運営者への依頼が必要になります。',
+    primary: '対応不要として終了する',
+    secondary: 'キャンセル',
+    requiresReauth: false,
+    additionalFields: [{ name: 'reason', label: '終了理由', required: true, maxLength: 500 }],
+  },
+  closeChatRoom: {
+    title: 'この問い合わせを終了しますか?',
+    body: '終了するとエンドユーザーに通知され、再オープンは運営者への依頼が必要になります。',
+    primary: '終了する',
+    secondary: 'キャンセル',
+    requiresReauth: true,
+  },
+
+  // メンバー停止
+  suspendMember: {
+    title: '{name} を停止しますか?',
+    body: '停止中はログインできません。停止解除はいつでも可能です。',
+    primary: 'メンバーを停止',
+    secondary: 'キャンセル',
+    requiresReauth: true,
+  },
+
+  // 退会
+  withdraw: {
+    title: '本当に退会しますか?',
+    body: '{cutoffDate} にサービスが停止し、{deletionDate} にすべてのデータが完全削除されます。この操作は取り消せません。',
+    primary: '退会を申請する',
+    secondary: 'キャンセル',
+    requiresReauth: true,
+  },
+
+  // 解約(契約終了。退会とは別概念で、月末まではアクセス可能)
+  cancelContract: {
+    title: '契約を解約しますか?',
+    body: '{cutoffDate} までサービスをご利用いただけます。データのエクスポートは退会画面から実施してください。',
+    primary: '契約を解約する',
+    secondary: 'キャンセル',
+    requiresReauth: true,
+  },
+} as const;
+```
+
+##### 6.2.8.4 エラーメッセージテンプレ
+
+```tsx
+// app/admin/src/i18n/errorMessages.ts
+export const ErrorMessages = {
+  // 入力バリデーション(汎用)
+  emailFormat: 'メールアドレスの形式が正しくありません(例: name@example.com)',
+  required: '{field}を入力してください',
+  maxLength: '{field}は最大 {max} 文字までです',
+  minLength: '{field}は最小 {min} 文字以上で入力してください',
+  numberRange: '{field}は {min} 以上 {max} 以下で入力してください',
+  passwordWeak: 'パスワードは 12 文字以上で、英大文字・小文字・数字・記号のうち 3 種類以上を含めてください',
+  passwordMismatch: '新しいパスワードと確認用パスワードが一致しません',
+
+  // 認証
+  loginFailed: 'メールアドレスまたはパスワードが正しくありません',
+  loginLocked: 'アカウントがロックされています。{minutes} 分後に再度お試しください',
+  reauthFailed: '再認証に失敗しました。パスワードをご確認の上、もう一度お試しください',
+  tokenExpired: 'リンクが無効または期限切れです。新しいリンクをメールで再送してください',
+
+  // 通信・処理
+  networkError: 'ネットワークの一時的な問題のため保存できませんでした。少し時間を置いて再度お試しください',
+  serverError: 'サーバーで一時的な問題が発生しました。少し時間を置いて再度お試しください',
+  optimisticLockConflict: '他のユーザーが更新したため保存できませんでした。最新を確認してください',
+  notFound: 'お探しの情報が見つかりません。削除された可能性があります',
+
+  // 認可
+  forbidden: 'この操作を実行する権限がありません',
+  permissionRequired: 'この操作には {permission} 権限が必要です。オーナーまたはユーザー管理権限保持者に依頼してください',
+
+  // 制限超過
+  rateLimited: '操作が短時間に集中したため一時的に受け付けられません。{seconds} 秒後にもう一度お試しください',
+  resendCooldown: 'メール再送は {seconds} 秒後から可能です',
+  bulkLimitExceeded: '一度に操作できるのは最大 {max} 件までです',
+
+  // 業務エラー
+  emailSuppressed: '対象のメールアドレスは配信停止状態のため送信できません',
+  contractSuspended: '契約が停止中のため、この操作はできません。サポートにお問い合わせください',
+} as const;
+```
+
+##### 6.2.8.5 成功メッセージテンプレ
+
+```tsx
+// app/admin/src/i18n/successMessages.ts
+export const SuccessMessages = {
+  faqPublished: 'FAQ を公開しました。ウィジェットで利用可能です',
+  faqSaved: 'FAQ を保存しました',
+  faqDeleted: 'FAQ を削除しました',
+
+  memberInvited: '招待メールを送信しました。有効期限は 7 日間です',
+  inviteResent: '招待メールを再送しました(旧リンクは失効しました)',
+  memberSuspended: 'メンバーを停止しました',
+  memberDeleted: 'メンバーを削除しました',
+
+  inquiryClosed: '対応不要として終了しました。エンドユーザーへ通知を送信しています',
+  chatRoomClosed: '問い合わせを終了しました。エンドユーザーへ通知を送信中です',
+
+  withdrawRequested: '退会申請を受け付けました。{cutoffDate} までは通常通りご利用いただけます',
+  passwordReset: '新しいパスワードを設定しました。ログインしてください',
+
+  reauthSucceeded: '再認証しました。続けて操作を実行してください',
+  exportStarted: 'エクスポートを開始しました。完了したらメールでお知らせします',
+} as const;
+```
+
+##### 6.2.8.6 空状態テンプレ
+
+```tsx
+// app/admin/src/i18n/emptyStates.ts
+export const EmptyStates = {
+  faqs: {
+    icon: '📝',
+    title: 'FAQ がまだありません',
+    description: '最初の FAQ を作成しましょう。CSV からまとめて取り込むこともできます',
+    primaryAction: { label: '+ 新規作成', href: '/faqs/new' },
+    secondaryAction: { label: 'CSV をインポート', href: '/faqs/import' },
+  },
+  inquiries: {
+    icon: '✅',
+    title: '未解決質問はありません',
+    description: 'ウィジェットを設置済みなら正常な状態です',
+    secondaryAction: { label: 'ウィジェット設定を見る', href: '/widget' },
+  },
+  chatRooms: {
+    icon: '💬',
+    title: '個別チャットはまだありません',
+    description: 'エンドユーザーからの問い合わせが始まるとここに表示されます',
+  },
+  announcements: {
+    icon: '🔔',
+    title: 'お知らせはまだありません',
+    description: '新着があるとここに表示されます',
+  },
+  members: {
+    icon: '👥',
+    title: 'メンバーがまだ招待されていません',
+    description: 'メンバーを招待するとあなたと一緒に運用できます',
+    primaryAction: { label: '+ メンバーを招待', href: '/members/invite' },
+  },
+} as const;
+```
+
+##### 6.2.8.7 権限不足表示テンプレ
+
+```tsx
+// app/admin/src/i18n/permissionMessages.ts
+export const PermissionMessages = {
+  faqManage: 'この操作には FAQ 管理権限が必要です',
+  chatRespond: 'この操作にはチャット対応権限が必要です',
+  usersManage: 'この操作にはユーザー管理権限が必要です',
+  projectManage: 'この操作にはプロジェクト設定権限が必要です',
+  logsView: 'この操作にはログ参照権限が必要です',
+  ownerOnly: 'この操作はオーナーのみ実行できます(課金・退会・規約再同意)',
+  selfEditGuard: 'あなた自身の権限・状態は変更できません。他のユーザー管理権限保持者に依頼してください',
+} as const;
+```
+
+##### 6.2.8.8 文言の検証
+
+実装時には以下を CI で検査する:
+
+```sh
+# 禁則語の混入検出(GUI 文字列リテラル限定)
+grep -rEn '(>|"|\")(OK|実行|処理する|確定|送信|こちら|エラーが発生しました|不正な値です|失敗しました)(<|"|\")' app/admin/src/ \
+  | grep -v 'i18n/' | grep -v '\.test\.' \
+  && echo "❌ 禁則語が混入しました" && exit 1
+```
+
+- `i18n/` 配下(テンプレ定義)は除外。テストファイル(`.test.ts`)も除外。
+- 例外を許可する場合はコメント `// @allow-forbidden-word: <理由>` を直前行に付与。
+
 ### 6.3 サイドメニュー実装
 
 `<Sidebar />` は基本設計 §5.6.2 の 7 グループ × 11 項目を展開する。
@@ -1852,11 +2381,40 @@ export const projectSettingsSchema = z.object({
 
 #### 6.8.1 呼出 API
 
-- `GET /api/v1/inquiries?status=...&assignee=...&from=...&to=...&keyword=...&cursor=...`
+- `GET /api/v1/inquiries?status=...&assignee=...&from=...&to=...&keyword=...&cursor=...&quickFilter=...`
+- 件数表示用: `GET /api/v1/inquiries/counts`（クイックフィルタ各チップの件数。60 秒キャッシュ）
 
-#### 6.8.2 関連参照
+#### 6.8.2 クイックフィルタの URL マッピング
 
-> FR-070〜079 / BR-008 / BR-012 / BR-019 / BR-020 / AC-010
+| チップ ID | `quickFilter` クエリ値 | 適用される詳細フィルタ |
+|---|---|---|
+| `my-open` | `my-open` | 状況: 未対応 + 対応中、担当: 自分 |
+| `overdue` | `overdue` | 状況: 未対応、最終投稿: 7 日以上前 |
+| `today` | `today` | 期間: 当日 0:00〜 |
+| `all` | `all`（既定） | 全件 |
+
+`quickFilter` が指定された場合、その他のフィルタクエリは無視せずプリセット + 追加条件として AND 結合する。URL クエリで状態保持し、ブックマーク・共有可能とする（FR-371）。
+
+#### 6.8.3 文言・空状態
+
+文言は §6.2.8 を正本とし、SCR-011 固有の文言は次の通り:
+
+```ts
+// app/admin/src/i18n/emptyStates.ts に追加済み(本書 §6.2.8.6)
+EmptyStates.inquiries = {
+  icon: '✅',
+  title: '未解決質問はありません',
+  description: 'ウィジェットを設置済みなら正常な状態です',
+  secondaryAction: { label: 'ウィジェット設定を見る', href: '/widget' },
+};
+```
+
+クイックフィルタチップ文言: 「自分の未対応」「期日切れ」「今日来た」「すべて」。
+状況バッジ表示文言: 「未対応 🔴」「対応中 🟡」「解決済み 🟢」「終了 ⚫」「FAQ 化済み 🟣」（色 + アイコン + テキストで FR-390 を満たす）。
+
+#### 6.8.4 関連参照
+
+> FR-070〜079 / FR-350 / FR-351 / FR-358 / FR-371 / FR-390 / BR-008 / BR-012 / BR-019 / BR-020 / AC-010
 
 ### 6.9 SCR-011 未解決質問詳細
 
@@ -1867,22 +2425,46 @@ export const projectSettingsSchema = z.object({
 ```ts
 export const updateInquirySchema = z.object({
   assigneeAccountId: z.string().nullable().optional(),
-  reason: z.string().max(500).optional(),
+  caseStatus: z.enum(['open', 'resolved']).optional(),
+  faqCandidateStatus: z.enum(['none', 'candidate', 'drafted', 'registered']).optional(),
+});
+
+// 対応不要として終了(専用エンドポイント)
+export const closeInquirySchema = z.object({
+  reason: z.string().min(1, '終了理由を入力してください').max(500),
 });
 ```
 
-サーバ側で `assertTransition()` を呼び、不正遷移は 409 + `INVALID_STATE`。
+- `updateInquirySchema`: 案件状態の通常更新（`open` ↔ `resolved`）。`closed` への遷移はこの API では拒否する。
+- `closeInquirySchema`: 「対応不要として終了」専用。**終了理由は必須**（基本設計 §5.4.5 / FR-354）。Plan §3.1 改善方針に準拠し、確認モーダルで理由テキストエリアを必須入力にする。
+
+サーバ側で `assertTransition()` を呼び、不正遷移は 409 + `INVALID_STATE`。Zod バリデーション失敗は 422 + `VALIDATION_FAILED`、`reason` 未入力時のエラー文言は `ErrorMessages.required` を使用（§6.2.8.4）。
 
 #### 6.9.2 関連 API
 
 - `GET /api/v1/inquiries/{id}`
 - `PATCH /api/v1/inquiries/{id}`
 - `POST /api/v1/inquiries/{id}/draft-faq`（AI 下書き生成）
-- `POST /api/v1/inquiries/{id}/close`（admin / 再認証必須）
+- `POST /api/v1/inquiries/{id}/close`（admin / 再認証必須 / `reason` 必須）
 
-#### 6.9.3 関連参照
+#### 6.9.3 確認モーダル仕様
 
-> FR-070〜079 / FR-100〜106 / AC-010 / AC-013
+「対応不要として終了」操作は §6.2.8.3 の `ConfirmDialogs.closeInquiry` を使用:
+
+| 項目 | 値 |
+|---|---|
+| タイトル | 「対応不要として終了しますか?」 |
+| 本文 | 「終了するとエンドユーザーに通知が送信され、再オープンには運営者への依頼が必要になります。」 |
+| 必須入力 | 終了理由（テキストエリア・最大 500 文字） |
+| Primary | 「対応不要として終了する」 |
+| Secondary | 「キャンセル」 |
+| 再認証 | 不要（FR-005 対象外。終了理由の入力自体が誤操作防止の段階） |
+
+UI 配置: 詳細画面下部の「その他の操作 ▼」アコーディオン内に配置し、画面メイン領域からの誤クリックを防止（基本設計 §5.4.5、Plan §3.1）。
+
+#### 6.9.4 関連参照
+
+> FR-070〜079 / FR-100〜106 / FR-350 / FR-352 / FR-354 / FR-356 / AC-010 / AC-013 / AC-024
 
 ### 6.10 SCR-012 FAQ 管理一覧
 
@@ -1891,19 +2473,31 @@ export const updateInquirySchema = z.object({
 #### 6.10.1 実装制約
 
 - 新規作成時のサーバ側 INSERT は必ず `status='draft'` を強制する（§5.1.2 第 1 層ガード）。
-- 公開操作は ConfirmDialog で明示的確認を必須化（FR-040 自動公開禁止）。
+- 公開操作は ConfirmDialog で明示的確認を必須化（FR-040 自動公開禁止）。再認証は FR-005 対象外（誤公開時に非公開化で取り消し可能）。
 - インポート CSV: 最大 5MB、UTF-8、ヘッダ列は基本設計の編集モード項目に合わせ `question,answer,category,status`。
+- 一括操作: チェック選択 + BulkActionBar で最大 50 件まで（FR-323 / FR-372）。バックエンドも `bulkLimitExceeded` で 50 件超を 422 拒否。
 
 #### 6.10.2 呼出 API
 
 - `GET /api/v1/faqs?status=...&projectId=...&keyword=...&cursor=...`
+- `GET /api/v1/faqs/counts`（状態サマリチップ用、60 秒キャッシュ）
 - `POST /api/v1/faqs/import`
 - `POST /api/v1/faqs/{id}/publish` / `hide` / `unpublish`
+- `POST /api/v1/faqs/bulk-status`（一括状態変更、最大 50 件）
 - `DELETE /api/v1/faqs/{id}`
 
-#### 6.10.3 関連参照
+#### 6.10.3 文言
 
-> FR-040〜048 / FR-310 / BR-001 / BR-009 / AC-006 / AC-014
+文言は §6.2.8 を正本とする。一覧固有の文言:
+
+- 状態サマリチップ: 「公開中 X」「下書き Y」「非公開 Z」（X/Y/Z は `/faqs/counts` の返り値）
+- 空状態: `EmptyStates.faqs`（§6.2.8.6）「FAQ がまだありません。最初の FAQ を作成しましょう。」
+- 削除確認: `ConfirmDialogs.deleteFaq`（§6.2.8.3）
+- 一括操作完了トースト: 「{N}件の FAQ を{action}しました」（action は「公開」「非公開化」「削除」）
+
+#### 6.10.4 関連参照
+
+> FR-040〜048 / FR-310 / FR-350 / FR-351 / FR-358 / FR-371 / FR-372 / BR-001 / BR-009 / AC-006 / AC-014
 
 ### 6.11 SCR-012 FAQ 編集 / AI 下書き生成
 
@@ -1923,23 +2517,47 @@ export const upsertFaqSchema = z.object({
 });
 ```
 
-#### 6.11.2 AI 下書き生成
+#### 6.11.2 自動保存
 
-inquiry 詳細から遷移してきた場合、初期値として AI が生成した下書きがロードされる。生成は `POST /api/v1/inquiries/{id}/draft-faq` で行い、結果を `inquiries.faq_candidate_status='drafted'` にする。生成された下書きは必ず `status='draft'` で保存される（§4.2.1 公開ガード）。
+`status='draft'` 編集時は **30 秒ごとの自動保存**（FR-321）。UI は `<AutosaveIndicator />`（§6.2.7.6）で状態表示。
 
-#### 6.11.3 公開操作
+- `idle`: 編集中、ユーザー操作待ち
+- `saving`: PATCH 送信中、黄色点 + 「保存中…」
+- `saved`: 成功、緑点 + 相対時刻「30 秒前に保存しました」
+- `error`: 失敗、赤点 + 「保存できませんでした」+ 「再試行」ボタン
 
-ConfirmDialog で「この FAQ を公開します。公開後、AI 回答の参照対象となります。」と表示。再認証不要だが、操作前に必ず Confirm。
+未保存変更がある状態で離脱を試みた場合は `useUnsavedChangesGuard()`（§6.2.7.7）で警告（FR-373）。
 
-#### 6.11.4 エラー表示
+#### 6.11.3 AI 下書き生成
+
+inquiry 詳細から遷移してきた場合、または編集画面の右ペイン「AI 下書きパネル」から未解決質問を選択してその場で生成可能。生成は `POST /api/v1/inquiries/{id}/draft-faq` で行い、結果を `inquiries.faq_candidate_status='drafted'` にする。生成された下書きは必ず `status='draft'` で保存される（§4.2.1 公開ガード）。
+
+UI フロー:
+1. 元未解決質問を選択（プルダウン）
+2. 「下書きを生成する」ボタン押下
+3. ProgressText で「生成中…」表示（FR-381、応答時間 3 秒超を想定）
+4. プレビュー表示
+5. 「採用する」で本文・回答欄に挿入 / 「やり直す」で再生成
+
+#### 6.11.4 公開操作
+
+`ConfirmDialogs.publishFaq`（§6.2.8.3）で確認後、`POST /api/v1/faqs/{id}/publish` を呼ぶ。**再認証は不要**（FR-005 対象外）。誤公開時の取り消しは同画面の状態ラジオを `hidden` に変更 → 「非公開化」操作で可能。
+
+#### 6.11.5 削除操作
+
+`ConfirmDialogs.deleteFaq`（§6.2.8.3）で確認後、`DELETE /api/v1/faqs/{id}` を呼ぶ。論理削除（`status='deleted'` + `deleted_at` 設定）。再認証不要。
+
+#### 6.11.6 エラー表示
 
 | エラーコード | 表示文言 |
 |-------------|---------|
-| `VERSION_CONFLICT` | 最新版を確認してください。他のユーザーがこの FAQ を更新しています。 |
+| `VERSION_CONFLICT` | `ErrorMessages.optimisticLockConflict`（§6.2.8.4）「他のユーザーが更新したため保存できませんでした。最新を確認してください」+ 「最新を表示」リンク |
+| `VALIDATION_FAILED` | フィールド直下に `ErrorMessages.required` / `maxLength` 等を表示 |
+| `INVALID_STATE` | 「この状態からは{遷移先}に変更できません」 |
 
-#### 6.11.5 関連参照
+#### 6.11.7 関連参照
 
-> FR-040〜048 / FR-100〜106 / FR-320〜323 / AC-006 / AC-014
+> FR-040〜048 / FR-100〜106 / FR-320〜323 / FR-350 / FR-353 / FR-373 / FR-381 / AC-006 / AC-014
 
 ### 6.12 SCR-013 個別チャット部屋（管理者側）
 
@@ -1957,11 +2575,50 @@ API: `POST /api/v1/chat-rooms/{id}/messages`
 
 #### 6.12.2 リアルタイム更新
 
-5 秒ポーリングで新着取得する。
+5 秒ポーリングで新着取得する。受信時は `<MessageList />` で `aria-live="polite"` リージョン更新し、スクリーンリーダー読み上げ通知。
 
-#### 6.12.3 関連参照
+#### 6.12.3 自動クローズ進捗バーの実装
 
-> FR-080〜091 / BR-005 / BR-007 / BR-009 / AC-011
+`reminder_state` 6 段階（§5.4 部屋状態 + reminder_state）を `<Timeline />`（§6.2.7.5）で抽象化:
+
+```ts
+const REMINDER_STAGES: { state: ReminderState; label: string; ordinal: number }[] = [
+  { state: 'active',                   label: '対応中',                   ordinal: 0 },
+  { state: 'stage1_pending_admin',     label: '管理者待ち',               ordinal: 1 },
+  { state: 'stage2_user_check_sent',   label: '利用者確認送信済',         ordinal: 2 },
+  { state: 'stage3_user_no_response',  label: '利用者無反応',             ordinal: 3 },
+  { state: 'stage4_final_check',       label: '最終確認送信済',           ordinal: 4 },
+  { state: 'stage5_final_no_response', label: '最終無反応',               ordinal: 5 },
+  { state: 'stage6_auto_closed',       label: '自動クローズ済',           ordinal: 6 },
+];
+
+// UI 表示: 「3/6 段階 (あと N 日で利用者最終確認)」
+const display = REMINDER_STAGES.find(s => s.state === room.reminder_state);
+const progressLabel = `${display.ordinal}/${REMINDER_STAGES.length - 1} 段階`;
+const nextDeadlineLabel = `あと ${daysUntilNextStage} 日で ${REMINDER_STAGES[display.ordinal + 1]?.label}`;
+```
+
+#### 6.12.4 機密情報注意
+
+入力欄直上に常時固定で `<Alert variant="warning" />` を表示。文言「機密情報(電話番号・クレジットカード番号・パスワード等)は入力しないでください」。色 + アイコン + テキストで FR-390 を満たす。
+
+#### 6.12.5 部屋を閉じる / 再オープン
+
+`ConfirmDialogs.closeChatRoom`（§6.2.8.3）または再オープン用の対応文言で確認後、`POST /api/v1/chat-rooms/{id}/close` / `POST /api/v1/chat-rooms/{id}/reopen` を呼ぶ。再認証必須（§4.3 再認証必須操作一覧）。
+
+部屋クローズ後の画面上部固定アラート文言:
+
+```ts
+SuccessMessages.chatRoomClosed = '問い合わせを終了しました。エンドユーザーへ通知を送信中です';
+
+// 表示専用文言(closed 状態)
+const closedBannerText = (closedAt: Date) =>
+  `この問い合わせは ${formatDate(closedAt)} に終了しました。再オープンが必要な場合は運営者へご依頼ください`;
+```
+
+#### 6.12.6 関連参照
+
+> FR-080〜091 / FR-350 / FR-353 / FR-354 / FR-381 / FR-390 / BR-005 / BR-007 / BR-009 / AC-011
 
 ### 6.13 SCR-013 個別チャット部屋（エンドユーザー側）
 
@@ -1975,9 +2632,22 @@ API: `POST /api/v1/chat-rooms/{id}/messages`
 
 **MVP では不提供**（基本設計 §15、v2.1 で確定）。
 
-#### 6.13.3 関連参照
+#### 6.13.3 機密情報注意（EU 側）
 
-> FR-080〜091 / FR-082a〜c / FR-083 / FR-084
+EU 側でも管理者側と同じく入力欄直上に常時固定でアラート表示。文言は同一「機密情報(電話番号・クレジットカード番号・パスワード等)は入力しないでください」。
+
+#### 6.13.4 部屋クローズ後の表示
+
+`room_status=closed` のとき、投稿フォームを非表示にし、画面上部に固定アラート:
+
+```ts
+const eu_closedBannerText = (closedAt: Date, projectName: string) =>
+  `この問い合わせは ${formatDate(closedAt)} に終了しました。新しい問い合わせを送信するには ${projectName} のサポート窓口へお問い合わせください`;
+```
+
+#### 6.13.5 関連参照
+
+> FR-080〜091 / FR-082a〜c / FR-083 / FR-084 / FR-091 / FR-353 / FR-390
 
 ### 6.14 SCR-014 ウィジェット設定
 
@@ -2024,12 +2694,55 @@ export const widgetSettingsSchema = z.object({
 
 - `GET /api/v1/usage?period=current_month`
 - `GET /api/v1/billing/invoices?limit=6`
+- `GET /api/v1/billing/invoices/latest/pdf`（最新請求書 PDF の R2 署名 URL を取得、有効期限 5 分）
 - `GET /api/v1/usage/trend?days=7`
 - 月次予算上限変更・しきい値設定変更・解約申請は再認証必須（FR-005）。
 
-#### 6.15.2 関連参照
+#### 6.15.2 SummaryCard グリッドの実装
 
-> FR-120〜127 / FR-129 / FR-148 / FR-191 / BR-012 / BR-021 / AC-015 / AC-020
+基本設計 §5.4.9 のサマリカード 6 枚を `<SummaryCard />`（§6.2.7.4）で描画。各カードに小型 UsageBar を埋め込み、状態ラベルを併記:
+
+```tsx
+type UsageState = 'normal' | 'warning' | 'danger' | 'over';
+function computeUsageState(ratio: number): UsageState {
+  if (ratio >= 1.25) return 'over';       // 「🚨 月次予算超過」
+  if (ratio >= 1.0)  return 'danger';     // 「🔴 月次予算に到達」
+  if (ratio >= 0.8)  return 'warning';    // 「⚠ もうすぐ予算到達」
+  return 'normal';                         // ラベル非表示
+}
+
+const USAGE_STATE_LABELS: Record<UsageState, (remaining: number) => string | null> = {
+  normal: () => null,
+  warning: (remaining) => `⚠ もうすぐ予算到達(残 ${remaining.toLocaleString()} 件)`,
+  danger: () => '🔴 月次予算に到達しました',
+  over: () => '🚨 月次予算超過(超過分は次月請求)',
+};
+```
+
+警告アラートは画面上部の `<Alert />` に集約し、サマリカード内のラベルと重複表示しない（情報源は同じだが視認性レベルを分離）。
+
+#### 6.15.3 TrialBanner 常時表示への拡張
+
+§6.2.6.X の dismiss ポリシーを **常時表示 + dismiss 24h** に維持しつつ、SCR-015 では「残 4 日以上」でも青背景の情報バナーを上部固定（基本設計 §5.4.9 主要文言を参照）:
+
+```ts
+function trialBannerVariant(daysRemaining: number): 'info' | 'warning' | 'danger' {
+  if (daysRemaining <= 1) return 'danger';   // 残 1 日以下: dismiss 不可
+  if (daysRemaining <= 3) return 'danger';   // 残 3 日以下: 赤強調
+  return 'info';                              // 残 4 日以上: 青(常時表示)
+}
+```
+
+#### 6.15.4 文言
+
+文言は §6.2.8 を正本とする。SCR-015 固有:
+
+- 解約確認: `ConfirmDialogs.cancelContract`（新規追加）— タイトル「契約を解約しますか?」、Primary「契約を解約する」（再認証必須）
+- 空状態(請求履歴): 「請求履歴はまだありません。トライアル終了後に最初の請求が発生します。」
+
+#### 6.15.5 関連参照
+
+> FR-120〜127 / FR-129 / FR-148 / FR-191 / FR-350 / FR-351 / FR-381 / FR-390 / BR-012 / BR-021 / AC-015 / AC-020
 
 ### 6.16 SCR-016 設定
 
@@ -2061,7 +2774,7 @@ export const ipAllowlistSchema = z.object({
 
 ### 6.17 SCR-017 ユーザー管理（一覧）
 
-画面項目（表示・操作・主要制約）はメイン基本設計 §5.4.11 SCR-017 を正本とする。本節では、当該画面の実装に関する呼出 API・行アクションの遷移方針のみを記載する。本画面はオーナーおよび `users:manage` 権限フラグ保持メンバーのみアクセス可。メンバーの招待 / 編集 / 状態操作はすべて §6.17a SCR-017-M1 を参照。
+画面項目（表示・操作・主要制約）はメイン基本設計 §5.4.11 SCR-017 を正本とする。本節では、当該画面の実装に関する呼出 API・行アクションの遷移方針・権限フラグアイコン定義のみを記載する。本画面はオーナーおよび `users:manage` 権限フラグ保持メンバーのみアクセス可。メンバーの招待 / 編集 / 状態操作はすべて §6.17a SCR-017-M1 を参照。
 
 #### 6.17.1 呼出 API
 
@@ -2071,13 +2784,55 @@ export const ipAllowlistSchema = z.object({
 
 - 「+ メンバーを招待」のクリックは SCR-017-M1 を招待モードで開く（クライアント側ルーティング）。
 - 行「編集」のクリックは SCR-017-M1 を編集モードで開く。サーバ呼出は SCR-017-M1 の保存 / 状態操作時に行う。
-- 行「削除」のクリックは確認ダイアログ + 再認証ののち、対象状態に応じて以下を呼び分ける:
+- 行「削除する」のクリックは `ConfirmDialogs.deleteMember`（§6.2.8.3） + 再認証ののち、対象状態に応じて以下を呼び分ける:
   - `pending_activation` 行: `POST /api/v1/members/{id}/invitation/revoke`（招待取消）
   - `active` / `disabled` 行: `DELETE /api/v1/members/{id}`（論理削除）
 
-#### 6.17.3 関連参照
+#### 6.17.3 権限フラグアイコン定義
 
-> FR-017 / FR-021a〜c / FR-333 / BR-013
+基本設計 §5.4.11 の「権限フラグアイコン群」を以下で実装。色 + 形 + tooltip の三重識別（FR-390）:
+
+```tsx
+// app/admin/src/components/PermissionFlagIcons.tsx
+export const PERMISSION_ICONS: Record<PermissionKind, { icon: string; label: string; color: string; tooltip: string }> = {
+  'faq:manage':     { icon: '📝', label: 'FAQ 管理',        color: '#36c', tooltip: PermissionMessages.faqManage },
+  'chat:respond':   { icon: '💬', label: '個別チャット対応', color: '#393', tooltip: PermissionMessages.chatRespond },
+  'users:manage':   { icon: '👥', label: 'ユーザー管理',    color: '#c63', tooltip: PermissionMessages.usersManage },
+  'project:manage': { icon: '⚙', label: 'プロジェクト設定', color: '#639', tooltip: PermissionMessages.projectManage },
+  'logs:view':      { icon: '📋', label: 'ログ参照',        color: '#555', tooltip: PermissionMessages.logsView },
+};
+
+export function PermissionFlagIcon({ kind, granted }: { kind: PermissionKind; granted: boolean }) {
+  const meta = PERMISSION_ICONS[kind];
+  return (
+    <span
+      role="img"
+      aria-label={`${meta.label}: ${granted ? '付与済み' : '未付与'}`}
+      title={meta.tooltip}
+      className={`permission-icon ${granted ? 'granted' : 'denied'}`}
+      style={{ color: granted ? meta.color : '#bbb' }}
+    >
+      {meta.icon}
+    </span>
+  );
+}
+```
+
+#### 6.17.4 招待中行の強調
+
+```tsx
+function rowVariant(member: Member): 'normal' | 'pending' | 'pending-urgent' {
+  if (member.status !== 'pending_activation') return 'normal';
+  const days = daysUntilInvitationExpiry(member.invitationExpiresAt);
+  return days <= 1 ? 'pending-urgent' : 'pending';
+}
+```
+
+CSS 上で `<tr class="pending">` は黄色背景、`<tr class="pending-urgent">` は赤背景。バッジ文言は「⏳ 招待中(残 N 日)」「🔴 期限切れ間近(残 N 日)」。
+
+#### 6.17.5 関連参照
+
+> FR-017 / FR-021a〜c / FR-350 / FR-351 / FR-356 / FR-390 / BR-013
 
 ### 6.17a SCR-017-M1 メンバー招待 / 編集モーダル
 
@@ -2152,9 +2907,88 @@ export const memberProjectGrantsUpdateSchema = z.object({
 | `active` | - | - | ○ | - | ○ |
 | `disabled` | - | - | - | ○ | - |
 
-#### 6.17a.4 関連参照
+#### 6.17a.4 権限テンプレ プリセット実装
 
-> FR-015〜021 / FR-015a〜d / FR-016a〜c / FR-018a〜c / FR-021c / FR-333〜338 / BR-013 / BR-013a〜c / AC-018 / AC-018a〜h
+基本設計 §5.4.11a の権限テンプレを以下で実装。フロント側のみで保持し、API は個別フラグ配列を送信する:
+
+```tsx
+// app/admin/src/components/PermissionTemplate.tsx
+type TemplateId = 'faq-staff' | 'inquiry-responder' | 'project-admin' | 'logs-only' | 'custom';
+
+const PERMISSION_TEMPLATES: Record<Exclude<TemplateId, 'custom'>, { label: string; description: string; permissions: PermissionKind[] }> = {
+  'faq-staff': {
+    label: 'FAQ 担当者',
+    description: 'FAQ の登録・編集・公開のみ',
+    permissions: ['faq:manage'],
+  },
+  'inquiry-responder': {
+    label: '問合せ対応者',
+    description: 'FAQ 管理 + 個別チャット対応',
+    permissions: ['faq:manage', 'chat:respond'],
+  },
+  'project-admin': {
+    label: 'プロジェクト管理者',
+    description: 'ユーザー管理以外の全権限',
+    permissions: ['faq:manage', 'chat:respond', 'project:manage', 'logs:view'],
+  },
+  'logs-only': {
+    label: 'ログ参照のみ',
+    description: '監査ログ閲覧のみ(返信権なし)',
+    permissions: ['logs:view'],
+  },
+};
+
+function detectTemplate(permissions: PermissionKind[]): TemplateId {
+  const sorted = [...permissions].sort().join(',');
+  for (const [id, def] of Object.entries(PERMISSION_TEMPLATES)) {
+    if ([...def.permissions].sort().join(',') === sorted) return id as TemplateId;
+  }
+  return 'custom';
+}
+```
+
+選択ロジック:
+- 招待モード初期値: `faq-staff`(よく使う最小権限)
+- 編集モード初期値: 現在の権限から `detectTemplate()` で逆引き → 該当なしは `custom`
+- ラジオ変更時: テンプレ → チェックボックス自動更新(`custom` 選択時は現状維持)
+- チェックボックス変更時: テンプレ自動的に `custom` に切替
+
+#### 6.17a.5 差分プレビューパネル
+
+編集モード時、保存前に差分を計算して表示:
+
+```tsx
+function computePermissionDiff(before: PermissionKind[], after: PermissionKind[]) {
+  const added = after.filter(p => !before.includes(p));
+  const removed = before.filter(p => !after.includes(p));
+  return { added, removed };
+}
+
+function computeProjectGrantDiff(before: string[], after: string[]) {
+  const added = after.filter(p => !before.includes(p));
+  const removed = before.filter(p => !after.includes(p));
+  return { added, removed };
+}
+```
+
+差分が 0 件のときはパネル自体を非表示にする。
+
+#### 6.17a.6 自己編集ガード
+
+```tsx
+function isSelfEditing(currentUser: Principal, target: Member): boolean {
+  return currentUser.accountId === target.accountId;
+}
+
+// 自己編集時の制約
+// 1. 権限フラグの users:manage チェックボックスは disabled + tooltip
+// 2. 「停止」「強制ログアウト」「招待取消」ボタンは非表示
+// 3. 画面上部に警告帯「あなた自身を編集中: 権限・状態は変更できません」を固定表示
+```
+
+#### 6.17a.7 関連参照
+
+> FR-015〜021 / FR-015a〜d / FR-016a〜c / FR-018a〜c / FR-021c / FR-333〜338 / FR-336 / FR-353 / FR-356 / FR-373 / BR-013 / BR-013a〜c / AC-018 / AC-018a〜h
 
 ### 6.18 SCR-018 プライバシーポリシー / 利用規約閲覧
 
@@ -2209,19 +3043,51 @@ API: `GET /api/v1/me/email-verification/{token}`
 
 #### 6.22.1 退会手続き（Zod）
 
-基本設計 §5.4.16 に従い退会理由（任意・テキストエリア）のみ。退会申請は再認証必須（FR-005）。
+基本設計 §5.4.16 に従い退会理由（任意・テキストエリア・最大 500 文字）のみ。退会申請は再認証必須（FR-005）。
 
 ```ts
 export const withdrawalRequestSchema = z.object({
-  reason: z.string().max(1000).optional(),
+  reason: z.string().max(500).optional(),
 });
 ```
 
-API: `POST /api/v1/withdrawal/request`
+API: `POST /api/v1/withdrawal/request`（オーナー専有、再認証必須）
 
-#### 6.22.2 関連参照
+レスポンスには `cutoffDate`（`YYYY-MM-DD`、当月末日）と `deletionDate`（`cutoffDate` + 30 日）を含め、SCR-024 のタイムラインおよび確認モーダル本文の差し込み変数として使用する。
 
-> FR-009 / BR-015 / AC-016
+#### 6.22.2 タイムライン実装
+
+`<Timeline />`（§6.2.7.5）でフロー可視化:
+
+```tsx
+const withdrawSteps: Step[] = [
+  { id: 'request',  label: '① 申請(今日)',                   date: today,         state: 'current' },
+  { id: 'cutoff',   label: `② ${cutoffDate} 末日: サービス停止`, date: cutoffDate,    state: 'future' },
+  { id: 'deletion', label: `③ ${deletionDate}: データ完全削除`,    date: deletionDate,  state: 'future' },
+];
+```
+
+タイムザイクル: タイムラインの末尾(③)は「(復元不可)」を必ず併記し、ユーザーに不可逆性を強調する（FR-354）。
+
+#### 6.22.3 確認モーダルの差し込み変数
+
+`ConfirmDialogs.withdraw`（§6.2.8.3）のテンプレで `{cutoffDate}` `{deletionDate}` を差し込み:
+
+```ts
+function withdrawConfirmBody({ cutoffDate, deletionDate }: { cutoffDate: string; deletionDate: string }) {
+  return ConfirmDialogs.withdraw.body
+    .replace('{cutoffDate}', formatDate(cutoffDate))
+    .replace('{deletionDate}', formatDate(deletionDate));
+}
+```
+
+#### 6.22.4 データエクスポート CTA
+
+CTA は画面中央付近に配置（Primary ボタン並みのサイズ、退会申請ボタンの上）。リンク先 `/settings/data-export` で SCR-016 のデータエクスポートセクションを直接表示。
+
+#### 6.22.5 関連参照
+
+> FR-009 / FR-350 / FR-354 / FR-360 / BR-015 / AC-016
 
 ### 6.23 SCR-025 利用規約への再同意案内
 
