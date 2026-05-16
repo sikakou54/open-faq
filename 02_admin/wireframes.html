@@ -309,12 +309,21 @@
       </div>
 
       <div class="app-main">
+        <header class="page-header"><div><h1>ホーム</h1><p class="page-description">現在の対応状況と SaaS 全体の主要指標を確認します</p></div></header>
+
+        <!-- 緊急アラート帯(上部固定) -->
+        <div class="alert-bar" role="alert">
+          <div>⚠ 承認期限切れ間近の申請が 1 件あります(残 24 時間以内) <a class="link">承認待ち一覧へ →</a></div>
+          <div>⚠ 24 時間以上滞留中の Webhook イベントが 2 件あります <a class="link">Webhook リプレイへ →</a></div>
+          <div>⚠ 3 営業日を超過した PII 誤検出報告が 1 件あります <a class="link">PII 誤検出管理へ →</a></div>
+        </div>
+
         <div class="panel">
           <div class="panel-title">
             KPI ハイライト
           </div>
 
-          <div class="grid-4">
+          <div class="summary-card-grid">
             <div class="summary-card">
               <div class="label">
                 アクティブ契約数
@@ -324,8 +333,8 @@
                 128
               </div>
 
-              <div class="delta">
-                前週比 +3 / 上限 200
+              <div class="delta-up">
+                ↑ 前週比 +3 / 上限 200
               </div>
             </div>
 
@@ -474,56 +483,33 @@
         <div class="grid-2" style="margin-top:8px;">
           <div class="panel">
             <div class="panel-title">
-              注意が必要な項目(バッジ集約)
+              クイックアクセス(件数バッジ集約)
             </div>
 
             <table class="wf">
               <tr>
-                <td>削除依頼の対応期限超過</td>
-
-                <td><span class="badge-pill red">7営業日超過 1 件</span></td>
-
-                <td><a class="link"></a></td>
-              </tr>
-
-              <tr>
-                <td>対応期限が近い削除依頼</td>
-
-                <td><span class="badge-pill yellow">3 件</span></td>
-
-                <td><a class="link"></a></td>
-              </tr>
-
-              <tr>
-                <td>DLQ 滞留(1 時間以上)</td>
-
-                <td><span class="badge-pill dlq">5 件</span></td>
-
-                <td><a class="link"></a></td>
-              </tr>
-
-              <tr>
-                <td>Webhook ペイロード差分検出</td>
-
-                <td><span class="badge-pill red">2 件</span></td>
-
-                <td><a class="link"></a></td>
-              </tr>
-
-              <tr>
-                <td>PII 誤検出報告 3 営業日経過</td>
-
-                <td><span class="badge-pill yellow">1 件</span></td>
-
-                <td><a class="link"></a></td>
-              </tr>
-
-              <tr>
-                <td>承認待ち(4-eyes)</td>
-
+                <td><a class="link">承認待ち一覧 →</a></td>
                 <td><span class="badge-pill purple">3 件</span></td>
-
-                <td><a class="link"></a></td>
+              </tr>
+              <tr>
+                <td><a class="link">DLQ 滞留(1 時間以上)→ Webhook リプレイ</a></td>
+                <td><span class="badge-pill dlq">5 件(うち 24h+ 2 件)</span></td>
+              </tr>
+              <tr>
+                <td><a class="link">ペイロード差分検出 →</a></td>
+                <td><span class="badge-pill red">2 件(未レビュー)</span></td>
+              </tr>
+              <tr>
+                <td><a class="link">PII 誤検出未判定 →</a></td>
+                <td><span class="badge-pill yellow">1 件(SLA 超過)</span></td>
+              </tr>
+              <tr>
+                <td><a class="link">削除データ参照 →</a></td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td><a class="link">AI 推論パラメータ <span class="hardgate-badge">⚠ 4-eyes</span> →</a></td>
+                <td>—</td>
               </tr>
             </table>
           </div>
@@ -896,117 +882,91 @@
       </div>
 
       <div class="app-main">
-        <div class="filter-bar">
-          <div class="filter-item">
-            契約検索: <span class="input" style="width:180px;"><span class="placeholder">ID/名前 部分一致 最大 100 文字</span></span>
-          </div>
+        <nav class="breadcrumb" aria-label="現在位置"><a>ホーム</a> / <span aria-current="page">削除データ参照</span></nav>
+        <header class="page-header"><div><h1>削除データ参照</h1><p class="page-description">論理削除済みリソースを検索・参照します。本文は表示されず、復元判断に必要なメタデータのみ表示します</p></div></header>
 
-          <div class="filter-item">
-            リソース種別(複数可): <span class="select" style="width:240px;">▼ owner / project / faq / account / announcement</span>
-          </div>
-
-          <div class="filter-item">
-            削除種別(複数可): <span class="select" style="width:220px;">▼ 削除済み / 無効化 / 削除予定</span>
-          </div>
-
-          <div class="filter-item">
-            削除日範囲: <span class="input" style="width:90px;">2026-04-11</span>〜<span class="input" style="width:90px;">2026-05-11</span> <span class="helper">(最大期間 1 年)</span>
-          </div><button class="btn small primary">検索</button> <button class="btn small">クリア</button>
+        <div class="quick-filter-chips" role="tablist" aria-label="クイックフィルタ">
+          <button class="chip active">最近 1 週間 <span class="count">12</span></button>
+          <button class="chip">最近 1 ヶ月 <span class="count">42</span></button>
+          <button class="chip">物理削除予定 7 日以内 <span class="count">3</span></button>
+          <button class="chip">すべて <span class="count">156</span></button>
         </div>
+
+        <details><summary style="font-size: 10px; color: #666; cursor: pointer; margin-bottom: 6px;">詳細フィルタ ▼</summary>
+          <div class="filter-bar">
+            <div class="filter-item">契約検索: <span class="input" style="width:180px;"><span class="placeholder">ID / 名前 部分一致</span></span></div>
+            <div class="filter-item">リソース種別: <span class="select" style="width:200px;">▼ owner / project / faq / account / announcement</span></div>
+            <div class="filter-item">削除種別: <span class="select" style="width:180px;">▼ deleted / disabled / deleted_pending</span></div>
+            <div class="filter-item">削除日範囲: <span class="input" style="width:90px;">2026-04-17</span>〜<span class="input" style="width:90px;">2026-05-17</span></div>
+            <button class="btn small primary">検索</button>
+          </div>
+        </details>
+
+        <div class="applied-filter-chips"><span class="chip-remove">直近 1 週間 ✕</span><a class="clear-all">すべてクリア</a></div>
+        <div class="small" style="margin-bottom: 6px;">表示中: 1-5 / 全 12 件</div>
 
         <table class="wf">
           <thead>
             <tr>
               <th>リソース ID</th>
-
-              <th>契約 ID / スラグ</th>
-
+              <th>契約</th>
               <th>種別</th>
-
               <th>削除日時</th>
-
               <th>削除種別</th>
-
+              <th>物理削除予定</th>
               <th>操作</th>
             </tr>
           </thead>
-
           <tbody>
             <tr>
               <td><code>fq_SAMPLE_01HXXXX</code></td>
-
-              <td>SAMPLE-owner-001 / acme-sample</td>
-
-              <td><span class="badge-pill">faq</span></td>
-
-              <td>2026-05-08 14:30 JST</td>
-
-              <td><span class="badge-pill yellow">削除予定</span></td>
-
-              <td><button class="btn small primary">復元</button></td>
+              <td>acme-sample</td>
+              <td><span class="badge-pill">📝 FAQ</span></td>
+              <td>9 日前</td>
+              <td><span class="badge-pill yellow">⏳ deleted_pending</span></td>
+              <td><span style="color: #c33;">残 6 日(2026-05-23)</span></td>
+              <td><button class="btn small primary">復元する</button></td>
             </tr>
-
             <tr>
               <td><code>own_SAMPLE_01HZZZZ</code></td>
-
-              <td>SAMPLE-owner-002 / beta-sample</td>
-
-              <td><span class="badge-pill">owner</span></td>
-
-              <td>2026-05-05 10:00 JST</td>
-
-              <td><span class="badge-pill yellow">削除予定</span></td>
-
-              <td><button class="btn small primary">復元</button></td>
+              <td>beta-sample</td>
+              <td><span class="badge-pill">👑 オーナー</span></td>
+              <td>12 日前</td>
+              <td><span class="badge-pill yellow">⏳ deleted_pending</span></td>
+              <td><span style="color: #c63;">残 18 日(2026-06-04)</span></td>
+              <td><button class="btn small primary">復元する</button></td>
             </tr>
-
             <tr>
               <td><code>prj_SAMPLE_01HYYYY</code></td>
-
-              <td>SAMPLE-owner-003 / gamma-sample</td>
-
-              <td><span class="badge-pill">project</span></td>
-
-              <td>2026-05-03 16:00 JST</td>
-
-              <td><span class="badge-pill gray">無効化</span></td>
-
-              <td><button class="btn small primary">復元</button></td>
+              <td>gamma-sample</td>
+              <td><span class="badge-pill">📁 プロジェクト</span></td>
+              <td>14 日前</td>
+              <td><span class="badge-pill orange">disabled</span></td>
+              <td>—</td>
+              <td><button class="btn small primary">復元する</button></td>
             </tr>
-
             <tr>
               <td><code>acc_SAMPLE_01HWWWW</code></td>
-
-              <td>SAMPLE-owner-001 / acme-sample</td>
-
-              <td><span class="badge-pill">account</span></td>
-
-              <td>2026-05-02 09:15 JST</td>
-
-              <td><span class="badge-pill gray">無効化</span></td>
-
-              <td><button class="btn small primary">復元</button></td>
+              <td>acme-sample</td>
+              <td><span class="badge-pill">👥 メンバー</span></td>
+              <td>15 日前</td>
+              <td><span class="badge-pill orange">disabled</span></td>
+              <td>—</td>
+              <td><button class="btn small primary">復元する</button></td>
             </tr>
-
-            <tr>
+            <tr style="opacity: 0.6;">
               <td><code>fq_SAMPLE_01HVVVV</code></td>
-
-              <td>SAMPLE-owner-004 / delta-sample</td>
-
-              <td><span class="badge-pill">faq</span></td>
-
-              <td>2025-04-10 12:00 JST</td>
-
-              <td><span class="badge-pill gray">削除済み(物理削除済)</span></td>
-
-              <td><button class="btn small" disabled>復元不可</button></td>
+              <td>delta-sample</td>
+              <td><span class="badge-pill">📝 FAQ</span></td>
+              <td>1 年前</td>
+              <td><span class="badge-pill gray">⚫ deleted(物理削除済)</span></td>
+              <td>—</td>
+              <td><button class="btn small" disabled title="物理削除済のため復元できません">復元不可</button></td>
             </tr>
           </tbody>
         </table>
 
-        <div class="pager">
-          42 件中 1-5 件表示 <span class="pg">‹</span><span class="pg active">1</span><span class="pg">2</span><span class="pg">3</span><span class="pg">›</span>
-        </div>
+        <div class="pager">表示中: 1-5 / 全 12 件 <span class="pg">‹</span><span class="pg active">1</span><span class="pg">2</span><span class="pg">3</span><span class="pg">›</span></div>
 
         <div class="panel" style="margin-top:8px;">
           <div class="panel-title">
@@ -1654,141 +1614,53 @@
       </div>
 
       <div class="app-main">
+        <nav class="breadcrumb" aria-label="現在位置"><a>ホーム</a> / <span aria-current="page">レート制限・予算上書き</span></nav>
+        <header class="page-header"><div><h1>レート制限・予算上書き</h1><p class="page-description">契約別にレート制限と月次予算上限を一時的に上書き設定します(緊急対応)</p></div><div><button class="btn primary">+ 上書きを追加</button></div></header>
+
         <div class="filter-bar">
-          <div class="filter-item">
-            契約検索: <span class="input" style="width:200px;"><span class="placeholder">ID/名前 部分一致</span></span>
-          </div><button class="btn small primary">検索</button>
+          <div class="filter-item">契約検索: <span class="input" style="width:200px;"><span class="placeholder">ID / 名前 部分一致</span></span></div>
+          <button class="btn small primary">検索</button>
         </div>
 
-        <div class="panel">
-          <div class="panel-title">
-            契約別現在値(SAMPLE-owner-001 / acme-sample 選択中)
-          </div>
+        <div class="small" style="margin-bottom: 6px;">上書き中の契約: 1-3 / 全 3 件</div>
 
+        <!-- 上書きカード 1 -->
+        <article class="panel">
+          <header style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
+            <div><h3 style="margin: 0; font-size: 12px;">acme-sample</h3><span class="small">SAMPLE-owner-001</span></div>
+            <span class="badge-pill yellow">期限: 残 5 日</span>
+          </header>
           <table class="wf">
-            <thead>
-              <tr>
-                <th>項目</th>
-
-                <th>デフォルト</th>
-
-                <th>現在の上書き値</th>
-
-                <th>変更先</th>
-
-                <th>反映</th>
-              </tr>
-            </thead>
-
+            <thead><tr><th>項目</th><th>グローバル値</th><th>上書き値</th></tr></thead>
             <tbody>
-              <tr>
-                <td>/widget/ask レート制限</td>
-
-                <td>60 req/min</td>
-
-                <td><span class="badge-pill purple">120 req/min</span></td>
-
-                <td>
-                  <div class="input" style="width:80px;">
-                    <span class="placeholder">1〜10000</span>
-                  </div>req/min
-                </td>
-
-                <td><span class="badge-pill green">即時</span></td>
-              </tr>
-
-              <tr>
-                <td>チャット投稿(お問い合わせ利用者側)</td>
-
-                <td>3 秒に 1 / 30 通/分</td>
-
-                <td>同左</td>
-
-                <td>
-                  <div class="input" style="width:40px;display:inline-block;">
-                    3
-                  </div>秒に 1
-
-                  <div class="input" style="width:40px;display:inline-block;">
-                    30
-                  </div>通/分
-                </td>
-
-                <td>-</td>
-              </tr>
-
-              <tr>
-                <td>チャット投稿(担当者側)</td>
-
-                <td>1 秒に 1 / 60 通/分</td>
-
-                <td>同左</td>
-
-                <td>
-                  <div class="input" style="width:40px;display:inline-block;">
-                    1
-                  </div>秒に 1
-
-                  <div class="input" style="width:40px;display:inline-block;">
-                    60
-                  </div>通/分
-                </td>
-
-                <td>-</td>
-              </tr>
-
-              <tr>
-                <td>月次予算上書き(円)</td>
-
-                <td>運営者推奨デフォルト</td>
-
-                <td><span class="badge-pill purple">¥500,000</span></td>
-
-                <td>
-                  <div class="input" style="width:120px;">
-                    <span class="placeholder">1 円刻み</span>
-                  </div>
-                </td>
-
-                <td><span class="badge-pill green">即時</span></td>
-              </tr>
+              <tr><td>/widget/ask レート制限</td><td>60 req/min</td><td><strong style="color: #4a3674;">120 req/min</strong></td></tr>
+              <tr><td>月次予算</td><td>¥100,000</td><td><strong style="color: #4a3674;">¥500,000</strong></td></tr>
             </tbody>
           </table>
-        </div>
+          <div class="small" style="margin-top: 6px;"><strong>上書き理由:</strong> キャンペーン期間中のトラフィック急増に対応(INC-SAMPLE-005)</div>
+          <div class="small">設定者: op-SAMPLE-01 / 2026-05-12 10:00</div>
+          <footer style="display: flex; gap: 6px; justify-content: flex-end; margin-top: 8px;">
+            <button class="btn small">編集する</button>
+            <button class="btn small danger">グローバル値に戻す <span class="reauth-badge">🛡</span></button>
+          </footer>
+        </article>
 
-        <div class="panel">
-          <div class="panel-title">
-            上書き理由・チケット ID
-          </div>
-
-          <div class="grid-2">
-            <div class="field">
-              <label>上書き理由 <span class="req">*</span></label>
-
-              <div class="textarea">
-                <span class="placeholder">最大 1000 文字</span>
-              </div>
-            </div>
-
-            <div>
-              <div class="field">
-                <label>対応チケット ID <span class="req">*</span></label>
-
-                <div class="input">
-                  <span class="placeholder">例: INC-SAMPLE-005</span>
-                </div>
-              </div>
-
-              <div class="field">
-                <label>再認証</label>
-
-                <div class="input">
-                  <span class="badge-pill green">過去 5 分以内に実施済</span>
-                </div>
-              </div>
-            </div>
-          </div><button class="btn primary">保存</button> <button class="btn hardgate" disabled>承認申請</button> <button class="btn">キャンセル</button>
-        </div>
+        <!-- 上書きカード 2 -->
+        <article class="panel">
+          <header style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
+            <div><h3 style="margin: 0; font-size: 12px;">beta-sample</h3><span class="small">SAMPLE-owner-002</span></div>
+          </header>
+          <table class="wf">
+            <thead><tr><th>項目</th><th>グローバル値</th><th>上書き値</th></tr></thead>
+            <tbody>
+              <tr><td>月次予算</td><td>¥100,000</td><td><strong style="color: #4a3674;">¥300,000</strong></td></tr>
+            </tbody>
+          </table>
+          <footer style="display: flex; gap: 6px; justify-content: flex-end; margin-top: 8px;">
+            <button class="btn small">編集する</button>
+            <button class="btn small danger">グローバル値に戻す <span class="reauth-badge">🛡</span></button>
+          </footer>
+        </article>
 
         <div class="panel">
           <div class="panel-title">
@@ -2196,99 +2068,35 @@
       </div>
 
       <div class="app-main">
-        <div class="panel">
-          <div class="panel-title">
-            KPI ハイライト
-          </div>
+        <nav class="breadcrumb" aria-label="現在位置"><a>ホーム</a> / <span aria-current="page">運営者活動</span></nav>
+        <header class="page-header"><div><h1>運営者活動ダッシュボード(監査)</h1><p class="page-description">運営者操作の監査ログを検索・閲覧・エクスポートします(5 年保持)</p></div><div><button class="btn primary">CSV をエクスポートする <span class="reauth-badge">🛡</span></button></div></header>
 
-          <div class="grid-4">
-            <div class="summary-card">
-              <div class="label">
-                アクティブ契約数
-              </div>
-
-              <div class="value">
-                128
-              </div>
-            </div>
-
-            <div class="summary-card red">
-              <div class="label">
-                削除依頼の期限超過率
-              </div>
-
-              <div class="value">
-                0.7%
-              </div>
-
-              <div class="delta">
-                7営業日超過 1 件
-              </div>
-            </div>
-
-            <div class="summary-card">
-              <div class="label">
-                運営者操作頻度異常
-              </div>
-
-              <div class="value">
-                0
-              </div>
-
-              <div class="delta">
-                直近 1h
-              </div>
-            </div>
-
-            <div class="summary-card green">
-              <div class="label">
-                全契約横断 MAU・解決率
-              </div>
-
-              <div class="value">
-                12,400 / 78%
-              </div>
-            </div>
-          </div>
+        <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+          <span class="badge-pill green">✅ ハッシュチェーン検証 OK(直近 24 時間)</span>
+          <span class="badge-pill gray">運営者頻度異常検知: 0 件</span>
         </div>
 
-        <div class="filter-bar">
-          <div class="filter-item">
-            action(部分一致): <span class="input" style="width:130px;"><span class="placeholder">owner.restore</span></span> <span class="helper">&lt;resource&gt;.&lt;verb&gt;</span>
-          </div>
-
-          <div class="filter-item">
-            actor_id(完全一致): <span class="input" style="width:120px;"><span class="placeholder">op-SAMPLE-01</span></span>
-          </div>
-
-          <div class="filter-item">
-            操作主体: <span class="select" style="width:160px;">▼ service_operator / admin / operator / お問い合わせ利用者 / system</span>
-          </div>
-
-          <div class="filter-item">
-            target: <span class="input" style="width:100px;"><span class="placeholder">target_id</span></span> <span class="select" style="width:80px;">▼ type</span>
-          </div>
-
-          <div class="filter-item">
-            発生日時: <span class="input" style="width:90px;">2025-05-11</span>〜<span class="input" style="width:90px;">2026-05-11</span> <span class="helper">最大 1 年</span>
-          </div>
-
-          <div class="filter-item">
-            オーナーアカウント(横断): <span class="input" style="width:100px;"><span class="placeholder">全契約可</span></span>
-          </div>
-
-          <div class="filter-item">
-            マスク済み IP: <span class="input" style="width:110px;"><span class="placeholder">203.0.113.*</span></span>
-          </div>
-
-          <div class="filter-item">
-            保持区分: <span class="select">▼ 1y / 5y / 7y / 全部</span>
-          </div>
-
-          <div class="filter-item">
-            対応チケット ID: <span class="input" style="width:100px;"><span class="placeholder">INC-SAMPLE</span></span>
-          </div><button class="btn small primary">検索</button>
+        <div class="quick-filter-chips" role="tablist" aria-label="クイックフィルタ">
+          <button class="chip active">直近 24h <span class="count">128</span></button>
+          <button class="chip">直近 7 日 <span class="count">894</span></button>
+          <button class="chip">重要操作のみ <span class="count">12</span></button>
+          <button class="chip">異常検知あり <span class="count">0</span></button>
+          <button class="chip">すべて <span class="count">12,420</span></button>
         </div>
+
+        <details><summary style="font-size: 10px; color: #666; cursor: pointer; margin-bottom: 6px;">詳細フィルタ ▼</summary>
+          <div class="filter-bar">
+            <div class="filter-item">action: <span class="input" style="width:130px;"><span class="placeholder">例: owner.restore</span></span></div>
+            <div class="filter-item">操作主体: <span class="select" style="width:140px;">▼ service_operator / admin / system</span></div>
+            <div class="filter-item">対象: <span class="input" style="width:100px;"><span class="placeholder">target_id</span></span></div>
+            <div class="filter-item">期間: <span class="input" style="width:90px;">2025-05-17</span>〜<span class="input" style="width:90px;">2026-05-17</span><span class="helper"> 最大 1 年</span></div>
+            <div class="filter-item">対応チケット ID: <span class="input ticket-id-field" style="width:100px;"><span class="placeholder">JIRA-12345</span></span></div>
+            <div class="filter-item">保持区分: <span class="select" style="width:90px;">▼ 1y/5y/7y</span></div>
+            <button class="btn small primary">検索</button>
+          </div>
+        </details>
+
+        <div class="small" style="margin-bottom: 6px;">表示中: 1-100 / 全 128 件(概算)</div>
 
         <table class="wf">
           <thead>
@@ -2930,67 +2738,28 @@
       </div>
 
       <div class="app-main">
-        <div class="panel">
-          <div class="panel-title">
-            3 営業日判定タイマー
-          </div>
+        <nav class="breadcrumb" aria-label="現在位置"><a>ホーム</a> / <span aria-current="page">PII 誤検出報告</span></nav>
+        <header class="page-header"><div><h1>PII 誤検出報告管理</h1><p class="page-description">PII 誤検出報告を 3 営業日以内に判定し、必要に応じてルールを更新します</p></div></header>
 
-          <div class="grid-4">
-            <div class="summary-card">
-              <div class="label">
-                reported
-              </div>
+        <!-- SLA サマリ帯(上部固定) -->
+        <div class="alert-bar" role="alert">⚠ SLA 超過: 1 件 / 期限間近: 1 件 / 期限内: 2 件</div>
 
-              <div class="value">
-                2
-              </div>
-            </div>
-
-            <div class="summary-card yellow">
-              <div class="label">
-                under_review
-              </div>
-
-              <div class="value">
-                1
-              </div>
-            </div>
-
-            <div class="summary-card red">
-              <div class="label">
-                3 営業日経過
-              </div>
-
-              <div class="value">
-                1
-              </div>
-            </div>
-
-            <div class="summary-card green">
-              <div class="label">
-                archived(直近 30 日)
-              </div>
-
-              <div class="value">
-                14
-              </div>
-            </div>
-          </div>
+        <div class="quick-filter-chips" role="tablist" aria-label="クイックフィルタ">
+          <button class="chip">期限切れ <span class="count">1</span></button>
+          <button class="chip">期限間近 <span class="count">1</span></button>
+          <button class="chip active">未判定 <span class="count">2</span></button>
+          <button class="chip">すべて <span class="count">18</span></button>
         </div>
 
-        <div class="filter-bar">
-          <div class="filter-item">
-            state: <span class="select" style="width:260px;">▼ all / reported / under_review / ruled_false_positive / ruled_correct_detection / rule_updated / archived</span>
+        <details><summary style="font-size: 10px; color: #666; cursor: pointer; margin-bottom: 6px;">詳細フィルタ ▼</summary>
+          <div class="filter-bar">
+            <div class="filter-item">報告元: <span class="select" style="width:160px;">▼ (担当者) / (管理者)</span></div>
+            <div class="filter-item">検出層: <span class="select" style="width:200px;">▼ 第 1 層 / 第 2 層 / 第 3 層</span></div>
+            <button class="btn small primary">検索</button>
           </div>
+        </details>
 
-          <div class="filter-item">
-            報告元: <span class="select" style="width:200px;">▼ (担当者) / (管理者) / (運営者)</span>
-          </div>
-
-          <div class="filter-item">
-            検出層: <span class="select" style="width:200px;">▼ 第 1 層(正規表現) / 第 2 層(NER) / 第 3 層(FAQ 整合性)</span>
-          </div><button class="btn small primary">検索</button>
-        </div>
+        <div class="small" style="margin-bottom: 6px;">表示中: 1-4 / 全 4 件</div>
 
         <table class="wf">
           <thead>
@@ -3102,47 +2871,23 @@
           </div>
 
           <div class="panel hardgate">
-            <div class="panel-title">
-              検出ルール更新
-            </div>
-
-            <div class="alert-bar warn">
-              ⚠ <strong>過去データは修正しない</strong>。ルール更新は今後の検出のみに適用。
-            </div>
-
-            <div class="field">
-              <label>更新対象ルール</label>
-
-              <div class="select">
-                ▼ 正規表現ルール(第 1 層) / 分類ルール(第 2 層)
-              </div>
-            </div>
-
+            <div class="panel-title">検出ルール更新</div>
+            <div class="alert-bar warn">⚠ <strong>過去データは修正しない</strong>。ルール更新は今後の検出のみに適用</div>
+            <div class="field"><label>更新対象ルール</label><div class="select">▼ 正規表現ルール(第 1 層) / 分類ルール(第 2 層)</div></div>
             <div class="field">
               <label>パラメータ変更内容</label>
-
-              <div class="textarea">
-                <span class="placeholder">SAMPLE: "田中" を氏名除外リスト(商品名候補)に追加</span>
-              </div>
+              <div class="textarea"><span class="placeholder">例: "田中" を氏名除外リスト(商品名候補)に追加</span></div>
             </div>
-
-            <div class="field">
-              <label>対応チケット ID <span class="req">*</span> / 再認証</label>
-
-              <div class="grid-2">
-                <div class="input">
-                  <span class="placeholder">INC-SAMPLE-PII-005</span>
-                </div>
-
-                <div class="input">
-                  <span class="badge-pill green">過去 5 分以内に実施済</span>
-                </div>
-              </div>
+            <div class="alert-bar info" role="status">ℹ <strong>影響件数プレビュー</strong>: 過去 30 日の質問ログに対しドライラン<br>検知数 <strong>142 件 → 116 件</strong>(差分 -26 件、-18.3%)</div>
+            <div class="field"><label>申請理由 <span class="req">*</span></label><div class="textarea"><span class="placeholder">なぜこの更新が必要か簡潔にご記入ください</span></div></div>
+            <div class="field"><label>対応チケット ID <span class="req">*</span></label><div class="input ticket-id-field"><span class="placeholder">例: JIRA-12345 / INC-PII-005</span></div></div>
+            <div class="field"><label>段階ロールアウト</label>
+              <div style="display: flex; gap: 6px; flex-wrap: wrap;"><button class="btn small">0% ロールバック</button> <button class="btn small primary">10% で開始</button> <button class="btn small">50% へ拡大</button> <button class="btn small">100% へ完全切替</button></div>
             </div>
-
-            <div class="field">
-              <label>段階ロールアウト</label> <button class="btn small">0% ロールバック</button> <button class="btn small primary">10% で開始</button> <button class="btn small">50% へ拡大</button> <button class="btn small">100% へ完全切替</button>
-            </div><button class="btn primary">検出ルール更新を実行</button>
+            <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px;">
+              <button class="btn danger">報告を却下する <span class="hardgate-badge">⚠ 4-eyes</span> <span class="reauth-badge">🛡</span></button>
+              <button class="btn primary">ルールを更新する <span class="hardgate-badge">⚠ 4-eyes</span> <span class="reauth-badge">🛡</span></button>
+            </div>
           </div>
         </div>
 
@@ -3240,25 +2985,28 @@
       </div>
 
       <div class="app-main">
+        <nav class="breadcrumb" aria-label="現在位置"><a>ホーム</a> / <span aria-current="page">ペイロード差分検出</span></nav>
+        <header class="page-header"><div><h1>Webhook ペイロード差分検出</h1><p class="page-description">同一イベント ID で payload_hash が異なる Webhook 受信を検出・レビューします</p></div><div><button class="btn primary">手動再処理する → SCR-097 へ <span class="reauth-badge">🛡</span></button></div></header>
 
+        <div class="alert-bar info" role="status">未レビュー: 2 件 / レビュー中: 0 件 / 処理完了: 6 件</div>
 
-        <div class="filter-bar">
-          <div class="filter-item">
-            state: <span class="select">▼ all / detected / reviewed / reprocessed_manually / dismissed_no_action</span>
-          </div>
-
-          <div class="filter-item">
-            イベント ID: <span class="input" style="width:150px;"><span class="placeholder">evt_SAMPLE_*</span></span>
-          </div>
-
-          <div class="filter-item">
-            オーナーアカウント: <span class="input" style="width:140px;"><span class="placeholder">部分一致</span></span>
-          </div>
-
-          <div class="filter-item">
-            期間: <span class="input" style="width:90px;">2026-04-11</span>〜<span class="input" style="width:90px;">2026-05-11</span>
-          </div><button class="btn small primary">検索</button>
+        <div class="quick-filter-chips" role="tablist" aria-label="クイックフィルタ">
+          <button class="chip active">未レビュー <span class="count">2</span></button>
+          <button class="chip">レビュー中 <span class="count">0</span></button>
+          <button class="chip">処理完了 <span class="count">6</span></button>
+          <button class="chip">すべて <span class="count">8</span></button>
         </div>
+
+        <details><summary style="font-size: 10px; color: #666; cursor: pointer; margin-bottom: 6px;">詳細フィルタ ▼</summary>
+          <div class="filter-bar">
+            <div class="filter-item">イベント ID: <span class="input" style="width:150px;"><span class="placeholder">evt_SAMPLE_*</span></span></div>
+            <div class="filter-item">契約: <span class="input" style="width:140px;"><span class="placeholder">部分一致</span></span></div>
+            <div class="filter-item">期間: <span class="input" style="width:90px;">2026-04-17</span>〜<span class="input" style="width:90px;">2026-05-17</span></div>
+            <button class="btn small primary">検索</button>
+          </div>
+        </details>
+
+        <div class="small" style="margin-bottom: 6px;">表示中: 1-4 / 全 8 件</div>
 
         <table class="wf">
           <thead>
@@ -3280,58 +3028,35 @@
           <tbody>
             <tr>
               <td>diff_SAMPLE_01H001</td>
-
               <td><code>evt_SAMPLE_01HDDDD</code></td>
-
-              <td>own_SAMPLE_01HDDDD</td>
-
-              <td>2026-05-09 09:00 JST</td>
-
-              <td><span class="badge-pill red">detected</span></td>
-
-              <td><button class="btn small primary">確認(diff 表示)</button></td>
+              <td>acme-sample</td>
+              <td>2 日前</td>
+              <td><span class="badge-pill blue">⏳ 未レビュー</span></td>
+              <td><button class="btn small primary">レビューを開始する</button></td>
             </tr>
-
             <tr>
               <td>diff_SAMPLE_01H002</td>
-
               <td><code>evt_SAMPLE_01HEEEE</code></td>
-
-              <td>own_SAMPLE_01HEEEE</td>
-
-              <td>2026-05-07 14:30 JST</td>
-
-              <td><span class="badge-pill blue">reviewed</span></td>
-
-              <td><button class="btn small primary">手動再処理</button> <button class="btn small">dismiss</button></td>
+              <td>beta-sample</td>
+              <td>4 日前</td>
+              <td><span class="badge-pill yellow">🔍 レビュー中</span></td>
+              <td><button class="btn small primary">手動再処理 → SCR-097</button> <button class="btn small">影響なしとして処理</button></td>
             </tr>
-
             <tr class="system-row">
               <td>diff_SAMPLE_01H000</td>
-
               <td><code>evt_SAMPLE_01HFFFF</code></td>
-
-              <td>own_SAMPLE_01HFFFF</td>
-
-              <td>2026-04-30 10:00 JST</td>
-
-              <td><span class="badge-pill green">reprocessed_manually</span></td>
-
+              <td>gamma-sample</td>
+              <td>11 日前</td>
+              <td><span class="badge-pill green">✅ 再処理済</span></td>
               <td><span class="helper">処理済</span></td>
             </tr>
-
             <tr class="system-row">
               <td>diff_SAMPLE_01HXXX</td>
-
               <td><code>evt_SAMPLE_01HGGGG</code></td>
-
-              <td>own_SAMPLE_01HGGGG</td>
-
-              <td>2026-04-28 16:00 JST</td>
-
-              <td><span class="badge-pill gray">dismissed_no_action</span></td>
-
-              <td><span class="helper">無視可と判断</span></td>
+              <td>delta-sample</td>
+              <td>13 日前</td>
+              <td><span class="badge-pill gray">⚫ 影響なし</span></td>
+              <td><span class="helper">処理完了</span></td>
             </tr>
           </tbody>
         </table>
