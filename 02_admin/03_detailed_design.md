@@ -990,6 +990,13 @@ export const AdminConfirmDialogs = {
     secondary: 'キャンセル',
     requiresReauth: true,
   },
+  resetOverride: {
+    title: '上書きをグローバル値に戻しますか?',
+    body: '{contractName} の上書き設定を削除し、グローバル既定値({globalValues})に戻します。即時反映されます',
+    primary: 'グローバル値に戻す',
+    secondary: 'キャンセル',
+    requiresReauth: true,
+  },
 } as const;
 ```
 
@@ -1005,7 +1012,8 @@ export const AdminConfirmDialogs = {
 
 | 用途 | メソッド | パス |
 |---|---|---|
-| 一覧検索 | GET | `/admin/api/v1/deleted-resources?type=&deletion_type=&owner=&from=&to=&cursor=` |
+| 一覧検索 | GET | `/admin/api/v1/deleted-resources?type=&deletion_type=&owner=&from=&to=&quickFilter=&cursor=` |
+| 件数集計(クイックフィルタ用、60 秒キャッシュ) | GET | `/admin/api/v1/deleted-resources/counts` |
 | 詳細取得 | GET | `/admin/api/v1/deleted-resources/{type}/{id}` |
 | 復元遷移 | - | SCR-091 へ `resource_type` / `resource_id` をクエリで引き継ぎ |
 
@@ -1025,11 +1033,63 @@ const DeletedResourceQuery = z.object({
 
 ##### 5.3.1.3 エラーコード
 
-| コード | メッセージキー | 条件 | HTTP |
+| コード | メッセージキー | 表示文言(運営者向け) | HTTP |
 |---|---|---|---|
-| `ERR_RANGE_TOO_WIDE` | `errors.search.range_too_wide` | from-to 範囲が 1 年超 | 400 |
-| `ERR_DELETED_PHYSICAL` | `errors.restore.physical_deleted`(FR-209) | 物理削除済参照 | 404 |
-| `ERR_TOO_MANY_RESULTS` | `errors.search.too_many_results` | ヒット 100 万件超過 | 400 |
+| `ERR_RANGE_TOO_WIDE` | `errors.search.range_too_wide` | 「期間は 1 年以内で指定してください」 | 400 |
+| `ERR_DELETED_PHYSICAL` | `errors.restore.physical_deleted`(FR-209) | 「物理削除済のため復元できません」 | 404 |
+| `ERR_TOO_MANY_RESULTS` | `errors.search.too_many_results` | 「検索結果が多すぎます(100 万件超)。条件を絞り込んでください」 | 400 |
+
+##### 5.3.1.4 クイックフィルタ実装
+
+```ts
+type DeletedQuickFilter = 'recent-week' | 'recent-month' | 'physical-soon' | 'all';
+
+function quickFilterToQuery(qf: DeletedQuickFilter, now: Date): Partial<DeletedResourceQuery> {
+  switch (qf) {
+    case 'recent-week':    return { from: addDays(now, -7).toISOString(),  to: now.toISOString() };
+    case 'recent-month':   return { from: addDays(now, -30).toISOString(), to: now.toISOString() };
+    case 'physical-soon':  return { deletion_type: ['deleted_pending'], physicalDeletionWithinDays: 7 };
+    case 'all':            return {};
+  }
+}
+```
+
+`physical-soon` は サーバ側で `deletion_queue.scheduled_for < now + 7d` のレコードのみ抽出。
+
+##### 5.3.1.5 詳細プレビューペイン
+
+```tsx
+function DeletedResourcePreview({ resource }: { resource: DeletedResourceDetail }) {
+  return (
+    <aside role="region" aria-label="削除済みリソース詳細" className="preview-pane">
+      <header>
+        <ResourceTypeIcon type={resource.type} />
+        <h2>{resource.previewLabel}</h2>
+      </header>
+      <dl>
+        <dt>リソース ID</dt><dd>{resource.id}</dd>
+        <dt>契約</dt><dd>{resource.ownerAccountName}</dd>
+        <dt>削除日時</dt><dd>{formatDateTime(resource.deletedAt)}</dd>
+        <dt>削除種別</dt><dd><DeletionTypeBadge type={resource.deletionType} /></dd>
+        {resource.deletedBy && <><dt>削除操作者</dt><dd>{resource.deletedBy}</dd></>}
+        {resource.physicalDeletionAt && <>
+          <dt>物理削除予定</dt>
+          <dd><PhysicalDeletionCountdown date={resource.physicalDeletionAt} /></dd>
+        </>}
+      </dl>
+      <footer>
+        <RestoreButton resource={resource} />
+      </footer>
+    </aside>
+  );
+}
+```
+
+`<PhysicalDeletionCountdown>` は残日数に応じて緑(残 30 日超)/ 黄(残 8-30 日)/ 赤(残 7 日以内)へ色変化。
+
+##### 5.3.1.6 関連参照
+
+> FR-200 / FR-209 / FR-223 / FR-450 / FR-451 / FR-453 / FR-459 / FR-460 / FR-471 / FR-480 / FR-490 / NFR-704
 
 #### 5.3.2 SCR-091 削除データ復元
 
@@ -1275,9 +1335,12 @@ function RolloutStepper({ current, next }: { current: 0|10|50|100; next?: 0|10|5
 
 | 用途 | メソッド | パス | 必須ヘッダ |
 |---|---|---|---|
+| 上書き中契約一覧 | GET | `/admin/api/v1/overrides?owner=&cursor=` | - |
 | 現在値取得 | GET | `/admin/api/v1/overrides/{owner_account_id}` | - |
-| レート上書き | PUT | `/admin/api/v1/overrides/rate-limit/{owner_account_id}` | `X-Op-Ticket-Id`、`X-Reauth-Token` |
-| 予算上書き | PUT | `/admin/api/v1/overrides/budget/{owner_account_id}` | `X-Op-Ticket-Id`、`X-Reauth-Token` |
+| レート上書き(新規 / 更新) | PUT | `/admin/api/v1/overrides/rate-limit/{owner_account_id}` | `X-Op-Ticket-Id`、`X-Reauth-Token` |
+| 予算上書き(新規 / 更新) | PUT | `/admin/api/v1/overrides/budget/{owner_account_id}` | `X-Op-Ticket-Id`、`X-Reauth-Token` |
+| **グローバル値に戻す**(削除) | DELETE | `/admin/api/v1/overrides/rate-limit/{owner_account_id}` | `X-Op-Ticket-Id`、`X-Reauth-Token` |
+| **グローバル値に戻す**(削除) | DELETE | `/admin/api/v1/overrides/budget/{owner_account_id}` | `X-Op-Ticket-Id`、`X-Reauth-Token` |
 | サプレス復帰 | POST | `/admin/api/v1/suppressions/{email}:reinstate` | `X-Op-Ticket-Id`、`X-Reauth-Token` |
 
 ##### 5.3.4.2 Zod スキーマ
@@ -1315,12 +1378,73 @@ const SuppressionReinstate = z.object({
 
 ##### 5.3.4.4 エラーコード
 
-| コード | メッセージキー | 条件 | HTTP |
+| コード | メッセージキー | 表示文言(運営者向け) | HTTP |
 |---|---|---|---|
-| `ERR_RANGE_INVALID` | `errors.override.range_invalid` | レート / 予算が許容範囲外 | 400 |
-| `ERR_BUDGET_KV_BOUND` | `errors.override.budget_kv_bound` | KV 範囲を逸脱 | 400 |
-| `ERR_REAUTH_REQUIRED` | `errors.auth.reauth_required` | 5 分以内に再認証なし | 401 |
-| `ERR_TICKET_REQUIRED` | `errors.audit.ticket_required` | チケット ID 欠落 | 400 |
+| `ERR_RANGE_INVALID` | `errors.override.range_invalid` | 「レート制限 / 予算が許容範囲外です(レート: 1〜10,000 req/min、予算: KV 範囲内)」 | 400 |
+| `ERR_BUDGET_KV_BOUND` | `errors.override.budget_kv_bound` | 「月次予算上書きは {min} 円〜{max} 円で入力してください」 | 400 |
+| `ERR_REAUTH_REQUIRED` | `errors.auth.reauth_required` | 「再認証が必要です(過去 5 分以内の再認証が無効です)」 | 401 |
+| `ERR_TICKET_REQUIRED` | `errors.audit.ticket_required` | 「対応チケット ID を入力してください」 | 400 |
+
+##### 5.3.4.5 上書きカード UI 実装
+
+```tsx
+function OverrideCard({ override, globalValues, onReset, onEdit }: {
+  override: Override;
+  globalValues: GlobalValues;
+  onReset: () => void;
+  onEdit: () => void;
+}) {
+  const rateDiff = override.rateLimit !== globalValues.rateLimit;
+  const budgetDiff = override.budget !== globalValues.budget;
+  return (
+    <article className="override-card">
+      <header>
+        <h3>{override.ownerAccountName}</h3>
+        <span className="contract-id">{override.ownerAccountId}</span>
+      </header>
+      <dl>
+        {rateDiff && (
+          <>
+            <dt>レート制限(/widget/ask)</dt>
+            <dd>{globalValues.rateLimit}/min → <strong>{override.rateLimit}/min</strong></dd>
+          </>
+        )}
+        {budgetDiff && (
+          <>
+            <dt>月次予算</dt>
+            <dd>{globalValues.budget.toLocaleString()} 円 → <strong>{override.budget.toLocaleString()} 円</strong></dd>
+          </>
+        )}
+      </dl>
+      <footer>
+        <button onClick={onEdit}>編集する</button>
+        <button className="btn-danger" onClick={onReset}>グローバル値に戻す <ReauthBadge /></button>
+      </footer>
+    </article>
+  );
+}
+```
+
+グローバル値との差分のみを強調表示することで、運営者が「何が違うか」を一目で判別できる。
+
+##### 5.3.4.6 「グローバル値に戻す」操作
+
+`AdminConfirmDialogs.resetOverride` を新規追加(下記)し、確認 + 再認証後に DELETE を呼ぶ:
+
+```ts
+// 詳細設計 §5.2.5.5 AdminConfirmDialogs に追加
+resetOverride: {
+  title: '上書きをグローバル値に戻しますか?',
+  body: '{contractName} の上書き設定を削除し、グローバル既定値({globalValues})に戻します。即時反映されます',
+  primary: 'グローバル値に戻す',
+  secondary: 'キャンセル',
+  requiresReauth: true,
+},
+```
+
+##### 5.3.4.7 関連参照
+
+> FR-121 / FR-128 / FR-211 / FR-224(b) / FR-231 / FR-450 / FR-451 / FR-453 / FR-455 / FR-458 / FR-459 / FR-490 / 連携 IF #5
 
 #### 5.3.5 SCR-094 お知らせ作成・配信(運営者)
 
@@ -1565,9 +1689,12 @@ function StaleSummaryBanner({ summary }: { summary: WebhookSummary }) {
 
 | 用途 | メソッド | パス | 必須ヘッダ |
 |---|---|---|---|
-| 一覧 | GET | `/admin/api/v1/pii-reports?state=&overdue=` | - |
+| 一覧 | GET | `/admin/api/v1/pii-reports?state=&overdue=&quickFilter=` | - |
+| SLA サマリ | GET | `/admin/api/v1/pii-reports/sla-summary` | - |
 | 詳細 | GET | `/admin/api/v1/pii-reports/{id}` | - |
 | 状態遷移 | POST | `/admin/api/v1/pii-reports/{id}/transition` | `X-Op-Ticket-Id` |
+| 却下 | POST | `/admin/api/v1/pii-reports/{id}/reject` | `X-Op-Ticket-Id`、`X-Reauth-Token` |
+| **影響件数ドライラン** | POST | `/admin/api/v1/pii-rules/revisions/dry-run` | `X-Op-Ticket-Id` |
 | ルール改版作成 | POST | `/admin/api/v1/pii-rules/revisions` | `X-Op-Ticket-Id`、`X-Reauth-Token` |
 | ロールアウト割合更新 | PUT | `/admin/api/v1/pii-rules/revisions/{id}/rollout` | `X-Op-Ticket-Id` |
 
@@ -1591,11 +1718,47 @@ function StaleSummaryBanner({ summary }: { summary: WebhookSummary }) {
 
 ##### 5.3.9.4 エラーコード
 
-| コード | メッセージキー | 条件 | HTTP |
+| コード | メッセージキー | 表示文言(運営者向け) | HTTP |
 |---|---|---|---|
-| `ERR_INVALID_TRANSITION` | `errors.pii_report.invalid_transition` | 不正な状態遷移 | 409 |
-| `ERR_REAUTH_REQUIRED` | `errors.auth.reauth_required` | 5 分以内に再認証なし | 401 |
-| `ERR_ROLLOUT_INVALID` | `errors.pii_rule.rollout_invalid` | ロールアウト割合が許容値以外 | 400 |
+| `ERR_INVALID_TRANSITION` | `errors.pii_report.invalid_transition` | 「この状態からは変更できない遷移です」 | 409 |
+| `ERR_REAUTH_REQUIRED` | `errors.auth.reauth_required` | 「再認証が必要です(過去 5 分以内の再認証が無効です)」 | 401 |
+| `ERR_ROLLOUT_INVALID` | `errors.pii_rule.rollout_invalid` | 「ロールアウト割合は 0% / 10% / 50% / 100% から選択してください」 | 400 |
+
+##### 5.3.9.5 SLA サマリ実装
+
+```ts
+// GET /admin/api/v1/pii-reports/sla-summary
+{
+  withinDeadline: 12,  // 期限内(残 2 営業日以上)
+  approaching: 3,       // 期限間近(残 1 営業日)
+  breached: 1,          // SLA 超過
+}
+
+// 営業日カウントは §13.9 営業日定義(祝日マスタを KV `holidays:jp` に同期)を使用
+```
+
+クライアントは上部固定アラート(breached > 0 なら赤、approaching > 0 なら黄、それ以外は非表示)を表示。
+
+##### 5.3.9.6 影響件数ドライラン
+
+ルール更新前に過去 30 日の質問ログをドライラン:
+
+```ts
+// POST /admin/api/v1/pii-rules/revisions/dry-run
+// body: { regex: string, classifierParams: {...} }
+// response:
+{
+  baseDetectionCount: 142,   // 現在のルールでの検知数(過去 30 日)
+  newDetectionCount: 168,    // 新ルールでの検知数(差分 +26)
+  sampleDiff: [...],          // 差分の代表的なサンプル(最大 10 件、マスク済)
+}
+```
+
+UI 側は「⚠ 検知数 {now} 件 → {after} 件(差分 {diff})」を保存ボタンの上に表示。差分が大きい場合(±20% 超)は **追加の確認ステップ** を表示。
+
+##### 5.3.9.7 関連参照
+
+> FR-060 / FR-064 / FR-450 / FR-451 / FR-453 / FR-458 / FR-471 / FR-480 / FR-490 / AC-036 / NFR-805
 
 #### 5.3.10 SCR-099 Webhook ペイロード差分検出一覧
 
@@ -1642,6 +1805,97 @@ const ReprocessRequest = z.object({
 | `ERR_REAUTH_REQUIRED` | `errors.auth.reauth_required` | 5 分以内に再認証なし | 401 |
 | `ERR_INVALID_TRANSITION` | `errors.payload_diff.invalid_transition` | 既に処理済みの diff への操作 | 409 |
 | `ERR_REASON_REQUIRED` | `errors.payload_diff.reason_required` | dismiss / reprocess の理由欠落 | 400 |
+
+#### 5.3.11 SCR-HOME ホームダッシュボード
+
+画面項目(表示・入力・操作・主要制約)は顧客管理基本設計 §5.3.16 SCR-HOME を正本とする。本節では、当該画面の実装に関する呼出 API・KPI 集計クエリの方針を記載する。
+
+##### 5.3.11.1 呼出 API
+
+| 用途 | メソッド | パス | 必須ヘッダ |
+|---|---|---|---|
+| 緊急アラート集約 | GET | `/admin/api/v1/home/alerts` | - |
+| KPI 集計 | GET | `/admin/api/v1/home/kpis?period=current_month` | - |
+| クイックアクセス件数バッジ | GET | `/admin/api/v1/home/badges` | - |
+
+レスポンス例:
+
+```ts
+// GET /admin/api/v1/home/alerts
+{
+  approvalsExpiringSoon: 2,        // 残 24h 以内
+  dlqStaleOver24h: 5,               // DLQ 24h+ 滞留
+  piiReportsSlaBreached: 1,         // PII SLA 超過
+  hashChainNgWithin24h: 0,          // ハッシュチェーン NG
+}
+
+// GET /admin/api/v1/home/kpis?period=current_month
+{
+  activeContracts: { current: 124, prevPeriod: 118 },
+  totalMau: { current: 8420, prevPeriod: 8120 },
+  totalQuestions: { current: 31200, prevPeriod: 29800 },
+  resolutionRate: { current: 0.93, prevPeriod: 0.91 },
+  aiInferenceCost: { current: 248000, prevPeriod: 232000 },  // JPY
+  notificationFailureRate: { current: 0.012, prevPeriod: 0.014 },
+}
+
+// GET /admin/api/v1/home/badges
+{
+  pendingApprovals: 4,
+  dlqTotal: 12,
+  dlqStaleOver24h: 5,
+  piiPending: 3,
+  piiSlaBreached: 1,
+  payloadDiffsUnreviewed: 2,
+}
+```
+
+##### 5.3.11.2 集計クエリ方針
+
+- **集計頻度**: 60 秒キャッシュ(`Cache-Control: private, max-age=60`)。負荷軽減と速報性のバランス。
+- **KPI 計算**:
+  - `activeContracts` = `accounts WHERE is_owner=1 AND contract_status='active'`
+  - `resolutionRate` = `inquiries.case_status='resolved'` / 全質問数(同期間)
+  - `notificationFailureRate` = `notifications.state IN ('failed','bounced','complained')` / 全送信数
+- **重い集計**: KPI 値は事前計算ジョブ(cron 5 分間隔)で `kpi_snapshots` テーブルに格納し、参照は単純な SELECT のみ。
+- **緊急アラート判定**:
+  - `approvalsExpiringSoon`: `operator_approvals WHERE state='requested' AND expires_at < now + 24h`
+  - `dlqStaleOver24h`: `webhook_events WHERE state IN ('dlq_retrying','dlq_manual_replay') AND received_at < now - 24h`
+  - `piiReportsSlaBreached`: `pii_false_positive_reports WHERE state='reported' AND created_at < now - 3business_days`
+
+##### 5.3.11.3 緊急アラート帯の表示制御
+
+```tsx
+function HomeAlertsBanner({ alerts }: { alerts: HomeAlerts }) {
+  const items = [];
+  if (alerts.approvalsExpiringSoon > 0) {
+    items.push({ message: `⚠ 承認期限切れ間近の申請が ${alerts.approvalsExpiringSoon} 件あります(残 24 時間以内)`, href: '/approvals?qf=expiring' });
+  }
+  if (alerts.dlqStaleOver24h > 0) {
+    items.push({ message: `⚠ 24 時間以上滞留中の Webhook イベントが ${alerts.dlqStaleOver24h} 件あります`, href: '/webhooks?qf=stale-24h' });
+  }
+  if (alerts.piiReportsSlaBreached > 0) {
+    items.push({ message: `⚠ 3 営業日を超過した PII 誤検出報告が ${alerts.piiReportsSlaBreached} 件あります`, href: '/pii-reports?qf=sla-breached' });
+  }
+  if (alerts.hashChainNgWithin24h > 0) {
+    items.push({ message: '⚠ 監査ログのハッシュチェーン検証で不整合が検出されました', href: '/audit-logs?check=hash-chain' });
+  }
+  if (items.length === 0) {
+    return <Alert variant="success" role="status">✓ 緊急対応が必要な事案はありません</Alert>;
+  }
+  return (
+    <Alert variant="danger" role="alert">
+      {items.map((item, i) => (
+        <div key={i}><a href={item.href}>{item.message}</a></div>
+      ))}
+    </Alert>
+  );
+}
+```
+
+##### 5.3.11.4 関連参照
+
+> FR-229 / FR-230 / FR-450 / FR-471 / FR-480 / NFR-808
 
 ### 5.4 画面遷移図
 
