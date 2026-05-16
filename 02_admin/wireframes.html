@@ -110,13 +110,14 @@
 
     <div class="auth-page">
       <div class="auth-card">
-        <h3>open-faq Admin Console / 運営者ログイン</h3>
+        <h3>open-faq Admin Console</h3>
+        <p class="page-description" style="margin: 0 0 12px; font-size: 10px; color: #666;">運営者専用のログイン画面です。IP 許可リストと多要素認証が必須です</p>
 
-
+        <!-- (例: IP 拒否時のアラート) -->
+        <!-- <div class="alert-bar" role="alert">許可された IP アドレスからアクセスしてください(現在の IP: 203.0.113.42)。管理者にお問い合わせください</div> -->
 
         <div class="field">
           <label>メールアドレス <span class="req">*</span></label>
-
           <div class="input">
             <span class="placeholder">operator-sample@open-faq.example</span>
           </div>
@@ -124,28 +125,32 @@
 
         <div class="field">
           <label>パスワード <span class="req">*</span></label>
-
           <div class="input">
             <span class="placeholder">••••••••</span>
           </div>
         </div>
 
         <div class="field">
-          <label>MFA TOTP コード <span class="req">*</span></label>
-
-          <div class="input" style="font-family:monospace; letter-spacing:6px;">
-            <span class="placeholder">_ _ _ _ _ _</span>
+          <label>認証コード(MFA / TOTP)<span class="req">*</span></label>
+          <div role="group" aria-label="認証コード(6 桁)" style="display: flex; gap: 4px;">
+            <div class="input" style="width: 28px; text-align: center; font-family: monospace;"><span class="placeholder">_</span></div>
+            <div class="input" style="width: 28px; text-align: center; font-family: monospace;"><span class="placeholder">_</span></div>
+            <div class="input" style="width: 28px; text-align: center; font-family: monospace;"><span class="placeholder">_</span></div>
+            <div class="input" style="width: 28px; text-align: center; font-family: monospace;"><span class="placeholder">_</span></div>
+            <div class="input" style="width: 28px; text-align: center; font-family: monospace;"><span class="placeholder">_</span></div>
+            <div class="input" style="width: 28px; text-align: center; font-family: monospace;"><span class="placeholder">_</span></div>
           </div>
+          <div class="helper">アプリに表示される 6 桁のコードを入力してください</div>
+        </div>
 
+        <button class="btn primary" style="width:100%;">ログインする</button>
 
-        </div><button class="btn primary" style="width:100%;">ログイン</button>
+        <!-- (例: ロックアウト時) -->
+        <!-- <div class="alert-bar" role="alert" style="margin-top: 10px;">ログイン試行回数の上限に達しました。14 分 35 秒後にもう一度お試しください</div> -->
 
         <div style="border-top:1px solid #ddd; margin-top:12px; padding-top:10px;">
           <a class="link">パスワードを忘れた場合</a>
-
-
         </div>
-
 
       </div>
     </div>
@@ -164,45 +169,53 @@
     </div>
 
     <div class="auth-page">
-      <div class="auth-card" style="max-width: 520px;">
+      <div class="auth-card" style="max-width: 560px;">
         <h3>MFA 初回セットアップ</h3>
+        <p class="page-description" style="margin: 0 0 12px; font-size: 10px; color: #666;">認証アプリと回復コードを設定します。回復コードは紛失すると復旧できません</p>
 
-        <div class="grid-3">
-          <div class="field">
-            <label>① セットアップトークン</label>
+        <ol class="timeline" role="list">
+          <li class="step current" aria-current="step"><span class="marker">●</span><div><div class="step-label">ステップ 1/3: 認証アプリを登録</div></div></li>
+          <li class="step future"><span class="marker">○</span><div><div class="step-label">ステップ 2/3: 認証コードを入力</div></div></li>
+          <li class="step future"><span class="marker">○</span><div><div class="step-label">ステップ 3/3: 回復コードを保管</div></div></li>
+        </ol>
 
-            <div class="input">
-              SAMPLE_MFA_SETUP_TOKEN
-            </div>
-          </div>
+        <div class="panel">
+          <div class="panel-title">ステップ 1: 認証アプリを登録</div>
+          <div class="small">Google Authenticator / Authy / 1Password などのアプリで QR を読み取ってください</div>
+          <div class="panel" style="background:#fafafa; height:100px; text-align:center; line-height:100px; font-size:9px; color:#888; margin-top: 6px;">[QR コード表示エリア]</div>
+          <a class="link">QR を読み取れない場合 → 手動キーを表示</a>
+        </div>
 
-          <div class="field">
-            <label>② QR コード</label>
-
-            <div class="panel" style="background:#fafafa; height:80px; text-align:center; line-height:80px; font-size:9px; color:#888;">
-              [QR コード表示エリア]
-            </div>
-          </div>
-
-          <div class="field">
-            <label>③ 回復コード(10 個生成)</label>
-
-            <div class="textarea" style="font-family:monospace; font-size:9px;">
-              SAMPLE-RECOVERY-001<br>
-              SAMPLE-RECOVERY-002<br>
-              ...<br>
-              SAMPLE-RECOVERY-010
-            </div>
+        <div class="panel">
+          <div class="panel-title">ステップ 2: 認証コードを入力</div>
+          <div role="group" aria-label="認証コード(6 桁)" style="display: flex; gap: 4px;">
+            <div class="input" style="width: 28px; text-align: center; font-family: monospace;"><span class="placeholder">_</span></div>
+            <div class="input" style="width: 28px; text-align: center; font-family: monospace;"><span class="placeholder">_</span></div>
+            <div class="input" style="width: 28px; text-align: center; font-family: monospace;"><span class="placeholder">_</span></div>
+            <div class="input" style="width: 28px; text-align: center; font-family: monospace;"><span class="placeholder">_</span></div>
+            <div class="input" style="width: 28px; text-align: center; font-family: monospace;"><span class="placeholder">_</span></div>
+            <div class="input" style="width: 28px; text-align: center; font-family: monospace;"><span class="placeholder">_</span></div>
           </div>
         </div>
 
-        <div class="field">
-          <label>初回 TOTP コード <span class="req">*</span></label>
-
-          <div class="input" style="font-family:monospace; letter-spacing:6px;">
-            <span class="placeholder">_ _ _ _ _ _</span>
+        <div class="panel" style="border-color: #c33;">
+          <div class="panel-title" style="color: #c33;">ステップ 3: 回復コードを保管</div>
+          <div class="alert-bar" role="alert" style="font-size: 9px;">⚠ 回復コードは認証アプリを失った場合の唯一の復旧手段です。安全な場所に保管してください。この画面を閉じると再表示できません</div>
+          <div class="textarea" style="font-family:monospace; font-size:9px; margin-top: 6px;">
+            SAMPLE-RECOVERY-001<br>
+            SAMPLE-RECOVERY-002<br>
+            ...<br>
+            SAMPLE-RECOVERY-010
           </div>
-        </div><button class="btn primary" style="width:100%;">セットアップ完了</button>
+          <div style="display: flex; gap: 6px; margin-top: 6px;">
+            <button class="btn small">🖨 印刷する</button>
+            <button class="btn small">📋 コピーする</button>
+            <button class="btn small">⬇ PDF でダウンロード</button>
+          </div>
+          <label class="checkbox" style="margin-top: 8px;"><input type="checkbox" /> 回復コードを安全な場所に保管しました</label>
+        </div>
+
+        <button class="btn primary" style="width:100%; margin-top: 12px;" disabled>セットアップを完了する</button>
       </div>
     </div>
   </div><!-- ============= ホームダッシュボード ============= -->
@@ -670,68 +683,58 @@
       </div>
 
       <div class="app-main">
-        <!-- フィルタ -->
+        <nav class="breadcrumb" aria-label="現在位置"><a>ホーム</a> / <span aria-current="page">承認待ち一覧</span></nav>
+        <header class="page-header"><div><h1>承認待ち一覧(4-eyes)</h1><p class="page-description">別運営者の承認が必要な申請を一覧表示します。自分の申請には「あなたの申請」バッジが付きます</p></div></header>
 
-        <div class="filter-bar">
-          <div class="filter-item">
-            役割: <span class="select">▼ 申請者(自分) / 承認待ち(他者依頼) / 全件</span>
-          </div>
-
-          <div class="filter-item">
-            状態: <span class="select">▼ requested / reviewing / approved / executed / rejected / expired</span>
-          </div>
-
-          <div class="filter-item">
-            操作種別: <span class="input" style="width:140px;"><span class="placeholder">例: ai_parameter.update</span></span>
-          </div>
-
-          <div class="filter-item">
-            期間: <span class="input" style="width:90px;">2026-05-04</span>〜<span class="input" style="width:90px;">2026-05-11</span>
-          </div><button class="btn small primary">検索</button>
+        <div class="quick-filter-chips" role="tablist" aria-label="クイックフィルタ">
+          <button class="chip active">承認待ち(別運営者) <span class="count">3</span></button>
+          <button class="chip">あなたの申請 <span class="count">1</span></button>
+          <button class="chip">期限切れ間近 <span class="count">1</span></button>
+          <button class="chip">すべて <span class="count">12</span></button>
         </div>
+
+        <details><summary style="font-size: 10px; color: #666; cursor: pointer; margin-bottom: 6px;">詳細フィルタ ▼</summary>
+          <div class="filter-bar">
+            <div class="filter-item">状態: <span class="select">▼ すべて</span></div>
+            <div class="filter-item">操作種別: <span class="input" style="width:140px;"><span class="placeholder">例: ai_parameter.update</span></span></div>
+            <div class="filter-item">期間: <span class="input" style="width:90px;">2026-05-10</span>〜<span class="input" style="width:90px;">2026-05-17</span></div>
+            <button class="btn small primary">検索</button>
+          </div>
+        </details>
+
+        <div class="small" style="margin-bottom: 6px;">表示中: 1-12 / 全 12 件</div>
 
         <table class="wf">
           <thead>
             <tr>
+              <th>状態</th>
               <th>申請 ID</th>
-
               <th>申請者</th>
-
               <th>操作種別</th>
-
-              <th>target</th>
-
-              <th>変更内容</th>
-
-              <th>state</th>
-
+              <th>対象</th>
               <th>残時間</th>
-
-              <th>承認者</th>
-
               <th>操作</th>
             </tr>
           </thead>
 
           <tbody>
             <tr>
-              <td>apv_SAMPLE_01H001</td>
-
+              <td><span class="approval-state-badge requested">⏳ 承認待ち</span></td>
+              <td><code>apv_SAMPLE_01H001</code></td>
               <td>op-SAMPLE-02</td>
-
-              <td>ai_parameter.update <span class="badge-pill purple">ハードゲート</span></td>
-
+              <td>ai_parameter.update <span class="hardgate-badge">⚠ 4-eyes</span></td>
               <td>own_SAMPLE_01HAAAA</td>
-
-              <td>変更あり</td>
-
-              <td><span class="badge-pill yellow">requested</span></td>
-
-              <td><span class="timer">61h:24m</span></td>
-
-              <td>-</td>
-
-              <td><button class="btn small primary">承認画面</button> <button class="btn small danger" disabled>却下</button></td>
+              <td><span class="timer">残 61h:24m</span></td>
+              <td><button class="btn small primary">承認画面を開く</button></td>
+            </tr>
+            <tr style="background: #f3eef8;">
+              <td><span class="approval-state-badge requested">⏳ 承認待ち</span> <span class="badge-pill purple">あなたの申請</span></td>
+              <td><code>apv_SAMPLE_01H004</code></td>
+              <td>op-SAMPLE-01(あなた)</td>
+              <td>rate_limit.override</td>
+              <td>own_SAMPLE_01HXXXX</td>
+              <td><span class="timer warn">残 23h:12m</span></td>
+              <td><button class="btn small">詳細</button> <button class="btn small danger">取り下げる <span class="reauth-badge">🛡</span></button></td>
             </tr>
 
             <tr>
@@ -1143,87 +1146,35 @@
       </div>
 
       <div class="app-main">
-
+        <nav class="breadcrumb" aria-label="現在位置"><a>ホーム</a> / <a>削除データ参照</a> / <span aria-current="page">復元</span></nav>
+        <header class="page-header"><div><h1>削除データ復元</h1><p class="page-description">論理削除済みのリソースを副作用プリチェック後に復元します(運営者操作)</p></div><div><span class="reauth-countdown">🛡 再認証残 4:38</span></div></header>
 
         <div class="grid-2">
           <div class="panel">
-            <div class="panel-title">
-              復元対象
-            </div>
-
-            <div class="field">
-              <label>復元対象 ID</label>
-
-              <div class="input">
-                <code>fq_SAMPLE_01HXXXX</code>
-              </div>
-            </div>
-
-            <div class="field">
-              <label>契約</label>
-
-              <div class="input">
-                SAMPLE-owner-001 / acme-sample
-              </div>
-            </div>
-
-            <div class="field">
-              <label>削除日時 / 種別</label>
-
-              <div class="input">
-                2026-05-08 14:30 JST<span class="badge-pill yellow">削除予定</span>
-              </div>
-            </div>
-
-            <div class="field">
-              <label>復元先ステータス(自動判定)</label>
-
-              <div class="input">
-                faq → published
-              </div>
-            </div>
+            <div class="panel-title">復元対象</div>
+            <div class="field"><label>復元対象 ID</label><div class="input"><code>fq_SAMPLE_01HXXXX</code></div></div>
+            <div class="field"><label>契約</label><div class="input">SAMPLE-owner-001 / acme-sample</div></div>
+            <div class="field"><label>削除日時 / 種別</label><div class="input">2026-05-08 14:30 JST <span class="badge-pill yellow">削除予定</span></div></div>
+            <div class="field"><label>復元先ステータス(自動判定)</label><div class="input">faq → published</div></div>
           </div>
 
           <div class="panel">
-            <div class="panel-title">
-              復元理由・チケット ID
-            </div>
-
+            <div class="panel-title">復元理由・チケット ID</div>
             <div class="field">
               <label>復元理由 <span class="req">*</span></label>
-
-              <div class="textarea">
-                <span class="placeholder">最大 1000 文字</span>
-              </div>
+              <div class="textarea"><span class="placeholder">対応チケットの内容と復元判断の根拠を簡潔にご記入ください(申請履歴に残ります)</span></div>
+              <div class="helper">最大 1000 文字</div>
             </div>
-
             <div class="field">
-              <label>対応チケット ID</label>
-
-              <div class="input">
-                <span class="placeholder">例: INC-SAMPLE-001(任意・最大 64 文字)</span>
-              </div>
-
-
-            </div>
-
-            <div class="field">
-              <label>再認証</label>
-
-              <div class="input">
-                <span class="badge-pill green">過去 5 分以内に実施済(残 4m 38s)</span>
-              </div>
-
-
+              <label>対応チケット ID <span class="req">*</span></label>
+              <div class="input ticket-id-field"><span class="placeholder">例: JIRA-12345 / INC-001 / #1234</span></div>
             </div>
           </div>
         </div>
 
-        <div class="panel">
-          <div class="panel-title">
-            副作用ロールバックプリチェック (a)〜(g)
-          </div>
+        <div class="alert-bar warn" role="status">⚠ プリチェックで NG 項目があります。詳細を確認してください(1/7 項目で注意あり)</div>
 
+        <details class="panel" open><summary class="panel-title" style="cursor: pointer;">副作用ロールバックプリチェック (a)〜(g)詳細 ▼</summary>
           <div class="precheck-table">
             <div class="precheck-row" style="background:#eee; font-weight:bold;">
               <div>
@@ -1369,18 +1320,19 @@
               </div>
             </div>
           </div>
-
-
-        </div>
+        </details>
 
         <div class="panel">
-          <div class="panel-title">
-            操作
-          </div><button class="btn hardgate">承認申請</button> <button class="btn danger primary">復元を実行</button> <button class="btn">キャンセル</button>
-
-
+          <div class="panel-title">実行モード</div>
+          <div class="tab-bar"><div class="tab active">4-eyes 申請(承認待ち)</div><div class="tab">即時実行(承認ログ)</div></div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;">
+            <button class="btn">プリチェックを実行</button>
+            <button class="btn hardgate">4-eyes 申請する</button>
+            <button class="btn danger">復元を実行する <span class="reauth-badge">🛡</span></button>
+            <button class="btn">キャンセル</button>
+          </div>
+          <div class="helper" style="margin-top: 6px;">MVP ハードゲート対象は「4-eyes 申請」タブからのみ実行可能です</div>
         </div>
-
 
       </div>
     </div>
@@ -1475,101 +1427,73 @@
       </div>
 
       <div class="app-main">
-
+        <nav class="breadcrumb" aria-label="現在位置"><a>ホーム</a> / <span aria-current="page">AI 推論パラメータ</span></nav>
+        <header class="page-header"><div><h1>AI 推論パラメータ <span class="hardgate-badge">⚠ 4-eyes</span></h1><p class="page-description">信頼度・関連度しきい値とモデルを階層別に設定します(4-eyes ハードゲート対象)</p></div></header>
 
         <div class="tab-bar">
-          <div class="tab">
-            グローバル
-          </div>
-
-          <div class="tab active">
-            契約別
-          </div>
-
-          <div class="tab">
-            プロジェクト別
-          </div>
+          <div class="tab">グローバル</div>
+          <div class="tab active">契約別</div>
+          <div class="tab">プロジェクト別</div>
+          <div class="tab" style="margin-left: auto;">変更履歴(直近 90 日)</div>
         </div>
+
+        <div class="alert-bar info" role="status">ℹ 有効値 = min(プロジェクト, オーナー, グローバル) — 編集中は <strong>オーナー値</strong></div>
 
         <div class="grid-2">
           <div class="panel">
-            <div class="panel-title">
-              対象契約選択
-            </div>
-
-            <div class="field">
-              <label>契約検索</label>
-
-              <div class="input">
-                <span class="placeholder">ID/名前 部分一致</span>
-              </div>
-            </div>
-
-            <div class="field">
-              <label>選択中</label>
-
-              <div class="input">
-                own_SAMPLE_01HAAAA / SAMPLE-owner-001 / acme-sample
-              </div>
-            </div>
-
-            <div class="field">
-              <label>適用優先順位の可視化</label>
-
-              <div class="panel" style="background:#fafafa; padding:8px;">
-                <div style="font-size:10px; font-family:monospace;">
-                  プロジェクト値 &nbsp;&gt;&nbsp; <strong>オーナー値(編集中)</strong> &nbsp;&gt;&nbsp; グローバル値
-                </div>
-              </div>
-            </div>
+            <div class="panel-title">対象契約選択</div>
+            <div class="field"><label>契約検索</label><div class="input"><span class="placeholder">ID / 名前 部分一致</span></div></div>
+            <div class="field"><label>選択中</label><div class="input">own_SAMPLE_01HAAAA / SAMPLE-owner-001 / acme-sample</div></div>
           </div>
 
           <div class="panel">
-            <div class="panel-title">
-              しきい値設定(0.00〜1.00、0.01 刻み)
-            </div>
-
+            <div class="panel-title">しきい値設定(0.00〜1.00、0.01 刻み)</div>
             <div class="field">
               <label>信頼度しきい値 <span class="req">*</span></label>
-
-              <div class="slider">
-                <div class="track">
-                  <div class="knob" style="left:60%;"></div>
-                </div>
-              </div><span class="slider-value">0.60</span> <span class="helper">グローバル値: 0.60 / 現在オーナー値: <strong>0.60 → 0.75</strong></span>
-
-
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <div class="slider" style="flex: 1;"><div class="track"><div class="knob" style="left:60%;"></div></div></div>
+                <div class="input" style="width: 60px; font-family: monospace;">0.75</div>
+              </div>
+              <div class="helper">グローバル値: 0.60 / 現在オーナー値: <strong>0.60 → 0.75</strong></div>
             </div>
-
             <div class="field">
               <label>関連度しきい値 <span class="req">*</span></label>
-
-              <div class="slider">
-                <div class="track">
-                  <div class="knob" style="left:50%;"></div>
-                </div>
-              </div><span class="slider-value">0.50</span> <span class="helper">グローバル値: 0.50 / 現在オーナー値: <strong>0.50 → 0.55</strong></span>
-
-
-            </div>
-
-            <div class="field">
-              <label>使用モデル</label>
-
-              <div class="select">
-                ▼ @cf/meta/llama-3.1-8b-instruct(デフォルト) / model-v2 / model-v3
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <div class="slider" style="flex: 1;"><div class="track"><div class="knob" style="left:50%;"></div></div></div>
+                <div class="input" style="width: 60px; font-family: monospace;">0.55</div>
               </div>
+              <div class="helper">グローバル値: 0.50 / 現在オーナー値: <strong>0.50 → 0.55</strong></div>
             </div>
+            <div class="field"><label>使用モデル</label><div class="select">▼ @cf/meta/llama-3.1-8b-instruct(デフォルト)</div></div>
           </div>
         </div>
 
         <div class="panel">
-          <div class="panel-title">
-            段階ロールアウト
+          <div class="panel-title">段階ロールアウト</div>
+          <ol class="timeline" role="list" aria-label="ロールアウト進行">
+            <li class="step done"><span class="marker">●</span><div><div class="step-label">0% 無効化</div></div></li>
+            <li class="step current" aria-current="step"><span class="marker">●</span><div><div class="step-label">10% 部分公開(現在)</div></div></li>
+            <li class="step future"><span class="marker">○</span><div><div class="step-label">50% 半数公開</div></div></li>
+            <li class="step future"><span class="marker">○</span><div><div class="step-label">100% 全面公開</div></div></li>
+          </ol>
+          <div class="helper">現在 10% → 次回 50%。各段階で 4-eyes 再申請が必要です</div>
+          <div style="display: flex; gap: 6px; margin-top: 6px;">
+            <button class="btn small">0% にロールバック</button>
+            <button class="btn small primary">50% へ拡大</button>
+            <button class="btn small">100% へ完全切替</button>
           </div>
+        </div>
 
-          <div class="filter-bar" style="background:#fff;">
-            <span class="filter-item">現在: <strong>10% ロールアウト中(残 50% / 100% 未開始)</strong></span> <button class="btn small">0% ロールバック</button> <button class="btn small primary">10% で継続</button> <button class="btn small">50% へ拡大</button> <button class="btn small">100% へ完全切替</button>
+        <div class="panel">
+          <div class="panel-title">申請情報</div>
+          <div class="field">
+            <label>申請理由 <span class="req">*</span></label>
+            <div class="textarea"><span class="placeholder">なぜこの変更が必要か簡潔にご記入ください(申請履歴に残ります)</span></div>
+            <div class="helper">最大 1000 文字</div>
+          </div>
+          <div class="field">
+            <label>対応チケット ID <span class="req">*</span></label>
+            <div class="input ticket-id-field"><span class="placeholder">例: JIRA-12345 / INC-001 / #1234</span></div>
           </div>
         </div>
 
@@ -1630,9 +1554,12 @@
         </div>
 
         <div class="panel">
-          <div class="panel-title">
-            操作
-          </div><button class="btn">対応チケット ID 入力</button> <button class="btn">再認証</button> <button class="btn hardgate">承認申請を送信</button> <button class="btn primary" disabled>変更を実行</button> <button class="btn">キャンセル</button>
+          <div class="panel-title">操作</div>
+          <div style="display: flex; gap: 8px; justify-content: flex-end;">
+            <button class="btn">キャンセル</button>
+            <button class="btn hardgate">4-eyes 申請する <span class="reauth-badge">🛡</span></button>
+          </div>
+          <div class="helper" style="margin-top: 6px; text-align: right;">申請後、運営者 2 名(あなたを除く)に通知されます</div>
         </div>
       </div>
     </div>
@@ -1989,11 +1916,19 @@
       </div>
 
       <div class="app-main">
+        <nav class="breadcrumb" aria-label="現在位置"><a>ホーム</a> / <span aria-current="page">お知らせ配信</span></nav>
+        <header class="page-header"><div><h1>お知らせ配信</h1><p class="page-description">全契約・特定契約・ユーザー種別宛のお知らせを下書き・予約・即時配信で発信します</p></div></header>
+
+        <ol class="timeline" role="list" aria-label="配信ステップ" style="margin-bottom: 12px;">
+          <li class="step done"><span class="marker">●</span><div><div class="step-label">① 下書きを作成</div></div></li>
+          <li class="step current" aria-current="step"><span class="marker">●</span><div><div class="step-label">② テスト送信で確認</div></div></li>
+          <li class="step future"><span class="marker">○</span><div><div class="step-label">③ 配信を予約</div></div></li>
+          <li class="step future"><span class="marker">○</span><div><div class="step-label">④ 即時配信(緊急時のみ)</div></div></li>
+        </ol>
+
         <div class="grid-2">
           <div class="panel">
-            <div class="panel-title">
-              お知らせ作成
-            </div>
+            <div class="panel-title">お知らせ作成</div>
 
             <div class="field">
               <label>種別 <span class="req">*</span></label>
@@ -2008,67 +1943,39 @@
             <div class="grid-2">
               <div class="field">
                 <label>重要度 <span class="req">*</span></label>
-
-                <div class="select">
-                  ▼ low / normal / high
-                </div>
+                <div class="select">▼ 通常 / 重要(high) / 最重要(critical)</div>
+                <div class="helper">critical は規約改定・重大セキュリティ通知・サスペンション確定などに限定してください</div>
               </div>
-
               <div class="field">
-                <label>オプトアウト可否</label> <span class="checkbox">お問い合わせ利用者側オプトアウトを許可</span>
-
-
+                <label>オプトアウト可否</label>
+                <label class="checkbox"><input type="checkbox" /> お問い合わせ利用者側オプトアウトを許可</label>
               </div>
             </div>
 
             <div class="field">
               <label>宛先範囲 <span class="req">*</span></label>
-
-              <div class="select">
-                ▼ 全契約 / 特定契約(複数) / 特定ユーザー種別(admin / operator)
-              </div>
-
-
+              <div class="select">▼ 全契約 / 特定契約(複数) / 特定ユーザー種別(admin / operator)</div>
+              <div class="alert-bar info" role="status" style="margin-top: 6px;">ℹ 想定配信件数: <strong>8 件</strong>(管理者ユーザー 8 名)</div>
             </div>
 
             <div class="field">
               <label>件名 <span class="req">*</span></label>
-
-              <div class="input">
-                <span class="placeholder">最大 200 文字</span>
-              </div>
+              <div class="input"><span class="placeholder">最大 200 文字</span></div>
+              <div class="helper">0 / 200</div>
             </div>
-
             <div class="field">
               <label>本文 <span class="req">*</span></label>
-
-              <div class="textarea rich">
-                <span class="placeholder">最大 10000 文字</span>
-              </div>
+              <div class="textarea rich"><span class="placeholder">最大 10000 文字</span></div>
+              <div class="helper">0 / 10,000</div>
             </div>
-
             <div class="field">
               <label>送信予定日時 <span class="req">*</span></label>
-
-              <div class="input">
-                2026-05-15 10:00 JST
-              </div>
-
-
+              <div class="input">2026-05-15 10:00 JST</div>
+              <div class="helper">現在時刻より未来かつ 30 日以内</div>
             </div>
-
             <div class="field">
-              <label>対応チケット ID <span class="req">*</span> / 再認証</label>
-
-              <div class="grid-2">
-                <div class="input">
-                  <span class="placeholder">INC-SAMPLE-010</span>
-                </div>
-
-                <div class="input">
-                  <span class="badge-pill green">過去 5 分以内に実施済</span>
-                </div>
-              </div>
+              <label>対応チケット ID <span class="req">*</span></label>
+              <div class="input ticket-id-field"><span class="placeholder">例: JIRA-12345 / INC-001 / #1234</span></div>
             </div>
           </div>
 
@@ -2119,9 +2026,20 @@
         </div>
 
         <div class="panel">
-          <div class="panel-title">
-            操作
-          </div><button class="btn">テスト送信(運営者本人宛)</button> <button class="btn primary">配信予約</button> <button class="btn danger">配信予約取消</button> <button class="btn">訂正告知発行</button> <button class="btn">下書きとして保存</button> <button class="btn">キャンセル</button>
+          <div class="panel-title">通常配信操作</div>
+          <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+            <button class="btn">下書きを保存</button>
+            <button class="btn">テスト送信(自分宛に送る)</button>
+            <button class="btn primary">配信を予約する <span class="reauth-badge">🛡</span></button>
+            <button class="btn">配信予約を取消</button>
+            <button class="btn">訂正告知を発行</button>
+          </div>
+        </div>
+
+        <div class="panel" style="border: 2px solid #c33; background: #fdf3f3; margin-top: 12px;">
+          <div class="panel-title" style="color: #c33;">⚠ 緊急時のみ: 即時配信</div>
+          <div class="small">即時配信は取り消しできません。4-eyes 承認ログ対象です</div>
+          <button class="btn danger primary" style="margin-top: 6px;">即時配信する <span class="hardgate-badge" style="margin-left: 4px;">⚠ 4-eyes</span> <span class="reauth-badge">🛡</span></button>
         </div>
 
 
@@ -2666,101 +2584,46 @@
       </div>
 
       <div class="app-main">
-        <div class="panel">
-          <div class="panel-title">
-            DLQ サマリ
-          </div>
+        <nav class="breadcrumb" aria-label="現在位置"><a>ホーム</a> / <span aria-current="page">Webhook リプレイ・DLQ</span></nav>
+        <header class="page-header"><div><h1>Webhook リプレイ・DLQ</h1><p class="page-description">課金 Webhook の失敗イベントを手動リプレイ・破棄します(30 日リプレイ枠)</p></div></header>
 
-          <div class="grid-4">
-            <div class="summary-card red">
-              <div class="label">
-                DLQ 滞留 1h 以上
-              </div>
+        <div class="alert-bar" role="alert">⚠ 24 時間以上滞留中のイベントが 2 件あります。早急に確認してください<br>⏳ リプレイ枠 30 日に近づくイベントが 1 件あります(残 3 日以内)</div>
 
-              <div class="value">
-                5
-              </div>
-
-              <div class="delta">
-                運営者 high alert 発火済
-              </div>
-            </div>
-
-            <div class="summary-card red">
-              <div class="label">
-                DLQ 滞留 24h 以上
-              </div>
-
-              <div class="value">
-                2
-              </div>
-
-              <div class="delta">
-                手動リプレイ判断必要
-              </div>
-            </div>
-
-            <div class="summary-card">
-              <div class="label">
-                直近 1h 受信失敗率
-              </div>
-
-              <div class="value">
-                3.2%
-              </div>
-
-              <div class="delta">
-                閾値 5% 内
-              </div>
-            </div>
-
-            <div class="summary-card green">
-              <div class="label">
-                直近 24h 成功率
-              </div>
-
-              <div class="value">
-                99.5%
-              </div>
-
-              <div class="delta">
-                範囲内
-              </div>
-            </div>
-          </div>
+        <div class="summary-card-grid">
+          <div class="summary-card red"><div class="label">DLQ 24h+ 滞留</div><div class="value">2</div><div class="delta-down">手動リプレイ判断必要</div></div>
+          <div class="summary-card yellow"><div class="label">30 日近接</div><div class="value">1</div><div class="delta">残 3 日以内</div></div>
+          <div class="summary-card"><div class="label">直近 1h 失敗率</div><div class="value">3.2%</div><div class="delta">閾値 5% 内</div></div>
+          <div class="summary-card green"><div class="label">直近 24h 成功率</div><div class="value">99.5%</div><div class="delta-up">範囲内</div></div>
         </div>
 
-        <div class="filter-bar">
-          <div class="filter-item">
-            状態フィルタ: <span class="select" style="width:280px;">▼ received / processing / succeeded / failed / dlq_retrying / dlq_manual_replay / dlq_archived / duplicate_*</span>
-          </div>
-
-          <div class="filter-item">
-            イベント ID: <span class="input" style="width:150px;"><span class="placeholder">evt_SAMPLE_*</span></span>
-          </div>
-
-          <div class="filter-item">
-            期間(直近 30 日): <span class="input" style="width:90px;">2026-04-11</span>〜<span class="input" style="width:90px;">2026-05-11</span>
-          </div><button class="btn small primary">検索</button>
+        <div class="quick-filter-chips" role="tablist" aria-label="クイックフィルタ">
+          <button class="chip active">DLQ 滞留 <span class="count">7</span></button>
+          <button class="chip">24h+ 滞留 <span class="count">2</span></button>
+          <button class="chip">30 日近接 <span class="count">1</span></button>
+          <button class="chip">すべて <span class="count">42</span></button>
         </div>
+
+        <details><summary style="font-size: 10px; color: #666; cursor: pointer; margin-bottom: 6px;">詳細フィルタ ▼</summary>
+          <div class="filter-bar">
+            <div class="filter-item">状態: <span class="select" style="width:200px;">▼ すべて</span></div>
+            <div class="filter-item">イベント ID: <span class="input" style="width:150px;"><span class="placeholder">evt_SAMPLE_*</span></span></div>
+            <div class="filter-item">期間(直近 30 日): <span class="input" style="width:90px;">2026-04-17</span>〜<span class="input" style="width:90px;">2026-05-17</span></div>
+            <button class="btn small primary">検索</button>
+          </div>
+        </details>
+
+        <div class="small" style="margin-bottom: 6px;">表示中: 1-50 / 全 42 件</div>
 
         <table class="wf">
           <thead>
             <tr>
               <th>イベント ID</th>
-
-              <th>received_at</th>
-
-              <th>state</th>
-
-              <th>オーナーアカウント</th>
-
-              <th>リトライ回数</th>
-
-              <th>自動 BO 残時間</th>
-
-              <th>退避済み</th>
-
+              <th>受信日時</th>
+              <th>状態</th>
+              <th>契約</th>
+              <th>リトライ</th>
+              <th>自動 BO 残</th>
+              <th>リプレイ枠残</th>
               <th>操作</th>
             </tr>
           </thead>
@@ -2952,37 +2815,25 @@
         </div>
 
         <div class="panel">
-          <div class="panel-title">
-            手動リプレイ操作
-          </div>
+          <div class="panel-title">操作(選択中: evt_SAMPLE_01HBBBB)</div>
 
-          <div class="grid-3">
-            <div class="field">
-              <label>対象イベント ID</label>
-
-              <div class="input">
-                <code>evt_SAMPLE_01HBBBB</code>
-              </div>
-            </div>
-
+          <div class="grid-2">
             <div class="field">
               <label>対応チケット ID <span class="req">*</span></label>
-
-              <div class="input">
-                <span class="placeholder">INC-SAMPLE-RB001</span>
-              </div>
+              <div class="input ticket-id-field"><span class="placeholder">例: JIRA-12345 / INC-001 / #1234</span></div>
             </div>
-
             <div class="field">
-              <label>再認証</label>
-
-              <div class="input">
-                <span class="badge-pill green">過去 5 分以内に実施済</span>
-              </div>
+              <label>再認証残時間</label>
+              <div><span class="reauth-countdown">🛡 再認証残 4:38</span></div>
             </div>
-          </div><button class="btn danger primary">手動リプレイを実行</button> <button class="btn">キャンセル</button>
+          </div>
 
-
+          <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px;">
+            <button class="btn">キャンセル</button>
+            <button class="btn primary">リプレイする <span class="reauth-badge">🛡</span></button>
+            <button class="btn danger">破棄する <span class="hardgate-badge" style="margin-left: 4px;">⚠ 4-eyes</span> <span class="reauth-badge">🛡</span></button>
+          </div>
+          <div class="helper" style="margin-top: 6px; text-align: right;">破棄は 4-eyes 承認ログ対象、破棄後は復元できません</div>
         </div>
 
 
@@ -3552,46 +3403,43 @@
     <div class="app-main">
       <div class="modal-overlay">
         <div class="modal-card hardgate">
-          <div class="modal-title">
-            承認申請
-          </div>
+          <div class="modal-title">4-eyes 承認を申請する <span class="hardgate-badge">⚠ ai_parameter.update</span></div>
 
-          <div class="alert-bar warn">
-            ⚠ この操作は 4-eyes 対象です。<br>
-            承認待ち期限: <strong>72 時間</strong>
-          </div>
+          <p class="small" style="margin-bottom: 8px;">この操作には別の運営者の承認が必要です。申請後、他の運営者に通知が送信されます(承認期限 72 時間)</p>
 
-          <div class="field">
-            <label>操作種別</label>
-
-            <div class="input">
-              <code>ai_parameter.update</code>
+          <div class="payload-diff-viewer">
+            <div class="mode-switch">
+              <button aria-pressed="true">要約</button>
+              <button>生 JSON</button>
             </div>
-          </div>
-
-          <div class="field">
-            <label>変更内容</label>
-
-            <div class="diff">
-              owner_account_id: "own_SAMPLE_01HAAAA" confidence_threshold: 0.60 → 0.75 relevance_threshold: 0.50 → 0.55 model: "@cf/meta/llama-3.1-8b-instruct"
-            </div>
+            <table class="diff-summary-table">
+              <thead><tr><th>項目</th><th>変更前</th><th>変更後</th></tr></thead>
+              <tbody>
+                <tr class="changed"><td>信頼度しきい値</td><td>0.60</td><td><strong>0.75</strong></td></tr>
+                <tr class="changed"><td>関連度しきい値</td><td>0.50</td><td><strong>0.55</strong></td></tr>
+                <tr><td>使用モデル</td><td>llama-3.1-8b-instruct</td><td>llama-3.1-8b-instruct</td></tr>
+                <tr><td>対象契約</td><td colspan="2">own_SAMPLE_01HAAAA / SAMPLE-owner-001</td></tr>
+              </tbody>
+            </table>
           </div>
 
           <div class="field">
             <label>申請理由 <span class="req">*</span></label>
-
-            <div class="textarea">
-              <span class="placeholder">最大 1000 文字</span>
-            </div>
+            <div class="textarea"><span class="placeholder">なぜこの変更が必要か簡潔にご記入ください(申請履歴に残ります)</span></div>
+            <div class="helper">0 / 1,000</div>
           </div>
 
           <div class="field">
             <label>対応チケット ID <span class="req">*</span></label>
+            <div class="input ticket-id-field"><span class="placeholder">例: JIRA-12345 / INC-001 / #1234</span></div>
+          </div>
 
-            <div class="input">
-              <span class="placeholder">INC-SAMPLE-002</span>
-            </div>
-          </div><button class="btn hardgate">承認申請を送信</button> <button class="btn">キャンセル</button>
+          <div class="alert-bar info" role="status">ℹ 申請後、運営者 2 名(あなたを除く)に通知されます</div>
+
+          <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px;">
+            <button class="btn">キャンセル</button>
+            <button class="btn hardgate">申請する <span class="reauth-badge">🛡</span></button>
+          </div>
         </div>
       </div>
     </div>
@@ -3609,53 +3457,58 @@
     <div class="app-main">
       <div class="modal-overlay">
         <div class="modal-card hardgate">
-          <div class="modal-title">
-            承認 / 却下
-          </div>
-
-          <div class="alert-bar warn">
-            ⚠ 自己承認はできません。
-          </div>
+          <div class="modal-title">申請内容を確認する</div>
 
           <div class="field">
             <label>申請者 / 残時間</label>
-
-            <div class="input">
-              op-SAMPLE-02 / 申請日時 2026-05-11 10:00 JST / 残 71:24:00
-            </div>
+            <div><strong>op-SAMPLE-02</strong>(申請: 2026-05-11 10:00 JST)<span class="timer warn" style="margin-left: 8px;">残 71:24:00</span></div>
           </div>
 
           <div class="field">
-            <label>対象操作 / 対象 / 変更内容</label>
+            <label>対象操作 / 対象</label>
+            <div><code>ai_parameter.update</code> → owner: <code>own_SAMPLE_01HAAAA</code></div>
+          </div>
 
-            <div class="diff">
-              action_code: "ai_parameter.update" target_type: "owner" target_id: "own_SAMPLE_01HAAAA"
+          <div class="payload-diff-viewer">
+            <div class="mode-switch">
+              <button aria-pressed="true">要約</button>
+              <button>生 JSON</button>
             </div>
+            <table class="diff-summary-table">
+              <thead><tr><th>項目</th><th>変更前</th><th>変更後</th></tr></thead>
+              <tbody>
+                <tr class="changed"><td>信頼度しきい値</td><td>0.60</td><td><strong>0.75</strong></td></tr>
+                <tr class="changed"><td>関連度しきい値</td><td>0.50</td><td><strong>0.55</strong></td></tr>
+              </tbody>
+            </table>
           </div>
 
           <div class="field">
             <label>申請理由</label>
-
-            <div class="input">
-              信頼度を 0.75 に引き上げ、本番契約 T01HAAAA で品質向上検証
-            </div>
+            <div>信頼度を 0.75 に引き上げ、本番契約 T01HAAAA で品質向上検証</div>
           </div>
 
           <div class="field">
             <label>対応チケット ID</label>
-
-            <div class="input">
-              INC-SAMPLE-002
-            </div>
+            <div><code>INC-SAMPLE-002</code></div>
           </div>
 
           <div class="field">
-            <label>承認 / 却下コメント</label>
+            <label>コメント(却下時は必須)</label>
+            <div class="textarea"><span class="placeholder">承認: 任意 / 却下: 却下する理由を簡潔にご記入ください(申請者に通知されます)</span></div>
+          </div>
 
-            <div class="textarea">
-              <span class="placeholder">任意</span>
+          <!-- (例: payload_hash 不一致時) -->
+          <!-- <div class="alert-bar" role="alert">⚠ 申請内容が変更されている可能性があります(payload_hash 不一致)。最新の内容を確認してから承認してください <a class="link">最新を表示</a> <a class="link">最新で再申請</a></div> -->
+
+          <div style="display: flex; justify-content: space-between; margin-top: 12px; padding-top: 8px; border-top: 1px solid #ccc;">
+            <button class="btn danger">却下する <span class="reauth-badge">🛡</span></button>
+            <div>
+              <button class="btn">キャンセル</button>
+              <button class="btn primary" style="background: #393; border-color: #060;">承認する <span class="reauth-badge">🛡</span></button>
             </div>
-          </div><button class="btn primary">承認</button> <button class="btn danger">却下</button> <button class="btn" disabled>自己取下げ</button> <button class="btn">キャンセル</button>
+          </div>
+          <div class="helper" style="margin-top: 4px;">承認と却下は視覚的に分離されています(承認 = 緑右下 / 却下 = 赤左下)</div>
         </div>
       </div>
     </div>
