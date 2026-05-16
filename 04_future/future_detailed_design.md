@@ -23,7 +23,7 @@
 | ID | 対象 | 実装設計で具体化すること | 関連 Future 要件 |
 |---|---|---|---|
 | FUT-DD-SEC-001 | 個別チャット列単位暗号化 | 暗号化カラム、鍵派生、ローテーション、バックフィル、復元手順、検索制約、監査ログ | FUT-REQ-SEC-001 |
-| FUT-DD-SEC-002 | テナント側 MFA | `accounts.mfa_enforcement`、MFA 登録 API、回復コード、未設定時ログイン制御、監査ログ | FUT-REQ-SEC-002 |
+| FUT-DD-SEC-002 | 利用者側 MFA | `accounts.mfa_enforcement`、MFA 登録 API、回復コード、未設定時ログイン制御、監査ログ | FUT-REQ-SEC-002 |
 | FUT-DD-SEC-003 | 4-eyes 完全強制 | `operator_approvals` の対象操作拡張、状態遷移、承認者重複防止、バイパス削除、E2E | FUT-REQ-SEC-003 |
 | FUT-DD-SEC-004 | 運営者サブロール | `operator_subroles` 相当テーブル、認可ミドルウェア、メニュー制御、監査ログ role snapshot | FUT-REQ-SEC-004 |
 | FUT-DD-AI-001 | Vectorize 連携 | 埋め込み生成 Queue、インデックス同期、再生成、検索 API フォールバック、コストメトリクス | FUT-REQ-AI-001 |
@@ -43,16 +43,16 @@
 
 ## 2. DDL 候補
 
-### 2.1 テナント MFA 強制
+### 2.1 契約 MFA 強制
 
 ```sql
-ALTER TABLE accounts -- (旧 tenants は廃止)
+ALTER TABLE accounts
   ADD COLUMN mfa_enforcement TEXT NOT NULL DEFAULT 'off'
   CHECK (mfa_enforcement IN ('off', 'admin_only', 'all_members'));
 
-CREATE TABLE tenant_mfa_policy_audit_logs (
+CREATE TABLE owner_mfa_policy_audit_logs (
   id             TEXT PRIMARY KEY,
-  tenant_id      TEXT NOT NULL,
+  owner_account_id      TEXT NOT NULL,
   changed_by     TEXT NOT NULL,
   before_policy  TEXT NOT NULL,
   after_policy   TEXT NOT NULL,
@@ -83,13 +83,13 @@ CREATE INDEX idx_operator_subroles_operator
 ### 2.3 マルチリージョン
 
 ```sql
-ALTER TABLE accounts -- (旧 tenants は廃止)
+ALTER TABLE accounts
   ADD COLUMN region TEXT NOT NULL DEFAULT 'apac'
   CHECK (region IN ('apac', 'wnam', 'eeur'));
 
-CREATE TABLE tenant_region_audit_logs (
+CREATE TABLE owner_region_audit_logs (
   id             TEXT PRIMARY KEY,
-  tenant_id      TEXT NOT NULL,
+  owner_account_id      TEXT NOT NULL,
   before_region  TEXT NOT NULL,
   after_region   TEXT NOT NULL,
   approved_by    TEXT NOT NULL,
@@ -106,14 +106,14 @@ ALTER TABLE chat_messages
   ADD COLUMN body_nonce TEXT,
   ADD COLUMN body_key_version INTEGER;
 
-CREATE TABLE tenant_key_versions (
+CREATE TABLE owner_key_versions (
   id             TEXT PRIMARY KEY,
-  tenant_id      TEXT NOT NULL,
+  owner_account_id      TEXT NOT NULL,
   key_version    INTEGER NOT NULL,
   status         TEXT NOT NULL,
   created_at     TEXT NOT NULL,
   rotated_at     TEXT,
-  UNIQUE (tenant_id, key_version),
+  UNIQUE (owner_account_id, key_version),
   CHECK (status IN ('active', 'retired'))
 );
 ```
@@ -139,7 +139,7 @@ CREATE TABLE plan_entitlements (
 
 | 領域 | 候補 |
 |---|---|
-| テナント MFA | `POST /api/v1/settings/mfa-policy`、`POST /api/v1/auth/mfa/setup`、`POST /api/v1/auth/mfa/recovery-code` |
+| 契約 MFA | `POST /api/v1/settings/mfa-policy`、`POST /api/v1/auth/mfa/setup`、`POST /api/v1/auth/mfa/recovery-code` |
 | 4-eyes | `POST /admin/v1/operator-approvals`、`POST /admin/v1/operator-approvals/{id}/approve`、`POST /admin/v1/operator-approvals/{id}/execute` |
 | Vectorize | `FaqEmbeddingSyncWorker`、`POST /internal/v1/faqs/{id}/embedding-refresh`、検索 API の `mode=semantic` |
 | SSE / リアルタイム | `GET /widget/v1/questions/{id}/stream`、`GET /api/v1/inbox/stream`、fallback polling |

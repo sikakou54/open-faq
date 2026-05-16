@@ -78,7 +78,7 @@
 
       <li>AI 推論パラメータ設定</li>
 
-      <li>テナント別レート/予算上書き管理</li>
+      <li>契約別レート/予算上書き管理</li>
 
       <li>お知らせ作成・配信(運営者)</li>
 
@@ -287,7 +287,7 @@
           <div class="grid-4">
             <div class="summary-card">
               <div class="label">
-                アクティブテナント数
+                アクティブ契約数
               </div>
 
               <div class="value">
@@ -301,7 +301,7 @@
 
             <div class="summary-card green">
               <div class="label">
-                全テナント MAU
+                全契約 MAU
               </div>
 
               <div class="value">
@@ -522,9 +522,9 @@
 
                   <td>op-SAMPLE-02</td>
 
-                  <td>tenant.restore</td>
+                  <td>owner.restore</td>
 
-                  <td>ten_SAMPLE_01HZZZZ</td>
+                  <td>own_SAMPLE_01HZZZZ</td>
                 </tr>
 
                 <tr>
@@ -534,7 +534,7 @@
 
                   <td>ai_parameter.update</td>
 
-                  <td>tenant: ten_SAMPLE_01HAAAA</td>
+                  <td>owner_account_id: own_SAMPLE_01HAAAA</td>
                 </tr>
 
                 <tr>
@@ -704,7 +704,7 @@
 
               <td>ai_parameter.update <span class="badge-pill purple">ハードゲート</span></td>
 
-              <td>ten_SAMPLE_01HAAAA</td>
+              <td>own_SAMPLE_01HAAAA</td>
 
               <td>変更あり</td>
 
@@ -722,9 +722,9 @@
 
               <td>op-SAMPLE-03</td>
 
-              <td>tenant.physical_delete <span class="badge-pill purple">ハードゲート</span></td>
+              <td>owner.physical_delete <span class="badge-pill purple">ハードゲート</span></td>
 
-              <td>ten_SAMPLE_01HBBBB</td>
+              <td>own_SAMPLE_01HBBBB</td>
 
               <td>変更あり</td>
 
@@ -764,7 +764,7 @@
 
               <td>ai_parameter.update</td>
 
-              <td>tenant: ten_SAMPLE_01HCCCC</td>
+              <td>owner_account_id: own_SAMPLE_01HCCCC</td>
 
               <td>変更あり</td>
 
@@ -894,11 +894,11 @@
       <div class="app-main">
         <div class="filter-bar">
           <div class="filter-item">
-            テナント検索: <span class="input" style="width:180px;"><span class="placeholder">ID/名前 部分一致 最大 100 文字</span></span>
+            契約検索: <span class="input" style="width:180px;"><span class="placeholder">ID/名前 部分一致 最大 100 文字</span></span>
           </div>
 
           <div class="filter-item">
-            リソース種別(複数可): <span class="select" style="width:240px;">▼ tenant / project / faq / account / announcement</span>
+            リソース種別(複数可): <span class="select" style="width:240px;">▼ owner / project / faq / account / announcement</span>
           </div>
 
           <div class="filter-item">
@@ -915,7 +915,7 @@
             <tr>
               <th>リソース ID</th>
 
-              <th>テナント ID / スラグ</th>
+              <th>契約 ID / スラグ</th>
 
               <th>種別</th>
 
@@ -931,7 +931,7 @@
             <tr>
               <td><code>fq_SAMPLE_01HXXXX</code></td>
 
-              <td>SAMPLE-tenant-001 / acme-sample</td>
+              <td>SAMPLE-owner-001 / acme-sample</td>
 
               <td><span class="badge-pill">faq</span></td>
 
@@ -943,11 +943,11 @@
             </tr>
 
             <tr>
-              <td><code>ten_SAMPLE_01HZZZZ</code></td>
+              <td><code>own_SAMPLE_01HZZZZ</code></td>
 
-              <td>SAMPLE-tenant-002 / beta-sample</td>
+              <td>SAMPLE-owner-002 / beta-sample</td>
 
-              <td><span class="badge-pill">tenant</span></td>
+              <td><span class="badge-pill">owner</span></td>
 
               <td>2026-05-05 10:00 JST</td>
 
@@ -959,7 +959,7 @@
             <tr>
               <td><code>prj_SAMPLE_01HYYYY</code></td>
 
-              <td>SAMPLE-tenant-003 / gamma-sample</td>
+              <td>SAMPLE-owner-003 / gamma-sample</td>
 
               <td><span class="badge-pill">project</span></td>
 
@@ -973,7 +973,7 @@
             <tr>
               <td><code>acc_SAMPLE_01HWWWW</code></td>
 
-              <td>SAMPLE-tenant-001 / acme-sample</td>
+              <td>SAMPLE-owner-001 / acme-sample</td>
 
               <td><span class="badge-pill">account</span></td>
 
@@ -987,7 +987,7 @@
             <tr>
               <td><code>fq_SAMPLE_01HVVVV</code></td>
 
-              <td>SAMPLE-tenant-004 / delta-sample</td>
+              <td>SAMPLE-owner-004 / delta-sample</td>
 
               <td><span class="badge-pill">faq</span></td>
 
@@ -1160,10 +1160,10 @@
             </div>
 
             <div class="field">
-              <label>テナント</label>
+              <label>契約</label>
 
               <div class="input">
-                SAMPLE-tenant-001 / acme-sample
+                SAMPLE-owner-001 / acme-sample
               </div>
             </div>
 
@@ -1389,7 +1389,7 @@
   <div class="screen">
     <div class="screen-header">
       <div>
-        <span class="scr-id operator">SCR-092</span> <span class="scr-name">AI 推論パラメータ設定(テナント別上書き)</span>
+        <span class="scr-id operator">SCR-092</span> <span class="scr-name">AI 推論パラメータ設定(契約別上書き)</span>
       </div>
 
       <div class="scr-user">
@@ -1483,7 +1483,7 @@
           </div>
 
           <div class="tab active">
-            テナント別
+            契約別
           </div>
 
           <div class="tab">
@@ -1494,11 +1494,11 @@
         <div class="grid-2">
           <div class="panel">
             <div class="panel-title">
-              対象テナント選択
+              対象契約選択
             </div>
 
             <div class="field">
-              <label>テナント検索</label>
+              <label>契約検索</label>
 
               <div class="input">
                 <span class="placeholder">ID/名前 部分一致</span>
@@ -1509,7 +1509,7 @@
               <label>選択中</label>
 
               <div class="input">
-                ten_SAMPLE_01HAAAA / SAMPLE-tenant-001 / acme-sample
+                own_SAMPLE_01HAAAA / SAMPLE-owner-001 / acme-sample
               </div>
             </div>
 
@@ -1518,7 +1518,7 @@
 
               <div class="panel" style="background:#fafafa; padding:8px;">
                 <div style="font-size:10px; font-family:monospace;">
-                  プロジェクト値 &nbsp;&gt;&nbsp; <strong>テナント値(編集中)</strong> &nbsp;&gt;&nbsp; グローバル値
+                  プロジェクト値 &nbsp;&gt;&nbsp; <strong>オーナー値(編集中)</strong> &nbsp;&gt;&nbsp; グローバル値
                 </div>
               </div>
             </div>
@@ -1536,7 +1536,7 @@
                 <div class="track">
                   <div class="knob" style="left:60%;"></div>
                 </div>
-              </div><span class="slider-value">0.60</span> <span class="helper">グローバル値: 0.60 / 現在テナント値: <strong>0.60 → 0.75</strong></span>
+              </div><span class="slider-value">0.60</span> <span class="helper">グローバル値: 0.60 / 現在オーナー値: <strong>0.60 → 0.75</strong></span>
 
 
             </div>
@@ -1548,7 +1548,7 @@
                 <div class="track">
                   <div class="knob" style="left:50%;"></div>
                 </div>
-              </div><span class="slider-value">0.50</span> <span class="helper">グローバル値: 0.50 / 現在テナント値: <strong>0.50 → 0.55</strong></span>
+              </div><span class="slider-value">0.50</span> <span class="helper">グローバル値: 0.50 / 現在オーナー値: <strong>0.50 → 0.55</strong></span>
 
 
             </div>
@@ -1636,12 +1636,12 @@
         </div>
       </div>
     </div>
-  </div><!-- ============= テナント別レート/予算上書き管理 ============= -->
+  </div><!-- ============= 契約別レート/予算上書き管理 ============= -->
 
   <div class="screen">
     <div class="screen-header">
       <div>
-        <span class="scr-id operator">SCR-093</span> <span class="scr-name">テナント別レート制限・予算上書き管理</span>
+        <span class="scr-id operator">SCR-093</span> <span class="scr-name">契約別レート制限・予算上書き管理</span>
       </div>
 
       <div class="scr-user">
@@ -1729,13 +1729,13 @@
       <div class="app-main">
         <div class="filter-bar">
           <div class="filter-item">
-            テナント検索: <span class="input" style="width:200px;"><span class="placeholder">ID/名前 部分一致</span></span>
+            契約検索: <span class="input" style="width:200px;"><span class="placeholder">ID/名前 部分一致</span></span>
           </div><button class="btn small primary">検索</button>
         </div>
 
         <div class="panel">
           <div class="panel-title">
-            テナント別現在値(SAMPLE-tenant-001 / acme-sample 選択中)
+            契約別現在値(SAMPLE-owner-001 / acme-sample 選択中)
           </div>
 
           <table class="wf">
@@ -2025,7 +2025,7 @@
               <label>宛先範囲 <span class="req">*</span></label>
 
               <div class="select">
-                ▼ 全テナント / 特定テナント(複数) / 特定ユーザー種別(admin / operator)
+                ▼ 全契約 / 特定契約(複数) / 特定ユーザー種別(admin / operator)
               </div>
 
 
@@ -2092,9 +2092,9 @@
 
               <table class="wf">
                 <tr>
-                  <td>対象テナント</td>
+                  <td>対象契約</td>
 
-                  <td>SAMPLE 3 件(ten_SAMPLE_01HAAAA / 01HBBBB / 01HCCCC)</td>
+                  <td>SAMPLE 3 件(own_SAMPLE_01HAAAA / 01HBBBB / 01HCCCC)</td>
                 </tr>
 
                 <tr>
@@ -2163,7 +2163,7 @@
 
                 <td>announcement / high</td>
 
-                <td>全テナント</td>
+                <td>全契約</td>
 
                 <td>2026-05-15 10:00</td>
 
@@ -2179,7 +2179,7 @@
 
                 <td>announcement / high(強制送信)</td>
 
-                <td>全テナント / admin</td>
+                <td>全契約 / admin</td>
 
                 <td>2026-05-20 00:00</td>
 
@@ -2409,7 +2409,7 @@
           </div>
 
           <div class="filter-item">
-            テナント: <span class="input" style="width:140px;"><span class="placeholder">部分一致</span></span>
+            契約: <span class="input" style="width:140px;"><span class="placeholder">部分一致</span></span>
           </div>
 
           <div class="filter-item">
@@ -2424,7 +2424,7 @@
 
               <th>依頼者メール(一部非表示)</th>
 
-              <th>テナント</th>
+              <th>契約</th>
 
               <th>状態</th>
 
@@ -2444,7 +2444,7 @@
 
               <td>end-***@example.com</td>
 
-              <td>ten_SAMPLE_01HAAAA</td>
+              <td>own_SAMPLE_01HAAAA</td>
 
               <td><span class="badge-pill yellow">受付済み</span></td>
 
@@ -2462,7 +2462,7 @@
 
               <td>buyer-***@sample.jp</td>
 
-              <td>ten_SAMPLE_01HBBBB</td>
+              <td>own_SAMPLE_01HBBBB</td>
 
               <td><span class="badge-pill blue">本人確認中</span></td>
 
@@ -2480,7 +2480,7 @@
 
               <td>user-***@example.org</td>
 
-              <td>ten_SAMPLE_01HCCCC</td>
+              <td>own_SAMPLE_01HCCCC</td>
 
               <td><span class="badge-pill blue">本人確認中</span></td>
 
@@ -2498,7 +2498,7 @@
 
               <td>x-***@example.com</td>
 
-              <td>ten_SAMPLE_01HDDDD</td>
+              <td>own_SAMPLE_01HDDDD</td>
 
               <td><span class="badge-pill purple">削除対応中</span></td>
 
@@ -2753,7 +2753,7 @@
           <div class="grid-4">
             <div class="summary-card">
               <div class="label">
-                アクティブテナント数
+                アクティブ契約数
               </div>
 
               <div class="value">
@@ -2791,7 +2791,7 @@
 
             <div class="summary-card green">
               <div class="label">
-                全テナント横断 MAU・解決率
+                全全契約横断 MAU・解決率
               </div>
 
               <div class="value">
@@ -2803,7 +2803,7 @@
 
         <div class="filter-bar">
           <div class="filter-item">
-            action(部分一致): <span class="input" style="width:130px;"><span class="placeholder">tenant.restore</span></span> <span class="helper">&lt;resource&gt;.&lt;verb&gt;</span>
+            action(部分一致): <span class="input" style="width:130px;"><span class="placeholder">owner.restore</span></span> <span class="helper">&lt;resource&gt;.&lt;verb&gt;</span>
           </div>
 
           <div class="filter-item">
@@ -2823,7 +2823,7 @@
           </div>
 
           <div class="filter-item">
-            tenant_id(横断): <span class="input" style="width:100px;"><span class="placeholder">全テナント可</span></span>
+            owner_account_id(横断): <span class="input" style="width:100px;"><span class="placeholder">全契約可</span></span>
           </div>
 
           <div class="filter-item">
@@ -2866,9 +2866,9 @@
 
               <td>service_operator / op-SAMPLE-01</td>
 
-              <td>tenant.restore</td>
+              <td>owner.restore</td>
 
-              <td>tenant / ten_SAMPLE_01HZZZZ</td>
+              <td>owner / own_SAMPLE_01HZZZZ</td>
 
               <td>203.0.113.0</td>
 
@@ -2886,7 +2886,7 @@
 
               <td>ai_parameter.update</td>
 
-              <td>tenant / ten_SAMPLE_01HAAAA</td>
+              <td>owner / own_SAMPLE_01HAAAA</td>
 
               <td>198.51.100.0</td>
 
@@ -2979,7 +2979,7 @@
 
         <div class="panel" style="margin-top:8px;">
           <div class="panel-title">
-            詳細: tenant.restore(操作者 op-SAMPLE-01 / 2026-05-11 10:32)
+            詳細: owner.restore(操作者 op-SAMPLE-01 / 2026-05-11 10:32)
           </div>
 
           <div class="grid-2">
@@ -2987,7 +2987,7 @@
               <label>before_value</label>
 
               <div class="diff">
-                <span class="del">- status: "削除予定"</span> tenant_id: "ten_SAMPLE_01HZZZZ" deleted_at: "2026-05-05T10:00Z"
+                <span class="del">- status: "削除予定"</span> owner_account_id: "own_SAMPLE_01HZZZZ" deleted_at: "2026-05-05T10:00Z"
               </div>
             </div>
 
@@ -2995,7 +2995,7 @@
               <label>after_value</label>
 
               <div class="diff">
-                <span class="add">+ status: "active"</span> tenant_id: "ten_SAMPLE_01HZZZZ" <span class="add">+ deleted_at: null</span> <span class="add">+ restored_by: "op-SAMPLE-01"</span>
+                <span class="add">+ status: "active"</span> owner_account_id: "own_SAMPLE_01HZZZZ" <span class="add">+ deleted_at: null</span> <span class="add">+ restored_by: "op-SAMPLE-01"</span>
               </div>
             </div>
           </div>
@@ -3220,7 +3220,7 @@
 
               <th>state</th>
 
-              <th>tenant_id</th>
+              <th>owner_account_id</th>
 
               <th>attempt_count</th>
 
@@ -3240,7 +3240,7 @@
 
               <td><span class="badge-pill yellow">dlq_retrying</span></td>
 
-              <td>ten_SAMPLE_01HAAAA</td>
+              <td>own_SAMPLE_01HAAAA</td>
 
               <td>2 / 3</td>
 
@@ -3259,7 +3259,7 @@
 
               <td><span class="badge-pill red">dlq_manual_replay</span></td>
 
-              <td>ten_SAMPLE_01HBBBB</td>
+              <td>own_SAMPLE_01HBBBB</td>
 
               <td>3 / 3</td>
 
@@ -3278,7 +3278,7 @@
 
               <td><span class="badge-pill blue">duplicate_skipped_hash_match</span></td>
 
-              <td>ten_SAMPLE_01HCCCC</td>
+              <td>own_SAMPLE_01HCCCC</td>
 
               <td>1 / 1</td>
 
@@ -3296,7 +3296,7 @@
 
               <td><span class="badge-pill red">duplicate_diff_detected_high_alert</span></td>
 
-              <td>ten_SAMPLE_01HDDDD</td>
+              <td>own_SAMPLE_01HDDDD</td>
 
               <td>1</td>
 
@@ -3314,7 +3314,7 @@
 
               <td><span class="badge-pill gray">dlq_archived</span></td>
 
-              <td>ten_SAMPLE_01HEEEE</td>
+              <td>own_SAMPLE_01HEEEE</td>
 
               <td>3 / 3</td>
 
@@ -3333,7 +3333,7 @@
 
               <td><span class="badge-pill green">succeeded</span></td>
 
-              <td>ten_SAMPLE_01HFFFF</td>
+              <td>own_SAMPLE_01HFFFF</td>
 
               <td>1</td>
 
@@ -3868,7 +3868,7 @@
           </div>
 
           <div class="filter-item">
-            tenant_id: <span class="input" style="width:140px;"><span class="placeholder">部分一致</span></span>
+            owner_account_id: <span class="input" style="width:140px;"><span class="placeholder">部分一致</span></span>
           </div>
 
           <div class="filter-item">
@@ -3883,7 +3883,7 @@
 
               <th>event_id</th>
 
-              <th>tenant_id</th>
+              <th>owner_account_id</th>
 
               <th>detected_at</th>
 
@@ -3899,7 +3899,7 @@
 
               <td><code>evt_SAMPLE_01HDDDD</code></td>
 
-              <td>ten_SAMPLE_01HDDDD</td>
+              <td>own_SAMPLE_01HDDDD</td>
 
               <td>2026-05-09 09:00 JST</td>
 
@@ -3913,7 +3913,7 @@
 
               <td><code>evt_SAMPLE_01HEEEE</code></td>
 
-              <td>ten_SAMPLE_01HEEEE</td>
+              <td>own_SAMPLE_01HEEEE</td>
 
               <td>2026-05-07 14:30 JST</td>
 
@@ -3927,7 +3927,7 @@
 
               <td><code>evt_SAMPLE_01HFFFF</code></td>
 
-              <td>ten_SAMPLE_01HFFFF</td>
+              <td>own_SAMPLE_01HFFFF</td>
 
               <td>2026-04-30 10:00 JST</td>
 
@@ -3941,7 +3941,7 @@
 
               <td><code>evt_SAMPLE_01HGGGG</code></td>
 
-              <td>ten_SAMPLE_01HGGGG</td>
+              <td>own_SAMPLE_01HGGGG</td>
 
               <td>2026-04-28 16:00 JST</td>
 
@@ -4041,7 +4041,7 @@
             <label>操作種別(自動表示)</label>
 
             <div class="input">
-              SAMPLE: <code>ai_parameter.update</code><code>tenant.restore</code><code>webhook.replay</code> 等
+              SAMPLE: <code>ai_parameter.update</code><code>owner.restore</code><code>webhook.replay</code> 等
             </div>
 
 
@@ -4099,7 +4099,7 @@
             <label>変更内容</label>
 
             <div class="diff">
-              tenant_id: "ten_SAMPLE_01HAAAA" confidence_threshold: 0.60 → 0.75 relevance_threshold: 0.50 → 0.55 model: "@cf/meta/llama-3.1-8b-instruct"
+              owner_account_id: "own_SAMPLE_01HAAAA" confidence_threshold: 0.60 → 0.75 relevance_threshold: 0.50 → 0.55 model: "@cf/meta/llama-3.1-8b-instruct"
             </div>
           </div>
 
@@ -4140,7 +4140,7 @@
             <label>対象操作 / 対象 / 変更内容</label>
 
             <div class="diff">
-              action_code: "ai_parameter.update" target_type: "tenant" target_id: "ten_SAMPLE_01HAAAA"  申請理由: "信頼度を 0.75 に引き上げ、本番テナント T01HAAAA で品質向上 PoC" ticket_id: "INC-SAMPLE-002"
+              action_code: "ai_parameter.update" target_type: "owner" target_id: "own_SAMPLE_01HAAAA"  申請理由: "信頼度を 0.75 に引き上げ、本番契約 T01HAAAA で品質向上 PoC" ticket_id: "INC-SAMPLE-002"
             </div>
           </div>
 

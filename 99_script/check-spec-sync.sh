@@ -45,7 +45,8 @@ require_pattern "メインシステム基本設計 v3\\.3" "02_admin/02_basic_de
 require_pattern "active.*/.*suspended.*/.*deleted_pending.*/.*deleted" "01_main/02_basic_design.md"
 require_pattern "active.*/.*suspended.*/.*deleted_pending.*/.*deleted" "02_admin/02_basic_design.md"
 reject_pattern "tenants\\.status='pending_legal_review'" "02_admin/02_basic_design.md"
-require_pattern "tenant_registration_reviews\\.status='pending_legal_review'" "02_admin/02_basic_design.md"
+reject_pattern "tenant_registration_reviews" "02_admin/02_basic_design.md"
+require_pattern "owner_registration_reviews\\.status='pending_legal_review'" "02_admin/02_basic_design.md"
 
 # Notification importance: English enum tokens must live in basic design; requirement docs must use business terms only.
 require_pattern "low.*/.*normal.*/.*high.*/.*critical" "01_main/02_basic_design.md"
@@ -80,5 +81,25 @@ require_pattern "AC-047" "02_admin/02_basic_design.md"
 
 # Future baseline must follow current MVP FR-089 value.
 require_pattern "FR-089.*自動クローズ段階 1 は 7 日" "04_future/future_requirements.md"
+
+# Tenant concept has been fully retired (see CLAUDE.md Terminology Mapping).
+# Any tenant / テナント occurrence outside CLAUDE.md is a defect.
+for f in \
+  "01_main/01_requirements.md" \
+  "01_main/02_basic_design.md" \
+  "01_main/03_detailed_design.md" \
+  "01_main/wireframes.html" \
+  "02_admin/01_requirements.md" \
+  "02_admin/02_basic_design.md" \
+  "02_admin/03_detailed_design.md" \
+  "02_admin/wireframes.html" \
+  "03_operations/operations.md" \
+  "04_future/future_requirements.md" \
+  "04_future/future_basic_design.md" \
+  "04_future/future_detailed_design.md"; do
+  [[ -f "$f" ]] || continue
+  reject_pattern "テナント" "$f"
+  reject_pattern "tenant" "$f"
+done
 
 echo "spec sync smoke check passed"
