@@ -22,7 +22,7 @@
     </div>
 
     <div class="subtitle">
-      open-faq / Admin Console / 13 画面 + 共通 UI
+      open-faq / Admin Console / 12 画面 + 共通 UI
     </div>
 
     <div class="meta">
@@ -39,7 +39,7 @@
       </div>
 
       <div>
-        <strong>対象画面:</strong> 13 画面 + 共通 UI
+        <strong>対象画面:</strong> 12 画面 + 共通 UI
       </div>
 
       <div>
@@ -81,8 +81,6 @@
       <li>契約別レート/予算上書き管理</li>
 
       <li>お知らせ作成・配信(運営者)</li>
-
-      <li>個人情報削除の対応ダッシュボード</li>
 
       <li>運営者活動ダッシュボード(監査)</li>
 
@@ -540,11 +538,11 @@
                 <tr>
                   <td>08:00</td>
 
-                  <td>system</td>
+                  <td>op-SAMPLE-01</td>
 
-                  <td>deletion_request.complete</td>
+                  <td>faq.publish</td>
 
-                  <td>dr_SAMPLE_001</td>
+                  <td>faq / faq_SAMPLE_01HBBBB</td>
                 </tr>
 
                 <tr>
@@ -2192,468 +2190,6 @@
         </div>
       </div>
     </div>
-  </div><!-- ============= 個人情報削除の対応ダッシュボード ============= -->
-
-  <div class="screen">
-    <div class="screen-header">
-      <div>
-        <span class="scr-id operator">SCR-095</span> <span class="scr-name">個人情報削除の対応ダッシュボード</span>
-      </div>
-
-      <div class="scr-user">
-        利用者: サービス運営者
-      </div>
-    </div>
-
-    <div class="app-layout">
-      <div class="app-header operator">
-        <div class="left">
-          <span class="logo">open-faq Admin Console</span> <span class="badge-pill purple">サービス運営者プレーン</span>
-        </div>
-
-        <div class="right">
-          <span class="mfa-badge">MFA: 有効</span> <span class="bell">inbox <span class="badge">3</span></span> <span class="user-menu">op-SAMPLE-01 ▼</span>
-        </div>
-      </div>
-
-      <div class="app-sidebar">
-        <div class="group">
-          運営機能
-        </div>
-
-        <div class="item">
-          ホーム
-        </div>
-
-        <div class="item">
-          削除データ参照
-        </div>
-
-        <div class="item">
-          削除データ復元
-        </div>
-
-        <div class="item">
-          AI 推論パラメータ
-        </div>
-
-        <div class="item">
-          レート/予算上書き
-        </div>
-
-        <div class="item">
-          お知らせ配信
-        </div>
-
-        <div class="item active">
-          削除依頼対応 <span><span class="badge yellow">5d:3</span> <span class="badge">7d:1</span></span>
-        </div>
-
-        <div class="item">
-          Webhook リプレイ
-        </div>
-
-        <div class="item">
-          PII 誤検出報告
-        </div>
-
-        <div class="item">
-          ペイロード差分
-        </div>
-
-        <div class="item">
-          運営者活動
-        </div>
-
-        <div class="group">
-          承認・通知
-        </div>
-
-        <div class="item">
-          承認待ち一覧
-        </div>
-
-        <div class="item">
-          運営者 inbox
-        </div>
-
-        <div class="item">
-          ログアウト
-        </div>
-      </div>
-
-      <div class="app-main">
-        <div class="panel">
-          <div class="panel-title">
-            対応状況サマリー
-          </div>
-
-          <div class="grid-4">
-            <div class="summary-card">
-              <div class="label">
-                受付済み
-              </div>
-
-              <div class="value">
-                SAMPLE 4
-              </div>
-
-              <div class="delta">
-                受付済み
-              </div>
-            </div>
-
-            <div class="summary-card">
-              <div class="label">
-                本人確認中
-              </div>
-
-              <div class="value">
-                SAMPLE 6
-              </div>
-
-              <div class="delta">
-                本人確認中
-              </div>
-            </div>
-
-            <div class="summary-card">
-              <div class="label">
-                削除対応中
-              </div>
-
-              <div class="value">
-                SAMPLE 2
-              </div>
-
-              <div class="delta">
-                削除対応中
-              </div>
-            </div>
-
-            <div class="summary-card green">
-              <div class="label">
-                完了
-              </div>
-
-              <div class="value">
-                SAMPLE 38
-              </div>
-
-              <div class="delta">
-                直近 30 日
-              </div>
-            </div>
-
-            <div class="summary-card yellow">
-              <div class="label">
-                5 営業日経過リマインド
-              </div>
-
-              <div class="value">
-                SAMPLE 3
-              </div>
-
-              <div class="delta">
-                運営者 inbox へ通知済
-              </div>
-            </div>
-
-            <div class="summary-card red">
-              <div class="label">
-                7 営業日超過
-              </div>
-
-              <div class="value">
-                SAMPLE 1
-              </div>
-
-              <div class="delta">
-                運営者 inbox へ緊急通知
-              </div>
-            </div>
-
-            <div class="summary-card">
-              <div class="label">
-                期限切れ
-              </div>
-
-              <div class="value">
-                SAMPLE 2
-              </div>
-
-              <div class="delta">
-                本人確認が14日間未完了
-              </div>
-            </div>
-
-            <div class="summary-card">
-              <div class="label">
-                取り消し済み
-              </div>
-
-              <div class="value">
-                SAMPLE 1
-              </div>
-
-              <div class="delta">
-                依頼者が取り消し
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="filter-bar">
-          <div class="filter-item">
-            状態: <span class="select">▼ すべて / 受付済み / 本人確認中 / 削除対応中 / 完了 / 期限切れ / 取り消し済み</span>
-          </div>
-
-          <div class="filter-item">
-            契約: <span class="input" style="width:140px;"><span class="placeholder">部分一致</span></span>
-          </div>
-
-          <div class="filter-item">
-            期限: <span class="select">▼ すべて / 5 営業日経過 / 7 営業日超過</span>
-          </div><button class="btn small primary">検索</button>
-        </div>
-
-        <table class="wf">
-          <thead>
-            <tr>
-              <th>受付ID</th>
-
-              <th>依頼者メール(一部非表示)</th>
-
-              <th>契約</th>
-
-              <th>状態</th>
-
-              <th>受付日時</th>
-
-              <th>対応期限</th>
-
-              <th>経過営業日</th>
-
-              <th>操作</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            <tr>
-              <td>dr_SAMPLE_001</td>
-
-              <td>end-***@example.com</td>
-
-              <td>own_SAMPLE_01HAAAA</td>
-
-              <td><span class="badge-pill yellow">受付済み</span></td>
-
-              <td>2026-05-09 10:00 JST</td>
-
-              <td>2026-05-20 23:59 JST</td>
-
-              <td><span class="timer">2 / 7 営業日</span></td>
-
-              <td><button class="btn small">本人確認へ</button> <button class="btn small primary">確認メール送信</button></td>
-            </tr>
-
-            <tr>
-              <td>dr_SAMPLE_002</td>
-
-              <td>buyer-***@sample.jp</td>
-
-              <td>own_SAMPLE_01HBBBB</td>
-
-              <td><span class="badge-pill blue">本人確認中</span></td>
-
-              <td>2026-05-04 14:30 JST</td>
-
-              <td>2026-05-13 23:59 JST</td>
-
-              <td><span class="timer warn">5 / 7 営業日(お知らせ済み)</span></td>
-
-              <td><button class="btn small primary">確認メール再送</button></td>
-            </tr>
-
-            <tr>
-              <td>dr_SAMPLE_003</td>
-
-              <td>user-***@example.org</td>
-
-              <td>own_SAMPLE_01HCCCC</td>
-
-              <td><span class="badge-pill blue">本人確認中</span></td>
-
-              <td>2026-04-28 09:00 JST</td>
-
-              <td>2026-05-08 23:59 JST</td>
-
-              <td><span class="timer over">8 / 7 営業日 期限超過</span></td>
-
-              <td><button class="btn small danger">至急対応中</button></td>
-            </tr>
-
-            <tr>
-              <td>dr_SAMPLE_004</td>
-
-              <td>x-***@example.com</td>
-
-              <td>own_SAMPLE_01HDDDD</td>
-
-              <td><span class="badge-pill purple">削除対応中</span></td>
-
-              <td>2026-05-06 11:00 JST</td>
-
-              <td>2026-05-15 23:59 JST</td>
-
-              <td><span class="timer">3 / 7 営業日</span></td>
-
-              <td></td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div class="grid-2" style="margin-top:8px;">
-          <div class="panel">
-            <div class="panel-title">
-              本人確認メールの送信
-            </div>
-
-            <div class="field">
-              <label>対象の依頼</label>
-
-              <div class="input">
-                dr_SAMPLE_001 / end-***@example.com
-              </div>
-            </div>
-
-            <div class="field">
-              <label>確認リンク</label>
-
-              <div class="input">
-                24 時間有効の確認リンク
-              </div>
-            </div>
-
-            <div class="field">
-              <label>送信先</label>
-
-              <div class="input">
-                end-***@example.com(メール送信後、リンクを1回開くと確認完了)
-              </div>
-            </div><button class="btn primary">確認メールを送る</button> <button class="btn">再送</button>
-
-
-          </div>
-
-          <div class="panel">
-            <div class="panel-title">
-              祝日マスタ参照
-            </div>
-
-            <table class="wf">
-              <thead>
-                <tr>
-                  <th>date</th>
-
-                  <th>name</th>
-
-                  <th>kind</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                <tr>
-                  <td>2026-05-03</td>
-
-                  <td>憲法記念日</td>
-
-                  <td><span class="badge-pill">national_holiday</span></td>
-                </tr>
-
-                <tr>
-                  <td>2026-05-04</td>
-
-                  <td>みどりの日</td>
-
-                  <td><span class="badge-pill">national_holiday</span></td>
-                </tr>
-
-                <tr>
-                  <td>2026-05-05</td>
-
-                  <td>こどもの日</td>
-
-                  <td><span class="badge-pill">national_holiday</span></td>
-                </tr>
-
-                <tr>
-                  <td>2026-05-06</td>
-
-                  <td>振替休日</td>
-
-                  <td><span class="badge-pill blue">substitute</span></td>
-                </tr>
-
-                <tr>
-                  <td>2026-12-29〜2027-01-03</td>
-
-                  <td>年末年始(固定除外)</td>
-
-                  <td><span class="badge-pill orange">special</span></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="panel-title">
-            詳細(選択中: dr_SAMPLE_002)
-          </div>
-
-          <div class="grid-3">
-            <div class="field">
-              <label>確認メール送信履歴</label>
-
-              <table class="wf">
-                <tr>
-                  <td>2026-05-04 14:35</td>
-
-                  <td>送信</td>
-                </tr>
-
-                <tr>
-                  <td>2026-05-06 09:20</td>
-
-                  <td>再送(前回未確認)</td>
-                </tr>
-
-                <tr>
-                  <td>2026-05-09 10:00</td>
-
-                  <td>再送(期限切れ後)</td>
-                </tr>
-              </table>
-            </div>
-
-            <div class="field">
-              <label>対応状況の履歴</label>
-
-              <div style="font-size:10px; font-family:monospace; background:#fafafa; border:1px solid #aaa; padding:6px;">
-                受付済み (2026-05-04 14:30)<br>
-                → 本人確認中 (2026-05-04 14:35)<br>
-                ⚠ 14 日経過で 自動期限切れ(残 9 日)
-              </div>
-            </div>
-
-            <div class="field">
-              <label>操作履歴を見る</label> <a class="link"></a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div><!-- ============= 運営者活動ダッシュボード(監査) ============= -->
 
   <div class="screen">
@@ -2897,20 +2433,20 @@
               <td><a class="link">JSON diff 表示</a></td>
             </tr>
 
-            <tr class="system-row">
+            <tr>
               <td>2026-05-11 08:00 JST</td>
 
-              <td>system / 削除処理</td>
+              <td>service_operator / op-SAMPLE-01</td>
 
-              <td>deletion_request.complete</td>
+              <td>faq.publish</td>
 
-              <td>deletion_request / dr_SAMPLE_001</td>
+              <td>faq / faq_SAMPLE_01HBBBB</td>
 
-              <td>-</td>
+              <td>198.51.100.0</td>
 
-              <td>-</td>
+              <td>INC-SAMPLE-003</td>
 
-              <td><span class="badge-pill orange">7y</span></td>
+              <td><span class="badge-pill purple">5y</span></td>
 
               <td><a class="link">JSON diff 表示</a></td>
             </tr>
