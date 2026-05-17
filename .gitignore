@@ -1,6 +1,6 @@
 # macOS
 .DS_Store
 
-# Legacy PDF output locations (now unified under pdf_output/)
-01_main/pdf/
-02_admin/pdf/
+# PDF出力ディレクトリ配下に統合済みの旧出力先
+01_メインシステム/pdf/
+02_運営者システム/pdf/
