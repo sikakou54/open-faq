@@ -7,7 +7,7 @@
 | 文書名 | DD02: プロジェクト・FAQ 管理 |
 | 詳細設計ID | DD02 |
 | 対象システム | FAQ AI ウィジェット SaaS / メインシステム |
-| 関連機能ID | FR-040〜048（FAQ CRUD / 公開ガード）/ FR-100〜106（FAQ 改善・下書き生成） |
+| 関連機能ID | FR-040〜048（FAQ CRUD / 公開ガード）/ FR-100〜103, FR-105, FR-106（未解決質問 → FAQ 登録） |
 | 作成日 | 2026-05-17 |
 | 版数 | v1.0 |
 | ステータス | 承認済 |
@@ -17,7 +17,7 @@
 | 種別 | ID | 名称 |
 |---|---|---|
 | 機能 | FR-040〜048 | FAQ CRUD / 自動公開禁止 / 公開・取下 / 一括インポート |
-| 機能 | FR-100〜106 | FAQ 改善 / AI 下書き生成 / 提案承認 |
+| 機能 | FR-100〜103, FR-105, FR-106 | 未解決質問 → FAQ 登録（初期反映 / 確認・編集 / 登録元トレース） |
 | 画面 | SCR-010 | プロジェクト一覧 |
 | 画面 | SCR-011 | FAQ 一覧 |
 | 画面 | SCR-012 | FAQ 編集 |
@@ -41,7 +41,7 @@ SCR-010 プロジェクト一覧 / SCR-011 FAQ 一覧 / SCR-012 FAQ 編集の画
 
 ### 3.2 機能詳細設計（参照のみ）
 
-FAQ CRUD / 公開ガード / 一括インポート / AI 改善提案の全項目は [../02_基本設計/02_API設計.md](../02_基本設計/02_API設計.md) を正本とする。
+FAQ CRUD / 公開ガード / 一括インポートの全項目は [../02_基本設計/02_API設計.md](../02_基本設計/02_API設計.md) を正本とする。
 
 ### 3.3 データベース詳細設計（参照のみ）
 
@@ -61,15 +61,13 @@ src/
 │   ├── projects.ts
 │   ├── faqs.ts
 │   └── faq-embeddings.ts
-├── adapter/
-│   └── workers-ai-answer-provider.ts # generateFaqDraft 実装
 └── middleware/
     └── authorize.ts          # requireProject / requireRole 連動
 ```
 
-### 3.5 FAQ 自動公開禁止（AC-006）
+### 3.5 FAQ 公開ガード（AC-006）
 
-`faqs.status` は CHECK 制約で値域固定。`status='published'` への遷移は人手承認 API（`POST /api/v1/faqs/{id}/publish`）のみ許可、AI 経由の直接公開は不可。`domain/faq-status.ts` の `canTransition()` で `draft → published` を拒否、`review → published` のみ許可する。
+`faqs.status` は CHECK 制約で値域固定。`status='published'` への遷移は人手承認 API（`POST /api/v1/faqs/{id}/publish`）のみ許可。`domain/faq-status.ts` の `canTransition()` で `draft → published` を拒否、`review → published` のみ許可する。
 
 ### 3.6 FTS5 検索
 
@@ -88,20 +86,26 @@ ORDER BY rank LIMIT 20
 
 FAQ 公開時に `@cf/baai/bge-base-en-v1.5` で埋め込みベクトルを計算し、`faq_embeddings` テーブル（または KV `embedding:{faqId}`）に保存。AI 推論時のリランキング用。
 
-### 3.8 AI 下書き生成（FR-100〜106）
-
-`POST /api/v1/faqs/draft` で AnswerProvider の `generateFaqDraft(input)` を呼び出し、提案文を返す。`handlers/faqs/draft.ts` で生成結果を `faqs` テーブルに `status='draft'` で INSERT し、`writeAudit({action: 'faq.draft.generate'})` で監査記録。
-
-### 3.9 一括インポート（`faq.bulk_import`）
+### 3.8 一括インポート（`faq.bulk_import`）
 
 CSV / JSON ファイル → R2 ステージング → Queue 投入 → consumer が分割 INSERT。1 リクエスト最大 1000 件。詳細は [DD14_バッチ・非同期処理.md](DD14_バッチ・非同期処理.md) を参照。
 
-### 3.10 リミット
+### 3.9 リミット
 
 | 項目 | 警告 | 拒否 |
 |---|---|---|
 | FAQ 件数 / 契約 | 8,000 | 12,000（409 `FAQ_LIMIT_EXCEEDED`） |
 | プロジェクト数 / 契約 | 40 | 50（409 `PROJECT_LIMIT_EXCEEDED`） |
+| IP 許可 CIDR 数 / プロジェクト | - | 100（400 `E-BIZ-IP-002`、SCR-010-M1 で行番号付きエラー） |
+
+### 3.10 プロジェクト単位 IP 許可リスト（FR-179 / FR-330）
+
+- データ: `project_ip_allowlist`（[03_テーブル設計.md §3.8a](../02_基本設計/03_テーブル設計.md) 参照）
+- API: `PATCH /projects/{id}` のフィールド `ipAllowlist`、または `PATCH /projects/{id}/ip-allowlist`（[02_API設計.md §5.3.3 / §5.3.3a](../02_基本設計/02_API設計.md) 参照）
+- 評価ロジックの正本: [02_API設計.md §5.5.0](../02_基本設計/02_API設計.md)
+- キャッシュ: ウィジェット Worker は `KV: ip_allowlist:{projectId}` に CIDR セットを 5 分 TTL で保持し、LPM 判定はメモリ上で実施。`PATCH` 成功時に該当キーを即時 invalidate
+- 監査ログ: `project.ip_allowlist.update`（`metadata` に変更前後の CIDR セット差分、`retention_class=general`）
+- 自己検証ガード: API 層で各行を `ipaddr` ライブラリでパースし、`IPv4Network` / `IPv6Network` のいずれかでなければ 400。重複は事前にセット化して検出。CIDR の正規化（`203.0.113.0/24` 形式）を保存前に実施
 
 ### 3.11 関連する横断設計
 

@@ -45,7 +45,6 @@
 | ウィジェット | `/widget/bootstrap`, `/widget/ask`, `/widget/feedback` | end_user(公開キー + セッション)| ウィジェット |
 | 未解決質問 | `/inquiries`, `/inquiries/{id}`, `/inquiries/{id}/close` | admin / `chat:respond` | SCR-011 |
 | チャット | `/inquiries/{code}/email-registration`, `/chat/rooms/{id}`, `/chat/rooms/{id}/messages` | admin / end_user | SCR-013 |
-| FAQ 改善 | `/inquiries/{id}/faq-drafts` | admin / `faq:manage` | SCR-012 / SCR-013 |
 | 通知 | `/webhooks/resend` | 署名検証のみ | (Resend Webhook) |
 | 利用量・課金 | `/billing/summary`, `/billing/subscription`, `/billing/invoices`, `/billing/budget` | admin / オーナー専有 | SCR-015 |
 | データ管理 | `/data/export` | admin / オーナー専有 | SCR-024 |
@@ -120,8 +119,8 @@
 |---|---|---|---|---|---|
 | 同時アクティブ契約 | 150 でシャーディング着手 | 200 | 不可 | 新規契約受付一時停止 + 運営者通知 | NFR-110 |
 | FAQ 件数(契約共通)| 8,000(80%)| 12,000(120%)| 不可 | 拒否レベルで 429 | FR-046 |
-| FAQ 質問文文字数 | - | 500 文字 | 不可 | 超過は 400 | FR-046 |
-| FAQ 回答文文字数 | - | 5,000 文字 | 不可 | 超過は 400 | FR-046 |
+| FAQ 質問文字数 | - | 500 文字 | 不可 | 超過は 400 | FR-046 |
+| FAQ 回答文字数 | - | 5,000 文字 | 不可 | 超過は 400 | FR-046 |
 | 月間質問数 | 80%(通知)| 100%(事後課金、**拒否しない**)| 契約別上書き可 | 125% で追加制限 | FR-122 |
 | Workers AI 月間コスト | 80% | 100%(停止)| 契約別上書き可 | 同上 | FR-122 |
 | チャット投稿(EU)| - | 10 件/分、2,000 字/msg | 不可 | 429、UI 警告 | FR-090 |
@@ -324,7 +323,8 @@
       "widgetKey": "pk_live_...",
       "allowedDomains": ["example.com", "*.example.com"],
       "contactEmail": "contact@...",
-      "contactEmailVerifiedAt": "..." | null
+      "contactEmailVerifiedAt": "..." | null,
+      "ipAllowlist": ["203.0.113.0/24", "2001:db8::/32"]
     }
   ],
   "nextCursor": null
@@ -338,7 +338,8 @@
 {
   "name": "新規プロジェクト",
   "description": "説明文",
-  "allowedDomains": ["example.com"]
+  "allowedDomains": ["example.com"],
+  "ipAllowlist": []
 }
 ```
 
@@ -357,6 +358,40 @@
 
 | 認証 | Cookie + CSRF(削除は再認証必須)|
 | エラー | 404 `NOT_FOUND`(オーナー境界違反偽装)|
+
+リクエスト(PATCH、部分更新):
+```json
+{
+  "name": "...",
+  "allowedDomains": ["..."],
+  "contactEmail": "...",
+  "ipAllowlist": ["203.0.113.0/24"]
+}
+```
+
+#### 5.3.3a `PATCH /projects/{id}/ip-allowlist`(プロジェクト単位 IP 許可リスト更新)
+
+| 機能ID | F-179 / F-330 |
+| 関連画面 | SCR-010-M1 |
+| 必要権限 | オーナー / `project:manage`(該当プロジェクト割当あり)|
+| 認証 | Cookie + CSRF(再認証不要。設定対象は管理画面ではなくウィジェットのため)|
+
+リクエスト:
+```json
+{
+  "ipAllowlist": ["203.0.113.0/24", "2001:db8::/32"]
+}
+```
+
+レスポンス(200): `{ "ipAllowlist": ["203.0.113.0/24", "2001:db8::/32"], "updatedAt": "..." }`
+
+評価対象スコープ:
+- 適用される: 当該プロジェクトの FAQ ウィジェット系エンドポイント(`POST /widget/v1/bootstrap`、`POST /widget/v1/questions`、`POST /widget/v1/chat/*`、`POST /widget/v1/inquiry/reenter` 等、プロジェクト ID または `pk_live_*` キーがリクエストに含まれる経路)
+- 適用されない: 管理画面 API(`/auth/*`、`/projects/*`(本エンドポイント自体)、`/account-settings/*`、`/users/*`、`/billing/*` 等)、エンドユーザー側でもメール経由再入室初動の `GET /widget/v1/inquiry/reenter?token=...`(トークン検証のみで IP 検査をかけると正当な再入室が失敗するため。ただし以降の WebSocket セッション確立時に再検査)
+
+エラー:
+- 400 `VALIDATION_ERROR`(CIDR 形式不正、件数超過、重複行)
+- 403 `FORBIDDEN`(オーナーまたは `project:manage` フラグなし)
 
 #### 5.3.4 `POST /projects/{id}/widget-key/rotate`(ウィジェット鍵ローテーション)
 
@@ -391,9 +426,24 @@
 
 ### 5.5 ウィジェット API
 
+#### 5.5.0 共通: プロジェクト単位 IP 許可リスト評価(FR-179 / FR-330)
+
+`/widget/v1/*` 配下の全エンドポイントは、ドメイン検証およびレート制限と並んで **プロジェクト単位 IP 許可リスト** の評価を実施する。
+
+評価順序(早い段階で拒否することで下流コストを抑制):
+1. オリジン(`origin` ヘッダまたは `Referer`)が `projects.allowed_domains` のいずれかと一致(FR-173)
+2. クライアント IP(プロキシ多段の場合は `cf-connecting-ip` または X-Forwarded-For 最左の信頼可能ホップ)が `project_ip_allowlist.cidr` のいずれかに含まれる、または当該プロジェクトの IP 許可リストが空(= 制限なし)
+3. レート制限(NFR-308 / FR-128)
+4. 個別エンドポイント認可
+
+評価対象から除外する経路:
+- `GET /widget/v1/inquiry/reenter?token=...`(メール経由再入室の初動。トークン検証のみで IP 検査をかけると正当な再入室が失敗するため。以降の WebSocket セッション確立時に再検査)
+
+拒否時のレスポンス: `403 IP_NOT_ALLOWED`(エラー本文には IP を含めない。詳細は 05_エラー設計.md `E-BIZ-IP-001` 参照)。本拒否はサーバ側で `error_logs` に件数のみ集計し、エンドユーザーへは「現在ご利用いただけません」のみ表示(IP 許可リストの存在自体を秘匿)。
+
 #### 5.5.1 `POST /widget/v1/bootstrap`
 
-| 認証 | 不要(ドメイン検証)|
+| 認証 | 不要(ドメイン検証 + IP 許可リスト評価)|
 
 リクエスト:
 ```json
@@ -487,10 +537,6 @@ PATCH:
 
 リクエスト: `{ "reason": "resolved_by_faq|customer_resolved|out_of_scope|duplicate" }`
 レスポンス(200): `{ "id": "...", "caseStatus": "closed", "closedAt": "..." }`
-
-#### 5.6.4 `POST /inquiries/{id}/draft-faq`(AI 下書き生成)
-
-レスポンス(202): `{ "faqDraftId": "draft_...", "status": "processing", "estimatedTimeMs": 2000 }`
 
 ### 5.7 チャット API
 

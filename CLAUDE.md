@@ -74,7 +74,7 @@
 メイン / 運営者間の共有概念の正本ルールは [共有/共有概念.md](共有/共有概念.md) で正本化する。本書には主要ルールの要約のみ記載:
 
 - 共有概念が変更される場合は、**共有概念.md 正本ルール表で示された正本ドキュメントを必ず更新** し、参照側ドキュメントはリンクのみ更新する(再掲禁止)
-- 共有概念には以下を含む(全項目は共有概念.md 参照): `accounts.contract_status` / `case_status` / 通知重要度 / SCR ID / AC ID / IF #1〜#12 / retention class / 法令プライバシー制約 / **オーナー直接所有のユーザーモデル**(`accounts.is_owner` + `accounts.owner_account_id` + `account_permissions` + `account_project_grants` ── メインを正本)/ ハッシュチェーン監査(運営者を正本)/ IP allowlist(運営者を正本)/ PII 暗号化(メインを正本)/ 暗号鍵管理(メインを正本)/ 4-eyes 承認基盤(運営者を正本)/ Stripe Webhook 受信(運営者を正本)等
+- 共有概念には以下を含む(全項目は共有概念.md 参照): `accounts.contract_status` / `case_status` / 通知重要度 / SCR ID / AC ID / IF #1〜#12 / retention class / 法令プライバシー制約 / **オーナー直接所有のユーザーモデル**(`accounts.is_owner` + `accounts.owner_account_id` + `account_permissions` + `account_project_grants` ── メインを正本)/ ハッシュチェーン監査(運営者を正本)/ 運営者ログイン向け IP allowlist = `operator_ip_allowlist`(運営者を正本)/ FAQ ウィジェット向けプロジェクト単位 IP 許可リスト = `project_ip_allowlist`(メインを正本、FR-179 / FR-330)/ PII 暗号化(メインを正本)/ 暗号鍵管理(メインを正本)/ 4-eyes 承認基盤(運営者を正本)/ Stripe Webhook 受信(運営者を正本)等
 - `accounts.contract_status` は `active` / `suspended` / `deleted_pending` / `deleted` に固定し、オーナー行(`is_owner=1`)でのみ意味を持つ
 - `case_status=closed` は自動 retention 処理で設定しない。管理者の確定(運営者によるクローズ要求の承認を含む)のみがクローズ可能とする
 - 通知重要度は `low` / `normal` / `high` / `critical`。`critical` はメール送信が必須となるイベント(オーナー + 同一オーナースコープで `users:manage` フラグを保持する全メンバーへ配信)に予約

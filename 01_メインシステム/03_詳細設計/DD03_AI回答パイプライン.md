@@ -108,8 +108,6 @@ export interface AnswerProvider {
   healthcheck(): Promise<{ ok: boolean; provider: string; model: string }>;
   /** 質問に回答 */
   answer(input: AnswerInput): Promise<AnswerOutput>;
-  /** FAQ 下書き生成 */
-  generateFaqDraft(input: FaqDraftInput): Promise<FaqDraftOutput>;
 }
 
 export type AnswerInput = {
