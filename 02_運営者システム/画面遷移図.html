@@ -7,7 +7,7 @@
 
   <title>FAQ AIウィジェット SaaS - 顧客管理システム 画面設計書(operator console v1.0)</title>
   <style type="text/css">
-@page { size: A4 landscape; margin: 10mm; } * { box-sizing: border-box; } html, body { margin: 0; padding: 0; font-family: "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif; color: #222; background: #fff; font-size: 11px; line-height: 1.4; } /* ====== 表紙・目次 ====== */ .cover { page-break-after: always; padding: 60px 40px; text-align: center; } .cover h1 { font-size: 28px; margin: 40px 0 12px; } .cover .subtitle { font-size: 14px; color: #666; margin-bottom: 40px; } .cover .meta { display: inline-block; text-align: left; border: 1px solid #ccc; padding: 16px 24px; margin-top: 20px; font-size: 12px; } .cover .meta div { margin: 4px 0; } .toc { page-break-after: always; padding: 30px 40px; } .toc h2 { font-size: 18px; border-bottom: 2px solid #333; padding-bottom: 6px; } .toc ul { columns: 2; -webkit-columns: 2; column-gap: 30px; padding-left: 20px; } .toc li { margin: 4px 0; font-size: 11px; break-inside: avoid; } .toc .toc-group { font-weight: bold; color: #4a3674; margin-top: 8px; } .legend { page-break-after: always; padding: 30px 40px; font-size: 11px; } .legend h2 { font-size: 16px; border-bottom: 2px solid #333; padding-bottom: 6px; } .legend table { width: 100%; border-collapse: collapse; margin-top: 10px; } .legend th, .legend td { border: 1px solid #aaa; padding: 5px 8px; text-align: left; font-size: 10px; vertical-align: top; } .legend th { background: #eee; } /* ====== 画面ブロック ====== */ .screen { page-break-after: always; padding: 12px; border: 1px solid #ddd; margin: 0; min-height: 180mm; } .screen:last-child { page-break-after: auto; } .screen-header { border-bottom: 2px solid #333; padding-bottom: 6px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: baseline; } .screen-header .scr-id { font-weight: bold; font-size: 14px; background: #333; color: #fff; padding: 2px 8px; margin-right: 10px; } .screen-header .scr-id.operator { background: #6b4ea0; } .screen-header .scr-name { font-size: 14px; font-weight: bold; } .screen-header .scr-user { font-size: 10px; color: #666; text-align: right; max-width: 60%; } /* ====== 管理画面レイアウト ====== */ .app-layout { display: grid; grid-template-columns: 200px 1fr; grid-template-rows: 40px 1fr; gap: 0; border: 1px solid #888; min-height: 540px; } .app-header { grid-column: 1 / 3; border-bottom: 1px solid #888; background: #f5f5f5; padding: 0 12px; display: flex; align-items: center; justify-content: space-between; font-size: 10px; } .app-header.operator { background: #f3eef8; border-bottom-color: #6b4ea0; } .app-header .left { display: flex; align-items: center; gap: 12px; } .app-header .logo { font-weight: bold; border: 1px solid #888; padding: 2px 8px; background: #fff; } .app-header.operator .logo { background: #6b4ea0; color: #fff; border-color: #4a3674; } .app-header .right { display: flex; align-items: center; gap: 12px; } .bell { border: 1px solid #888; padding: 2px 6px; background: #fff; position: relative; } .bell .badge { position: absolute; top: -5px; right: -5px; background: #c33; color: #fff; font-size: 8px; border-radius: 50%; width: 14px; height: 14px; text-align: center; line-height: 14px; } .user-menu { border: 1px solid #888; padding: 2px 8px; background: #fff; } .mfa-badge { border: 1px solid #393; padding: 2px 6px; background: #e0f0e0; color: #060; font-size: 9px; } .app-sidebar { border-right: 1px solid #888; background: #fafafa; padding: 8px 0; font-size: 10px; } .app-sidebar .group { color: #888; font-size: 9px; padding: 8px 10px 2px; text-transform: uppercase; } .app-sidebar .item { padding: 4px 10px; border-left: 3px solid transparent; display: flex; justify-content: space-between; align-items: center; gap: 4px; } .app-sidebar .item.active { background: #efe6f7; border-left: 3px solid #6b4ea0; font-weight: bold; } .app-sidebar .item .badge { background: #c33; color: #fff; font-size: 8px; border-radius: 8px; padding: 0 5px; min-width: 14px; text-align: center; } .app-sidebar .item .badge.yellow { background: #c93; } .app-sidebar .item .badge.purple { background: #6b4ea0; } .app-main { padding: 12px; overflow: hidden; } /* ====== フォーム共通 ====== */ .field { margin-bottom: 8px; } .field label { display: block; font-size: 10px; margin-bottom: 2px; color: #444; } .field label .req { color: #c33; } .input, .textarea, .select { width: 100%; border: 1px solid #888; background: #fff; padding: 4px 6px; font-size: 10px; color: #555; min-height: 22px; } .input .placeholder, .textarea .placeholder, .select .placeholder { color: #aaa; } .textarea { min-height: 50px; } .textarea.rich { min-height: 90px; border-top-width: 18px; position: relative; } .textarea.rich::before { content: "B I U • 1. link </>"; position: absolute; top: -18px; left: 0; right: 0; height: 18px; padding: 2px 6px; background: #eee; border: 1px solid #888; border-bottom: 0; font-size: 9px; font-family: monospace; color: #555; } .checkbox { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; } .checkbox::before { content: ""; display: inline-block; width: 12px; height: 12px; border: 1px solid #555; background: #fff; } .checkbox.checked::before { background: #6b4ea0; } .btn { display: inline-block; border: 1px solid #333; padding: 4px 12px; background: #fff; font-size: 10px; margin-right: 6px; cursor: default; } .btn.primary { background: #333; color: #fff; } .btn.danger { border-color: #c33; color: #c33; } .btn.danger.primary { background: #c33; color: #fff; } .btn.small { padding: 2px 6px; font-size: 9px; } .btn.hardgate { background: #fff; border: 2px solid #6b4ea0; color: #4a3674; font-weight: bold; } .btn.hardgate::before { content: "⚠ 承認 "; font-size: 9px; color: #c33; } .btn[disabled], .btn.disabled { opacity: 0.4; background: #eee; } .link { color: #06c; text-decoration: underline; font-size: 10px; } .helper { color: #888; font-size: 9px; margin-top: 2px; } /* ====== テーブル ====== */ table.wf { width: 100%; border-collapse: collapse; font-size: 10px; } table.wf th, table.wf td { border: 1px solid #aaa; padding: 4px 6px; text-align: left; vertical-align: top; } table.wf th { background: #eee; font-size: 9px; } table.wf tr.system-row td { background: #fafafa; color: #555; font-style: italic; } /* ====== バッジ ====== */ .badge-pill { display: inline-block; padding: 1px 6px; border: 1px solid #555; border-radius: 8px; font-size: 9px; background: #fff; } .badge-pill.green { background: #e0f0e0; border-color: #393; color: #060; } .badge-pill.blue { background: #e0e8f5; border-color: #36c; color: #036; } .badge-pill.orange { background: #fbe6cc; border-color: #c63; color: #963; } .badge-pill.gray { background: #eee; border-color: #888; color: #555; } .badge-pill.red { background: #f5e0e0; border-color: #c33; color: #c33; } .badge-pill.purple { background: #efe6f7; border-color: #6b4ea0; color: #4a3674; } .badge-pill.yellow { background: #fdf6cc; border-color: #c93; color: #963; } .badge-pill.dlq { background: #f5e0e0; border-color: #c33; color: #c33; font-weight: bold; } /* ====== カード/パネル ====== */ .panel { border: 1px solid #888; padding: 8px; background: #fff; margin-bottom: 8px; } .panel-title { font-weight: bold; font-size: 11px; border-bottom: 1px solid #aaa; padding-bottom: 3px; margin-bottom: 6px; } .summary-card { border: 1px solid #888; padding: 6px 8px; background: #fff; } .summary-card .label { font-size: 9px; color: #666; } .summary-card .value { font-size: 16px; font-weight: bold; margin: 2px 0; } .summary-card .delta { font-size: 9px; color: #888; } .summary-card.red { border-color: #c33; background: #fdf3f3; } .summary-card.yellow { border-color: #c93; background: #fffbe6; } .summary-card.purple { border-color: #6b4ea0; background: #f8f3fa; } .summary-card.green { border-color: #393; background: #f0f7f0; } /* ====== グリッド ====== */ .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; } .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; } .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; } /* ====== フィルタ ====== */ .filter-bar { background: #f8f8f8; border: 1px solid #ccc; padding: 6px 8px; margin-bottom: 8px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; } .filter-bar .filter-item { font-size: 10px; display: inline-flex; align-items: center; gap: 4px; } .filter-bar .filter-item .input, .filter-bar .filter-item .select { display: inline-block; width: auto; min-height: 18px; padding: 2px 6px; } /* ====== タブ ====== */ .tab-bar { display: flex; border-bottom: 1px solid #888; margin-bottom: 8px; } .tab-bar .tab { padding: 4px 12px; border: 1px solid #888; border-bottom: 0; background: #eee; font-size: 10px; margin-right: 2px; } .tab-bar .tab.active { background: #fff; font-weight: bold; } /* ====== スライダ(信頼度・関連度) ====== */ .slider { border: 1px solid #888; background: #fff; height: 18px; position: relative; padding: 0 6px; } .slider .track { background: #ccc; height: 4px; margin-top: 7px; position: relative; } .slider .knob { position: absolute; top: -4px; width: 12px; height: 12px; background: #6b4ea0; border: 1px solid #4a3674; border-radius: 50%; } .slider-value { font-size: 10px; font-weight: bold; margin-left: 6px; font-family: monospace; } /* ====== JSON diff ====== */ .diff { font-family: monospace; font-size: 9px; border: 1px solid #aaa; padding: 6px; background: #fafafa; white-space: pre-wrap; line-height: 1.5; } .diff .add { background: #e0f0e0; display: inline-block; width: 100%; } .diff .del { background: #f5e0e0; display: inline-block; width: 100%; } .diff .ignore { color: #aaa; text-decoration: line-through; } /* ====== プリチェック (a)-(g) ====== */ .precheck-table { border: 1px solid #aaa; } .precheck-row { display: grid; grid-template-columns: 30px 1fr 140px 100px; border-bottom: 1px solid #ddd; padding: 4px 6px; align-items: center; font-size: 10px; } .precheck-row:last-child { border-bottom: 0; } .precheck-row .ok { color: #393; font-weight: bold; } .precheck-row .ng { color: #c33; font-weight: bold; } .precheck-row .info { color: #666; } /* ====== タイマー ====== */ .timer { display: inline-block; padding: 1px 6px; border: 1px solid #888; font-family: monospace; font-size: 10px; background: #fff; } .timer.warn { background: #fdf6cc; border-color: #c93; color: #963; } .timer.over { background: #f5e0e0; border-color: #c33; color: #c33; font-weight: bold; } /* ====== アラートバー ====== */ .alert-bar { border: 1px solid #c33; background: #fdf3f3; padding: 6px 8px; font-size: 10px; margin-bottom: 8px; } .alert-bar.info { border-color: #36c; background: #eef4fb; } .alert-bar.warn { border-color: #c93; background: #fffbe6; } /* ====== モーダル ====== */ .modal-overlay { border: 1px dashed #888; background: #fafafa; padding: 10px; margin: 10px 0; } .modal-card { border: 2px solid #333; background: #fff; padding: 14px; max-width: 560px; margin: 0 auto; } .modal-card.danger { border-color: #c33; } .modal-card.hardgate { border-color: #6b4ea0; } .modal-card .modal-title { font-weight: bold; font-size: 12px; border-bottom: 2px solid #333; padding-bottom: 4px; margin-bottom: 8px; } .modal-card.danger .modal-title { border-bottom-color: #c33; color: #c33; } .modal-card.hardgate .modal-title { border-bottom-color: #6b4ea0; color: #4a3674; } /* ====== 認証画面 ====== */ .auth-page { border: 1px solid #888; min-height: 540px; background: #f8f8fa; display: flex; align-items: center; justify-content: center; padding: 30px; } .auth-card { background: #fff; border: 1px solid #6b4ea0; padding: 24px; max-width: 380px; width: 100%; } .auth-card h3 { margin: 0 0 12px; font-size: 14px; color: #4a3674; border-bottom: 2px solid #6b4ea0; padding-bottom: 4px; } /* ====== ページャ ====== */ .pager { font-size: 10px; margin-top: 6px; color: #666; } .pager .pg { display: inline-block; border: 1px solid #888; padding: 1px 5px; background: #fff; margin: 0 1px; } .pager .pg.active { background: #6b4ea0; color: #fff; } /* ====== フットノート / ノート ====== */ .note { background: #f3eef8; border-left: 3px solid #6b4ea0; padding: 4px 8px; font-size: 9px; color: #4a3674; margin-top: 6px; } /* ====== フロー図 ====== */ .flow-page { padding: 14px; } .flow-grid { display: grid; gap: 10px; } .flow-node { border: 1px solid #6b4ea0; background: #f8f3fa; padding: 6px 10px; font-size: 10px; text-align: center; min-width: 100px; } .flow-node.auth { border-color: #393; background: #f0f7f0; } .flow-node.hub { border-color: #c93; background: #fffbe6; font-weight: bold; } .flow-node.scr { border-color: #6b4ea0; } .flow-arrow { font-size: 14px; text-align: center; color: #555; } .flow-row { display: flex; align-items: center; gap: 8px; margin: 6px 0; } /* ====== 画面設計書フォーマット ====== */ .legend { page-break-after: always; padding: 30px 40px; font-size: 11px; } .legend h2 { font-size: 18px; border-bottom: 2px solid #333; padding-bottom: 6px; } .legend h3 { font-size: 12px; margin: 14px 0 6px; } .legend table { width: 100%; border-collapse: collapse; margin-top: 8px; } .legend th, .legend td { border: 1px solid #aaa; padding: 5px 8px; text-align: left; font-size: 10px; vertical-align: top; } .legend th { background: #eee; } /* ====== UX 共通コンポーネント(基本設計 §5.2.2 / 詳細設計 §5.2.5 と整合) ====== */ /* PageHeader */ .page-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; } .page-header h1 { font-size: 14px; margin: 0; } .page-header .page-description { font-size: 10px; color: #666; margin: 2px 0 0; } /* Breadcrumb */ .breadcrumb { font-size: 10px; color: #666; margin-bottom: 4px; } .breadcrumb a { color: #06c; text-decoration: none; } .breadcrumb a:hover { text-decoration: underline; } /* QuickFilterChips / AppliedFilterChips */ .quick-filter-chips { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; } .chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border: 1px solid #888; border-radius: 12px; background: #fff; font-size: 10px; cursor: pointer; } .chip.active { background: #6b4ea0; color: #fff; border-color: #4a3674; } .chip .count { font-size: 9px; opacity: 0.8; } .applied-filter-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px; align-items: center; } .applied-filter-chips .chip-remove { padding: 2px 8px; background: #efe6f7; border: 1px solid #6b4ea0; color: #4a3674; border-radius: 10px; font-size: 9px; } .applied-filter-chips .clear-all { font-size: 9px; color: #c33; text-decoration: underline; cursor: pointer; } /* BulkActionBar */ .bulk-action-bar { position: sticky; bottom: 0; background: #4a3674; color: #fff; padding: 8px 12px; display: flex; gap: 12px; align-items: center; font-size: 10px; margin-top: 8px; } .bulk-action-bar .count { font-weight: bold; } .bulk-action-bar .btn { background: #fff; color: #4a3674; border-color: #fff; } .bulk-action-bar .btn-link { background: none; border: none; color: #fff; text-decoration: underline; cursor: pointer; } /* SummaryCard グリッド(既存 .summary-card を踏襲しつつグリッドのみ追加) */ .summary-card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; margin-bottom: 12px; } .summary-card .unit { font-size: 11px; color: #666; margin-left: 4px; font-weight: normal; } .summary-card .delta-up { color: #393; font-size: 9px; } .summary-card .delta-down { color: #c33; font-size: 9px; } /* Timeline */ .timeline { list-style: none; padding: 0 0 0 24px; margin: 8px 0; position: relative; } .timeline::before { content: ""; position: absolute; left: 10px; top: 0; bottom: 0; width: 2px; background: #aaa; } .timeline .step { position: relative; padding: 4px 0 4px 18px; font-size: 10px; } .timeline .step .marker { position: absolute; left: -20px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: #fff; border: 2px solid #aaa; text-align: center; line-height: 8px; font-size: 8px; } .timeline .step.done .marker { background: #393; border-color: #393; color: #fff; } .timeline .step.current .marker { background: #6b4ea0; border-color: #4a3674; color: #fff; } .timeline .step.future .marker { background: #fff; border-color: #aaa; } .timeline .step .step-label { font-weight: 600; } .timeline .step .step-date { font-size: 9px; color: #666; } /* ApprovalStateBadge / HardgateBadge / ReauthBadge / ReauthCountdown(運営者特有) */ .approval-state-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 10px; font-size: 9px; border: 1px solid; } .approval-state-badge.requested { background: #e0e8f5; border-color: #36c; color: #036; } .approval-state-badge.approved { background: #e0f0e0; border-color: #393; color: #060; } .approval-state-badge.rejected { background: #f5e0e0; border-color: #c33; color: #c33; } .approval-state-badge.withdrawn { background: #eee; border-color: #888; color: #555; } .hardgate-badge { display: inline-block; padding: 1px 6px; background: #efe6f7; border: 1px solid #6b4ea0; color: #4a3674; font-weight: bold; font-size: 9px; border-radius: 8px; } .reauth-badge { display: inline-block; padding: 0 4px; font-size: 9px; margin-left: 4px; color: #c63; } .reauth-countdown { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; background: #fff; border: 1px solid #6b4ea0; color: #4a3674; font-size: 9px; font-family: monospace; border-radius: 10px; } .reauth-countdown.urgent { border-color: #c33; background: #fdf3f3; color: #c33; } /* PayloadDiffViewer (要約モード) */ .payload-diff-viewer .mode-switch { display: flex; gap: 4px; margin-bottom: 6px; } .payload-diff-viewer .mode-switch button { padding: 2px 8px; font-size: 9px; border: 1px solid #888; background: #fff; cursor: pointer; } .payload-diff-viewer .mode-switch button[aria-pressed="true"] { background: #6b4ea0; color: #fff; border-color: #4a3674; } .diff-summary-table { width: 100%; border-collapse: collapse; font-size: 10px; } .diff-summary-table th, .diff-summary-table td { border: 1px solid #aaa; padding: 4px 6px; vertical-align: top; } .diff-summary-table th { background: #f3eef8; font-size: 9px; } .diff-summary-table .changed { background: #fffbe6; } /* SelfApprovalGuard */ .self-approval-message { background: #f3eef8; border: 1px solid #6b4ea0; color: #4a3674; padding: 6px 8px; font-size: 10px; margin: 8px 0; } /* TicketIdField */ .ticket-id-field { font-family: monospace; } .ticket-id-field::placeholder { color: #aaa; font-style: italic; } /* LoadingSkeleton */ .skeleton-table .skeleton-row { display: flex; gap: 6px; margin-bottom: 6px; } .skeleton-table .skeleton-cell { background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%); background-size: 200% 100%; animation: skeleton-shimmer 1.4s ease infinite; height: 18px; flex: 1; border-radius: 2px; } @keyframes skeleton-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } } @media (prefers-reduced-motion: reduce) { .skeleton-table .skeleton-cell { animation: none; } } .skeleton-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; } .skeleton-card { background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%); background-size: 200% 100%; animation: skeleton-shimmer 1.4s ease infinite; height: 80px; border-radius: 4px; } /* ProgressText */ .progress-text { font-size: 10px; color: #666; display: inline-flex; align-items: center; gap: 6px; } .progress-text::before { content: ""; width: 10px; height: 10px; border: 2px solid #6b4ea0; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; } @keyframes spin { to { transform: rotate(360deg); } } @media (prefers-reduced-motion: reduce) { .progress-text::before { animation: none; border-top-color: #6b4ea0; } } /* PermissionTooltip */ .permission-disabled { opacity: 0.5; cursor: not-allowed; position: relative; } /* EmptyState 強化 */ .empty-state { border: 1px dashed #aaa; padding: 24px; text-align: center; color: #666; font-size: 10px; } .empty-state .icon { font-size: 24px; margin-bottom: 8px; } .empty-state .title { font-size: 12px; font-weight: bold; color: #4a3674; margin-bottom: 4px; } .empty-state .description { color: #666; margin-bottom: 12px; } .empty-state .cta-row { display: flex; gap: 8px; justify-content: center; } /* sr-only / focus-visible */ .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; } *:focus-visible { outline: 2px solid #6b4ea0; outline-offset: 2px; }
+@page { size: A4 landscape; margin: 10mm; } * { box-sizing: border-box; } html, body { margin: 0; padding: 0; font-family: "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif; color: #222; background: #fff; font-size: 11px; line-height: 1.4; } /* ====== 表紙・目次 ====== */ .cover { page-break-after: always; padding: 60px 40px; text-align: center; } .cover h1 { font-size: 28px; margin: 40px 0 12px; } .cover .subtitle { font-size: 14px; color: #666; margin-bottom: 40px; } .cover .meta { display: inline-block; text-align: left; border: 1px solid #ccc; padding: 16px 24px; margin-top: 20px; font-size: 12px; } .cover .meta div { margin: 4px 0; } .toc { page-break-after: always; padding: 30px 40px; } .toc h2 { font-size: 18px; border-bottom: 2px solid #333; padding-bottom: 6px; } .toc ul { columns: 2; -webkit-columns: 2; column-gap: 30px; padding-left: 20px; } .toc li { margin: 4px 0; font-size: 11px; break-inside: avoid; } .toc .toc-group { font-weight: bold; color: #4a3674; margin-top: 8px; } .legend { page-break-after: always; padding: 30px 40px; font-size: 11px; } .legend h2 { font-size: 16px; border-bottom: 2px solid #333; padding-bottom: 6px; } .legend table { width: 100%; border-collapse: collapse; margin-top: 10px; } .legend th, .legend td { border: 1px solid #aaa; padding: 5px 8px; text-align: left; font-size: 10px; vertical-align: top; } .legend th { background: #eee; } /* ====== 画面ブロック ====== */ .screen { page-break-after: always; padding: 12px; border: 1px solid #ddd; margin: 0; min-height: 180mm; } .screen:last-child { page-break-after: auto; } .screen-header { border-bottom: 2px solid #333; padding-bottom: 6px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: baseline; } .screen-header .scr-id { font-weight: bold; font-size: 14px; background: #333; color: #fff; padding: 2px 8px; margin-right: 10px; } .screen-header .scr-id.operator { background: #6b4ea0; } .screen-header .scr-name { font-size: 14px; font-weight: bold; } .screen-header .scr-user { font-size: 10px; color: #666; text-align: right; max-width: 60%; } /* ====== 管理画面レイアウト ====== */ .app-layout { display: grid; grid-template-columns: 200px 1fr; grid-template-rows: 40px 1fr; gap: 0; border: 1px solid #888; min-height: 540px; } .app-header { grid-column: 1 / 3; border-bottom: 1px solid #888; background: #f5f5f5; padding: 0 12px; display: flex; align-items: center; justify-content: space-between; font-size: 10px; } .app-header.operator { background: #f3eef8; border-bottom-color: #6b4ea0; } .app-header .left { display: flex; align-items: center; gap: 12px; } .app-header .logo { font-weight: bold; border: 1px solid #888; padding: 2px 8px; background: #fff; } .app-header.operator .logo { background: #6b4ea0; color: #fff; border-color: #4a3674; } .app-header .right { display: flex; align-items: center; gap: 12px; } .bell { border: 1px solid #888; padding: 2px 6px; background: #fff; position: relative; } .bell .badge { position: absolute; top: -5px; right: -5px; background: #c33; color: #fff; font-size: 8px; border-radius: 50%; width: 14px; height: 14px; text-align: center; line-height: 14px; } .user-menu { border: 1px solid #888; padding: 2px 8px; background: #fff; } .mfa-badge { border: 1px solid #393; padding: 2px 6px; background: #e0f0e0; color: #060; font-size: 9px; } .app-sidebar { border-right: 1px solid #888; background: #fafafa; padding: 8px 0; font-size: 10px; } .app-sidebar .group { color: #888; font-size: 9px; padding: 8px 10px 2px; text-transform: uppercase; } .app-sidebar .item { padding: 4px 10px; border-left: 3px solid transparent; display: flex; justify-content: space-between; align-items: center; gap: 4px; } .app-sidebar .item.active { background: #efe6f7; border-left: 3px solid #6b4ea0; font-weight: bold; } .app-sidebar .item .badge { background: #c33; color: #fff; font-size: 8px; border-radius: 8px; padding: 0 5px; min-width: 14px; text-align: center; } .app-sidebar .item .badge.yellow { background: #c93; } .app-sidebar .item .badge.purple { background: #6b4ea0; } .app-main { padding: 12px; overflow: hidden; } /* ====== フォーム共通 ====== */ .field { margin-bottom: 8px; } .field label { display: block; font-size: 10px; margin-bottom: 2px; color: #444; } .field label .req { color: #c33; } .input, .textarea, .select { width: 100%; border: 1px solid #888; background: #fff; padding: 4px 6px; font-size: 10px; color: #555; min-height: 22px; } .input .placeholder, .textarea .placeholder, .select .placeholder { color: #aaa; } .textarea { min-height: 50px; } .textarea.rich { min-height: 90px; border-top-width: 18px; position: relative; } .textarea.rich::before { content: "B I U • 1. link </>"; position: absolute; top: -18px; left: 0; right: 0; height: 18px; padding: 2px 6px; background: #eee; border: 1px solid #888; border-bottom: 0; font-size: 9px; font-family: monospace; color: #555; } .checkbox { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; } .checkbox::before { content: ""; display: inline-block; width: 12px; height: 12px; border: 1px solid #555; background: #fff; } .checkbox.checked::before { background: #6b4ea0; } .btn { display: inline-block; border: 1px solid #333; padding: 4px 12px; background: #fff; font-size: 10px; margin-right: 6px; cursor: default; } .btn.primary { background: #333; color: #fff; } .btn.danger { border-color: #c33; color: #c33; } .btn.danger.primary { background: #c33; color: #fff; } .btn.small { padding: 2px 6px; font-size: 9px; } .btn.hardgate { background: #fff; border: 2px solid #6b4ea0; color: #4a3674; font-weight: bold; } .btn.hardgate::before { content: "承認 "; font-size: 9px; color: #c33; } .btn[disabled], .btn.disabled { opacity: 0.4; background: #eee; } .link { color: #06c; text-decoration: underline; font-size: 10px; } .helper { color: #888; font-size: 9px; margin-top: 2px; } /* ====== テーブル ====== */ table.wf { width: 100%; border-collapse: collapse; font-size: 10px; } table.wf th, table.wf td { border: 1px solid #aaa; padding: 4px 6px; text-align: left; vertical-align: top; } table.wf th { background: #eee; font-size: 9px; } table.wf tr.system-row td { background: #fafafa; color: #555; font-style: italic; } /* ====== バッジ ====== */ .badge-pill { display: inline-block; padding: 1px 6px; border: 1px solid #555; border-radius: 8px; font-size: 9px; background: #fff; } .badge-pill.green { background: #e0f0e0; border-color: #393; color: #060; } .badge-pill.blue { background: #e0e8f5; border-color: #36c; color: #036; } .badge-pill.orange { background: #fbe6cc; border-color: #c63; color: #963; } .badge-pill.gray { background: #eee; border-color: #888; color: #555; } .badge-pill.red { background: #f5e0e0; border-color: #c33; color: #c33; } .badge-pill.purple { background: #efe6f7; border-color: #6b4ea0; color: #4a3674; } .badge-pill.yellow { background: #fdf6cc; border-color: #c93; color: #963; } .badge-pill.dlq { background: #f5e0e0; border-color: #c33; color: #c33; font-weight: bold; } /* ====== カード/パネル ====== */ .panel { border: 1px solid #888; padding: 8px; background: #fff; margin-bottom: 8px; } .panel-title { font-weight: bold; font-size: 11px; border-bottom: 1px solid #aaa; padding-bottom: 3px; margin-bottom: 6px; } .summary-card { border: 1px solid #888; padding: 6px 8px; background: #fff; } .summary-card .label { font-size: 9px; color: #666; } .summary-card .value { font-size: 16px; font-weight: bold; margin: 2px 0; } .summary-card .delta { font-size: 9px; color: #888; } .summary-card.red { border-color: #c33; background: #fdf3f3; } .summary-card.yellow { border-color: #c93; background: #fffbe6; } .summary-card.purple { border-color: #6b4ea0; background: #f8f3fa; } .summary-card.green { border-color: #393; background: #f0f7f0; } /* ====== グリッド ====== */ .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; } .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; } .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; } /* ====== フィルタ ====== */ .filter-bar { background: #f8f8f8; border: 1px solid #ccc; padding: 6px 8px; margin-bottom: 8px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; } .filter-bar .filter-item { font-size: 10px; display: inline-flex; align-items: center; gap: 4px; } .filter-bar .filter-item .input, .filter-bar .filter-item .select { display: inline-block; width: auto; min-height: 18px; padding: 2px 6px; } /* ====== タブ ====== */ .tab-bar { display: flex; border-bottom: 1px solid #888; margin-bottom: 8px; } .tab-bar .tab { padding: 4px 12px; border: 1px solid #888; border-bottom: 0; background: #eee; font-size: 10px; margin-right: 2px; } .tab-bar .tab.active { background: #fff; font-weight: bold; } /* ====== スライダ(信頼度・関連度) ====== */ .slider { border: 1px solid #888; background: #fff; height: 18px; position: relative; padding: 0 6px; } .slider .track { background: #ccc; height: 4px; margin-top: 7px; position: relative; } .slider .knob { position: absolute; top: -4px; width: 12px; height: 12px; background: #6b4ea0; border: 1px solid #4a3674; border-radius: 50%; } .slider-value { font-size: 10px; font-weight: bold; margin-left: 6px; font-family: monospace; } /* ====== JSON diff ====== */ .diff { font-family: monospace; font-size: 9px; border: 1px solid #aaa; padding: 6px; background: #fafafa; white-space: pre-wrap; line-height: 1.5; } .diff .add { background: #e0f0e0; display: inline-block; width: 100%; } .diff .del { background: #f5e0e0; display: inline-block; width: 100%; } .diff .ignore { color: #aaa; text-decoration: line-through; } /* ====== プリチェック (a)-(g) ====== */ .precheck-table { border: 1px solid #aaa; } .precheck-row { display: grid; grid-template-columns: 30px 1fr 140px 100px; border-bottom: 1px solid #ddd; padding: 4px 6px; align-items: center; font-size: 10px; } .precheck-row:last-child { border-bottom: 0; } .precheck-row .ok { color: #393; font-weight: bold; } .precheck-row .ng { color: #c33; font-weight: bold; } .precheck-row .info { color: #666; } /* ====== タイマー ====== */ .timer { display: inline-block; padding: 1px 6px; border: 1px solid #888; font-family: monospace; font-size: 10px; background: #fff; } .timer.warn { background: #fdf6cc; border-color: #c93; color: #963; } .timer.over { background: #f5e0e0; border-color: #c33; color: #c33; font-weight: bold; } /* ====== アラートバー ====== */ .alert-bar { border: 1px solid #c33; background: #fdf3f3; padding: 6px 8px; font-size: 10px; margin-bottom: 8px; } .alert-bar.info { border-color: #36c; background: #eef4fb; } .alert-bar.warn { border-color: #c93; background: #fffbe6; } /* ====== モーダル ====== */ .modal-overlay { border: 1px dashed #888; background: #fafafa; padding: 10px; margin: 10px 0; } .modal-card { border: 2px solid #333; background: #fff; padding: 14px; max-width: 560px; margin: 0 auto; } .modal-card.danger { border-color: #c33; } .modal-card.hardgate { border-color: #6b4ea0; } .modal-card .modal-title { font-weight: bold; font-size: 12px; border-bottom: 2px solid #333; padding-bottom: 4px; margin-bottom: 8px; } .modal-card.danger .modal-title { border-bottom-color: #c33; color: #c33; } .modal-card.hardgate .modal-title { border-bottom-color: #6b4ea0; color: #4a3674; } /* ====== 認証画面 ====== */ .auth-page { border: 1px solid #888; min-height: 540px; background: #f8f8fa; display: flex; align-items: center; justify-content: center; padding: 30px; } .auth-card { background: #fff; border: 1px solid #6b4ea0; padding: 24px; max-width: 380px; width: 100%; } .auth-card h3 { margin: 0 0 12px; font-size: 14px; color: #4a3674; border-bottom: 2px solid #6b4ea0; padding-bottom: 4px; } /* ====== ページャ ====== */ .pager { font-size: 10px; margin-top: 6px; color: #666; } .pager .pg { display: inline-block; border: 1px solid #888; padding: 1px 5px; background: #fff; margin: 0 1px; } .pager .pg.active { background: #6b4ea0; color: #fff; } /* ====== フットノート / ノート ====== */ .note { background: #f3eef8; border-left: 3px solid #6b4ea0; padding: 4px 8px; font-size: 9px; color: #4a3674; margin-top: 6px; } /* ====== フロー図 ====== */ .flow-page { padding: 14px; } .flow-grid { display: grid; gap: 10px; } .flow-node { border: 1px solid #6b4ea0; background: #f8f3fa; padding: 6px 10px; font-size: 10px; text-align: center; min-width: 100px; } .flow-node.auth { border-color: #393; background: #f0f7f0; } .flow-node.hub { border-color: #c93; background: #fffbe6; font-weight: bold; } .flow-node.scr { border-color: #6b4ea0; } .flow-arrow { font-size: 14px; text-align: center; color: #555; } .flow-row { display: flex; align-items: center; gap: 8px; margin: 6px 0; } /* ====== 画面設計書フォーマット ====== */ .legend { page-break-after: always; padding: 30px 40px; font-size: 11px; } .legend h2 { font-size: 18px; border-bottom: 2px solid #333; padding-bottom: 6px; } .legend h3 { font-size: 12px; margin: 14px 0 6px; } .legend table { width: 100%; border-collapse: collapse; margin-top: 8px; } .legend th, .legend td { border: 1px solid #aaa; padding: 5px 8px; text-align: left; font-size: 10px; vertical-align: top; } .legend th { background: #eee; } /* ====== UX 共通コンポーネント(基本設計 §5.2.2 / 詳細設計 §5.2.5 と整合) ====== */ /* PageHeader */ .page-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; } .page-header h1 { font-size: 14px; margin: 0; } .page-header .page-description { font-size: 10px; color: #666; margin: 2px 0 0; } /* Breadcrumb */ .breadcrumb { font-size: 10px; color: #666; margin-bottom: 4px; } .breadcrumb a { color: #06c; text-decoration: none; } .breadcrumb a:hover { text-decoration: underline; } /* QuickFilterChips / AppliedFilterChips */ .quick-filter-chips { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; } .chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border: 1px solid #888; border-radius: 12px; background: #fff; font-size: 10px; cursor: pointer; } .chip.active { background: #6b4ea0; color: #fff; border-color: #4a3674; } .chip .count { font-size: 9px; opacity: 0.8; } .applied-filter-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px; align-items: center; } .applied-filter-chips .chip-remove { padding: 2px 8px; background: #efe6f7; border: 1px solid #6b4ea0; color: #4a3674; border-radius: 10px; font-size: 9px; } .applied-filter-chips .clear-all { font-size: 9px; color: #c33; text-decoration: underline; cursor: pointer; } /* BulkActionBar */ .bulk-action-bar { position: sticky; bottom: 0; background: #4a3674; color: #fff; padding: 8px 12px; display: flex; gap: 12px; align-items: center; font-size: 10px; margin-top: 8px; } .bulk-action-bar .count { font-weight: bold; } .bulk-action-bar .btn { background: #fff; color: #4a3674; border-color: #fff; } .bulk-action-bar .btn-link { background: none; border: none; color: #fff; text-decoration: underline; cursor: pointer; } /* SummaryCard グリッド(既存 .summary-card を踏襲しつつグリッドのみ追加) */ .summary-card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; margin-bottom: 12px; } .summary-card .unit { font-size: 11px; color: #666; margin-left: 4px; font-weight: normal; } .summary-card .delta-up { color: #393; font-size: 9px; } .summary-card .delta-down { color: #c33; font-size: 9px; } /* Timeline */ .timeline { list-style: none; padding: 0 0 0 24px; margin: 8px 0; position: relative; } .timeline::before { content: ""; position: absolute; left: 10px; top: 0; bottom: 0; width: 2px; background: #aaa; } .timeline .step { position: relative; padding: 4px 0 4px 18px; font-size: 10px; } .timeline .step .marker { position: absolute; left: -20px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: #fff; border: 2px solid #aaa; text-align: center; line-height: 8px; font-size: 8px; } .timeline .step.done .marker { background: #393; border-color: #393; color: #fff; } .timeline .step.current .marker { background: #6b4ea0; border-color: #4a3674; color: #fff; } .timeline .step.future .marker { background: #fff; border-color: #aaa; } .timeline .step .step-label { font-weight: 600; } .timeline .step .step-date { font-size: 9px; color: #666; } /* ApprovalStateBadge / HardgateBadge / ReauthBadge / ReauthCountdown(運営者特有) */ .approval-state-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 10px; font-size: 9px; border: 1px solid; } .approval-state-badge.requested { background: #e0e8f5; border-color: #36c; color: #036; } .approval-state-badge.approved { background: #e0f0e0; border-color: #393; color: #060; } .approval-state-badge.rejected { background: #f5e0e0; border-color: #c33; color: #c33; } .approval-state-badge.withdrawn { background: #eee; border-color: #888; color: #555; } .hardgate-badge { display: inline-block; padding: 1px 6px; background: #efe6f7; border: 1px solid #6b4ea0; color: #4a3674; font-weight: bold; font-size: 9px; border-radius: 8px; } .reauth-badge { display: inline-block; padding: 0 4px; font-size: 9px; margin-left: 4px; color: #c63; } .reauth-countdown { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; background: #fff; border: 1px solid #6b4ea0; color: #4a3674; font-size: 9px; font-family: monospace; border-radius: 10px; } .reauth-countdown.urgent { border-color: #c33; background: #fdf3f3; color: #c33; } /* PayloadDiffViewer (要約モード) */ .payload-diff-viewer .mode-switch { display: flex; gap: 4px; margin-bottom: 6px; } .payload-diff-viewer .mode-switch button { padding: 2px 8px; font-size: 9px; border: 1px solid #888; background: #fff; cursor: pointer; } .payload-diff-viewer .mode-switch button[aria-pressed="true"] { background: #6b4ea0; color: #fff; border-color: #4a3674; } .diff-summary-table { width: 100%; border-collapse: collapse; font-size: 10px; } .diff-summary-table th, .diff-summary-table td { border: 1px solid #aaa; padding: 4px 6px; vertical-align: top; } .diff-summary-table th { background: #f3eef8; font-size: 9px; } .diff-summary-table .changed { background: #fffbe6; } /* SelfApprovalGuard */ .self-approval-message { background: #f3eef8; border: 1px solid #6b4ea0; color: #4a3674; padding: 6px 8px; font-size: 10px; margin: 8px 0; } /* TicketIdField */ .ticket-id-field { font-family: monospace; } .ticket-id-field::placeholder { color: #aaa; font-style: italic; } /* LoadingSkeleton */ .skeleton-table .skeleton-row { display: flex; gap: 6px; margin-bottom: 6px; } .skeleton-table .skeleton-cell { background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%); background-size: 200% 100%; animation: skeleton-shimmer 1.4s ease infinite; height: 18px; flex: 1; border-radius: 2px; } @keyframes skeleton-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } } @media (prefers-reduced-motion: reduce) { .skeleton-table .skeleton-cell { animation: none; } } .skeleton-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; } .skeleton-card { background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%); background-size: 200% 100%; animation: skeleton-shimmer 1.4s ease infinite; height: 80px; border-radius: 4px; } /* ProgressText */ .progress-text { font-size: 10px; color: #666; display: inline-flex; align-items: center; gap: 6px; } .progress-text::before { content: ""; width: 10px; height: 10px; border: 2px solid #6b4ea0; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; } @keyframes spin { to { transform: rotate(360deg); } } @media (prefers-reduced-motion: reduce) { .progress-text::before { animation: none; border-top-color: #6b4ea0; } } /* PermissionTooltip */ .permission-disabled { opacity: 0.5; cursor: not-allowed; position: relative; } /* EmptyState 強化 */ .empty-state { border: 1px dashed #aaa; padding: 24px; text-align: center; color: #666; font-size: 10px; } .empty-state .icon { font-size: 24px; margin-bottom: 8px; } .empty-state .title { font-size: 12px; font-weight: bold; color: #4a3674; margin-bottom: 4px; } .empty-state .description { color: #666; margin-bottom: 12px; } .empty-state .cta-row { display: flex; gap: 8px; justify-content: center; } /* sr-only / focus-visible */ .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; } *:focus-visible { outline: 2px solid #6b4ea0; outline-offset: 2px; }
   </style>
 </head>
 
@@ -206,8 +206,8 @@
           </div>
           <div style="display: flex; gap: 6px; margin-top: 6px;">
             <button class="btn small">🖨 印刷する</button>
-            <button class="btn small">📋 コピーする</button>
-            <button class="btn small">⬇ PDF でダウンロード</button>
+            <button class="btn small">コピーする</button>
+            <button class="btn small">PDF でダウンロード</button>
           </div>
           <label class="checkbox" style="margin-top: 8px;"><input type="checkbox" /> 回復コードを安全な場所に保管しました</label>
         </div>
@@ -505,7 +505,7 @@
                 <td>—</td>
               </tr>
               <tr>
-                <td><a class="link">AI 推論パラメータ <span class="hardgate-badge">⚠ 4-eyes</span> →</a></td>
+                <td><a class="link">AI 推論パラメータ <span class="hardgate-badge">4-eyes</span> →</a></td>
                 <td>—</td>
               </tr>
             </table>
@@ -702,22 +702,22 @@
 
           <tbody>
             <tr>
-              <td><span class="approval-state-badge requested">⏳ 承認待ち</span></td>
+              <td><span class="approval-state-badge requested">承認待ち</span></td>
               <td><code>apv_SAMPLE_01H001</code></td>
               <td>op-SAMPLE-02</td>
-              <td>ai_parameter.update <span class="hardgate-badge">⚠ 4-eyes</span></td>
+              <td>ai_parameter.update <span class="hardgate-badge">4-eyes</span></td>
               <td>own_SAMPLE_01HAAAA</td>
               <td><span class="timer">残 61h:24m</span></td>
               <td><button class="btn small primary">承認画面を開く</button></td>
             </tr>
             <tr style="background: #f3eef8;">
-              <td><span class="approval-state-badge requested">⏳ 承認待ち</span> <span class="badge-pill purple">あなたの申請</span></td>
+              <td><span class="approval-state-badge requested">承認待ち</span> <span class="badge-pill purple">あなたの申請</span></td>
               <td><code>apv_SAMPLE_01H004</code></td>
               <td>op-SAMPLE-01(あなた)</td>
               <td>rate_limit.override</td>
               <td>own_SAMPLE_01HXXXX</td>
               <td><span class="timer warn">残 23h:12m</span></td>
-              <td><button class="btn small">詳細</button> <button class="btn small danger">取り下げる <span class="reauth-badge">🛡</span></button></td>
+              <td><button class="btn small">詳細</button> <button class="btn small danger">取り下げる</button></td>
             </tr>
 
             <tr>
@@ -918,9 +918,9 @@
             <tr>
               <td><code>fq_SAMPLE_01HXXXX</code></td>
               <td>acme-sample</td>
-              <td><span class="badge-pill">📝 FAQ</span></td>
+              <td><span class="badge-pill">FAQ</span></td>
               <td>9 日前</td>
-              <td><span class="badge-pill yellow">⏳ deleted_pending</span></td>
+              <td><span class="badge-pill yellow">deleted_pending</span></td>
               <td><span style="color: #c33;">残 6 日(2026-05-23)</span></td>
               <td><button class="btn small primary">復元する</button></td>
             </tr>
@@ -929,14 +929,14 @@
               <td>beta-sample</td>
               <td><span class="badge-pill">👑 オーナー</span></td>
               <td>12 日前</td>
-              <td><span class="badge-pill yellow">⏳ deleted_pending</span></td>
+              <td><span class="badge-pill yellow">deleted_pending</span></td>
               <td><span style="color: #c63;">残 18 日(2026-06-04)</span></td>
               <td><button class="btn small primary">復元する</button></td>
             </tr>
             <tr>
               <td><code>prj_SAMPLE_01HYYYY</code></td>
               <td>gamma-sample</td>
-              <td><span class="badge-pill">📁 プロジェクト</span></td>
+              <td><span class="badge-pill">プロジェクト</span></td>
               <td>14 日前</td>
               <td><span class="badge-pill orange">disabled</span></td>
               <td>—</td>
@@ -945,7 +945,7 @@
             <tr>
               <td><code>acc_SAMPLE_01HWWWW</code></td>
               <td>acme-sample</td>
-              <td><span class="badge-pill">👥 メンバー</span></td>
+              <td><span class="badge-pill">メンバー</span></td>
               <td>15 日前</td>
               <td><span class="badge-pill orange">disabled</span></td>
               <td>—</td>
@@ -954,9 +954,9 @@
             <tr style="opacity: 0.6;">
               <td><code>fq_SAMPLE_01HVVVV</code></td>
               <td>delta-sample</td>
-              <td><span class="badge-pill">📝 FAQ</span></td>
+              <td><span class="badge-pill">FAQ</span></td>
               <td>1 年前</td>
-              <td><span class="badge-pill gray">⚫ deleted(物理削除済)</span></td>
+              <td><span class="badge-pill gray">deleted(物理削除済)</span></td>
               <td>—</td>
               <td><button class="btn small" disabled title="物理削除済のため復元できません">復元不可</button></td>
             </tr>
@@ -1104,7 +1104,7 @@
 
       <div class="app-main">
         <nav class="breadcrumb" aria-label="現在位置"><a>ホーム</a> / <a>削除データ参照</a> / <span aria-current="page">復元</span></nav>
-        <header class="page-header"><div><h1>削除データ復元</h1><p class="page-description">論理削除済みのリソースを副作用プリチェック後に復元します(運営者操作)</p></div><div><span class="reauth-countdown">🛡 再認証残 4:38</span></div></header>
+        <header class="page-header"><div><h1>削除データ復元</h1><p class="page-description">論理削除済みのリソースを副作用プリチェック後に復元します(運営者操作)</p></div><div><span class="reauth-countdown">再認証残 4:38</span></div></header>
 
         <div class="grid-2">
           <div class="panel">
@@ -1161,7 +1161,7 @@
               </div>
 
               <div>
-                <span class="ok">✓ OK</span>
+                <span class="ok">OK</span>
               </div>
 
               <div class="info">
@@ -1179,7 +1179,7 @@
               </div>
 
               <div>
-                <span class="ok">✓ OK</span>
+                <span class="ok">OK</span>
               </div>
 
               <div class="info">
@@ -1197,7 +1197,7 @@
               </div>
 
               <div>
-                <span class="ok">✓ OK</span>
+                <span class="ok">OK</span>
               </div>
 
               <div class="info">
@@ -1215,7 +1215,7 @@
               </div>
 
               <div>
-                <span class="ok">✓ OK</span>
+                <span class="ok">OK</span>
               </div>
 
               <div class="info">
@@ -1233,7 +1233,7 @@
               </div>
 
               <div>
-                <span class="ok">✓ OK</span>
+                <span class="ok">OK</span>
               </div>
 
               <div class="info">
@@ -1251,7 +1251,7 @@
               </div>
 
               <div>
-                <span class="ng">⚠ 注意</span>
+                <span class="ng">注意</span>
               </div>
 
               <div class="info">
@@ -1269,7 +1269,7 @@
               </div>
 
               <div>
-                <span class="ok">✓ OK</span>
+                <span class="ok">OK</span>
               </div>
 
               <div class="info">
@@ -1285,7 +1285,7 @@
           <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;">
             <button class="btn">プリチェックを実行</button>
             <button class="btn hardgate">4-eyes 申請する</button>
-            <button class="btn danger">復元を実行する <span class="reauth-badge">🛡</span></button>
+            <button class="btn danger">復元を実行する</button>
             <button class="btn">キャンセル</button>
           </div>
           <div class="helper" style="margin-top: 6px;">MVP ハードゲート対象は「4-eyes 申請」タブからのみ実行可能です</div>
@@ -1385,7 +1385,7 @@
 
       <div class="app-main">
         <nav class="breadcrumb" aria-label="現在位置"><a>ホーム</a> / <span aria-current="page">AI 推論パラメータ</span></nav>
-        <header class="page-header"><div><h1>AI 推論パラメータ <span class="hardgate-badge">⚠ 4-eyes</span></h1><p class="page-description">信頼度・関連度しきい値とモデルを階層別に設定します(4-eyes ハードゲート対象)</p></div></header>
+        <header class="page-header"><div><h1>AI 推論パラメータ <span class="hardgate-badge">4-eyes</span></h1><p class="page-description">信頼度・関連度しきい値とモデルを階層別に設定します(4-eyes ハードゲート対象)</p></div></header>
 
         <div class="tab-bar">
           <div class="tab">グローバル</div>
@@ -1514,7 +1514,7 @@
           <div class="panel-title">操作</div>
           <div style="display: flex; gap: 8px; justify-content: flex-end;">
             <button class="btn">キャンセル</button>
-            <button class="btn hardgate">4-eyes 申請する <span class="reauth-badge">🛡</span></button>
+            <button class="btn hardgate">4-eyes 申請する</button>
           </div>
           <div class="helper" style="margin-top: 6px; text-align: right;">申請後、運営者 2 名(あなたを除く)に通知されます</div>
         </div>
@@ -1638,7 +1638,7 @@
           <div class="small">設定者: op-SAMPLE-01 / 2026-05-12 10:00</div>
           <footer style="display: flex; gap: 6px; justify-content: flex-end; margin-top: 8px;">
             <button class="btn small">編集する</button>
-            <button class="btn small danger">グローバル値に戻す <span class="reauth-badge">🛡</span></button>
+            <button class="btn small danger">グローバル値に戻す</button>
           </footer>
         </article>
 
@@ -1655,7 +1655,7 @@
           </table>
           <footer style="display: flex; gap: 6px; justify-content: flex-end; margin-top: 8px;">
             <button class="btn small">編集する</button>
-            <button class="btn small danger">グローバル値に戻す <span class="reauth-badge">🛡</span></button>
+            <button class="btn small danger">グローバル値に戻す</button>
           </footer>
         </article>
 
@@ -1899,7 +1899,7 @@
           <div style="display: flex; gap: 6px; flex-wrap: wrap;">
             <button class="btn">下書きを保存</button>
             <button class="btn">テスト送信(自分宛に送る)</button>
-            <button class="btn primary">配信を予約する <span class="reauth-badge">🛡</span></button>
+            <button class="btn primary">配信を予約する</button>
             <button class="btn">配信予約を取消</button>
             <button class="btn">訂正告知を発行</button>
           </div>
@@ -1908,7 +1908,7 @@
         <div class="panel" style="border: 2px solid #c33; background: #fdf3f3; margin-top: 12px;">
           <div class="panel-title" style="color: #c33;">⚠ 緊急時のみ: 即時配信</div>
           <div class="small">即時配信は取り消しできません。4-eyes 承認ログ対象です</div>
-          <button class="btn danger primary" style="margin-top: 6px;">即時配信する <span class="hardgate-badge" style="margin-left: 4px;">⚠ 4-eyes</span> <span class="reauth-badge">🛡</span></button>
+          <button class="btn danger primary" style="margin-top: 6px;">即時配信する <span class="hardgate-badge" style="margin-left: 4px;">4-eyes</span></button>
         </div>
 
 
@@ -2066,10 +2066,10 @@
 
       <div class="app-main">
         <nav class="breadcrumb" aria-label="現在位置"><a>ホーム</a> / <span aria-current="page">運営者活動</span></nav>
-        <header class="page-header"><div><h1>運営者活動ダッシュボード(監査)</h1><p class="page-description">運営者操作の監査ログを検索・閲覧・エクスポートします(5 年保持)</p></div><div><button class="btn primary">CSV をエクスポートする <span class="reauth-badge">🛡</span></button></div></header>
+        <header class="page-header"><div><h1>運営者活動ダッシュボード(監査)</h1><p class="page-description">運営者操作の監査ログを検索・閲覧・エクスポートします(5 年保持)</p></div><div><button class="btn primary">CSV をエクスポートする</button></div></header>
 
         <div style="display: flex; gap: 8px; margin-bottom: 8px;">
-          <span class="badge-pill green">✅ ハッシュチェーン検証 OK(直近 24 時間)</span>
+          <span class="badge-pill green">ハッシュチェーン検証 OK(直近 24 時間)</span>
           <span class="badge-pill gray">運営者頻度異常検知: 0 件</span>
         </div>
 
@@ -2392,7 +2392,7 @@
         <nav class="breadcrumb" aria-label="現在位置"><a>ホーム</a> / <span aria-current="page">Webhook リプレイ・DLQ</span></nav>
         <header class="page-header"><div><h1>Webhook リプレイ・DLQ</h1><p class="page-description">課金 Webhook の失敗イベントを手動リプレイ・破棄します(30 日リプレイ枠)</p></div></header>
 
-        <div class="alert-bar" role="alert">⚠ 24 時間以上滞留中のイベントが 2 件あります。早急に確認してください<br>⏳ リプレイ枠 30 日に近づくイベントが 1 件あります(残 3 日以内)</div>
+        <div class="alert-bar" role="alert">⚠ 24 時間以上滞留中のイベントが 2 件あります。早急に確認してください<br>リプレイ枠 30 日に近づくイベントが 1 件あります(残 3 日以内)</div>
 
         <div class="summary-card-grid">
           <div class="summary-card red"><div class="label">DLQ 24h+ 滞留</div><div class="value">2</div><div class="delta-down">手動リプレイ判断必要</div></div>
@@ -2629,14 +2629,14 @@
             </div>
             <div class="field">
               <label>再認証残時間</label>
-              <div><span class="reauth-countdown">🛡 再認証残 4:38</span></div>
+              <div><span class="reauth-countdown">再認証残 4:38</span></div>
             </div>
           </div>
 
           <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px;">
             <button class="btn">キャンセル</button>
-            <button class="btn primary">リプレイする <span class="reauth-badge">🛡</span></button>
-            <button class="btn danger">破棄する <span class="hardgate-badge" style="margin-left: 4px;">⚠ 4-eyes</span> <span class="reauth-badge">🛡</span></button>
+            <button class="btn primary">リプレイする</button>
+            <button class="btn danger">破棄する <span class="hardgate-badge" style="margin-left: 4px;">4-eyes</span></button>
           </div>
           <div class="helper" style="margin-top: 6px; text-align: right;">破棄は 4-eyes 承認ログ対象、破棄後は復元できません</div>
         </div>
@@ -2882,8 +2882,8 @@
               <div style="display: flex; gap: 6px; flex-wrap: wrap;"><button class="btn small">0% ロールバック</button> <button class="btn small primary">10% で開始</button> <button class="btn small">50% へ拡大</button> <button class="btn small">100% へ完全切替</button></div>
             </div>
             <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px;">
-              <button class="btn danger">報告を却下する <span class="hardgate-badge">⚠ 4-eyes</span> <span class="reauth-badge">🛡</span></button>
-              <button class="btn primary">ルールを更新する <span class="hardgate-badge">⚠ 4-eyes</span> <span class="reauth-badge">🛡</span></button>
+              <button class="btn danger">報告を却下する <span class="hardgate-badge">4-eyes</span></button>
+              <button class="btn primary">ルールを更新する <span class="hardgate-badge">4-eyes</span></button>
             </div>
           </div>
         </div>
@@ -2983,7 +2983,7 @@
 
       <div class="app-main">
         <nav class="breadcrumb" aria-label="現在位置"><a>ホーム</a> / <span aria-current="page">ペイロード差分検出</span></nav>
-        <header class="page-header"><div><h1>Webhook ペイロード差分検出</h1><p class="page-description">同一イベント ID で payload_hash が異なる Webhook 受信を検出・レビューします</p></div><div><button class="btn primary">手動再処理する → SCR-097 へ <span class="reauth-badge">🛡</span></button></div></header>
+        <header class="page-header"><div><h1>Webhook ペイロード差分検出</h1><p class="page-description">同一イベント ID で payload_hash が異なる Webhook 受信を検出・レビューします</p></div><div><button class="btn primary">手動再処理する → SCR-097 へ</button></div></header>
 
         <div class="alert-bar info" role="status">未レビュー: 2 件 / レビュー中: 0 件 / 処理完了: 6 件</div>
 
@@ -3028,7 +3028,7 @@
               <td><code>evt_SAMPLE_01HDDDD</code></td>
               <td>acme-sample</td>
               <td>2 日前</td>
-              <td><span class="badge-pill blue">⏳ 未レビュー</span></td>
+              <td><span class="badge-pill blue">未レビュー</span></td>
               <td><button class="btn small primary">レビューを開始する</button></td>
             </tr>
             <tr>
@@ -3036,7 +3036,7 @@
               <td><code>evt_SAMPLE_01HEEEE</code></td>
               <td>beta-sample</td>
               <td>4 日前</td>
-              <td><span class="badge-pill yellow">🔍 レビュー中</span></td>
+              <td><span class="badge-pill yellow">レビュー中</span></td>
               <td><button class="btn small primary">手動再処理 → SCR-097</button> <button class="btn small">影響なしとして処理</button></td>
             </tr>
             <tr class="system-row">
@@ -3044,7 +3044,7 @@
               <td><code>evt_SAMPLE_01HFFFF</code></td>
               <td>gamma-sample</td>
               <td>11 日前</td>
-              <td><span class="badge-pill green">✅ 再処理済</span></td>
+              <td><span class="badge-pill green">再処理済</span></td>
               <td><span class="helper">処理済</span></td>
             </tr>
             <tr class="system-row">
@@ -3052,7 +3052,7 @@
               <td><code>evt_SAMPLE_01HGGGG</code></td>
               <td>delta-sample</td>
               <td>13 日前</td>
-              <td><span class="badge-pill gray">⚫ 影響なし</span></td>
+              <td><span class="badge-pill gray">影響なし</span></td>
               <td><span class="helper">処理完了</span></td>
             </tr>
           </tbody>
@@ -3125,7 +3125,7 @@
     <div class="app-main">
       <div class="modal-overlay">
         <div class="modal-card hardgate">
-          <div class="modal-title">4-eyes 承認を申請する <span class="hardgate-badge">⚠ ai_parameter.update</span></div>
+          <div class="modal-title">4-eyes 承認を申請する <span class="hardgate-badge">ai_parameter.update</span></div>
 
           <p class="small" style="margin-bottom: 8px;">この操作には別の運営者の承認が必要です。申請後、他の運営者に通知が送信されます(承認期限 72 時間)</p>
 
@@ -3160,7 +3160,7 @@
 
           <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px;">
             <button class="btn">キャンセル</button>
-            <button class="btn hardgate">申請する <span class="reauth-badge">🛡</span></button>
+            <button class="btn hardgate">申請する</button>
           </div>
         </div>
       </div>
@@ -3224,10 +3224,10 @@
           <!-- <div class="alert-bar" role="alert">⚠ 申請内容が変更されている可能性があります(payload_hash 不一致)。最新の内容を確認してから承認してください <a class="link">最新を表示</a> <a class="link">最新で再申請</a></div> -->
 
           <div style="display: flex; justify-content: space-between; margin-top: 12px; padding-top: 8px; border-top: 1px solid #ccc;">
-            <button class="btn danger">却下する <span class="reauth-badge">🛡</span></button>
+            <button class="btn danger">却下する</button>
             <div>
               <button class="btn">キャンセル</button>
-              <button class="btn primary" style="background: #393; border-color: #060;">承認する <span class="reauth-badge">🛡</span></button>
+              <button class="btn primary" style="background: #393; border-color: #060;">承認する</button>
             </div>
           </div>
           <div class="helper" style="margin-top: 4px;">承認と却下は視覚的に分離されています(承認 = 緑右下 / 却下 = 赤左下)</div>
