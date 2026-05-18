@@ -39,7 +39,7 @@
 |---|---|---|---|
 | 認証 | `/auth/register`, `/auth/login`, `/auth/logout`, `/auth/re-auth`, `/auth/password/reset-requests` | 公開(login)、認証済み(他)| SCR-001, SCR-002, SCR-003 |
 | メール確認 | `/auth/email-verifications/{token}` | トークン認証 | SCR-023 |
-| 管理者ユーザー管理 | `/admin-users`, `/admin-users/{id}`, `/admin-users/{id}/activation-email` | admin / `users:manage` | SCR-017, SCR-017-M1 |
+| 管理者ユーザー管理 | `/members`, `/members/invite`, `/members/{id}/permissions`, `/members/{id}/resend-invitation`, `/members/{id}` | admin / `users:manage` | SCR-017, SCR-017-M1 |
 | プロジェクト管理 | `/projects`, `/projects/{id}` | admin / `project:manage` | SCR-010, SCR-010-M1 |
 | FAQ 管理 | `/projects/{id}/faqs`, `/projects/{id}/faqs/{faqId}`, `/projects/{id}/faqs/import`, `/projects/{id}/faqs/export` | admin / `faq:manage` | SCR-012 |
 | ウィジェット | `/widget/bootstrap`, `/widget/ask`, `/widget/feedback` | end_user(公開キー + セッション)| ウィジェット |
@@ -248,7 +248,7 @@
     {
       "id": "01HZ...",
       "email": "member@...",
-      "status": "active|pending_activation|disabled",
+      "status": "active|pending_activation",
       "role": "admin",
       "is_owner": false,
       "permissions": ["faq:manage", "chat:respond"],
@@ -297,11 +297,16 @@
 レスポンス(200): `{ "id": "...", "permissions": [...], "updatedAt": "..." }`
 エラー: 404 `NOT_FOUND`(オーナー境界違反、E-AUTHZ-OWNER-BOUNDARY)、403 `OWNER_PROTECTED`
 
-#### 5.2.4 `POST /members/{id}/disable` / `DELETE /members/{id}`
+#### 5.2.4 `DELETE /members/{id}` / `POST /members/{id}/resend-invitation`
 
 | 認証 | Cookie + CSRF + 再認証必須 |
+| 関連画面 | SCR-017-M1(削除・招待再送)|
 
-エラー: 403 `OWNER_PROTECTED`、404 `NOT_FOUND`
+`DELETE /members/{id}` は招待中(`pending_activation`)・有効(`active`)いずれの状態でも実行可能。実行時は対象メンバーの全セッションを失効。
+
+`POST /members/{id}/resend-invitation` は `status='pending_activation'` のメンバーのみ対象。旧 `access_tokens.purpose='activation'` を失効させ新規トークン(7 日有効)を発行。
+
+エラー: 403 `OWNER_PROTECTED`(オーナー対象)、403 `SELF_MUTATION_FORBIDDEN`(自分自身対象)、404 `NOT_FOUND`
 
 ### 5.3 プロジェクト管理 API
 
