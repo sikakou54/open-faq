@@ -74,11 +74,11 @@
 メイン / 運営者間の共有概念の正本ルールは [共有/共有概念.md](共有/共有概念.md) で正本化する。本書には主要ルールの要約のみ記載:
 
 - 共有概念が変更される場合は、**共有概念.md 正本ルール表で示された正本ドキュメントを必ず更新** し、参照側ドキュメントはリンクのみ更新する(再掲禁止)
-- 共有概念には以下を含む(全項目は共有概念.md 参照): `accounts.contract_status` / `case_status` / 通知重要度 / SCR ID / AC ID / IF #1〜#12 / retention class / 法令プライバシー制約 / **オーナー直接所有のユーザーモデル**(`accounts.is_owner` + `accounts.owner_account_id` + `account_permissions` + `account_project_grants` ── メインを正本)/ ハッシュチェーン監査(運営者を正本)/ 運営者ログイン向け IP allowlist = `operator_ip_allowlist`(運営者を正本)/ FAQ ウィジェット向けプロジェクト単位 IP 許可リスト = `project_ip_allowlist`(メインを正本、FR-179 / FR-330)/ PII 暗号化(メインを正本)/ 暗号鍵管理(メインを正本)/ 4-eyes 承認基盤(運営者を正本)/ Stripe Webhook 受信(運営者を正本)等
+- 共有概念には以下を含む(全項目は共有概念.md 参照): `accounts.contract_status` / `case_status` / 通知重要度 / SCR ID / AC ID / IF #1〜#12 / retention class / 法令プライバシー制約 / **オーナー / プロジェクト管理者 / メンバーの 3 ロールユーザーモデル**(`accounts.is_owner` + `accounts.owner_account_id` + `account_project_grants.role`(`admin` / `member`)── メインを正本)/ ハッシュチェーン監査(運営者を正本)/ 運営者ログイン向け IP allowlist = `operator_ip_allowlist`(運営者を正本)/ FAQ ウィジェット向けプロジェクト単位 IP 許可リスト = `project_ip_allowlist`(メインを正本、FR-179 / FR-330)/ PII 暗号化(メインを正本)/ 暗号鍵管理(メインを正本)/ 4-eyes 承認基盤(運営者を正本)/ Stripe Webhook 受信(運営者を正本)等
 - `accounts.contract_status` は `active` / `suspended` / `deleted_pending` / `deleted` に固定し、オーナー行(`is_owner=1`)でのみ意味を持つ
 - `case_status=closed` は自動 retention 処理で設定しない。管理者の確定(運営者によるクローズ要求の承認を含む)のみがクローズ可能とする
-- 通知重要度は `low` / `normal` / `high` / `critical`。`critical` はメール送信が必須となるイベント(オーナー + 同一オーナースコープで `users:manage` フラグを保持する全メンバーへ配信)に予約
-- 利用者側アカウントは **オーナー**(契約あたり 1 アカウント固定、全権、MVP では譲渡不可、`accounts.owner_account_id = accounts.id` で自己参照)と **メンバー**(0..N、`owner_account_id` でオーナーに紐付き、メンバー権限フラグ `faq:manage` / `chat:respond` / `users:manage` / `project:manage` / `logs:view` および `account_project_grants` のプロジェクト割当で制御)に分かれる。オーナー専有機能(課金、退会、規約再同意)はメンバーに付与できない。プロジェクト割当が 0 のメンバーはダッシュボードとプロジェクト非依存機能のみ利用可能
+- 通知重要度は `low` / `normal` / `high` / `critical`。`critical` はメール送信が必須となるイベント(オーナー + 同一オーナースコープで `account_project_grants.role='admin'` を 1 件でも保持する全プロジェクト管理者へ配信)に予約
+- 利用者側アカウントは **オーナー**(契約あたり 1 アカウント固定、全権、MVP では譲渡不可、`accounts.owner_account_id = accounts.id` で自己参照、`account_project_grants` に行を持たず全プロジェクトの暗黙の `admin` 相当)と **メンバー**(0..N、`owner_account_id` でオーナーに紐付き、プロジェクトごとに `account_project_grants.role` = `admin`(プロジェクト管理者)または `member`(メンバー)で制御)に分かれる。オーナー専有機能(プロジェクト作成・編集・削除、課金、退会、規約再同意、メンバーアカウント完全削除)はプロジェクト別ロールでは付与できない。プロジェクト割当が 0 のメンバーはダッシュボードのみ利用可能。プロジェクト作成時にはプロジェクト管理者(`role='admin'`)を最低 1 名指定する(FR-030a)
 - `audit_logs.retention_class` は **クラス名表記**(`general` / `billing` / `operator_high_priv`)に統一(期間表記 `1y` / `5y` / `7y` は人間可読補助)
 
 ---

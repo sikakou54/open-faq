@@ -704,9 +704,9 @@ src/
 
 1. **DD11 暗号化・鍵管理** — `MASTER_KEY` / HKDF / AES-256-GCM の基盤が他すべての依存元
 2. **DD08 トークン発行・検証** — メール検証・パスワードリセット・再入室で利用
-3. **DD09 認可ヘルパ** — `requireTenant` / `requireProject` / `requireInquiry` は全 API 共通
+3. **DD09 認可ヘルパ** — `requireTenant` / `requireProjectRole` / `requireInquiry` / `requireOwner` は全 API 共通
 4. **DD10 監査ログ書込・完全性検証** — 全業務処理で `writeAudit` を必須呼出
-5. **DD01 アカウント・ユーザー管理** — 認証・オーナー / メンバー / 5 種権限フラグ
+5. **DD01 アカウント・ユーザー管理** — 認証・オーナー / プロジェクト管理者 / メンバーの 3 ロール
 6. **DD02 プロジェクト・FAQ 管理** — プロジェクト / FAQ CRUD + FTS5
 7. **DD03 AI 回答パイプライン** — Workers AI / PostCheck / PII scrubber
 8. **DD04 AI しきい値 3 階層適用** — KV / 永続キャッシュ / フォールバック

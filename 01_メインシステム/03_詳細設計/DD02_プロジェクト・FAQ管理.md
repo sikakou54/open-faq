@@ -107,11 +107,61 @@ CSV / JSON ファイル → R2 ステージング → Queue 投入 → consumer 
 - 監査ログ: `project.ip_allowlist.update`（`metadata` に変更前後の CIDR セット差分、`retention_class=general`）
 - 自己検証ガード: API 層で各行を `ipaddr` ライブラリでパースし、`IPv4Network` / `IPv6Network` のいずれかでなければ 400。重複は事前にセット化して検出。CIDR の正規化（`203.0.113.0/24` 形式）を保存前に実施
 
-### 3.11 関連する横断設計
+### 3.11 プロジェクト作成時の管理者必須指定(FR-015e / FR-030a)
 
-- 認可: [DD09_認可ヘルパ.md](DD09_認可ヘルパ.md) の `requireProject` でオーナー境界 + プロジェクト割当を検証
-- 監査ログ: `faq.create` / `faq.update` / `faq.publish` / `faq.unpublish` / `faq.bulk_import` を `retention_class=general` で記録
-- リアルタイム反映: FAQ 公開・編集時に `widget-api` 側の KV キャッシュ（`embedding:{faqId}`、`ai_threshold:{owner}:{project}` は別系統）を invalidate
+`POST /projects` 実行時は SCR-010-M1(新規作成モード)からの `initialAdmins` を受け取り、以下のトランザクション境界で処理する:
+
+1. リクエスト検証: `selfAsAdmin=false` の場合は `invitees[].role='admin'` が 1 件以上必須。違反は 400 `VALIDATION_ERROR`(`field: "initialAdmins"`)。`invitees[].email` の同一オーナー配下重複 / リスト内重複は 409 / 400。
+2. `projects` INSERT(ウィジェット公開鍵を発行)
+3. `invitees[]` の各行について:
+   - 既存メンバーアカウントが存在する場合(同一オーナー配下 + 同一 `email_hmac`): `account_project_grants` に当該プロジェクト × 指定ロールを INSERT のみ + 通知メール
+   - 新規メールアドレスの場合: `accounts` を `status='pending_activation'` で作成 + `account_project_grants` を同時 INSERT + `access_tokens.purpose='activation'`(有効期限 7 日)発行 + 招待メール送信 Queue 投入
+4. `selfAsAdmin=true` のときはオーナー側 `account_project_grants` の追加処理は **不要**(オーナーは `is_owner=1` 判定で全プロジェクト bypass)。論理上「オーナーが当該プロジェクトの管理者として振る舞う」ことを `initialAdmins.selfAsAdmin` フラグの記録のみで担保する
+5. 監査ログ `project.created_with_initial_admins`(`metadata` に `{ projectId, ownerAsAdmin, invitees: [{ email_hmac, role }] }`、`retention_class=general`)を記録
+
+擬似コード:
+
+```ts
+async function createProject(actor: Principal, req: CreateProjectRequest) {
+  requireOwner(actor); // E-AUTHZ-OWNER-ONLY
+  validateInitialAdmins(req.initialAdmins); // 400 / 409
+  await db.transaction(async (tx) => {
+    const project = await tx.insert('projects', { ...req, owner_account_id: actor.ownerAccountId });
+    for (const invitee of req.initialAdmins.invitees) {
+      const existing = await tx.findMemberByEmailHmac(actor.ownerAccountId, hmac(invitee.email));
+      if (existing) {
+        await tx.insert('account_project_grants', { account_id: existing.id, project_id: project.id, role: invitee.role, granted_by: actor.accountId });
+      } else {
+        const acc = await tx.insert('accounts', { owner_account_id: actor.ownerAccountId, email_encrypted: enc(invitee.email), email_hmac: hmac(invitee.email), name: invitee.displayName, status: 'pending_activation', role: 'admin', is_owner: 0 });
+        await tx.insert('account_project_grants', { account_id: acc.id, project_id: project.id, role: invitee.role, granted_by: actor.accountId });
+        const token = await tx.insert('access_tokens', { account_id: acc.id, purpose: 'activation', expires_at: now + 7d });
+        await emailQueue.enqueue({ to: invitee.email, template: 'TPL-ADMIN_USER_REGISTER', token: token.id });
+      }
+    }
+    await tx.insertAudit({ action: 'project.created_with_initial_admins', target_type: 'project', target_id: project.id, metadata: { ownerAsAdmin: req.initialAdmins.selfAsAdmin, invitees: req.initialAdmins.invitees.map(i => ({ email_hmac: hmac(i.email), role: i.role })) } });
+    return project;
+  });
+}
+```
+
+### 3.12 プロジェクト削除時の孤立メンバー cleanup(FR-030b)
+
+`DELETE /projects/{id}` 実行時は以下のトランザクション境界で処理する:
+
+1. 削除前のスナップショット: 当該プロジェクトに割当のあるメンバー accountId 一覧を取得
+2. `account_project_grants` から当該 `project_id` の全行を DELETE
+3. 孤立メンバーの抽出: 「ステップ 1 のメンバーのうち、他プロジェクト割当が 0 件かつ `is_owner=0` のもの」
+4. 孤立メンバーの全セッションを失効(`sessions.revoked_at` を設定)+ `accounts` から物理削除
+5. プロジェクト本体および紐づくデータ(FAQ / 質問ログ / 案件 / チャット 等)を削除 / 匿名化(削除モードに従う)
+6. 監査ログ `project.deleted_with_orphan_cleanup`(`metadata` に `{ projectId, deletedAccountIds }`、`retention_class=general`)を記録
+
+オーナー(`is_owner=1`)は本処理の対象外(常に存続)。孤立判定は DDL の `ON DELETE CASCADE` では実現できないため、必ずアプリ層のトランザクション内で実施する。
+
+### 3.13 関連する横断設計
+
+- 認可: [DD09_認可ヘルパ.md](DD09_認可ヘルパ.md) の `requireProjectRole` でオーナー境界 + プロジェクトロール(`admin` / `member`)を検証
+- 監査ログ: `faq.create` / `faq.update` / `faq.publish` / `faq.unpublish` / `faq.bulk_import` / `project.created_with_initial_admins` / `project.deleted_with_orphan_cleanup` / `project.member_invited` を `retention_class=general` で記録
+- リアルタイム反映: FAQ 公開・編集時に `widget-api` 側の KV キャッシュ(`embedding:{faqId}`、`ai_threshold:{owner}:{project}` は別系統)を invalidate
 
 ## 4. 関連設計
 
@@ -141,7 +191,7 @@ CSV / JSON ファイル → R2 ステージング → Queue 投入 → consumer 
 | 結合 | FTS5 検索の MATCH 構文 / BM25 ランキング |
 | 異常系 | 他オーナーのプロジェクトに対する FAQ CRUD アクセス時 404 |
 | 境界値 | FAQ 件数 7999 / 8000 / 8001 / 11999 / 12000 / 12001 |
-| 権限 | `faq:manage` フラグ無メンバーによる FAQ 編集時 403 |
+| 権限 | 該当プロジェクトに割当のないメンバー(`account_project_grants` 行なし)による FAQ 編集試行で 404 偽装 / 該当 PJ の `member`+ ロールを持つメンバーは編集可 |
 | 性能 | `POST /api/v1/faqs/{id}/publish` p95 < 300ms（UPDATE 1 行 + KV invalidate） |
 
 ## 6. 未確定事項・確認事項

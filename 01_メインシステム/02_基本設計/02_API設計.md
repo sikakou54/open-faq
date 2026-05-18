@@ -39,11 +39,11 @@
 |---|---|---|---|
 | 認証 | `/auth/register`, `/auth/login`, `/auth/logout`, `/auth/re-auth`, `/auth/password/reset-requests` | 公開(login)、認証済み(他)| SCR-001, SCR-002, SCR-003 |
 | メール確認 | `/auth/email-verifications/{token}` | トークン認証 | SCR-023 |
-| 管理者ユーザー管理 | `/members`, `/members/invite`, `/members/{id}/permissions`, `/members/{id}/resend-invitation`, `/members/{id}` | admin / `users:manage` | SCR-017, SCR-017-M1 |
-| プロジェクト管理 | `/projects`, `/projects/{id}` | admin / `project:manage` | SCR-010, SCR-010-M1 |
-| FAQ 管理 | `/projects/{id}/faqs`, `/projects/{id}/faqs/{faqId}`, `/projects/{id}/faqs/import`, `/projects/{id}/faqs/export` | admin / `faq:manage` | SCR-012 |
+| 管理者ユーザー管理 | `/members`, `/members/invite`, `/members/{id}/project-grants`, `/members/{id}/resend-invitation`, `/members/{id}`, `/projects/{id}/members`, `/projects/{id}/members/{accountId}` | オーナー / プロジェクト管理者(該当 PJ 範囲)| SCR-017, SCR-017-M1, SCR-010-M1 |
+| プロジェクト管理 | `/projects`, `/projects/{id}` | **オーナー専有** | SCR-010, SCR-010-M1 |
+| FAQ 管理 | `/projects/{id}/faqs`, `/projects/{id}/faqs/{faqId}`, `/projects/{id}/faqs/import`, `/projects/{id}/faqs/export` | オーナー / 該当 PJ の `member`+ | SCR-012 |
 | ウィジェット | `/widget/bootstrap`, `/widget/ask`, `/widget/feedback` | end_user(公開キー + セッション)| ウィジェット |
-| 未解決質問 | `/inquiries`, `/inquiries/{id}`, `/inquiries/{id}/close` | admin / `chat:respond` | SCR-011 |
+| 未解決質問 | `/inquiries`, `/inquiries/{id}`, `/inquiries/{id}/close` | オーナー / 該当 PJ の `member`+ | SCR-011 |
 | チャット | `/inquiries/{code}/email-registration`, `/chat/rooms/{id}`, `/chat/rooms/{id}/messages` | admin / end_user | SCR-013 |
 | 通知 | `/webhooks/resend` | 署名検証のみ | (Resend Webhook) |
 | 利用量・課金 | `/billing/summary`, `/billing/subscription`, `/billing/invoices`, `/billing/budget` | admin / オーナー専有 | SCR-015 |
@@ -238,7 +238,7 @@
 #### 5.2.1 `GET /members`
 
 | 機能ID | F-015 |
-| 必要権限 | `users:manage` or オーナー |
+| 必要権限 | オーナー / プロジェクト管理者(該当 PJ 範囲のメンバーのみ可視)|
 | 関連画面 | SCR-017 |
 
 レスポンス(200):
@@ -251,8 +251,10 @@
       "status": "active|pending_activation",
       "role": "admin",
       "is_owner": false,
-      "permissions": ["faq:manage", "chat:respond"],
-      "assignedProjects": ["proj_1", "proj_2"],
+      "projectGrants": [
+        { "projectId": "proj_1", "role": "admin" },
+        { "projectId": "proj_2", "role": "member" }
+      ],
       "lastLoginAt": "2026-05-13T10:00:00Z",
       "invitationExpiresAt": "2026-05-20T..."
     }
@@ -261,9 +263,12 @@
 }
 ```
 
+非オーナーが呼び出した場合、`items[]` は「操作者自身が `admin` を持つプロジェクトに割当のあるメンバー」に絞られ、各 `projectGrants[]` も操作者の `admin` 範囲のプロジェクトのみが見える。
+
 #### 5.2.2 `POST /members/invite`
 
 | 認証 | Cookie + CSRF + **再認証必須** |
+| 必要権限 | オーナー / プロジェクト管理者(`projectGrants[*].projectId` の各プロジェクトで操作者自身が `admin` 保持)|
 | 関連画面 | SCR-017-M1 |
 
 リクエスト:
@@ -271,10 +276,16 @@
 {
   "email": "newmember@...",
   "displayName": "新規メンバー",
-  "permissions": ["faq:manage"],
-  "projectIds": ["proj_1"]
+  "projectGrants": [
+    { "projectId": "proj_1", "role": "admin" },
+    { "projectId": "proj_2", "role": "member" }
+  ]
 }
 ```
+
+- `projectGrants` は 0 件以上(0 件 = ダッシュボードのみ利用可能なメンバー、FR-015d)
+- 操作者が非オーナーの場合、`projectGrants[*].projectId` の各プロジェクトで操作者自身が `admin` ロール保持を検証(違反は 403 `PROJECT_ACCESS_DENIED`)
+- 同一 `projectId` の重複は 400 `VALIDATION_ERROR`
 
 レスポンス(201):
 ```json
@@ -286,27 +297,72 @@
 }
 ```
 
-エラー: 409 `ALREADY_EXISTS`、400 `VALIDATION_ERROR`、403 `PERMISSION_DENIED`(オーナー専有)
+エラー: 409 `ALREADY_EXISTS`(FR-021c)、400 `VALIDATION_ERROR`、403 `PROJECT_ACCESS_DENIED`、403 `PERMISSION_DENIED`(オーナー専有)
 
-#### 5.2.3 `POST /members/{id}/permissions`
-
-| 認証 | Cookie + CSRF + 再認証必須 |
-| 必要権限 | `users:manage` or オーナー |
-
-リクエスト: `{ "permissions": ["faq:manage", "chat:respond"] }`
-レスポンス(200): `{ "id": "...", "permissions": [...], "updatedAt": "..." }`
-エラー: 404 `NOT_FOUND`(オーナー境界違反、E-AUTHZ-OWNER-BOUNDARY)、403 `OWNER_PROTECTED`
-
-#### 5.2.4 `DELETE /members/{id}` / `POST /members/{id}/resend-invitation`
+#### 5.2.3 `POST /members/{id}/project-grants`(全体上書き)
 
 | 認証 | Cookie + CSRF + 再認証必須 |
+| 必要権限 | **オーナー専有**(契約全体のロール一括変更) |
+
+メンバーのプロジェクト別ロール割当を全体上書きする。プロジェクト管理者は本 API を呼び出せない代わりに `POST /projects/{id}/members` / `DELETE /projects/{id}/members/{accountId}` を用いて該当プロジェクト範囲のみ操作する。
+
+リクエスト:
+```json
+{
+  "projectGrants": [
+    { "projectId": "proj_1", "role": "admin" },
+    { "projectId": "proj_2", "role": "member" }
+  ]
+}
+```
+
+- 送られた `projectGrants` 全体で **上書き**(差分計算は API 側で実施し監査ログ記録)
+- 空配列 = 全プロジェクト割当を解除(ダッシュボードのみ利用可)
+- 本変更で「あるプロジェクトの最後の `admin` を外す」結果になる場合は 403 `LAST_ADMIN_PROTECTED`(E-AUTHZ-LAST-ADMIN-PROTECTED)で拒否
+
+レスポンス(200): `{ "id": "...", "projectGrants": [...], "updatedAt": "..." }`
+エラー: 404 `NOT_FOUND`(オーナー境界違反、E-AUTHZ-OWNER-BOUNDARY)、403 `OWNER_PROTECTED`、403 `LAST_ADMIN_PROTECTED`、403 `SELF_MUTATION_FORBIDDEN`(自分が `admin` を持つ最後の PJ で自身を `member` 化 / 割当解除)
+
+#### 5.2.4 `POST /projects/{id}/members`(プロジェクト単発招待)
+
+| 認証 | Cookie + CSRF + 再認証必須 |
+| 必要権限 | オーナー / 該当プロジェクトの `admin` ロール保持メンバー |
+| 関連画面 | SCR-017-M1(プロジェクト管理者の招待操作)|
+
+該当プロジェクト 1 件に対する単発招待。既存メンバーアカウントの場合は `account_project_grants` 行のみ追加(指定ロール)。新規メールアドレスの場合は `accounts` を `pending_activation` で作成 + `account_project_grants` を同時 INSERT + 招待メール送信(7 日有効、`access_tokens.purpose='activation'`)。
+
+リクエスト:
+```json
+{
+  "email": "newmember@...",
+  "displayName": "新規メンバー",
+  "role": "admin"
+}
+```
+
+レスポンス(201): `{ "accountId": "01HZ...", "status": "active|pending_activation", "expiresAt": "..." | null }`
+エラー: 409 `ALREADY_EXISTS_IN_PROJECT`(既に該当プロジェクトに割当あり)、400 `VALIDATION_ERROR`、403 `PROJECT_ACCESS_DENIED`
+
+#### 5.2.5 `DELETE /projects/{id}/members/{accountId}`(プロジェクトからの離脱)
+
+| 認証 | Cookie + CSRF + 再認証必須 |
+| 必要権限 | オーナー / 該当プロジェクトの `admin` ロール保持メンバー |
+
+当該プロジェクトの `account_project_grants` 行のみ削除する(アカウント本体は削除しない)。削除後に他プロジェクト割当が 0 件かつ `is_owner=0` となっても accounts は維持(ダッシュボードのみ利用可)。
+
+エラー: 403 `LAST_ADMIN_PROTECTED`(本人が当該プロジェクトの最後の `admin` で、結果として `admin` が 0 件になる場合)、403 `SELF_MUTATION_FORBIDDEN`(自分が `admin` を持つ最後のプロジェクトでの自己離脱)、404 `NOT_FOUND`
+
+#### 5.2.6 `DELETE /members/{id}` / `POST /members/{id}/resend-invitation`
+
+| 認証 | Cookie + CSRF + 再認証必須 |
+| 必要権限 | `DELETE /members/{id}` は **オーナー専有**(アカウント完全削除)。`POST /members/{id}/resend-invitation` はオーナー / 該当プロジェクトの `admin` 保持メンバー |
 | 関連画面 | SCR-017-M1(削除・招待再送)|
 
-`DELETE /members/{id}` は招待中(`pending_activation`)・有効(`active`)いずれの状態でも実行可能。実行時は対象メンバーの全セッションを失効。
+`DELETE /members/{id}` は招待中(`pending_activation`)・有効(`active`)いずれの状態でも実行可能。実行時は対象メンバーの全セッションを失効。プロジェクト管理者は本 API を呼び出せず、該当プロジェクトからの「離脱」(`DELETE /projects/{id}/members/{accountId}`)で対応する。
 
 `POST /members/{id}/resend-invitation` は `status='pending_activation'` のメンバーのみ対象。旧 `access_tokens.purpose='activation'` を失効させ新規トークン(7 日有効)を発行。
 
-エラー: 403 `OWNER_PROTECTED`(オーナー対象)、403 `SELF_MUTATION_FORBIDDEN`(自分自身対象)、404 `NOT_FOUND`
+エラー: 403 `OWNER_PROTECTED`(オーナー対象)、403 `SELF_MUTATION_FORBIDDEN`(自分自身対象)、403 `PERMISSION_DENIED`(オーナー専有を非オーナーが呼出)、404 `NOT_FOUND`
 
 ### 5.3 プロジェクト管理 API
 
@@ -338,31 +394,53 @@
 
 #### 5.3.2 `POST /projects`(新規作成)
 
+| 認証 | Cookie + CSRF |
+| 必要権限 | **オーナー専有**(プロジェクト設定全般を含めオーナーのみ実行可)|
+| 関連画面 | SCR-010-M1(新規作成モード)|
+
 リクエスト:
 ```json
 {
   "name": "新規プロジェクト",
   "description": "説明文",
   "allowedDomains": ["example.com"],
-  "ipAllowlist": []
+  "ipAllowlist": [],
+  "initialAdmins": {
+    "selfAsAdmin": true,
+    "invitees": [
+      { "email": "admin1@example.com", "displayName": "管理者A", "role": "admin" },
+      { "email": "member1@example.com", "displayName": "メンバーA", "role": "member" }
+    ]
+  }
 }
 ```
+
+`initialAdmins` 仕様(FR-030a / FR-015e):
+- `selfAsAdmin=true` のとき、オーナー自身を当該プロジェクトの管理者として扱う(`account_project_grants` は OWNER 行を作らないため、認可は `isOwner` bypass で実現される。論理上「オーナーが管理者」)
+- `invitees[]` は 0 件以上。各要素は `email` / `displayName` / `role`(`admin` / `member`)を持つ
+- バリデーション: `selfAsAdmin=false` のときは `invitees[]` に `role='admin'` が 1 件以上必須。違反は 400 `VALIDATION_ERROR`(`field: "initialAdmins"`、メッセージは「最低 1 名の管理者が必要です」)
+- `invitees[]` の `email` は同一オーナー配下の既存有効・招待中アカウントと重複不可(FR-021c、409 `ALREADY_EXISTS`)、リスト内重複も不可(400)
+- 新規 `accounts` 行は `pending_activation` で作成、`account_project_grants` を同時 INSERT、`access_tokens.purpose='activation'`(7 日有効)を発行、招待メール送信を Queue 投入。既存メンバーアカウントが招待された場合は `account_project_grants` 追加のみ + 通知メール
 
 レスポンス(201):
 ```json
 {
   "id": "01HZ...",
   "widgetKey": "pk_live_abc123...",
-  "keyExpiresAt": "2027-05-13T..."
+  "keyExpiresAt": "2027-05-13T...",
+  "invitations": [
+    { "accountId": "01HZ...", "email": "admin1@example.com", "status": "pending_activation", "expiresAt": "2026-05-20T..." }
+  ]
 }
 ```
 
-エラー: 400 `VALIDATION_ERROR`、409 `DUPLICATE_NAME`
+エラー: 400 `VALIDATION_ERROR`(`name` / `initialAdmins` 必須違反)、409 `DUPLICATE_NAME` / `ALREADY_EXISTS`、403 `E-AUTHZ-OWNER-ONLY`
 
 #### 5.3.3 `PATCH /projects/{id}` / `DELETE /projects/{id}`
 
 | 認証 | Cookie + CSRF(削除は再認証必須)|
-| エラー | 404 `NOT_FOUND`(オーナー境界違反偽装)|
+| 必要権限 | **オーナー専有** |
+| エラー | 404 `NOT_FOUND`(オーナー境界違反偽装)、403 `E-AUTHZ-OWNER-ONLY` |
 
 リクエスト(PATCH、部分更新):
 ```json
@@ -374,11 +452,18 @@
 }
 ```
 
+`DELETE /projects/{id}` 実行時の挙動(FR-030b):
+1. 当該プロジェクトの `account_project_grants` を全行削除
+2. 削除後、他プロジェクト割当が 0 件かつ `is_owner=0` となったメンバーの `accounts` を物理削除(孤立メンバー cleanup)+ 全セッション失効
+3. プロジェクト本体および紐づくデータ(FAQ / 質問ログ / 案件 / チャット 等)を削除 / 匿名化(削除モードに従う)
+
+上記 1-3 はアプリ層のトランザクション内で実装する。
+
 #### 5.3.3a `PATCH /projects/{id}/ip-allowlist`(プロジェクト単位 IP 許可リスト更新)
 
 | 機能ID | F-179 / F-330 |
 | 関連画面 | SCR-010-M1 |
-| 必要権限 | オーナー / `project:manage`(該当プロジェクト割当あり)|
+| 必要権限 | **オーナー専有**(プロジェクト設定の一部)|
 | 認証 | Cookie + CSRF(再認証不要。設定対象は管理画面ではなくウィジェットのため)|
 
 リクエスト:
@@ -396,7 +481,7 @@
 
 エラー:
 - 400 `VALIDATION_ERROR`(CIDR 形式不正、件数超過、重複行)
-- 403 `FORBIDDEN`(オーナーまたは `project:manage` フラグなし)
+- 403 `E-AUTHZ-OWNER-ONLY`(オーナー以外がアクセス)
 
 #### 5.3.4 `POST /projects/{id}/widget-key/rotate`(ウィジェット鍵ローテーション)
 
@@ -410,7 +495,7 @@
 
 #### 5.4.1 `GET /faqs?status=draft&projectId=...&keyword=...&cursor=...`
 
-| 必要権限 | `faq:manage`(編集系)/ 参照は全 admin |
+| 必要権限 | 編集系: オーナー / 該当 PJ の `member`+(`admin` または `member`)/ 参照: 同左 |
 
 #### 5.4.2 `POST /faqs` / `PATCH /faqs/{id}` / `DELETE /faqs/{id}`
 

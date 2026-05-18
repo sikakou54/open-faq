@@ -351,7 +351,7 @@ admin/
 
 メール通知の正本は [基本設計 / メッセージ一覧](../02_基本設計/06_メッセージ一覧.md) §8(運営者向け通知 + IF #12 経由通知)。通知契機 13 種(運営者宛)+ 5 種(IF #12 経由 利用者向け)+ テンプレートは当該ドキュメントを正本とする。
 
-通知重要度は `low` / `normal` / `high` / `critical` の 4 値。`critical` は強制送信(オーナー + `users:manage` フラグ保持メンバー全員に必ずメール配信)を予約する。10 分集約窓(`notify-batch:<owner_account_id>:<kind>`)は D-19 で確定。
+通知重要度は `low` / `normal` / `high` / `critical` の 4 値。`critical` は強制送信(オーナー + 全プロジェクト管理者(`account_project_grants.role='admin'` を 1 件でも保持するメンバー)に必ずメール配信)を予約する。10 分集約窓(`notify-batch:<owner_account_id>:<kind>`)は D-19 で確定。
 
 ### 3.2 セキュリティ
 
