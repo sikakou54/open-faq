@@ -283,7 +283,7 @@
 }
 ```
 
-- `projectGrants` は 0 件以上(0 件 = ダッシュボードのみ利用可能なメンバー、FR-015d)
+- `projectGrants` は **1 件以上必須**(FR-015 / FR-015d 不変条件)。空配列は 400 `E-BIZ-MEMBER-NO-GRANT`(「メンバー招待には最低 1 件のプロジェクト割当が必要です」)で拒否
 - 操作者が非オーナーの場合、`projectGrants[*].projectId` の各プロジェクトで操作者自身が `admin` ロール保持を検証(違反は 403 `PROJECT_ACCESS_DENIED`)
 - 同一 `projectId` の重複は 400 `VALIDATION_ERROR`
 
@@ -297,7 +297,7 @@
 }
 ```
 
-エラー: 409 `ALREADY_EXISTS`(FR-021c)、400 `VALIDATION_ERROR`、403 `PROJECT_ACCESS_DENIED`、403 `PERMISSION_DENIED`(オーナー専有)
+エラー: 409 `ALREADY_EXISTS`(FR-021c)、400 `VALIDATION_ERROR`、400 `E-BIZ-MEMBER-NO-GRANT`、403 `PROJECT_ACCESS_DENIED`、403 `PERMISSION_DENIED`(オーナー専有)
 
 #### 5.2.3 `POST /members/{id}/project-grants`(全体上書き)
 
@@ -317,11 +317,11 @@
 ```
 
 - 送られた `projectGrants` 全体で **上書き**(差分計算は API 側で実施し監査ログ記録)
-- 空配列 = 全プロジェクト割当を解除(ダッシュボードのみ利用可)
+- 結果として `projectGrants` が空配列となる(対象メンバーの全プロジェクト割当を解除する)操作は 400 `E-BIZ-MEMBER-NO-GRANT`(FR-015d 不変条件違反)で拒否。当該メンバーを完全削除したい場合はオーナーが `DELETE /members/{id}` を実行する
 - 本変更で「あるプロジェクトの最後の `admin` を外す」結果になる場合は 403 `LAST_ADMIN_PROTECTED`(E-AUTHZ-LAST-ADMIN-PROTECTED)で拒否
 
 レスポンス(200): `{ "id": "...", "projectGrants": [...], "updatedAt": "..." }`
-エラー: 404 `NOT_FOUND`(オーナー境界違反、E-AUTHZ-OWNER-BOUNDARY)、403 `OWNER_PROTECTED`、403 `LAST_ADMIN_PROTECTED`、403 `SELF_MUTATION_FORBIDDEN`(自分が `admin` を持つ最後の PJ で自身を `member` 化 / 割当解除)
+エラー: 404 `NOT_FOUND`(オーナー境界違反、E-AUTHZ-OWNER-BOUNDARY)、400 `E-BIZ-MEMBER-NO-GRANT`(結果として割当 0 件になる場合)、403 `OWNER_PROTECTED`、403 `LAST_ADMIN_PROTECTED`、403 `SELF_MUTATION_FORBIDDEN`(自分が `admin` を持つ最後の PJ で自身を `member` 化 / 割当解除)
 
 #### 5.2.4 `POST /projects/{id}/members`(プロジェクト単発招待)
 
@@ -348,9 +348,9 @@
 | 認証 | Cookie + CSRF + 再認証必須 |
 | 必要権限 | オーナー / 該当プロジェクトの `admin` ロール保持メンバー |
 
-当該プロジェクトの `account_project_grants` 行のみ削除する(アカウント本体は削除しない)。削除後に他プロジェクト割当が 0 件かつ `is_owner=0` となっても accounts は維持(ダッシュボードのみ利用可)。
+当該プロジェクトの `account_project_grants` 行のみ削除する(アカウント本体は削除しない)。**削除前に対象メンバーの全プロジェクト割当数を検査し、当該プロジェクトが最後の 1 件の場合は 400 `E-BIZ-MEMBER-NO-GRANT`(FR-015d / FR-018c 不変条件違反)で拒否**。当該メンバーを完全に外したい場合はオーナーが `DELETE /members/{id}` でアカウント完全削除を実行する。
 
-エラー: 403 `LAST_ADMIN_PROTECTED`(本人が当該プロジェクトの最後の `admin` で、結果として `admin` が 0 件になる場合)、403 `SELF_MUTATION_FORBIDDEN`(自分が `admin` を持つ最後のプロジェクトでの自己離脱)、404 `NOT_FOUND`
+エラー: 400 `E-BIZ-MEMBER-NO-GRANT`(対象メンバーの最後の 1 件の割当を取り消す操作)、403 `LAST_ADMIN_PROTECTED`(本人が当該プロジェクトの最後の `admin` で、結果として `admin` が 0 件になる場合)、403 `SELF_MUTATION_FORBIDDEN`(自分が `admin` を持つ最後のプロジェクトでの自己離脱)、404 `NOT_FOUND`
 
 #### 5.2.6 `DELETE /members/{id}` / `POST /members/{id}/resend-invitation`
 

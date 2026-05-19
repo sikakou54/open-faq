@@ -146,7 +146,6 @@ graph LR
 | SCR-026 | 契約ホーム(オーナー視点ダッシュボード / 契約 WS のトップ)| §5.SCR-026 | `GET /v1/usage?viewMode=owner` | `usage_metering`, `question_logs`, `chat_rooms`, `faqs` | オーナー専有 | - | MSG-SCR-026-* | §6 認可判定 | - | - |
 | SCR-027 | エンドユーザー再入室 | §5.SCR-027 | `GET /v1/widget/sessions/:token` | `access_tokens`, `chat_rooms` | エンドユーザー | E-AUTH-TOKEN | MSG-SCR-027-* | §3 ウィジェットトークン | §12 ウィジェット保護 | - |
 | SCR-028 | プロフィール(共通領域)| §5.SCR-028 | `PATCH /v1/me`, `POST /v1/me/password`, `GET /v1/me/sessions` | `accounts`, `sessions` | 全認証ユーザー(自分のみ)| E-AUTH-* | MSG-SCR-028-* | §3 ログイン / §3 パスワード変更 | §7 監査 | - |
-| SCR-029 | 割当ゼロホーム(共通領域)| §5.SCR-029 | (なし、表示のみ)| `accounts`, `account_project_grants` | プロジェクト割当 0 件のメンバー | - | MSG-SCR-029-* | §6 認可判定 | - | - |
 | SCR-030 | プロジェクト個別設定(プロジェクト WS / 通知宛先・チャネル)| §5.SCR-030 | `PATCH /v1/projects/{id}/notification-settings` | `projects`, `project_notification_settings` | 当該 PJ の `admin` 以上 | E-INPUT-* | MSG-SCR-030-* | §6 認可判定 | - | - |
 
 ## 9. 連携 IF × ドキュメント カバレッジ
