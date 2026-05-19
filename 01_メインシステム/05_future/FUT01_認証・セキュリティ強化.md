@@ -46,7 +46,7 @@
 
 | 項目 | 基本設計で具体化すること | 関連 Future 要件 |
 |---|---|---|
-| 利用者側 admin / operator MFA | SCR-016 設定画面、MFA 登録・解除フロー、契約単位強制状態、未設定ユーザーのログイン制御、リカバリ導線 | FUT-REQ-SEC-002 |
+| 利用者側 admin / operator MFA | SCR-028 アカウント設定、MFA 登録・解除フロー、契約単位強制状態、未設定ユーザーのログイン制御、リカバリ導線 | FUT-REQ-SEC-002 |
 | 4-eyes 完全強制 | 10 操作の申請・承認・実行状態、SCR-096 のバイパス検出 KPI、緊急例外 RB-014 との分岐 | FUT-REQ-SEC-003 |
 | 運営者サブロール分割 | 権限マトリクス、メニュー表示制御、API 認可境界、監査ログの role / subrole 記録粒度 | FUT-REQ-SEC-004 |
 | SSO / パスキー | 認証プロバイダ選定、既存自前認証との併存、招待・退会・ロックアウトとの状態整合 | FUT-REQ-SEC-005 |
@@ -119,7 +119,7 @@ CREATE TABLE owner_key_versions (
 | 種別 | 影響内容 |
 |---|---|
 | 要件 | FR-005(MFA 段階導入)、NFR-319(個別チャット平文 → 暗号化)、4-eyes(3 操作ハードゲート → 全 10 操作ワークフロー)、SSO / パスキーは新規要件として追加 |
-| 画面 | SCR-016 アカウント設定(MFA 登録・解除・回復コード)、ログイン画面(MFA 入力)、招待受諾フロー(契約単位強制下) |
+| 画面 | SCR-028 アカウント設定(MFA 登録・解除・回復コード)、ログイン画面(MFA 入力)、招待受諾フロー(契約単位強制下) |
 | API | `POST /api/v1/settings/mfa-policy`、`POST /api/v1/auth/mfa/setup`、`POST /api/v1/auth/mfa/recovery-code`、SSO 連携 OAuth / OIDC エンドポイント |
 | テーブル | `accounts.mfa_enforcement` 列追加、`owner_mfa_policy_audit_logs`、`chat_messages.body_ciphertext` / `body_nonce` / `body_key_version`、`owner_key_versions` |
 | 運用 | MFA 未設定者向けの猶予期間運用、回復コード再発行手順、鍵ローテーション Runbook、列単位暗号化への dual read 期間運用、SSO IdP との連携運用 |
