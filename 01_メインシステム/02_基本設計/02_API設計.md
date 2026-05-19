@@ -39,14 +39,14 @@
 |---|---|---|---|
 | 認証 | `/auth/register`, `/auth/login`, `/auth/logout`, `/auth/re-auth`, `/auth/password/reset-requests` | 公開(login)、認証済み(他)| SCR-001, SCR-002, SCR-003 |
 | メール確認 | `/auth/email-verifications/{token}` | トークン認証 | SCR-023 |
-| 管理者ユーザー管理 | `/members`, `/members/invite`, `/members/{id}/project-grants`, `/members/{id}/resend-invitation`, `/members/{id}`, `/projects/{id}/members`, `/projects/{id}/members/{accountId}` | オーナー / プロジェクト管理者(該当 PJ 範囲)| SCR-017, SCR-017-M1, SCR-010-M1 |
+| 管理者ユーザー管理 | `/members`, `/members/invite`, `/members/{id}/project-grants`, `/members/{id}/resend-invitation`, `/members/{id}`, `/projects/{id}/members`, `/projects/{id}/members/{accountId}` | オーナー / プロジェクト管理者(該当 PJ 範囲)| SCR-017, SCR-017-M1 |
 | プロジェクト管理 | `/projects`, `/projects/{id}` | **オーナー専有** | SCR-010, SCR-010-M1 |
 | FAQ 管理 | `/projects/{id}/faqs`, `/projects/{id}/faqs/{faqId}`, `/projects/{id}/faqs/import`, `/projects/{id}/faqs/export` | オーナー / 該当 PJ の `member`+ | SCR-012 |
 | ウィジェット | `/widget/bootstrap`, `/widget/ask`, `/widget/feedback` | end_user(公開キー + セッション)| ウィジェット |
 | 未解決質問 | `/inquiries`, `/inquiries/{id}`, `/inquiries/{id}/close` | オーナー / 該当 PJ の `member`+ | SCR-011 |
 | チャット | `/inquiries/{code}/email-registration`, `/chat/rooms/{id}`, `/chat/rooms/{id}/messages` | admin / end_user | SCR-013 |
 | 通知 | `/webhooks/resend` | 署名検証のみ | (Resend Webhook) |
-| 利用量・課金 | `/billing/summary`, `/billing/subscription`, `/billing/invoices`, `/billing/budget` | admin / オーナー専有 | SCR-015 |
+| 利用量・課金 | `/usage`, `/billing/summary`, `/billing/subscription`, `/billing/invoices`, `/billing/budget` | ダッシュボード閲覧: オーナー / 該当 PJ の `member`+、課金操作: オーナー専有 | SCR-015 |
 | データ管理 | `/data/export` | admin / オーナー専有 | SCR-024 |
 | お知らせ受信箱 | `/me/announcements`, `/me/announcements/{id}`, `/me/announcements/{id}/read` | admin 限定 | SCR-021, SCR-022 |
 | 規約 | `/terms/current`, `/terms/agree` | admin | SCR-018, SCR-025 |
@@ -370,6 +370,7 @@
 
 | 機能ID | F-034 |
 | 関連画面 | SCR-010 |
+| 必要権限 | **オーナー専有** |
 
 レスポンス(200):
 ```json
@@ -407,20 +408,17 @@
   "ipAllowlist": [],
   "initialAdmins": {
     "selfAsAdmin": true,
-    "invitees": [
-      { "email": "admin1@example.com", "displayName": "管理者A", "role": "admin" },
-      { "email": "member1@example.com", "displayName": "メンバーA", "role": "member" }
-    ]
+    "adminEmails": ["admin1@example.com"]
   }
 }
 ```
 
 `initialAdmins` 仕様(FR-030a / FR-015e):
 - `selfAsAdmin=true` のとき、オーナー自身を当該プロジェクトの管理者として扱う(`account_project_grants` は OWNER 行を作らないため、認可は `isOwner` bypass で実現される。論理上「オーナーが管理者」)
-- `invitees[]` は 0 件以上。各要素は `email` / `displayName` / `role`(`admin` / `member`)を持つ
-- バリデーション: `selfAsAdmin=false` のときは `invitees[]` に `role='admin'` が 1 件以上必須。違反は 400 `VALIDATION_ERROR`(`field: "initialAdmins"`、メッセージは「最低 1 名の管理者が必要です」)
-- `invitees[]` の `email` は同一オーナー配下の既存有効・招待中アカウントと重複不可(FR-021c、409 `ALREADY_EXISTS`)、リスト内重複も不可(400)
-- 新規 `accounts` 行は `pending_activation` で作成、`account_project_grants` を同時 INSERT、`access_tokens.purpose='activation'`(7 日有効)を発行、招待メール送信を Queue 投入。既存メンバーアカウントが招待された場合は `account_project_grants` 追加のみ + 通知メール
+- `adminEmails[]` は 0 件以上。メールアドレスのみを受け付け、ロール指定は受け付けない。サーバー側で `account_project_grants.role='admin'` に固定する
+- バリデーション: `selfAsAdmin=false` のときは `adminEmails[]` が 1 件以上必須。違反は 400 `VALIDATION_ERROR`(`field: "initialAdmins"`、メッセージは「最低 1 名の管理者が必要です」)
+- `adminEmails[]` はリスト内重複不可(400)。同一オーナー配下の既存有効・招待中アカウントに一致する場合は、当該プロジェクトへの `admin` 割当追加として扱う
+- プロジェクト作成成功時、`adminEmails[]` に入力された全メールアドレスへプロジェクト管理者招待メールを Queue 投入する。新規 `accounts` 行は `pending_activation` で作成、`account_project_grants.role='admin'` を同時 INSERT、`access_tokens.purpose='activation'`(7 日有効)を発行し、招待メールにはアクティベーション URL を含める。既存の招待中メンバーには新しいアクティベーション URL、既存有効メンバーには管理者割当通知とログイン URL を含める。一般メンバー追加や `member` ロール指定は SCR-017 / SCR-017-M1 のユーザー管理で行う
 
 レスポンス(201):
 ```json
@@ -428,13 +426,13 @@
   "id": "01HZ...",
   "widgetKey": "pk_live_abc123...",
   "keyExpiresAt": "2027-05-13T...",
-  "invitations": [
-    { "accountId": "01HZ...", "email": "admin1@example.com", "status": "pending_activation", "expiresAt": "2026-05-20T..." }
+  "adminAssignments": [
+    { "accountId": "01HZ...", "email": "admin1@example.com", "role": "admin", "status": "pending_activation", "mailStatus": "queued", "expiresAt": "2026-05-20T..." }
   ]
 }
 ```
 
-エラー: 400 `VALIDATION_ERROR`(`name` / `initialAdmins` 必須違反)、409 `DUPLICATE_NAME` / `ALREADY_EXISTS`、403 `E-AUTHZ-OWNER-ONLY`
+エラー: 400 `VALIDATION_ERROR`(`name` / `initialAdmins` 必須違反、管理者メールアドレス重複)、409 `DUPLICATE_NAME`、403 `E-AUTHZ-OWNER-ONLY`
 
 #### 5.3.3 `PATCH /projects/{id}` / `DELETE /projects/{id}`
 
@@ -639,10 +637,13 @@ PATCH:
 
 ### 5.8 利用量・課金 API
 
-#### 5.8.1 `GET /usage?period=current_month`
+#### 5.8.1 `GET /usage?period=current_month&viewMode=owner|project&projectId={id}`
 
 | 機能ID | F-120 |
 | 関連画面 | SCR-015 |
+| 必要権限 | `viewMode=owner` はオーナー専有。`viewMode=project` はオーナー / 該当プロジェクトの `admin` または `member` |
+
+`viewMode` はヘッダーのダッシュボード切替アイコンと連動する。オーナーは `owner` / `project` を切替可能。プロジェクト管理者・メンバーは `project` 固定とし、`projectId` はヘッダーで選択中のプロジェクトを指定する。
 
 レスポンス(200):
 ```json

@@ -109,36 +109,40 @@ CSV / JSON ファイル → R2 ステージング → Queue 投入 → consumer 
 
 ### 3.11 プロジェクト作成時の管理者必須指定(FR-015e / FR-030a)
 
-`POST /projects` 実行時は SCR-010-M1(新規作成モード)からの `initialAdmins` を受け取り、以下のトランザクション境界で処理する:
+`POST /projects` 実行時は SCR-010-M1(新規作成モード)からの `initialAdmins` を受け取り、以下のトランザクション境界で処理する。SCR-010-M1 では一般メンバー追加やロール選択は行わず、他者指定時のロールは `admin` 固定とする:
 
-1. リクエスト検証: `selfAsAdmin=false` の場合は `invitees[].role='admin'` が 1 件以上必須。違反は 400 `VALIDATION_ERROR`(`field: "initialAdmins"`)。`invitees[].email` の同一オーナー配下重複 / リスト内重複は 409 / 400。
+1. リクエスト検証: `selfAsAdmin=false` の場合は `adminEmails[]` が 1 件以上必須。違反は 400 `VALIDATION_ERROR`(`field: "initialAdmins"`)。`adminEmails[]` のリスト内重複は 400。
 2. `projects` INSERT(ウィジェット公開鍵を発行)
-3. `invitees[]` の各行について:
-   - 既存メンバーアカウントが存在する場合(同一オーナー配下 + 同一 `email_hmac`): `account_project_grants` に当該プロジェクト × 指定ロールを INSERT のみ + 通知メール
-   - 新規メールアドレスの場合: `accounts` を `status='pending_activation'` で作成 + `account_project_grants` を同時 INSERT + `access_tokens.purpose='activation'`(有効期限 7 日)発行 + 招待メール送信 Queue 投入
+3. `adminEmails[]` の各メールアドレスについて:
+   - 既存メンバーアカウントが存在する場合(同一オーナー配下 + 同一 `email_hmac`): `account_project_grants` に当該プロジェクト × `role='admin'` を INSERT + プロジェクト管理者招待メールを Queue 投入。有効(`active`)メンバーにはログイン URL、招待中(`pending_activation`)メンバーには新しいアクティベーション URL(7 日有効)を含める
+   - 新規メールアドレスの場合: `accounts` を `status='pending_activation'` で作成 + `account_project_grants.role='admin'` を同時 INSERT + `access_tokens.purpose='activation'`(有効期限 7 日)発行 + 招待メール送信 Queue 投入
 4. `selfAsAdmin=true` のときはオーナー側 `account_project_grants` の追加処理は **不要**(オーナーは `is_owner=1` 判定で全プロジェクト bypass)。論理上「オーナーが当該プロジェクトの管理者として振る舞う」ことを `initialAdmins.selfAsAdmin` フラグの記録のみで担保する
-5. 監査ログ `project.created_with_initial_admins`(`metadata` に `{ projectId, ownerAsAdmin, invitees: [{ email_hmac, role }] }`、`retention_class=general`)を記録
+5. 監査ログ `project.created_with_initial_admins`(`metadata` に `{ projectId, ownerAsAdmin, adminEmails: [{ email_hmac, role: "admin" }] }`、`retention_class=general`)を記録
 
 擬似コード:
 
 ```ts
 async function createProject(actor: Principal, req: CreateProjectRequest) {
   requireOwner(actor); // E-AUTHZ-OWNER-ONLY
-  validateInitialAdmins(req.initialAdmins); // 400 / 409
+  validateInitialAdmins(req.initialAdmins); // 400
   await db.transaction(async (tx) => {
     const project = await tx.insert('projects', { ...req, owner_account_id: actor.ownerAccountId });
-    for (const invitee of req.initialAdmins.invitees) {
-      const existing = await tx.findMemberByEmailHmac(actor.ownerAccountId, hmac(invitee.email));
+    for (const email of req.initialAdmins.adminEmails) {
+      const existing = await tx.findMemberByEmailHmac(actor.ownerAccountId, hmac(email));
       if (existing) {
-        await tx.insert('account_project_grants', { account_id: existing.id, project_id: project.id, role: invitee.role, granted_by: actor.accountId });
+        await tx.insert('account_project_grants', { account_id: existing.id, project_id: project.id, role: 'admin', granted_by: actor.accountId });
+        const token = existing.status === 'pending_activation'
+          ? await tx.rotateActivationToken(existing.id, { expires_at: now + 7d })
+          : null;
+        await emailQueue.enqueue({ to: email, template: 'TPL-PROJECT_ADMIN_INVITE', project_id: project.id, token_id: token?.id ?? null });
       } else {
-        const acc = await tx.insert('accounts', { owner_account_id: actor.ownerAccountId, email_encrypted: enc(invitee.email), email_hmac: hmac(invitee.email), name: invitee.displayName, status: 'pending_activation', role: 'admin', is_owner: 0 });
-        await tx.insert('account_project_grants', { account_id: acc.id, project_id: project.id, role: invitee.role, granted_by: actor.accountId });
+        const acc = await tx.insert('accounts', { owner_account_id: actor.ownerAccountId, email_encrypted: enc(email), email_hmac: hmac(email), name: null, status: 'pending_activation', role: 'admin', is_owner: 0 });
+        await tx.insert('account_project_grants', { account_id: acc.id, project_id: project.id, role: 'admin', granted_by: actor.accountId });
         const token = await tx.insert('access_tokens', { account_id: acc.id, purpose: 'activation', expires_at: now + 7d });
-        await emailQueue.enqueue({ to: invitee.email, template: 'TPL-ADMIN_USER_REGISTER', token: token.id });
+        await emailQueue.enqueue({ to: email, template: 'TPL-PROJECT_ADMIN_INVITE', project_id: project.id, token_id: token.id });
       }
     }
-    await tx.insertAudit({ action: 'project.created_with_initial_admins', target_type: 'project', target_id: project.id, metadata: { ownerAsAdmin: req.initialAdmins.selfAsAdmin, invitees: req.initialAdmins.invitees.map(i => ({ email_hmac: hmac(i.email), role: i.role })) } });
+    await tx.insertAudit({ action: 'project.created_with_initial_admins', target_type: 'project', target_id: project.id, metadata: { ownerAsAdmin: req.initialAdmins.selfAsAdmin, adminEmails: req.initialAdmins.adminEmails.map(email => ({ email_hmac: hmac(email), role: 'admin' })) } });
     return project;
   });
 }

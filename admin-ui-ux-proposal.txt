@@ -1,0 +1,512 @@
+管理画面UI/UX提案
+
+前提
+
+本システムでは、管理対象の情報が大きく2種類あります。
+
+1. オーナーが管理する情報
+
+- システム全体に関わる設定やマスタ情報
+- プロジェクト横断で利用される情報
+- 権限上、オーナーのみが作成・編集・削除できる情報
+
+2. プロジェクト管理者およびメンバーが管理する情報
+
+- 各プロジェクト内で利用・更新される情報
+- プロジェクト単位で管理される設定やデータ
+- ロールに応じて閲覧・編集範囲が異なる情報
+
+この2種類の情報が混在しても、ユーザーが迷わず管理できるように、Supabaseのような「Organization / Project を切り替えながら管理するダッシュボード構成」を前提にUI/UXを設計する。
+
+1. 基本方針
+
+管理画面は、情報の種類ではなく「管理スコープ」で分ける。
+
+- オーナー管理情報: システム全体、全プロジェクト共通、マスタ、横断設定
+- プロジェクト管理情報: 選択中プロジェクト内の設定、データ、運用情報
+
+ユーザーが常に「今、自分は全体を編集しているのか、特定プロジェクトを編集しているのか」を理解できるUIにする。
+
+重要な表示要素:
+
+- 今どの組織を操作しているか
+- 今どのプロジェクトを操作しているか
+- この画面は Global か Project か
+- 自分のロールは何か
+- この操作が可能かどうか
+
+2. 画面構成案
+
+2.1 グローバル管理エリア
+
+オーナー専用の管理領域。
+
+構成例:
+
+Global Console
+- Overview
+- Projects
+- Users / Members
+- Roles / Permissions
+- Master Data
+- Shared Settings
+- Billing / Plan
+- Audit Logs
+- System Settings
+
+ここではプロジェクト横断の情報だけを扱う。
+
+主な対象:
+
+- プロジェクト一覧、作成、停止、削除
+- ユーザー・組織メンバー管理
+- ロール定義
+- 共通マスタ
+- システム共通設定
+- 監査ログ
+- 契約・課金情報
+
+2.2 プロジェクト管理エリア
+
+プロジェクトを選択した後の管理領域。
+
+構成例:
+
+Project Console: Project A
+- Overview
+- Data
+- Settings
+- Members
+- Roles
+- Logs
+- Integrations
+- Project Settings
+
+主な対象:
+
+- プロジェクト内データ
+- プロジェクト固有設定
+- プロジェクトメンバー
+- プロジェクト内ロール
+- 利用ログ
+- 外部連携
+- プロジェクト単位の公開・停止・削除
+
+3. ナビゲーション設計
+
+Supabase風にする場合、画面上部に Organization Switcher と Project Switcher を配置し、左サイドバーで管理カテゴリを切り替える構成が扱いやすい。
+
+構成例:
+
+Top Bar
+- Organization Switcher
+- Project Switcher
+- User Menu
+
+Left Sidebar
+- Global
+  - Overview
+  - Projects
+  - Members
+  - Master Data
+  - System Settings
+- Project
+  - Overview
+  - Data
+  - Members
+  - Settings
+  - Logs
+
+ポイント:
+
+- 左メニュー内で Global 項目と Project 項目を明確に分ける
+- 現在のスコープを画面上部に常時表示する
+- グローバル画面では Project 表示を消す、または No project selected と表示する
+- プロジェクト画面では選択中プロジェクト名を常に表示する
+
+表示例:
+
+Organization: Acme Inc.
+Project: Customer FAQ
+
+4. 情報の階層構造
+
+おすすめの階層:
+
+Organization / Owner Scope
+- Projects
+  - Project A
+    - Data
+    - Members
+    - Settings
+    - Logs
+  - Project B
+    - Data
+    - Members
+    - Settings
+    - Logs
+- Global Members
+- Global Roles
+- Shared Master Data
+- System Settings
+
+「プロジェクトに属するもの」と「全体に属するもの」をURLでも分ける。
+
+URL例:
+
+/admin/global/master-data
+/admin/global/projects
+
+/admin/projects/:projectId/data
+/admin/projects/:projectId/settings
+/admin/projects/:projectId/members
+
+URLにスコープを含めることで、ユーザーも開発者も現在の管理対象を判断しやすくなる。
+
+5. 権限ごとの表示・操作制御
+
+基本ロール:
+
+- Owner: 全体設定、プロジェクト作成・削除、全ユーザー管理
+- Project Admin: 担当プロジェクト内の設定・メンバー・データ管理
+- Member: プロジェクト内データの閲覧・編集
+- Viewer: 閲覧のみ
+
+UI制御方針:
+
+- 権限がまったくないメニュー: 非表示
+- 存在は知ってよいが操作不可の機能: disabled 表示
+- 押せない理由が必要な操作: tooltip や inline message で説明
+
+表示例:
+
+[Delete Project] disabled
+この操作は Owner のみ実行できます。
+
+重要なのは、操作後に権限エラーを出すのではなく、操作前に分かるようにすることである。
+
+6. 誤操作を防ぐためのUI設計
+
+特に危険な操作は段階を分ける。
+
+対象:
+
+- プロジェクト削除
+- 全体マスタ変更
+- ロール変更
+- メンバー削除
+- 公開状態の変更
+- 外部連携の解除
+
+設計方針:
+
+- 破壊的操作は赤系ボタンに統一する
+- 通常の保存ボタンと削除ボタンを近くに置かない
+- 削除は確認モーダルを挟む
+- 重大操作は対象名の入力を必須にする
+- 変更前後の差分を表示する
+- 保存後に戻せない場合は明記する
+- 監査ログに残す
+
+確認モーダル例:
+
+Project "Customer FAQ" を削除します。
+この操作は取り消せません。
+
+確認のため project name を入力してください。
+[ Customer FAQ ]
+
+[Cancel] [Delete project]
+
+7. 一覧、詳細、編集画面の構成
+
+7.1 一覧画面
+
+一覧は「検索、フィルタ、並び替え、状態表示、主要アクション」を基本にする。
+
+構成例:
+
+Header
+- Title
+- Description
+- Primary Action
+
+Toolbar
+- Search
+- Filter
+- Sort
+- View options
+
+Table
+- Name
+- Status
+- Scope
+- Updated at
+- Updated by
+- Actions
+
+オーナー管理情報では Scope や Used by Projects を表示すると便利。
+
+7.2 詳細画面
+
+詳細画面では、情報の意味と影響範囲を明確にする。
+
+構成例:
+
+Header
+- Name
+- Status badge
+- Scope badge: Global / Project
+- Actions
+
+Tabs
+- Overview
+- Settings
+- Related Projects
+- Activity Logs
+
+7.3 編集画面
+
+編集画面では、保存前に影響範囲が分かるようにする。
+
+構成例:
+
+Form
+- Basic fields
+- Advanced settings
+- Validation messages
+- Impact preview
+- Save / Cancel
+
+共通マスタ編集時の表示例:
+
+この変更は 12 projects に影響します。
+
+影響を受けるプロジェクト:
+- Project A
+- Project B
+- Project C
+
+8. オーナー管理情報とプロジェクト管理情報の関係性の見せ方
+
+関係性は「参照元」と「利用先」を双方向で見せると分かりやすい。
+
+グローバルマスタ詳細画面:
+
+Used by Projects
+- Project A
+- Project B
+- Project C
+
+プロジェクト設定画面:
+
+Inherited from Global Settings
+- Default role policy
+- Common category master
+- Notification template
+
+Project Overrides
+- Project-specific notification rule
+- Custom display name
+
+グローバル設定とプロジェクト固有設定が混在する場合は、ラベルを付ける。
+
+表示例:
+
+[Global] 共通カテゴリ
+[Project Override] 表示順
+
+9. 初めて使うユーザーでも理解しやすい導線
+
+初回体験では、最初に「どちらを管理したいか」を選ばせると迷いにくい。
+
+Welcome
+- システム全体を設定する
+  - Global Console
+- プロジェクトを管理する
+  - Project Selector
+
+オンボーディングで用意するもの:
+
+- 初回チェックリスト
+- 空状態の説明
+- 権限によってできることの表示
+- プロジェクト作成後の次アクション
+- サンプルデータやテンプレート
+
+初回チェックリスト例:
+
+まずはプロジェクトを作成しましょう。
+[Create project]
+
+次に設定する項目:
+1. メンバーを招待
+2. プロジェクト設定を確認
+3. 初期データを登録
+
+10. 将来的に管理対象が増えた場合にも拡張しやすい設計
+
+拡張性を考えるなら、メニューを固定的に作り込みすぎないことが重要。
+
+おすすめ:
+
+- Global と Project のスコープを明確に分ける
+- 各管理対象は独立したモジュールとして追加できる構成にする
+- 一覧、詳細、編集の画面パターンを共通化する
+- 権限チェックをUIとAPIの両方で統一する
+- URL設計にスコープを含める
+- 監査ログ、作成者、更新者、更新日時を標準項目にする
+
+将来的にメニューが増えた場合のカテゴリ例:
+
+Global
+- Organization
+- Access Control
+- Master Data
+- Operations
+- System
+
+Project
+- Workspace
+- Data
+- Access Control
+- Integrations
+- Operations
+
+11. メニュー構成案
+
+Dashboard
+
+Global
+- Overview
+- Projects
+- Members
+- Roles & Permissions
+- Master Data
+- Shared Templates
+- System Settings
+- Audit Logs
+
+Project
+- Overview
+- Data
+- Project Members
+- Project Roles
+- Project Settings
+- Integrations
+- Activity Logs
+
+Account
+- Profile
+- Notifications
+- API Keys
+
+Owner の場合は Global と Project の両方を表示する。
+Project Admin や Member の場合は、Global を非表示または閲覧専用にする。
+
+12. ユーザーロール別の利用フロー
+
+12.1 Owner
+
+ログイン
+-> Organization Dashboard
+-> Global Console
+-> プロジェクト作成
+-> メンバー招待
+-> ロール設定
+-> 共通マスタ設定
+-> 各プロジェクト状況を確認
+
+12.2 Project Admin
+
+ログイン
+-> Project Selector
+-> Project Dashboard
+-> プロジェクト設定確認
+-> メンバー管理
+-> データ管理
+-> ログ確認
+
+12.3 Member
+
+ログイン
+-> 自分が参加しているプロジェクト一覧
+-> Project Dashboard
+-> 許可されたデータを閲覧・編集
+
+12.4 Viewer
+
+ログイン
+-> 参加プロジェクト一覧
+-> Dashboard / Data / Logs を閲覧
+
+13. UIコンポーネント例
+
+使うとよいコンポーネント:
+
+- Organization switcher
+- Project switcher
+- Scope badge: Global / Project
+- Role badge: Owner / Admin / Member / Viewer
+- Permission-aware button
+- Data table
+- Filter bar
+- Detail tabs
+- Breadcrumb
+- Confirmation modal
+- Impact preview
+- Audit log timeline
+- Empty state
+- Toast notification
+- Inline validation
+- Read-only field with reason tooltip
+
+表示例:
+
+[Global] Default Category Master
+
+Used by: 18 projects
+Last updated: 2026-05-19 by Owner
+
+14. 避けるべき設計パターン
+
+避けたいのは、スコープが曖昧になる設計。
+
+- グローバル設定とプロジェクト設定を同じ一覧に混ぜる
+- 権限がない操作を押してからエラーにする
+- 削除や公開変更をワンクリックで実行する
+- メニュー名だけで対象範囲を判断させる
+- プロジェクト選択中なのに全体設定を編集できてしまう
+- Owner向け機能を全ユーザーに見せすぎる
+- 一覧から直接、重大操作を実行できる
+- 初回ログイン時に空のダッシュボードだけを見せる
+- URLから現在のスコープが分からない
+- 将来の追加を考えず、個別画面を場当たり的に増やす
+
+15. 推奨する全体像
+
+最もおすすめなのは、以下の構成。
+
+Organization Dashboard
+- Global Console
+  - 全体設定
+  - プロジェクト管理
+  - ユーザー・権限
+  - 共通マスタ
+
+Project Dashboard
+- Project Console
+  - プロジェクト内データ
+  - プロジェクト設定
+  - メンバー管理
+  - ログ・連携
+
+UI上では、常に以下を表示する。
+
+- 今どの組織か
+- 今どのプロジェクトか
+- この画面は Global か Project か
+- 自分のロールは何か
+- この操作が可能かどうか
+
+この設計にすると、オーナー管理情報とプロジェクト管理情報が増えても、ユーザーは「どの範囲の情報を操作しているのか」を見失いにくくなる。
