@@ -667,11 +667,11 @@
 
       <div class="app-main">
         <nav class="breadcrumb" aria-label="現在位置"><a>ホーム</a> / <span aria-current="page">承認待ち一覧</span></nav>
-        <header class="page-header"><div><h1>承認待ち一覧(4-eyes)</h1><p class="page-description">別運営者の承認が必要な申請を一覧表示します。自分の申請には「あなたの申請」バッジが付きます</p></div></header>
+        <header class="page-header"><div><h1>承認待ち一覧(4-eyes)</h1><p class="page-description">別運営者の承認が必要な申請を一覧表示します。自分の申請には「自分の申請」バッジが付きます</p></div></header>
 
         <div class="quick-filter-chips" role="tablist" aria-label="クイックフィルタ">
           <button class="chip active">承認待ち(別運営者) <span class="count">3</span></button>
-          <button class="chip">あなたの申請 <span class="count">1</span></button>
+          <button class="chip">自分の申請 <span class="count">1</span></button>
           <button class="chip">期限切れ間近 <span class="count">1</span></button>
           <button class="chip">すべて <span class="count">12</span></button>
         </div>
@@ -711,9 +711,9 @@
               <td><button class="btn small primary">承認画面を開く</button></td>
             </tr>
             <tr style="background: #f3eef8;">
-              <td><span class="approval-state-badge requested">承認待ち</span> <span class="badge-pill purple">あなたの申請</span></td>
+              <td><span class="approval-state-badge requested">承認待ち</span> <span class="badge-pill purple">自分の申請</span></td>
               <td><code>apv_SAMPLE_01H004</code></td>
-              <td>op-SAMPLE-01(あなた)</td>
+              <td>op-SAMPLE-01(自分)</td>
               <td>rate_limit.override</td>
               <td>own_SAMPLE_01HXXXX</td>
               <td><span class="timer warn">残 23h:12m</span></td>
@@ -757,7 +757,7 @@
 
               <td>op-SAMPLE-02</td>
 
-              <td><button class="btn small primary">実行</button></td>
+              <td><button class="btn small primary">実行する</button></td>
             </tr>
 
             <tr class="system-row">
@@ -997,7 +997,7 @@
 
             <div>
               <div class="field">
-                <label>復元操作</label> <button class="btn primary">遷移し復元実行</button>
+                <label>復元操作</label> <button class="btn primary">復元画面へ移動する</button>
 
 
               </div>
@@ -1129,7 +1129,7 @@
           </div>
         </div>
 
-        <div class="alert-bar warn" role="status">⚠ プリチェックで NG 項目があります。詳細を確認してください(1/7 項目で注意あり)</div>
+        <div class="alert-bar warn" role="status">⚠ プリチェックで確認が必要な項目があります。詳細を確認してください(1/7 項目で注意あり)</div>
 
         <div class="panel"><div class="panel-title">副作用ロールバックプリチェック (a)〜(g)詳細</div>
           <div class="precheck-table">
@@ -1161,7 +1161,7 @@
               </div>
 
               <div>
-                <span class="ok">OK</span>
+                <span class="ok">検証済み</span>
               </div>
 
               <div class="info">
@@ -1179,7 +1179,7 @@
               </div>
 
               <div>
-                <span class="ok">OK</span>
+                <span class="ok">検証済み</span>
               </div>
 
               <div class="info">
@@ -1197,7 +1197,7 @@
               </div>
 
               <div>
-                <span class="ok">OK</span>
+                <span class="ok">検証済み</span>
               </div>
 
               <div class="info">
@@ -1215,7 +1215,7 @@
               </div>
 
               <div>
-                <span class="ok">OK</span>
+                <span class="ok">検証済み</span>
               </div>
 
               <div class="info">
@@ -1233,7 +1233,7 @@
               </div>
 
               <div>
-                <span class="ok">OK</span>
+                <span class="ok">検証済み</span>
               </div>
 
               <div class="info">
@@ -1269,7 +1269,7 @@
               </div>
 
               <div>
-                <span class="ok">OK</span>
+                <span class="ok">検証済み</span>
               </div>
 
               <div class="info">
@@ -1283,10 +1283,10 @@
           <div class="panel-title">実行モード</div>
           <div class="tab-bar"><div class="tab active">4-eyes 申請(承認待ち)</div><div class="tab">即時実行(承認ログ)</div></div>
           <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;">
-            <button class="btn">プリチェックを実行</button>
+            <button class="btn">プリチェックを開始する</button>
             <button class="btn hardgate">4-eyes 申請する</button>
-            <button class="btn danger">復元を実行する</button>
-            <button class="btn">キャンセル</button>
+            <button class="btn danger">復元する</button>
+            <button class="btn">操作を取り消す</button>
           </div>
           <div class="helper" style="margin-top: 6px;">MVP ハードゲート対象は「4-eyes 申請」タブからのみ実行可能です</div>
         </div>
@@ -1513,10 +1513,10 @@
         <div class="panel">
           <div class="panel-title">操作</div>
           <div style="display: flex; gap: 8px; justify-content: flex-end;">
-            <button class="btn">キャンセル</button>
+            <button class="btn">操作を取り消す</button>
             <button class="btn hardgate">4-eyes 申請する</button>
           </div>
-          <div class="helper" style="margin-top: 6px; text-align: right;">申請後、運営者 2 名(あなたを除く)に通知されます</div>
+          <div class="helper" style="margin-top: 6px; text-align: right;">申請後、申請者本人を除く運営者 2 名に通知されます</div>
         </div>
       </div>
     </div>
@@ -2069,7 +2069,7 @@
         <header class="page-header"><div><h1>運営者活動ダッシュボード(監査)</h1><p class="page-description">運営者操作の監査ログを検索・閲覧・エクスポートします(5 年保持)</p></div><div><button class="btn primary">CSV をエクスポートする</button></div></header>
 
         <div style="display: flex; gap: 8px; margin-bottom: 8px;">
-          <span class="badge-pill green">ハッシュチェーン検証 OK(直近 24 時間)</span>
+          <span class="badge-pill green">ハッシュチェーン検証済み(直近 24 時間)</span>
           <span class="badge-pill gray">運営者頻度異常検知: 0 件</span>
         </div>
 
@@ -2286,7 +2286,7 @@
                 署名付きトークン/ ファイル末尾 <code>signature</code> 行
               </div>
             </div>
-          </div><button class="btn primary">エクスポート実行</button> <button class="btn">検証ツール</button>
+          </div><button class="btn primary">CSV をエクスポートする</button> <button class="btn">検証ツール</button>
 
 
         </div>
@@ -2634,7 +2634,7 @@
           </div>
 
           <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px;">
-            <button class="btn">キャンセル</button>
+            <button class="btn">操作を取り消す</button>
             <button class="btn primary">リプレイする</button>
             <button class="btn danger">破棄する <span class="hardgate-badge" style="margin-left: 4px;">4-eyes</span></button>
           </div>
@@ -3012,7 +3012,7 @@
 
               <th>イベント ID</th>
 
-              <th>オーナーアカウント</th>
+              <th>契約オーナー</th>
 
               <th>detected_at</th>
 
@@ -3156,10 +3156,10 @@
             <div class="input ticket-id-field"><span class="placeholder">例: JIRA-12345 / INC-001 / #1234</span></div>
           </div>
 
-          <div class="alert-bar info" role="status">ℹ 申請後、運営者 2 名(あなたを除く)に通知されます</div>
+          <div class="alert-bar info" role="status">ℹ 申請後、申請者本人を除く運営者 2 名に通知されます</div>
 
           <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px;">
-            <button class="btn">キャンセル</button>
+            <button class="btn">操作を取り消す</button>
             <button class="btn hardgate">申請する</button>
           </div>
         </div>
@@ -3226,7 +3226,7 @@
           <div style="display: flex; justify-content: space-between; margin-top: 12px; padding-top: 8px; border-top: 1px solid #ccc;">
             <button class="btn danger">却下する</button>
             <div>
-              <button class="btn">キャンセル</button>
+              <button class="btn">操作を取り消す</button>
               <button class="btn primary" style="background: #393; border-color: #060;">承認する</button>
             </div>
           </div>
