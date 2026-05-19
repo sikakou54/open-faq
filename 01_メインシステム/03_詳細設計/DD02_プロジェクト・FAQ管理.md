@@ -107,65 +107,73 @@ CSV / JSON ファイル → R2 ステージング → Queue 投入 → consumer 
 - 監査ログ: `project.ip_allowlist.update`（`metadata` に変更前後の CIDR セット差分、`retention_class=general`）
 - 自己検証ガード: API 層で各行を `ipaddr` ライブラリでパースし、`IPv4Network` / `IPv6Network` のいずれかでなければ 400。重複は事前にセット化して検出。CIDR の正規化（`203.0.113.0/24` 形式）を保存前に実施
 
-### 3.11 プロジェクト作成時の管理者必須指定(FR-015e / FR-030a)
+### 3.11 プロジェクト作成時のオーナー自動 admin 付与(FR-015e / FR-030a、v1.10 改訂)
 
-`POST /projects` 実行時は SCR-010-M1(新規作成モード)からの `initialAdmins` を受け取り、以下のトランザクション境界で処理する。SCR-010-M1 では一般メンバー追加やロール選択は行わず、他者指定時のロールは `admin` 固定とする:
+`POST /projects` 実行時は SCR-010-M1(新規作成モード)から `name` / `allowedDomains` / `ipAllowlist` 等の基本情報のみを受け取り、**v1.10 で `initialAdmins` フィールドを撤回**。オーナーは作成時に自動で当該プロジェクトの管理者となる(`account_project_grants(role='admin', valid=1)` 自動 INSERT)。他者をプロジェクト管理者として招待する操作は、プロジェクト作成後に SCR-017-M1 経由(`POST /projects/{id}/members` + `role='admin'`)で行う。
 
-1. リクエスト検証: `selfAsAdmin=false` の場合は `adminEmails[]` が 1 件以上必須。違反は 400 `VALIDATION_ERROR`(`field: "initialAdmins"`)。`adminEmails[]` のリスト内重複は 400。
-2. `projects` INSERT(ウィジェット公開鍵を発行)
-3. `adminEmails[]` の各メールアドレスについて:
-   - 既存メンバーアカウントが存在する場合(同一オーナー配下 + 同一 `email_hmac`): `account_project_grants` に当該プロジェクト × `role='admin'` を INSERT + プロジェクト管理者招待メールを Queue 投入。有効(`active`)メンバーにはログイン URL、招待中(`pending_activation`)メンバーには新しいアクティベーション URL(7 日有効)を含める
-   - 新規メールアドレスの場合: `accounts` を `status='pending_activation'` で作成 + `account_project_grants.role='admin'` を同時 INSERT + `access_tokens.purpose='activation'`(有効期限 7 日)発行 + 招待メール送信 Queue 投入
-4. `selfAsAdmin=true` のときはオーナー側 `account_project_grants` の追加処理は **不要**(オーナーは `is_owner=1` 判定で全プロジェクト bypass)。論理上「オーナーが当該プロジェクトの管理者として振る舞う」ことを `initialAdmins.selfAsAdmin` フラグの記録のみで担保する
-5. 監査ログ `project.created_with_initial_admins`(`metadata` に `{ projectId, ownerAsAdmin, adminEmails: [{ email_hmac, role: "admin" }] }`、`retention_class=general`)を記録
+処理ステップ:
+
+1. リクエスト検証: `name`(1〜100 文字必須)、`allowedDomains`(1 件以上必須、形式チェック)、`ipAllowlist`(任意、CIDR 形式)。違反は 400 `VALIDATION_ERROR`
+2. `projects` INSERT(ウィジェット公開鍵を発行、`valid=1`)
+3. **オーナー自動 admin 行 INSERT**: `INSERT INTO account_project_grants(account_id=actor.ownerAccountId, project_id=newPid, role='admin', valid=1, granted_at=now(), granted_by=actor.accountId)`
+4. 監査ログ `project.created_with_owner_admin`(`metadata` に `{ projectId, ownerAccountId }`、`retention_class=general`)を記録
 
 擬似コード:
 
 ```ts
 async function createProject(actor: Principal, req: CreateProjectRequest) {
   requireOwner(actor); // E-AUTHZ-OWNER-ONLY
-  validateInitialAdmins(req.initialAdmins); // 400
-  await db.transaction(async (tx) => {
-    const project = await tx.insert('projects', { ...req, owner_account_id: actor.ownerAccountId });
-    for (const email of req.initialAdmins.adminEmails) {
-      const existing = await tx.findMemberByEmailHmac(actor.ownerAccountId, hmac(email));
-      if (existing) {
-        await tx.insert('account_project_grants', { account_id: existing.id, project_id: project.id, role: 'admin', granted_by: actor.accountId });
-        const token = existing.status === 'pending_activation'
-          ? await tx.rotateActivationToken(existing.id, { expires_at: now + 7d })
-          : null;
-        await emailQueue.enqueue({ to: email, template: 'TPL-PROJECT_ADMIN_INVITE', project_id: project.id, token_id: token?.id ?? null });
-      } else {
-        const acc = await tx.insert('accounts', { owner_account_id: actor.ownerAccountId, email_encrypted: enc(email), email_hmac: hmac(email), name: null, status: 'pending_activation', role: 'admin', is_owner: 0 });
-        await tx.insert('account_project_grants', { account_id: acc.id, project_id: project.id, role: 'admin', granted_by: actor.accountId });
-        const token = await tx.insert('access_tokens', { account_id: acc.id, purpose: 'activation', expires_at: now + 7d });
-        await emailQueue.enqueue({ to: email, template: 'TPL-PROJECT_ADMIN_INVITE', project_id: project.id, token_id: token.id });
-      }
-    }
-    await tx.insertAudit({ action: 'project.created_with_initial_admins', target_type: 'project', target_id: project.id, metadata: { ownerAsAdmin: req.initialAdmins.selfAsAdmin, adminEmails: req.initialAdmins.adminEmails.map(email => ({ email_hmac: hmac(email), role: 'admin' })) } });
+  validateCreateProjectRequest(req); // 400
+  return await db.transaction(async (tx) => {
+    const project = await tx.insert('projects', {
+      ...req,
+      owner_account_id: actor.ownerAccountId,
+      valid: 1,
+    });
+    // v1.10: オーナー admin 行を自動 INSERT
+    await tx.insert('account_project_grants', {
+      account_id: actor.ownerAccountId,
+      project_id: project.id,
+      role: 'admin',
+      valid: 1,
+      granted_by: actor.accountId,
+      granted_at: now(),
+    });
+    await tx.insertAudit({
+      action: 'project.created_with_owner_admin',
+      target_type: 'project',
+      target_id: project.id,
+      metadata: { ownerAccountId: actor.ownerAccountId },
+      retention_class: 'general',
+    });
     return project;
   });
 }
 ```
 
-### 3.12 プロジェクト削除時の孤立メンバー cleanup(FR-030b)
+### 3.12 プロジェクト削除時の論理削除カスケード + 孤立メンバー cleanup(FR-030b、v1.10 で論理削除化)
 
-`DELETE /projects/{id}` 実行時は以下のトランザクション境界で処理する:
+`DELETE /projects/{id}` 実行時は **SCR-026 のみ** から起動可能(v1.10 で SCR-010 / SCR-010-M1 から動線撤去)。以下のトランザクション境界で論理削除する:
 
-1. 削除前のスナップショット: 当該プロジェクトに割当のあるメンバー accountId 一覧を取得
-2. `account_project_grants` から当該 `project_id` の全行を DELETE
-3. 孤立メンバーの抽出: 「ステップ 1 のメンバーのうち、他プロジェクト割当が 0 件かつ `is_owner=0` のもの」
-4. 孤立メンバーの全セッションを失効(`sessions.revoked_at` を設定)+ `accounts` から物理削除
-5. プロジェクト本体および紐づくデータ(FAQ / 質問ログ / 案件 / チャット 等)を削除 / 匿名化(削除モードに従う)
-6. 監査ログ `project.deleted_with_orphan_cleanup`(`metadata` に `{ projectId, deletedAccountIds }`、`retention_class=general`)を記録
+1. 削除前のスナップショット: 当該プロジェクトに `valid=1` で割当のあるメンバー accountId 一覧を取得(オーナー含む)
+2. `UPDATE account_project_grants SET valid=0, updated_at=now() WHERE project_id=? AND valid=1`(オーナー自身の admin 行も含む全行を論理削除)
+3. 孤立メンバーの抽出: 「ステップ 1 のメンバーのうち、他プロジェクト割当(`valid=1` の grants)が 0 件かつ `is_owner=0` のもの」
+4. 孤立メンバーの全セッションを失効(`UPDATE sessions SET revoked_at=now()`)+ 未使用招待トークンを失効(`UPDATE access_tokens SET used_at=now() WHERE used_at IS NULL`)+ `UPDATE accounts SET valid=0, updated_at=now()` で論理削除
+5. `UPDATE projects SET status='deleted', valid=0, deleted_at=now(), updated_at=now() WHERE id=?` + 関連テーブル(`allowed_domains` / `project_ip_allowlist` / `faqs` / `inquiries` / `inquiry_contacts` / `chat_rooms` / `question_logs`)を `valid=0, updated_at=now()` に伝播
+6. 監査ログ `project.logical_delete`(`metadata` に `{ projectId, logicallyDeletedAccountIds: [...] }`、`retention_class=general`)を記録
 
-オーナー(`is_owner=1`)は本処理の対象外(常に存続)。孤立判定は DDL の `ON DELETE CASCADE` では実現できないため、必ずアプリ層のトランザクション内で実施する。
+オーナー(`is_owner=1`)の `accounts` 行は本処理の論理削除対象外(常に `valid=1` 維持)。当該プロジェクトに対するオーナー自身の `account_project_grants` admin 行は他のメンバー grants と同様に `valid=0` に論理削除される。論理削除データは `updated_at < now() - 90d AND valid=0` の物理削除バッチ([DD14_バッチ・非同期処理.md §3.13](DD14_バッチ・非同期処理.md))で 90 日後に物理削除される。
 
-### 3.13 関連する横断設計
+### 3.13 90 日後物理削除バッチ(v1.10 新設、概要)
+
+詳細は [DD14_バッチ・非同期処理.md §3.13](DD14_バッチ・非同期処理.md) を正本とする。日次バッチで `valid=0 AND updated_at < now() - 90d` の行を物理削除する。`accounts` 行が物理 DELETE されると `ON DELETE CASCADE` で関連 `account_project_grants` / `sessions` / `access_tokens` 等が連鎖物理削除される。`projects` 行が物理 DELETE されると `ON DELETE CASCADE` で関連 `faqs` / `inquiries` / `chat_*` 等が連鎖物理削除される。`billing_subscriptions` は物理削除バッチの対象外(電子帳簿保存法 7 年保持、永久維持)。匿名化モード(`accounts.data_deletion_mode='anonymize'`)は物理削除前に匿名化処理を実施する。
+
+### 3.14 関連する横断設計
 
 - 認可: [DD09_認可ヘルパ.md](DD09_認可ヘルパ.md) の `requireProjectRole` でオーナー境界 + プロジェクトロール(`admin` / `member`)を検証
-- 監査ログ: `faq.create` / `faq.update` / `faq.publish` / `faq.unpublish` / `faq.bulk_import` / `project.created_with_initial_admins` / `project.deleted_with_orphan_cleanup` / `project.member_invited` を `retention_class=general` で記録
+- 監査ログ: `faq.create` / `faq.update` / `faq.publish` / `faq.unpublish` / `faq.bulk_import` / `project.created_with_owner_admin`(v1.10、旧 `project.created_with_initial_admins`)/ `project.logical_delete`(v1.10、旧 `project.deleted_with_orphan_cleanup`)/ `project.member_invited` / `project.hard_delete_by_batch`(v1.10、90 日後物理削除バッチ起動)を `retention_class=general` で記録
 - リアルタイム反映: FAQ 公開・編集時に `widget-api` 側の KV キャッシュ(`embedding:{faqId}`、`ai_threshold:{owner}:{project}` は別系統)を invalidate
+- 論理削除フィルタ: 全 GET 系クエリで `WHERE valid=1` を必須付与(漏れは IDOR 類似の脆弱性、09_セキュリティ設計参照)
 
 ## 4. 関連設計
 

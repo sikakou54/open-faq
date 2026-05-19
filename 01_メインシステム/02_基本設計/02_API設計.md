@@ -39,7 +39,7 @@
 |---|---|---|---|
 | 認証 | `/auth/register`, `/auth/login`, `/auth/logout`, `/auth/re-auth`, `/auth/password/reset-requests` | 公開(login)、認証済み(他)| SCR-001, SCR-002, SCR-003 |
 | メール確認 | `/auth/email-verifications/{token}` | トークン認証 | SCR-023 |
-| 管理者ユーザー管理 | `/members/{id}/resend-invitation`(招待再送), `/projects/{id}/members`(SCR-017-M1 招待), `/projects/{id}/members/{accountId}`(ロール変更 / アカウント全体物理削除)| オーナー / プロジェクト管理者(該当 PJ 範囲)| SCR-017, SCR-017-M1 |
+| 管理者ユーザー管理 | `/members/{id}/resend-invitation`(招待再送), `/projects/{id}/members`(SCR-017-M1 招待), `/projects/{id}/members/{accountId}`(ロール変更 / v1.10 でアカウント全体論理削除)| オーナー / プロジェクト管理者(該当 PJ 範囲)| SCR-017, SCR-017-M1 |
 | プロジェクト管理 | `/projects`, `/projects/{id}` | **オーナー専有** | SCR-010, SCR-010-M1 |
 | FAQ 管理 | `/projects/{id}/faqs`, `/projects/{id}/faqs/{faqId}`, `/projects/{id}/faqs/import`, `/projects/{id}/faqs/export` | オーナー / 該当 PJ の `member`+ | SCR-012 |
 | ウィジェット | `/widget/bootstrap`, `/widget/ask`, `/widget/feedback` | end_user(公開キー + セッション)| ウィジェット |
@@ -80,6 +80,17 @@
 ### 3.2 オーナー境界判定
 
 すべての操作で `actor.owner_account_id == target.owner_account_id` を必須(認証・認可設計書 09 §5.2)。違反時は **404 偽装**(エラー設計書 06 §5.3)。
+
+### 3.2a 論理削除フィルタ(v1.10 新設)
+
+`valid` カラムを持つテーブル(`accounts` / `account_project_grants` / `projects` / `allowed_domains` / `project_ip_allowlist` / `faqs` / `question_logs` / `inquiries` / `inquiry_contacts` / `chat_rooms` / `billing_subscriptions`)に対する全 GET 系 API(一覧 / 詳細)のクエリは、原則として `WHERE <table>.valid=1` フィルタを追加する。論理削除済み(`valid=0`)の行は通常 API 経由では返却しない。
+
+例外:
+- 運営者経由の連携 IF #4(物理削除前の復元 / リストア)では `valid=0` 行への参照を許可
+- 監査ログ参照系 API は `valid` 概念外(`audit_logs` には `valid` カラムを追加しない)
+- 認証ミドルウェアは `accounts.valid=0` 行へのログインを 401 で拒否する(セッション内 `accountId` の `valid` を確認、`valid=0` ならセッションも失効扱い)
+
+`WHERE valid=1` フィルタの漏れは IDOR 類似の脆弱性として扱う([09_セキュリティ設計.md](09_セキュリティ設計.md))。
 
 ### 3.3 冪等性キー
 
@@ -267,7 +278,7 @@
 
 #### 5.2.2 `POST /members/invite` および `POST /members/{id}/project-grants`(v1.6 で廃止)
 
-旧 API 2 種は **v1.6(2026-05-19)で廃止**、`DELETE /members/{id}` は v1.7 で廃止。メンバー管理は完全にプロジェクト単位化されたため、招待は `POST /projects/{id}/members`(§5.2.4)、ロール変更は `PATCH /projects/{id}/members/{accountId}`(§5.2.4a)、**アカウント全体物理削除**は `DELETE /projects/{id}/members/{accountId}`(§5.2.5、v1.7)、招待再送は `POST /members/{id}/resend-invitation`(§5.2.6)に集約する。
+旧 API 2 種は **v1.6(2026-05-19)で廃止**、`DELETE /members/{id}` は v1.7 で廃止。メンバー管理は完全にプロジェクト単位化されたため、招待は `POST /projects/{id}/members`(§5.2.4)、ロール変更は `PATCH /projects/{id}/members/{accountId}`(§5.2.4a)、**アカウント全体論理削除**(v1.10、`accounts.valid=0`)は `DELETE /projects/{id}/members/{accountId}`(§5.2.5)、招待再送は `POST /members/{id}/resend-invitation`(§5.2.6)に集約する。
 
 #### 5.2.4 `POST /projects/{id}/members`(プロジェクト単発招待 / SCR-017-M1 招待モード正本)
 
@@ -312,32 +323,34 @@
 レスポンス(200): `{ "accountId": "...", "projectId": "...", "role": "admin|member", "updatedAt": "..." }`
 エラー: 404 `NOT_FOUND`、403 `PROJECT_ACCESS_DENIED`、403 `LAST_ADMIN_PROTECTED`、403 `SELF_MUTATION_FORBIDDEN`、400 `VALIDATION_ERROR`
 
-#### 5.2.5 `DELETE /projects/{id}/members/{accountId}`(メンバーアカウント削除 / v1.7 でアカウント全体物理削除に再定義)
+#### 5.2.5 `DELETE /projects/{id}/members/{accountId}`(メンバーアカウント削除 / v1.7 でアカウント全体物理削除、v1.10 で論理削除に再統一)
 
 | 認証 | Cookie + CSRF + 再認証必須 |
 | 必要権限 | オーナー / 該当プロジェクトの `admin` ロール保持メンバー |
 | 関連画面 | SCR-017-M1「アカウントを削除」(L2) |
 
-**v1.7 で「離脱(`account_project_grants` 行のみ削除)」を廃止し、「アカウント全体の物理削除」に変更**。同一トランザクションで次を削除する:
+**v1.10 で「アカウント全体物理削除」を「アカウント全体論理削除」に再統一**(v1.7 物理削除統一を撤回)。同一トランザクションで次を実行する:
 
-1. 対象 `accounts` 行
-2. 対象アカウントの全 `account_project_grants` 行(当該プロジェクトに限らず、他プロジェクト分も含む)
-3. 対象アカウントの全 `sessions` 行
-4. 招待中の場合は対応する `access_tokens.purpose='activation'` を失効
+1. `UPDATE accounts SET valid=0, updated_at=now() WHERE id=?`(対象 `accounts` 行を論理削除)
+2. `UPDATE account_project_grants SET valid=0, updated_at=now() WHERE account_id=? AND valid=1`(対象アカウントの全 `account_project_grants` 行を論理削除、当該プロジェクトに限らず他プロジェクト分も含む)
+3. `UPDATE sessions SET revoked_at=now() WHERE account_id=? AND revoked_at IS NULL`(全セッション失効)
+4. 招待中の場合は対応する `access_tokens.purpose='activation'` を `used_at=now()` で強制失効
 
-API パスはプロジェクトスコープ表記を維持(操作起点が「当該プロジェクトの SCR-017-M1」であるため認可境界判定に `projectId` が必要)。`accountId` は実際にはアカウント全体の削除を意味する。
+API パスはプロジェクトスコープ表記を維持(操作起点が「当該プロジェクトの SCR-017-M1」であるため認可境界判定に `projectId` が必要)。`accountId` は実際にはアカウント全体の論理削除を意味する。論理削除データは `updated_at` 基準で 90 日経過後に物理削除バッチ(DD14)で物理削除される(物理削除モードに従って実体を消去)。
+
+同一メールアドレスでの再招待: `uq_accounts_owner_email` は v1.10 で `WHERE valid=1` 部分 UNIQUE 化されており、論理削除済(`valid=0`)の `accounts` 行を維持したまま、同一オーナー配下の同一メールで新規 `accounts` 行を `valid=1` で作成可能。
 
 権限ルール(FR-019 / FR-019a / FR-019b):
 
 | 操作者 | 削除可 | 削除不可 |
 |---|---|---|
-| オーナー(`is_owner=1`)| 当該プロジェクトに割当のある `admin` / `member` メンバー(他プロジェクトにも割当があれば連鎖削除)| オーナー自身(自分)|
+| オーナー(`is_owner=1`)| 当該プロジェクトに割当のある `admin` / `member` メンバー(他プロジェクトにも割当があれば連鎖論理削除)| オーナー自身(自分)|
 | プロジェクト管理者(`is_owner=0`、当該プロジェクトに `admin`)| 当該プロジェクトに割当のある `member` メンバー | 自分自身 / 当該プロジェクトの他の `admin`(`E-AUTHZ-ADMIN-DELETE-PROTECTED`)|
 
-最後の admin が削除された場合の振る舞い(FR-019a): 当該プロジェクトに `admin` ロール保持メンバーが 0 件になっても **プロジェクトは削除されず存続し、オーナーが暗黙の管理者として継承** する(オーナーは元々全プロジェクトの暗黙 `admin`)。
+最後の admin の有無に関する振る舞い(FR-019a、v1.10 改訂): v1.10 でオーナーが作成時に自動付与される `account_project_grants(role='admin', valid=1)` 行を常に保持するため、「プロジェクトに admin 行が 0 件になる」状態は構造的に発生しない。`E-AUTHZ-LAST-ADMIN-PROTECTED` の判定はオーナー行除外(`is_owner=0 AND role='admin' AND valid=1` の件数)で行う。
 
 レスポンス(204): No Content
-エラー: 403 `E-AUTHZ-OWNER-PROTECTED`(対象がオーナー)、403 `E-AUTHZ-SELF-MUTATION`(自分自身対象)、403 `E-AUTHZ-ADMIN-DELETE-PROTECTED`(オーナー以外が当該プロジェクトの他 admin を削除しようとした)、403 `PROJECT_ACCESS_DENIED`、404 `NOT_FOUND`
+エラー: 403 `E-AUTHZ-OWNER-PROTECTED`(対象がオーナー)、403 `E-AUTHZ-SELF-MUTATION`(自分自身対象)、403 `E-AUTHZ-ADMIN-DELETE-PROTECTED`(オーナー以外が当該プロジェクトの他 admin を削除しようとした)、403 `PROJECT_ACCESS_DENIED`、404 `NOT_FOUND`、409 `E-BIZ-ACCOUNT-INACTIVE`(対象が既に `valid=0`)
 
 #### 5.2.6 `POST /members/{id}/resend-invitation`(招待メール再送)
 
@@ -392,39 +405,31 @@ API パスはプロジェクトスコープ表記を維持(操作起点が「当
   "name": "新規プロジェクト",
   "description": "説明文",
   "allowedDomains": ["example.com"],
-  "ipAllowlist": [],
-  "initialAdmins": {
-    "selfAsAdmin": true,
-    "adminEmails": ["admin1@example.com"]
-  }
+  "ipAllowlist": []
 }
 ```
 
-`initialAdmins` 仕様(FR-030a / FR-015e):
-- `selfAsAdmin=true` のとき、オーナー自身を当該プロジェクトの管理者として扱う(`account_project_grants` は OWNER 行を作らないため、認可は `isOwner` bypass で実現される。論理上「オーナーが管理者」)
-- `adminEmails[]` は 0 件以上。メールアドレスのみを受け付け、ロール指定は受け付けない。サーバー側で `account_project_grants.role='admin'` に固定する
-- バリデーション: `selfAsAdmin=false` のときは `adminEmails[]` が 1 件以上必須。違反は 400 `VALIDATION_ERROR`(`field: "initialAdmins"`、メッセージは「最低 1 名の管理者が必要です」)
-- `adminEmails[]` はリスト内重複不可(400)。同一オーナー配下の既存有効・招待中アカウントに一致する場合は、当該プロジェクトへの `admin` 割当追加として扱う
-- プロジェクト作成成功時、`adminEmails[]` に入力された全メールアドレスへプロジェクト管理者招待メールを Queue 投入する。新規 `accounts` 行は `pending_activation` で作成、`account_project_grants.role='admin'` を同時 INSERT、`access_tokens.purpose='activation'`(7 日有効)を発行し、招待メールにはアクティベーション URL を含める。既存の招待中メンバーには新しいアクティベーション URL、既存有効メンバーには管理者割当通知とログイン URL を含める。一般メンバー追加や `member` ロール指定は SCR-017 / SCR-017-M1 のユーザー管理で行う
+オーナー固定化(v1.10、FR-030a / FR-015e):
+- **v1.10 で `initialAdmins` フィールドを撤去**(従来は `selfAsAdmin` フラグ + `adminEmails[]` を受け取っていた)。オーナーは作成時に自動で当該プロジェクトの管理者となるため、UI / API での個別指定は不要。
+- サーバー側処理: プロジェクト作成成功と同一トランザクション内で `INSERT INTO account_project_grants(account_id=actor.accountId, project_id=newPid, role='admin', valid=1, granted_at=now(), granted_by=actor.accountId)` を 1 行発行する(オーナー自動 admin 行付与)。認可上は `isOwner=true` bypass を維持しつつ、本 admin 行は critical 通知の宛先解決(`SELECT DISTINCT account_id FROM account_project_grants WHERE role='admin' AND valid=1 …`)と画面表示の事実情報として参照される。
+- 他者をプロジェクト管理者として招待する操作は、プロジェクト作成後に当該プロジェクトの SCR-017 / SCR-017-M1(プロジェクト WS)から `POST /projects/{id}/members` 経由で行う。
 
 レスポンス(201):
 ```json
 {
   "id": "01HZ...",
   "widgetKey": "pk_live_abc123...",
-  "keyExpiresAt": "2027-05-13T...",
-  "adminAssignments": [
-    { "accountId": "01HZ...", "email": "admin1@example.com", "role": "admin", "status": "pending_activation", "mailStatus": "queued", "expiresAt": "2026-05-20T..." }
-  ]
+  "keyExpiresAt": "2027-05-13T..."
 }
 ```
 
-エラー: 400 `VALIDATION_ERROR`(`name` / `initialAdmins` 必須違反、管理者メールアドレス重複)、409 `DUPLICATE_NAME`、403 `E-AUTHZ-OWNER-ONLY`
+エラー: 400 `VALIDATION_ERROR`(`name` / `allowedDomains` 必須違反)、409 `DUPLICATE_NAME`、403 `E-AUTHZ-OWNER-ONLY`
 
 #### 5.3.3 `PATCH /projects/{id}` / `DELETE /projects/{id}`
 
-| 認証 | Cookie + CSRF(削除は再認証必須)|
+| 認証 | Cookie + CSRF(削除は再認証必須、L3 = プロジェクト名タイプ確認 + パスワード再認証)|
 | 必要権限 | **オーナー専有** |
+| 関連画面 | `PATCH`: SCR-010-M1 編集モード / `DELETE`: **SCR-026 のみ**(v1.10 で SCR-010 / SCR-010-M1 から削除動線を撤去)|
 | エラー | 404 `NOT_FOUND`(オーナー境界違反偽装)、403 `E-AUTHZ-OWNER-ONLY` |
 
 リクエスト(PATCH、部分更新):
@@ -437,12 +442,14 @@ API パスはプロジェクトスコープ表記を維持(操作起点が「当
 }
 ```
 
-`DELETE /projects/{id}` 実行時の挙動(FR-030b):
-1. 当該プロジェクトの `account_project_grants` を全行削除
-2. 削除後、他プロジェクト割当が 0 件かつ `is_owner=0` となったメンバーの `accounts` を物理削除(孤立メンバー cleanup)+ 全セッション失効
-3. プロジェクト本体および紐づくデータ(FAQ / 質問ログ / 案件 / チャット 等)を削除 / 匿名化(削除モードに従う)
+`DELETE /projects/{id}` 実行時の挙動(FR-030b、v1.10 で論理削除化):
+1. `UPDATE account_project_grants SET valid=0, updated_at=now() WHERE project_id=? AND valid=1`(オーナー自身の admin 行も含む全行を論理削除)
+2. UPDATE 後、他プロジェクト割当(`valid=1` 行)が 0 件かつ `is_owner=0` となったメンバーの `accounts` を `UPDATE accounts SET valid=0, updated_at=now()` で論理削除 + 全セッション失効(`UPDATE sessions SET revoked_at=now() WHERE account_id IN (...)`)+ 未使用招待トークン失効(`UPDATE access_tokens SET used_at=now() WHERE account_id IN (...) AND used_at IS NULL`)
+3. `UPDATE projects SET status='deleted', valid=0, deleted_at=now(), updated_at=now() WHERE id=?`
+4. 関連テーブル(`allowed_domains` / `project_ip_allowlist` / `faqs` / `inquiries` / `inquiry_contacts` / `chat_rooms` / `question_logs`)の対象行を `valid=0, updated_at=now()` に伝播。匿名化モード(`accounts.data_deletion_mode='anonymize'`)の場合の即時匿名化は v1.10 では行わず、90 日後の物理削除バッチ時に実施する
+5. 監査ログ `project.logical_delete` を `retention_class='general'` で記録(metadata: `{projectId, logicallyDeletedAccountIds: [...]}`)
 
-上記 1-3 はアプリ層のトランザクション内で実装する。
+上記 1-5 はアプリ層のトランザクション内で実装する。論理削除データは `updated_at` 基準で 90 日経過後に物理削除バッチ(DD14)で物理削除される。物理削除時は `ON DELETE CASCADE` で関連行が連鎖物理削除される。
 
 #### 5.3.3a `PATCH /projects/{id}/ip-allowlist`(プロジェクト単位 IP 許可リスト更新)
 
@@ -1053,3 +1060,4 @@ POST /internal/admin-integration/v1/admin-operation/notify
 | 日付 | 版数 | 変更内容 | 変更者 |
 |---|---|---|---|
 | 2026-05-17 | 1.0 | 初版作成 | claude |
+| 2026-05-19 | 1.10 | **オーナー固定化 + メンバー / プロジェクト論理削除化 + 削除動線 SCR-026 集約**。① `POST /projects` から `initialAdmins` フィールドを撤去、プロジェクト作成時に `account_project_grants(role='admin', valid=1)` をオーナー行へ自動 INSERT する処理を追加。② `DELETE /projects/{id}/members/{accountId}` を物理削除 → 論理削除(`accounts.valid=0` + 関連 `account_project_grants.valid=0` + `sessions.revoked_at` + `access_tokens.used_at`)に再統一。新エラー `E-BIZ-ACCOUNT-INACTIVE` を追加。③ `DELETE /projects/{id}` の関連画面を SCR-010 / SCR-010-M1 → **SCR-026** に変更。処理を物理削除 → 論理削除(`projects.status='deleted' + valid=0` + `account_project_grants.valid=0` 伝播 + 孤立メンバー `accounts.valid=0`)に統一。監査ログ `project.logical_delete` を発行。④ 共通仕様 §3.2a 「論理削除フィルタ」を新設(全 GET 系で `WHERE valid=1` 必須)| claude |
