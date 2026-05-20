@@ -52,7 +52,7 @@ export function generateInquiryCode(now = new Date()): string {
 
 ### 3.2 未解決質問画面（参照のみ）
 
-未解決質問一覧 / 詳細 / 状態遷移は [../02_基本設計/01_画面設計.md](../02_基本設計/01_画面設計.md) を正本とする。`case_status` の 5 値（`open` / `in_progress` / `waiting_user` / `resolved` / `closed`）の遷移ガードは [../02_基本設計/03_テーブル設計.md](../02_基本設計/03_テーブル設計.md) §8 を正本とする。
+未解決質問一覧 / 詳細 / 状態遷移は [../02_基本設計/01_画面設計.md](../02_基本設計/01_画面設計.md) を正本とする。`case_status` の 5 値（`open` / `in_progress` / `waiting_user` / `resolved` / `closed`）の遷移ガードは [../02_基本設計/03_テーブル設計.md](../02_基本設計/03_テーブル設計.md) §4.5.2 を正本とする。
 
 ### 3.3 未解決質問の保持期間通知（cron JST 09:00）
 

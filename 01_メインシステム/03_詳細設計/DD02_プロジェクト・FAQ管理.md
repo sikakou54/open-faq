@@ -100,7 +100,7 @@ CSV / JSON ファイル → R2 ステージング → Queue 投入 → consumer 
 
 ### 3.10 プロジェクト単位 IP 許可リスト（FR-179 / FR-330）
 
-- データ: `project_ip_allowlist`（[03_テーブル設計.md §3.8a](../02_基本設計/03_テーブル設計.md) 参照）
+- データ: `project_ip_allowlist`（[03_テーブル設計.md §3.9](../02_基本設計/03_テーブル設計.md) 参照）
 - API: `PATCH /projects/{id}` のフィールド `ipAllowlist`、または `PATCH /projects/{id}/ip-allowlist`（[02_API設計.md §5.3.3 / §5.3.3a](../02_基本設計/02_API設計.md) 参照）
 - 評価ロジックの正本: [02_API設計.md §5.5.0](../02_基本設計/02_API設計.md)
 - キャッシュ: ウィジェット Worker は `KV: ip_allowlist:{projectId}` に CIDR セットを 5 分 TTL で保持し、LPM 判定はメモリ上で実施。`PATCH` 成功時に該当キーを即時 invalidate
