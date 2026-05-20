@@ -83,7 +83,7 @@
 
 ### 3.2a 論理削除フィルタ
 
-`valid` カラムを持つテーブル(`users` / `contract_owners` / `project_users` / `projects` / `allowed_domains` / `project_ip_allowlist` / `faqs` / `question_logs` / `inquiries` / `inquiry_contacts` / `chat_rooms` / `billing_subscriptions`)に対する全 GET 系 API(一覧 / 詳細)のクエリは、原則として `WHERE <table>.valid=1` フィルタを追加する。論理削除済み(`valid=0`)の行は通常 API 経由では返却しない。
+`valid` カラムを持つテーブル(`users` / `contract_owners` / `project_users` / `projects` / `allowed_domains` / `project_ip_allowlist` / `faqs` / `question_logs` / `inquiries` / `end_users` / `chat_rooms` / `billing_subscriptions`)に対する全 GET 系 API(一覧 / 詳細)のクエリは、原則として `WHERE <table>.valid=1` フィルタを追加する。論理削除済み(`valid=0`)の行は通常 API 経由では返却しない。
 
 例外:
 - 運営者経由の連携 IF #4(物理削除前の復元 / リストア)では `valid=0` 行への参照を許可
@@ -440,7 +440,7 @@ API パスはプロジェクトスコープ表記を維持(操作起点が「当
 1. `UPDATE project_users SET valid=0, updated_at=now() WHERE project_id=? AND valid=1`(オーナー自身の admin 行も含む全行を論理削除)
 2. UPDATE 後、他プロジェクト割当(`valid=1` 行)が 0 件かつ `contract_owners` 行を持たないメンバーの `users` を `UPDATE users SET valid=0, updated_at=now()` で論理削除 + 全セッション失効(`UPDATE sessions SET revoked_at=now() WHERE user_id IN (...)`)+ 未使用招待トークン失効(`UPDATE access_tokens SET used_at=now() WHERE user_id IN (...) AND used_at IS NULL`)
 3. `UPDATE projects SET status='deleted', valid=0, deleted_at=now(), updated_at=now() WHERE id=?`
-4. 関連テーブル(`allowed_domains` / `project_ip_allowlist` / `faqs` / `inquiries` / `inquiry_contacts` / `chat_rooms` / `question_logs`)の対象行を `valid=0, updated_at=now()` に伝播。匿名化モード(`contract_owners.data_deletion_mode='anonymize'`)の場合の即時匿名化は本処理では行わず、90 日後の物理削除バッチ時に実施する
+4. 関連テーブル(`allowed_domains` / `project_ip_allowlist` / `faqs` / `inquiries` / `end_users` / `chat_rooms` / `question_logs`)の対象行を `valid=0, updated_at=now()` に伝播。匿名化モード(`contract_owners.data_deletion_mode='anonymize'`)の場合の即時匿名化は本処理では行わず、90 日後の物理削除バッチ時に実施する
 5. 監査ログ `project.logical_delete` を `retention_class='general'` で記録(metadata: `{projectId, logicallyDeletedUserIds: [...]}`)
 
 上記 1-5 はアプリ層のトランザクション内で実装する。論理削除データは `updated_at` 基準で 90 日経過後に物理削除バッチ(DD14)で物理削除される。物理削除時は `ON DELETE CASCADE` で関連行が連鎖物理削除される。
