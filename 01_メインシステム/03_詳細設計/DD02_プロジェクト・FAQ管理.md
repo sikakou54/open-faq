@@ -107,9 +107,9 @@ CSV / JSON ファイル → R2 ステージング → Queue 投入 → consumer 
 - 監査ログ: `project.ip_allowlist.update`（`metadata` に変更前後の CIDR セット差分、`retention_class=general`）
 - 自己検証ガード: API 層で各行を `ipaddr` ライブラリでパースし、`IPv4Network` / `IPv6Network` のいずれかでなければ 400。重複は事前にセット化して検出。CIDR の正規化（`203.0.113.0/24` 形式）を保存前に実施
 
-### 3.11 プロジェクト作成時のオーナー自動 admin 付与(FR-015e / FR-030a、v1.10 改訂)
+### 3.11 プロジェクト作成時のオーナー自動 admin 付与(FR-015e / FR-030a)
 
-`POST /projects` 実行時は SCR-010-M1(新規作成モード)から `name` / `allowedDomains` / `ipAllowlist` 等の基本情報のみを受け取り、**v1.10 で `initialAdmins` フィールドを撤回**。オーナーは作成時に自動で当該プロジェクトの管理者となる(`account_project_grants(role='admin', valid=1)` 自動 INSERT)。他者をプロジェクト管理者として招待する操作は、プロジェクト作成後に SCR-017-M1 経由(`POST /projects/{id}/members` + `role='admin'`)で行う。
+`POST /projects` 実行時は SCR-010-M1(新規作成モード)から `name` / `allowedDomains` / `ipAllowlist` 等の基本情報のみを受け取る(`initialAdmins` フィールドは受け取らない)。オーナーは作成時に自動で当該プロジェクトの管理者となる(`account_project_grants(role='admin', valid=1)` 自動 INSERT)。他者をプロジェクト管理者として招待する操作は、プロジェクト作成後に SCR-017-M1 経由(`POST /projects/{id}/members` + `role='admin'`)で行う。
 
 処理ステップ:
 
@@ -130,7 +130,7 @@ async function createProject(actor: Principal, req: CreateProjectRequest) {
       owner_account_id: actor.ownerAccountId,
       valid: 1,
     });
-    // v1.10: オーナー admin 行を自動 INSERT
+    // オーナー admin 行を自動 INSERT
     await tx.insert('account_project_grants', {
       account_id: actor.ownerAccountId,
       project_id: project.id,
@@ -151,9 +151,9 @@ async function createProject(actor: Principal, req: CreateProjectRequest) {
 }
 ```
 
-### 3.12 プロジェクト削除時の論理削除カスケード + 孤立メンバー cleanup(FR-030b、v1.10 で論理削除化)
+### 3.12 プロジェクト削除時の論理削除カスケード + 孤立メンバー cleanup(FR-030b)
 
-`DELETE /projects/{id}` 実行時は **SCR-026 のみ** から起動可能(v1.10 で SCR-010 / SCR-010-M1 から動線撤去)。以下のトランザクション境界で論理削除する:
+`DELETE /projects/{id}` 実行時は **SCR-026 のみ** から起動可能。以下のトランザクション境界で論理削除する:
 
 1. 削除前のスナップショット: 当該プロジェクトに `valid=1` で割当のあるメンバー accountId 一覧を取得(オーナー含む)
 2. `UPDATE account_project_grants SET valid=0, updated_at=now() WHERE project_id=? AND valid=1`(オーナー自身の admin 行も含む全行を論理削除)
@@ -164,14 +164,14 @@ async function createProject(actor: Principal, req: CreateProjectRequest) {
 
 オーナー(`is_owner=1`)の `accounts` 行は本処理の論理削除対象外(常に `valid=1` 維持)。当該プロジェクトに対するオーナー自身の `account_project_grants` admin 行は他のメンバー grants と同様に `valid=0` に論理削除される。論理削除データは `updated_at < now() - 90d AND valid=0` の物理削除バッチ([DD14_バッチ・非同期処理.md §3.13](DD14_バッチ・非同期処理.md))で 90 日後に物理削除される。
 
-### 3.13 90 日後物理削除バッチ(v1.10 新設、概要)
+### 3.13 90 日後物理削除バッチ(概要)
 
 詳細は [DD14_バッチ・非同期処理.md §3.13](DD14_バッチ・非同期処理.md) を正本とする。日次バッチで `valid=0 AND updated_at < now() - 90d` の行を物理削除する。`accounts` 行が物理 DELETE されると `ON DELETE CASCADE` で関連 `account_project_grants` / `sessions` / `access_tokens` 等が連鎖物理削除される。`projects` 行が物理 DELETE されると `ON DELETE CASCADE` で関連 `faqs` / `inquiries` / `chat_*` 等が連鎖物理削除される。`billing_subscriptions` は物理削除バッチの対象外(電子帳簿保存法 7 年保持、永久維持)。匿名化モード(`accounts.data_deletion_mode='anonymize'`)は物理削除前に匿名化処理を実施する。
 
 ### 3.14 関連する横断設計
 
 - 認可: [DD09_認可ヘルパ.md](DD09_認可ヘルパ.md) の `requireProjectRole` でオーナー境界 + プロジェクトロール(`admin` / `member`)を検証
-- 監査ログ: `faq.create` / `faq.update` / `faq.publish` / `faq.unpublish` / `faq.bulk_import` / `project.created_with_owner_admin`(v1.10、旧 `project.created_with_initial_admins`)/ `project.logical_delete`(v1.10、旧 `project.deleted_with_orphan_cleanup`)/ `project.member_invited` / `project.hard_delete_by_batch`(v1.10、90 日後物理削除バッチ起動)を `retention_class=general` で記録
+- 監査ログ: `faq.create` / `faq.update` / `faq.publish` / `faq.unpublish` / `faq.bulk_import` / `project.created_with_owner_admin` / `project.logical_delete` / `project.member_invited` / `project.hard_delete_by_batch`(90 日後物理削除バッチ起動)を `retention_class=general` で記録
 - リアルタイム反映: FAQ 公開・編集時に `widget-api` 側の KV キャッシュ(`embedding:{faqId}`、`ai_threshold:{owner}:{project}` は別系統)を invalidate
 - 論理削除フィルタ: 全 GET 系クエリで `WHERE valid=1` を必須付与(漏れは IDOR 類似の脆弱性、09_セキュリティ設計参照)
 

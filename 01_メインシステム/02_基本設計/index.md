@@ -130,14 +130,13 @@ graph LR
 | SCR-002 | 新規登録 | §5.SCR-002 | `POST /v1/accounts` | `accounts` | - | E-AUTH-VALIDATION | MSG-SCR-002-* | §3 新規登録 | - | §5 トライアル |
 | SCR-003 | パスワード再設定 | §5.SCR-003 | `POST /v1/password/reset` | `accounts` | - | E-AUTH-* | MSG-SCR-003-* | §3 パスワード再設定 | §7 監査 | - |
 | SCR-010 | プロジェクト一覧 | §5.SCR-010 | `GET /v1/projects` | `projects`, `account_project_grants` | オーナー専有 | E-AUTHZ-OWNER-ONLY | MSG-SCR-010-* | §6 オーナー境界 | - | - |
-| SCR-010-M1 | プロジェクト設定モーダル(v1.10 で「管理者を指定」セクション + 削除動線を撤去)| §5.SCR-010-M1 | `POST/PATCH /v1/projects` | `projects`(作成時にオーナー grants 自動 INSERT)| オーナー専有 | E-INPUT-* | MSG-SCR-010-M1-*(ADMIN-* は廃止) | §6 認可判定 | - | - |
+| SCR-010-M1 | プロジェクト設定モーダル(「管理者を指定」セクション・削除動線は持たない)| §5.SCR-010-M1 | `POST/PATCH /v1/projects` | `projects`(作成時にオーナー grants 自動 INSERT)| オーナー専有 | E-INPUT-* | MSG-SCR-010-M1-* | §6 認可判定 | - | - |
 | SCR-011 | 未解決質問一覧 / 詳細 | §5.SCR-011 | `GET /v1/inquiries` | `question_logs`, `inquiries` | オーナー / 該当 PJ の `member`+ | E-BIZ-CASE-* | MSG-SCR-011-* | §6 オーナー境界 | - | - |
 | SCR-012 | FAQ 管理 | §5.SCR-012 | `GET /v1/faqs` ほか | `faqs`, `faq_revisions`, `faq_search_fts` | オーナー / 該当 PJ の `member`+ | E-BIZ-FAQ-PUBLISH | MSG-SCR-012-* | §6 認可判定 | - | §3 FAQ 件数上限 |
 | SCR-013 | 個別チャット部屋 | §5.SCR-013 | `POST /v1/chats/:id/messages` | `chat_rooms`, `chat_messages` | オーナー / 該当 PJ の `member`+ | E-BIZ-CHAT-* | MSG-SCR-013-* | §6 オーナー境界 | - | §3 チャット部屋数上限 |
 | SCR-014 | ウィジェット設定(プロジェクト WS / 公開キー + 見た目 + プレビュー)| §5.SCR-014 | `PATCH /v1/widget-config`, `POST /v1/projects/{id}/widget-key/rotate` | `projects`, `allowed_domains`, `project_legacy_keys` | 当該 PJ の `admin` 以上(`member` は閲覧のみ)| E-INPUT-DOMAIN | MSG-SCR-014-* | §6 API キー検証 | §12 ウィジェット保護 | - |
 | SCR-015 | プロジェクトホーム(プロジェクト視点)+ 課金部(契約 WS 配置)| §5.SCR-015 | `GET /v1/usage`, `GET /v1/invoices` | `usage_metering`, `billing_invoices` | プロジェクト視点 = オーナー / 該当 PJ の `member`+ / 課金部 = オーナー専有 | - | MSG-SCR-015-* | §6 認可判定 | - | §9〜§11 |
-| ~~SCR-016~~ | (廃止)旧「設定(退会・課金画面入口)」── SCR-028 アカウント設定に統合 | — | — | — | — | — | — | — | — | — |
-| SCR-017 | ユーザー管理(プロジェクト WS のみ・v1.7 で契約 WS 視点廃止)| §5.SCR-017 | `POST /v1/projects/:id/members`, `PATCH /v1/projects/:id/members/:accountId`, `DELETE /v1/projects/:id/members/:accountId`(v1.10 でアカウント全体論理削除)| `accounts.valid`, `account_project_grants.valid`, `sessions.revoked_at` | オーナー / `admin`(該当 PJ)| E-AUTHZ-MEMBER / E-AUTHZ-ADMIN-DELETE-PROTECTED / E-BIZ-ACCOUNT-INACTIVE | MSG-SCR-017-* | §3 招待受諾 | - | - |
+| SCR-017 | ユーザー管理(プロジェクト WS のみ)| §5.SCR-017 | `POST /v1/projects/:id/members`, `PATCH /v1/projects/:id/members/:accountId`, `DELETE /v1/projects/:id/members/:accountId`(アカウント全体論理削除)| `accounts.valid`, `account_project_grants.valid`, `sessions.revoked_at` | オーナー / `admin`(該当 PJ)| E-AUTHZ-MEMBER / E-AUTHZ-ADMIN-DELETE-PROTECTED / E-BIZ-ACCOUNT-INACTIVE | MSG-SCR-017-* | §3 招待受諾 | - | - |
 | SCR-017-M1 | メンバー招待 / 編集モーダル(プロジェクト単位)| §5.SCR-017-M1 | `POST /v1/projects/:id/members`(招待), `PATCH /v1/projects/:id/members/:accountId`(ロール変更), `DELETE /v1/projects/:id/members/:accountId`(離脱)| `accounts`, `account_project_grants` | オーナー / `admin`(該当 PJ)| E-INPUT-* / E-BIZ-MEMBER-NO-GRANT | MSG-SCR-017-M1-* | §3 招待トークン | - | - |
 | SCR-018 | プライバシーポリシー / 利用規約 | §5.SCR-018 | `GET /v1/terms/current` | `terms_versions` | 認証不要 | - | MSG-SCR-018-* | - | - | - |
 | SCR-021 | お知らせ一覧 | §5.SCR-021 | `GET /v1/inbox-messages` | `inbox_messages` | 全ユーザー | - | MSG-SCR-021-* | §6 認可判定 | - | - |
@@ -145,10 +144,9 @@ graph LR
 | SCR-023 | メール確認 | §5.SCR-023 | `POST /v1/email-verification` | `accounts` | - | E-AUTH-VERIFICATION | MSG-SCR-023-* | §3 メール確認 | - | - |
 | SCR-024 | 退会申請 | §5.SCR-024 | `POST /v1/withdrawal-requests` | `withdrawal_requests` | オーナー専有 | E-BIZ-WITHDRAWAL | MSG-SCR-024-* | §6 オーナー専有 | - | §5 退会フロー |
 | SCR-025 | 規約再同意割込み | §5.SCR-025 | `POST /v1/terms/agree` | `terms_agreements` | 全ユーザー | E-AUTHZ-TERMS | MSG-SCR-025-* | §3 規約再同意 | - | - |
-| SCR-026 | 契約ホーム(オーナー視点ダッシュボード / 契約 WS のトップ、**v1.10 でプロジェクト削除動線を SCR-010 から集約**)| §5.SCR-026 | `GET /v1/usage?viewMode=owner`, `DELETE /v1/projects/{id}` | `usage_metering`, `question_logs`, `chat_rooms`, `faqs`, `projects.valid` | オーナー専有 | E-AUTHZ-OWNER-ONLY / E-BIZ-PROJECT-INACTIVE | MSG-SCR-026-*(プロジェクト削除 MSG: BTN-DELETE-001 / CONFIRM_*-DELETE-001 / TOAST-DELETE-001) | §6 認可判定 | - | - |
+| SCR-026 | 契約ホーム(オーナー視点ダッシュボード / 契約 WS のトップ。**プロジェクト削除動線を集約**)| §5.SCR-026 | `GET /v1/usage?viewMode=owner`, `DELETE /v1/projects/{id}` | `usage_metering`, `question_logs`, `chat_rooms`, `faqs`, `projects.valid` | オーナー専有 | E-AUTHZ-OWNER-ONLY / E-BIZ-PROJECT-INACTIVE | MSG-SCR-026-*(プロジェクト削除 MSG: BTN-DELETE-001 / CONFIRM_*-DELETE-001 / TOAST-DELETE-001) | §6 認可判定 | - | - |
 | SCR-027 | エンドユーザー再入室 | §5.SCR-027 | `GET /v1/widget/sessions/:token` | `access_tokens`, `chat_rooms` | エンドユーザー | E-AUTH-TOKEN | MSG-SCR-027-* | §3 ウィジェットトークン | §12 ウィジェット保護 | - |
 | SCR-028 | アカウント設定(共通領域)| §5.SCR-028 | `PATCH /v1/me`, `POST /v1/me/password`, `GET /v1/me/sessions`, `PATCH /v1/me/contact-email`(オーナーのみ)| `accounts`, `sessions` | 全認証ユーザー(自分のみ。退会セクションはオーナーのみ)| E-AUTH-* | MSG-SCR-028-* | §3 ログイン / §3 パスワード変更 | §7 監査 | §5 退会(オーナーのみ)|
-| ~~SCR-030~~ | (v2.0 で廃止)プロジェクト情報は SCR-015 プロジェクトホームの「プロジェクト情報」パネルに統合、通知設定は常時 ON 固定 | — | — | — | — | — | — | — | — | — |
 
 ## 9. 連携 IF × ドキュメント カバレッジ
 
