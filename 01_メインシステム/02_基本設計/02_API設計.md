@@ -906,11 +906,16 @@ POST /internal/admin-integration/v1/announcement/inbound
 }
 ```
 
+- `audienceOwnerAccountIds`:
+  - `null` または空配列 → **全契約配信**(`accounts.is_owner=1 AND contract_status='active' AND valid=1` を動的解決)
+  - 配列 → 列挙された owner_account_id への限定配信(各要素は ULID 形式)
+
 動作:
 1. JWT + Idempotency-Key 検証
 2. `service_announcements` レコード作成
-3. `announcement_recipients` を宛先範囲に応じて生成
-4. announcement-fanout-queue に投入、`inbox_messages` へ fan-out
+3. `audienceOwnerAccountIds` が配列の場合、各要素に対し `announcement_audiences(announcement_id, owner_account_id)` 行を INSERT(v1.11 で中間テーブル化、従来の `service_announcements.audience_owner_account_ids` JSON 列は廃止)
+4. `announcement_recipients` を宛先範囲に応じて生成(`announcement_audiences` 行が 0 件なら全契約、1 件以上なら列挙された owner のみ)
+5. announcement-fanout-queue に投入、`inbox_messages` へ fan-out
 
 #### 5.13.7 IF #8 監視メトリクス取得(送信側、メ → 顧管)
 
@@ -1061,3 +1066,4 @@ POST /internal/admin-integration/v1/admin-operation/notify
 |---|---|---|---|
 | 2026-05-17 | 1.0 | 初版作成 | claude |
 | 2026-05-19 | 1.10 | **オーナー固定化 + メンバー / プロジェクト論理削除化 + 削除動線 SCR-026 集約**。① `POST /projects` から `initialAdmins` フィールドを撤去、プロジェクト作成時に `account_project_grants(role='admin', valid=1)` をオーナー行へ自動 INSERT する処理を追加。② `DELETE /projects/{id}/members/{accountId}` を物理削除 → 論理削除(`accounts.valid=0` + 関連 `account_project_grants.valid=0` + `sessions.revoked_at` + `access_tokens.used_at`)に再統一。新エラー `E-BIZ-ACCOUNT-INACTIVE` を追加。③ `DELETE /projects/{id}` の関連画面を SCR-010 / SCR-010-M1 → **SCR-026** に変更。処理を物理削除 → 論理削除(`projects.status='deleted' + valid=0` + `account_project_grants.valid=0` 伝播 + 孤立メンバー `accounts.valid=0`)に統一。監査ログ `project.logical_delete` を発行。④ 共通仕様 §3.2a 「論理削除フィルタ」を新設(全 GET 系で `WHERE valid=1` 必須)| claude |
+| 2026-05-20 | 1.11 | **テーブル設計 v1.11 リファクタリングへの API 側追従**。IF #7 お知らせ生成受信(§5.13.6): `audienceOwnerAccountIds` 配列を `service_announcements.audience_owner_account_ids` JSON 列に格納する従来仕様を廃止し、新規中間テーブル `announcement_audiences(announcement_id, owner_account_id)` への INSERT 処理に置換。リクエスト I/F そのものは後方互換(`null`/空配列 = 全契約配信、配列 = 限定配信)| claude |
