@@ -361,56 +361,72 @@ erDiagram
   terms_versions ||--o{ terms_agreements : agreed
 </pre>
 
+<!-- svg-pan-zoom は UMD 配布のため通常の <script> で読み込む(window.svgPanZoom にぶら下がる) -->
+<script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.2/dist/svg-pan-zoom.min.js"></script>
 <script type="module">
   import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-  import svgPanZoom from 'https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.2/dist/svg-pan-zoom.min.js';
 
-  mermaid.initialize({
-    startOnLoad: false,
-    theme: 'default',
-    er: { useMaxWidth: false, layoutDirection: 'TB' },
-    securityLevel: 'loose',
-    maxTextSize: 100000
-  });
-
-  const src = document.getElementById('mermaid-src').textContent.trim();
   const wrap = document.getElementById('er-svg-wrap');
 
+  function showError(msg) {
+    wrap.innerHTML = '<div class="loading" style="color:#dc2626; padding:20px; text-align:left; white-space:pre-wrap;">ER 図の描画に失敗しました:\n' + msg + '</div>';
+    console.error(msg);
+  }
+
   try {
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'default',
+      er: { useMaxWidth: false, layoutDirection: 'TB' },
+      securityLevel: 'loose',
+      maxTextSize: 100000
+    });
+
+    const src = document.getElementById('mermaid-src').textContent.trim();
     const { svg } = await mermaid.render('er-svg-generated', src);
     wrap.innerHTML = svg;
     const svgEl = wrap.querySelector('svg');
+    if (!svgEl) throw new Error('mermaid.render did not return an <svg> element');
+
+    // 親要素に収まるようにサイズを上書き
+    svgEl.removeAttribute('style');
     svgEl.setAttribute('width', '100%');
     svgEl.setAttribute('height', '100%');
     svgEl.style.maxWidth = 'none';
+    svgEl.style.maxHeight = 'none';
+    svgEl.style.display = 'block';
 
-    const panZoom = svgPanZoom(svgEl, {
-      zoomEnabled: true,
-      panEnabled: true,
-      controlIconsEnabled: false,
-      fit: true,
-      center: true,
-      minZoom: 0.1,
-      maxZoom: 10,
-      zoomScaleSensitivity: 0.3
-    });
+    // svg-pan-zoom が読み込まれていればパン/ズームを有効化(無くても表示自体は成功する)
+    if (typeof window.svgPanZoom === 'function') {
+      const panZoom = window.svgPanZoom(svgEl, {
+        zoomEnabled: true,
+        panEnabled: true,
+        controlIconsEnabled: false,
+        fit: true,
+        center: true,
+        minZoom: 0.1,
+        maxZoom: 10,
+        zoomScaleSensitivity: 0.3
+      });
 
-    document.getElementById('btn-zoom-in').addEventListener('click', () => panZoom.zoomIn());
-    document.getElementById('btn-zoom-out').addEventListener('click', () => panZoom.zoomOut());
-    document.getElementById('btn-reset').addEventListener('click', () => { panZoom.resetZoom(); panZoom.center(); });
-    document.getElementById('btn-fit').addEventListener('click', () => { panZoom.fit(); panZoom.center(); });
+      document.getElementById('btn-zoom-in').addEventListener('click', () => panZoom.zoomIn());
+      document.getElementById('btn-zoom-out').addEventListener('click', () => panZoom.zoomOut());
+      document.getElementById('btn-reset').addEventListener('click', () => { panZoom.resetZoom(); panZoom.center(); });
+      document.getElementById('btn-fit').addEventListener('click', () => { panZoom.fit(); panZoom.center(); });
 
-    wrap.addEventListener('mousedown', () => wrap.classList.add('dragging'));
-    window.addEventListener('mouseup', () => wrap.classList.remove('dragging'));
+      wrap.addEventListener('mousedown', () => wrap.classList.add('dragging'));
+      window.addEventListener('mouseup', () => wrap.classList.remove('dragging'));
 
-    window.addEventListener('beforeprint', () => {
-      panZoom.resetZoom();
-      panZoom.fit();
-      panZoom.center();
-    });
+      window.addEventListener('beforeprint', () => {
+        panZoom.resetZoom();
+        panZoom.fit();
+        panZoom.center();
+      });
+    } else {
+      console.warn('svg-pan-zoom が読み込まれていません。ズーム / パン機能は無効です。');
+    }
   } catch (err) {
-    wrap.innerHTML = '<div class="loading" style="color:#dc2626;">ER 図の描画に失敗しました: ' + (err && err.message ? err.message : String(err)) + '</div>';
-    console.error(err);
+    showError((err && err.stack) ? err.stack : (err && err.message ? err.message : String(err)));
   }
 </script>
 
