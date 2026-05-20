@@ -69,18 +69,18 @@
 | ID | 対象 | 実装設計で具体化すること | 関連 Future 要件 |
 |---|---|---|---|
 | FUT-DD-SEC-003 | 4-eyes 完全強制 | `operator_approvals` の対象操作拡張、状態遷移、承認者重複防止、バイパス削除、E2E | FUT-REQ-SEC-003 |
-| FUT-DD-I18N-002 | マルチリージョン(越境移転ガード) | `accounts.region`、routing、D1 / R2 配置、region guard、越境拒否 API | FUT-REQ-I18N-002 |
+| FUT-DD-I18N-002 | マルチリージョン(越境移転ガード) | `contract_owners.region`、routing、D1 / R2 配置、region guard、越境拒否 API | FUT-REQ-I18N-002 |
 
 #### マルチリージョン / 越境移転ガード(DDL 候補)
 
 ```sql
-ALTER TABLE accounts
+ALTER TABLE contract_owners
   ADD COLUMN region TEXT NOT NULL DEFAULT 'apac'
   CHECK (region IN ('apac', 'wnam', 'eeur'));
 
 CREATE TABLE owner_region_audit_logs (
   id             TEXT PRIMARY KEY,
-  owner_account_id      TEXT NOT NULL,
+  contract_owner_user_id      TEXT NOT NULL,
   before_region  TEXT NOT NULL,
   after_region   TEXT NOT NULL,
   approved_by    TEXT NOT NULL,
@@ -112,7 +112,7 @@ CREATE TABLE owner_region_audit_logs (
 | 要件 | 4-eyes 原則(3 操作 → 全 10 操作)、GDPR / 越境移転(region 属性導入)、監査ハッシュチェーン(運営者正本)拡張 |
 | 画面 | SCR-APPROVALS(全 10 操作申請・承認・実行 UI)、SCR-096(承認バイパス検出 KPI ダッシュボード)、運営者画面での region 表示、越境移転承認画面 |
 | API | `POST /admin/v1/operator-approvals`、`POST /admin/v1/operator-approvals/{id}/approve`、`POST /admin/v1/operator-approvals/{id}/execute`、`TenantRegionGuard` ミドルウェア、`POST /admin/v1/owners/{id}/region-approval` |
-| テーブル | `operator_approvals` 対象操作拡張(7 操作追加)、`accounts.region` 列追加、`owner_region_audit_logs`、`audit_logs.retention_class`(`general` / `billing` / `operator_high_priv`)・ハッシュチェーン拡張 |
+| テーブル | `operator_approvals` 対象操作拡張(7 操作追加)、`contract_owners.region` 列追加、`owner_region_audit_logs`、`audit_logs.retention_class`(`general` / `billing` / `operator_high_priv`)・ハッシュチェーン拡張 |
 | 運用 | 4-eyes 全 10 操作ワークフロー運用、SCR-096 承認バイパス検出 KPI(4 週間連続 0 件)監視、越境移転ガード運用、GDPR データ削除要求(DSR)対応手順、監査ハッシュチェーン第三者検証手順 |
 
 ---

@@ -43,7 +43,7 @@
 
 | Worker | JST 想定 | UTC cron 式 | UTC 換算 | Worker 内ガード | 冪等性キー | リトライ | 関連 D |
 |---|---|---|---|---|---|---|---|
-| `MonthlyBillingCronWorker` | 月初 1 日 02:00 JST | `0 17 * * *`(毎日 17:00 UTC) | 翌日 02:00 JST | `if (jstNow().day !== 1) return;` | `(owner_account_id, billing_year_month)` UNIQUE | 3 回 | D-11 |
+| `MonthlyBillingCronWorker` | 月初 1 日 02:00 JST | `0 17 * * *`(毎日 17:00 UTC) | 翌日 02:00 JST | `if (jstNow().day !== 1) return;` | `(contract_owner_user_id, billing_year_month)` UNIQUE | 3 回 | D-11 |
 | `AuditChainVerifierWorker` | 日次 02:00 JST | `0 17 * * *` | 翌日 02:00 JST | - | `(verify_date)` | - | D-04 |
 | `AnnouncementSchedulerWorker` | 1 分ポーリング | `* * * * *` | 毎分 | - | - | - | D-09 |
 | `DLQAutoBackoffWorker` | 5 分ポーリング | `*/5 * * * *` | 5 分間隔 | - | `(event_id, attempt)` | 指数 BO 3 回 | - |
@@ -93,19 +93,19 @@ function monthlyBilling():
     target_month = (now - 1 day).format("YYYY-MM")  // 月初実行時に前月を対象
     audit_logs(billing.cron.run, 7y, payload={month: target_month, started_at: now})
     
-    owners = D1.query("SELECT id FROM accounts WHERE is_owner = 1 AND contract_status='active'")
+    owners = D1.query("SELECT user_id FROM contract_owners WHERE contract_status='active' AND valid=1")
     success = 0; failed = 0
     for owner in owners:
         try:
-            usage = computeUsage(owner.id, target_month)
+            usage = computeUsage(owner.user_id, target_month)
             amount = computeAmount(usage)
-            existing = D1.query("SELECT id FROM billing_invoices WHERE owner_account_id=? AND billing_year_month=?", owner.id, target_month)
+            existing = D1.query("SELECT id FROM billing_invoices WHERE contract_owner_user_id=? AND billing_year_month=?", owner.user_id, target_month)
             if existing:
                 continue  // 冪等
             invoiceId = ULID()
-            D1.exec("INSERT INTO billing_invoices (id, owner_account_id, billing_year_month, amount_yen, status, issued_at) VALUES (?, ?, ?, ?, 'issued', ?)", invoiceId, owner.id, target_month, amount, now)
-            stripeInvoice = stripe.invoiceItems.create({customer: owner.stripe_customer_id, amount: amount, currency: 'jpy', metadata: {owner_account_id: owner.id, billing_year_month: target_month}})
-            stripeInv = stripe.invoices.create({customer: owner.stripe_customer_id, auto_advance: false, metadata: {owner_account_id, billing_year_month}, idempotencyKey: `monthly-billing-${owner.id}-${target_month}`})
+            D1.exec("INSERT INTO billing_invoices (id, contract_owner_user_id, billing_year_month, amount_yen, status, issued_at) VALUES (?, ?, ?, ?, 'issued', ?)", invoiceId, owner.user_id, target_month, amount, now)
+            stripeInvoice = stripe.invoiceItems.create({customer: owner.stripe_customer_id, amount: amount, currency: 'jpy', metadata: {contract_owner_user_id: owner.user_id, billing_year_month: target_month}})
+            stripeInv = stripe.invoices.create({customer: owner.stripe_customer_id, auto_advance: false, metadata: {contract_owner_user_id, billing_year_month}, idempotencyKey: `monthly-billing-${owner.user_id}-${target_month}`})
             D1.exec("UPDATE billing_invoices SET stripe_invoice_id=? WHERE id=?", stripeInv.id, invoiceId)
             audit_logs(billing.invoice.issued, 7y, payload={invoice_id: invoiceId})
             sendMail(owner, FR-148)
@@ -114,7 +114,7 @@ function monthlyBilling():
         catch e:
             failed++
             if attempt >= 3:
-                notifyOperator(high, "Monthly billing failed for owner=${owner.id}")
+                notifyOperator(high, "Monthly billing failed for owner=${owner.user_id}")
     
     audit_logs(billing.cron.run, 7y, payload={summary: {success, failed}})
 ```

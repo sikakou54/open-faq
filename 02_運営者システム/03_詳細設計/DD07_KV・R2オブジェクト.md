@@ -48,10 +48,10 @@
 |---|---|---|---|---|---|
 | `operator-session:<session_id>` | `{ operatorId, mfaVerifiedAt, reauthenticatedAt, csrfToken, expiresAt }` | 60 秒(キャッシュ) | ログイン時、ログアウト時失効 | AdminConsoleWorker | `{"operatorId":"01J...","mfaVerifiedAt":"...","csrfToken":"abc"}` |
 | `operator-ip-allowlist:<operator_id>` | `["203.0.113.0/24","2001:db8::/48"]`(CIDR 配列) | 60 秒 | IP リスト変更時に Invalidate | エッジ(AdminConsoleWorker) | `["203.0.113.0/24"]` |
-| `mfa-setup:<account_id>` | `{ token, secret, expiresAt }` | 72 時間 | MFA セットアップ開始時 | AdminConsoleWorker | - |
+| `mfa-setup:<operator_id>` | `{ token, secret, expiresAt }` | 72 時間 | MFA セットアップ開始時 | AdminConsoleWorker | - |
 | `password-reset:<token_hash>` | `{ operatorId, expiresAt }` | 60 分 | リセット要求時 | AdminConsoleWorker | - |
 | `re-auth:<session_id>` | `{ operatorId, reauthenticatedAt, consumed }` | 15 分(1 回限り、`consumed=true` で即時失効) | 再認証成功時 | AdminConsoleWorker | `{"operatorId":"01J...","consumed":false}` |
-| `login-lockout:<ip_hash>:<account_id>` | `{ failedCount, lockedUntil }` | 15 分 | ログイン失敗時 | AdminConsoleWorker | `{"failedCount":5,"lockedUntil":"..."}` |
+| `login-lockout:<ip_hash>:<operator_id>` | `{ failedCount, lockedUntil }` | 15 分 | ログイン失敗時 | AdminConsoleWorker | `{"failedCount":5,"lockedUntil":"..."}` |
 
 #### 3.2.2 機能フラグ
 
@@ -69,7 +69,7 @@
 | `pii-rules:regex` | `[{ id, pattern, enabled }, ...]` | 60 秒(D-13) | 本書 | SCR-098 `POST /pii-rules/revisions` |
 | `pii-rules:classifier` | `{ threshold, weights, modelId }` | 60 秒(D-13) | 本書 | 同上 |
 | `ai-params:global` | `{ confidenceThreshold, relevanceThreshold, modelId }` | 60 秒(D-15) | 本書 | SCR-092 |
-| `ai-params:owner:<owner_account_id>` | 同上 | 60 秒 | 本書 | SCR-092 |
+| `ai-params:owner:<contract_owner_user_id>` | 同上 | 60 秒 | 本書 | SCR-092 |
 | `ai-params:project:<project_id>` | 同上 | 60 秒 | 本書 | SCR-092 |
 | `ai-models:available` | `["@cf/meta/llama-3.1-8b-instruct", ...]` | 60 秒 | 本書 | 運営者手動 |
 | `ai-cost:unit-prices` | `{ "<model_id>": { "input_per_1k_tokens": <yen>, "output_per_1k_tokens": <yen> } }` | 60 秒 | 本書 | 運営者手動(NFR-804 (m) FR-304) |
@@ -78,8 +78,8 @@
 
 | キー形式 | 値スキーマ | TTL | 用途 |
 |---|---|---|---|
-| `rate-limit:<owner_account_id>` | `{ widgetAskPerMin, chatEndUserPerMin, chatStaffPerMin }` | 30 秒(D-14) | メイン側参照 |
-| `budget-limit:<owner_account_id>` | `{ monthlyBudgetYen }` | 30 秒 | 同上 |
+| `rate-limit:<contract_owner_user_id>` | `{ widgetAskPerMin, chatEndUserPerMin, chatStaffPerMin }` | 30 秒(D-14) | メイン側参照 |
+| `budget-limit:<contract_owner_user_id>` | `{ monthlyBudgetYen }` | 30 秒 | 同上 |
 | `budget-limit:min` | 数値 | 永続(運営者更新時のみ Invalidate) | バリデーション下限 |
 | `budget-limit:max` | 数値 | 永続 | バリデーション上限 |
 
@@ -94,7 +94,7 @@
 
 | キー形式 | 値スキーマ | TTL | 用途 |
 |---|---|---|---|
-| `notify-batch:<owner_account_id>:<operation_kind>` | `{ entries: [...], firstAt }` | 10 分(D-19) | FR-211 集約窓 |
+| `notify-batch:<contract_owner_user_id>:<operation_kind>` | `{ entries: [...], firstAt }` | 10 分(D-19) | FR-211 集約窓 |
 
 ### 3.3 R2 オブジェクトパス
 
@@ -116,10 +116,10 @@ Namespace: `admin_archive`(本書側専用 R2 バケット)
 |---|---|---|---|
 | `operator-session:<sid>` | JSON | 60s | セッションキャッシュ |
 | `operator-ip-allowlist:<operator_id>` | JSON 配列 | 60s | エッジ IP 判定 |
-| `mfa-setup:<account_id>` | JSON | 72h | 初回 MFA |
+| `mfa-setup:<operator_id>` | JSON | 72h | 初回 MFA |
 | `password-reset:<token_hash>` | JSON | 60m | リセット |
 | `re-auth:<sid>` | JSON | 15m | 1 回限り |
-| `login-lockout:<ip_hash>:<account_id>` | JSON | 15m | ロックアウト |
+| `login-lockout:<ip_hash>:<operator_id>` | JSON | 15m | ロックアウト |
 | `feature:hard-gate:<action_code>` | bool | 60s | 4-eyes 切替 |
 | `feature:pii-layer2:enabled` | bool | 60s | PII NER |
 | `feature:ai-model:rollout:<version>` | JSON | 60s | モデル段階展開 |
@@ -127,16 +127,16 @@ Namespace: `admin_archive`(本書側専用 R2 バケット)
 | `feature:announcement-batch-size` | int | 60s | お知らせバッチ |
 | `pii-rules:regex` | JSON 配列 | 60s | PII 第 1 層 |
 | `ai-params:global` | JSON | 60s | AI 既定値 |
-| `ai-params:owner:<owner_account_id>` | JSON | 60s | 契約上書き |
+| `ai-params:owner:<contract_owner_user_id>` | JSON | 60s | 契約上書き |
 | `ai-params:project:<project_id>` | JSON | 60s | プロジェクト上書き |
 | `ai-models:available` | JSON 配列 | 60s | モデル一覧 |
 | `ai-cost:unit-prices` | JSON | 60s | 単価表(FR-304) |
-| `rate-limit:<owner_account_id>` | JSON | 30s | レート上書き |
-| `budget-limit:<owner_account_id>` | JSON | 30s | 予算上書き |
+| `rate-limit:<contract_owner_user_id>` | JSON | 30s | レート上書き |
+| `budget-limit:<contract_owner_user_id>` | JSON | 30s | 予算上書き |
 | `budget-limit:min` / `max` | int | 永続 | バリデーション |
 | `webhook:idempotency:<event_id>` | JSON | 30d | 冪等キャッシュ |
 | `audit-export:<job_id>` | JSON | 24h | エクスポート進捗 |
-| `notify-batch:<owner_account_id>:<kind>` | JSON | 10m | FR-211 集約 |
+| `notify-batch:<contract_owner_user_id>:<kind>` | JSON | 10m | FR-211 集約 |
 | `monitoring:thresholds:<kpi_id>` | JSON | 永続 | KPI 動的閾値(下表で初期値定義) |
 | `cb:internal-api:<endpoint>` | JSON | 60s (open 時) | サーキットブレーカ状態 |
 | `sre:planned-outage:<id>` | JSON | 永続 | 計画停止期間(SLA 除外用) |

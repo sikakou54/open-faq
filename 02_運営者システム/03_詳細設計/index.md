@@ -196,7 +196,7 @@ flowchart TB
 | `BillingWebhookWorker` | Stripe / Resend Webhook 一次受信、署名検証、event_id 冪等、ペイロード正規化 + 差分検出、内部転送(連携 IF #10)、DLQ 投入 + R2 退避 | `D1` / `R2` / `Queues` / `Secrets` | リクエスト駆動(30 秒以内) |
 | `AnnouncementSchedulerWorker` | お知らせ配信予約の 1 分ポーリング、`scheduled_at ≤ now+5min` を `sending` 遷移、連携 IF #7 でメイン転送 | `D1` / `Queues` | 1 分間隔 |
 | `AuditChainVerifierWorker` | 監査ログ全件のハッシュチェーン再計算(D-04)、不一致時の運営者 inbox + メール通知 | `D1` / `Secrets`(チェーン鍵) | 日次 02:00 JST |
-| `MonthlyBillingCronWorker` | 月初 02:00 JST の請求書発行(D-11)、`(owner_account_id, billing_year_month)` 冪等、Stripe Invoice API 発行、契約通知 + 監査記録 | `D1` / Stripe / Queues | 月次 |
+| `MonthlyBillingCronWorker` | 月初 02:00 JST の請求書発行(D-11)、`(contract_owner_user_id, billing_year_month)` 冪等、Stripe Invoice API 発行、契約通知 + 監査記録 | `D1` / Stripe / Queues | 月次 |
 | `RetentionPurgeWorker` | 監査ログの 3 区分(1y / 5y / 7y)物理削除バッチ、R2 アーカイブ書出後に DELETE | `D1` / `R2` | 日次 03:00 JST |
 | `R2AuditArchiveWorker` | 5y / 7y の年次 R2 圧縮アーカイブ書出 | `D1` / `R2` | 年次 12/31 04:00 JST |
 | `DLQAutoBackoffWorker` | Cloudflare Queues DLQ の自動指数 BO(1m → 4m → 16m、最大 3 回)、1 時間経過で `dlq_manual_replay` 遷移 | `Queues` / `D1` | 5 分間隔 |
@@ -351,7 +351,7 @@ admin/
 
 メール通知の正本は [基本設計 / メッセージ一覧](../02_基本設計/06_メッセージ一覧.md) §8(運営者向け通知 + IF #12 経由通知)。通知契機 13 種(運営者宛)+ 5 種(IF #12 経由 利用者向け)+ テンプレートは当該ドキュメントを正本とする。
 
-通知重要度は `low` / `normal` / `high` / `critical` の 4 値。`critical` は強制送信(オーナー + 全プロジェクト管理者(`account_project_grants.role='admin'` を 1 件でも保持するメンバー)に必ずメール配信)を予約する。10 分集約窓(`notify-batch:<owner_account_id>:<kind>`)は D-19 で確定。
+通知重要度は `low` / `normal` / `high` / `critical` の 4 値。`critical` は強制送信(オーナー + 全プロジェクト管理者(`project_users.role='admin'` を 1 件でも保持するユーザー)に必ずメール配信)を予約する。10 分集約窓(`notify-batch:<contract_owner_user_id>:<kind>`)は D-19 で確定。
 
 ### 3.2 セキュリティ
 
@@ -446,14 +446,14 @@ admin/
 | D-08 | 監査ログ 3 区分の物理分離方式 | 単一テーブル + `retention_class` 列 | DD03, DD09 |
 | D-09 | お知らせ配信予約スケジューラ | Cron Triggers + D1 ポーリング 1 分 | DD06, DD08 |
 | D-10 | 課金 Webhook 一次受信エンドポイント | 唯一の受信先 | DD04 |
-| D-11 | 月次請求確定 cron 実装方式 | 月初 02:00 JST、(owner_account_id, year_month) UNIQUE | DD08 |
+| D-11 | 月次請求確定 cron 実装方式 | 月初 02:00 JST、(contract_owner_user_id, year_month) UNIQUE | DD08 |
 | D-12 | 4-eyes 申請承認 UI/データモデル | `operator_approvals` テーブル | DD02 |
 | D-13 | PII 誤検出ルール更新の即時反映 | KV `pii-rules:*`、過去データ修正なし | DD10, DD07 |
 | D-14 | 契約別レート/予算上書き即時反映 | KV TTL 30s + IF #5 | DD07 |
 | D-15 | AI 推論パラメータ 3 階層 | KV `ai-params:*`、project > owner > global | DD07 |
 | D-17 | 監査エクスポート HMAC 署名 | HKDF info=`audit-export`、SHA-256 | DD03 |
 | D-18 | 運営者セッショントークン TTL | MVP 8h | DD01 |
-| D-19 | 運営者操作通知の集約窓 | 10 分集約(owner_account_id, operation_kind) | DD06 |
+| D-19 | 運営者操作通知の集約窓 | 10 分集約(contract_owner_user_id, operation_kind) | DD06 |
 | D-20 | 運営者 inbox の保持 | 1 年 + retention_class='5y' リンク | DD06 |
 
 ### 7.3 詳細設計引継ぎ事項 確定マッピング

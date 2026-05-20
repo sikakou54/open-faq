@@ -39,13 +39,13 @@
 
 ```ts
 // app/workers/widget-api/src/domain/ai-threshold.ts
-export async function getThreshold(env: Env, ownerAccountId: string, projectId: string): Promise<{
+export async function getThreshold(env: Env, contractOwnerUserId: string, projectId: string): Promise<{
   confidenceThreshold: number;
   relevanceThreshold: number;
   source: 'kv' | 'persistent' | 'global_default';
 }> {
   // 1) KV (TTL 60s)
-  const kvKey = `ai_threshold:${ownerAccountId}:${projectId}`;
+  const kvKey = `ai_threshold:${contractOwnerUserId}:${projectId}`;
   const kvHit = await env.KV_CACHE.get<Threshold>(kvKey, 'json');
   if (kvHit) return { ...kvHit, source: 'kv' };
 
@@ -54,11 +54,11 @@ export async function getThreshold(env: Env, ownerAccountId: string, projectId: 
   const persistent = await env.DB.prepare(`
     SELECT confidence_threshold, relevance_threshold FROM ai_threshold_persistent_cache
     WHERE (scope='project' AND project_id=?1)
-       OR (scope='owner' AND owner_account_id=?2)
+       OR (scope='owner' AND contract_owner_user_id=?2)
        OR (scope='global')
     ORDER BY CASE scope WHEN 'project' THEN 0 WHEN 'owner' THEN 1 ELSE 2 END
     LIMIT 1
-  `).bind(projectId, ownerAccountId).first<Threshold>();
+  `).bind(projectId, contractOwnerUserId).first<Threshold>();
   if (persistent) {
     await env.KV_CACHE.put(kvKey, JSON.stringify(persistent), { expirationTtl: 60 });
     return { ...persistent, source: 'persistent' };
@@ -66,7 +66,7 @@ export async function getThreshold(env: Env, ownerAccountId: string, projectId: 
 
   // 3) グローバル既定値
   await enqueueServiceAlert(env, {
-    level: 'normal', message: `AI しきい値フォールバック発動: owner=${ownerAccountId}`,
+    level: 'normal', message: `AI しきい値フォールバック発動: owner=${contractOwnerUserId}`,
   });
   return { confidenceThreshold: 0.60, relevanceThreshold: 0.50, source: 'global_default' };
 }

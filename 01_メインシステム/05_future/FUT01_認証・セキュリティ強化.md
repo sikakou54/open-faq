@@ -57,18 +57,19 @@
 #### 契約 MFA 強制(DDL 候補)
 
 ```sql
-ALTER TABLE accounts
+-- 契約オーナー専有属性に追加(v1.11 で `accounts` を `users` / `contract_owners` / `project_users` に 3 表分割済み)
+ALTER TABLE contract_owners
   ADD COLUMN mfa_enforcement TEXT NOT NULL DEFAULT 'off'
   CHECK (mfa_enforcement IN ('off', 'admin_only', 'all_members'));
 
 CREATE TABLE owner_mfa_policy_audit_logs (
-  id             TEXT PRIMARY KEY,
-  owner_account_id      TEXT NOT NULL,
-  changed_by     TEXT NOT NULL,
-  before_policy  TEXT NOT NULL,
-  after_policy   TEXT NOT NULL,
-  reason         TEXT,
-  created_at     TEXT NOT NULL
+  id                      TEXT PRIMARY KEY,
+  contract_owner_user_id  TEXT NOT NULL REFERENCES contract_owners(user_id) ON DELETE CASCADE,
+  changed_by              TEXT REFERENCES users(id) ON DELETE SET NULL,
+  before_policy           TEXT NOT NULL,
+  after_policy            TEXT NOT NULL,
+  reason                  TEXT,
+  created_at              TEXT NOT NULL
 );
 ```
 
@@ -81,13 +82,13 @@ ALTER TABLE chat_messages
   ADD COLUMN body_key_version INTEGER;
 
 CREATE TABLE owner_key_versions (
-  id             TEXT PRIMARY KEY,
-  owner_account_id      TEXT NOT NULL,
-  key_version    INTEGER NOT NULL,
-  status         TEXT NOT NULL,
-  created_at     TEXT NOT NULL,
-  rotated_at     TEXT,
-  UNIQUE (owner_account_id, key_version),
+  id                      TEXT PRIMARY KEY,
+  contract_owner_user_id  TEXT NOT NULL REFERENCES contract_owners(user_id) ON DELETE CASCADE,
+  key_version             INTEGER NOT NULL,
+  status                  TEXT NOT NULL,
+  created_at              TEXT NOT NULL,
+  rotated_at              TEXT,
+  UNIQUE (contract_owner_user_id, key_version),
   CHECK (status IN ('active', 'retired'))
 );
 ```
@@ -97,7 +98,7 @@ CREATE TABLE owner_key_versions (
 | ID | 対象 | 実装設計で具体化すること | 関連 Future 要件 |
 |---|---|---|---|
 | FUT-DD-SEC-001 | 個別チャット列単位暗号化 | 暗号化カラム、鍵派生、ローテーション、バックフィル、復元手順、検索制約、監査ログ | FUT-REQ-SEC-001 |
-| FUT-DD-SEC-002 | 利用者側 MFA | `accounts.mfa_enforcement`、MFA 登録 API、回復コード、未設定時ログイン制御、監査ログ | FUT-REQ-SEC-002 |
+| FUT-DD-SEC-002 | 利用者側 MFA | `contract_owners.mfa_enforcement`、MFA 登録 API、回復コード、未設定時ログイン制御、監査ログ | FUT-REQ-SEC-002 |
 
 #### API / Worker 候補(関連分)
 
@@ -121,7 +122,7 @@ CREATE TABLE owner_key_versions (
 | 要件 | FR-005(MFA 段階導入)、NFR-319(個別チャット平文 → 暗号化)、4-eyes(3 操作ハードゲート → 全 10 操作ワークフロー)、SSO / パスキーは新規要件として追加 |
 | 画面 | SCR-028 アカウント設定(MFA 登録・解除・回復コード)、ログイン画面(MFA 入力)、招待受諾フロー(契約単位強制下) |
 | API | `POST /api/v1/settings/mfa-policy`、`POST /api/v1/auth/mfa/setup`、`POST /api/v1/auth/mfa/recovery-code`、SSO 連携 OAuth / OIDC エンドポイント |
-| テーブル | `accounts.mfa_enforcement` 列追加、`owner_mfa_policy_audit_logs`、`chat_messages.body_ciphertext` / `body_nonce` / `body_key_version`、`owner_key_versions` |
+| テーブル | `contract_owners.mfa_enforcement` 列追加、`owner_mfa_policy_audit_logs`、`chat_messages.body_ciphertext` / `body_nonce` / `body_key_version`、`owner_key_versions` |
 | 運用 | MFA 未設定者向けの猶予期間運用、回復コード再発行手順、鍵ローテーション Runbook、列単位暗号化への dual read 期間運用、SSO IdP との連携運用 |
 
 ---

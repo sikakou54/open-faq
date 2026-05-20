@@ -64,18 +64,18 @@ export function generateInquiryCode(now = new Date()): string {
 export async function processOpenInquiryRetention(env: Env) {
   const cutoff = new Date(Date.now() - 730 * 86400000).toISOString();
   const stuck = await env.DB.prepare(`
-    SELECT id, owner_account_id, case_status FROM inquiries
+    SELECT id, contract_owner_user_id, case_status FROM inquiries
     WHERE case_status = 'open'
       AND created_at <= ?1
       AND deleted_at IS NULL
   `).bind(cutoff).all();
   for (const i of stuck.results) {
     await enqueueNotification(env, {
-      ownerAccountId: i.owner_account_id, kind: 'OPEN_INQUIRY_RETENTION_NOTICE',
+      contractOwnerUserId: i.contract_owner_user_id, kind: 'OPEN_INQUIRY_RETENTION_NOTICE',
       refType: 'inquiry', refId: i.id,
     });
     await writeAudit(env, {
-      action: 'inquiry.retention_notice', ownerAccountId: i.owner_account_id, targetId: i.id,
+      action: 'inquiry.retention_notice', contractOwnerUserId: i.contract_owner_user_id, targetId: i.id,
       retentionClass: 'general',
     });
   }

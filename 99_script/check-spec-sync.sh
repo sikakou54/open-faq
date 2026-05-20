@@ -133,7 +133,11 @@ done
 # SC-002: 共有概念正本ファイルでの必須キーワード出現
 # ============================================================================
 
-require_pattern "オーナー境界|owner_account_id" "01_メインシステム/02_基本設計/08_認証・認可設計.md"
+require_pattern "オーナー境界|contract_owner_user_id" "01_メインシステム/02_基本設計/08_認証・認可設計.md"
+require_pattern "users" "01_メインシステム/02_基本設計/03_テーブル設計.md"
+require_pattern "contract_owners" "01_メインシステム/02_基本設計/03_テーブル設計.md"
+require_pattern "project_users" "01_メインシステム/02_基本設計/03_テーブル設計.md"
+require_pattern "contract_owner_user_id" "01_メインシステム/02_基本設計/03_テーブル設計.md"
 require_pattern "ハッシュチェーン" "02_運営者システム/02_基本設計/09_セキュリティ設計.md"
 require_pattern "4-eyes" "02_運営者システム/02_基本設計/08_認証・認可設計.md"
 require_pattern "IP allowlist" "02_運営者システム/02_基本設計/08_認証・認可設計.md"
@@ -184,7 +188,7 @@ require_pattern "E-OP-AUTH-" "02_運営者システム/02_基本設計/05_エラ
 require_pattern "E-OP-4EYES-" "02_運営者システム/02_基本設計/05_エラー設計.md"
 
 # ============================================================================
-# SC-007: accounts.contract_status 4 値が課金・請求設計とテーブル設計に出現
+# SC-007: contract_owners.contract_status 4 値が課金・請求設計とテーブル設計に出現
 # ============================================================================
 
 for v in "active" "suspended" "deleted_pending" "deleted"; do

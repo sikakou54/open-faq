@@ -44,11 +44,11 @@
 | action コード | retention_class | 4-eyes 対象 | payload スキーマ参照 |
 |---|---|---|---|
 | **owner.*** | | | |
-| `owner.suspend` | 5y | MVP Log Only / Beta Hard Gate | `{ownerAccountId, reason, suspendedAt}` |
-| `owner.restore` | 5y | MVP Log Only / Beta Hard Gate | `{ownerAccountId, restorationId, reason, rollback}` |
-| `owner.physical_delete` | 5y | **MVP Hard Gate** | `{ownerAccountId, slug, reason, ticketId}` |
-| `owner.restore_data` | 5y | MVP Log Only / Beta Hard Gate | `{ownerAccountId, resourceType, resourceId, reason, rollback}` |
-| `owner.update` | 5y | - | `{ownerAccountId, before, after}` |
+| `owner.suspend` | 5y | MVP Log Only / Beta Hard Gate | `{contractOwnerUserId, reason, suspendedAt}` |
+| `owner.restore` | 5y | MVP Log Only / Beta Hard Gate | `{contractOwnerUserId, restorationId, reason, rollback}` |
+| `owner.physical_delete` | 5y | **MVP Hard Gate** | `{contractOwnerUserId, slug, reason, ticketId}` |
+| `owner.restore_data` | 5y | MVP Log Only / Beta Hard Gate | `{contractOwnerUserId, resourceType, resourceId, reason, rollback}` |
+| `owner.update` | 5y | - | `{contractOwnerUserId, before, after}` |
 | **operator.*** | | | |
 | `operator.invite` | 5y | - | `{invitedId, invitedBy, email}` |
 | `operator.accept` | 5y | - | `{operatorId}` |
@@ -57,7 +57,7 @@
 | `operator.login.attempt` | 1y | - | `{email, success, ipMasked}` |
 | `operator.login.success` | 5y | - | `{operatorId, sessionId}` |
 | `operator.login.failed` | 5y | - | `{email, failedCount}` |
-| `operator.lockout` | 5y | - | `{accountId, lockedUntil}` |
+| `operator.lockout` | 5y | - | `{operatorId, lockedUntil}` |
 | `operator.password.reset.request` | 5y | - | `{email}` |
 | `operator.password.reset` | 5y | - | `{operatorId, approvalId}` |
 | `operator.subrole.grant` | 5y | - | `{operatorId, subrole}` |
@@ -82,10 +82,10 @@
 | `ai_parameter.update` | 5y | **MVP Hard Gate** | `{scope, scopeId, before, after, version}` |
 | `ai_model.switch` | 5y | - | `{from, to, rolloutPercentage}` |
 | **rate_limit.*** / **budget_limit.*** | | | |
-| `rate_limit.override` | 5y | MVP Log Only / Beta Hard Gate | `{ownerAccountId, before, after, overrideId}` |
-| `budget_limit.override` | 5y | MVP Log Only / Beta Hard Gate | `{ownerAccountId, before, after, overrideId}` |
-| `suppress_list.restore` | 5y | MVP Log Only | `{ownerAccountId, email}` |
-| `widget.force_stop` | 5y | MVP Log Only / Beta Hard Gate | `{ownerAccountId, reason}` |
+| `rate_limit.override` | 5y | MVP Log Only / Beta Hard Gate | `{contractOwnerUserId, before, after, overrideId}` |
+| `budget_limit.override` | 5y | MVP Log Only / Beta Hard Gate | `{contractOwnerUserId, before, after, overrideId}` |
+| `suppress_list.restore` | 5y | MVP Log Only | `{contractOwnerUserId, email}` |
+| `widget.force_stop` | 5y | MVP Log Only / Beta Hard Gate | `{contractOwnerUserId, reason}` |
 | **announcement.*** | | | |
 | `announcement.create` | 5y | - | `{announcementId, kind, severity, scope}` |
 | `announcement.preview` | 1y | - | `{announcementId}` |
@@ -104,14 +104,14 @@
 | `webhook.payload_diff.reprocess` | 5y | - | `{diffId, replayId}` |
 | `webhook.payload_diff.dismiss` | 5y | - | `{diffId, reason}` |
 | **billing.*** | | | |
-| `billing.invoice.issued` | 7y | - | `{invoiceId, ownerAccountId, amount, billingYearMonth}` |
+| `billing.invoice.issued` | 7y | - | `{invoiceId, contractOwnerUserId, amount, billingYearMonth}` |
 | `billing.invoice.finalized` | 7y | - | `{invoiceId}` |
 | `billing.credit_note.issued` | 7y | - | `{creditNoteId, invoiceId, amount, reason}` |
 | `billing.cron.run` | 7y | - | `{month, success, failed}` |
 | `pricing.update` | 7y | MVP Log Only / Beta Hard Gate | `{pricingVersion, before, after, effectiveFrom}` |
 | **stripe.*** | | | |
 | `stripe.event.processed` | 7y | - | `{eventId, eventType}` |
-| `stripe.subscription.resume` | 5y | - | `{subscriptionId, ownerAccountId}` |
+| `stripe.subscription.resume` | 5y | - | `{subscriptionId, contractOwnerUserId}` |
 | **pii.*** | | | |
 | `pii_fp_report.create` | 1y | - | `{reportId, detectionLayer}` |
 | `pii_fp_report.transition` | 5y | - | `{reportId, from, to}` |

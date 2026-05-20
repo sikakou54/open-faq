@@ -52,18 +52,19 @@
 #### マルチリージョン(DDL 候補)
 
 ```sql
-ALTER TABLE accounts
+-- 契約オーナー専有属性に追加(v1.11 で `accounts` を `users` / `contract_owners` / `project_users` に 3 表分割済み)
+ALTER TABLE contract_owners
   ADD COLUMN region TEXT NOT NULL DEFAULT 'apac'
   CHECK (region IN ('apac', 'wnam', 'eeur'));
 
 CREATE TABLE owner_region_audit_logs (
-  id             TEXT PRIMARY KEY,
-  owner_account_id      TEXT NOT NULL,
-  before_region  TEXT NOT NULL,
-  after_region   TEXT NOT NULL,
-  approved_by    TEXT NOT NULL,
-  reason         TEXT NOT NULL,
-  created_at     TEXT NOT NULL
+  id                      TEXT PRIMARY KEY,
+  contract_owner_user_id  TEXT NOT NULL REFERENCES contract_owners(user_id) ON DELETE CASCADE,
+  before_region           TEXT NOT NULL,
+  after_region            TEXT NOT NULL,
+  approved_by             TEXT REFERENCES users(id) ON DELETE SET NULL,
+  reason                  TEXT NOT NULL,
+  created_at              TEXT NOT NULL
 );
 ```
 
@@ -72,7 +73,7 @@ CREATE TABLE owner_region_audit_logs (
 | ID | 対象 | 実装設計で具体化すること | 関連 Future 要件 |
 |---|---|---|---|
 | FUT-DD-I18N-001 | 多言語 UI | i18n key 管理、メールテンプレート多言語化、fallback、翻訳差分 CI | FUT-REQ-I18N-001 |
-| FUT-DD-I18N-002 | マルチリージョン | `accounts.region`、routing、D1 / R2 配置、region guard、越境拒否 API | FUT-REQ-I18N-002 |
+| FUT-DD-I18N-002 | マルチリージョン | `contract_owners.region`、routing、D1 / R2 配置、region guard、越境拒否 API | FUT-REQ-I18N-002 |
 | FUT-DD-I18N-003 | 管理者単位 TZ | profile setting、日付フォーマット、集計境界、監査ログ UTC 正本との変換 | FUT-REQ-I18N-003 |
 
 #### API / Worker 候補(関連分)
@@ -97,7 +98,7 @@ CREATE TABLE owner_region_audit_logs (
 | 要件 | NFR-1101(言語)、NFR-1102(TZ)、region 属性導入による契約モデル拡張 |
 | 画面 | UI 言語スイッチャー、契約発行画面(region 選択)、アカウント設定(個人 TZ)、運営者画面(region 表示) |
 | API | `POST /admin/v1/owners/{id}/region-approval`、`TenantRegionGuard` ミドルウェア(全 API)、メール送信 API の locale パラメータ |
-| テーブル | `accounts.region` 列追加、`owner_region_audit_logs`、翻訳キー管理テーブル(Future で具体化) |
+| テーブル | `contract_owners.region` 列追加、`owner_region_audit_logs`、翻訳キー管理テーブル(Future で具体化) |
 | 運用 | 越境移転ガードの監査、translation 差分 CI、海外メールテンプレートのレビュー、リージョン別 D1 / R2 配置運用、リージョン横断レポート集計 |
 
 ---

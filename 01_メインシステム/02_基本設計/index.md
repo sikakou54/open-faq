@@ -26,8 +26,8 @@
 |---|---|---|---|
 | 1 | 画面設計方針 | SaaS 標準 SPA + サーバーサイドルーティング併用。SCR-001〜027(モーダル含む)を網羅。 | [01_画面設計.md](01_画面設計.md) |
 | 2 | API 設計方針 | REST + JSON。`/v1` 配下に統一。`Authorization` ヘッダ。連携 IF #1〜#12(送信側)。 | [02_API設計.md](02_API設計.md) |
-| 3 | データ設計方針 | RDB(マルチオーナーは `owner_account_id` 列で分離)+ KV(セッション / トークン / レート制限)+ R2(添付・ウィジェット静的)。 | [03_テーブル設計.md](03_テーブル設計.md) |
-| 4 | 権限設計方針 | オーナー専有機能 + プロジェクト別ロール(`account_project_grants.role` = `admin` / `member`) + 契約状態による利用上書き。 | [04_権限設計.md](04_権限設計.md) |
+| 3 | データ設計方針 | RDB(マルチオーナーは `contract_owner_user_id` 列で分離)+ KV(セッション / トークン / レート制限)+ R2(添付・ウィジェット静的)。 | [03_テーブル設計.md](03_テーブル設計.md) |
+| 4 | 権限設計方針 | オーナー専有機能 + プロジェクト別ロール(`project_users.role` = `admin` / `member`) + 契約状態による利用上書き。 | [04_権限設計.md](04_権限設計.md) |
 | 5 | エラー設計方針 | `E-AUTH-*` / `E-AUTHZ-*` / `E-BIZ-*` / `E-INPUT-*` / `E-IF-*` の ID 体系。ステータスコード対応表。 | [05_エラー設計.md](05_エラー設計.md) |
 | 6 | メッセージ設計方針 | `MSG-SCR-*` の ID 体系。通知契機 + テンプレート。重要度 `critical` はメール強制送信。 | [06_メッセージ一覧.md](06_メッセージ一覧.md) |
 | 7 | トレーサビリティ方針 | 要件 → 機能 → 画面 → API → DB → 権限 → エラー → メッセージ → テスト観点を縦串で追跡。 | [07_トレーサビリティマトリクス.md](07_トレーサビリティマトリクス.md) |
@@ -53,7 +53,7 @@
 | FRxx ファイル | 概要 | 主関連画面 | 主関連 API |
 |---|---|---|---|
 | [../01_要件定義/FR01_アカウント管理.md](../01_要件定義/FR01_アカウント管理.md) | 新規登録 / ログイン / 再認証 / ログアウト | SCR-001〜003 | `POST /v1/sessions`, `POST /v1/accounts` |
-| [../01_要件定義/FR02_ユーザー管理.md](../01_要件定義/FR02_ユーザー管理.md) | メンバー招待 / 権限 / プロジェクト割当(プロジェクト単位)| SCR-017 | `POST /v1/projects/:id/members`(招待), `PATCH /v1/projects/:id/members/:accountId`(ロール変更), `DELETE /v1/projects/:id/members/:accountId`(離脱)|
+| [../01_要件定義/FR02_ユーザー管理.md](../01_要件定義/FR02_ユーザー管理.md) | メンバー招待 / 権限 / プロジェクト割当(プロジェクト単位)| SCR-017 | `POST /v1/projects/:id/members`(招待), `PATCH /v1/projects/:id/members/:userId`(ロール変更), `DELETE /v1/projects/:id/members/:userId`(離脱)|
 | [../01_要件定義/FR03_プロジェクト管理.md](../01_要件定義/FR03_プロジェクト管理.md) | プロジェクト作成 / 編集 / 削除 | SCR-010 | `GET /v1/projects` ほか |
 | [../01_要件定義/FR04_FAQ管理.md](../01_要件定義/FR04_FAQ管理.md) | FAQ CRUD + 公開 + 改版 | SCR-012 | `GET /v1/faqs` ほか |
 | [../01_要件定義/FR05_AI回答.md](../01_要件定義/FR05_AI回答.md) | AI 推論 + 信頼度しきい値判定 | ウィジェット | `POST /v1/widget/ai-reply` |
@@ -113,7 +113,7 @@ graph LR
 | 01 | [01_画面設計.md](01_画面設計.md) | SCR-001〜027 + モーダル の全画面定義 |
 | 02 | [02_API設計.md](02_API設計.md) | 管理 API + 連携 IF #1〜#12(送信側)の全エンドポイント |
 | 03 | [03_テーブル設計.md](03_テーブル設計.md) | 全テーブル + DDL + コード値 + 状態遷移 |
-| 04 | [04_権限設計.md](04_権限設計.md) | 3 ロール(オーナー / プロジェクト管理者 / メンバー)+ プロジェクト別ロール(`account_project_grants.role`)+ 契約状態上書き |
+| 04 | [04_権限設計.md](04_権限設計.md) | 3 ロール(オーナー / プロジェクト管理者 / メンバー)+ プロジェクト別ロール(`project_users.role`)+ 契約状態上書き |
 | 05 | [05_エラー設計.md](05_エラー設計.md) | エラー ID 体系 + ステータスコード対応表 + 共通方針 |
 | 06 | [06_メッセージ一覧.md](06_メッセージ一覧.md) | メッセージ / 通知契機(メール本文の正本は §11 メール設計)|
 | 07 | [07_トレーサビリティマトリクス.md](07_トレーサビリティマトリクス.md) | 要件 → 設計 → テスト観点の対応 |
@@ -129,15 +129,15 @@ graph LR
 | SCR-001 | ログイン | §5.SCR-001 | `POST /v1/sessions` | `accounts`, `sessions` | §3 ロール | E-AUTH-* | MSG-SCR-001-* | §3 ログイン | §5 ロックアウト | - |
 | SCR-002 | 新規登録 | §5.SCR-002 | `POST /v1/accounts` | `accounts` | - | E-AUTH-VALIDATION | MSG-SCR-002-* | §3 新規登録 | - | §5 トライアル |
 | SCR-003 | パスワード再設定 | §5.SCR-003 | `POST /v1/password/reset` | `accounts` | - | E-AUTH-* | MSG-SCR-003-* | §3 パスワード再設定 | §7 監査 | - |
-| SCR-010 | プロジェクト一覧 | §5.SCR-010 | `GET /v1/projects` | `projects`, `account_project_grants` | オーナー専有 | E-AUTHZ-OWNER-ONLY | MSG-SCR-010-* | §6 オーナー境界 | - | - |
+| SCR-010 | プロジェクト一覧 | §5.SCR-010 | `GET /v1/projects` | `projects`, `project_users` | オーナー専有 | E-AUTHZ-OWNER-ONLY | MSG-SCR-010-* | §6 オーナー境界 | - | - |
 | SCR-010-M1 | プロジェクト設定モーダル(「管理者を指定」セクション・削除動線は持たない)| §5.SCR-010-M1 | `POST/PATCH /v1/projects` | `projects`(作成時にオーナー grants 自動 INSERT)| オーナー専有 | E-INPUT-* | MSG-SCR-010-M1-* | §6 認可判定 | - | - |
 | SCR-011 | 未解決質問一覧 / 詳細 | §5.SCR-011 | `GET /v1/inquiries` | `question_logs`, `inquiries` | オーナー / 該当 PJ の `member`+ | E-BIZ-CASE-* | MSG-SCR-011-* | §6 オーナー境界 | - | - |
 | SCR-012 | FAQ 管理 | §5.SCR-012 | `GET /v1/faqs` ほか | `faqs`, `faq_revisions`, `faq_search_fts` | オーナー / 該当 PJ の `member`+ | E-BIZ-FAQ-PUBLISH | MSG-SCR-012-* | §6 認可判定 | - | §3 FAQ 件数上限 |
 | SCR-013 | 個別チャット部屋 | §5.SCR-013 | `POST /v1/chats/:id/messages` | `chat_rooms`, `chat_messages` | オーナー / 該当 PJ の `member`+ | E-BIZ-CHAT-* | MSG-SCR-013-* | §6 オーナー境界 | - | §3 チャット部屋数上限 |
 | SCR-014 | ウィジェット設定(プロジェクト WS / 公開キー + 見た目 + プレビュー)| §5.SCR-014 | `PATCH /v1/widget-config`, `POST /v1/projects/{id}/widget-key/rotate` | `projects`, `allowed_domains`, `project_legacy_keys` | 当該 PJ の `admin` 以上(`member` は閲覧のみ)| E-INPUT-DOMAIN | MSG-SCR-014-* | §6 API キー検証 | §12 ウィジェット保護 | - |
 | SCR-015 | プロジェクトホーム(プロジェクト視点)+ 課金部(契約 WS 配置)| §5.SCR-015 | `GET /v1/usage`, `GET /v1/invoices` | `usage_metering`, `billing_invoices` | プロジェクト視点 = オーナー / 該当 PJ の `member`+ / 課金部 = オーナー専有 | - | MSG-SCR-015-* | §6 認可判定 | - | §9〜§11 |
-| SCR-017 | ユーザー管理(プロジェクト WS のみ)| §5.SCR-017 | `POST /v1/projects/:id/members`, `PATCH /v1/projects/:id/members/:accountId`, `DELETE /v1/projects/:id/members/:accountId`(アカウント全体論理削除)| `accounts.valid`, `account_project_grants.valid`, `sessions.revoked_at` | オーナー / `admin`(該当 PJ)| E-AUTHZ-MEMBER / E-AUTHZ-ADMIN-DELETE-PROTECTED / E-BIZ-ACCOUNT-INACTIVE | MSG-SCR-017-* | §3 招待受諾 | - | - |
-| SCR-017-M1 | メンバー招待 / 編集モーダル(プロジェクト単位)| §5.SCR-017-M1 | `POST /v1/projects/:id/members`(招待), `PATCH /v1/projects/:id/members/:accountId`(ロール変更), `DELETE /v1/projects/:id/members/:accountId`(離脱)| `accounts`, `account_project_grants` | オーナー / `admin`(該当 PJ)| E-INPUT-* / E-BIZ-MEMBER-NO-GRANT | MSG-SCR-017-M1-* | §3 招待トークン | - | - |
+| SCR-017 | ユーザー管理(プロジェクト WS のみ)| §5.SCR-017 | `POST /v1/projects/:id/members`, `PATCH /v1/projects/:id/members/:userId`, `DELETE /v1/projects/:id/members/:userId`(アカウント全体論理削除)| `users.valid`, `project_users.valid`, `sessions.revoked_at` | オーナー / `admin`(該当 PJ)| E-AUTHZ-MEMBER / E-AUTHZ-ADMIN-DELETE-PROTECTED / E-BIZ-ACCOUNT-INACTIVE | MSG-SCR-017-* | §3 招待受諾 | - | - |
+| SCR-017-M1 | メンバー招待 / 編集モーダル(プロジェクト単位)| §5.SCR-017-M1 | `POST /v1/projects/:id/members`(招待), `PATCH /v1/projects/:id/members/:userId`(ロール変更), `DELETE /v1/projects/:id/members/:userId`(離脱)| `users`, `project_users` | オーナー / `admin`(該当 PJ)| E-INPUT-* / E-BIZ-MEMBER-NO-GRANT | MSG-SCR-017-M1-* | §3 招待トークン | - | - |
 | SCR-018 | プライバシーポリシー / 利用規約 | §5.SCR-018 | `GET /v1/terms/current` | `terms_versions` | 認証不要 | - | MSG-SCR-018-* | - | - | - |
 | SCR-021 | お知らせ一覧 | §5.SCR-021 | `GET /v1/inbox-messages` | `inbox_messages` | 全ユーザー | - | MSG-SCR-021-* | §6 認可判定 | - | - |
 | SCR-022 | お知らせ詳細 | §5.SCR-022 | `PATCH /v1/inbox-messages/:id/read` | `inbox_messages` | 全ユーザー | - | MSG-SCR-022-* | §6 認可判定 | - | - |

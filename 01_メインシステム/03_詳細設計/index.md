@@ -149,13 +149,13 @@ sequenceDiagram
   U->>P: GET /
   P-->>U: SPA + HTML/JS/CSS
   U->>W: POST /api/v1/auth/login (Cookie 未保持)
-  W->>D: SELECT accounts WHERE email_hmac=?
+  W->>D: SELECT users WHERE email_hmac=?
   W->>D: Argon2id verify
   W->>K: SET session:{sid} (TTL 12h)
   W-->>U: Set-Cookie: session=...; CSRF Cookie
   U->>W: GET /api/v1/inquiries (Cookie + X-CSRF-Token)
   W->>K: GET session:{sid}
-  W->>D: SELECT inquiries WHERE owner_account_id=? AND ...
+  W->>D: SELECT inquiries WHERE contract_owner_user_id=? AND ...
   W->>A: INSERT audit_logs (read 操作は省略可)
   W-->>U: 200 OK + JSON
 ```
@@ -181,7 +181,7 @@ sequenceDiagram
   W->>API: POST /widget/v1/ask { question, session_token }
   API->>D: FTS5 検索 (faq_search_fts)
   API->>AI: 推論（質問 + FAQ 抜粋）
-  API->>K: GET ai_threshold:{owner_account_id}:{project_id}
+  API->>K: GET ai_threshold:{contract_owner_user_id}:{project_id}
   API->>D: INSERT question_logs (metering_billable=...)
   API-->>W: { type: "answered" | "unanswered" | "error", ... }
 ```
@@ -203,7 +203,7 @@ sequenceDiagram
   alt 既存
     IW-->>ADM: 200 OK (キャッシュ結果)
   else 新規
-    IW->>D: UPDATE accounts SET force_logout_at = ?
+    IW->>D: UPDATE users SET force_logout_at = ?
     IW->>Q: SEND session-invalidation-queue
     IW->>K: SET idempotency:{key} = result (TTL 24h)
     IW-->>ADM: 201 Created
@@ -646,7 +646,7 @@ src/
 |------|-------|----|
 | ファイル | kebab-case | `inquiry-status.ts`, `widget-key-rotate.ts` |
 | クラス | PascalCase | `WorkersAIAnswerProvider` |
-| 関数 / 変数 | camelCase | `generateInquiryCode`, `ownerAccountId` |
+| 関数 / 変数 | camelCase | `generateInquiryCode`, `contractOwnerUserId` |
 | 定数 | UPPER_SNAKE_CASE | `MAX_RETRY`, `DEFAULT_LIMITS` |
 | 型 | PascalCase | `Inquiry`, `AnswerInput` |
 | Zod スキーマ | `xxxSchema` | `loginSchema`, `createFaqSchema` |

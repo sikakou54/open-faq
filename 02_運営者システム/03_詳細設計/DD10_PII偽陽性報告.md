@@ -172,11 +172,11 @@
 メインの PII 検出 Worker は次の判定で新ルール採用率を決定する:
 
 ```text
-function shouldUseNewRevision(revisionId: string, ownerAccountId: string): boolean {
+function shouldUseNewRevision(revisionId: string, contractOwnerUserId: string): boolean {
     const rollout = KV.get(`feature:pii-rule-rollout:${revisionId}`);
     if (!rollout || rollout.percentage === 0) return false;
     if (rollout.percentage === 100) return true;
-    const hash = sha256(`${revisionId}:${ownerAccountId}`);
+    const hash = sha256(`${revisionId}:${contractOwnerUserId}`);
     const bucket = parseInt(hash.substring(0, 4), 16) % 100;  // 0..99
     return bucket < rollout.percentage;
 }

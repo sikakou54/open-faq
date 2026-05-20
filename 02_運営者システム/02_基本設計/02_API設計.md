@@ -172,7 +172,7 @@
 
 #### 5.1.3 `POST /admin/v1/auth/mfa/setup` / `GET /admin/v1/auth/mfa/setup?token=...`
 
-| 認証 | 招待トークン(`mfa-setup:<account_id>` KV、72h)|
+| 認証 | 招待トークン(`mfa-setup:<operator_id>` KV、72h)|
 | 関連画面 | SCR-AUTH-M1 |
 
 GET レスポンス(QR + 秘密鍵 + 回復コード 10 個発行):
@@ -279,7 +279,7 @@ POST リクエスト: `{ "setupToken": "...", "totpCode": "...", "recoveryCodesS
     {
       "resourceType": "owner",
       "resourceId": "...",
-      "ownerAccountId": "...",
+      "contractOwnerUserId": "...",
       "deletionType": "deleted_pending",
       "deletedAt": "...",
       "scheduledPhysicalDeleteAt": "...",
@@ -355,7 +355,7 @@ POST リクエスト: `{ "setupToken": "...", "totpCode": "...", "recoveryCodesS
 
 監査: `ai_parameter.update`(5y)
 
-#### 5.4.2 `PUT /admin/v1/overrides/rate-limit/{owner_account_id}`
+#### 5.4.2 `PUT /admin/v1/overrides/rate-limit/{contract_owner_user_id}`
 
 | 機能ID | F-OP-012 |
 | 4-eyes 種別 | 承認ログ(action: `rate_limit.override`)|
@@ -375,7 +375,7 @@ POST リクエスト: `{ "setupToken": "...", "totpCode": "...", "recoveryCodesS
 
 監査: `rate_limit.override`(5y)
 
-#### 5.4.3 `PUT /admin/v1/overrides/budget/{owner_account_id}`
+#### 5.4.3 `PUT /admin/v1/overrides/budget/{contract_owner_user_id}`
 
 | 4-eyes 種別 | 承認ログ(action: `budget.override`)|
 
@@ -426,7 +426,7 @@ POST リクエスト: `{ "setupToken": "...", "totpCode": "...", "recoveryCodesS
 | 機能ID | F-OP-017 |
 | 関連画面 | SCR-096 |
 
-クエリ: `action`, `actorId`, `targetId`, `ownerAccountId`, `from`, `to`, `ipMasked`, `ticketId`, `cursor`, `limit`
+クエリ: `action`, `actorId`, `targetId`, `contractOwnerUserId`, `from`, `to`, `ipMasked`, `ticketId`, `cursor`, `limit`
 バリデーション: `to - from ≤ 365 日`
 
 レスポンス(200):

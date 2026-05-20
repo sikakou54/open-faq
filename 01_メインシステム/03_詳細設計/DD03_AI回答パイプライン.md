@@ -113,7 +113,7 @@ export interface AnswerProvider {
 export type AnswerInput = {
   question: string;
   faqs: { id: string; title: string; body: string; relevance: number }[];
-  ownerAccountId: string;
+  contractOwnerUserId: string;
   projectId: string;
 };
 

@@ -232,7 +232,7 @@ function getExcludeFields(apiVersion: string): string[] {
       "id": "in_xxx",
       "created": 1715500000,
       "amount_paid": 10000,
-      "metadata": { "owner_account_id": "01J...", "test_run": "true" }
+      "metadata": { "contract_owner_user_id": "01J...", "test_run": "true" }
     },
     "previous_attributes": { "status": "open" }
   },
@@ -248,7 +248,7 @@ function getExcludeFields(apiVersion: string): string[] {
     "object": {
       "id": "in_xxx",
       "amount_paid": 10000,
-      "metadata": { "owner_account_id": "01J..." }
+      "metadata": { "contract_owner_user_id": "01J..." }
     }
   },
   "type": "invoice.paid"
