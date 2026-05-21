@@ -121,12 +121,6 @@ erDiagram
     TEXT project_id FK "projects(id)"
     TEXT domain "(project_id,domain) UNIQUE"
   }
-  project_ip_allowlist {
-    TEXT id PK
-    TEXT project_id FK "projects(id)"
-    TEXT cidr "(project_id,cidr) UNIQUE"
-    TEXT family "ipv4/ipv6"
-  }
   end_users {
     TEXT id PK
     TEXT project_id FK "projects(id)"
@@ -327,7 +321,6 @@ erDiagram
   projects ||--o{ question_logs : records
   projects ||--o{ inquiries : holds
   projects ||--o{ allowed_domains : authorizes
-  projects ||--o{ project_ip_allowlist : "IP制限"
   projects ||--o{ project_legacy_keys : rotates
   projects ||--o{ end_users : "1-N(プロジェクト単位)"
   faqs ||--o{ faq_revisions : versioned

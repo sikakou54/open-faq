@@ -96,24 +96,15 @@ CSV / JSON ファイル → R2 ステージング → Queue 投入 → consumer 
 |---|---|---|
 | FAQ 件数 / 契約 | 8,000 | 12,000（409 `FAQ_LIMIT_EXCEEDED`） |
 | プロジェクト数 / 契約 | 40 | 50（409 `PROJECT_LIMIT_EXCEEDED`） |
-| IP 許可 CIDR 数 / プロジェクト | - | 100（400 `E-BIZ-IP-002`、SCR-010-M1 で行番号付きエラー） |
 
-### 3.10 プロジェクト単位 IP 許可リスト（FR-179 / FR-330）
 
-- データ: `project_ip_allowlist`（[03_テーブル設計.md §3.9](../02_基本設計/03_テーブル設計.md) 参照）
-- API: `PATCH /projects/{id}` のフィールド `ipAllowlist`、または `PATCH /projects/{id}/ip-allowlist`（[02_API設計.md §5.3.3 / §5.3.3a](../02_基本設計/02_API設計.md) 参照）
-- 評価ロジックの正本: [02_API設計.md §5.5.0](../02_基本設計/02_API設計.md)
-- キャッシュ: ウィジェット Worker は `KV: ip_allowlist:{projectId}` に CIDR セットを 5 分 TTL で保持し、LPM 判定はメモリ上で実施。`PATCH` 成功時に該当キーを即時 invalidate
-- 監査ログ: `project.ip_allowlist.update`（`metadata` に変更前後の CIDR セット差分、`retention_class=general`）
-- 自己検証ガード: API 層で各行を `ipaddr` ライブラリでパースし、`IPv4Network` / `IPv6Network` のいずれかでなければ 400。重複は事前にセット化して検出。CIDR の正規化（`203.0.113.0/24` 形式）を保存前に実施
+### 3.10 プロジェクト作成時のオーナー自動 admin 付与(FR-015e / FR-030a)
 
-### 3.11 プロジェクト作成時のオーナー自動 admin 付与(FR-015e / FR-030a)
-
-`POST /projects` 実行時は SCR-010-M1(新規作成モード)から `name` / `allowedDomains` / `ipAllowlist` 等の基本情報のみを受け取る(`initialAdmins` フィールドは受け取らない)。オーナーは作成時に自動で当該プロジェクトの管理者となる(`project_users(role='admin', valid=1)` 自動 INSERT)。他者をプロジェクト管理者として招待する操作は、プロジェクト作成後に SCR-017-M1 経由(`POST /projects/{id}/members` + `role='admin'`)で行う。
+`POST /projects` 実行時は SCR-010-M1(新規作成モード)から `name` / `allowedDomains` 等の基本情報のみを受け取る(`initialAdmins` フィールドは受け取らない)。オーナーは作成時に自動で当該プロジェクトの管理者となる(`project_users(role='admin', valid=1)` 自動 INSERT)。他者をプロジェクト管理者として招待する操作は、プロジェクト作成後に SCR-017-M1 経由(`POST /projects/{id}/members` + `role='admin'`)で行う。
 
 処理ステップ:
 
-1. リクエスト検証: `name`(1〜100 文字必須)、`allowedDomains`(1 件以上必須、形式チェック)、`ipAllowlist`(任意、CIDR 形式)。違反は 400 `VALIDATION_ERROR`
+1. リクエスト検証: `name`(1〜100 文字必須)、`allowedDomains`(1 件以上必須、形式チェック)。違反は 400 `VALIDATION_ERROR`
 2. `projects` INSERT(ウィジェット公開鍵を発行、`valid=1`)
 3. **オーナー自動 admin 行 INSERT**: `INSERT INTO project_users(user_id=actor.contractOwnerUserId, project_id=newPid, contract_owner_user_id=actor.contractOwnerUserId, role='admin', valid=1, granted_at=now(), granted_by=actor.userId)`
 4. 監査ログ `project.created_with_owner_admin`(`metadata` に `{ projectId, contractOwnerUserId }`、`retention_class=general`)を記録
@@ -152,7 +143,7 @@ async function createProject(actor: Principal, req: CreateProjectRequest) {
 }
 ```
 
-### 3.12 プロジェクト削除時の論理削除カスケード + 孤立メンバー cleanup(FR-030b)
+### 3.11 プロジェクト削除時の論理削除カスケード + 孤立メンバー cleanup(FR-030b)
 
 `DELETE /projects/{id}` 実行時は **SCR-026 のみ** から起動可能。以下のトランザクション境界で論理削除する:
 
@@ -160,16 +151,16 @@ async function createProject(actor: Principal, req: CreateProjectRequest) {
 2. `UPDATE project_users SET valid=0, updated_at=now() WHERE project_id=? AND valid=1`(オーナー自身の admin 行も含む全行を論理削除)
 3. 孤立メンバーの抽出: 「ステップ 1 のメンバーのうち、他プロジェクト割当(`valid=1` の `project_users`)が 0 件かつ `contract_owners` 行を持たない(非オーナー)もの」
 4. 孤立メンバーの全セッションを失効(`UPDATE sessions SET revoked_at=now()`)+ 未使用招待トークンを失効(`UPDATE access_tokens SET used_at=now() WHERE used_at IS NULL`)+ `UPDATE users SET valid=0, updated_at=now()` で論理削除
-5. `UPDATE projects SET status='deleted', valid=0, deleted_at=now(), updated_at=now() WHERE id=?` + 関連テーブル(`allowed_domains` / `project_ip_allowlist` / `faqs` / `inquiries` / `end_users` / `chat_rooms` / `question_logs`)を `valid=0, updated_at=now()` に伝播
+5. `UPDATE projects SET status='deleted', valid=0, deleted_at=now(), updated_at=now() WHERE id=?` + 関連テーブル(`allowed_domains` / `faqs` / `inquiries` / `end_users` / `chat_rooms` / `question_logs`)を `valid=0, updated_at=now()` に伝播
 6. 監査ログ `project.logical_delete`(`metadata` に `{ projectId, logicallyDeletedUserIds: [...] }`、`retention_class=general`)を記録
 
-オーナーの `users` 行は本処理の論理削除対象外(`contract_owners` 行を持つユーザーは常に `valid=1` 維持)。当該プロジェクトに対するオーナー自身の `project_users` admin 行は他のメンバー行と同様に `valid=0` に論理削除される。論理削除データは `updated_at < now() - 90d AND valid=0` の物理削除バッチ([DD14_バッチ・非同期処理.md §3.13](DD14_バッチ・非同期処理.md))で 90 日後に物理削除される。
+オーナーの `users` 行は本処理の論理削除対象外(`contract_owners` 行を持つユーザーは常に `valid=1` 維持)。当該プロジェクトに対するオーナー自身の `project_users` admin 行は他のメンバー行と同様に `valid=0` に論理削除される。論理削除データは `updated_at < now() - 90d AND valid=0` の物理削除バッチ([DD14_バッチ・非同期処理.md §3.12](DD14_バッチ・非同期処理.md))で 90 日後に物理削除される。
 
-### 3.13 90 日後物理削除バッチ(概要)
+### 3.12 90 日後物理削除バッチ(概要)
 
-詳細は [DD14_バッチ・非同期処理.md §3.13](DD14_バッチ・非同期処理.md) を正本とする。日次バッチで `valid=0 AND updated_at < now() - 90d` の行を物理削除する。`users` 行が物理 DELETE されると `ON DELETE CASCADE` で関連 `contract_owners` / `project_users` / `sessions` / `access_tokens` / `terms_agreements` 等が連鎖物理削除される。`projects` 行が物理 DELETE されると `ON DELETE CASCADE` で関連 `faqs` / `inquiries` / `chat_*` 等が連鎖物理削除される。`billing_subscriptions` は物理削除バッチの対象外(電子帳簿保存法 7 年保持、永久維持)。匿名化モード(`contract_owners.data_deletion_mode='anonymize'`)は物理削除前に匿名化処理を実施する。
+詳細は [DD14_バッチ・非同期処理.md §3.12](DD14_バッチ・非同期処理.md) を正本とする。日次バッチで `valid=0 AND updated_at < now() - 90d` の行を物理削除する。`users` 行が物理 DELETE されると `ON DELETE CASCADE` で関連 `contract_owners` / `project_users` / `sessions` / `access_tokens` / `terms_agreements` 等が連鎖物理削除される。`projects` 行が物理 DELETE されると `ON DELETE CASCADE` で関連 `faqs` / `inquiries` / `chat_*` 等が連鎖物理削除される。`billing_subscriptions` は物理削除バッチの対象外(電子帳簿保存法 7 年保持、永久維持)。匿名化モード(`contract_owners.data_deletion_mode='anonymize'`)は物理削除前に匿名化処理を実施する。
 
-### 3.14 関連する横断設計
+### 3.13 関連する横断設計
 
 - 認可: [DD09_認可ヘルパ.md](DD09_認可ヘルパ.md) の `requireProjectRole` でオーナー境界 + プロジェクトロール(`admin` / `member`)を検証
 - 監査ログ: `faq.create` / `faq.update` / `faq.publish` / `faq.unpublish` / `faq.bulk_import` / `project.created_with_owner_admin` / `project.logical_delete` / `project.member_invited` / `project.hard_delete_by_batch`(90 日後物理削除バッチ起動)を `retention_class=general` で記録
