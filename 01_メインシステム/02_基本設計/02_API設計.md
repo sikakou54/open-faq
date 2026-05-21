@@ -244,6 +244,88 @@
 レスポンス(200): `{ "userId": "...", "verifiedAt": "..." }`
 エラー: 410 `TOKEN_EXPIRED`(E-AUTH-TOKEN-EXPIRED)
 
+#### 5.1.7 `POST /auth/invitations/{token}/preview`(招待トークン検証 + 招待情報プレビュー)
+
+| 機能ID | F-016 |
+| 認証 | 未認証可(トークン認証のみ)|
+| 関連画面 | SCR-031 メンバーアカウント有効化(初期表示時)|
+
+トークン形式 = `activation` purpose の `access_tokens.token_hash` 検証。検証成功時は招待情報(プロジェクト名 / 付与ロール / 招待元オーナー名 / 招待者メールアドレス)を返す。SCR-031 の招待情報パネル表示に使用する。Turnstile 不要(プレビューは情報取得のみで状態変更なし)。
+
+レスポンス(200):
+```json
+{
+  "userId": "01HZ...",
+  "email": "newmember@...",
+  "projectId": "proj_1",
+  "projectName": "顧客サポート",
+  "invitedRole": "admin" | "member",
+  "inviterOwnerName": "山田 一郎",
+  "expiresAt": "2026-05-28T..."
+}
+```
+
+エラー: 410 `TOKEN_EXPIRED`(E-AUTH-TOKEN-EXPIRED)、410 `TOKEN_USED`(E-AUTH-TOKEN-USED)、404 `TOKEN_NOT_FOUND`
+
+#### 5.1.8 `POST /auth/invitations/{token}/activate`(メンバーアカウント有効化)
+
+| 機能ID | F-016 |
+| 認証 | 未認証可(トークン認証のみ、Turnstile 必須)|
+| 関連画面 | SCR-031 メンバーアカウント有効化(「登録を完了する」押下時)|
+
+招待されたメンバー本人が氏名(`displayName`)+ 初回パスワード(`password`)+ 利用規約同意(`termsAgreed`)+ プライバシーポリシー同意(`privacyAgreed`)を受け取り、同一トランザクションで以下を実行する:
+
+1. `verifyToken(rawToken, 'activation', env)` → 期限・使用済みチェック
+2. `access_tokens.meta` から `invitedProjectId` / `invitedRole` を取得
+3. `UPDATE users SET name=?, password_hash=?, status='active', updated_at=now() WHERE id=?`
+4. `INSERT INTO terms_agreements (user_id, terms_version, privacy_version, agreed_at) VALUES (...)`
+5. `UPDATE project_users SET valid=1, updated_at=now() WHERE user_id=? AND project_id=?`
+6. `consumeToken(rawToken, 'activation', env)` → `access_tokens.used_at` セット
+7. `writeAudit('user.activation_completed', { user_id, project_id, role })`
+
+リクエスト:
+```json
+{
+  "displayName": "山田 太郎",
+  "password": "P@ssw0rd-strong",
+  "passwordConfirm": "P@ssw0rd-strong",
+  "termsAgreed": true,
+  "privacyAgreed": true,
+  "turnstileToken": "..."
+}
+```
+
+バリデーション:
+- `displayName`: 必須、1〜100 文字(前後空白トリム)
+- `password`: 12 文字以上、英大文字 / 小文字 / 数字 / 記号のうち 3 種類以上(FR-006)
+- `passwordConfirm`: `password` と一致
+- `termsAgreed` / `privacyAgreed`: 両方 `true` 必須(FR-160 / FR-164)
+- `turnstileToken`: 検証成功(FR-177)
+
+レスポンス(200): `{ "userId": "01HZ...", "redirectUrl": "/auth/login" }`
+エラー: 410 `TOKEN_EXPIRED`(E-AUTH-TOKEN-EXPIRED)、410 `TOKEN_USED`(E-AUTH-TOKEN-USED)、400 `VALIDATION_ERROR`(氏名長 / パスワード強度 / 規約同意未チェック)、400 `TURNSTILE_FAILED`
+
+#### 5.1.9 `POST /auth/contact-verifications/{token}`(プロジェクト連絡先メール確認)
+
+| 機能ID | F-PRJ-001(プロジェクト管理派生)|
+| 認証 | 未認証可(トークン認証のみ、Turnstile 不要)|
+| 関連画面 | SCR-032 プロジェクト連絡先メール確認完了 |
+
+TPL-PROJECT_CONTACT_VERIFY 確認メール内リンクの着地時に呼び出され、トークン検証成功時に `projects.contact_email_verified_at` をセットする。Turnstile は不要(入力フォームを持たない単純な確認専用エンドポイントで、トークン HMAC-SHA256 検証 + IP/トークン単位のレート制限で十分)。
+
+同一トランザクションで以下:
+
+1. `verifyToken(rawToken, 'contact_verify', env)` → 期限・使用済みチェック
+2. `access_tokens.meta.projectId` を取得(JSON パース)
+3. `UPDATE projects SET contact_email_verified_at=now(), updated_at=now() WHERE id=?`
+4. `consumeToken(rawToken, 'contact_verify', env)` → `access_tokens.used_at` セット
+5. `writeAudit('project.contact_email_verified', { project_id, email_hmac })`
+
+リクエスト: ボディなし(URL のトークンのみ)
+
+レスポンス(200): `{ "projectId": "proj_1", "projectName": "サポートサイト", "verifiedAt": "2026-05-21T..." }`
+エラー: 410 `TOKEN_EXPIRED`(E-AUTH-TOKEN-EXPIRED)、410 `TOKEN_USED`(E-AUTH-TOKEN-USED)、404 `TOKEN_NOT_FOUND`
+
 ### 5.2 利用者(メンバー)API
 
 #### 5.2.1 `GET /members`
@@ -282,13 +364,12 @@
 | 必要権限 | オーナー / 該当プロジェクトの `admin` ロール保持メンバー |
 | 関連画面 | SCR-017-M1(プロジェクト管理者の招待操作)|
 
-該当プロジェクト 1 件に対する単発招待。既存メンバーアカウントの場合は `project_users` 行のみ追加(指定ロール)。新規メールアドレスの場合は `users` を `pending_activation` で作成 + `project_users` を同時 INSERT + 招待メール送信(7 日有効、`access_tokens.purpose='activation'`)。
+該当プロジェクト 1 件に対する単発招待。既存メンバーアカウントの場合は `project_users` 行のみ追加(指定ロール)。新規メールアドレスの場合は `users` を **`name=NULL` / `status='pending_activation'`** で作成 + `project_users` を `valid=0` で同時 INSERT + 招待メール送信(7 日有効、`access_tokens.purpose='activation'`、`meta={"invitedProjectId": "...", "invitedRole": "..."}` を JSON 保持)。**氏名(`displayName`)は受け付けない**(招待された本人が SCR-031 メンバーアカウント有効化ページで入力する。FR-016d / FR-016e)。
 
 リクエスト:
 ```json
 {
   "email": "newmember@...",
-  "displayName": "新規メンバー",
   "role": "admin"
 }
 ```
@@ -354,7 +435,7 @@ API パスはプロジェクトスコープ表記を維持(操作起点が「当
 | 必要権限 | オーナー / 該当プロジェクトの `admin` 保持メンバー |
 | 関連画面 | SCR-017-M1(招待再送)|
 
-`status='pending_activation'` のメンバーのみ対象。旧 `access_tokens.purpose='activation'` を失効させ新規トークン(7 日有効)を発行。
+`status='pending_activation'` のメンバーのみ対象。旧 `access_tokens.purpose='activation'` を失効させ新規トークン(7 日有効、`meta` を同一の `invitedProjectId` / `invitedRole` で再発行)を発行。リクエストボディは空(氏名 `displayName` を受け付けない。FR-016b / FR-016d)。
 
 エラー: 403 `E-AUTHZ-OWNER-PROTECTED`、403 `E-AUTHZ-SELF-MUTATION`、404 `NOT_FOUND`
 

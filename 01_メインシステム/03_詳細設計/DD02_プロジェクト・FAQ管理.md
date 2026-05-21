@@ -156,6 +156,39 @@ async function createProject(actor: Principal, req: CreateProjectRequest) {
 
 オーナーの `users` 行は本処理の論理削除対象外(`contract_owners` 行を持つユーザーは常に `valid=1` 維持)。当該プロジェクトに対するオーナー自身の `project_users` admin 行は他のメンバー行と同様に `valid=0` に論理削除される。論理削除データは `updated_at < now() - 90d AND valid=0` の物理削除バッチ([DD14_バッチ・非同期処理.md §3.12](DD14_バッチ・非同期処理.md))で 90 日後に物理削除される。
 
+### 3.11a プロジェクト連絡先メール確認フロー(FR-033a / SCR-032)
+
+SCR-010-M1 で `projects.contact_email` が新規入力 / 変更された時に、TPL-PROJECT_CONTACT_VERIFY 確認メールを連絡先メール宛に送信し、`access_tokens.purpose='contact_verify'`(24h、`meta={"projectId": "..."}`)を発行する。受信者は SCR-032 メンバーアカウント連絡先確認完了ページに着地し、`POST /auth/contact-verifications/{token}` 経由で確認完了。
+
+```ts
+// (1) 連絡先メール変更時(POST/PATCH /projects 内)
+await env.DB.prepare(
+  `UPDATE projects SET contact_email = ?1, contact_email_verified_at = NULL, updated_at = ?2 WHERE id = ?3`
+).bind(newContactEmail, now, projectId).run();
+const rawToken = await generateToken('contact_verify', { projectId }, env, 24 * 3600);
+await enqueueEmail({
+  template: 'TPL-PROJECT_CONTACT_VERIFY',
+  to: newContactEmail,
+  verifyUrl: `${env.WEB_BASE}/auth/contact-verify?token=${encodeURIComponent(rawToken)}`,
+});
+
+// (2) SCR-032 着地時(POST /auth/contact-verifications/{token})
+const { payload } = await verifyToken(rawToken, 'contact_verify', env);  // 410 if expired/used
+const { projectId } = payload;
+await env.DB.batch([
+  env.DB.prepare(`UPDATE projects SET contact_email_verified_at = ?1, updated_at = ?1 WHERE id = ?2`).bind(now, projectId),
+]);
+await consumeToken(rawToken, 'contact_verify', env);
+await writeAudit({ action: 'project.contact_email_verified', target_project_id: projectId });
+```
+
+注意:
+- 連絡先メール再変更時は旧トークンを `consumeToken()` で失効させ、新トークンを発行する
+- `contact_email_verified_at` が `NULL` の間はウィジェット表示に用いない(FR-033c)
+- 受信者(連絡先メール所有者)はアカウントを持つ必要がない ── 第三者の共有メールアドレスでも本フローを進められる
+- Turnstile は不要(状態変更は単純な `verified_at` セットのみ、トークン HMAC + レート制限で十分)
+- 詳細なトークン発行ロジックは [DD08_トークン発行・検証.md §3.3b](DD08_トークン発行・検証.md) を参照
+
 ### 3.12 90 日後物理削除バッチ(概要)
 
 詳細は [DD14_バッチ・非同期処理.md §3.12](DD14_バッチ・非同期処理.md) を正本とする。日次バッチで `valid=0 AND updated_at < now() - 90d` の行を物理削除する。`users` 行が物理 DELETE されると `ON DELETE CASCADE` で関連 `contract_owners` / `project_users` / `sessions` / `access_tokens` / `terms_agreements` 等が連鎖物理削除される。`projects` 行が物理 DELETE されると `ON DELETE CASCADE` で関連 `faqs` / `inquiries` / `chat_*` 等が連鎖物理削除される。`billing_subscriptions` は物理削除バッチの対象外(電子帳簿保存法 7 年保持、永久維持)。匿名化モード(`contract_owners.data_deletion_mode='anonymize'`)は物理削除前に匿名化処理を実施する。
