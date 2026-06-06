@@ -7,7 +7,7 @@
 | 文書名 | DD05: inquiry_code 採番・未解決質問 |
 | 詳細設計ID | DD05 |
 | 対象システム | FAQ AI ウィジェット SaaS / メインシステム |
-| 関連機能ID | FR-070〜079（未解決質問一覧 / 詳細 / 状態遷移）/ FR-072（inquiry_code 採番）/ AC-010 / AC-012 / AC-013 |
+| 関連機能ID | FR-070〜079（未解決質問一覧 / 詳細 / FAQ 登録状況）/ FR-072（inquiry_code 採番）/ AC-010 / AC-012 / AC-013 |
 | 作成日 | 2026-05-17 |
 | 版数 | v1.0 |
 | ステータス | 承認済 |
@@ -16,7 +16,7 @@
 
 | 種別 | ID | 名称 |
 |---|---|---|
-| 機能 | FR-070〜079 | 未解決質問一覧 / 詳細 / 状態遷移（5 値） |
+| 機能 | FR-070〜079 | 未解決質問一覧 / 詳細 / FAQ 登録状況（3 値） |
 | 機能 | FR-072 | inquiry_code 採番（`INQ-YYYYMMDD-XXXXXXXX`） |
 | 画面 | SCR-011 | FAQ 一覧（未解決質問は派生表示） |
 | API | `/inquiries/*` | 未解決質問操作 |
@@ -28,7 +28,7 @@
 |---|---|---|
 | §10.3 | inquiry_code 採番 | Base32 + 衝突 1.1×10^12 / リトライ最大 3 回 |
 | §6 SCR-011 | FAQ 一覧 | 未解決質問派生表示（正本は基本設計） |
-| §7 | 機能詳細設計（未解決質問関連） | 状態遷移 5 値（正本は基本設計） |
+| §7 | 機能詳細設計（未解決質問関連） | FAQ 登録状況 3 値（正本は基本設計） |
 | §14.1.4-14.1.5 | 730 日保持期間処理 | 未解決質問の保持期間通知 + 物理削除 |
 
 ## 3. 詳細設計本文
@@ -52,11 +52,11 @@ export function generateInquiryCode(now = new Date()): string {
 
 ### 3.2 未解決質問画面（参照のみ）
 
-未解決質問一覧 / 詳細 / 状態遷移は [../02_基本設計/01_画面設計.md](../02_基本設計/01_画面設計.md) を正本とする。`case_status` の 5 値（`open` / `in_progress` / `waiting_user` / `resolved` / `closed`）の遷移ガードは [../02_基本設計/03_テーブル設計.md](../02_基本設計/03_テーブル設計.md) §4.5.2 を正本とする。
+未解決質問一覧 / 詳細 / FAQ 登録状況は [../02_基本設計/01_画面設計.md](../02_基本設計/01_画面設計.md) を正本とする。`faq_registration_status` の 3 値（`unregistered` / `drafted` / `registered`）と更新契機は [../02_基本設計/03_テーブル設計.md](../02_基本設計/03_テーブル設計.md) §4.5.2 を正本とする。
 
 ### 3.3 未解決質問の保持期間通知（cron JST 09:00）
 
-`case_status='open'` の未解決質問が保持期間に近づいた場合に、管理者ユーザーへ滞留通知を送信する。案件状態は変更しない。詳細は [DD14_バッチ・非同期処理.md](DD14_バッチ・非同期処理.md) §14.1.4 を参照。
+`faq_registration_status!='registered'` の未解決質問が保持期間に近づいた場合に、管理者ユーザーへ滞留通知を送信する。FAQ 登録状況は変更しない。詳細は [DD14_バッチ・非同期処理.md](DD14_バッチ・非同期処理.md) §14.1.4 を参照。
 
 ### 3.4 730 日保持期間処理（cron JST 02:00）
 
@@ -64,8 +64,8 @@ export function generateInquiryCode(now = new Date()): string {
 export async function processOpenInquiryRetention(env: Env) {
   const cutoff = new Date(Date.now() - 730 * 86400000).toISOString();
   const stuck = await env.DB.prepare(`
-    SELECT id, contract_owner_user_id, case_status FROM inquiries
-    WHERE case_status = 'open'
+    SELECT id, contract_owner_user_id, faq_registration_status FROM inquiries
+    WHERE faq_registration_status != 'registered'
       AND created_at <= ?1
       AND deleted_at IS NULL
   `).bind(cutoff).all();
@@ -82,17 +82,17 @@ export async function processOpenInquiryRetention(env: Env) {
 }
 ```
 
-> **注**: `case_status='closed'` は自動 retention 処理で設定しない。管理者の確定（運営者によるクローズ要求の承認を含む）のみがクローズ可能。
+> **注**: retention 処理は FAQ 登録状況を変更しない。個別チャットの操作も本状態を変更しない。
 
 ### 3.5 実装モジュール構成
 
 ```
 src/
 ├── routes/
-│   └── inquiries.ts          # /inquiries/* CRUD + 状態遷移
+│   └── inquiries.ts          # /inquiries/* 参照 + 担当変更
 ├── handlers/
 ├── domain/
-│   └── inquiry-status.ts     # case_status 5 値の遷移ガード
+│   └── inquiry-status.ts     # FAQ 登録状況 3 値の遷移ガード
 ├── repository/
 │   └── inquiries.ts
 └── lib/
@@ -127,12 +127,12 @@ src/
 import { describe, it, expect } from 'vitest';
 import { canTransition, assertTransition } from '@faq-saas/shared';
 
-describe('inquiry status transition', () => {
-  it('closed → open は拒否', () => {
-    expect(canTransition('closed', 'open')).toBe(false);
+describe('faq registration status transition', () => {
+  it('registered → drafted は拒否', () => {
+    expect(canTransition('registered', 'drafted')).toBe(false);
   });
   it('assertTransition は不正遷移で throw', () => {
-    expect(() => assertTransition('closed', 'open')).toThrow('INVALID_STATE');
+    expect(() => assertTransition('registered', 'drafted')).toThrow('INVALID_STATE');
   });
 });
 ```
@@ -141,9 +141,9 @@ describe('inquiry status transition', () => {
 
 | 観点 | 内容 |
 |---|---|
-| 単体 | `generateInquiryCode` 衝突リトライ最大 3 回 / `case_status` 全 5 値遷移 |
+| 単体 | `generateInquiryCode` 衝突リトライ最大 3 回 / `faq_registration_status` 全 3 値遷移 |
 | 結合 | inquiry_code UNIQUE 制約違反 → リトライ → 成功 |
-| 異常系 | `closed → open` 等の不正遷移は 422 `INVALID_STATE` |
+| 異常系 | `registered → drafted`、PATCH での状況直接指定は 422 `INVALID_STATE` |
 | 境界値 | 保持期間 729 / 730 / 731 日経過時の通知挙動 |
 | 性能 | `GET /api/v1/inquiries` p95 < 500ms（`idx_inquiries_contract_status_created` 利用） |
 

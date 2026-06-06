@@ -64,7 +64,7 @@
 <section class="notes">
   <h2>ER 図の見方</h2>
   <ul>
-    <li><b>掲載カラム</b>: 主要キー(PK / FK)+ 業務キー(<code>inquiry_code</code> / <code>widget_public_key</code> 等)+ 状態カラム(<code>case_status</code> / <code>contract_status</code> 等)+ 特徴的なカラム(<code>actor_user_id</code> / <code>actor_end_user_id</code> 等)。</li>
+    <li><b>掲載カラム</b>: 主要キー(PK / FK)+ 業務キー(<code>inquiry_code</code> / <code>chat_code</code> / <code>widget_public_key</code> 等)+ 状態カラム(<code>faq_registration_status</code> / <code>contract_status</code> 等)+ 特徴的なカラム(<code>actor_user_id</code> / <code>actor_end_user_id</code> 等)。</li>
     <li><b>省略カラム</b>: <code>created_at</code> / <code>updated_at</code> / <code>valid</code> / <code>*_encrypted</code> / <code>*_key_version</code> / <code>metadata</code> 等の共通技術カラム。完全なカラム定義は <a href="03_テーブル設計.md">03_テーブル設計.md §3</a> を参照。</li>
     <li><b>関係性</b>: 実線 = FK 制約あり / 注記 <code>FK制約なし</code> = 論理参照のみ(<code>error_logs</code> / <code>announcement_recipients</code> の一部カラム)。</li>
     <li><b>4 主体モデル</b>: <code>users</code>(管理者:オーナー / プロジェクト管理者 / メンバー)+ <code>end_users</code>(エンドユーザー、プロジェクト単位スコープ、独立)+ <code>contract_owners</code>(オーナー専有属性、行存在 = オーナー判定)+ <code>project_users</code>(プロジェクト割当 + 別ロール)。</li>
@@ -166,11 +166,9 @@ erDiagram
     TEXT id PK
     TEXT contract_owner_user_id FK
     TEXT project_id FK "projects(id)"
-    TEXT end_user_id FK "end_users(id) N:1"
     TEXT question_log_id FK "question_logs(id) opt"
     TEXT inquiry_code "UNIQUE"
-    TEXT case_status "open/resolved/closed/faq_registered"
-    TEXT faq_candidate_status "none/candidate/drafted/registered"
+    TEXT faq_registration_status "unregistered/drafted/registered"
     TEXT assignee_user_id FK "users(id)"
   }
   inquiry_status_history {
@@ -182,16 +180,12 @@ erDiagram
   }
   chat_rooms {
     TEXT id PK
-    TEXT inquiry_id FK "inquiries(id)"
-    TEXT room_status "open/closed"
-    TEXT reminder_state "active/stage1~stage6_auto_closed"
-  }
-  chat_room_reminder_history {
-    TEXT id PK
-    TEXT chat_room_id FK "chat_rooms(id)"
-    TEXT from_state
-    TEXT to_state
-    TEXT changed_by FK "users(id) opt"
+    TEXT contract_owner_user_id FK
+    TEXT project_id FK "projects(id)"
+    TEXT end_user_id FK "end_users(id)"
+    TEXT source_question_log_id FK "question_logs(id) opt"
+    TEXT chat_code "UNIQUE"
+    TEXT assignee_user_id FK "users(id) opt"
   }
   chat_messages {
     TEXT id PK
@@ -329,11 +323,11 @@ erDiagram
   faqs ||--o{ question_log_faq_refs : "参照される"
   question_logs ||--o{ question_log_faq_refs : "M:N参照FAQ"
   question_logs ||--o| inquiries : "未解決質問起点(opt)"
-  inquiries ||--|| chat_rooms : has
-  inquiries }o--|| end_users : "N:1(end_user_id)"
+  question_logs ||--o| chat_rooms : "チャット起点(opt)"
   inquiries ||--o{ inquiry_status_history : tracks
+  projects ||--o{ chat_rooms : holds
+  end_users ||--o{ chat_rooms : "N:1(end_user_id)"
   chat_rooms ||--o{ chat_messages : contains
-  chat_rooms ||--o{ chat_room_reminder_history : tracks
   end_users ||--o{ chat_messages : "投稿(actor_end_user_id)"
   end_users ||--o{ access_tokens : "再入室トークン(end_user_id)"
   end_users ||--o{ audit_logs : "操作(actor_end_user_id)"
