@@ -89,7 +89,7 @@ export async function processOpenInquiryRetention(env: Env) {
 ```
 src/
 ├── routes/
-│   └── inquiries.ts          # /inquiries/* 参照 + 担当変更 + 状況 open/closed 手動操作
+│   └── inquiries.ts          # /inquiries/* 参照 + 状況 open/closed 手動操作(担当者概念なし)
 ├── handlers/
 ├── domain/
 │   └── inquiry-status.ts     # 状況 2 値(open / closed)の遷移ガード(手動操作のみ)

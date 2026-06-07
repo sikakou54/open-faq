@@ -109,6 +109,7 @@ erDiagram
     TEXT name
     TEXT status "active/deleted"
     TEXT widget_public_key "UNIQUE"
+    TEXT default_assignee_user_id FK "users(id) opt / チャット既定担当"
   }
   project_legacy_keys {
     TEXT id PK
@@ -169,7 +170,6 @@ erDiagram
     TEXT question_log_id FK "question_logs(id) opt"
     TEXT inquiry_code "UNIQUE"
     TEXT status "open/closed"
-    TEXT assignee_user_id FK "users(id)"
   }
   inquiry_status_history {
     TEXT id PK
@@ -185,7 +185,7 @@ erDiagram
     TEXT end_user_id FK "end_users(id)"
     TEXT source_question_log_id FK "question_logs(id) opt"
     TEXT chat_code "UNIQUE"
-    TEXT assignee_user_id FK "users(id) opt"
+    TEXT assignee_user_id FK "users(id) NOT NULL / 担当者必須"
   }
   chat_messages {
     TEXT id PK
