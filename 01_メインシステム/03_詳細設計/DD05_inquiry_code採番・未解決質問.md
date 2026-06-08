@@ -147,7 +147,7 @@ describe('inquiry status transition (manual only)', () => {
 |---|---|
 | 単体 | `generateInquiryCode` 衝突リトライ最大 3 回 / `inquiries.status` 全 2 値遷移(`open` ↔ `closed`、`reason=manual` のみ) |
 | 結合 | inquiry_code UNIQUE 制約違反 → リトライ → 成功 |
-| 異常系 | 不正値(`open` / `closed` 以外)は 400 `INVALID_STATE` / FAQ 下書き保存・公開後に `status` が変化しないこと(連動ロジックなし)|
+| 異常系 | 不正値(`open` / `closed` 以外)は 400 `INVALID_STATE` / FAQ 保存(状態を `published` 等に変更)後に `inquiries.status` が変化しないこと(連動ロジックなし)|
 | 境界値 | 保持期間 729 / 730 / 731 日経過時の通知挙動 |
 | 性能 | `GET /api/v1/inquiries` p95 < 500ms（`idx_inquiries_contract_status_created` 利用） |
 
