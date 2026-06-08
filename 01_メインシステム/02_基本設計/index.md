@@ -69,7 +69,7 @@
 | [../01_要件定義/FR15_セキュリティ.md](../01_要件定義/FR15_セキュリティ.md) | 不正利用検知 / 鍵管理 / 監査 | — | — |
 | [../01_要件定義/FR16_お知らせ.md](../01_要件定義/FR16_お知らせ.md) | お知らせ配信 / 既読 | SCR-021 / SCR-022 | `GET /v1/inbox-messages` |
 | [../01_要件定義/FR17_検索・全文検索.md](../01_要件定義/FR17_検索・全文検索.md) | FTS 検索 | SCR-012 | `GET /v1/faqs?q=` |
-| [../01_要件定義/FR18_インポート・エクスポート.md](../01_要件定義/FR18_インポート・エクスポート.md) | FAQ / 質問ログのインポート/エクスポート | SCR-012 / SCR-015 | `POST /v1/imports`, `GET /v1/exports` |
+| [../01_要件定義/FR18_インポート・エクスポート.md](../01_要件定義/FR18_インポート・エクスポート.md) | FAQ の CSV インポート/エクスポート / 質問ログのエクスポート | SCR-012 / SCR-012-M1 / SCR-015 | `POST /v1/imports`(CSV のみ), `GET /v1/exports`(CSV のみ)|
 | [../01_要件定義/FR19_UX細部・データ運用.md](../01_要件定義/FR19_UX細部・データ運用.md) | UX 細部要件 / データ運用要件 | 全画面 | — |
 | [../01_要件定義/FR20_アクセス制御細部.md](../01_要件定義/FR20_アクセス制御細部.md) | アクセス制御細部要件 | — | — |
 | [../01_要件定義/FR21_AI推論動作.md](../01_要件定義/FR21_AI推論動作.md) | AI 推論動作要件 | — | `POST /v1/widget/ai-reply` |
@@ -133,6 +133,7 @@ graph LR
 | SCR-010-M1 | プロジェクト設定モーダル(「管理者を指定」セクション・削除動線は持たない)| §5.SCR-010-M1 | `POST/PATCH /v1/projects` | `projects`(作成時にオーナー grants 自動 INSERT)| オーナー専有 | E-INPUT-* | MSG-SCR-010-M1-* | §6 認可判定 | - | - |
 | SCR-011 | 未解決質問一覧 / 詳細 | §5.SCR-011 | `GET /v1/inquiries` | `question_logs`, `inquiries` | オーナー / 該当 PJ の `member`+ | E-BIZ-CASE-* | MSG-SCR-011-* | §6 オーナー境界 | - | - |
 | SCR-012 | FAQ 管理 | §5.SCR-012 | `GET /v1/faqs` ほか | `faqs`, `faq_revisions`, `faq_search_fts` | オーナー / 該当 PJ の `member`+ | E-BIZ-NOT-FOUND | MSG-SCR-012-* | §6 認可判定 | - | §3 FAQ 件数上限 |
+| SCR-012-M1 | FAQ CSV インポートモーダル | §5.SCR-012-M1 | `POST /faqs/import`(CSV のみ), `GET /faqs/import/template` | `faqs`, `faq_revisions` | オーナー / 該当 PJ の `member`+ | E-INPUT-CSV-INVALID, E-INPUT-CSV-FAQID-NOTFOUND | MSG-SCR-012-M1-* | §6 認可判定 | - | §3 1 ファイル 1000 件 |
 | SCR-013 | 個別チャット一覧 | §5.SCR-013 | `GET /v1/chat-rooms` | `chat_rooms`, `chat_messages` | オーナー / 該当 PJ の `member`+ | E-BIZ-CHAT-* | MSG-SCR-013-* | §6 オーナー境界 | - | §3 チャット部屋数上限 |
 | SCR-033 | 個別チャット部屋(利用者側)| §5.SCR-033 | `POST /v1/chats/:id/messages`, `PATCH /chat-rooms/{id}`(担当変更)| `chat_rooms`(`assignee_user_id` NOT NULL), `chat_messages` | オーナー / 該当 PJ の `member`+ | E-BIZ-CHAT-* / E-INPUT-ASSIGNEE | MSG-SCR-033-* | §6 オーナー境界 | - | §3 チャット部屋数上限 |
 | SCR-034 | チャット管理(デフォルト担当者設定)| §5.SCR-034 | `PATCH /projects/{id}`(`defaultAssigneeUserId`)| `projects`(`default_assignee_user_id`)| オーナー / 該当 PJ の `admin` | E-AUTHZ-FORBIDDEN | MSG-SCR-034-* | §6 認可判定 | - | - |
