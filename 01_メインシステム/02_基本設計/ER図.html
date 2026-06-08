@@ -171,13 +171,6 @@ erDiagram
     TEXT inquiry_code "UNIQUE"
     TEXT status "open/closed"
   }
-  inquiry_status_history {
-    TEXT id PK
-    TEXT inquiry_id FK "inquiries(id)"
-    TEXT from_status
-    TEXT to_status
-    TEXT changed_by FK "users(id)"
-  }
   chat_rooms {
     TEXT id PK
     TEXT contract_owner_user_id FK
@@ -324,7 +317,6 @@ erDiagram
   question_logs ||--o{ question_log_faq_refs : "M:N参照FAQ"
   question_logs ||--o| inquiries : "未解決質問起点(opt)"
   question_logs ||--o| chat_rooms : "チャット起点(opt)"
-  inquiries ||--o{ inquiry_status_history : tracks
   projects ||--o{ chat_rooms : holds
   end_users ||--o{ chat_rooms : "N:1(end_user_id)"
   chat_rooms ||--o{ chat_messages : contains

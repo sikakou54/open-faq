@@ -145,7 +145,7 @@ describe('inquiry status transition (manual only)', () => {
 
 | 観点 | 内容 |
 |---|---|
-| 単体 | `generateInquiryCode` 衝突リトライ最大 3 回 / `inquiries.status` 全 2 値遷移(`open` ↔ `closed`、`reason=manual` のみ) |
+| 単体 | `generateInquiryCode` 衝突リトライ最大 3 回 / `inquiries.status` 全 2 値遷移(`open` ↔ `closed`) |
 | 結合 | inquiry_code UNIQUE 制約違反 → リトライ → 成功 |
 | 異常系 | 不正値(`open` / `closed` 以外)は 400 `INVALID_STATE` / FAQ 保存(状態を `published` 等に変更)後に `inquiries.status` が変化しないこと(連動ロジックなし)|
 | 境界値 | 保持期間 729 / 730 / 731 日経過時の通知挙動 |
