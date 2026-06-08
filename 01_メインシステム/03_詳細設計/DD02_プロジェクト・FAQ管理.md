@@ -145,7 +145,7 @@ async function createProject(actor: Principal, req: CreateProjectRequest) {
 
 ### 3.11 プロジェクト削除時の論理削除カスケード + 孤立メンバー cleanup(FR-030b)
 
-`DELETE /projects/{id}` 実行時は **SCR-026 のみ** から起動可能。以下のトランザクション境界で論理削除する:
+`DELETE /projects/{id}` 実行時は **SCR-015 プロジェクト情報パネルのオーナー専有 DangerSection のみ** から起動可能。以下のトランザクション境界で論理削除する:
 
 1. 削除前のスナップショット: 当該プロジェクトに `valid=1` で割当のあるメンバー userId 一覧を取得(オーナー含む)
 2. `UPDATE project_users SET valid=0, updated_at=now() WHERE project_id=? AND valid=1`(オーナー自身の admin 行も含む全行を論理削除)
