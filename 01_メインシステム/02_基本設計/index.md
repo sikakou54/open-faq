@@ -65,7 +65,7 @@
 | [../01_要件定義/FR11_管理ダッシュボード.md](../01_要件定義/FR11_管理ダッシュボード.md) | KPI ダッシュボード | SCR-020 | `GET /v1/dashboard` |
 | [../01_要件定義/FR12_通知.md](../01_要件定義/FR12_通知.md) | 通知 / インボックス / メール | SCR-021 / SCR-022 | `GET /v1/inbox-messages` |
 | [../01_要件定義/FR13_ウィジェット.md](../01_要件定義/FR13_ウィジェット.md) | ウィジェット配信 + 設定 + 許可ドメイン | SCR-014 | `GET /v1/widget-config` ほか |
-| [../01_要件定義/FR14_プライバシー・データ管理.md](../01_要件定義/FR14_プライバシー・データ管理.md) | プライバシー / データ削除 | SCR-018 / SCR-024 | `POST /v1/withdrawal-requests` |
+| [../01_要件定義/FR14_プライバシー・データ管理.md](../01_要件定義/FR14_プライバシー・データ管理.md) | プライバシー / データ削除 | SCR-018 / SCR-035 / SCR-024 | `POST /v1/withdrawal-requests` |
 | [../01_要件定義/FR15_セキュリティ.md](../01_要件定義/FR15_セキュリティ.md) | 不正利用検知 / 鍵管理 / 監査 | — | — |
 | [../01_要件定義/FR16_お知らせ.md](../01_要件定義/FR16_お知らせ.md) | お知らせ配信 / 既読 | SCR-021 / SCR-022 | `GET /v1/inbox-messages` |
 | [../01_要件定義/FR17_検索・全文検索.md](../01_要件定義/FR17_検索・全文検索.md) | FTS 検索 | SCR-012 | `GET /v1/faqs?q=` |
@@ -141,7 +141,8 @@ graph LR
 | SCR-015 | プロジェクトホーム(プロジェクト視点)+ 課金部(契約 WS 配置)。**プロジェクト削除動線を集約**| §5.SCR-015 | `GET /v1/usage`, `GET /v1/invoices`, `DELETE /v1/projects/{id}` | `usage_metering`, `billing_invoices`, `projects.valid` | プロジェクト視点 = オーナー / 該当 PJ の `member`+ / 課金部・プロジェクト削除部 = オーナー専有 | E-AUTHZ-OWNER-ONLY | MSG-SCR-015-*(プロジェクト削除 MSG: BTN-DELETE-001 / CONFIRM_*-DELETE-001 / TOAST-DELETE-001) | §6 認可判定 | - | §9〜§11 |
 | SCR-017 | ユーザー管理(プロジェクト WS のみ)| §5.SCR-017 | `POST /v1/projects/:id/members`, `PATCH /v1/projects/:id/members/:userId`, `DELETE /v1/projects/:id/members/:userId`(アカウント全体論理削除)| `users.valid`, `project_users.valid`, `sessions.revoked_at` | オーナー / `admin`(該当 PJ)| E-AUTHZ-MEMBER / E-AUTHZ-ADMIN-DELETE-PROTECTED / E-BIZ-ACCOUNT-INACTIVE | MSG-SCR-017-* | §3 招待受諾 | - | - |
 | SCR-017-M1 | メンバー招待 / 編集モーダル(プロジェクト単位)| §5.SCR-017-M1 | `POST /v1/projects/:id/members`(招待), `PATCH /v1/projects/:id/members/:userId`(ロール変更), `DELETE /v1/projects/:id/members/:userId`(離脱)| `users`, `project_users` | オーナー / `admin`(該当 PJ)| E-INPUT-* / E-BIZ-MEMBER-NO-GRANT | MSG-SCR-017-M1-* | §3 招待トークン | - | - |
-| SCR-018 | プライバシーポリシー / 利用規約 | §5.SCR-018 | `GET /v1/terms/current` | `terms_versions` | 認証不要 | - | MSG-SCR-018-* | - | - | - |
+| SCR-018 | 利用規約閲覧(利用規約のみ)| §5.SCR-018 | `GET /v1/terms/current` | `terms_versions`(`doc_type='terms_of_service'`)| 認証不要 | - | MSG-SCR-018-* | - | - | - |
+| SCR-035 | プライバシーポリシー閲覧(プライバシーポリシーのみ)| §5.SCR-035 | `GET /v1/privacy/current` | `terms_versions`(`doc_type='privacy_policy'`)| 認証不要 | - | MSG-SCR-035-* | - | - | - |
 | SCR-021 | お知らせ一覧 | §5.SCR-021 | `GET /v1/inbox-messages` | `inbox_messages` | 全ユーザー | - | MSG-SCR-021-* | §6 認可判定 | - | - |
 | SCR-022 | お知らせ詳細 | §5.SCR-022 | `PATCH /v1/inbox-messages/:id/read` | `inbox_messages` | 全ユーザー | - | MSG-SCR-022-* | §6 認可判定 | - | - |
 | SCR-023 | メール確認 | §5.SCR-023 | `POST /v1/email-verification` | `accounts` | - | E-AUTH-VERIFICATION | MSG-SCR-023-* | §3 メール確認 | - | - |
