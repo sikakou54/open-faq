@@ -529,7 +529,7 @@ API パスはプロジェクトスコープ表記を維持(操作起点が「当
 | 関連画面 | SCR-014 |
 
 リクエスト: `{}`(ボディなし。公開キーは無期限のため有効期限指定パラメータは持たない)
-レスポンス(201): `{ "newKey": "pk_live_xyz789...", "deprecationWarning": "..." }`(`deprecationWarning` は旧キーの 30 日猶予失効予告)
+レスポンス(201): `{ "newKey": "pk_live_xyz789...", "deprecationWarning": "..." }`(`deprecationWarning` は旧キーの 24 時間猶予失効予告)
 
 #### 5.3.5 `GET /projects/{id}/notification-settings`(v2.0 で廃止)/ 5.3.6 `PATCH /projects/{id}/notification-settings`(v2.0 で廃止)
 
