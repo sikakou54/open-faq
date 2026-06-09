@@ -227,7 +227,7 @@ erDiagram
     TEXT id PK
     TEXT contract_owner_user_id FK
     TEXT stripe_subscription_id "UNIQUE"
-    TEXT status "trialing/active/past_due/canceled/unpaid/incomplete"
+    TEXT status "active/past_due/canceled/unpaid/incomplete"
     TEXT plan_id
   }
   billing_invoices {

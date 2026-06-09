@@ -32,7 +32,7 @@
 | DB | D1(`main-db-prod`) | D1 Time Travel(直近 30 日) |
 | インフラ | Cloudflare Workers + KV + R2 + Queues + Cron Triggers | apac リージョン |
 | 外部サービス | Stripe(課金 Webhook)、Resend(メール送信)、Workers AI(AI 推論) | 連携 IF #1〜#12 |
-| バッチ | tombstone 日次 / 未解決質問・個別チャット保持期間処理 / 月次集計 / 月次確定 cron / トライアル終了判定 / 監査ログ完全性検証 / RetentionConsistencyChecker 等 | §06_運用手順 §1 を参照 |
+| バッチ | tombstone 日次 / 未解決質問・個別チャット保持期間処理 / 月次集計 / 月次確定 cron / 無料枠超過・支払方法未登録判定 / 監査ログ完全性検証 / RetentionConsistencyChecker 等 | §06_運用手順 §1 を参照 |
 | ログ | アプリログ(R2 / 90 日)、エラーログ(180 日)、監査ログ(1y / 5y / 7y) | JSON Lines |
 | 監視対象 | NFR-804 (a)〜(h) の 8 KPI + AI 品質メトリクス + D1 容量 + 連携 IF 状況 + サーキットブレーカ状態 | Cloudflare Workers Analytics Engine |
 

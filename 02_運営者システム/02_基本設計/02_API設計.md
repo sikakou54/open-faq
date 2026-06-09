@@ -562,7 +562,6 @@ verifyStripeSignature(payload, header, secret, tolerance=300s):
 | `invoice.finalized` | 請求書確定 |
 | `customer.subscription.updated` | プラン変更反映 |
 | `customer.subscription.deleted` | 解約 → `suspended` 遷移 |
-| `customer.subscription.trial_will_end` | トライアル終了予告 |
 | `charge.refunded` | 返金 → 請求書更新 |
 
 ##### DLQ・リプレイ設計

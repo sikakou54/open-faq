@@ -501,13 +501,12 @@ src/
 │   │   ├── clicked.ts
 │   │   ├── failed.ts
 │   │   └── suppressed.ts
-│   └── stripe/               # 9 イベント種別 (IF #10)
+│   └── stripe/               # 8 イベント種別 (IF #10)
 │       ├── invoice-paid.ts
 │       ├── invoice-payment-failed.ts
 │       ├── customer-subscription-created.ts
 │       ├── customer-subscription-updated.ts
 │       ├── customer-subscription-deleted.ts
-│       ├── customer-subscription-trial-will-end.ts
 │       ├── charge-refunded.ts
 │       ├── charge-dispute-created.ts
 │       └── customer-tax-id-updated.ts
@@ -541,7 +540,7 @@ src/
 ├── jobs/
 │   ├── monthly-aggregate.ts        # UTC 15:00 (月末日)
 │   ├── monthly-finalize.ts         # JST 02:00 (月初 1 日)
-│   ├── trial-end-check.ts          # JST 00:00 (毎日)
+│   ├── quota-exceeded-no-payment-check.ts  # JST 00:00 (毎日) 支払方法ゲート(FR-136)
 │   ├── open-inquiry-retention-notice.ts # JST 09:00 (毎日)
 │   ├── open-inquiry-retention.ts   # JST 02:00 (毎日)
 │   ├── auto-close-evaluation.ts    # */5 * * * * (5 分間隔)
