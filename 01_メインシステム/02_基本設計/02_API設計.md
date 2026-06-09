@@ -491,8 +491,7 @@ API パスはプロジェクトスコープ表記を維持(操作起点が「当
 ```json
 {
   "id": "01HZ...",
-  "widgetKey": "pk_live_abc123...",
-  "keyExpiresAt": "2027-05-13T..."
+  "widgetKey": "pk_live_abc123..."
 }
 ```
 
@@ -528,8 +527,8 @@ API パスはプロジェクトスコープ表記を維持(操作起点が「当
 | 認証 | 再認証必須 |
 | 関連画面 | SCR-014 |
 
-リクエスト: `{ "expiresIn": 7 | 30 | 90 | 180 | 365 }`
-レスポンス(201): `{ "newKey": "pk_live_xyz789...", "expiresAt": "...", "deprecationWarning": "..." }`
+リクエスト: `{}`(ボディなし。公開キーは無期限のため有効期限指定パラメータは持たない)
+レスポンス(201): `{ "newKey": "pk_live_xyz789...", "deprecationWarning": "..." }`(`deprecationWarning` は旧キーの 30 日猶予失効予告)
 
 #### 5.3.5 `GET /projects/{id}/notification-settings`(v2.0 で廃止)/ 5.3.6 `PATCH /projects/{id}/notification-settings`(v2.0 で廃止)
 
@@ -595,7 +594,7 @@ CSV 列構成は `FAQ ID, 質問, 回答, カテゴリ`。各行の `FAQ ID` で
 }
 ```
 
-エラー: 401 `WIDGET_KEY_INVALID` / `WIDGET_KEY_EXPIRED`、403 `DOMAIN_NOT_ALLOWED`、403 `CONTRACT_SUSPENDED`
+エラー: 401 `WIDGET_KEY_INVALID`、403 `DOMAIN_NOT_ALLOWED`、403 `CONTRACT_SUSPENDED`
 
 #### 5.5.2 `POST /widget/v1/ask`(質問送信)
 
