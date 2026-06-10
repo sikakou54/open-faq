@@ -74,13 +74,15 @@
 | `ai-models:available` | `["@cf/meta/llama-3.1-8b-instruct", ...]` | 60 秒 | 本書 | 運営者手動 |
 | `ai-cost:unit-prices` | `{ "<model_id>": { "input_per_1k_tokens": <yen>, "output_per_1k_tokens": <yen> } }` | 60 秒 | 本書 | 運営者手動(NFR-804 (m) FR-304) |
 
-#### 3.2.4 レート / 月次上限件数上書き
+#### 3.2.4 レート(契約単位) / 月次上限件数・無料枠(プロジェクト単位)上書き
 
 | キー形式 | 値スキーマ | TTL | 用途 |
 |---|---|---|---|
-| `rate-limit:<contract_owner_user_id>` | `{ widgetAskPerMin, chatEndUserPerMin, chatStaffPerMin }` | 30 秒(D-14) | メイン側参照 |
-| `usage-limit:<contract_owner_user_id>` | `{ questionMonthlyLimit, faqMonthlyLimit, chatRoomMonthlyLimit }` | 30 秒 | 同上 |
-| `usage-limit:min` | `{ question, faq, chatRoom }`(課金対象別下限件数) | 永続(運営者更新時のみ Invalidate) | バリデーション下限 |
+| `rate-limit:<contract_owner_user_id>` | `{ widgetAskPerMin, chatEndUserPerMin, chatStaffPerMin }` | 30 秒(D-14) | メイン側参照(レート、契約単位)|
+| `usage-limit:<contract_owner_user_id>:<project_id>` | `{ questionMonthlyLimit, faqMonthlyLimit, chatRoomMonthlyLimit, questionFreeQuota, faqFreeQuota, chatRoomFreeQuota, paymentGateStopped }` | 30 秒 | メイン側参照(月次上限件数・無料枠、**プロジェクト単位**)|
+| `usage-limit:default:<kind>` | 件数 | 永続(運営者更新時のみ Invalidate)| プロジェクト別デフォルト上限件数 |
+| `usage-limit:free-default:<kind>` | 件数 | 永続 | プロジェクト別デフォルト無料枠 |
+| `usage-limit:min` | `{ question, faq, chatRoom }`(課金対象別下限件数) | 永続 | バリデーション下限 |
 | `usage-limit:max` | `{ question, faq, chatRoom }`(課金対象別上限件数) | 永続 | バリデーション上限 |
 
 #### 3.2.5 Webhook・トークン
@@ -131,8 +133,9 @@ Namespace: `admin_archive`(本書側専用 R2 バケット)
 | `ai-params:project:<project_id>` | JSON | 60s | プロジェクト上書き |
 | `ai-models:available` | JSON 配列 | 60s | モデル一覧 |
 | `ai-cost:unit-prices` | JSON | 60s | 単価表(FR-304) |
-| `rate-limit:<contract_owner_user_id>` | JSON | 30s | レート上書き |
-| `usage-limit:<contract_owner_user_id>` | JSON | 30s | 月次上限件数上書き |
+| `rate-limit:<contract_owner_user_id>` | JSON | 30s | レート上書き(契約単位)|
+| `usage-limit:<contract_owner_user_id>:<project_id>` | JSON | 30s | 月次上限件数・無料枠上書き(プロジェクト単位)|
+| `usage-limit:default:<kind>` / `free-default:<kind>` | 件数 | 永続 | プロジェクト別デフォルト上限 / 無料枠 |
 | `usage-limit:min` / `max` | JSON | 永続 | バリデーション(課金対象別)|
 | `webhook:idempotency:<event_id>` | JSON | 30d | 冪等キャッシュ |
 | `audit-export:<job_id>` | JSON | 24h | エクスポート進捗 |

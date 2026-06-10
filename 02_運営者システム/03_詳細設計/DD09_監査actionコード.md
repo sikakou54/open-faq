@@ -83,7 +83,7 @@
 | `ai_model.switch` | 5y | - | `{from, to, rolloutPercentage}` |
 | **rate_limit.*** / **usage_limit.*** | | | |
 | `rate_limit.override` | 5y | MVP Log Only / Beta Hard Gate | `{contractOwnerUserId, before, after, overrideId}` |
-| `usage_limit.override` | 5y | MVP Log Only / Beta Hard Gate | `{contractOwnerUserId, resourceKind, before, after, overrideId}` |
+| `usage_limit.override` | 5y | MVP Log Only / Beta Hard Gate | `{contractOwnerUserId, projectId, resourceKind, before, after, overrideId}`(プロジェクト単位)|
 | `suppress_list.restore` | 5y | MVP Log Only | `{contractOwnerUserId, email}` |
 | `widget.force_stop` | 5y | MVP Log Only / Beta Hard Gate | `{contractOwnerUserId, reason}` |
 | **announcement.*** | | | |

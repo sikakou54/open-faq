@@ -166,7 +166,7 @@ async function createProject(actor: Principal, req: CreateProjectRequest) {
 2. `UPDATE project_users SET valid=0, updated_at=now() WHERE project_id=? AND valid=1`(オーナー自身の admin 行も含む全行を論理削除)
 3. 孤立メンバーの抽出: 「ステップ 1 のメンバーのうち、他プロジェクト割当(`valid=1` の `project_users`)が 0 件かつ `contract_owners` 行を持たない(非オーナー)もの」
 4. 孤立メンバーの全セッションを失効(`UPDATE sessions SET revoked_at=now()`)+ 未使用招待トークンを失効(`UPDATE access_tokens SET used_at=now() WHERE used_at IS NULL`)+ `UPDATE users SET valid=0, updated_at=now()` で論理削除
-5. `UPDATE projects SET status='deleted', valid=0, deleted_at=now(), updated_at=now() WHERE id=?` + 関連テーブル(`allowed_domains` / `faqs` / `inquiries` / `end_users` / `chat_rooms` / `question_logs`)を `valid=0, updated_at=now()` に伝播
+5. `UPDATE projects SET status='deleted', valid=0, deleted_at=now(), updated_at=now() WHERE id=?` + 関連テーブル(`allowed_domains` / `faqs` / `inquiries` / `end_users` / `chat_rooms` / `question_logs` / `project_quota_limits`)を `valid=0, updated_at=now()` に伝播(`usage_metering` は法定保管 7 年のため論理削除せず保持)
 6. 監査ログ `project.logical_delete`(`metadata` に `{ projectId, logicallyDeletedUserIds: [...] }`、`retention_class=general`)を記録
 
 オーナーの `users` 行は本処理の論理削除対象外(`contract_owners` 行を持つユーザーは常に `valid=1` 維持)。当該プロジェクトに対するオーナー自身の `project_users` admin 行は他のメンバー行と同様に `valid=0` に論理削除される。論理削除データは `updated_at < now() - 90d AND valid=0` の物理削除バッチ([DD14_バッチ・非同期処理.md §3.12](DD14_バッチ・非同期処理.md))で 90 日後に物理削除される。
@@ -206,7 +206,7 @@ await writeAudit({ action: 'project.contact_email_verified', target_project_id: 
 
 ### 3.12 90 日後物理削除バッチ(概要)
 
-詳細は [DD14_バッチ・非同期処理.md §3.12](DD14_バッチ・非同期処理.md) を正本とする。日次バッチで `valid=0 AND updated_at < now() - 90d` の行を物理削除する。`users` 行が物理 DELETE されると `ON DELETE CASCADE` で関連 `contract_owners` / `project_users` / `sessions` / `access_tokens` / `terms_agreements` 等が連鎖物理削除される。`projects` 行が物理 DELETE されると `ON DELETE CASCADE` で関連 `faqs` / `inquiries` / `chat_*` 等が連鎖物理削除される。`billing_subscriptions` は物理削除バッチの対象外(電子帳簿保存法 7 年保持、永久維持)。匿名化モード(`contract_owners.data_deletion_mode='anonymize'`)は物理削除前に匿名化処理を実施する。
+詳細は [DD14_バッチ・非同期処理.md §3.12](DD14_バッチ・非同期処理.md) を正本とする。日次バッチで `valid=0 AND updated_at < now() - 90d` の行を物理削除する。`users` 行が物理 DELETE されると `ON DELETE CASCADE` で関連 `contract_owners` / `project_users` / `sessions` / `access_tokens` / `terms_agreements` 等が連鎖物理削除される。`projects` 行が物理 DELETE されると `ON DELETE CASCADE` で関連 `faqs` / `inquiries` / `chat_*` / `project_quota_limits` 等が連鎖物理削除される。`billing_subscriptions` / `usage_metering` は物理削除バッチの対象外(電子帳簿保存法 7 年保持、永久維持。`usage_metering` はプロジェクト単位行も含め 7 年保持)。匿名化モード(`contract_owners.data_deletion_mode='anonymize'`)は物理削除前に匿名化処理を実施する。
 
 ### 3.13 関連する横断設計
 

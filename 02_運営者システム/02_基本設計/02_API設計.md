@@ -375,13 +375,13 @@ POST リクエスト: `{ "setupToken": "...", "totpCode": "...", "recoveryCodesS
 
 監査: `rate_limit.override`(5y)
 
-#### 5.4.3 `PUT /admin/v1/overrides/usage-limit/{contract_owner_user_id}`
+#### 5.4.3 `PUT /admin/v1/overrides/usage-limit/{contract_owner_user_id}/{project_id}`
 
 | 4-eyes 種別 | 承認ログ(action: `usage_limit.override`)|
 
-課金対象ごとの月次上限件数の運営者上書き(`owner_quota_overrides`、`resource_kind` = `*_monthly_limit`)。
+**プロジェクト単位**の課金対象ごとの月次上限件数・無料枠の運営者上書き。メイン側 `project_quota_limits`(`source='operator'`、`resource_kind` = `*_monthly_limit`)へ IF #5(§メイン 02_API設計 §5.13.4a)経由で反映する。`project_id` で対象プロジェクトを特定し、`reason` / `validUntil` / 運営者 ID を監査記録する。レート制限の上書き(§5.4.2、契約単位)とは別系統。
 
-リクエスト: `{ "questionLimit": 50000, "faqLimit": 1000, "chatRoomLimit": 500, "reason": "..." }`
+リクエスト: `{ "questionLimit": 50000, "questionFreeQuota": 5000, "faqLimit": 1000, "chatRoomLimit": 500, "reason": "...", "validUntil": "..." }`
 
 ### 5.5 お知らせ API
 
@@ -636,7 +636,7 @@ POST 先: メイン側 `/internal/admin-integration/v1/admin-operation/notify`
 | `key.master_rotate` | **ハードゲート** | (運用 CLI、API なし) | - |
 | `owner.suspend` / `owner.restore` | 承認ログ | `POST /admin/v1/owners/:id/suspend`, `/restore`(IF #1 経由) | SCR-091 派生 |
 | `rate_limit.override` | 承認ログ | `PUT /admin/v1/overrides/rate-limit/{owner_id}` | SCR-093 |
-| `usage_limit.override` | 承認ログ | `PUT /admin/v1/overrides/usage-limit/{owner_id}` | SCR-093 |
+| `usage_limit.override` | 承認ログ | `PUT /admin/v1/overrides/usage-limit/{owner_id}/{project_id}` | SCR-093 |
 | `owner.force_stop` | 承認ログ | `POST /admin/v1/owners/:id/force-stop` | SCR-093 派生 |
 | `owner.restore_data` | 承認ログ | `POST /admin/v1/restorations` | SCR-091 |
 | `webhook.replay` | 承認ログ | `POST /admin/v1/webhooks/replay` | SCR-097 |

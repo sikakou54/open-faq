@@ -87,7 +87,7 @@
 | SCR-090 | 削除データ参照 | §5.SCR-090 | `GET /v1/operator/deleted/:type/:id` | `accounts_retired`, `audit_logs` | 4-eyes 不要 | E-OP-AUTHZ-* | MSG-SCR-090-* | §6 再認証 | §7 監査 | - |
 | SCR-091 | 削除データ復元 | §5.SCR-091 | `POST /v1/operator/restore` | `accounts_retired`, `audit_logs` | 4-eyes 承認ログ | E-OP-RESTORE-* | MSG-SCR-091-* | §6 4-eyes 承認 | §7 監査 | - |
 | SCR-092 | AI 推論パラメータ設定 | §5.SCR-092 | `PATCH /v1/operator/ai-parameters` | `ai_parameter_overrides`, `audit_logs` | **4-eyes ハードゲート** | E-OP-4EYES-* | MSG-SCR-092-* | §6 ハードゲート | §7 監査 | - |
-| SCR-093 | レート制限・上限件数上書き | §5.SCR-093 | `PATCH /v1/operator/rate-limits` ほか | `rate_limit_overrides`, `usage_limit_overrides` | 4-eyes 承認ログ | E-OP-OVERRIDE-* | MSG-SCR-093-* | §6 4-eyes 承認 | §7 監査 | §3 契約上書き |
+| SCR-093 | レート制限(契約単位)・上限件数(プロジェクト単位)上書き | §5.SCR-093 | `PUT /admin/v1/overrides/rate-limit/{owner_id}`(契約)/ `.../usage-limit/{owner_id}/{project_id}`(プロジェクト)| `owner_quota_overrides`(レート)/ メイン `project_quota_limits`(月次上限件数)| 4-eyes 承認ログ | E-OP-OVERRIDE-* | MSG-SCR-093-* | §6 4-eyes 承認 | §7 監査 | §3 利用上限上書き |
 | SCR-094 | お知らせ作成・配信 | §5.SCR-094 | `POST /v1/operator/announcements` ほか | `announcement_drafts`, `service_announcements` | 全運営者 | E-OP-INPUT-* | MSG-SCR-094-* | §6 認可判定 | - | - |
 | SCR-096 | 運営者活動ダッシュボード | §5.SCR-096 | `GET /v1/operator/audit-logs` | `audit_logs` | 全運営者(参照)| - | MSG-SCR-096-* | §6 認可判定 | §7 監査参照 | - |
 | SCR-097 | Webhook リプレイ・DLQ 操作 | §5.SCR-097 | `POST /v1/operator/webhook/replay` ほか | `webhook_events`, `dlq_replay_log` | 4-eyes 承認ログ | E-OP-WEBHOOK-* | MSG-SCR-097-* | §6 4-eyes 承認 | §7 監査 | §13 DLQ |
@@ -106,7 +106,7 @@
 | 3 | マスター鍵ローテーション | **ハードゲート** | (運用 CLI) | `key.master_rotate` | 5y(operator_high_priv)| (CLI) |
 | 4 | 契約無効化 / サスペンション解除 | 承認ログ | SCR-091 派生 | `owner.suspend`, `owner.restore` | 5y(billing)| `POST /v1/operator/owners/:id/suspend` ほか |
 | 5 | 契約別レート制限上書き | 承認ログ | SCR-093 | `rate_limit.override` | 5y(general)| `PATCH /v1/operator/rate-limits` |
-| 6 | 契約別上限件数上書き | 承認ログ | SCR-093 | `usage_limit.override` | 5y(billing)| `PATCH /v1/operator/usage-limits` |
+| 6 | プロジェクト別上限件数上書き | 承認ログ | SCR-093 | `usage_limit.override` | 5y(billing)| `PUT /admin/v1/overrides/usage-limit/{owner_id}/{project_id}` |
 | 7 | 強制停止(契約単位)| 承認ログ | SCR-093 派生 | `owner.force_stop` | 5y(operator_high_priv)| `POST /v1/operator/owners/:id/force-stop` |
 | 8 | 削除データ復元 | 承認ログ | SCR-091 | `owner.restore_data` | 5y(operator_high_priv)| `POST /v1/operator/restore` |
 | 9 | 課金 Webhook リプレイ | 承認ログ | SCR-097 | `webhook.replay` | 5y(billing)| `POST /v1/operator/webhook/replay` |
