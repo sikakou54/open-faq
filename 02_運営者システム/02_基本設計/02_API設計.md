@@ -43,7 +43,7 @@
 | 削除データ参照 | `GET /admin/v1/deleted-resources` | Cookie | - | - |
 | 削除データ復元 | `POST /admin/v1/restorations` | Cookie + Re-Auth | `restoration_id` | 承認ログ |
 | AI パラメータ | `PUT /admin/v1/ai-parameters/{scope}/{id}` | Cookie + Re-Auth | `parameter_revision` | **ハードゲート** |
-| レート/予算上書き | `PUT /admin/v1/overrides/rate-limit/{id}`, `/budget/{id}` | Cookie + Re-Auth | `override_id` | 承認ログ |
+| レート/上限件数上書き | `PUT /admin/v1/overrides/rate-limit/{id}`, `/usage-limit/{id}` | Cookie + Re-Auth | `override_id` | 承認ログ |
 | お知らせ配信 | `POST /admin/v1/announcements`, `/{id}/schedule|cancel` | Cookie + Re-Auth | `announcement_id` | 承認ログ(即時配信のみ)|
 | 監査ログ | `GET /admin/v1/audit-logs`, `POST /audit-logs/exports` | Cookie | `export_id` | - |
 | Webhook リプレイ | `POST /admin/v1/webhooks/replay` | Cookie + Re-Auth | `replay_id` | 承認ログ |
@@ -375,11 +375,13 @@ POST リクエスト: `{ "setupToken": "...", "totpCode": "...", "recoveryCodesS
 
 監査: `rate_limit.override`(5y)
 
-#### 5.4.3 `PUT /admin/v1/overrides/budget/{contract_owner_user_id}`
+#### 5.4.3 `PUT /admin/v1/overrides/usage-limit/{contract_owner_user_id}`
 
-| 4-eyes 種別 | 承認ログ(action: `budget.override`)|
+| 4-eyes 種別 | 承認ログ(action: `usage_limit.override`)|
 
-リクエスト: `{ "monthlyBudgetJpy": 100000, "reason": "..." }`
+課金対象ごとの月次上限件数の運営者上書き(`owner_quota_overrides`、`resource_kind` = `*_monthly_limit`)。
+
+リクエスト: `{ "questionLimit": 50000, "faqLimit": 1000, "chatRoomLimit": 500, "reason": "..." }`
 
 ### 5.5 お知らせ API
 
@@ -634,7 +636,7 @@ POST 先: メイン側 `/internal/admin-integration/v1/admin-operation/notify`
 | `key.master_rotate` | **ハードゲート** | (運用 CLI、API なし) | - |
 | `owner.suspend` / `owner.restore` | 承認ログ | `POST /admin/v1/owners/:id/suspend`, `/restore`(IF #1 経由) | SCR-091 派生 |
 | `rate_limit.override` | 承認ログ | `PUT /admin/v1/overrides/rate-limit/{owner_id}` | SCR-093 |
-| `budget.override` | 承認ログ | `PUT /admin/v1/overrides/budget/{owner_id}` | SCR-093 |
+| `usage_limit.override` | 承認ログ | `PUT /admin/v1/overrides/usage-limit/{owner_id}` | SCR-093 |
 | `owner.force_stop` | 承認ログ | `POST /admin/v1/owners/:id/force-stop` | SCR-093 派生 |
 | `owner.restore_data` | 承認ログ | `POST /admin/v1/restorations` | SCR-091 |
 | `webhook.replay` | 承認ログ | `POST /admin/v1/webhooks/replay` | SCR-097 |

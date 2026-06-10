@@ -50,7 +50,7 @@
 | 4 | `owner.suspend` | - | 単独 + 事後監査 |
 | 5 | `owner.restore` | - | 対象 |
 | 6 | `pricing.update` | - | 対象 |
-| 7 | `rate_limit.override` / `budget_limit.override` | - | 対象 |
+| 7 | `rate_limit.override` / `usage_limit.override` | - | 対象 |
 | 8 | `widget.force_stop` | - | 対象 |
 | 9 | `feature.hard_gate.toggle` | - | 対象 |
 | 10 | `owner.restore_data`(FR-204、削除データ復元) | - | 対象 |

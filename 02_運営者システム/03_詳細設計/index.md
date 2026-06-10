@@ -80,7 +80,7 @@
 | 2 | 4-eyes 申請承認(MVP 3 ハードゲート + 7 承認ログ) | 承認待ち一覧、各操作モーダル | FR-226, §6.2.1(基本設計) |
 | 3 | 削除データ参照・復元(副作用 (a)〜(g) ロールバック) | SCR-090 / SCR-091 | FR-200〜FR-211, FR-222, FR-223 |
 | 4 | AI 推論パラメータ 3 階層上書き | SCR-092 | FR-055, FR-061〜FR-066, AC-034 |
-| 5 | 契約別レート/予算上書き + サプレスリスト復帰 | SCR-093 | FR-121, FR-128, FR-224, NFR-503, NFR-504 |
+| 5 | 契約別レート/上限件数上書き + サプレスリスト復帰 | SCR-093 | FR-121, FR-128, FR-224, NFR-503, NFR-504 |
 | 6 | お知らせ作成・配信(運営者) | SCR-094 | FR-149, FR-188, FR-189 |
 | 7 | 監査ログ閲覧・エクスポート(HMAC 署名) | SCR-096 | FR-229, FR-230, FR-232, NFR-306, NFR-602 |
 | 8 | 課金 Webhook リプレイ・DLQ 操作 | SCR-097 | FR-302, NFR-808, NFR-809 |
@@ -449,7 +449,7 @@ admin/
 | D-11 | 月次請求確定 cron 実装方式 | 月初 02:00 JST、(contract_owner_user_id, year_month) UNIQUE | DD08 |
 | D-12 | 4-eyes 申請承認 UI/データモデル | `operator_approvals` テーブル | DD02 |
 | D-13 | PII 誤検出ルール更新の即時反映 | KV `pii-rules:*`、過去データ修正なし | DD10, DD07 |
-| D-14 | 契約別レート/予算上書き即時反映 | KV TTL 30s + IF #5 | DD07 |
+| D-14 | 契約別レート/上限件数上書き即時反映 | KV TTL 30s + IF #5 | DD07 |
 | D-15 | AI 推論パラメータ 3 階層 | KV `ai-params:*`、project > owner > global | DD07 |
 | D-17 | 監査エクスポート HMAC 署名 | HKDF info=`audit-export`、SHA-256 | DD03 |
 | D-18 | 運営者セッショントークン TTL | MVP 8h | DD01 |

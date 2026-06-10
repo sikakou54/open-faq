@@ -35,7 +35,7 @@
 | 項目 | 規約 |
 |---|---|
 | 一般形式 | `<feature>:<scope>:<id>`(英小文字 + ハイフン + コロン区切り) |
-| 機能ごとに TTL を設定 | 認証系 60s〜15min、フラグ系 60s、ルール系 60s、レート/予算 30s、トークン系 個別 |
+| 機能ごとに TTL を設定 | 認証系 60s〜15min、フラグ系 60s、ルール系 60s、レート/上限件数 30s、トークン系 個別 |
 | 文字制限 | 英数 + `-` + `_` + `:`、最大 512 バイト |
 | 値形式 | JSON 文字列、bool、数値、または ID 文字列 |
 | Namespace | `admin_cache`(本書側専用 KV namespace) |
@@ -74,14 +74,14 @@
 | `ai-models:available` | `["@cf/meta/llama-3.1-8b-instruct", ...]` | 60 秒 | 本書 | 運営者手動 |
 | `ai-cost:unit-prices` | `{ "<model_id>": { "input_per_1k_tokens": <yen>, "output_per_1k_tokens": <yen> } }` | 60 秒 | 本書 | 運営者手動(NFR-804 (m) FR-304) |
 
-#### 3.2.4 レート / 予算上書き
+#### 3.2.4 レート / 月次上限件数上書き
 
 | キー形式 | 値スキーマ | TTL | 用途 |
 |---|---|---|---|
 | `rate-limit:<contract_owner_user_id>` | `{ widgetAskPerMin, chatEndUserPerMin, chatStaffPerMin }` | 30 秒(D-14) | メイン側参照 |
-| `budget-limit:<contract_owner_user_id>` | `{ monthlyBudgetYen }` | 30 秒 | 同上 |
-| `budget-limit:min` | 数値 | 永続(運営者更新時のみ Invalidate) | バリデーション下限 |
-| `budget-limit:max` | 数値 | 永続 | バリデーション上限 |
+| `usage-limit:<contract_owner_user_id>` | `{ questionMonthlyLimit, faqMonthlyLimit, chatRoomMonthlyLimit }` | 30 秒 | 同上 |
+| `usage-limit:min` | `{ question, faq, chatRoom }`(課金対象別下限件数) | 永続(運営者更新時のみ Invalidate) | バリデーション下限 |
+| `usage-limit:max` | `{ question, faq, chatRoom }`(課金対象別上限件数) | 永続 | バリデーション上限 |
 
 #### 3.2.5 Webhook・トークン
 
@@ -132,8 +132,8 @@ Namespace: `admin_archive`(本書側専用 R2 バケット)
 | `ai-models:available` | JSON 配列 | 60s | モデル一覧 |
 | `ai-cost:unit-prices` | JSON | 60s | 単価表(FR-304) |
 | `rate-limit:<contract_owner_user_id>` | JSON | 30s | レート上書き |
-| `budget-limit:<contract_owner_user_id>` | JSON | 30s | 予算上書き |
-| `budget-limit:min` / `max` | int | 永続 | バリデーション |
+| `usage-limit:<contract_owner_user_id>` | JSON | 30s | 月次上限件数上書き |
+| `usage-limit:min` / `max` | JSON | 永続 | バリデーション(課金対象別)|
 | `webhook:idempotency:<event_id>` | JSON | 30d | 冪等キャッシュ |
 | `audit-export:<job_id>` | JSON | 24h | エクスポート進捗 |
 | `notify-batch:<contract_owner_user_id>:<kind>` | JSON | 10m | FR-211 集約 |
@@ -196,7 +196,7 @@ SLA 集計時に除外する計画停止期間を管理:
 
 | 項目 | ガイドライン |
 |---|---|
-| TTL 既定 | キャッシュ 60 秒、レート/予算 30 秒、トークン 個別、フラグ 60 秒 |
+| TTL 既定 | キャッシュ 60 秒、レート/上限件数 30 秒、トークン 個別、フラグ 60 秒 |
 | Invalidate | 値変更後に必ず `DELETE`(TTL 待ちでは設計上の遅延が許容できる場合のみ放置) |
 | 値サイズ | 1 KB 以下を推奨、超過時は R2 退避を検討 |
 | KV API レート | `admin_cache` namespace 全体で 1000 RPS 上限を想定。超過時は L1 cache(Worker メモリ)併用 |

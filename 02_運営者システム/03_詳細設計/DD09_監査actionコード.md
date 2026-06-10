@@ -81,9 +81,9 @@
 | **ai_parameter.*** | | | |
 | `ai_parameter.update` | 5y | **MVP Hard Gate** | `{scope, scopeId, before, after, version}` |
 | `ai_model.switch` | 5y | - | `{from, to, rolloutPercentage}` |
-| **rate_limit.*** / **budget_limit.*** | | | |
+| **rate_limit.*** / **usage_limit.*** | | | |
 | `rate_limit.override` | 5y | MVP Log Only / Beta Hard Gate | `{contractOwnerUserId, before, after, overrideId}` |
-| `budget_limit.override` | 5y | MVP Log Only / Beta Hard Gate | `{contractOwnerUserId, before, after, overrideId}` |
+| `usage_limit.override` | 5y | MVP Log Only / Beta Hard Gate | `{contractOwnerUserId, resourceKind, before, after, overrideId}` |
 | `suppress_list.restore` | 5y | MVP Log Only | `{contractOwnerUserId, email}` |
 | `widget.force_stop` | 5y | MVP Log Only / Beta Hard Gate | `{contractOwnerUserId, reason}` |
 | **announcement.*** | | | |
@@ -167,7 +167,7 @@
 |---|---|
 | `owner.suspend` / `owner.restore` / `owner.physical_delete` / `owner.update` | ✅(`physical_delete` のみハードゲート) |
 | `ai_parameter.update` / `ai_model.switch` | ✅ ハードゲート |
-| `rate_limit.override` / `budget_limit.override` / `suppress_list.restore` / `widget.force_stop` | ✅(Beta から) |
+| `rate_limit.override` / `usage_limit.override` / `suppress_list.restore` / `widget.force_stop` | ✅(Beta から) |
 | `announcement.create` / `announcement.schedule` / `announcement.cancel` / `announcement.send` / `announcement.correction.issue` | - |
 | `operator.*` 全般(`invite` / `accept` / `disable` / `session.revoke` / `login.success` / `login.failed` / `lockout` / `password.reset.request` / `password.reset` / `subrole.grant` / `subrole.revoke`) | - |
 | `operator_approval.*` 全般(`request` / `start_review` / `approve` / `reject` / `withdraw` / `execute` / `expire`) | - |
