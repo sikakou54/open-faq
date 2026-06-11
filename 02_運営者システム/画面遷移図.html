@@ -1536,7 +1536,7 @@ svg.lucide { margin-right: 4px; }
   <div class="screen">
     <div class="screen-header">
       <div>
-        <span class="scr-id operator">SCR-093</span> <span class="scr-name">レート制限(契約単位)・上限件数(プロジェクト単位)上書き管理</span>
+        <span class="scr-id operator">SCR-093</span> <span class="scr-name">レート制限・利用設定上書き管理</span>
       </div>
 
       <div class="scr-user">
@@ -1623,52 +1623,33 @@ svg.lucide { margin-right: 4px; }
 
       <div class="app-main">
         <nav class="breadcrumb" aria-label="現在位置"><a>ホーム</a> / <span aria-current="page">レート制限・上限件数上書き</span></nav>
-        <header class="page-header"><div><h1>レート制限(契約単位)・上限件数(プロジェクト単位)上書き</h1><p class="page-description">レート制限は契約単位、月次上限件数・無料枠(質問数 / FAQ 件数 / 個別チャット部屋数)はプロジェクト単位(契約配下のプロジェクトを選択)で一時的に上書き設定します(緊急対応)</p></div><div><button class="btn primary">+ 上書きを追加</button></div></header>
+        <header class="page-header"><div><h1>レート制限・利用設定上書き</h1><p class="page-description">レート制限は契約単位、質問数上限と課金対象別無料枠はプロジェクト単位で一時的に上書きします。FAQ・チャットの月次上限はありません。</p></div><div><button class="btn primary">+ 上書きを追加</button></div></header>
 
         <div class="filter-bar">
           <div class="filter-item">契約検索: <span class="input" style="width:200px;"><span class="placeholder">ID / 名前 部分一致</span></span></div>
           <button class="btn small primary">検索</button>
         </div>
 
-        <div class="small" style="margin-bottom: 6px;">上書き中の契約: 1-3 / 全 3 件</div>
+        <div class="small" style="margin-bottom: 6px;">上書き中: レート 1 件 / 利用設定 2 件</div>
 
-        <!-- 上書きカード 1 -->
-        <article class="panel">
-          <header style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
-            <div><h3 style="margin: 0; font-size: 12px;">acme-sample</h3><span class="small">SAMPLE-owner-001</span></div>
-            <span class="badge-pill yellow">期限: 残 5 日</span>
-          </header>
+        <div class="panel">
+          <div class="panel-title">レート制限上書き一覧(契約単位)</div>
           <table class="wf">
-            <thead><tr><th>項目</th><th>グローバル値</th><th>上書き値</th></tr></thead>
+            <thead><tr><th>契約</th><th>項目</th><th>グローバル値</th><th>上書き値</th><th>有効期限</th><th>理由</th><th>設定者</th><th>操作</th></tr></thead>
+            <tbody><tr><td>acme-sample<br><span class="small">SAMPLE-owner-001</span></td><td>/widget/ask</td><td>60 req/min</td><td><strong style="color: #4a3674;">120 req/min</strong></td><td><span class="badge-pill yellow">残 5 日</span></td><td>キャンペーン対応</td><td>op-SAMPLE-01<br>2026-05-12</td><td><button class="btn small">編集</button><button class="btn small danger">戻す</button></td></tr></tbody>
+          </table>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">利用設定上書き一覧(プロジェクト単位)</div>
+          <table class="wf">
+            <thead><tr><th>契約</th><th>プロジェクト</th><th>課金対象</th><th>現在値</th><th>無料利用枠</th><th>上書き値</th><th>有効期限</th><th>理由</th><th>操作</th></tr></thead>
             <tbody>
-              <tr><td>/widget/ask レート制限</td><td>60 req/min</td><td><strong style="color: #4a3674;">120 req/min</strong></td></tr>
-              <tr><td>質問数 月次上限件数</td><td>1,000 件</td><td><strong style="color: #4a3674;">50,000 件</strong></td></tr>
+              <tr><td>acme-sample</td><td>サポートサイト</td><td>質問数</td><td>5,000 件</td><td>1,000 件</td><td><strong style="color: #4a3674;">50,000 件</strong></td><td><span class="badge-pill yellow">残 5 日</span></td><td>キャンペーン対応</td><td><button class="btn small">編集</button><button class="btn small danger">戻す</button></td></tr>
+              <tr><td>beta-sample</td><td>ヘルプセンター</td><td>FAQ 件数</td><td>上限なし</td><td>100 件</td><td><strong style="color: #4a3674;">無料枠 500 件</strong></td><td>2026-06-30</td><td>移行期間対応</td><td><button class="btn small">編集</button><button class="btn small danger">戻す</button></td></tr>
             </tbody>
           </table>
-          <div class="small" style="margin-top: 6px;"><strong>上書き理由:</strong> キャンペーン期間中のトラフィック急増に対応(INC-SAMPLE-005)</div>
-          <div class="small">設定者: op-SAMPLE-01 / 2026-05-12 10:00</div>
-          <footer style="display: flex; gap: 6px; justify-content: flex-end; margin-top: 8px;">
-            <button class="btn small">編集する</button>
-            <button class="btn small danger">グローバル値に戻す</button>
-          </footer>
-        </article>
-
-        <!-- 上書きカード 2 -->
-        <article class="panel">
-          <header style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
-            <div><h3 style="margin: 0; font-size: 12px;">beta-sample</h3><span class="small">SAMPLE-owner-002</span></div>
-          </header>
-          <table class="wf">
-            <thead><tr><th>項目</th><th>グローバル値</th><th>上書き値</th></tr></thead>
-            <tbody>
-              <tr><td>質問数 月次上限件数</td><td>1,000 件</td><td><strong style="color: #4a3674;">30,000 件</strong></td></tr>
-            </tbody>
-          </table>
-          <footer style="display: flex; gap: 6px; justify-content: flex-end; margin-top: 8px;">
-            <button class="btn small">編集する</button>
-            <button class="btn small danger">グローバル値に戻す</button>
-          </footer>
-        </article>
+        </div>
 
         <div class="panel">
           <div class="panel-title">

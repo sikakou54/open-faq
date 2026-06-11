@@ -379,9 +379,9 @@ POST リクエスト: `{ "setupToken": "...", "totpCode": "...", "recoveryCodesS
 
 | 4-eyes 種別 | 承認ログ(action: `usage_limit.override`)|
 
-**プロジェクト単位**の課金対象ごとの月次上限件数・無料枠の運営者上書き。メイン側 `project_quota_limits`(`source='operator'`、`resource_kind` = `*_monthly_limit`)へ IF #5(§メイン 02_API設計 §5.13.4a)経由で反映する。`project_id` で対象プロジェクトを特定し、`reason` / `validUntil` / 運営者 ID を監査記録する。レート制限の上書き(§5.4.2、契約単位)とは別系統。
+**プロジェクト単位**の質問数上限・課金対象別無料枠の運営者上書き。質問数は `limitEnabled` / `limit` / `freeQuota`、FAQ・チャットは `freeQuota` だけを受け付ける。`limitEnabled=false` の場合は `limit=null` として上限OFFを明示する。FAQ・チャットに `limit` を指定した場合は 422。
 
-リクエスト: `{ "questionLimit": 50000, "questionFreeQuota": 5000, "faqLimit": 1000, "chatRoomLimit": 500, "reason": "...", "validUntil": "..." }`
+リクエスト: `{ "questionLimitEnabled": true, "questionLimit": 50000, "questionFreeQuota": 5000, "faqFreeQuota": 1000, "chatRoomFreeQuota": 500, "reason": "...", "validUntil": "..." }`
 
 ### 5.5 お知らせ API
 

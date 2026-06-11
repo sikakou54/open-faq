@@ -79,11 +79,11 @@
 | キー形式 | 値スキーマ | TTL | 用途 |
 |---|---|---|---|
 | `rate-limit:<contract_owner_user_id>` | `{ widgetAskPerMin, chatEndUserPerMin, chatStaffPerMin }` | 30 秒(D-14) | メイン側参照(レート、契約単位)|
-| `usage-limit:<contract_owner_user_id>:<project_id>` | `{ questionMonthlyLimit, faqMonthlyLimit, chatRoomMonthlyLimit, questionFreeQuota, faqFreeQuota, chatRoomFreeQuota, paymentGateStopped }` | 30 秒 | メイン側参照(月次上限件数・無料枠、**プロジェクト単位**)|
+| `usage-limit:<contract_owner_user_id>:<project_id>` | `{ questionMonthlyLimit, questionFreeQuota, faqFreeQuota, chatRoomFreeQuota, paymentGateStopped }` | 30 秒 | メイン側参照(質問数上限・課金対象別無料枠、**プロジェクト単位**)|
 | `usage-limit:default:<kind>` | 件数 | 永続(運営者更新時のみ Invalidate)| プロジェクト別デフォルト上限件数 |
 | `usage-limit:free-default:<kind>` | 件数 | 永続 | プロジェクト別デフォルト無料枠 |
-| `usage-limit:min` | `{ question, faq, chatRoom }`(課金対象別下限件数) | 永続 | バリデーション下限 |
-| `usage-limit:max` | `{ question, faq, chatRoom }`(課金対象別上限件数) | 永続 | バリデーション上限 |
+| `usage-limit:min` | `{ question }` | 永続 | 質問数上限のバリデーション下限 |
+| `usage-limit:max` | `{ question }` | 永続 | 質問数上限のバリデーション上限 |
 
 #### 3.2.5 Webhook・トークン
 
@@ -136,7 +136,7 @@ Namespace: `admin_archive`(本書側専用 R2 バケット)
 | `rate-limit:<contract_owner_user_id>` | JSON | 30s | レート上書き(契約単位)|
 | `usage-limit:<contract_owner_user_id>:<project_id>` | JSON | 30s | 月次上限件数・無料枠上書き(プロジェクト単位)|
 | `usage-limit:default:<kind>` / `free-default:<kind>` | 件数 | 永続 | プロジェクト別デフォルト上限 / 無料枠 |
-| `usage-limit:min` / `max` | JSON | 永続 | バリデーション(課金対象別)|
+| `usage-limit:min` / `max` | JSON | 永続 | 質問数上限のバリデーション |
 | `webhook:idempotency:<event_id>` | JSON | 30d | 冪等キャッシュ |
 | `audit-export:<job_id>` | JSON | 24h | エクスポート進捗 |
 | `notify-batch:<contract_owner_user_id>:<kind>` | JSON | 10m | FR-211 集約 |

@@ -160,7 +160,7 @@ async function createProject(actor: Principal, req: CreateProjectRequest) {
 
 ### 3.11 プロジェクト削除時の論理削除カスケード + 孤立メンバー cleanup(FR-030b)
 
-`DELETE /projects/{id}` 実行時は **SCR-015 プロジェクト情報パネルのオーナー専有 DangerSection のみ** から起動可能。以下のトランザクション境界で論理削除する:
+`DELETE /projects/{id}` 実行時は **SCR-042 プロジェクト設定のオーナー専有 DangerSectionのみ** から起動可能。以下のトランザクション境界で論理削除する:
 
 1. 削除前のスナップショット: 当該プロジェクトに `valid=1` で割当のあるメンバー userId 一覧を取得(オーナー含む)
 2. `UPDATE project_users SET valid=0, updated_at=now() WHERE project_id=? AND valid=1`(オーナー自身の admin 行も含む全行を論理削除)
@@ -173,7 +173,7 @@ async function createProject(actor: Principal, req: CreateProjectRequest) {
 
 ### 3.11a プロジェクト連絡先メール確認フロー(FR-033a / SCR-032)
 
-SCR-010-M1 で `projects.contact_email` が新規入力 / 変更された時に、TPL-PROJECT_CONTACT_VERIFY 確認メールを連絡先メール宛に送信し、`access_tokens.purpose='contact_verify'`(24h、`meta={"projectId": "..."}`)を発行する。受信者は SCR-032 メンバーアカウント連絡先確認完了ページに着地し、`POST /auth/contact-verifications/{token}` 経由で確認完了。
+SCR-010-M1で初期値を入力した時、またはSCR-042で `projects.contact_email` を変更した時に、TPL-PROJECT_CONTACT_VERIFY確認メールを送信する。受信者はSCR-032へ着地し、`POST /auth/contact-verifications/{token}` で確認完了する。
 
 ```ts
 // (1) 連絡先メール変更時(POST/PATCH /projects 内)
