@@ -82,7 +82,7 @@ export async function processOpenInquiryRetention(env: Env) {
 }
 ```
 
-> **注**: retention 処理は `inquiries.status` を変更しない。FAQ 操作・個別チャット操作も本状態を変更しない(連動ロジックなし)。
+> **注**: retention 処理と FAQ 操作は `inquiries.status` を変更しない。
 
 ### 3.5 実装モジュール構成
 
@@ -109,8 +109,7 @@ src/
 | テーブル設計 | [../02_基本設計/03_テーブル設計.md](../02_基本設計/03_テーブル設計.md) |
 | API 設計 | [../02_基本設計/02_API設計.md](../02_基本設計/02_API設計.md) |
 | 運用設計 | [../04_運用設計/index.md](../04_運用設計/index.md) |
-| 将来対応 | [../05_future/index.md](../05_future/index.md) |
-| 関連 DD | [DD06_個別チャット.md](DD06_個別チャット.md) / [DD07_通知ロジック.md](DD07_通知ロジック.md) / [DD14_バッチ・非同期処理.md](DD14_バッチ・非同期処理.md) |
+| 関連 DD | [DD07_通知ロジック.md](DD07_通知ロジック.md) / [DD14_バッチ・非同期処理.md](DD14_バッチ・非同期処理.md) |
 
 ## 5. テスト観点
 

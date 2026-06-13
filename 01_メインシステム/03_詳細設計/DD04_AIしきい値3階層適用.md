@@ -92,7 +92,6 @@ IF #6 受信時に KV (`expirationTtl: 60`) と D1 (`ai_threshold_persistent_cac
 | 基本設計 | [../02_基本設計/index.md](../02_基本設計/index.md) |
 | API 設計 | [../02_基本設計/02_API設計.md](../02_基本設計/02_API設計.md) |
 | 運用設計 | [../04_運用設計/index.md](../04_運用設計/index.md) |
-| 将来対応 | [../05_future/index.md](../05_future/index.md) |
 | 関連 DD | [DD03_AI回答パイプライン.md](DD03_AI回答パイプライン.md) / [DD13_ウィジェット配信.md](DD13_ウィジェット配信.md) |
 
 ## 5. テスト観点

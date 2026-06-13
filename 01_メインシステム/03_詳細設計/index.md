@@ -6,7 +6,7 @@
 |---|---|
 | 文書名 | 詳細設計 index（メインシステム） |
 | 対象システム | FAQ AI ウィジェット SaaS / メインシステム（管理画面 + 公開ウィジェット + エンドユーザー画面） |
-| 版数 | v1.0 |
+| 版数 | v1.1 |
 | 作成日 | 2026-05-17 |
 | ステータス | 承認済 |
 | 入力文書 | [../01_要件定義/index.md](../01_要件定義/index.md) / [../02_基本設計/index.md](../02_基本設計/index.md) / [../画面遷移図.html](../画面遷移図.html) |
@@ -28,7 +28,7 @@
 
 - **管理画面**（管理者ユーザー admin 向け、SCR-001〜025）
 - **公開ウィジェット**（エンドユーザー end_user 向け、JavaScript 配信、iframe sandbox）
-- **エンドユーザー専用画面**（SCR-027 個別チャット再入室）
+- **公開ウィジェット**（通常 / 未解決 / 制限中）
 - **内部連携 API**（顧客管理システムとの IF #1〜#12 送受信）
 - **非同期処理基盤**（cron / Queue / Webhook 受信）
 
@@ -48,7 +48,6 @@
 | 詳細設計（本書） | 本ファイル | 実装に直結する具体仕様 |
 | 画面設計書 | [../画面遷移図.html](../画面遷移図.html) | 画面レイアウト、画面目的、権限、入出力、遷移、例外の視覚情報 |
 | 運用設計 | [../04_運用設計/index.md](../04_運用設計/index.md) | 運用手順 / runbook |
-| 将来対応 | [../05_future/index.md](../05_future/index.md) | MVP 後の候補 |
 
 ---
 
@@ -125,7 +124,7 @@ flowchart TB
 |---|--------------|------------|--------|------------------|
 | 1 | `pages-admin` | Cloudflare Pages | 管理画面 SPA（SCR-001〜025）配信。静的アセット + クライアントサイドルーティング。 | - |
 | 2 | `pages-widget` | Cloudflare Pages | `widget.js` および iframe コンテンツ配信。CSP / HSTS 設定。 | - |
-| 3 | `pages-public` | Cloudflare Pages | SCR-027 等の公開ページ配信。Turnstile 統合。 | - |
+| 3 | `pages-public` | Cloudflare Pages | 利用規約・プライバシーポリシー等の公開ページ配信。 | - |
 | 4 | `worker-main-api` | Workers | 管理画面用 API（`/api/v1/*`）。Cookie + CSRF 認証。 | D1 / KV / R2 / QU / AI / SS |
 | 5 | `worker-widget-api` | Workers | ウィジェット用 API（`/widget/v1/*`）。bootstrap → session token 認証。 | D1 / KV / AI |
 | 6 | `worker-internal-api` | Workers | 顧客管理連携 API（`/internal/admin-integration/v1/*`）。mTLS + 短期 JWT 認証。 | D1 / KV / QU / SS |
@@ -331,7 +330,7 @@ faq-saas/                                # 実装リポジトリ
 │   │   ├── package.json
 │   │   └── vite.config.ts
 │   ├── widget/                          # widget.js + iframe コンテンツ (pages-widget)
-│   ├── public/                          # SCR-027 等 (pages-public)
+│   ├── public/                          # 利用規約・プライバシーポリシー等 (pages-public)
 │   ├── workers/                         # Cloudflare Workers 群
 │   │   ├── main-api/                    # /api/v1/*
 │   │   ├── widget-api/                  # /widget/v1/*
@@ -384,7 +383,6 @@ src/
 │   ├── projects.ts           # /projects/*
 │   ├── faqs.ts               # /faqs/*
 │   ├── inquiries.ts          # /inquiries/*
-│   ├── chat-rooms.ts         # /chat-rooms/*
 │   ├── usage.ts              # /usage
 │   ├── billing.ts            # /billing/*
 │   ├── data.ts               # /data/*
@@ -446,9 +444,7 @@ src/
 ├── routes/
 │   ├── bootstrap.ts
 │   ├── ask.ts
-│   ├── inquiries.ts
-│   ├── chat-rooms.ts
-│   └── reentry.ts            # SCR-027 連携
+│   └── inquiries.ts
 ├── handlers/
 ├── repository/
 ├── adapter/
@@ -649,7 +645,7 @@ src/
 | 型 | PascalCase | `Inquiry`, `AnswerInput` |
 | Zod スキーマ | `xxxSchema` | `loginSchema`, `createFaqSchema` |
 | DB テーブル / カラム | snake_case | テーブル設計 |
-| API パス | kebab-case | `/chat-rooms/{id}/messages` |
+| API パス | kebab-case | `/inquiries/{id}` |
 
 #### 4.5.3 エラーハンドリング規約
 
@@ -683,14 +679,13 @@ src/
 | [DD03_AI回答パイプライン.md](DD03_AI回答パイプライン.md) | AI 回答パイプライン | FR-050〜060 | §10.1 |
 | [DD04_AIしきい値3階層適用.md](DD04_AIしきい値3階層適用.md) | AI しきい値 3 階層適用 | FR-340 / FR-341 | §10.2 |
 | [DD05_inquiry_code採番・未解決質問.md](DD05_inquiry_code採番・未解決質問.md) | inquiry_code 採番・未解決質問 | FR-070〜079 / FR-072 | §10.3 / §6 SCR-011 / §7 |
-| [DD06_個別チャット.md](DD06_個別チャット.md) | チャット | FR-080〜091, FR-086a〜c | §6 SCR-013 / SCR-033 / SCR-034(自動割り当てタブ) / §7 |
 | [DD07_通知ロジック.md](DD07_通知ロジック.md) | 通知ロジック | FR-140〜149 | §10.4 |
-| [DD08_トークン発行・検証.md](DD08_トークン発行・検証.md) | トークン発行・検証 | FR-003 / 004 / 006 / 083 / 084 | §10.5 |
+| [DD08_トークン発行・検証.md](DD08_トークン発行・検証.md) | トークン発行・検証 | FR-003 / 004 / 006 | §10.5 |
 | [DD09_認可ヘルパ.md](DD09_認可ヘルパ.md) | 認可ヘルパ | NFR-301 / FR-007 | §10.6 |
 | [DD10_監査ログ書込・完全性検証.md](DD10_監査ログ書込・完全性検証.md) | 監査ログ書込・完全性検証 | NFR-601 / NFR-602 | §10.7 / §10.8 / §15.2 |
 | [DD11_暗号化・鍵管理.md](DD11_暗号化・鍵管理.md) | 暗号化・鍵管理 | NFR-301 / NFR-401 | §10.9 |
 | [DD12_利用量計測・課金.md](DD12_利用量計測・課金.md) | 利用量計測・課金 | FR-120〜127 / FR-139 | SCR-036 プロジェクト利用量 / SCR-037 契約利用状況 / SCR-038 料金・請求 |
-| [DD13_ウィジェット配信.md](DD13_ウィジェット配信.md) | ウィジェット配信 | FR-150〜156 / FR-031 / FR-083 / 084 | §6 SCR-014(プロジェクト WS 配置・公開キーはプロジェクト単位)/ SCR-027(基本設計が正本)|
+| [DD13_ウィジェット配信.md](DD13_ウィジェット配信.md) | ウィジェット配信 | FR-150〜156, FR-156a〜d / FR-031 / FR-070〜079 | §6 SCR-014 / ウィジェット UI |
 | [DD14_バッチ・非同期処理.md](DD14_バッチ・非同期処理.md) | バッチ・非同期処理 | FR-148 / FR-191 | §10.11 / §14 |
 | [DD15_アクセシビリティ・国際化.md](DD15_アクセシビリティ・国際化.md) | アクセシビリティ・国際化 | NFR-401 / WCAG 2.1 AA | §13.4 / §13.5 |
 
@@ -701,20 +696,19 @@ src/
 実装順序は依存関係を考慮し、横断的基盤機能から積み上げ、ドメイン機能を後段で組み立てる。
 
 1. **DD11 暗号化・鍵管理** — `MASTER_KEY` / HKDF / AES-256-GCM の基盤が他すべての依存元
-2. **DD08 トークン発行・検証** — メール検証・パスワードリセット・再入室で利用
+2. **DD08 トークン発行・検証** — メール検証・パスワードリセットで利用
 3. **DD09 認可ヘルパ** — `requireTenant` / `requireProjectRole` / `requireInquiry` / `requireOwner` は全 API 共通
 4. **DD10 監査ログ書込・完全性検証** — 全業務処理で `writeAudit` を必須呼出
 5. **DD01 アカウント・ユーザー管理** — 認証・オーナー / プロジェクト管理者 / メンバーの 3 ロール
 6. **DD02 プロジェクト・FAQ 管理** — プロジェクト / FAQ CRUD + FTS5
 7. **DD03 AI 回答パイプライン** — Workers AI / PostCheck / PII scrubber
 8. **DD04 AI しきい値 3 階層適用** — KV / 永続キャッシュ / フォールバック
-9. **DD13 ウィジェット配信** — bootstrap / ask / SCR-027 再入室
+9. **DD13 ウィジェット配信** — bootstrap / ask / 未解決問い合わせID表示
 10. **DD05 inquiry_code 採番・未解決質問** — INQ-YYYYMMDD-XXXXXXXX
-11. **DD06 個別チャット** — チャット部屋・メッセージ
-12. **DD07 通知ロジック** — Resend / Queue / Webhook
-13. **DD12 利用量計測・課金** — 月次集計 / Stripe 連動
-14. **DD14 バッチ・非同期処理** — cron / Queue / DLQ 全体
-15. **DD15 アクセシビリティ・国際化** — WCAG / i18n（横断的、リリース前ゲート）
+11. **DD07 通知ロジック** — Resend / Queue / Webhook
+12. **DD12 利用量計測・課金** — 月次集計 / Stripe 連動
+13. **DD14 バッチ・非同期処理** — cron / Queue / DLQ 全体
+14. **DD15 アクセシビリティ・国際化** — WCAG / i18n（横断的、リリース前ゲート）
 
 ---
 
@@ -769,11 +763,11 @@ src/
 | データ種別 | 保持期間 | 起点 |
 |----------|---------|------|
 | FAQ | 無期限 | - |
-| question_logs / inquiries / chat / 通知 / inbox | 1 年 | created_at / closed_at |
+| question_logs / inquiries / 通知 / inbox | 1 年 | created_at / closed_at |
 | 監査ログ (general / billing / operator_high_priv) | 1y / 7y / 5y | created_at |
 | エラーログ | 180 日 | occurred_at |
 
-調整制約は [03_テーブル設計.md §4.7](../02_基本設計/03_テーブル設計.md) を正本。短縮は法令・契約義務範囲内でサポート窓口経由運営者対応、長期化は将来要件（FUT 配下）で再検討。
+調整制約は [03_テーブル設計.md §4.7](../02_基本設計/03_テーブル設計.md) を正本。短縮は法令・契約義務範囲内でサポート窓口経由運営者対応とする。
 
 ### 7.7 コンプライアンス（§13.X）
 

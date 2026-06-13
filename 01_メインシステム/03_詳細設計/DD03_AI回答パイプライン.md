@@ -439,7 +439,6 @@ function assessRegression(results: ResultPair[]): 'pass' | 'fail' | 'warn' {
 | API 設計 | [../02_基本設計/02_API設計.md](../02_基本設計/02_API設計.md) |
 | セキュリティ設計 | [../02_基本設計/09_セキュリティ設計.md](../02_基本設計/09_セキュリティ設計.md) |
 | 運用設計 | [../04_運用設計/index.md](../04_運用設計/index.md) |
-| 将来対応 | [../05_future/index.md](../05_future/index.md) |
 | 関連 DD | [DD04_AIしきい値3階層適用.md](DD04_AIしきい値3階層適用.md) / [DD13_ウィジェット配信.md](DD13_ウィジェット配信.md) / [DD05_inquiry_code採番・未解決質問.md](DD05_inquiry_code採番・未解決質問.md) / [DD14_バッチ・非同期処理.md](DD14_バッチ・非同期処理.md) |
 
 ## 5. テスト観点

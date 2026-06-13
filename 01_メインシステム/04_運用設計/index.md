@@ -32,7 +32,7 @@
 | DB | D1(`main-db-prod`) | D1 Time Travel(直近 30 日) |
 | インフラ | Cloudflare Workers + KV + R2 + Queues + Cron Triggers | apac リージョン |
 | 外部サービス | Stripe(課金 Webhook)、Resend(メール送信)、Workers AI(AI 推論) | 連携 IF #1〜#12 |
-| バッチ | tombstone 日次 / 未解決質問・個別チャット保持期間処理 / 月次集計 / 月次確定 cron / 無料枠超過・支払方法未登録判定 / 監査ログ完全性検証 / RetentionConsistencyChecker 等 | §06_運用手順 §1 を参照 |
+| バッチ | tombstone 日次 / 未解決質問保持期間処理 / 月次集計 / 月次確定 cron / 無料枠超過・支払方法未登録判定 / 監査ログ完全性検証 / RetentionConsistencyChecker 等 | §06_運用手順 §1 を参照 |
 | ログ | アプリログ(R2 / 90 日)、エラーログ(180 日)、監査ログ(1y / 5y / 7y) | JSON Lines |
 | 監視対象 | NFR-804 (a)〜(h) の 8 KPI + AI 品質メトリクス + D1 容量 + 連携 IF 状況 + サーキットブレーカ状態 | Cloudflare Workers Analytics Engine |
 
@@ -79,7 +79,6 @@
 | 要件定義 | WHAT | [../01_要件定義/index.md](../01_要件定義/index.md) |
 | 基本設計 | HOW(全体) | [../02_基本設計/index.md](../02_基本設計/index.md) |
 | 詳細設計 | HOW(実装) | [../03_詳細設計/index.md](../03_詳細設計/index.md) |
-| 将来対応 | バックログ | [../05_future/index.md](../05_future/index.md) |
 | 運営者システム運用設計 | 対称配置 | [../../02_運営者システム/04_運用設計/index.md](../../02_運営者システム/04_運用設計/index.md) |
 | 共有概念 | 正本ルール表 | [../../共有/共有概念.md](../../共有/共有概念.md) |
 

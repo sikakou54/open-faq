@@ -8,7 +8,7 @@
 | 対象システム名 | FAQ AI ウィジェット SaaS / メインシステム(利用者向け) |
 | 作成日 | 2026-05-17 |
 | 作成者 | プロジェクト設計チーム |
-| 版数 | v1.0 |
+| 版数 | v1.1 |
 | ステータス | 承認済(v1.0 初版) |
 
 ## 1. 目的・対象範囲
@@ -16,7 +16,7 @@
 | 項目 | 内容 |
 |---|---|
 | 目的 | メインシステム(利用者向け FAQ ウィジェット SaaS)の全体方針 + 設計方針 + 個別設計書への索引を示す。詳細仕様は本ディレクトリ配下の 10 個別設計書を正本とする。 |
-| 対象範囲 | 利用者(オーナー / メンバー / エンドユーザー)向け SaaS のシステム全体方針 |
+| 対象範囲 | 利用者(オーナー / プロジェクト管理者 / メンバー)向け管理SaaSと公開FAQウィジェットのシステム全体方針 |
 | 対象外 | 運営者システム([../../02_運営者システム/02_基本設計/](../../02_運営者システム/02_基本設計/))、実装ディレクトリ構成(詳細設計)、デプロイ詳細(運用設計) |
 | 想定読者 | 設計レビュアー / 実装担当者 / AI 駆動開発担当 |
 
@@ -58,7 +58,6 @@
 | [../01_要件定義/FR04_FAQ管理.md](../01_要件定義/FR04_FAQ管理.md) | FAQ CRUD + 公開 + 改版 | SCR-012 | `GET /v1/faqs` ほか |
 | [../01_要件定義/FR05_AI回答.md](../01_要件定義/FR05_AI回答.md) | AI 推論 + 信頼度しきい値判定 | ウィジェット | `POST /v1/widget/ai-reply` |
 | [../01_要件定義/FR06_未解決質問登録.md](../01_要件定義/FR06_未解決質問登録.md) | 未解決質問の登録 / 一覧 | SCR-011 | `GET /v1/inquiries` ほか |
-| [../01_要件定義/FR07_個別チャット.md](../01_要件定義/FR07_個別チャット.md) | 個別チャット一覧 / 部屋 / チャット管理 | SCR-013 / SCR-033 / SCR-034 | `POST /v1/chats/:id/messages`, `PATCH /chat-rooms/{id}`, `PATCH /projects/{id}` |
 | [../01_要件定義/FR08_未解決質問からFAQ登録.md](../01_要件定義/FR08_未解決質問からFAQ登録.md) | 未解決 → FAQ 候補化 / 公開 | SCR-011 / SCR-012 | `POST /v1/faqs/from-inquiry` |
 | [../01_要件定義/FR09_処理エラー.md](../01_要件定義/FR09_処理エラー.md) | エラー一覧 / 再実行 | SCR-019 | `GET /v1/errors` |
 | [../01_要件定義/FR10_利用量・課金.md](../01_要件定義/FR10_利用量・課金.md) | 利用量メータリング / 請求 | SCR-036 / SCR-037 / SCR-038 | `GET /v1/usage`, `GET /v1/invoices` |
@@ -85,9 +84,7 @@ graph LR
     API -->|AI 推論| OAI[OpenAI]
     API -->|未解決| Inquiry[(question_logs)]
     Inquiry --> Admin[管理者画面]
-    Admin -->|個別チャット応答| API
-    API -->|チャット| ChatRoom[(chat_rooms)]
-    ChatRoom -->|FAQ 化| FAQ[(faqs)]
+    Inquiry -->|FAQ 化| FAQ[(faqs)]
     API -->|利用量計測| Meter[(usage_metering)]
     Meter -->|月次集計| Stripe[Stripe]
     Stripe -->|Webhook IF#10| Operator[運営者システム]
@@ -102,7 +99,7 @@ graph LR
 | 可用性 | Cloudflare グローバル分散 + マルチリージョン DB レプリケーション | §13.2 |
 | スケーラビリティ | サーバーレス自動スケール + KV キャッシュ | §13.3 |
 | アクセシビリティ | WCAG 2.1 AA 準拠 | §13.4 |
-| 国際化 | i18n 基盤(MVP は日本語のみ。将来英語追加) | §13.5 / [../05_future/index.md](../05_future/index.md) |
+| 国際化 | i18n 基盤(MVP は日本語のみ) | §13.5 |
 | バックアップ | D1 自動バックアップ + R2 ライフサイクル | §13.6 / [../04_運用設計/02_バックアップ・リストア設計.md](../04_運用設計/02_バックアップ・リストア設計.md) |
 | データ保持 | テーブル別 retention class 制御 | §13.7 |
 
@@ -134,11 +131,8 @@ graph LR
 | SCR-011 | 要対応の質問 一覧 / 詳細 | §5.SCR-011 | `GET /v1/inquiries` | `question_logs`, `inquiries` | オーナー / 該当 PJ の `member`+ | E-BIZ-CASE-* | MSG-SCR-011-* | §6 オーナー境界 | - | - |
 | SCR-012 | FAQ 管理 | §5.SCR-012 | `GET /v1/faqs` ほか | `faqs`, `faq_revisions`, `faq_search_fts` | オーナー / 該当 PJ の `member`+ | E-BIZ-NOT-FOUND | MSG-SCR-012-* | §6 認可判定 | - | §3 FAQ 件数上限 |
 | SCR-012-M1 | FAQ CSV インポートモーダル | §5.SCR-012-M1 | `POST /faqs/import`(CSV のみ), `GET /faqs/import/template` | `faqs`, `faq_revisions` | オーナー / 該当 PJ の `member`+ | E-INPUT-CSV-INVALID, E-INPUT-CSV-FAQID-NOTFOUND | MSG-SCR-012-M1-* | §6 認可判定 | - | §3 1 ファイル 1000 件 |
-| SCR-013 | 個別チャット一覧 | §5.SCR-013 | `GET /v1/chat-rooms` | `chat_rooms`, `chat_messages` | オーナー / 該当 PJ の `member`+ | E-BIZ-CHAT-* | MSG-SCR-013-* | §6 オーナー境界 | - | 月次上限なし |
-| SCR-033 | 個別チャット部屋(利用者側)| §5.SCR-033 | `POST /v1/chats/:id/messages`, `PATCH /chat-rooms/{id}`(担当変更)| `chat_rooms`(`assignee_user_id` NOT NULL), `chat_messages` | オーナー / 該当 PJ の `member`+ | E-BIZ-CHAT-* / E-INPUT-ASSIGNEE | MSG-SCR-033-* | §6 オーナー境界 | - | 月次上限なし |
-| SCR-034 | 自動割り当て(チャット配下タブ)| §5.SCR-034 | `PATCH /projects/{id}`(`defaultAssigneeUserId`)| `projects` | オーナー / 該当 PJ の `admin` | E-AUTHZ-FORBIDDEN | MSG-SCR-034-* | §6 認可判定 | - | - |
 | SCR-014 | ウィジェット設定(プロジェクト WS / 公開キー + 見た目 + プレビュー)| §5.SCR-014 | `PATCH /v1/widget-config`, `POST /v1/projects/{id}/widget-key/rotate` | `projects`, `allowed_domains`, `project_legacy_keys` | 当該 PJ の `admin` 以上(`member` は閲覧のみ)| E-INPUT-DOMAIN | MSG-SCR-014-* | §6 API キー検証 | §12 ウィジェット保護 | - |
-| SCR-015 | 概要(プロジェクト)| §5.SCR-015 | `GET /v1/usage?viewMode=project` | `usage_metering`, `inquiries`, `chat_rooms`, `faqs` | オーナー / 該当 PJ の `member`+ | E-AUTHZ-FORBIDDEN | MSG-SCR-015-* | §6 認可判定 | - | - |
+| SCR-015 | 概要(プロジェクト)| §5.SCR-015 | `GET /v1/usage?viewMode=project` | `usage_metering`, `inquiries`, `faqs` | オーナー / 該当 PJ の `member`+ | E-AUTHZ-FORBIDDEN | MSG-SCR-015-* | §6 認可判定 | - | - |
 | ~~SCR-015-M1~~ | (廃止)月次上限件数設定はプロジェクト単位に移行し SCR-036-M1 へ統合 | — | — | — | — | — | — | — | — | — |
 | SCR-017 | メンバー(プロジェクト)| §5.SCR-017 | プロジェクトメンバーAPI(割当解除は当該行のみ)| `users`, `project_users` | オーナー / `admin`(該当 PJ)| E-BIZ-MEMBER-NO-GRANT | MSG-SCR-017-* | §3 招待受諾 | - | - |
 | SCR-017-M1 | メンバー招待 / 編集モーダル(プロジェクト単位)| §5.SCR-017-M1 | `POST /v1/projects/:id/members`(招待), `PATCH /v1/projects/:id/members/:userId`(ロール変更), `DELETE /v1/projects/:id/members/:userId`(離脱)| `users`, `project_users` | オーナー / `admin`(該当 PJ)| E-INPUT-* / E-BIZ-MEMBER-NO-GRANT | MSG-SCR-017-M1-* | §3 招待トークン | - | - |
@@ -151,8 +145,7 @@ graph LR
 | SCR-023 | メール確認 | §5.SCR-023 | `POST /v1/email-verification` | `accounts` | - | E-AUTH-VERIFICATION | MSG-SCR-023-* | §3 メール確認 | - | - |
 | SCR-024 | 退会申請 | §5.SCR-024 | `POST /v1/withdrawal-requests` | `withdrawal_requests` | オーナー専有 | E-BIZ-WITHDRAWAL | MSG-SCR-024-* | §6 オーナー専有 | - | §5 退会フロー |
 | SCR-025 | 規約再同意割込み | §5.SCR-025 | `POST /v1/terms/agree` | `terms_agreements` | 全ユーザー | E-AUTHZ-TERMS | MSG-SCR-025-* | §3 規約再同意 | - | - |
-| SCR-026 | 契約概要 | §5.SCR-026 | `GET /v1/usage?viewMode=owner` | `usage_metering`, `question_logs`, `chat_rooms`, `faqs`, `projects.valid` | オーナー専有 | E-AUTHZ-OWNER-ONLY | MSG-SCR-026-* | §6 認可判定 | - | - |
-| SCR-027 | エンドユーザー再入室 | §5.SCR-027 | `GET /v1/widget/sessions/:token` | `access_tokens`, `chat_rooms` | エンドユーザー | E-AUTH-TOKEN | MSG-SCR-027-* | §3 ウィジェットトークン | §12 ウィジェット保護 | - |
+| SCR-026 | 契約概要 | §5.SCR-026 | `GET /v1/usage?viewMode=owner` | `usage_metering`, `question_logs`, `faqs`, `projects.valid` | オーナー専有 | E-AUTHZ-OWNER-ONLY | MSG-SCR-026-* | §6 認可判定 | - | - |
 | SCR-028 | 個人設定 | §5.SCR-028 | `PATCH /v1/me`, `POST /v1/me/password`, `GET /v1/me/sessions` | `accounts`, `sessions`, `project_users` | 全認証ユーザー(自分のみ)| E-AUTH-* | MSG-SCR-028-* | §3 | §7 | - |
 | SCR-037 | 契約利用状況 | §5.SCR-037 | `GET /owner/projects/usage` | `usage_metering` | オーナー専有 | E-AUTHZ-OWNER-ONLY | MSG-SCR-037-* | §6 | - | §3a |
 | SCR-038 | 料金・請求 | §5.SCR-038 | `GET /billing/summary`, `GET /billing/invoices` | `billing_*` | オーナー専有 | E-BILL-* | MSG-SCR-038-* | §6 | - | §5〜§16 |
@@ -185,7 +178,6 @@ graph LR
 | 要件定義 | WHAT(機能要件 / 非機能要件 / 業務要件 / 受入条件) | [../01_要件定義/index.md](../01_要件定義/index.md) |
 | 詳細設計 | 実装関連の詳細(モジュール構成 / バッチ / ログ / 監視 / 実装ガイドライン) | [../03_詳細設計/index.md](../03_詳細設計/index.md) |
 | 運用設計 | 監視 / バックアップ / ログ / 障害対応 / リリース / 運用手順 | [../04_運用設計/index.md](../04_運用設計/index.md) |
-| 将来対応 | MVP 範囲外 | [../05_future/index.md](../05_future/index.md) |
 | 画面遷移図(ワイヤーフレーム)| エンドユーザー UI 表現 | [../画面遷移図.html](../画面遷移図.html) |
 | 運営者側ドキュメント | 顧客管理システム側設計書 | [../../02_運営者システム/02_基本設計/index.md](../../02_運営者システム/02_基本設計/index.md) |
 | 共有概念対応表 | メイン / 運営者の正本所在 | [../../共有/共有概念.md](../../共有/共有概念.md) |
