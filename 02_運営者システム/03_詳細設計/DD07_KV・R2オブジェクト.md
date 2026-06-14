@@ -66,7 +66,7 @@
 
 | キー形式 | 値スキーマ | TTL | 主管 | 更新元 |
 |---|---|---|---|---|
-| `pii-rules:regex` | `[{ id, pattern, enabled }, ...]` | 60 秒(D-13) | 本書 | SCR-098 `POST /pii-rules/revisions` |
+| `pii-rules:regex` | `[{ id, pattern, enabled }, ...]` | 60 秒(D-13) | 本書 | SCR-097 `POST /pii-rules/revisions` |
 | `pii-rules:classifier` | `{ threshold, weights, modelId }` | 60 秒(D-13) | 本書 | 同上 |
 | `ai-params:global` | `{ confidenceThreshold, relevanceThreshold, modelId }` | 60 秒(D-15) | 本書 | SCR-092 |
 | `ai-params:owner:<contract_owner_user_id>` | 同上 | 60 秒 | 本書 | SCR-092 |
@@ -104,7 +104,7 @@ Namespace: `admin_archive`(本書側専用 R2 バケット)
 
 | パス | 用途 | 保持 | アクセス |
 |---|---|---|---|
-| `dlq-stripe-events/<event_id>.json` | DLQ 退避 Webhook ペイロード | 30 日(life-cycle rule) | BillingWebhookWorker / SCR-097 |
+| `dlq-stripe-events/<event_id>.json` | DLQ 退避 Webhook ペイロード | 30 日(life-cycle rule) | BillingWebhookWorker / SCR-096 |
 | `audit-export/<job_id>-<seq>.csv` | 監査ログエクスポート(CSV) | 24 時間 | AdminConsoleWorker |
 | `audit-export/<job_id>-<seq>.jsonl` | 同(JSONL) | 24 時間 | 同上 |
 | `audit-export/<job_id>-<seq>.sig` | HMAC 署名ファイル(D-17) | 24 時間 | 同上 |

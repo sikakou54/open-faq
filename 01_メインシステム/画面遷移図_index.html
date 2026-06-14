@@ -58,9 +58,7 @@
 .app-header .logo + .proj-selector::before { content: "▼ "; }
 .app-header .ws-switcher { border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); padding: 3px 10px; font-size: var(--fs-sm); min-width: 160px; text-align: left; margin-left: 8px; display: inline-block; }
 .app-header .ws-switcher::before { content: "▼ "; }
-/* 旧 .left::after は廃止 */
-.app-header .left::after { content: none; }
-/* WorkspaceSwitcher ドロップダウン例(SCR-026 / SCR-015 で表示) */
+/* WorkspaceSwitcher ドロップダウン例(SCR-016 / SCR-008 で表示) */
 .ws-dropdown { position: absolute; top: 30px; left: 80px; width: 240px; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); box-shadow: var(--shadow-md); font-size: var(--fs-sm); z-index: 5; overflow: hidden; }
 .ws-dropdown .ws-heading { padding: 5px 10px; background: var(--gray-50); color: var(--text-secondary); font-weight: var(--fw-semibold); font-size: var(--fs-xs); border-bottom: 1px solid var(--border); }
 .ws-dropdown .ws-item { padding: 5px 10px 5px 18px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
@@ -72,7 +70,7 @@
 .ws-dropdown .ws-child:hover { background: var(--gray-50); }
 .ws-dropdown .ws-child.active { background: var(--success-bg); font-weight: var(--fw-semibold); color: var(--success); }
 .ws-dropdown .ws-child.active::after { content: " ✓"; color: var(--success); }
-#scr-015 .app-main::before { content: "表示モード: オーナーダッシュボード ⇄ プロジェクト管理者・メンバー"; display: block; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface-sunk); padding: 6px 10px; margin-bottom: var(--sp-2); font-size: var(--fs-sm); font-weight: var(--fw-semibold); color: var(--text-secondary); }
+#scr-008 .app-main::before { content: "表示モード: オーナーダッシュボード ⇄ プロジェクト管理者・メンバー"; display: block; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface-sunk); padding: 6px 10px; margin-bottom: var(--sp-2); font-size: var(--fs-sm); font-weight: var(--fw-semibold); color: var(--text-secondary); }
 /* ===== Lucide CDN アイコン共通(絵文字置換) ===== */
 [data-lucide], svg.lucide { display: inline-block; width: 1em; height: 1em; vertical-align: -0.14em; stroke-width: 2; flex-shrink: 0; }
 svg.lucide { margin-right: 4px; }
@@ -87,11 +85,11 @@ svg.lucide { margin-right: 4px; }
 .app-sidebar .item { justify-content: flex-start; }
 .app-sidebar .item .badge { margin-left: auto; }
 /* v3.0 で別画面へ移管した旧パネルは、履歴参照用のマークアップを残して表示しない。 */
-#scr-015 .app-main > .panel[style*="success-border"],
-#scr-015 .app-main > .grid-2,
-#scr-015 .app-main > .panel[style*="margin-top: 8px"],
-#scr-015 .app-main > .panel[style*="margin-top: 16px"],
-#scr-028 .app-main > .panel:nth-last-of-type(-n+2) { display: none; }
+#scr-008 .app-main > .panel[style*="success-border"],
+#scr-008 .app-main > .grid-2,
+#scr-008 .app-main > .panel[style*="margin-top: 8px"],
+#scr-008 .app-main > .panel[style*="margin-top: 16px"],
+#scr-017 .app-main > .panel:nth-last-of-type(-n+2) { display: none; }
 /* エンドユーザー向け FAQ ウィジェット: チャット UI + ヘッダーメニュー */
 .widget-chat-shell { width: 360px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); box-shadow: var(--shadow-md); overflow: hidden; }
 .widget-chat-shell.restricted { border-color: var(--danger-border); }
@@ -257,19 +255,19 @@ body { padding-top: 54px; }
     <section class="doc-section">
       <h2>共通画面</h2>
       <ul class="plain-list">
-        <li>全利用者共通: SCR-018 利用規約、SCR-035 プライバシーポリシー</li>
-        <li>認証ユーザー共通: SCR-001 ログイン、SCR-003 パスワード再設定、SCR-021 / 022 お知らせ、SCR-028 個人設定</li>
-        <li>プロジェクト運用共通: SCR-015、SCR-011、SCR-012、SCR-014、SCR-036</li>
-        <li>招待メンバー共通: SCR-031 アカウント有効化</li>
+        <li>全利用者共通: SCR-010 利用規約、SCR-020 プライバシーポリシー</li>
+        <li>認証ユーザー共通: SCR-001 ログイン、SCR-003 パスワード再設定、SCR-011 / SCR-012 お知らせ、SCR-017 個人設定</li>
+        <li>プロジェクト運用共通: SCR-008、SCR-005、SCR-006、SCR-007、SCR-021</li>
+        <li>招待メンバー共通: SCR-018 アカウント有効化</li>
       </ul>
     </section>
     <section class="doc-section">
       <h2>専用・高権限画面</h2>
       <ul class="plain-list">
         <li>ウィジェット利用者専用: WIDGET</li>
-        <li>プロジェクト管理者以上: SCR-017 / M1、SCR-036-M1</li>
-        <li>オーナー専用: SCR-002 / 023、SCR-010 / M1、SCR-024〜026、SCR-037〜041</li>
-        <li>SCR-042: オーナーは編集・削除、プロジェクト管理者は参照のみ</li>
+        <li>プロジェクト管理者以上: SCR-009 / M1、SCR-021-M1</li>
+        <li>オーナー専用: SCR-002 / SCR-013、SCR-004 / SCR-004-M1、SCR-014〜016、SCR-022〜026</li>
+        <li>SCR-027: オーナーは編集・削除、プロジェクト管理者は参照のみ</li>
       </ul>
     </section>
   </div>
@@ -279,11 +277,11 @@ body { padding-top: 54px; }
     <table class="role-table">
       <thead><tr><th>項目</th><th>今回の分類</th><th>判断理由</th></tr></thead>
       <tbody>
-        <tr><td>SCR-002 / SCR-023</td><td>オーナー</td><td>画面ヘッダは「管理者」表記ですが、画面設計の目的が「新規利用者(オーナー)」の登録と明記されているため。</td></tr>
-        <tr><td>SCR-025 規約再同意</td><td>オーナー</td><td>既存ワイヤーフレームはオーナー / メンバー表記ですが、権限設計・要件・トレーサビリティでは契約判断としてオーナー専有のため。</td></tr>
-        <tr><td>SCR-032 連絡先メール確認</td><td>オーナー / プロジェクト管理者の関連フロー</td><td>実操作者はアカウント不要のメール所有者ですが、設定と完了確認を行う管理ロール側にも必要なため。</td></tr>
-        <tr><td>SCR-042 プロジェクト設定</td><td>管理者は参照、オーナーは編集・削除</td><td>既存ワイヤーフレームには編集操作がありますが、権限設計の正本を優先したため。</td></tr>
-        <tr><td>SCR-018 / SCR-035</td><td>全4種別</td><td>認証不要URLが提供されるため、ウィジェット利用者にも公開閲覧版を含めたため。</td></tr>
+        <tr><td>SCR-002 / SCR-013</td><td>オーナー</td><td>画面ヘッダは「管理者」表記ですが、画面設計の目的が「新規利用者(オーナー)」の登録と明記されているため。</td></tr>
+        <tr><td>SCR-015 規約再同意</td><td>オーナー</td><td>既存ワイヤーフレームはオーナー / メンバー表記ですが、権限設計・要件・トレーサビリティでは契約判断としてオーナー専有のため。</td></tr>
+        <tr><td>SCR-019 連絡先メール確認</td><td>オーナー / プロジェクト管理者の関連フロー</td><td>実操作者はアカウント不要のメール所有者ですが、設定と完了確認を行う管理ロール側にも必要なため。</td></tr>
+        <tr><td>SCR-027 プロジェクト設定</td><td>管理者は参照、オーナーは編集・削除</td><td>既存ワイヤーフレームには編集操作がありますが、権限設計の正本を優先したため。</td></tr>
+        <tr><td>SCR-010 / SCR-020</td><td>全4種別</td><td>認証不要URLが提供されるため、ウィジェット利用者にも公開閲覧版を含めたため。</td></tr>
       </tbody>
     </table>
   </section>
@@ -306,13 +304,13 @@ body { padding-top: 54px; }
       <table class="wf">
         <thead><tr><th>ナビゲーション</th><th>画面 / URL</th><th>責務</th></tr></thead>
         <tbody>
-          <tr><td>契約概要</td><td>SCR-026<br><code>/owner</code></td><td>契約全体の状況と対応起点</td></tr>
-          <tr><td>プロジェクト</td><td>SCR-010<br><code>/owner/projects</code></td><td>プロジェクトの一覧・新規作成</td></tr>
-          <tr><td>利用量と上限</td><td>SCR-037<br><code>/owner/usage</code></td><td>契約横断の利用量、無料利用枠、上限</td></tr>
-          <tr><td>料金・請求</td><td>SCR-038<br><code>/owner/billing</code></td><td>プラン、支払方法、請求履歴</td></tr>
-          <tr><td>メンバー</td><td>SCR-039<br><code>/owner/members</code></td><td>契約メンバーとアカウント管理</td></tr>
-          <tr><td>操作履歴</td><td>SCR-040<br><code>/owner/activity</code></td><td>契約全体の監査ログ閲覧</td></tr>
-          <tr><td>契約設定</td><td>SCR-041<br><code>/owner/settings</code></td><td>契約情報、連絡先、退会</td></tr>
+          <tr><td>契約概要</td><td>SCR-016<br><code>/owner</code></td><td>契約全体の状況と対応起点</td></tr>
+          <tr><td>プロジェクト</td><td>SCR-004<br><code>/owner/projects</code></td><td>プロジェクトの一覧・新規作成</td></tr>
+          <tr><td>利用量と上限</td><td>SCR-022<br><code>/owner/usage</code></td><td>契約横断の利用量、無料利用枠、上限</td></tr>
+          <tr><td>料金・請求</td><td>SCR-023<br><code>/owner/billing</code></td><td>プラン、支払方法、請求履歴</td></tr>
+          <tr><td>メンバー</td><td>SCR-024<br><code>/owner/members</code></td><td>契約メンバーとアカウント管理</td></tr>
+          <tr><td>操作履歴</td><td>SCR-025<br><code>/owner/activity</code></td><td>契約全体の監査ログ閲覧</td></tr>
+          <tr><td>契約設定</td><td>SCR-026<br><code>/owner/settings</code></td><td>契約情報、連絡先、退会</td></tr>
         </tbody>
       </table>
     </div>
@@ -321,12 +319,12 @@ body { padding-top: 54px; }
       <table class="wf">
         <thead><tr><th>ナビゲーション</th><th>画面 / URL</th><th>責務</th></tr></thead>
         <tbody>
-          <tr><td>概要</td><td>SCR-015<br><code>/projects/:projectId</code></td><td>選択中プロジェクトの利用状況</td></tr>
-          <tr><td>要対応の質問</td><td>SCR-011</td><td>AIで解決できなかった質問への対応</td></tr>
-          <tr><td>FAQ</td><td>SCR-012</td><td>FAQの作成・編集・公開</td></tr>
-          <tr><td>メンバー</td><td>SCR-017</td><td>プロジェクトへの割り当てと権限</td></tr>
-          <tr><td>ウィジェット</td><td>SCR-014</td><td>表示、動作、設置コード</td></tr>
-          <tr><td>プロジェクト設定</td><td>SCR-042<br><code>/projects/:projectId/settings</code></td><td>基本情報、連絡先、削除</td></tr>
+          <tr><td>概要</td><td>SCR-008<br><code>/projects/:projectId</code></td><td>選択中プロジェクトの利用状況</td></tr>
+          <tr><td>要対応の質問</td><td>SCR-005</td><td>AIで解決できなかった質問への対応</td></tr>
+          <tr><td>FAQ</td><td>SCR-006</td><td>FAQの作成・編集・公開</td></tr>
+          <tr><td>メンバー</td><td>SCR-009</td><td>プロジェクトへの割り当てと権限</td></tr>
+          <tr><td>ウィジェット</td><td>SCR-007</td><td>表示、動作、設置コード</td></tr>
+          <tr><td>プロジェクト設定</td><td>SCR-027<br><code>/projects/:projectId/settings</code></td><td>基本情報、連絡先、削除</td></tr>
         </tbody>
       </table>
     </div>

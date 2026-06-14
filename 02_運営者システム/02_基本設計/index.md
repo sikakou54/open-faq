@@ -28,7 +28,7 @@
 | 2 | 4-eyes 承認フロー方針 | 対象 10 操作のうち 3 操作はハードゲート(承認なし実行不可)、7 操作は承認ログ(実行と承認ログを別運営者で実施) | [04_権限設計.md](04_権限設計.md) |
 | 3 | 監査ハッシュチェーン方針 | `audit_logs` 全行に前行ハッシュを連鎖し改竄不能化。日次完全性検証 cron。3 区分保持(1y / 5y / 7y)。 | [09_セキュリティ設計.md](09_セキュリティ設計.md) |
 | 4 | Stripe Webhook 一次受信方針 | 運営者側で一次受信し DLQ 30 日リプレイ。署名検証 + payload 差分検出 + メインへの転送 | [10_課金・請求設計.md](10_課金・請求設計.md) |
-| 5 | 画面設計方針 | SCR-090〜099 + SCR-AUTH / SCR-HOME / SCR-APPROVALS。承認待ち一覧 + モーダル承認/却下。 | [01_画面設計.md](01_画面設計.md) |
+| 5 | 画面設計方針 | SCR-090〜098 + SCR-AUTH / SCR-HOME / SCR-APPROVALS。承認待ち一覧 + モーダル承認/却下。 | [01_画面設計.md](01_画面設計.md) |
 | 6 | API 設計方針 | `/v1/operator/*` 配下。連携 IF #1〜#12 の主管責任(送信 8 + 受信 2)。 | [02_API設計.md](02_API設計.md) |
 | 7 | データ設計方針 | `operator_*` テーブル群 + `audit_logs`(ハッシュチェーン)+ `webhook_events` + `operator_approvals` + `accounts_retired`。 | [03_テーブル設計.md](03_テーブル設計.md) |
 | 8 | エラー設計方針 | `E-OP-*` プレフィックス。4-eyes 未承認 / IP allowlist 拒否 / 再認証期限切れの専用エラー。 | [05_エラー設計.md](05_エラー設計.md) |
@@ -61,7 +61,7 @@
 | [../01_要件定義/FR07_個別チャット.md](../01_要件定義/FR07_個別チャット.md) | 個別チャット関連(メイン側を正本として参照)| - | - |
 | [../01_要件定義/FR08_未解決質問からFAQ登録.md](../01_要件定義/FR08_未解決質問からFAQ登録.md) | 未解決 → FAQ 関連(メイン側を正本として参照)| - | - |
 | [../01_要件定義/FR09_処理エラー.md](../01_要件定義/FR09_処理エラー.md) | 処理エラー対応(運営者側エラーチケット連携)| - | - |
-| [../01_要件定義/FR10_利用量・課金.md](../01_要件定義/FR10_利用量・課金.md) | 利用量・課金(運営者主管: Stripe Webhook 一次受信 / 月次請求確定)| SCR-097 | `POST /v1/operator/webhook/replay` |
+| [../01_要件定義/FR10_利用量・課金.md](../01_要件定義/FR10_利用量・課金.md) | 利用量・課金(運営者主管: Stripe Webhook 一次受信 / 月次請求確定)| SCR-096 | `POST /v1/operator/webhook/replay` |
 | [../01_要件定義/FR11_管理ダッシュボード.md](../01_要件定義/FR11_管理ダッシュボード.md) | 運営者ホームダッシュボード | SCR-HOME | `GET /v1/operator/home` |
 | [../01_要件定義/FR12_通知.md](../01_要件定義/FR12_通知.md) | 通知(IF #12 経由でメインへ転送)| - | - |
 | [../01_要件定義/FR13_ウィジェット.md](../01_要件定義/FR13_ウィジェット.md) | ウィジェット(メイン側を正本として参照)| - | - |
@@ -75,7 +75,7 @@
 | [../01_要件定義/FR21_ローディング・フィードバック.md](../01_要件定義/FR21_ローディング・フィードバック.md) | ローディング・フィードバック要件 | 全画面 | - |
 | [../01_要件定義/FR22_アクセシビリティ強化.md](../01_要件定義/FR22_アクセシビリティ強化.md) | アクセシビリティ強化要件 | 全画面 | - |
 | [../01_要件定義/FR23_4-eyes承認.md](../01_要件定義/FR23_4-eyes承認.md) | 4-eyes 承認(対象 10 操作)| SCR-APPROVALS | `POST /v1/operator/approvals` ほか |
-| [../01_要件定義/FR24_監査・SLA.md](../01_要件定義/FR24_監査・SLA.md) | 監査ログ参照 / SLA 監視 / 運営者活動ダッシュボード | SCR-096 | `GET /v1/operator/audit-logs` |
+| [../01_要件定義/FR24_監査・SLA.md](../01_要件定義/FR24_監査・SLA.md) | 監査ログ参照 / SLA 監視 / 運営者活動ダッシュボード | SCR-095 | `GET /v1/operator/audit-logs` |
 
 ## 5. SCR × ドキュメント カバレッジ表
 
@@ -89,10 +89,10 @@
 | SCR-092 | AI 推論パラメータ設定 | §5.SCR-092 | `PATCH /v1/operator/ai-parameters` | `ai_parameter_overrides`, `audit_logs` | **4-eyes ハードゲート** | E-OP-4EYES-* | MSG-SCR-092-* | §6 ハードゲート | §7 監査 | - |
 | SCR-093 | レート制限(契約単位)・上限件数(プロジェクト単位)上書き | §5.SCR-093 | `PUT /admin/v1/overrides/rate-limit/{owner_id}`(契約)/ `.../usage-limit/{owner_id}/{project_id}`(プロジェクト)| `owner_quota_overrides`(レート)/ メイン `project_quota_limits`(月次上限件数)| 4-eyes 承認ログ | E-OP-OVERRIDE-* | MSG-SCR-093-* | §6 4-eyes 承認 | §7 監査 | §3 利用上限上書き |
 | SCR-094 | お知らせ作成・配信 | §5.SCR-094 | `POST /v1/operator/announcements` ほか | `announcement_drafts`, `service_announcements` | 全運営者 | E-OP-INPUT-* | MSG-SCR-094-* | §6 認可判定 | - | - |
-| SCR-096 | 運営者活動ダッシュボード | §5.SCR-096 | `GET /v1/operator/audit-logs` | `audit_logs` | 全運営者(参照)| - | MSG-SCR-096-* | §6 認可判定 | §7 監査参照 | - |
-| SCR-097 | Webhook リプレイ・DLQ 操作 | §5.SCR-097 | `POST /v1/operator/webhook/replay` ほか | `webhook_events`, `dlq_replay_log` | 4-eyes 承認ログ | E-OP-WEBHOOK-* | MSG-SCR-097-* | §6 4-eyes 承認 | §7 監査 | §13 DLQ |
-| SCR-098 | PII 誤検出報告管理 | §5.SCR-098 | `GET /v1/operator/pii-reports` ほか | `pii_false_positive_reports` | 全運営者 | E-OP-PII-* | MSG-SCR-098-* | §6 認可判定 | §13 PII マスキング | - |
-| SCR-099 | Webhook ペイロード差分検出 | §5.SCR-099 | `GET /v1/operator/webhook/diffs` | `webhook_payload_diffs` | 全運営者 | - | MSG-SCR-099-* | §6 認可判定 | §7 監査 | §13 差分検出 |
+| SCR-095 | 運営者活動ダッシュボード | §5.SCR-095 | `GET /v1/operator/audit-logs` | `audit_logs` | 全運営者(参照)| - | MSG-SCR-095-* | §6 認可判定 | §7 監査参照 | - |
+| SCR-096 | Webhook リプレイ・DLQ 操作 | §5.SCR-096 | `POST /v1/operator/webhook/replay` ほか | `webhook_events`, `dlq_replay_log` | 4-eyes 承認ログ | E-OP-WEBHOOK-* | MSG-SCR-096-* | §6 4-eyes 承認 | §7 監査 | §13 DLQ |
+| SCR-097 | PII 誤検出報告管理 | §5.SCR-097 | `GET /v1/operator/pii-reports` ほか | `pii_false_positive_reports` | 全運営者 | E-OP-PII-* | MSG-SCR-097-* | §6 認可判定 | §13 PII マスキング | - |
+| SCR-098 | Webhook ペイロード差分検出 | §5.SCR-098 | `GET /v1/operator/webhook/diffs` | `webhook_payload_diffs` | 全運営者 | - | MSG-SCR-098-* | §6 認可判定 | §7 監査 | §13 差分検出 |
 | SCR-APPROVALS | 承認待ち一覧(4-eyes)| §5.SCR-APPROVALS | `GET /v1/operator/approvals` | `operator_approvals` | 4-eyes 申請者/承認者 | E-OP-4EYES-* | MSG-SCR-APPROVALS-* | §6 4-eyes フロー | §7 監査 | - |
 | SCR-APPROVALS-M1 | 4-eyes 承認申請モーダル | §5.SCR-APPROVALS-M1 | `POST /v1/operator/approvals` | `operator_approvals` | 4-eyes 申請者 | E-OP-4EYES-* | MSG-SCR-APPROVALS-M1-* | §6 申請 / payload_hash | §7 監査 | - |
 | SCR-APPROVALS-M2 | 4-eyes 承認/却下モーダル | §5.SCR-APPROVALS-M2 | `POST /v1/operator/approvals/:id/approve` ほか | `operator_approvals` | 4-eyes 承認者 | E-OP-4EYES-* | MSG-SCR-APPROVALS-M2-* | §6 承認 / 自己承認禁止 | §7 監査 | - |
@@ -109,8 +109,8 @@
 | 6 | プロジェクト別上限件数上書き | 承認ログ | SCR-093 | `usage_limit.override` | 5y(billing)| `PUT /admin/v1/overrides/usage-limit/{owner_id}/{project_id}` |
 | 7 | 強制停止(契約単位)| 承認ログ | SCR-093 派生 | `owner.force_stop` | 5y(operator_high_priv)| `POST /v1/operator/owners/:id/force-stop` |
 | 8 | 削除データ復元 | 承認ログ | SCR-091 | `owner.restore_data` | 5y(operator_high_priv)| `POST /v1/operator/restore` |
-| 9 | 課金 Webhook リプレイ | 承認ログ | SCR-097 | `webhook.replay` | 5y(billing)| `POST /v1/operator/webhook/replay` |
-| 10 | 法的レビュー結果記録 | 承認ログ | SCR-098 派生 | `owner.legal_review.record` | 7y(operator_high_priv)| `POST /v1/operator/legal-review` |
+| 9 | 課金 Webhook リプレイ | 承認ログ | SCR-096 | `webhook.replay` | 5y(billing)| `POST /v1/operator/webhook/replay` |
+| 10 | 法的レビュー結果記録 | 承認ログ | SCR-097 派生 | `owner.legal_review.record` | 7y(operator_high_priv)| `POST /v1/operator/legal-review` |
 
 ## 7. 連携 IF × ドキュメント カバレッジ
 

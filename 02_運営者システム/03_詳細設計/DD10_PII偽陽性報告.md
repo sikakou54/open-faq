@@ -19,7 +19,7 @@
 | 機能 | FR-060 | PII 第 1 層検出(正規表現) |
 | 機能 | FR-064 | PII 誤検出報告フロー |
 | 受入条件 | AC-036 | PII 3 層 + 報告フロー |
-| 画面 | SCR-098 | PII 誤検出報告管理(3 営業日判定) |
+| 画面 | SCR-097 | PII 誤検出報告管理(3 営業日判定) |
 | API | `POST /pii-fp-reports` | 報告作成 |
 | API | `POST /pii-fp-reports/{id}/transition` | 状態遷移(運営者) |
 | API | `POST /pii-rules/revisions` | ルール改定(段階ロールアウト) |
@@ -30,7 +30,7 @@
 
 | 元章 | 元タイトル | 概要 |
 |---|---|---|
-| §5 SCR-098 | PII 誤検出報告管理画面 | 3 営業日タイマー + ルール改定 |
+| §5 SCR-097 | PII 誤検出報告管理画面 | 3 営業日タイマー + ルール改定 |
 | §6 PII 機能(参照) | 報告 → 判定 → ルール更新 → KV 即時反映 | D-13 |
 | 付録 B.5 | `pii_false_positive_reports.state` | 6 状態遷移 |
 
@@ -53,7 +53,7 @@
 | From | To | トリガー |
 |---|---|---|
 | - | reported | 報告転送 |
-| reported | under_review | SCR-098 開始(3 営業日タイマー起動) |
+| reported | under_review | SCR-097 開始(3 営業日タイマー起動) |
 | under_review | ruled_false_positive | 判定 |
 | under_review | ruled_correct_detection | 判定 |
 | ruled_false_positive | rule_updated | KV ルール更新 |
@@ -132,7 +132,7 @@
 | 監査 | `pii_rule.update`(5y、`{revisionId, rolloutPercentage}`) |
 | 報告状態遷移 | ルール改定後、対応する `pii_false_positive_reports.state` を `rule_updated` に遷移 |
 
-### 3.6 SCR-098 主要機能
+### 3.6 SCR-097 主要機能
 
 | 機能 | 説明 |
 |---|---|

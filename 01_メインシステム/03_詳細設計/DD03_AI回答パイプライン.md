@@ -20,7 +20,7 @@
 | 機能 | FR-058 / FR-058a | プロンプト注入対策 / 検知ログ |
 | 機能 | FR-059 / FR-342 | AI 品質回帰 |
 | 機能 | FR-060 | 矛盾検知 |
-| 画面 | SCR-014 | ウィジェット表示 |
+| 画面 | SCR-007 | ウィジェット表示 |
 | API | `POST /widget/v1/ask` | ウィジェット質問送信 |
 | テーブル | `question_logs` `faqs` `faq_embeddings` `ai_models` | AI 回答基盤 |
 
@@ -271,7 +271,7 @@ async function faqConsistencyCheck(output: AnswerOutput, faqs: AnswerInput['faqs
 | **モデル前提** | `@cf/baai/bge-base-en-v1.5` (768 次元、英語ベースだが日本語にも適合する公開ベンチマーク値あり) |
 | **算出根拠** | (a) `bge-base-en-v1.5` の **公開ベンチマーク MTEB** で「明確に無関連な短文ペア」の cos 類似度がおおむね **0.1〜0.25** 帯に収束、(b) 着手前の社内データ (FAQ 50 件 × 質問 200 件) で「FAQ 内回答」中央値が **0.55**、「FAQ 外回答 (誤回答)」中央値が **0.18** で、両分布の谷が **0.30 付近** に位置することを実測 (`docs/ai-quality/post-check-threshold-baseline.md` で詳細記録)。(c) 偽陽性 (FAQ 内なのに誤ブロック) と偽陰性 (FAQ 外なのに通過) は **偽陽性低減を優先** (利用者体験への直接的悪影響を回避)、そのうえで「誤回答ブロック率 90% 以上」を確保できる最低値として 0.3 を採用 |
 | **チューニング SLO** | 偽陽性率 (`fp_rate = (FAQ 内なのにブロック) / (FAQ 内総数)`) **≤ 5%** / 偽陰性率 (`fn_rate = (FAQ 外なのに通過) / (FAQ 外総数)`) **≤ 10%** を月次計測。両方を 30 日連続で達成できれば閾値固定、いずれかを超過すれば調整 |
-| **チューニング手順** | (a) `question_logs` から週次サンプリング (信頼度層別 100 件)、(b) 運営者 (SCR-098) が AI 判定結果を確認・ラベル付け、(c) 月次集計で FP/FN 率を更新、(d) 閾値変更は `feature.post_check_threshold.update` action コード (`operator_high_priv = 5y`)、4-eyes 承認必須（緊急一時無効化として KV `feature:post-check-threshold:override` を許容）。 |
+| **チューニング手順** | (a) `question_logs` から週次サンプリング (信頼度層別 100 件)、(b) 運営者 (SCR-097) が AI 判定結果を確認・ラベル付け、(c) 月次集計で FP/FN 率を更新、(d) 閾値変更は `feature.post_check_threshold.update` action コード (`operator_high_priv = 5y`)、4-eyes 承認必須（緊急一時無効化として KV `feature:post-check-threshold:override` を許容）。 |
 | **緊急時上書き** | 重大な偽陽性 (大量ブロック) が観測され、セキュリティインシデント区分（大量誤遮断による業務影響）に該当 + 発動条件 4 項目（対応チケット ID / 2 名承認 / 契約通知 / 監査ログ）が成立する場合に限り、運営者 4-eyes 承認で KV `feature:post-check-threshold:override` に一時値 (例 `0.2`) を設定可能。TTL 24 時間、ローテーション後は自動失効。設定は `feature.post_check_threshold.toggle` action コードで監査記録 (operator_high_priv = 5y)。 |
 | **モデル変更時の追従** | `@cf/baai/bge-base-en-v1.5` を別モデル (`@cf/baai/bge-m3` 等) に切替時、AI 回帰テスト の合格基準に **「PostCheck 第 3 層の FP/FN 率が新閾値で旧閾値の ±10% 以内」** を追加検証する。閾値の絶対値はモデルにより異なるため、再計算 (上記 (a)〜(c) 手順を staging で再実行) を必須化する。 |
 | **観測指標** | (i) `post_check_layer3_fp_rate_monthly` (FP 率)、(ii) `post_check_layer3_fn_rate_monthly` (FN 率)、(iii) `post_check_layer3_block_rate_daily` (日次ブロック率) を記録。`monitoring:thresholds:<kpi_id>` で動的閾値管理。 |
@@ -312,7 +312,7 @@ export async function piiScrub(text: string, opts: { blockOnSensitive: boolean }
   return { masked, detected, action: detected.length > 0 ? 'masked' : 'pass' };
 }
 
-// 誤検出報告フロー: ユーザーが「誤検出」を報告 → SCR-098 (運営者) で 3 営業日以内に判定
+// 誤検出報告フロー: ユーザーが「誤検出」を報告 → SCR-097 (運営者) で 3 営業日以内に判定
 ```
 
 ### 3.6 矛盾検知
@@ -377,7 +377,7 @@ export async function consume(batch: MessageBatch<AiRegressionJob>, env: Env) {
         level: 'normal', message: `AI 回帰テスト要注意: ${modelVersion} → -${(drop*100).toFixed(1)}pt`,
       });
     }
-    // 結果を顧管 SCR-098 へ報告 (IF #9 と同様)
+    // 結果を顧管 SCR-097 へ報告 (IF #9 と同様)
     await sendToAdminIntegration(env, '/internal/main-integration/v1/ai-regression/result',
                                   { testSetId, modelVersion, passRate, results });
     msg.ack();
@@ -439,7 +439,7 @@ function assessRegression(results: ResultPair[]): 'pass' | 'fail' | 'warn' {
 | API 設計 | [../02_基本設計/02_API設計.md](../02_基本設計/02_API設計.md) |
 | セキュリティ設計 | [../02_基本設計/09_セキュリティ設計.md](../02_基本設計/09_セキュリティ設計.md) |
 | 運用設計 | [../04_運用設計/index.md](../04_運用設計/index.md) |
-| 関連 DD | [DD04_AIしきい値3階層適用.md](DD04_AIしきい値3階層適用.md) / [DD13_ウィジェット配信.md](DD13_ウィジェット配信.md) / [DD05_inquiry_code採番・未解決質問.md](DD05_inquiry_code採番・未解決質問.md) / [DD14_バッチ・非同期処理.md](DD14_バッチ・非同期処理.md) |
+| 関連 DD | [DD04_AIしきい値3階層適用.md](DD04_AIしきい値3階層適用.md) / [DD12_ウィジェット配信.md](DD12_ウィジェット配信.md) / [DD05_inquiry_code採番・未解決質問.md](DD05_inquiry_code採番・未解決質問.md) / [DD13_バッチ・非同期処理.md](DD13_バッチ・非同期処理.md) |
 
 ## 5. テスト観点
 

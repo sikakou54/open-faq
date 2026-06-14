@@ -426,7 +426,7 @@ POST リクエスト: `{ "setupToken": "...", "totpCode": "...", "recoveryCodesS
 #### 5.6.1 `GET /admin/v1/audit-logs`
 
 | 機能ID | F-OP-017 |
-| 関連画面 | SCR-096 |
+| 関連画面 | SCR-095 |
 
 クエリ: `action`, `actorId`, `targetId`, `contractOwnerUserId`, `from`, `to`, `ipMasked`, `ticketId`, `cursor`, `limit`
 バリデーション: `to - from ≤ 365 日`
@@ -472,7 +472,7 @@ POST リクエスト: `{ "setupToken": "...", "totpCode": "...", "recoveryCodesS
 
 | 機能ID | F-OP-016 |
 | 4-eyes 種別 | 承認ログ(action: `pii_rule.update`)|
-| 関連画面 | SCR-098 |
+| 関連画面 | SCR-097 |
 
 リクエスト:
 ```json
@@ -496,7 +496,7 @@ POST リクエスト: `{ "setupToken": "...", "totpCode": "...", "recoveryCodesS
 
 | 機能ID | F-OP-015 |
 | 4-eyes 種別 | 承認ログ(action: `webhook.replay`)|
-| 関連画面 | SCR-097 |
+| 関連画面 | SCR-096 |
 
 リクエスト: `{ "eventId": "evt_xxx", "ticketId": "TKT-1234" }` + `X-Op-Ticket-Id`
 バリデーション: `state='dlq_manual_replay'`、自動 BO 完了済み、受信から 30 日以内
@@ -553,7 +553,7 @@ verifyStripeSignature(payload, header, secret, tolerance=300s):
 | 冪等性キー | Stripe `event_id`(`evt_*`)を `webhook_events.event_id` PK |
 | 正規化 JSON | キーソート + 空白除去 → SHA-256 ハッシュ |
 | 同 event_id + ハッシュ一致 | 200 OK「duplicate, skipped, hash_match」+ ログ |
-| 同 event_id + ハッシュ不一致 | 200 OK + `webhook_payload_diffs` INSERT + SCR-099 記録 + 運営者 high alert + **自動上書き禁止** |
+| 同 event_id + ハッシュ不一致 | 200 OK + `webhook_payload_diffs` INSERT + SCR-098 記録 + 運営者 high alert + **自動上書き禁止** |
 
 ##### 内部転送対象イベント(メイン側へ mTLS + JWT 同期)
 
@@ -574,7 +574,7 @@ verifyStripeSignature(payload, header, secret, tolerance=300s):
 | R2 退避パス | `dlq-stripe-events/<event_id>.json` |
 | R2 保持期間 | 30 日(`dlq_archived` で以降リプレイ不可)|
 | 自動 BO | 1m → 4m → 16m(3 回、超過で永久失敗)|
-| 手動リプレイ | SCR-097 から運営者の明示操作のみ |
+| 手動リプレイ | SCR-096 から運営者の明示操作のみ |
 | タイムアウト | 30 秒 |
 
 #### 5.7.3 Stripe Webhook 除外フィールド(差分検出時、付録 H 全件)
@@ -639,8 +639,8 @@ POST 先: メイン側 `/internal/admin-integration/v1/admin-operation/notify`
 | `usage_limit.override` | 承認ログ | `PUT /admin/v1/overrides/usage-limit/{owner_id}/{project_id}` | SCR-093 |
 | `owner.force_stop` | 承認ログ | `POST /admin/v1/owners/:id/force-stop` | SCR-093 派生 |
 | `owner.restore_data` | 承認ログ | `POST /admin/v1/restorations` | SCR-091 |
-| `webhook.replay` | 承認ログ | `POST /admin/v1/webhooks/replay` | SCR-097 |
-| `owner.legal_review.record` | 承認ログ | `POST /admin/v1/legal-review` | SCR-098 派生 |
+| `webhook.replay` | 承認ログ | `POST /admin/v1/webhooks/replay` | SCR-096 |
+| `owner.legal_review.record` | 承認ログ | `POST /admin/v1/legal-review` | SCR-097 派生 |
 
 ## 7. 未決事項
 

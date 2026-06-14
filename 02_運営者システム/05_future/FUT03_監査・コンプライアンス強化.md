@@ -33,7 +33,7 @@
 
 | ID | 要件候補 | MVP の前提 | 判定時期 | 判定基準 / 完了条件 |
 |---|---|---|---|---|
-| FUT-REQ-SEC-003 | 4-eyes 原則の完全強制 | 3 操作をハードゲート化し、7 操作は承認ログのみ | ベータ / GA | ベータで全 10 操作ワークフロー化、GA でバイパス禁止。SCR-096 の承認バイパス検出 KPI が 4 週間連続 0 件 |
+| FUT-REQ-SEC-003 | 4-eyes 原則の完全強制 | 3 操作をハードゲート化し、7 操作は承認ログのみ | ベータ / GA | ベータで全 10 操作ワークフロー化、GA でバイパス禁止。SCR-095 の承認バイパス検出 KPI が 4 週間連続 0 件 |
 
 #### 国際化・リージョン(GDPR / 越境移転関連)
 
@@ -54,7 +54,7 @@
 
 | 項目 | 基本設計で具体化すること | 関連 Future 要件 |
 |---|---|---|
-| 4-eyes 完全強制 | 10 操作の申請・承認・実行状態、SCR-096 のバイパス検出 KPI、緊急例外 RB-014 との分岐 | FUT-REQ-SEC-003 |
+| 4-eyes 完全強制 | 10 操作の申請・承認・実行状態、SCR-095 のバイパス検出 KPI、緊急例外 RB-014 との分岐 | FUT-REQ-SEC-003 |
 
 #### 国際化・リージョン(越境移転ガード関連)
 
@@ -110,10 +110,10 @@ CREATE TABLE owner_region_audit_logs (
 | 種別 | 影響内容 |
 |---|---|
 | 要件 | 4-eyes 原則(3 操作 → 全 10 操作)、GDPR / 越境移転(region 属性導入)、監査ハッシュチェーン(運営者正本)拡張 |
-| 画面 | SCR-APPROVALS(全 10 操作申請・承認・実行 UI)、SCR-096(承認バイパス検出 KPI ダッシュボード)、運営者画面での region 表示、越境移転承認画面 |
+| 画面 | SCR-APPROVALS(全 10 操作申請・承認・実行 UI)、SCR-095(承認バイパス検出 KPI ダッシュボード)、運営者画面での region 表示、越境移転承認画面 |
 | API | `POST /admin/v1/operator-approvals`、`POST /admin/v1/operator-approvals/{id}/approve`、`POST /admin/v1/operator-approvals/{id}/execute`、`TenantRegionGuard` ミドルウェア、`POST /admin/v1/owners/{id}/region-approval` |
 | テーブル | `operator_approvals` 対象操作拡張(7 操作追加)、`contract_owners.region` 列追加、`owner_region_audit_logs`、`audit_logs.retention_class`(`general` / `billing` / `operator_high_priv`)・ハッシュチェーン拡張 |
-| 運用 | 4-eyes 全 10 操作ワークフロー運用、SCR-096 承認バイパス検出 KPI(4 週間連続 0 件)監視、越境移転ガード運用、GDPR データ削除要求(DSR)対応手順、監査ハッシュチェーン第三者検証手順 |
+| 運用 | 4-eyes 全 10 操作ワークフロー運用、SCR-095 承認バイパス検出 KPI(4 週間連続 0 件)監視、越境移転ガード運用、GDPR データ削除要求(DSR)対応手順、監査ハッシュチェーン第三者検証手順 |
 
 ---
 
@@ -121,7 +121,7 @@ CREATE TABLE owner_region_audit_logs (
 
 | 項目 | 内容 |
 |---|---|
-| 実施判断条件 | 4-eyes はベータで全 10 操作ワークフロー化 + GA でバイパス禁止(SCR-096 承認バイパス検出 KPI 4 週間連続 0 件)、GDPR / 越境移転ガードはマルチリージョン導入と同時に確定 |
+| 実施判断条件 | 4-eyes はベータで全 10 操作ワークフロー化 + GA でバイパス禁止(SCR-095 承認バイパス検出 KPI 4 週間連続 0 件)、GDPR / 越境移転ガードはマルチリージョン導入と同時に確定 |
 | 期限 | T2(全 10 操作ワークフロー化、PII NER 第 2 層によるログ強化)、T3(バイパス API 削除、緊急例外 RB-014 限定、GDPR / 越境移転ガード、監査ハッシュチェーン拡張) |
 | 依存関係 | 共有概念の 4-eyes 承認基盤(運営者正本)・ハッシュチェーン監査(運営者正本)・IP allowlist(運営者正本)、メイン側 PII 暗号化(メイン正本)、運営者システム 10 セキュリティ設計書 §7、04 テーブル定義書(`operator_approvals` / `audit_logs`)、09 認証認可設計書 §7 |
 
@@ -148,4 +148,4 @@ CREATE TABLE owner_region_audit_logs (
 | FUT-AUDIT-Q-003 | GDPR DSR(データ削除要求)対応手順と `audit_logs.retention_class` との整合 | 高 | 検討中 |
 | FUT-AUDIT-Q-004 | 越境移転ガードでの region 変更 / 移行手順(EU → APAC 等) | 中 | 検討中 |
 | FUT-AUDIT-Q-005 | 監査ハッシュチェーン第三者検証(オプション)導入時の公開範囲 | 中 | 検討中 |
-| FUT-AUDIT-Q-006 | SCR-096 承認バイパス検出 KPI 監視ダッシュボード仕様 | 中 | 検討中 |
+| FUT-AUDIT-Q-006 | SCR-095 承認バイパス検出 KPI 監視ダッシュボード仕様 | 中 | 検討中 |

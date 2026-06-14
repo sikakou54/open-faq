@@ -63,7 +63,7 @@
 
 意味のある状態、バリデーション、業務ロジックを持つモーダルダイアログ(プロジェクト作成 / 編集、規約再同意、4-eyes 承認モーダル等)は、呼び出し画面に埋め込まず **独立した画面として SCR ID を付与して定義する**。
 
-- **ID 規約**: 親画面の SCR ID に `-M<n>` サフィックスを付ける。親画面下の最初のモーダルは `SCR-<親>-M1`、同じ親に複数モーダルがあれば `-M2` / `-M3` …(例: SCR-010 の編集モーダル → `SCR-010-M1`)
+- **ID 規約**: 親画面の SCR ID に `-M<n>` サフィックスを付ける。親画面下の最初のモーダルは `SCR-<親>-M1`、同じ親に複数モーダルがあれば `-M2` / `-M3` …(例: SCR-004 の編集モーダル → `SCR-004-M1`)
 - **配置**: モーダル行 / セクション / ワイヤーフレームブロックを、すべてのドキュメントで **親画面の直後** に置く ── 要件定義の SCR 一覧、`02_基本設計/01_画面設計.md` §2 / §5、サイドメニュー除外一覧、画面遷移図、`02_基本設計/07_トレーサビリティマトリクス.md` §3 / §4。SCR ID をアルファベット順にソートすると親画面の直下にモーダルが並ぶ
 - **コンテンツ分割**: 親画面側は「モーダルを開く」操作のみを記載する。入力項目、バリデーション、保存 / キャンセルボタンはすべてモーダル SCR の項目表に記載する
 - **モーダル画面に該当しないもの**: 単純な確認ダイアログ(「本当に削除しますか?」yes/no)や再認証チャレンジは独立 SCR にせず、呼び出しボタンの注記として `(確認ダイアログ)` のままインライン記載する
@@ -77,9 +77,9 @@
 - 共有概念が変更される場合は、**共有概念.md 正本ルール表で示された正本ドキュメントを必ず更新** し、参照側ドキュメントはリンクのみ更新する(再掲禁止)
 - 共有概念には以下を含む(全項目は共有概念.md 参照): `contract_owners.contract_status` / `inquiries.status` / 通知重要度 / SCR ID / AC ID / IF #1〜#12 / retention class / 法令プライバシー制約 / **オーナー / プロジェクト管理者 / メンバーの 3 ロールユーザーモデル**(`users` マスタ + `contract_owners`(オーナー専有属性、行存在 = オーナー判定)+ `project_users`(プロジェクト割当、`role`='admin'/'member')、契約境界キー = `contract_owner_user_id` ── メインを正本)/ ハッシュチェーン監査(運営者を正本)/ 運営者ログイン向け IP allowlist = `operator_ip_allowlist`(運営者を正本)/ PII 暗号化(メインを正本)/ 暗号鍵管理(メインを正本)/ 4-eyes 承認基盤(運営者を正本)/ Stripe Webhook 受信(運営者を正本)等
 - `contract_owners.contract_status` は `active` / `suspended` / `deleted_pending` / `deleted` に固定し、`contract_owners` 行を持つユーザー(= オーナー)でのみ意味を持つ。v1.10 で `contract_status='deleted'` 設定時は必ず `contract_owners.valid=0` も同時セットする(`contract_owners` テーブルの CHECK 制約で強制)
-- `inquiries.status` は 2 値(`open` / `closed`)。未解決質問登録時 `open`、SCR-011 詳細画面の手動操作で `open` ↔ `closed` を切替する(再オープン回数制限なし)。FAQ 下書き保存・FAQ 公開・個別チャットの操作は本カラムを変更しない(連動ロジックなし、FR-079)
+- `inquiries.status` は 2 値(`open` / `closed`)。未解決質問登録時 `open`、SCR-005 詳細画面の手動操作で `open` ↔ `closed` を切替する(再オープン回数制限なし)。FAQ 下書き保存・FAQ 公開・個別チャットの操作は本カラムを変更しない(連動ロジックなし、FR-077)
 - 通知重要度は `low` / `normal` / `high` / `critical`。`critical` はメール送信が必須となるイベント(`project_users.role='admin' AND valid=1` を 1 件でも保持する全ユーザーへ配信。v1.10 でオーナーも自動 admin 行を保持するため、本クエリ単独で網羅可能)に予約
-- 利用者側ユーザーは **オーナー**(契約あたり 1 ユーザー固定、全権、MVP では譲渡不可、`contract_owners.user_id PRIMARY KEY` で 1 契約 = 1 オーナー固定が DB レベル担保される、**v1.10 でプロジェクト作成時に `project_users(role='admin', valid=1)` 行が自動 INSERT** される明示的なプロジェクト管理者保持者。認可フロー先頭の `isOwner=true` bypass(= `contract_owners` 行存在判定)は維持し、admin 行は通知宛先解決と画面表示の事実情報として参照される)と **メンバー**(0..N、`project_users.contract_owner_user_id` でオーナーに紐付き、プロジェクトごとに `project_users.role` = `admin`(プロジェクト管理者)または `member`(メンバー)で制御)に分かれる。オーナー専有機能(プロジェクト作成・編集・削除、課金、退会、規約再同意、メンバーユーザー削除)はプロジェクト別ロールでは付与できない。プロジェクト割当が 0 のメンバーはダッシュボードのみ利用可能。**v1.10 でプロジェクト作成時はオーナーが自動で当該プロジェクトの管理者となり、SCR-010-M1 から「管理者を指定」UI は撤去**(FR-030a 改訂)。**v1.10 でメンバーユーザー削除は論理削除(`users.valid=0`)。プロジェクト削除動線は SCR-015 プロジェクトホームのプロジェクト情報パネル(オーナー専有 DangerSection)のみに集約**(SCR-010 / SCR-010-M1 / SCR-026 には置かない。一覧の「操作」列は撤去し行内リンクで編集 / 詳細へ遷移する方針)。論理削除データは `updated_at` 基準で 90 日経過後に物理削除バッチ(DD14)で物理削除される。全削除対象 12 テーブルに `valid INTEGER NOT NULL DEFAULT 1 CHECK (valid IN (0,1))` カラムを追加(`users` / `contract_owners` / `project_users` / `projects` / `allowed_domains` / `faqs` / `question_logs` / `inquiries` / `inquiry_contacts` / `chat_rooms` / `billing_subscriptions` / `project_quota_limits`)。月次上限件数・無料枠はプロジェクト単位(`project_quota_limits`、SCR-036 上限管理。オーナー / 当該プロジェクト管理者が設定可、運営者上書きは SCR-093)、レート制限は契約単位(`owner_quota_overrides`)。`usage_metering` はプロジェクト単位計測 + 契約単位請求集計
+- 利用者側ユーザーは **オーナー**(契約あたり 1 ユーザー固定、全権、MVP では譲渡不可、`contract_owners.user_id PRIMARY KEY` で 1 契約 = 1 オーナー固定が DB レベル担保される、**v1.10 でプロジェクト作成時に `project_users(role='admin', valid=1)` 行が自動 INSERT** される明示的なプロジェクト管理者保持者。認可フロー先頭の `isOwner=true` bypass(= `contract_owners` 行存在判定)は維持し、admin 行は通知宛先解決と画面表示の事実情報として参照される)と **メンバー**(0..N、`project_users.contract_owner_user_id` でオーナーに紐付き、プロジェクトごとに `project_users.role` = `admin`(プロジェクト管理者)または `member`(メンバー)で制御)に分かれる。オーナー専有機能(プロジェクト作成・編集・削除、課金、退会、規約再同意、メンバーユーザー削除)はプロジェクト別ロールでは付与できない。プロジェクト割当が 0 のメンバーはダッシュボードのみ利用可能。**v1.10 でプロジェクト作成時はオーナーが自動で当該プロジェクトの管理者となり、SCR-004-M1 から「管理者を指定」UI は撤去**(FR-030a 改訂)。**v1.10 でメンバーユーザー削除は論理削除(`users.valid=0`)。プロジェクト削除動線は SCR-008 プロジェクトホームのプロジェクト情報パネル(オーナー専有 DangerSection)のみに集約**(SCR-004 / SCR-004-M1 / SCR-016 には置かない。一覧の「操作」列は撤去し行内リンクで編集 / 詳細へ遷移する方針)。論理削除データは `updated_at` 基準で 90 日経過後に物理削除バッチ(DD13)で物理削除される。全削除対象 10 テーブルに `valid INTEGER NOT NULL DEFAULT 1 CHECK (valid IN (0,1))` カラムを追加(`users` / `contract_owners` / `project_users` / `projects` / `allowed_domains` / `faqs` / `question_logs` / `inquiries` / `billing_subscriptions` / `project_quota_limits`)。月次上限件数・無料枠はプロジェクト単位(`project_quota_limits`、SCR-021 上限管理。オーナー / 当該プロジェクト管理者が設定可、運営者上書きは SCR-093)、レート制限は契約単位(`owner_quota_overrides`)。`usage_metering` はプロジェクト単位計測 + 契約単位請求集計
 - `audit_logs.retention_class` は **クラス名表記**(`general` / `billing` / `operator_high_priv`)に統一(期間表記 `1y` / `5y` / `7y` は人間可読補助)
 
 ---
@@ -92,11 +92,11 @@
 bash 99_script/check-spec-sync.sh
 ```
 
-check-spec-sync.sh は SC-001〜SC-011 を実装している:
+check-spec-sync.sh は SC-001〜SC-012 を実装している:
 
 | 検査 ID | 検査内容 |
 |---|---|
-| SC-001 | 各基本設計 10 ファイルの必須ヘッダ存在 |
+| SC-001 | 各基本設計 11 ファイルの必須ヘッダ存在 |
 | SC-002 | 共有概念正本ファイルでの必須キーワード出現 |
 | SC-003 | 参照側ドキュメントでの再掲禁止(リンクのみで実装、深い相互参照は手動レビュー)|
 | SC-004 | SCR ID クロスチェック(画面設計 01 とトレーサビリティ 07 に全 SCR 出現)|
@@ -107,6 +107,7 @@ check-spec-sync.sh は SC-001〜SC-011 を実装している:
 | SC-009 | 連携 IF #1〜#12 がメイン側 API 設計 + 運営者側 API 設計(主管責任表)に出現 |
 | SC-010 | 参照リンク到達性(主要相対パスのターゲット存在確認)|
 | SC-011 | 要件定義 FR / 詳細設計 DD / 将来対応 FUT グループファイルが両システムで揃っているか |
+| SC-012 | FR / DD / FUT、SCR、テーブル、API 節、メッセージ節、メール節の連番と廃番識別子の再混入防止 |
 
 このスモークチェックは完全なレビューの代替ではない。要件定義と基本設計と詳細設計のドリフトを引き起こしたことのある高リスクな退行を検出する。
 
@@ -121,7 +122,7 @@ check-spec-sync.sh は SC-001〜SC-011 を実装している:
 ├── 画面遷移図.html                    # エンドユーザー UI ワイヤーフレーム
 ├── 01_要件定義/
 │   ├── index.md                       # 索引 + システム概要 + 機能要件一覧 + 業務要件 + トレーサビリティ
-│   └── FR01_アカウント管理.md 〜 FR22_SCR画面マスタ.md   # 機能グループ別 22 ファイル
+│   └── FR01_アカウント管理.md 〜 FR21_SCR画面マスタ.md   # 機能グループ別 21 ファイル
 ├── 02_基本設計/
 │   ├── index.md                       # 索引 + 設計方針 + システム構成 + 機能一覧 + SCR × ドキュメントカバレッジ
 │   ├── 01_画面設計.md                 # SCR-001〜027 + モーダル
@@ -137,7 +138,7 @@ check-spec-sync.sh は SC-001〜SC-011 を実装している:
 │   └── 11_メール設計.md               # 全 TPL- 件名 + 本文テンプレート全文の正本
 ├── 03_詳細設計/
 │   ├── index.md                       # 索引 + 詳細設計方針 + システム全体構成 + 実装順序
-│   └── DD01_*.md 〜 DD15_*.md         # 機能グループ × ドメイン別 15 ファイル
+│   └── DD01_*.md 〜 DD14_*.md         # 機能グループ × ドメイン別 14 ファイル
 ├── 04_運用設計/
 │   ├── index.md
 │   ├── 01_監視設計.md
@@ -148,7 +149,7 @@ check-spec-sync.sh は SC-001〜SC-011 を実装している:
 │   └── 06_運用手順.md
 └── 05_future/
     ├── index.md
-    └── FUT01_*.md 〜 FUT05_*.md       # 将来対応カテゴリ別 5 ファイル
+    └── FUT01_*.md 〜 FUT06_*.md       # 将来対応カテゴリ別 6 ID
 
 02_運営者システム/                     # メインと同構成。FR は 24 ファイル、DD は 12 ファイル、FUT は 3 ファイル
 ├── 画面遷移図.html                    # 運営者 UI ワイヤーフレーム
@@ -168,7 +169,7 @@ check-spec-sync.sh は SC-001〜SC-011 を実装している:
 └── 共有概念.md                        # 共有概念対応表 + 検査キーワード
 
 99_script/
-├── check-spec-sync.sh                 # 仕様同期スモークチェック(SC-001〜SC-011)
+├── check-spec-sync.sh                 # 仕様同期スモークチェック(SC-001〜SC-012)
 ├── html_to_pdf.sh                     # HTML → PDF(Chrome headless or WeasyPrint)
 └── md_to_pdf.sh                       # Markdown → PDF(pandoc + xelatex)
 

@@ -49,7 +49,7 @@
 |---|---|
 | API | エンドポイントごとの OpenAPI スキーマ、JSON Schema、エラーコード一覧(TH-1) |
 | DDL | NULL 制約、外部キー、CHECK 制約、インデックスの正確な構文(TH-2) |
-| 画面詳細 | SCR-090〜099 のコンポーネント、項目、API 呼出、4-eyes UI(TH-3, TH-5) |
+| 画面詳細 | SCR-090〜098 のコンポーネント、項目、API 呼出、4-eyes UI(TH-3, TH-5) |
 | HTML サニタイザ | 許可タグ・属性ホワイトリスト具体値(TH-4) |
 | 監査 action コード | `<resource>.<verb>` 全コード一覧 + retention_class(TH-6) |
 | KV キー一覧 | 個別キーの命名・TTL 値・サンプル値(TH-7) |
@@ -82,10 +82,10 @@
 | 4 | AI 推論パラメータ 3 階層上書き | SCR-092 | FR-055, FR-061〜FR-066, AC-034 |
 | 5 | 契約別レート/上限件数上書き + サプレスリスト復帰 | SCR-093 | FR-121, FR-128, FR-224, NFR-503, NFR-504 |
 | 6 | お知らせ作成・配信(運営者) | SCR-094 | FR-149, FR-188, FR-189 |
-| 7 | 監査ログ閲覧・エクスポート(HMAC 署名) | SCR-096 | FR-229, FR-230, FR-232, NFR-306, NFR-602 |
-| 8 | 課金 Webhook リプレイ・DLQ 操作 | SCR-097 | FR-302, NFR-808, NFR-809 |
-| 9 | PII 誤検出報告管理(3 営業日判定) | SCR-098 | FR-060, FR-064, NFR-805 |
-| 10 | Webhook ペイロード差分検出 | SCR-099 | FR-302 異常系, AC-041 |
+| 7 | 監査ログ閲覧・エクスポート(HMAC 署名) | SCR-095 | FR-229, FR-230, FR-232, NFR-306, NFR-602 |
+| 8 | 課金 Webhook リプレイ・DLQ 操作 | SCR-096 | FR-302, NFR-808, NFR-809 |
+| 9 | PII 誤検出報告管理(3 営業日判定) | SCR-097 | FR-060, FR-064, NFR-805 |
+| 10 | Webhook ペイロード差分検出 | SCR-098 | FR-302 異常系, AC-041 |
 | 11 | 月次請求確定 cron(月初 02:00 JST) | バックグラウンド | FR-303, AC-042 |
 | 12 | 監査ハッシュチェーン日次検証 | バックグラウンド | NFR-306, RB-017 |
 | 13 | 運営者操作通知(FR-211、10 分集約) | 連携 IF #12 | FR-211, D-19 |
@@ -192,7 +192,7 @@ flowchart TB
 
 | Worker | 責務 | バインド | 主な処理時間 |
 |---|---|---|---|
-| `AdminConsoleWorker` | 運営者ログイン、MFA、IP 許可、再認証、4-eyes 承認、SCR-090〜099 の全 API、内部 API クライアント(連携 IF 発信側) | `D1: admin_db` / `KV: admin_cache` / `Secrets` / Queues producer / R2 reader | リクエスト駆動 |
+| `AdminConsoleWorker` | 運営者ログイン、MFA、IP 許可、再認証、4-eyes 承認、SCR-090〜098 の全 API、内部 API クライアント(連携 IF 発信側) | `D1: admin_db` / `KV: admin_cache` / `Secrets` / Queues producer / R2 reader | リクエスト駆動 |
 | `BillingWebhookWorker` | Stripe / Resend Webhook 一次受信、署名検証、event_id 冪等、ペイロード正規化 + 差分検出、内部転送(連携 IF #10)、DLQ 投入 + R2 退避 | `D1` / `R2` / `Queues` / `Secrets` | リクエスト駆動(30 秒以内) |
 | `AnnouncementSchedulerWorker` | お知らせ配信予約の 1 分ポーリング、`scheduled_at ≤ now+5min` を `sending` 遷移、連携 IF #7 でメイン転送 | `D1` / `Queues` | 1 分間隔 |
 | `AuditChainVerifierWorker` | 監査ログ全件のハッシュチェーン再計算(D-04)、不一致時の運営者 inbox + メール通知 | `D1` / `Secrets`(チェーン鍵) | 日次 02:00 JST |
@@ -332,7 +332,7 @@ admin/
 ├── tests/
 │   ├── unit/                     # Vitest
 │   ├── integration/              # Miniflare
-│   ├── e2e/                      # Playwright(SCR-090〜094, SCR-096〜099)
+│   ├── e2e/                      # Playwright(SCR-090〜094, SCR-095〜098)
 │   └── webhook/                  # Stripe Test Mode
 ├── scripts/
 │   ├── audit-export-verify.ts    # HMAC 署名検証ツール(運営者配布)
@@ -387,7 +387,7 @@ admin/
 | [DD07_KV・R2オブジェクト.md](DD07_KV・R2オブジェクト.md) | KV キー全表 + R2 オブジェクトパス | TH-7 全般 | §9 全文, 付録 J |
 | [DD08_Cron実装.md](DD08_Cron実装.md) | Cron UTC 式 + 擬似コード + 失敗時通知 | FR-303, AC-042, D-04/05/09/11 | §14 全文, 付録 L |
 | [DD09_監査actionコード.md](DD09_監査actionコード.md) | 監査 action コード一覧(約 60 件) | NFR-602, D-08 | §15 全文, 付録 F |
-| [DD10_PII偽陽性報告.md](DD10_PII偽陽性報告.md) | PII 誤検出報告 3 営業日判定 + ルール改定 | FR-060, FR-064, NFR-805, AC-036 | §5 SCR-098, §6 PII, 付録 B.5 |
+| [DD10_PII偽陽性報告.md](DD10_PII偽陽性報告.md) | PII 誤検出報告 3 営業日判定 + ルール改定 | FR-060, FR-064, NFR-805, AC-036 | §5 SCR-097, §6 PII, 付録 B.5 |
 | [DD11_状態遷移詳細.md](DD11_状態遷移詳細.md) | 主要 5 状態機械 + ペイロード差分 state | D-08, AC-041 | 付録 B 全文 |
 | [DD12_運営者用ログ・テスト.md](DD12_運営者用ログ・テスト.md) | 構造化ログ + テスト戦略 + 受入条件 | NFR-103〜106, AC-036〜046 | §16, §17 全文 |
 
