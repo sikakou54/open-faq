@@ -703,7 +703,7 @@ src/
 6. **DD02 プロジェクト・FAQ 管理** — プロジェクト / FAQ CRUD + FTS5
 7. **DD03 AI 回答パイプライン** — Workers AI / PostCheck / PII scrubber
 8. **DD04 AI しきい値 3 階層適用** — KV / 永続キャッシュ / フォールバック
-9. **DD12 ウィジェット配信** — bootstrap / ask / 未解決問い合わせID表示
+9. **DD12 ウィジェット配信** — bootstrap / 丸型ランチャーバッジからの開閉 / ask / 未解決時の連絡先表示（問い合わせIDは非表示）
 10. **DD05 inquiry_code 採番・未解決質問** — INQ-YYYYMMDD-XXXXXXXX
 11. **DD06 通知ロジック** — Resend / Queue / Webhook
 12. **DD11 利用量計測・課金** — 月次集計 / Stripe 連動

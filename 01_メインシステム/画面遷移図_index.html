@@ -90,26 +90,24 @@ svg.lucide { margin-right: 4px; }
 #scr-008 .app-main > .panel[style*="margin-top: 8px"],
 #scr-008 .app-main > .panel[style*="margin-top: 16px"],
 #scr-017 .app-main > .panel:nth-last-of-type(-n+2) { display: none; }
-/* エンドユーザー向け FAQ ウィジェット: チャット UI + ヘッダーメニュー */
+/* エンドユーザー向け FAQ ウィジェット: ランチャー / チャット UI */
+.widget-launcher-stage { position: relative; width: 360px; height: 360px; border: 1px dashed var(--border-strong); border-radius: 12px; background: linear-gradient(135deg, var(--gray-25), var(--surface)); overflow: hidden; }
+.widget-launcher-stage::before { content: "導入サイトのページ領域"; position: absolute; top: 16px; left: 16px; color: var(--text-muted); font-size: var(--fs-xs); }
+.widget-launcher-button { position: absolute; right: 18px; bottom: 18px; display: inline-flex; align-items: center; justify-content: center; width: 56px; height: 56px; padding: 0; border: 0; border-radius: 50%; color: #fff; background: var(--accent-600); box-shadow: var(--shadow-md); cursor: pointer; }
+.widget-launcher-button svg.lucide { width: 26px; height: 26px; margin: 0; }
 .widget-chat-shell { width: 360px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); box-shadow: var(--shadow-md); overflow: hidden; }
 .widget-chat-shell.restricted { border-color: var(--danger-border); }
-.widget-chat-header { position: relative; min-height: 48px; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 10px 8px 14px; color: #fff; background: var(--accent-600); }
+.widget-chat-header { min-height: 48px; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 10px 8px 14px; color: #fff; background: var(--accent-600); }
 .widget-chat-header .title { font-size: var(--fs-base); font-weight: var(--fw-semibold); }
 .widget-chat-header .status { display: block; margin-top: 2px; font-size: var(--fs-xs); opacity: .82; }
-.widget-menu-button { width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,.4); border-radius: var(--r-md); color: #fff; background: rgba(255,255,255,.08); }
-.widget-menu-button svg.lucide { width: 18px; height: 18px; margin: 0; }
-.widget-menu-panel { position: absolute; z-index: 4; top: 42px; right: 8px; width: 190px; padding: 5px; border: 1px solid var(--border); border-radius: var(--r-md); color: var(--text); background: var(--surface); box-shadow: var(--shadow-lg); }
-.widget-menu-panel .menu-item { display: flex; align-items: center; gap: 8px; padding: 8px 9px; border-radius: var(--r-sm); font-size: var(--fs-sm); text-decoration: none; color: var(--text); }
-.widget-menu-panel .menu-item:hover { background: var(--gray-50); }
-.widget-menu-panel .menu-item svg.lucide { width: 15px; height: 15px; margin: 0; color: var(--text-secondary); }
+.widget-close-button { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 50%; color: #fff; background: transparent; cursor: pointer; }
+.widget-close-button svg.lucide { width: 19px; height: 19px; margin: 0; }
 .widget-chat-body { padding: 12px; background: var(--gray-25); }
 .widget-chat-body .msg-list { height: 260px; margin: 0 0 8px; background: var(--surface); }
 .widget-chat-body .msg { max-width: 82%; }
 .widget-chat-body .msg.staff { border-color: var(--accent-200); }
 .widget-chat-body .msg.staff.handoff-reply { max-width: 92%; border-color: var(--info-border); background: var(--info-bg); }
 .widget-chat-body .msg.staff.limit-reply { max-width: 92%; border-color: var(--danger-border); background: var(--danger-bg); color: var(--text); }
-.widget-chat-id { display: inline-flex; align-items: center; gap: 5px; margin-bottom: 8px; padding: 4px 8px; border: 1px solid var(--info-border); border-radius: var(--r-pill); color: var(--info); background: var(--info-bg); font-size: var(--fs-xs); font-weight: var(--fw-semibold); }
-.widget-chat-id code { color: inherit; font-size: inherit; }
 .widget-chat-composer { display: grid; grid-template-columns: 1fr auto; gap: 6px; align-items: end; }
 .widget-chat-composer .textarea { min-height: 54px; background: var(--surface); }
 .widget-chat-composer .btn { margin: 0; min-height: 54px; padding-inline: 12px; }
@@ -156,8 +154,6 @@ body { padding-top: 54px; }
 .wireframe-stack .screen { margin-bottom: 20px; min-height: auto; page-break-after: always; }
 .role-screen-note { margin: 0 0 8px; padding: 8px 12px; border: 1px solid color-mix(in srgb, var(--role-accent) 35%, white); border-left: 4px solid var(--role-accent); border-radius: var(--r-md); color: color-mix(in srgb, var(--role-accent) 80%, #111827); background: color-mix(in srgb, var(--role-accent) 7%, white); font-size: var(--fs-sm); }
 .role-readonly .input, .role-readonly .select, .role-readonly .textarea { background: var(--gray-50); color: var(--text-secondary); }
-.public-legal-layout { border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface); min-height: 540px; }
-.public-legal-layout .app-main { max-width: 960px; margin: 0 auto; padding: 28px; }
 .source-note { font-size: var(--fs-sm); color: var(--text-secondary); text-align: center; padding: 14px; }
 .index-cards { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; }
 .index-card { border: 1px solid var(--border); border-top: 5px solid var(--card-accent); border-radius: 12px; padding: 18px; background: var(--surface); box-shadow: var(--shadow-sm); }
@@ -217,7 +213,7 @@ body { padding-top: 54px; }
   <h2>ウィジェット利用者</h2>
   <p><strong>導入サイトでFAQ質問と問い合わせ案内を利用するエンドユーザー</strong></p>
   <p>管理コンソールのアカウントを持たず、導入サイトに埋め込まれたFAQウィジェットを利用します。管理画面、設定、契約情報にはアクセスしません。</p>
-  <div class="small">収録画面: 3画面</div>
+  <div class="small">収録画面: 1画面</div>
   <a class="open-link" href="画面遷移図_ウィジェット利用者.html">この画面遷移図を開く</a>
 </article>
 <article class="index-card" style="--card-accent: #2563eb">
@@ -246,7 +242,7 @@ body { padding-top: 54px; }
     <h2>ユーザー種別ごとの利用範囲の比較</h2>
     <table class="role-table comparison">
       <thead><tr><th>機能領域</th><th>ウィジェット利用者</th><th>プロジェクトメンバー</th><th>プロジェクト管理者</th><th>オーナー</th></tr></thead>
-      <tbody><tr><td>公開ウィジェット・質問</td><td class="mark-full">◎</td><td class="mark-none">×</td><td class="mark-none">×</td><td class="mark-full">◎ 設定・プレビュー</td></tr><tr><td>プロジェクト概要</td><td class="mark-none">×</td><td class="mark-full">◎</td><td class="mark-full">◎</td><td class="mark-full">◎</td></tr><tr><td>FAQ・要対応質問</td><td class="mark-none">×</td><td class="mark-full">◎</td><td class="mark-full">◎</td><td class="mark-full">◎</td></tr><tr><td>ウィジェット設定</td><td class="mark-none">×</td><td class="mark-limited">△ 閲覧・コピー</td><td class="mark-full">◎</td><td class="mark-full">◎</td></tr><tr><td>プロジェクトメンバー管理</td><td class="mark-none">×</td><td class="mark-none">×</td><td class="mark-full">◎ 担当PJ</td><td class="mark-full">◎ 全PJ</td></tr><tr><td>質問数上限・アラート</td><td class="mark-none">×</td><td class="mark-limited">△ 閲覧</td><td class="mark-full">◎ 担当PJ</td><td class="mark-full">◎ 全PJ</td></tr><tr><td>プロジェクト設定</td><td class="mark-none">×</td><td class="mark-none">×</td><td class="mark-limited">△ 参照</td><td class="mark-full">◎ 編集・削除</td></tr><tr><td>契約・課金・監査・退会</td><td class="mark-none">×</td><td class="mark-none">×</td><td class="mark-none">×</td><td class="mark-full">◎</td></tr><tr><td>利用規約・プライバシーポリシー</td><td class="mark-full">◎ 公開閲覧</td><td class="mark-full">◎ 閲覧</td><td class="mark-full">◎ 閲覧</td><td class="mark-full">◎ 閲覧・契約判断</td></tr></tbody>
+      <tbody><tr><td>公開ウィジェット・質問</td><td class="mark-full">◎</td><td class="mark-none">×</td><td class="mark-none">×</td><td class="mark-full">◎ 設定・プレビュー</td></tr><tr><td>プロジェクト概要</td><td class="mark-none">×</td><td class="mark-full">◎</td><td class="mark-full">◎</td><td class="mark-full">◎</td></tr><tr><td>FAQ・要対応質問</td><td class="mark-none">×</td><td class="mark-full">◎</td><td class="mark-full">◎</td><td class="mark-full">◎</td></tr><tr><td>ウィジェット設定</td><td class="mark-none">×</td><td class="mark-limited">△ 閲覧・コピー</td><td class="mark-full">◎</td><td class="mark-full">◎</td></tr><tr><td>プロジェクトメンバー管理</td><td class="mark-none">×</td><td class="mark-none">×</td><td class="mark-full">◎ 担当PJ</td><td class="mark-full">◎ 全PJ</td></tr><tr><td>質問数上限・アラート</td><td class="mark-none">×</td><td class="mark-limited">△ 閲覧</td><td class="mark-full">◎ 担当PJ</td><td class="mark-full">◎ 全PJ</td></tr><tr><td>プロジェクト設定</td><td class="mark-none">×</td><td class="mark-none">×</td><td class="mark-limited">△ 参照</td><td class="mark-full">◎ 編集・削除</td></tr><tr><td>契約・課金・監査・退会</td><td class="mark-none">×</td><td class="mark-none">×</td><td class="mark-none">×</td><td class="mark-full">◎</td></tr><tr><td>利用規約・プライバシーポリシー</td><td class="mark-none">× 表示なし</td><td class="mark-full">◎ 閲覧</td><td class="mark-full">◎ 閲覧</td><td class="mark-full">◎ 閲覧・契約判断</td></tr></tbody>
     </table>
     <div class="small">凡例: ◎ 利用可 / △ 制限付き / × 利用不可</div>
   </section>
@@ -255,7 +251,7 @@ body { padding-top: 54px; }
     <section class="doc-section">
       <h2>共通画面</h2>
       <ul class="plain-list">
-        <li>全利用者共通: SCR-010 利用規約、SCR-020 プライバシーポリシー</li>
+        <li>公開共通画面: SCR-010 利用規約、SCR-020 プライバシーポリシー（ウィジェット内の導線なし）</li>
         <li>認証ユーザー共通: SCR-001 ログイン、SCR-003 パスワード再設定、SCR-011 / SCR-012 お知らせ、SCR-017 個人設定</li>
         <li>プロジェクト運用共通: SCR-008、SCR-005、SCR-006、SCR-007、SCR-021</li>
         <li>招待メンバー共通: SCR-018 アカウント有効化</li>
@@ -281,7 +277,7 @@ body { padding-top: 54px; }
         <tr><td>SCR-015 規約再同意</td><td>オーナー</td><td>既存ワイヤーフレームはオーナー / メンバー表記ですが、権限設計・要件・トレーサビリティでは契約判断としてオーナー専有のため。</td></tr>
         <tr><td>SCR-019 連絡先メール確認</td><td>オーナー / プロジェクト管理者の関連フロー</td><td>実操作者はアカウント不要のメール所有者ですが、設定と完了確認を行う管理ロール側にも必要なため。</td></tr>
         <tr><td>SCR-027 プロジェクト設定</td><td>管理者は参照、オーナーは編集・削除</td><td>既存ワイヤーフレームには編集操作がありますが、権限設計の正本を優先したため。</td></tr>
-        <tr><td>SCR-010 / SCR-020</td><td>全4種別</td><td>認証不要URLが提供されるため、ウィジェット利用者にも公開閲覧版を含めたため。</td></tr>
+        <tr><td>SCR-010 / SCR-020</td><td>管理コンソール関連3種別の画面図に収録</td><td>認証不要URLは維持するが、ウィジェット利用者向け画面図とウィジェット内の導線からは除外するため。</td></tr>
       </tbody>
     </table>
   </section>

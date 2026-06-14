@@ -104,19 +104,6 @@ function addScreenNote(html, note, readOnly = false) {
   return result;
 }
 
-function makePublicLegalView(html) {
-  let result = removeDivsByClassAndText(html, "app-header", ["open-faq"]);
-  result = removeDivsByClassAndText(result, "app-sidebar", ["利用規約"]);
-  result = result.replace(
-    '<div class="app-layout">',
-    '<div class="public-legal-layout">',
-  );
-  return addScreenNote(
-    result,
-    "<strong>公開閲覧版:</strong> 認証不要URLから文書本文のみを閲覧します。管理コンソールのサイドメニューは表示しません。",
-  );
-}
-
 const blocks = extractScreenBlocks(source);
 
 const catalog = {
@@ -209,8 +196,8 @@ const catalog = {
     condition: "契約オーナーのみ。",
   },
   "widget-enduser": {
-    purpose: "導入サイト上のチャットUIでFAQ質問を行い、未解決時は問い合わせIDと連絡先を確認する。",
-    condition: "許可ドメイン上の埋め込み。上限到達時は質問受付停止。",
+    purpose: "導入サイト上の丸型ランチャーバッジからチャットUIを開き、FAQ質問と未解決時の確認済み連絡先確認を行う。",
+    condition: "許可ドメイン上の埋め込み。初期表示は右下固定の丸型バッジ。上限到達時は質問受付停止。",
   },
   "scr-017": {
     purpose: "自分のプロフィール、パスワード、セッション、参加プロジェクトを管理する。",
@@ -312,48 +299,52 @@ const roles = [
     description:
       "管理コンソールのアカウントを持たず、導入サイトに埋め込まれたFAQウィジェットを利用します。管理画面、設定、契約情報にはアクセスしません。",
     color: "#0f766e",
-    screens: [
-      "widget-enduser",
-      "scr-010",
-      "scr-020",
-    ],
+    screens: ["widget-enduser"],
     access: {
-      "widget-enduser": "チャットUIで質問。上限到達時は返信で問い合わせ先を確認",
-      "scr-010": "公開URLで閲覧",
-      "scr-020": "公開URLで閲覧",
+      "widget-enduser": "丸型バッジをクリックしてチャットUIを開き、質問。上限到達時は返信で問い合わせ先を確認",
     },
     flows: [
       {
         name: "FAQ質問・問い合わせ",
         steps: [
+          "丸型バッジ表示",
+          "クリック / Enter / Space",
+          "チャットUI展開",
           "WIDGET 質問",
           "AIで未解決",
-          "問い合わせID発行",
+          "未解決質問を内部登録",
           "連絡先メール表示",
           "別のFAQ質問を継続",
         ],
         condition:
-          "質問受付中で公開済みFAQから回答できなかった場合。問い合わせIDと確認済み連絡先を表示。",
+          "質問受付中で公開済みFAQから回答できなかった場合。管理用問い合わせIDは表示せず、確認済み連絡先のみ表示。",
       },
       {
         name: "質問上限到達",
-        steps: ["WIDGET 質問", "429 / 受付停止", "連絡先メールへ誘導"],
+        steps: ["丸型バッジ表示", "チャットUI展開", "WIDGET 質問", "429 / 受付停止", "連絡先メールへ誘導"],
         condition: "プロジェクトの月次質問数が設定上限100%に到達。",
+      },
+      {
+        name: "チャットUIを閉じて再開",
+        steps: ["チャットUI展開", "閉じる", "丸型バッジ表示", "再度開く", "会話状態を復元"],
+        condition: "同一ページ内では会話履歴、入力内容、受付状態を保持。",
       },
     ],
     differences: [
+      ["初期表示", "丸型バッジ", "右下固定の直径56px。クリック / Enter / SpaceでチャットUIを展開"],
       ["管理コンソール", "利用不可", "プロジェクト・契約のデータや設定は表示しない"],
-      ["利用規約・ポリシー", "公開閲覧", "認証不要URLから本文のみ表示"],
+      ["利用規約・ポリシー", "表示なし", "ウィジェット内にメニューや導線を設けない"],
       ["質問受付", "状態依存", "上限到達・契約停止時は新規質問を受け付けない"],
     ],
     excluded: [
       "SCR-001〜003、SCR-011〜016、SCR-017、SCR-018〜027の管理コンソール画面",
       "FAQ編集、メンバー管理、ウィジェット設定、利用量設定",
       "契約・請求・退会・操作履歴",
+      "SCR-010 利用規約、SCR-020 プライバシーポリシー",
     ],
     notes: [
-      "SCR-010 / SCR-020は既存画面の認証不要版として、管理サイドバーを除いた本文表示にしています。",
-      "WIDGETは固有SCR IDを持たないiframe状態図ですが、利用者が最初に触れる画面として含めています。",
+      "WIDGETは固有SCR IDを持たないiframe状態図です。ヘッダーにはタイトル、受付状態、閉じるボタンのみを表示します。",
+      "閉じるボタンで丸型バッジ表示へ戻り、再展開時も同一ページ内の会話履歴と受付状態を保持します。",
     ],
   },
   {
@@ -615,8 +606,6 @@ body { padding-top: 54px; }
 .wireframe-stack .screen { margin-bottom: 20px; min-height: auto; page-break-after: always; }
 .role-screen-note { margin: 0 0 8px; padding: 8px 12px; border: 1px solid color-mix(in srgb, var(--role-accent) 35%, white); border-left: 4px solid var(--role-accent); border-radius: var(--r-md); color: color-mix(in srgb, var(--role-accent) 80%, #111827); background: color-mix(in srgb, var(--role-accent) 7%, white); font-size: var(--fs-sm); }
 .role-readonly .input, .role-readonly .select, .role-readonly .textarea { background: var(--gray-50); color: var(--text-secondary); }
-.public-legal-layout { border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface); min-height: 540px; }
-.public-legal-layout .app-main { max-width: 960px; margin: 0 auto; padding: 28px; }
 .source-note { font-size: var(--fs-sm); color: var(--text-secondary); text-align: center; padding: 14px; }
 .index-cards { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; }
 .index-card { border: 1px solid var(--border); border-top: 5px solid var(--card-accent); border-radius: 12px; padding: 18px; background: var(--surface); box-shadow: var(--shadow-sm); }
@@ -684,10 +673,6 @@ function roleSpecificBlock(role, id) {
     "チャット",
     "自動割り当て",
   ]);
-
-  if (role.audienceKey === "widget-user" && ["scr-010", "scr-020"].includes(id)) {
-    return makePublicLegalView(html);
-  }
 
   if (["project-member", "project-admin"].includes(role.audienceKey) && id === "scr-017") {
     html = removeDivsByClassAndText(html, "panel", [
@@ -883,7 +868,7 @@ const comparisonRows = [
   ["質問数上限・アラート", "×", "△ 閲覧", "◎ 担当PJ", "◎ 全PJ"],
   ["プロジェクト設定", "×", "×", "△ 参照", "◎ 編集・削除"],
   ["契約・課金・監査・退会", "×", "×", "×", "◎"],
-  ["利用規約・プライバシーポリシー", "◎ 公開閲覧", "◎ 閲覧", "◎ 閲覧", "◎ 閲覧・契約判断"],
+  ["利用規約・プライバシーポリシー", "× 表示なし", "◎ 閲覧", "◎ 閲覧", "◎ 閲覧・契約判断"],
 ];
 
 function markClass(value) {
@@ -962,7 +947,7 @@ ${renderNav(indexFile)}
     <section class="doc-section">
       <h2>共通画面</h2>
       <ul class="plain-list">
-        <li>全利用者共通: SCR-010 利用規約、SCR-020 プライバシーポリシー</li>
+        <li>公開共通画面: SCR-010 利用規約、SCR-020 プライバシーポリシー（ウィジェット内の導線なし）</li>
         <li>認証ユーザー共通: SCR-001 ログイン、SCR-003 パスワード再設定、SCR-011 / SCR-012 お知らせ、SCR-017 個人設定</li>
         <li>プロジェクト運用共通: SCR-008、SCR-005、SCR-006、SCR-007、SCR-021</li>
         <li>招待メンバー共通: SCR-018 アカウント有効化</li>
@@ -988,7 +973,7 @@ ${renderNav(indexFile)}
         <tr><td>SCR-015 規約再同意</td><td>オーナー</td><td>既存ワイヤーフレームはオーナー / メンバー表記ですが、権限設計・要件・トレーサビリティでは契約判断としてオーナー専有のため。</td></tr>
         <tr><td>SCR-019 連絡先メール確認</td><td>オーナー / プロジェクト管理者の関連フロー</td><td>実操作者はアカウント不要のメール所有者ですが、設定と完了確認を行う管理ロール側にも必要なため。</td></tr>
         <tr><td>SCR-027 プロジェクト設定</td><td>管理者は参照、オーナーは編集・削除</td><td>既存ワイヤーフレームには編集操作がありますが、権限設計の正本を優先したため。</td></tr>
-        <tr><td>SCR-010 / SCR-020</td><td>全4種別</td><td>認証不要URLが提供されるため、ウィジェット利用者にも公開閲覧版を含めたため。</td></tr>
+        <tr><td>SCR-010 / SCR-020</td><td>管理コンソール関連3種別の画面図に収録</td><td>認証不要URLは維持するが、ウィジェット利用者向け画面図とウィジェット内の導線からは除外するため。</td></tr>
       </tbody>
     </table>
   </section>
