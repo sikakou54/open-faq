@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DD14: アクセシビリティ・国際化 | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/03_詳細設計/DD14_アクセシビリティ・国際化.html">
+<article class="content" id="content">
+<h1 id="dd14-アクセシビリティ国際化">DD14: アクセシビリティ・国際化</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書名</td>
+<td>DD14: アクセシビリティ・国際化</td>
+</tr>
+<tr>
+<td>詳細設計ID</td>
+<td>DD14</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>FAQ AI ウィジェット SaaS / メインシステム</td>
+</tr>
+<tr>
+<td>関連機能ID</td>
+<td>NFR-401（プライバシー保護）/ WCAG 2.2 AA 準拠 / i18n 基盤</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-17</td>
+</tr>
+<tr>
+<td>版数</td>
+<td>v1.1</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>承認済</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-対象範囲">1. 対象範囲</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>ID</th>
+<th>名称</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>非機能</td>
+<td>NFR-401</td>
+<td>プライバシー保護（403/401 画面 SR 対応含む）</td>
+</tr>
+<tr>
+<td>非機能</td>
+<td>WCAG 2.2 AA</td>
+<td>アクセシビリティ準拠</td>
+</tr>
+<tr>
+<td>ライブラリ</td>
+<td><code>focus-trap-react</code></td>
+<td>モーダル focus trap</td>
+</tr>
+<tr>
+<td>ライブラリ</td>
+<td><code>react-i18next</code> <code>app/shared/src/i18n/ja.ts</code></td>
+<td>i18n 基盤</td>
+</tr>
+<tr>
+<td>ライブラリ</td>
+<td><code>formatJst</code></td>
+<td>JST 固定タイムゾーン</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-収録ロジック対応章">2. 収録ロジック・対応章</h2>
+<table>
+<thead>
+<tr>
+<th>元章</th>
+<th>元タイトル</th>
+<th>概要</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>§13.4</td>
+<td>アクセシビリティ（WCAG 2.2 AA）</td>
+<td>実装規約</td>
+</tr>
+<tr>
+<td>§13.4.X</td>
+<td>モーダル focus trap 実装規約</td>
+<td>ライブラリ + キーボード規約</td>
+</tr>
+<tr>
+<td>§13.4.Y</td>
+<td>専用 403 / 401 画面のアクセシビリティ</td>
+<td>role="alert" + aria-live</td>
+</tr>
+<tr>
+<td>§13.4.2</td>
+<td>自動テスト</td>
+<td><code>@axe-core/playwright</code></td>
+</tr>
+<tr>
+<td>§13.5</td>
+<td>国際化</td>
+<td>i18n 基盤</td>
+</tr>
+<tr>
+<td>§13.5.X</td>
+<td>i18n キー命名規則とカタログ管理</td>
+<td><code>&lt;scope&gt;.&lt;entity&gt;.&lt;state_or_action&gt;</code></td>
+</tr>
+<tr>
+<td>§13.5.X (TZ)</td>
+<td>タイムゾーン処理</td>
+<td>JST 固定</td>
+</tr>
+<tr>
+<td>§13.5.2</td>
+<td>日時表示</td>
+<td><code>formatJst</code> 実装</td>
+</tr>
+<tr>
+<td>§13.5.3</td>
+<td>UTF-8 4 バイト対応</td>
+<td>絵文字対応</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-詳細設計本文">3. 詳細設計本文</h2>
+<h3 id="31-アクセシビリティ実装規約">3.1 アクセシビリティ実装規約</h3>
+<ul>
+<li><strong>キーボード操作</strong>: 全画面で Tab / Enter / Esc が動作。フォーカス可視（<code>:focus-visible</code> 2px outline）</li>
+<li><strong>ARIA</strong>: ランドマーク（<code>role="main"</code>, <code>role="navigation"</code> 等）、<code>aria-label</code>, <code>aria-describedby</code>, <code>aria-live</code></li>
+<li><strong>コントラスト比</strong>: 通常テキスト 4.5:1 以上、大テキスト 3:1 以上（Tailwind カラーパレットで担保）</li>
+<li><strong>代替テキスト</strong>: <code>&lt;img alt&gt;</code> 必須、装飾画像は <code>alt=""</code></li>
+<li><strong>フォームラベル</strong>: <code>&lt;label htmlFor&gt;</code> で関連付け、エラーは <code>aria-describedby</code> で連携</li>
+<li><strong>ターゲットサイズ</strong>: 主要なボタン、アイコンボタン、行アクションは 44×44 CSS px 以上。例外は文章中のインラインリンク</li>
+<li><strong>フォーカス非遮蔽</strong>: sticky header / footer でフォーカス対象を完全に隠さない。<code>scroll-margin</code> を共通指定</li>
+<li><strong>状態表現</strong>: 色や絵文字だけで状態を伝えず、必ず可読テキストを併記。装飾絵文字は <code>aria-hidden="true"</code></li>
+<li><strong>ドラッグ代替</strong>: 並べ替え等にドラッグを用いる場合、キーボード操作と上下移動ボタンを併設</li>
+</ul>
+<h3 id="32-モーダル-focus-trap-実装規約">3.2 モーダル focus trap 実装規約</h3>
+<p>axe-core ではキーボードトラップの一部ケース（テスト終了時のフォーカス検証）を自動検出できないため、専用ライブラリと回帰テストで担保する。</p>
+<ul>
+<li><strong>採用ライブラリ</strong>: <code>focus-trap-react</code>（同等 OSS でも可。MVP 着手時の依存追加 PR で確定）</li>
+<li><strong>対象モーダル</strong> (メイン側): ConfirmDialog / 再認証モーダル / 退会確認モーダル / お知らせ詳細モーダル</li>
+<li><strong>挙動規約</strong>:
+<ul>
+<li>モーダル open 時、内部最初の <strong>フォーカス可能要素</strong> にフォーカス</li>
+<li>Tab / Shift+Tab で内部循環、外部へ抜けない</li>
+<li>Esc キー: ConfirmDialog 系は閉じる（dismiss 扱い）。重要操作モーダル（退会・再認証）は <strong>Esc 無効</strong>、明示の × ボタンで閉じる</li>
+<li>モーダル close 後、フォーカスを <strong>発火元のボタン or 指定 <code>data-focus-restore-target</code></strong> に明示復元</li>
+</ul></li>
+</ul>
+<h4 id="321-キーボードショートカット一覧">3.2.1 キーボードショートカット一覧</h4>
+<table>
+<thead>
+<tr>
+<th>場面</th>
+<th>キー</th>
+<th>動作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>全画面共通</td>
+<td>Tab / Shift+Tab</td>
+<td>フォーカス送り</td>
+</tr>
+<tr>
+<td>全画面共通</td>
+<td>Enter</td>
+<td>主アクション（送信ボタン等）</td>
+</tr>
+<tr>
+<td>モーダル内</td>
+<td>Esc</td>
+<td>閉じる（重要操作モーダルを除く）</td>
+</tr>
+<tr>
+<td>SCR-006 FAQ 編集</td>
+<td>Ctrl+S (Cmd+S)</td>
+<td>下書き保存</td>
+</tr>
+</tbody>
+</table>
+<h4 id="322-回帰テスト">3.2.2 回帰テスト</h4>
+<p><code>apps/admin/e2e/a11y/focus-trap.spec.ts</code> で各モーダルにつき以下を検証</p>
+<ul>
+<li>Tab × 50 回押下でフォーカスが循環し外部に抜けないこと</li>
+<li>Esc 挙動が上表通り</li>
+<li>close 後の <code>document.activeElement</code> が発火元一致</li>
+</ul>
+<h3 id="33-専用-403--401-画面のアクセシビリティ">3.3 専用 403 / 401 画面のアクセシビリティ</h3>
+<ul>
+<li><strong>IP 許可リスト 403 画面（運営者ログイン前、<code>operator_ip_allowlist</code>）</strong> / <strong>契約停止 401 画面</strong>:
+<ul>
+<li>ページ単位で <code>role="alert"</code> を main 領域に付与し、SR 利用者に状態が伝わるようにする</li>
+<li>文言は <strong><code>&lt;h1&gt;</code> で「アクセスが拒否されました」</strong>、本文に原因と次のアクション（連絡先 / 管理者向けガイド URL）を <code>aria-live="assertive"</code> で読み上げ可</li>
+<li>ステータスコード（403 / 401）は人間可読テキストとして本文に含める（数字単独は SR で意味が伝わらないため「アクセス権限がありません (403)」のように併記）</li>
+<li>連絡先メールアドレスは <code>mailto:</code> リンクで提供、<code>aria-label="サポート窓口へメールで問い合わせる"</code> を付与</li>
+<li><strong>メイン側 SCR-001 ログイン画面</strong> でも、ログイン失敗時のエラーメッセージは <code>role="alert"</code> + <code>aria-live="assertive"</code> で読み上げ可</li>
+</ul></li>
+</ul>
+<h3 id="34-アクセシビリティ自動テスト">3.4 アクセシビリティ自動テスト</h3>
+<p><code>@axe-core/playwright</code> で E2E に組み込み。Critical / Serious 違反は 0 件を維持。focus trap / 専用 403 画面は別途 <code>focus-trap.spec.ts</code> / <code>a11y-error-pages.spec.ts</code> で個別検証。</p>
+<h3 id="35-i18n-基盤">3.5 i18n 基盤</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// app/admin/src/lib/i18n.ts</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { useTranslation } <span class="im">from</span> <span class="st">&#39;react-i18next&#39;</span><span class="op">;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">// メッセージカタログ: app/shared/src/i18n/ja.ts</span></span></code></pre></div>
+<h3 id="36-i18n-キー命名規則とカタログ管理">3.6 i18n キー命名規則とカタログ管理</h3>
+<p><strong>命名規則</strong>: <code>&lt;scope&gt;.&lt;entity&gt;.&lt;state_or_action&gt;</code> の 3 階層を基本形とし、エラーメッセージは <code>errors.&lt;feature&gt;.&lt;code&gt;</code> を使う。</p>
+<table>
+<thead>
+<tr>
+<th>カテゴリ</th>
+<th>命名パターン</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>画面ラベル</td>
+<td><code>screen.&lt;scr_id&gt;.&lt;element&gt;</code></td>
+<td><code>screen.scr_012.faq_title</code></td>
+</tr>
+<tr>
+<td>ボタン共通</td>
+<td><code>common.button.&lt;action&gt;</code></td>
+<td><code>common.button.save</code> / <code>common.button.cancel</code></td>
+</tr>
+<tr>
+<td>バリデーション</td>
+<td><code>errors.validation.&lt;field&gt;.&lt;rule&gt;</code></td>
+<td><code>errors.validation.email.required</code></td>
+</tr>
+<tr>
+<td>ビジネスエラー</td>
+<td><code>errors.&lt;feature&gt;.&lt;code&gt;</code></td>
+<td><code>errors.faq.quota_exceeded</code> / <code>errors.search.range_too_wide</code></td>
+</tr>
+<tr>
+<td>お知らせ種別</td>
+<td><code>announcement.kind.&lt;value&gt;</code></td>
+<td><code>announcement.kind.critical</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>カタログ管理</strong>:</p>
+<ul>
+<li>場所: <code>app/shared/src/i18n/ja.ts</code></li>
+<li>構造: ネストしたオブジェクト (TypeScript の型推論でキー補完を効かせる)</li>
+<li>CI 検証: 未使用キー検出 + 翻訳ファイル間のキー欠落検出を <code>i18n-lint</code> 等で実施 <!-- TBD: ツール選定。担当: フロントリード --></li>
+</ul>
+<h3 id="37-タイムゾーン処理">3.7 タイムゾーン処理</h3>
+<p><code>formatJst</code> で JST 固定変換する。</p>
+<p><strong>MVP 仕様</strong>:</p>
+<ul>
+<li>全契約 JST 固定。<code>formatJst</code> を <strong>アプリ層の唯一の日時表示関数</strong> とし、<code>new Date().toLocaleString()</code> の直接呼出は ESLint ルール (<code>no-restricted-syntax</code>) で禁止。</li>
+<li>API レスポンスの日時は <strong>常に UTC ISO 8601</strong> (<code>Z</code> 末尾)。クライアント側で <code>formatJst</code> 通過後に表示。</li>
+<li>メール本文・PDF 帳票も JST 固定（テンプレート側で <code>formatJst</code> 呼出）。</li>
+</ul>
+<p><strong>回帰テスト</strong>: 既存契約全件が JST 固定で動作することを Integration テストで保証 (<code>it-tz-default-001</code>)。</p>
+<h3 id="38-日時表示">3.8 日時表示</h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// app/admin/src/lib/format-date.ts</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">function</span> <span class="fu">formatJst</span>(iso<span class="op">:</span> <span class="dt">string</span>)<span class="op">:</span> <span class="dt">string</span> {</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="kw">new</span> <span class="bu">Date</span>(iso)<span class="op">.</span><span class="fu">toLocaleString</span>(<span class="st">&#39;ja-JP&#39;</span><span class="op">,</span> {</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    timeZone<span class="op">:</span> <span class="st">&#39;Asia/Tokyo&#39;</span><span class="op">,</span> year<span class="op">:</span> <span class="st">&#39;numeric&#39;</span><span class="op">,</span> month<span class="op">:</span> <span class="st">&#39;2-digit&#39;</span><span class="op">,</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    day<span class="op">:</span> <span class="st">&#39;2-digit&#39;</span><span class="op">,</span> hour<span class="op">:</span> <span class="st">&#39;2-digit&#39;</span><span class="op">,</span> minute<span class="op">:</span> <span class="st">&#39;2-digit&#39;</span><span class="op">,</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>DB は UTC ISO 8601、表示時 JST。</p>
+<h3 id="39-utf-8-4-バイト対応">3.9 UTF-8 4 バイト対応</h3>
+<p>SQLite はデフォルトで UTF-8 対応。絵文字（4 バイト）含む文字列も格納可能。インデックスは BINARY collation で問題なし。</p>
+<h3 id="310-i18n-規約まとめ">3.10 i18n 規約まとめ</h3>
+<p>ユーザー向けテキストは i18n キーで参照、ハードコード禁止。</p>
+<h2 id="4-関連設計">4. 関連設計</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>参照先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>要件</td>
+<td><a href="../01_要件定義/index.html">../01_要件定義/index.html</a></td>
+</tr>
+<tr>
+<td>基本設計</td>
+<td><a href="../02_基本設計/index.html">../02_基本設計/index.html</a></td>
+</tr>
+<tr>
+<td>画面設計</td>
+<td><a href="../02_基本設計/01_画面設計.html">../02_基本設計/01_画面設計.html</a></td>
+</tr>
+<tr>
+<td>メッセージ一覧</td>
+<td><a href="../02_基本設計/06_メッセージ一覧.html">../02_基本設計/06_メッセージ一覧.html</a></td>
+</tr>
+<tr>
+<td>運用設計</td>
+<td><a href="../04_運用設計/index.html">../04_運用設計/index.html</a></td>
+</tr>
+<tr>
+<td>関連 DD</td>
+<td><a href="DD01_アカウント・ユーザー管理.html">DD01_アカウント・ユーザー管理.html</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-テスト観点">5. テスト観点</h2>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>自動</td>
+<td><code>@axe-core/playwright</code> で Critical / Serious 違反 0 件維持</td>
+</tr>
+<tr>
+<td>ターゲットサイズ</td>
+<td>主要操作のbounding boxが44×44 CSS px以上</td>
+</tr>
+<tr>
+<td>状態表現</td>
+<td>アイコン・色を除いてもラベルから状態を識別可能</td>
+</tr>
+<tr>
+<td>focus trap</td>
+<td>各モーダルで Tab × 50 回循環 + Esc 挙動 + close 後フォーカス復元</td>
+</tr>
+<tr>
+<td>SR</td>
+<td>403 / 401 画面の <code>role="alert"</code> + <code>aria-live="assertive"</code> 読み上げ</td>
+</tr>
+<tr>
+<td>単体</td>
+<td><code>formatJst</code> の各種 ISO 8601 入力で JST 固定 'YYYY/MM/DD HH:mm'</td>
+</tr>
+<tr>
+<td>結合</td>
+<td>API レスポンスは UTC ISO 8601、画面表示は JST</td>
+</tr>
+<tr>
+<td>国際化</td>
+<td>絵文字（4 バイト UTF-8）含む FAQ 本文 / チャット本文の往復保存</td>
+</tr>
+<tr>
+<td>カタログ</td>
+<td><code>i18n-lint</code> で未使用キー / 欠落キー 0 件</td>
+</tr>
+<tr>
+<td>ショートカット</td>
+<td>Ctrl+Enter / Ctrl+S の各画面動作</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-未確定事項確認事項">6. 未確定事項・確認事項</h2>
+<table>
+<thead>
+<tr>
+<th>確認事項ID</th>
+<th>確認内容</th>
+<th>優先度</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TBD-DD14-001</td>
+<td><code>i18n-lint</code> 等の翻訳カタログ検証ツール選定</td>
+<td>中</td>
+<td>未確定（フロントリード）</td>
+</tr>
+<tr>
+<td>-</td>
+<td>その他は v1.0 リリース時点で確定済み</td>
+<td>低</td>
+<td>確認済</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

@@ -3,14 +3,14 @@ set -euo pipefail
 
 # build_all_pdfs.sh
 #
-# リポジトリ内の全 Markdown / HTML ドキュメントを `PDF出力/` 配下に
+# リポジトリ内の全 HTML 設計書(正本)を `PDF出力/` 配下に
 # 同じツリー構造で一括 PDF 化する。
 #
 # 仕様:
-# - 対象: 01_メインシステム/ / 02_運営者システム/ / 共有/ 配下の *.md と *.html
-# - 除外: CLAUDE.md(リポジトリ運用ルールのため PDF 不要)、99_script/、PDF出力/
+# - 対象: 01_メインシステム/ / 02_運営者システム/ / 共有/ 配下の *.html(本文ページ)
+# - 除外: 画面遷移図ラッパー(*.view.html)、assets/、99_script/、PDF出力/
 # - 出力先: PDF出力/<元の相対パス>/<basename>.{pdf}
-# - md_to_pdf.sh / html_to_pdf.sh を内部で呼び出す
+# - html_to_pdf.sh を内部で呼び出す(Chrome headless が portal.js を実行しシェルを描画)
 # - 失敗があっても続行し、最後に集計を表示
 #
 # 使い方:
@@ -65,19 +65,20 @@ if [[ $CHANGED_ONLY -eq 1 ]]; then
     git ls-files --others --exclude-standard -z
   } 2>/dev/null \
     | tr '\0' '\n' \
-    | awk '/\.(md|html)$/' \
+    | awk '/\.html$/' \
+    | grep -vE '\.view\.html$' \
     | sort -u \
-    | grep -vE '(^|/)CLAUDE\.md$' \
     | grep -vE '^99_script/' \
     | grep -vE '^PDF出力/' \
+    | grep -vE '^assets/' \
     > "$TMP_LIST"
 else
-  # 全 .md / .html を再帰検索。CLAUDE.md・99_script/・PDF出力/ を除外。
+  # 全 .html を再帰検索。assets/・99_script/・PDF出力/・*.view.html を除外。
   find . \
-       -type d \( -name 'PDF出力' -o -name '99_script' -o -name '.git' \) -prune \
-    -o -type f \( -name '*.md' -o -name '*.html' \) -print \
+       -type d \( -name 'PDF出力' -o -name '99_script' -o -name '.git' -o -name 'assets' \) -prune \
+    -o -type f -name '*.html' -print \
     | sed 's|^\./||' \
-    | grep -vE '^CLAUDE\.md$' \
+    | grep -vE '\.view\.html$' \
     | sort \
     > "$TMP_LIST"
 fi
@@ -126,16 +127,6 @@ while IFS= read -r src; do
 
   TMP_LOG="$(mktemp)"
   case "$ext" in
-    md)
-      if bash "${SCRIPT_DIR}/md_to_pdf.sh" "$src" "$out_pdf" >"$TMP_LOG" 2>&1; then
-        OK=$((OK + 1))
-      else
-        FAIL=$((FAIL + 1))
-        FAIL_LIST="${FAIL_LIST}${src}\n"
-        echo "  FAILED: $src" >&2
-        tail -15 "$TMP_LOG" | sed 's/^/    /' >&2
-      fi
-      ;;
     html)
       if bash "${SCRIPT_DIR}/html_to_pdf.sh" "$src" "$out_pdf" >"$TMP_LOG" 2>&1; then
         OK=$((OK + 1))

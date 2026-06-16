@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>障害対応設計(運営者システム) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="02_運営者システム/04_運用設計/04_障害対応設計.html">
+<article class="content" id="content">
+<h1 id="障害対応設計運営者システム">障害対応設計(運営者システム)</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書名</td>
+<td>障害対応設計(運営者システム)</td>
+</tr>
+<tr>
+<td>運用ID</td>
+<td>OPS-04</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>FAQ AI ウィジェット SaaS / 運営者システム</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-17</td>
+</tr>
+<tr>
+<td>版数</td>
+<td>v1.0</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>承認済</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-障害対応方針参照-nfr-801820">1. 障害対応方針(参照: NFR-801〜820)</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>区分</th>
+<th>要件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NFR-801</td>
+<td>障害対応</td>
+<td>障害時にエラー表示、再試行案内、運用確認、ステータス通知ができること</td>
+</tr>
+<tr>
+<td>NFR-802</td>
+<td>障害対応</td>
+<td>障害発生時のエスカレーションフローを定めること</td>
+</tr>
+<tr>
+<td>NFR-803</td>
+<td>バックアップ</td>
+<td>データ越境ゼロを担保するため、バックアップは日本リージョン(apac)内で完結させること。日次・週次・月次の三層保持。RTO 4 時間以内、RPO 15 分以内。年 1 回以上の復旧訓練と訓練未達時の改善計画を必須。詳細は <a href="02_バックアップ・リストア設計.html">02_バックアップ・リストア設計.html</a> を参照</td>
+</tr>
+<tr>
+<td>NFR-804</td>
+<td>監視</td>
+<td>主要 KPI を監視し、しきい値超過時にアラート通知できること。具体 KPI / しきい値 / 通知先 / 重大度はメインシステム NFR-804 を正本とし、本書側でも同一基準で監視する。運営者ダッシュボード(FR-230)で参照する KPI はメインシステム NFR-804 の (a)〜(h) に加え、(k) 運営者操作頻度異常検知(FR-229(c))、(l) 全契約横断 MAU・解決率を含めること</td>
+</tr>
+<tr>
+<td>NFR-805</td>
+<td>プライバシー保護</td>
+<td>AI 回答およびチャット投稿から個人情報(氏名・住所・電話番号等)を検出しマスキングする仕組みを備えること。検出器は Cloudflare ネットワーク内で完結する手段を採用し、エンドユーザー入力や FAQ 本文を外部 API へ送信しないこと</td>
+</tr>
+<tr>
+<td>NFR-806</td>
+<td>監視</td>
+<td>API エラー率やレイテンシなど主要 KPI の SLO しきい値を定義し、閾値を超過した場合にアラートを通知し自動復旧を試行できること</td>
+</tr>
+<tr>
+<td>NFR-807</td>
+<td>障害対応</td>
+<td>AI 推論基盤の品質劣化(回答可能率の急落、矛盾率の急増、出力検査拒否率の急増)を監視し、しきい値超過時に運営者へアラート通知できること。直近 1 時間の回答可能率が直近 7 日平均から 20 ポイント以上低下した場合を高重要度アラートの目安とする</td>
+</tr>
+<tr>
+<td>NFR-808</td>
+<td>障害対応</td>
+<td>課金プロバイダ Webhook の受信レイテンシ・処理失敗率を監視し、直近 1 時間で受信失敗率が 5% を超過、または未処理 Webhook が 30 分以上滞留した場合に運営者へ高重要度アラートを通知できること。Webhook 処理は冪等であり、リプレイによる二重課金・二重停止を発生させないこと(FR-302(b) と整合)</td>
+</tr>
+<tr>
+<td>NFR-809</td>
+<td>DLQ 運用</td>
+<td>サービス間連携および外部 Webhook の Dead Letter Queue は (a) Cloudflare Queues DLQ 保持 4 日、R2 退避、(b) 1 時間以内自動指数バックオフ、以降は明示的リプレイ、(c) リプレイ可能範囲 30 日、(d) 滞留が IF 別上限超過で運営者 high アラート</td>
+</tr>
+<tr>
+<td>NFR-820</td>
+<td>オンコール対応</td>
+<td>障害検知から運営者の一次対応着手までの社内 SLO を定義し、重大度別のアサイン・着手・告知を行えること</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-障害対応プロセス参照-基本設計-122">2. 障害対応プロセス(参照: 基本設計 §12.2)</h2>
+<table>
+<thead>
+<tr>
+<th>段階</th>
+<th>仕様</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>検知</td>
+<td>自動アラート(NFR-804 (a)〜(l))または利用者報告</td>
+</tr>
+<tr>
+<td>一次対応 SLA</td>
+<td>NFR-820(P1=15 分アサイン/30 分着手、P2=1h、P3=翌営業日)</td>
+</tr>
+<tr>
+<td>切り分け</td>
+<td>影響範囲判定(全契約/特定契約/特定機能)、手順は §4 Runbook</td>
+</tr>
+<tr>
+<td>復旧手段</td>
+<td>バックアップ復元(RTO 4h)、Wrangler 直前バージョンへ即時切替(p95 5 分以内)、デプロイロールバック</td>
+</tr>
+<tr>
+<td>事後対応</td>
+<td>ポストモーテム(P1 は 5 営業日以内に公開)、再発防止策、関係者報告</td>
+</tr>
+<tr>
+<td>ステータス公開</td>
+<td>ステータスページ + 管理者 inbox + メール</td>
+</tr>
+</tbody>
+</table>
+<h3 id="21-要件由来-障害対応プロセス参照-要件-142">2.1 要件由来 障害対応プロセス(参照: 要件 §14.2)</h3>
+<table>
+<thead>
+<tr>
+<th>段階</th>
+<th>要件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>検知</td>
+<td>自動アラートまたは利用者からの報告で検知できること</td>
+</tr>
+<tr>
+<td>一次対応</td>
+<td>対応着手までの目標時間を定めること(NFR-820 で重大度別に SLA 定義: P1=15 分以内アサイン/30 分以内着手、P2=1 時間以内、P3=営業日内)</td>
+</tr>
+<tr>
+<td>切り分け</td>
+<td>影響範囲(全契約/特定契約/特定機能)を判定できること。判定手順は §4 Runbook で定義</td>
+</tr>
+<tr>
+<td>復旧</td>
+<td>バックアップ、再起動、デプロイロールバックなどの手段を持つこと。デプロイロールバックは <strong>Wrangler 直前バージョンへの即時切替</strong>(p95 5 分以内)、データ復元は NFR-803 の RTO 4 時間以内</td>
+</tr>
+<tr>
+<td>事後対応</td>
+<td>原因分析(ポストモーテム文書)、再発防止策の策定、関係者への報告。重大障害(P1)発生時は 5 営業日以内にポストモーテムを公開すること</td>
+</tr>
+<tr>
+<td>ステータス公開</td>
+<td>障害状態を利用者に告知できる手段(ステータスページおよび管理者向けお知らせ受信箱)を用意すること</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-オンコール-slanfr-820">3. オンコール SLA(NFR-820)</h2>
+<table>
+<thead>
+<tr>
+<th>重大度</th>
+<th>アサイン</th>
+<th>着手</th>
+<th>告知</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P1(全契約停止 / データ毀損)</td>
+<td><strong>15 分以内</strong></td>
+<td><strong>30 分以内</strong></td>
+<td>ステータスページ + 運営者 inbox(high)+ 対象オーナー / メンバー(ユーザー管理権限保持)</td>
+</tr>
+<tr>
+<td>P2(機能影響 / SLO 違反疑い)</td>
+<td><strong>1 時間以内</strong></td>
+<td><strong>1 時間以内</strong></td>
+<td>運営者 inbox + 関係者</td>
+</tr>
+<tr>
+<td>P3(軽微・非機能影響なし)</td>
+<td>翌営業日内</td>
+<td>翌営業日内</td>
+<td>運営者 inbox</td>
+</tr>
+</tbody>
+</table>
+<p>SLA 達成率は月次集計、SCR-095 で可視化する。MVP は営業時間 + 緊急時ベストエフォートで運用する。</p>
+<h2 id="4-runbook-rb-001rb-023">4. Runbook RB-001〜RB-023</h2>
+<p>本書では概要のみ。詳細手順は別 Runbook ドキュメントへ。MVP 必須 Runbook は要件 §14.8 を正本とする。</p>
+<table>
+<thead>
+<tr>
+<th>RB</th>
+<th>対象シナリオ</th>
+<th>検知契機</th>
+<th>対応概略</th>
+<th>優先度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RB-001</td>
+<td>課金プロバイダ Webhook 滞留</td>
+<td>NFR-808 アラート(直近 1 時間で受信失敗率 5% 超過、または 30 分以上未処理)</td>
+<td>(1) DLQ 状況確認(SCR-096)→ (2) 課金プロバイダ側ステータス確認 → (3) 自動リトライ完了待機 → (4) 1 時間経過後は手動リプレイ判断(NFR-809)</td>
+<td>P0</td>
+</tr>
+<tr>
+<td>RB-002</td>
+<td>AI 推論基盤の品質劣化</td>
+<td>NFR-807 アラート(回答可能率の急落、矛盾率急増)</td>
+<td>(1) 直近 1 時間の質問ログサンプル抽出 → (2) モデル切替判断(SCR-092)→ (3) 信頼度しきい値の一時引上げ → (4) ポストモーテム作成</td>
+<td>P0</td>
+</tr>
+<tr>
+<td>RB-003</td>
+<td>D1 容量逼迫</td>
+<td>NFR-115 アラート(8GB / 80% 到達)</td>
+<td>(1) NFR-115 自動緩和の実行状況確認 → (2) シャーディング設計起動判断 → (3) 古データのアーカイブ進捗確認 → (4) 必要に応じ新規契約受付一時停止(NFR-110)</td>
+<td>P0</td>
+</tr>
+<tr>
+<td>RB-004</td>
+<td>運営者アカウント侵害疑義</td>
+<td>NFR-311 異常検知(IP 許可リスト外アクセス、運営者操作頻度異常)/ R-015</td>
+<td>(1) 該当運営者セッション全無効化 → (2) MFA 強制再設定要求 → (3) 全運営者操作ログを直近 30 日に渡って洗出し → (4) 影響契約へ inbox/high 通知 → (5) ポストモーテム + 法務報告判断</td>
+<td>P0</td>
+</tr>
+<tr>
+<td>RB-005</td>
+<td>バウンス率・苦情率の急増</td>
+<td>NFR-503 / NFR-504 アラート</td>
+<td>(1) 急増対象契約の絞込み → (2) 必要に応じ契約別送信一時停止 → (3) サプレスリスト確認 → (4) DKIM/SPF/DMARC 状態確認 → (5) Resend 側状況確認</td>
+<td>P0</td>
+</tr>
+<tr>
+<td>RB-006</td>
+<td>契約緊急停止(規約違反、要件 §6.2.1 区分 3 セキュリティインシデント発動時など)</td>
+<td>通報 / 自動検知 / FR-224</td>
+<td>(1) 4-eyes 承認(§6.2.3)→ (2) <code>contract_owners.contract_status='suspended'</code> 遷移 → (3) ウィジェット強制停止 → (4) オーナー / メンバー(ユーザー管理権限保持)へ通知(FR-211)→ (5) 異議受付窓口の用意</td>
+<td>P0</td>
+</tr>
+<tr>
+<td>RB-007</td>
+<td>バックアップ復元</td>
+<td>データ毀損 / RTO 4 時間以内</td>
+<td>(1) 影響範囲特定 → (2) 復元ポイント選定(NFR-803 三層スナップショット)→ (3) staging で復元検証 → (4) 本番適用 → (5) 整合性検証(NFR-803 4 項目)→ (6) ポストモーテム</td>
+<td>P0</td>
+</tr>
+<tr>
+<td>RB-009</td>
+<td>AI 誤回答に関する重大苦情対応</td>
+<td>サポート問い合わせ</td>
+<td>個別事案調査、原因 FAQ 修正提案、運営者 inbox に集約</td>
+<td>P0</td>
+</tr>
+<tr>
+<td>RB-010</td>
+<td>サスペンション解除フロー</td>
+<td>課金 Webhook(支払成功)/ 手動解除</td>
+<td>支払完了確認 → <code>active</code> 復帰 → オーナー / メンバー(ユーザー管理権限保持)通知</td>
+<td>P0</td>
+</tr>
+<tr>
+<td>RB-011</td>
+<td>削除データ復元と物理削除ジョブの競合</td>
+<td>FR-204 異常系</td>
+<td>ロック取得失敗時のロールバック、運営者 high 通知、再試行判断</td>
+<td>P0</td>
+</tr>
+<tr>
+<td>RB-012</td>
+<td>規約改定 14 日不同意契約の強制制限移行</td>
+<td>バッチ起動</td>
+<td>SCR-015 割込制御、機能制限の自動適用</td>
+<td>P1</td>
+</tr>
+<tr>
+<td>RB-013</td>
+<td>DKIM/SPF/DMARC レコード変更時の段階展開</td>
+<td>DNS 変更計画</td>
+<td>テスト送信 → 部分契約先行 → 全体展開</td>
+<td>P1</td>
+</tr>
+<tr>
+<td>RB-014</td>
+<td>4-eyes 二人承認バイパスの緊急申請</td>
+<td>メイン要件 §6.2.1 緊急区分のいずれか + §6.2.2 (2) 2 名承認が成立不能</td>
+<td><strong>MVP</strong>: マスター鍵保管庫(物理金庫)からの紙ベース回復コード使用、その場で 2 名以上の運営者立会・記録、事後 5 営業日以内のポストモーテム公開、<code>master_key.emergency_bypass</code> action コード(<code>retention_class='5y'</code>)で記録</td>
+<td>P1</td>
+</tr>
+<tr>
+<td>RB-015</td>
+<td>Webhook ペイロード差分検出時の再処理判断</td>
+<td>FR-302 異常系 / SCR-098</td>
+<td>差分内容確認 → メイン側影響範囲確認 → 手動再処理 or dismiss</td>
+<td>P0</td>
+</tr>
+<tr>
+<td>RB-016</td>
+<td>PII 誤検出報告の急増対応</td>
+<td>SCR-097 集約しきい値</td>
+<td>ルール改修判定、ロールアウト計画、過去データは修正なし</td>
+<td>P1</td>
+</tr>
+<tr>
+<td>RB-017</td>
+<td>監査ログ改ざん検知時の対応</td>
+<td>日次バッチアラート</td>
+<td>不一致範囲特定 → 法務・運営判断 → 監査ログ R2 アーカイブ参照 → 業務継続判断</td>
+<td>P0</td>
+</tr>
+<tr>
+<td>RB-018</td>
+<td>監査ログ保持期間切替時の移行(1y→5y)</td>
+<td>既存ログ再分類</td>
+<td>該当 action 一覧確認 → retention_class 更新 → 物理削除バッチ調整</td>
+<td>P2</td>
+</tr>
+<tr>
+<td>RB-020</td>
+<td>緊急ペネトレーションテスト</td>
+<td>NFR-330 Critical 検出</td>
+<td>外部委託調整 → 範囲確定 → 実施 → 修正 → 再テスト → 5 年保持記録</td>
+<td>P0</td>
+</tr>
+<tr>
+<td>RB-021</td>
+<td>メインシステム障害時の運営者側縮退運転</td>
+<td>連携 IF #2 ヘルスチェック 5s タイムアウト × 3 回連続、または <code>monitoring:main_outage=true</code> 手動セット</td>
+<td>(1) <code>monitoring:main_outage</code> フラグ立て + SCR-095 バナー + 運営者 inbox(system/critical)、(2) <a href="02_バックアップ・リストア設計.html">02_バックアップ・リストア設計.html</a> §2 表に基づき不可機能ボタン disabled 化、(3) 復旧検知時(ヘルスチェック 3 回連続成功)で <code>integration.replay.batch</code> を自動起動(連携 IF #10 / #1 / #12 / #5 / #6 の未送信キュー消化)、(4) <code>audit_logs(monitoring.main_outage.start/end, retention_class='5y')</code> に記録、(5) 復旧後 5 営業日以内にポストモーテム公開</td>
+<td>P0</td>
+</tr>
+<tr>
+<td>RB-023</td>
+<td>EU 顧客の登録試行検知</td>
+<td>契約登録時の §1.5.1 EU/EEA/UK 国コード判定ヒット</td>
+<td>(1) <code>contract_owners.contract_status='pending_legal_review'</code> 保留、(2) 運営者 inbox(legal/high)+ メール通知、(3) 法務担当エスカレーション、(4) 受入判定: 拒否 or 個別契約締結後の承認、(5) 同意取得書面 ID を <code>audit_logs(owner.legal_review.approve, retention_class='5y')</code> に記録</td>
+<td>P0</td>
+</tr>
+</tbody>
+</table>
+<h3 id="41-runbook-の維持">4.1 Runbook の維持</h3>
+<ul>
+<li>各 Runbook は対応履歴(直近 5 件)を末尾に追記して陳腐化を防ぐ</li>
+<li>年 1 回以上、机上演習(table-top exercise)で手順を検証</li>
+<li>改訂時は監査ログに記録し、運営者間で共有</li>
+</ul>
+<h2 id="5-dlq-運用nfr-809">5. DLQ 運用(NFR-809)</h2>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>仕様</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cloudflare Queues DLQ 保持</td>
+<td><strong>4 日間</strong>、これを超える保持が必要なイベントは R2 へコピー保存し <code>event_id</code> と保存パスを D1(<code>webhook_events</code>)で管理</td>
+</tr>
+<tr>
+<td>自動再処理</td>
+<td>DLQ 投入から <strong>1 時間以内</strong> は自動指数バックオフで再試行、それ以降は運営者の明示的リプレイ操作のみ(SCR-096)</td>
+</tr>
+<tr>
+<td>リプレイ可能範囲</td>
+<td>直近 30 日</td>
+</tr>
+<tr>
+<td>監視</td>
+<td>DLQ 滞留が IF 別上限を超過した瞬間に運営者 high お知らせ + メール通知</td>
+</tr>
+<tr>
+<td><strong>DLQ 自動 BO 間隔(Webhook)</strong></td>
+<td>1m → 4m → 16m(指数バックオフ)。<code>DLQAutoBackoffWorker</code>(5 分 cron)が <code>webhook_events.next_retry_at</code> を参照</td>
+</tr>
+<tr>
+<td><strong>DLQ 自動 BO 最大回数(Webhook)</strong></td>
+<td>3 回(超過で <code>dlq_manual_replay</code> 待ち)。<code>webhook_events.attempt_count</code> カラム</td>
+</tr>
+<tr>
+<td><strong>DLQ 滞留 → 手動リプレイ移行</strong></td>
+<td>1 時間 → <code>dlq_retrying</code> → <code>dlq_manual_replay</code> 自動遷移</td>
+</tr>
+<tr>
+<td><strong>お知らせ配信失敗 BO</strong></td>
+<td>1m → 4m → 16m、3 回超過で <code>announcement.dispatch.dlq</code>。<code>announcement_drafts.attempt_count</code></td>
+</tr>
+<tr>
+<td><strong>メール送信 BO</strong>(§11.3 連動)</td>
+<td>1m → 2m → 4m → 8m → 16m、5 回 + 24h 累計打切。<code>MailSendWorker</code> 内部状態</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-サーキットブレーカ戦略参照-詳細設計-1322">6. サーキットブレーカ戦略(参照: 詳細設計 §13.2.2)</h2>
+<p>メイン §13.2.3 と対称形。連携 IF #1〜#12 の双方向リトライで雪崩が起きないことを担保する。</p>
+<ul>
+<li><strong>対象</strong>: 本書 → メイン宛の連携 IF(<code>#1</code> suspend / <code>#1</code> resume / <code>#2</code> forced-logout / <code>#4</code> restore / <code>#5</code> rate-limit override / <code>#6</code> threshold update / <code>#7</code> announcement inbound / <code>#12</code> operator operation)</li>
+<li><strong>発動条件(open)</strong>: HTTP 5xx / タイムアウトが <strong>連続 5 回 60 秒以内</strong> に発生した宛先(= メイン側エンドポイント単位)</li>
+<li><strong>open 維持時間</strong>: 60 秒。経過後 <code>half_open</code> で 1 回のみテストリクエスト送信、成功で <code>closed</code> に復帰、失敗で再度 60 秒 <code>open</code></li>
+<li><strong>状態保存</strong>: KV <code>cb:internal-api:&lt;endpoint_key&gt;</code> に <code>{state, openedAt, failureCount}</code> を保持。TTL 60s(<code>open</code> の場合)、<code>closed</code> は明示 DELETE</li>
+<li><strong>open 中の挙動</strong>:
+<ul>
+<li><strong>書込系 IF(#1/#2/#4/#5/#6)</strong>: DLQ(R2 退避 <code>dlq/internal-api/&lt;if_num&gt;/&lt;date&gt;/</code>)に投入し、<code>AdminConsoleNotifier</code> で運営者 inbox に critical 通知</li>
+<li><strong>読込系 IF(#11 受信側)</strong>: メインから受信する側なので逆方向。本書は受信失敗で 5xx を返却し、メイン側のサーキットブレーカが発動</li>
+</ul></li>
+<li><strong>半開状態のテスト</strong>: 100ms タイムアウトでヘルスチェック(<code>GET /internal/admin-integration/v1/healthz</code>)、200 OK で復帰判定</li>
+<li><strong>メイン(99.9%)と顧管(99.5%)の SLO 差を吸収</strong>: 顧管が一時的に劣化してもメインに影響を波及させない</li>
+<li><strong>監査ログ</strong>: サーキットブレーカ open / close 遷移時に <code>audit_logs</code> に <code>circuit_breaker.opened</code> / <code>circuit_breaker.closed</code> を retention_class=<code>5y</code> で記録</li>
+<li><strong>メトリクス</strong>: <code>sli_circuit_breaker_open_count</code>(1h ウィンドウで &gt; 3 回で warn、&gt; 10 回で critical)</li>
+</ul>
+<h2 id="7-リミット設計表関連">7. リミット設計表(関連)</h2>
+<table>
+<thead>
+<tr>
+<th>機能</th>
+<th>リミット</th>
+<th>DB / KV</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>監査ログ検索期間</td>
+<td>最大 1 年</td>
+<td>API バリデーション</td>
+</tr>
+<tr>
+<td>監査ログ検索ヒット</td>
+<td>最大 100 万件</td>
+<td>サーバ側 COUNT</td>
+</tr>
+<tr>
+<td>監査ログエクスポート</td>
+<td>1 ファイル 10 万行</td>
+<td>サーバ側分割</td>
+</tr>
+<tr>
+<td>ページング</td>
+<td>カーソル 100 件/ページ</td>
+<td>API</td>
+</tr>
+<tr>
+<td>DLQ 保持(Queues)</td>
+<td>4 日</td>
+<td>Queues 設定</td>
+</tr>
+<tr>
+<td>DLQ R2 退避</td>
+<td>30 日</td>
+<td>R2 lifecycle rule</td>
+</tr>
+<tr>
+<td>Webhook リプレイ範囲</td>
+<td>30 日</td>
+<td><code>webhook_events.received_at</code></td>
+</tr>
+<tr>
+<td>4-eyes 承認待ち TTL</td>
+<td>72 時間</td>
+<td><code>operator_approvals.expires_at</code></td>
+</tr>
+<tr>
+<td>お知らせ配信予約</td>
+<td>最大 30 日先</td>
+<td>API バリデーション</td>
+</tr>
+<tr>
+<td>お知らせ配信予約取消</td>
+<td>配信開始 5 分前まで</td>
+<td>API バリデーション</td>
+</tr>
+<tr>
+<td>運営者セッション</td>
+<td>8 時間</td>
+<td>D-18</td>
+</tr>
+<tr>
+<td>再認証セッション</td>
+<td>15 分(1 回限り)</td>
+<td>KV <code>re-auth:&lt;sid&gt;</code></td>
+</tr>
+<tr>
+<td>HTML サニタイズ本文</td>
+<td>10,000 文字</td>
+<td>API バリデーション</td>
+</tr>
+</tbody>
+</table>
+<h2 id="8-関連設計">8. 関連設計</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>参照先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>要件</td>
+<td><a href="../01_要件定義/index.html">../01_要件定義/index.html</a> §10.8 / §14.8 Runbook 要件</td>
+</tr>
+<tr>
+<td>基本設計</td>
+<td><a href="../02_基本設計/index.html">../02_基本設計/index.html</a> §11.9 / §12.2 / §12.3</td>
+</tr>
+<tr>
+<td>詳細設計</td>
+<td><a href="../03_詳細設計/index.html">../03_詳細設計/index.html</a> §13.2 / §13.7 / §13.8 / §13.10</td>
+</tr>
+<tr>
+<td>監視</td>
+<td><a href="01_監視設計.html">01_監視設計.html</a></td>
+</tr>
+<tr>
+<td>バックアップ</td>
+<td><a href="02_バックアップ・リストア設計.html">02_バックアップ・リストア設計.html</a></td>
+</tr>
+<tr>
+<td>関連 NFR</td>
+<td>NFR-801 / NFR-802 / NFR-803 / NFR-804 / NFR-807 / NFR-808 / NFR-809 / NFR-820</td>
+</tr>
+<tr>
+<td>メイン側障害対応</td>
+<td><a href="../../01_メインシステム/04_運用設計/04_障害対応設計.html">../../01_メインシステム/04_運用設計/04_障害対応設計.html</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-未確定事項確認事項">9. 未確定事項・確認事項</h2>
+<table>
+<thead>
+<tr>
+<th>確認事項ID</th>
+<th>確認内容</th>
+<th>優先度</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>v1.0 リリース時点で全項目確定済み</td>
+<td>低</td>
+<td>確認済</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

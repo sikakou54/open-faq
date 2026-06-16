@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DD11: 状態遷移詳細(運営者システム) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="02_運営者システム/03_詳細設計/DD11_状態遷移詳細.html">
+<article class="content" id="content">
+<h1 id="dd11-状態遷移詳細運営者システム">DD11: 状態遷移詳細(運営者システム)</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書名</td>
+<td>DD11: 状態遷移詳細(運営者システム)</td>
+</tr>
+<tr>
+<td>詳細設計ID</td>
+<td>DD11</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>FAQ AI ウィジェット SaaS / 運営者システム</td>
+</tr>
+<tr>
+<td>関連機能ID</td>
+<td>D-08, AC-041, FR-302, FR-188, FR-189, FR-226, FR-064</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-17</td>
+</tr>
+<tr>
+<td>版数</td>
+<td>v1.0</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>承認済</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-対象範囲">1. 対象範囲</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>ID</th>
+<th>名称</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>テーブル</td>
+<td><code>webhook_events.state</code></td>
+<td>12 状態</td>
+</tr>
+<tr>
+<td>テーブル</td>
+<td><code>operator_approvals.state</code></td>
+<td>7 状態</td>
+</tr>
+<tr>
+<td>テーブル</td>
+<td><code>announcement_drafts.state</code></td>
+<td>8 状態</td>
+</tr>
+<tr>
+<td>テーブル</td>
+<td><code>pii_false_positive_reports.state</code></td>
+<td>6 状態</td>
+</tr>
+<tr>
+<td>テーブル</td>
+<td><code>webhook_payload_diffs.state</code></td>
+<td>4 状態</td>
+</tr>
+<tr>
+<td>テーブル</td>
+<td><code>contract_owners.contract_status</code>(参照、メイン主管)</td>
+<td>4 値</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-収録ロジック対応章">2. 収録ロジック・対応章</h2>
+<table>
+<thead>
+<tr>
+<th>元章</th>
+<th>元タイトル</th>
+<th>概要</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>付録 B 全文</td>
+<td>状態遷移詳細表(本書版)</td>
+<td>5 状態機械の遷移表</td>
+</tr>
+<tr>
+<td>§4</td>
+<td>状態詳細設計(参照)</td>
+<td>個別設計書の正本リンク</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-詳細設計本文">3. 詳細設計本文</h2>
+<h3 id="31-webhook_eventsstate12-状態ac-041">3.1 <code>webhook_events.state</code>(12 状態、AC-041)</h3>
+<table>
+<thead>
+<tr>
+<th>From</th>
+<th>To</th>
+<th>トリガー</th>
+<th>副作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>received</td>
+<td>POST 受信</td>
+<td>row INSERT</td>
+</tr>
+<tr>
+<td>received</td>
+<td>verifying_signature</td>
+<td>即時</td>
+<td>-</td>
+</tr>
+<tr>
+<td>verifying_signature</td>
+<td>rejected</td>
+<td>HMAC NG</td>
+<td>401 + high alert</td>
+</tr>
+<tr>
+<td>verifying_signature</td>
+<td>checking_idempotency</td>
+<td>HMAC OK</td>
+<td>payload_hash 計算</td>
+</tr>
+<tr>
+<td>checking_idempotency</td>
+<td>processing</td>
+<td>未処理</td>
+<td>INSERT + R2 退避</td>
+</tr>
+<tr>
+<td>checking_idempotency</td>
+<td>duplicate_skipped_hash_match</td>
+<td>既処理 + 一致</td>
+<td>200 + ログ</td>
+</tr>
+<tr>
+<td>checking_idempotency</td>
+<td>duplicate_diff_detected_high_alert</td>
+<td>既処理 + 不一致</td>
+<td>webhook_payload_diffs INSERT、SCR-098 待ち</td>
+</tr>
+<tr>
+<td>processing</td>
+<td>succeeded</td>
+<td>IF #10 200</td>
+<td>audit:stripe.event.processed(7y)</td>
+</tr>
+<tr>
+<td>processing</td>
+<td>failed</td>
+<td>5xx/Timeout</td>
+<td>DLQ 投入</td>
+</tr>
+<tr>
+<td>failed</td>
+<td>dlq_retrying</td>
+<td>DLQAutoBackoffWorker</td>
+<td>指数 BO</td>
+</tr>
+<tr>
+<td>dlq_retrying</td>
+<td>succeeded</td>
+<td>再試行成功</td>
+<td>-</td>
+</tr>
+<tr>
+<td>dlq_retrying</td>
+<td>dlq_manual_replay</td>
+<td>1h 経過</td>
+<td>運営者 high</td>
+</tr>
+<tr>
+<td>dlq_manual_replay</td>
+<td>succeeded</td>
+<td>SCR-096 リプレイ</td>
+<td>audit:webhook.replay(5y)</td>
+</tr>
+<tr>
+<td>dlq_manual_replay</td>
+<td>dlq_archived</td>
+<td>30 日経過</td>
+<td>リプレイ不可</td>
+</tr>
+</tbody>
+</table>
+<p>主管担当: <a href="DD04_Stripe_Webhook一次受信.html">DD04_Stripe_Webhook一次受信.html</a>。</p>
+<h3 id="32-operator_approvalsstate7-状態fr-226">3.2 <code>operator_approvals.state</code>(7 状態、FR-226)</h3>
+<table>
+<thead>
+<tr>
+<th>From</th>
+<th>To</th>
+<th>トリガー</th>
+<th>ガード</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>requested</td>
+<td>POST /approvals</td>
+<td>expires_at = +72h</td>
+</tr>
+<tr>
+<td>requested</td>
+<td>reviewing</td>
+<td>start-review</td>
+<td>requested_by ≠ reviewer</td>
+</tr>
+<tr>
+<td>reviewing</td>
+<td>approved</td>
+<td>approve</td>
+<td>DB CHECK 自己承認禁止</td>
+</tr>
+<tr>
+<td>reviewing</td>
+<td>rejected</td>
+<td>reject</td>
+<td>requested_by ≠ rejected_by、コメント必須</td>
+</tr>
+<tr>
+<td>requested</td>
+<td>withdrawn</td>
+<td>withdraw(申請者本人)</td>
+<td>withdrawn_by == requested_by(自己取下げ)</td>
+</tr>
+<tr>
+<td>requested/reviewing</td>
+<td>expired</td>
+<td>72h 経過</td>
+<td>バッチ</td>
+</tr>
+<tr>
+<td>approved</td>
+<td>executed</td>
+<td>execute</td>
+<td>now &lt; approved_at + 72h、payload_hash 一致</td>
+</tr>
+<tr>
+<td>approved</td>
+<td>expired</td>
+<td>72h 経過</td>
+<td>バッチ</td>
+</tr>
+</tbody>
+</table>
+<p>主管担当: <a href="DD02_4-eyes承認フロー.html">DD02_4-eyes承認フロー.html</a>。</p>
+<h3 id="33-announcement_draftsstate8-状態fr-188--fr-189">3.3 <code>announcement_drafts.state</code>(8 状態、FR-188 / FR-189)</h3>
+<table>
+<thead>
+<tr>
+<th>From</th>
+<th>To</th>
+<th>トリガー</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>draft</td>
+<td>POST /announcements</td>
+</tr>
+<tr>
+<td>draft</td>
+<td>preview</td>
+<td>preview</td>
+</tr>
+<tr>
+<td>preview</td>
+<td>scheduled</td>
+<td>schedule(再認証 + チケット必須)</td>
+</tr>
+<tr>
+<td>scheduled</td>
+<td>sending</td>
+<td>AnnouncementSchedulerWorker(scheduled_at ≤ now+5min)</td>
+</tr>
+<tr>
+<td>scheduled</td>
+<td>cancelled</td>
+<td>cancel(now &lt; scheduled_at - 5min)</td>
+</tr>
+<tr>
+<td>sending</td>
+<td>sent</td>
+<td>連携 IF #7 200 OK</td>
+</tr>
+<tr>
+<td>sending</td>
+<td>failed</td>
+<td>連携 IF #7 一時失敗(5xx/Timeout)、<code>attempt_count++</code></td>
+</tr>
+<tr>
+<td>failed</td>
+<td>sending</td>
+<td>自動指数 BO(1m → 4m → 16m、最大 3 回)</td>
+</tr>
+<tr>
+<td>failed</td>
+<td>dlq</td>
+<td>自動 BO 3 回失敗、運営者 inbox high</td>
+</tr>
+</tbody>
+</table>
+<p>主管担当: <a href="DD06_お知らせ承認・配信.html">DD06_お知らせ承認・配信.html</a>。</p>
+<h3 id="34-pii_false_positive_reportsstate6-状態fr-064">3.4 <code>pii_false_positive_reports.state</code>(6 状態、FR-064)</h3>
+<table>
+<thead>
+<tr>
+<th>From</th>
+<th>To</th>
+<th>トリガー</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>reported</td>
+<td>報告転送</td>
+</tr>
+<tr>
+<td>reported</td>
+<td>under_review</td>
+<td>SCR-097 開始(3 営業日タイマー起動)</td>
+</tr>
+<tr>
+<td>under_review</td>
+<td>ruled_false_positive</td>
+<td>判定</td>
+</tr>
+<tr>
+<td>under_review</td>
+<td>ruled_correct_detection</td>
+<td>判定</td>
+</tr>
+<tr>
+<td>ruled_false_positive</td>
+<td>rule_updated</td>
+<td>KV ルール更新</td>
+</tr>
+<tr>
+<td>-</td>
+<td>archived</td>
+<td>90 日経過 or rule_updated 後</td>
+</tr>
+</tbody>
+</table>
+<p>主管担当: <a href="DD10_PII偽陽性報告.html">DD10_PII偽陽性報告.html</a>。</p>
+<h3 id="35-webhook_payload_diffsstate4-状態ac-041-異常系">3.5 <code>webhook_payload_diffs.state</code>(4 状態、AC-041 異常系)</h3>
+<table>
+<thead>
+<tr>
+<th>From</th>
+<th>To</th>
+<th>トリガー</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>detected</td>
+<td>BillingWebhookWorker が差分検出</td>
+</tr>
+<tr>
+<td>detected</td>
+<td>reviewed</td>
+<td>start-review</td>
+</tr>
+<tr>
+<td>reviewed</td>
+<td>reprocessed_manually</td>
+<td>reprocess(再認証 + チケット必須)</td>
+</tr>
+<tr>
+<td>reviewed</td>
+<td>dismissed_no_action</td>
+<td>dismiss(理由必須)</td>
+</tr>
+</tbody>
+</table>
+<p>主管担当: <a href="DD04_Stripe_Webhook一次受信.html">DD04_Stripe_Webhook一次受信.html</a> §3.9。</p>
+<h3 id="36-contract_ownerscontract_status参考メイン主管">3.6 <code>contract_owners.contract_status</code>(参考、メイン主管)</h3>
+<p><code>contract_owners</code> 行(= オーナー)のみで意味を持つ 4 値:</p>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>説明</th>
+<th>遷移経路</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>active</code></td>
+<td>通常稼働</td>
+<td>初期値 + <code>owner.restore_data</code> で復活</td>
+</tr>
+<tr>
+<td><code>suspended</code></td>
+<td>一時停止</td>
+<td><code>owner.suspend</code>(運営者)</td>
+</tr>
+<tr>
+<td><code>deleted_pending</code></td>
+<td>退会受付済、猶予期間中(30 日)</td>
+<td>利用者の退会操作</td>
+</tr>
+<tr>
+<td><code>deleted</code></td>
+<td>物理削除済(<code>accounts_retired</code> 移行)</td>
+<td><code>owner.physical_delete</code>(ハードゲート、運営者)</td>
+</tr>
+</tbody>
+</table>
+<p>メイン主管。本書側は SCR-090 / SCR-091 で参照表示のみ。詳細は <a href="../../01_メインシステム/02_基本設計/03_テーブル設計.html">メインシステム / contract_status 設計</a> を正本参照。</p>
+<h3 id="37-状態遷移実装ガイドライン">3.7 状態遷移実装ガイドライン</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>ガイドライン</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>楽観ロック</td>
+<td>全状態テーブルに <code>version</code> 列を持ち、<code>UPDATE ... WHERE id=? AND version=? AND state=?</code> パターンで競合検出</td>
+</tr>
+<tr>
+<td>影響行数チェック</td>
+<td><code>UPDATE</code> 後に <code>rowsAffected=0</code> で 409 Conflict 返却</td>
+</tr>
+<tr>
+<td>監査記録</td>
+<td>状態遷移ごとに対応 action コード(<a href="DD09_監査actionコード.html">DD09_監査actionコード.html</a>)を <code>audit_logs</code> に必ず記録</td>
+</tr>
+<tr>
+<td>DB CHECK 制約</td>
+<td>多重ガードのため、可能な状態値を CHECK 制約で列挙(<code>CHECK (state IN ('requested','reviewing','approved','rejected','withdrawn','executed','expired'))</code>)</td>
+</tr>
+<tr>
+<td>バッチ駆動遷移</td>
+<td><code>expired</code> / <code>archived</code> / <code>dlq_archived</code> 等の時間経過遷移は専用 cron Worker で実行</td>
+</tr>
+<tr>
+<td>観察可能性</td>
+<td>各状態の在庫数(現在のレコード数)を KPI として <code>monitoring:thresholds:&lt;kpi_id&gt;</code> で監視</td>
+</tr>
+</tbody>
+</table>
+<h3 id="38-状態遷移共通エラーコード">3.8 状態遷移共通エラーコード</h3>
+<table>
+<thead>
+<tr>
+<th>エラー ID</th>
+<th>HTTP</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>E-OP-STATE-001</code></td>
+<td>409</td>
+<td>INVALID_STATE_TRANSITION(許可されない from → to ペア)</td>
+</tr>
+<tr>
+<td><code>E-OP-STATE-002</code></td>
+<td>409</td>
+<td>VERSION_CONFLICT(楽観ロック競合)</td>
+</tr>
+<tr>
+<td><code>E-OP-STATE-003</code></td>
+<td>410</td>
+<td>RESOURCE_ARCHIVED(<code>archived</code> / <code>dlq_archived</code> 状態は操作不可)</td>
+</tr>
+<tr>
+<td><code>E-OP-STATE-004</code></td>
+<td>423</td>
+<td>RESOURCE_LOCKED(<code>executing</code> 等で並行更新拒否)</td>
+</tr>
+</tbody>
+</table>
+<p>各機能固有のエラー ID(<code>E-OP-ANN-*</code> / <code>E-OP-WEBHOOK-*</code> 等)は各 DD を参照。</p>
+<h3 id="39-状態テーブル一覧">3.9 状態テーブル一覧</h3>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>状態列</th>
+<th>状態数</th>
+<th>主管 DD</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>webhook_events</code></td>
+<td><code>state</code></td>
+<td>12</td>
+<td>DD04</td>
+</tr>
+<tr>
+<td><code>operator_approvals</code></td>
+<td><code>state</code></td>
+<td>7</td>
+<td>DD02</td>
+</tr>
+<tr>
+<td><code>announcement_drafts</code></td>
+<td><code>state</code></td>
+<td>8</td>
+<td>DD06</td>
+</tr>
+<tr>
+<td><code>pii_false_positive_reports</code></td>
+<td><code>state</code></td>
+<td>6</td>
+<td>DD10</td>
+</tr>
+<tr>
+<td><code>webhook_payload_diffs</code></td>
+<td><code>state</code></td>
+<td>4</td>
+<td>DD04</td>
+</tr>
+<tr>
+<td><code>restorations</code></td>
+<td><code>state</code></td>
+<td>3(<code>executing</code> / <code>succeeded</code> / <code>failed</code>)</td>
+<td>DD05</td>
+</tr>
+<tr>
+<td><code>accounts</code>(参照)</td>
+<td><code>contract_status</code></td>
+<td>4</td>
+<td>メイン主管</td>
+</tr>
+<tr>
+<td><code>operator_accounts</code></td>
+<td><code>lifecycle_state</code></td>
+<td>4(<code>invited</code> / <code>active</code> / <code>disabled</code> / <code>revoked</code>)</td>
+<td>DD01</td>
+</tr>
+</tbody>
+</table>
+<p>すべての完全な DDL + CHECK 制約は <a href="../02_基本設計/03_テーブル設計.html">基本設計 / テーブル設計</a> を正本とする。</p>
+<h3 id="310-状態遷移サマリ">3.10 状態遷移サマリ</h3>
+<pre class="mermaid"><code>stateDiagram-v2
+    state webhook_events {
+        [*] --&gt; received
+        received --&gt; verifying_signature
+        verifying_signature --&gt; rejected: HMAC NG
+        verifying_signature --&gt; checking_idempotency: HMAC OK
+        checking_idempotency --&gt; processing: 未処理
+        checking_idempotency --&gt; duplicate_skipped_hash_match: 既処理+一致
+        checking_idempotency --&gt; duplicate_diff_detected_high_alert: 既処理+不一致
+        processing --&gt; succeeded: IF#10 200
+        processing --&gt; failed: 5xx/Timeout
+        failed --&gt; dlq_retrying: DLQAutoBackoff
+        dlq_retrying --&gt; succeeded
+        dlq_retrying --&gt; dlq_manual_replay: 1h 経過
+        dlq_manual_replay --&gt; succeeded: 手動リプレイ
+        dlq_manual_replay --&gt; dlq_archived: 30 日経過
+    }</code></pre>
+<pre class="mermaid"><code>stateDiagram-v2
+    state operator_approvals {
+        [*] --&gt; requested: POST /approvals
+        requested --&gt; reviewing: start-review
+        requested --&gt; withdrawn: withdraw
+        requested --&gt; expired: 72h
+        reviewing --&gt; approved: approve
+        reviewing --&gt; rejected: reject
+        reviewing --&gt; expired: 72h
+        approved --&gt; executed: execute
+        approved --&gt; expired: 72h
+    }</code></pre>
+<pre class="mermaid"><code>stateDiagram-v2
+    state announcement_drafts {
+        [*] --&gt; draft: POST /announcements
+        draft --&gt; preview
+        preview --&gt; scheduled: schedule
+        scheduled --&gt; sending: cron tick
+        scheduled --&gt; cancelled: cancel
+        sending --&gt; sent: IF#7 200
+        sending --&gt; failed: 一時失敗
+        failed --&gt; sending: 自動 BO
+        failed --&gt; dlq: 3 回失敗
+    }</code></pre>
+<pre class="mermaid"><code>stateDiagram-v2
+    state pii_false_positive_reports {
+        [*] --&gt; reported
+        reported --&gt; under_review: SCR-097 開始
+        under_review --&gt; ruled_false_positive
+        under_review --&gt; ruled_correct_detection
+        ruled_false_positive --&gt; rule_updated: KV 更新
+        ruled_correct_detection --&gt; archived: 90 日
+        rule_updated --&gt; archived: 即時
+    }</code></pre>
+<pre class="mermaid"><code>stateDiagram-v2
+    state webhook_payload_diffs {
+        [*] --&gt; detected
+        detected --&gt; reviewed: start-review
+        reviewed --&gt; reprocessed_manually: reprocess
+        reviewed --&gt; dismissed_no_action: dismiss
+    }</code></pre>
+<h2 id="4-関連設計">4. 関連設計</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>参照先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>要件</td>
+<td><a href="../01_要件定義/index.html">../01_要件定義/index.html</a></td>
+</tr>
+<tr>
+<td>基本設計</td>
+<td><a href="../02_基本設計/index.html">../02_基本設計/index.html</a></td>
+</tr>
+<tr>
+<td>テーブル設計(正本)</td>
+<td><a href="../02_基本設計/03_テーブル設計.html">../02_基本設計/03_テーブル設計.html</a></td>
+</tr>
+<tr>
+<td>メインテーブル設計</td>
+<td><a href="../../01_メインシステム/02_基本設計/03_テーブル設計.html">../../01_メインシステム/02_基本設計/03_テーブル設計.html</a></td>
+</tr>
+<tr>
+<td>関連 DD</td>
+<td><a href="DD02_4-eyes承認フロー.html">DD02_4-eyes承認フロー.html</a> / <a href="DD04_Stripe_Webhook一次受信.html">DD04_Stripe_Webhook一次受信.html</a> / <a href="DD06_お知らせ承認・配信.html">DD06_お知らせ承認・配信.html</a> / <a href="DD10_PII偽陽性報告.html">DD10_PII偽陽性報告.html</a></td>
+</tr>
+<tr>
+<td>運用設計</td>
+<td><a href="../04_運用設計/index.html">../04_運用設計/index.html</a></td>
+</tr>
+<tr>
+<td>将来対応</td>
+<td><a href="../05_future/index.html">../05_future/index.html</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-テスト観点">5. テスト観点</h2>
+<h3 id="51-ユニットテスト">5.1 ユニットテスト</h3>
+<ul>
+<li>各状態の許可遷移ペア網羅(マトリクステーブル)</li>
+<li>拒否ペア(<code>draft → sent</code> 等)で 409 返却</li>
+<li>楽観ロック競合(同一 from で 2 並列 UPDATE → 1 件成功 / 1 件 409)</li>
+<li>バッチ駆動遷移(72h / 90 日 / 30 日 / 1h)の境界</li>
+</ul>
+<h3 id="52-結合テストminiflare">5.2 結合テスト(Miniflare)</h3>
+<ul>
+<li>各状態機械の完全パス(happy path)</li>
+<li>失敗パス(<code>rejected</code> / <code>failed</code> / <code>dlq</code> / <code>archived</code> 全件)</li>
+<li>バッチ実行で <code>expired</code> / <code>archived</code> 遷移</li>
+<li>状態遷移時の <code>audit_logs</code> 必須記録(対応 action コード)</li>
+</ul>
+<h3 id="53-e2e-テストplaywright">5.3 E2E テスト(Playwright)</h3>
+<p>各 DD の E2E シナリオ(<code>e2e-scr090-001</code>〜<code>e2e-scr099-001</code>、<code>e2e-4eyes-*-001</code> 等)で全状態を踏破。</p>
+<h3 id="54-状態遷移マトリクス検証-ci">5.4 状態遷移マトリクス検証 CI</h3>
+<ul>
+<li>本書の遷移表と実装(state machine モジュール)の整合性を <code>03_script/check-state-machine.sh</code> で検証(TODO: スクリプト整備)</li>
+<li>各 state テーブルの CHECK 制約と本書記載の値リストの一致</li>
+</ul>
+<h2 id="6-未確定事項確認事項">6. 未確定事項・確認事項</h2>
+<table>
+<thead>
+<tr>
+<th>確認事項ID</th>
+<th>確認内容</th>
+<th>優先度</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>v1.0 リリース時点で全項目確定済み</td>
+<td>低</td>
+<td>確認済</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

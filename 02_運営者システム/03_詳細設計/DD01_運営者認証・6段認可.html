@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DD01: 運営者認証・6 段認可(運営者システム) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="02_運営者システム/03_詳細設計/DD01_運営者認証・6段認可.html">
+<article class="content" id="content">
+<h1 id="dd01-運営者認証6-段認可運営者システム">DD01: 運営者認証・6 段認可(運営者システム)</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書名</td>
+<td>DD01: 運営者認証・6 段認可(運営者システム)</td>
+</tr>
+<tr>
+<td>詳細設計ID</td>
+<td>DD01</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>FAQ AI ウィジェット SaaS / 運営者システム</td>
+</tr>
+<tr>
+<td>関連機能ID</td>
+<td>FR-007, FR-220, FR-221, FR-222, FR-223, FR-224, FR-225, NFR-310, NFR-311</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-17</td>
+</tr>
+<tr>
+<td>版数</td>
+<td>v1.0</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>承認済</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-対象範囲">1. 対象範囲</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>ID</th>
+<th>名称</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>機能</td>
+<td>FR-007</td>
+<td>再認証(クリティカル操作 5 分以内)</td>
+</tr>
+<tr>
+<td>機能</td>
+<td>FR-220</td>
+<td>運営者 MFA(TOTP)</td>
+</tr>
+<tr>
+<td>機能</td>
+<td>FR-221</td>
+<td>運営者 IP 許可リスト</td>
+</tr>
+<tr>
+<td>機能</td>
+<td>FR-222</td>
+<td>運営者操作監査</td>
+</tr>
+<tr>
+<td>機能</td>
+<td>FR-223</td>
+<td>削除データ参照(認可境界)</td>
+</tr>
+<tr>
+<td>機能</td>
+<td>FR-224</td>
+<td>契約上書き(運営者操作通知)</td>
+</tr>
+<tr>
+<td>機能</td>
+<td>FR-225</td>
+<td>運営者アカウント・ライフサイクル</td>
+</tr>
+<tr>
+<td>画面</td>
+<td>SCR-AUTH</td>
+<td>運営者ログイン</td>
+</tr>
+<tr>
+<td>画面</td>
+<td>SCR-AUTH-M1</td>
+<td>MFA 初回セットアップモーダル</td>
+</tr>
+<tr>
+<td>画面</td>
+<td>SCR-HOME</td>
+<td>運営者ダッシュボード(認証後ランディング)</td>
+</tr>
+<tr>
+<td>画面</td>
+<td>全画面</td>
+<td>認証ミドルウェア共通</td>
+</tr>
+<tr>
+<td>API</td>
+<td><code>POST /auth/login</code> / <code>POST /auth/mfa/verify</code> / <code>POST /auth/reauth</code> / <code>POST /auth/logout</code></td>
+<td>認証フロー</td>
+</tr>
+<tr>
+<td>テーブル</td>
+<td><code>operator_accounts</code> / <code>operator_sessions</code> / <code>operator_mfa_secrets</code> / <code>operator_ip_allowlists</code> / <code>operator_reauths</code></td>
+<td>運営者主管</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-収録ロジック対応章">2. 収録ロジック・対応章</h2>
+<table>
+<thead>
+<tr>
+<th>元章</th>
+<th>元タイトル</th>
+<th>概要</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>§3</td>
+<td>利用者・権限詳細設計</td>
+<td>単一 <code>service_operator</code> ロール、MFA、IP 許可、運営者ライフサイクル</td>
+</tr>
+<tr>
+<td>§5 SCR-AUTH / SCR-HOME</td>
+<td>画面詳細(参照)</td>
+<td>認証画面・ホーム画面のレイアウト・操作</td>
+</tr>
+<tr>
+<td>§6 認証関連</td>
+<td>機能詳細(参照)</td>
+<td>ログイン → MFA → セッション発行 → 再認証</td>
+</tr>
+<tr>
+<td>§12 セキュリティ詳細(認証部分)</td>
+<td>認証セキュリティ</td>
+<td>セッショントークン TTL、HKDF info 値、CSRF、Cookie 属性</td>
+</tr>
+<tr>
+<td>§2.5</td>
+<td>リクエストフロー</td>
+<td>6 段認可判定(IP → セッション → MFA → role → 再認証 → 4-eyes)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-詳細設計本文">3. 詳細設計本文</h2>
+<h3 id="31-6-段認可判定モデル">3.1 6 段認可判定モデル</h3>
+<p>運営者リクエストはエッジ + Worker 内で次の 6 段階を <strong>早期返却 / 同一順序</strong> で評価する。失敗した段で即座にレスポンスを返却し、以降の段は評価しない。</p>
+<table>
+<thead>
+<tr>
+<th>段</th>
+<th>判定対象</th>
+<th>失敗時レスポンス</th>
+<th>評価場所</th>
+<th>参照キー</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>IP 許可リスト</td>
+<td>403 Forbidden(エッジ)</td>
+<td>Cloudflare Edge</td>
+<td>KV: <code>operator-ip-allowlist:&lt;operator_id&gt;</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>セッション有効性</td>
+<td>401 UNAUTHENTICATED</td>
+<td>AdminConsoleWorker</td>
+<td>KV: <code>operator-session:&lt;sid&gt;</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td>MFA 検証フラグ</td>
+<td>403 FORBIDDEN_MFA_REQUIRED</td>
+<td>AdminConsoleWorker</td>
+<td>セッション内 <code>mfaVerifiedAt</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>ロール(<code>service_operator</code>)</td>
+<td>403 FORBIDDEN_ROLE</td>
+<td>AdminConsoleWorker</td>
+<td>D1: <code>operator_accounts.role</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td>再認証(クリティカル操作)</td>
+<td>403 RE_AUTH_REQUIRED</td>
+<td>AdminConsoleWorker</td>
+<td>KV: <code>re-auth:&lt;sid&gt;</code></td>
+</tr>
+<tr>
+<td>6</td>
+<td>4-eyes 承認</td>
+<td>403 FORBIDDEN_HARD_GATE</td>
+<td>AdminConsoleWorker</td>
+<td>KV: <code>feature:hard-gate:&lt;action&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<p>判定の正本は <a href="../02_基本設計/08_認証・認可設計.html">基本設計 / 認証・認可設計</a> §3〜§7。本書は実装上のミドルウェア順序と早期返却ルールを確定する。</p>
+<h3 id="32-ログインフロー">3.2 ログインフロー</h3>
+<pre class="mermaid"><code>sequenceDiagram
+    participant Browser as 運営者ブラウザ
+    participant Edge as Cloudflare Edge
+    participant Worker as AdminConsoleWorker
+    participant D1
+    participant KV
+
+    Browser-&gt;&gt;Edge: POST /admin/api/v1/auth/login {email, password}
+    Edge-&gt;&gt;Edge: IP 許可リスト判定
+    alt 未許可 IP
+        Edge--&gt;&gt;Browser: 403 Forbidden
+    else 許可 IP
+        Edge-&gt;&gt;Worker: ルーティング
+        Worker-&gt;&gt;D1: SELECT operator_accounts WHERE email=?
+        Worker-&gt;&gt;Worker: Argon2id 検証
+        alt 失敗
+            Worker-&gt;&gt;KV: INCR login-lockout:&lt;ip_hash&gt;:&lt;operator_id&gt;
+            Worker-&gt;&gt;D1: audit_logs(operator.login.failed, 5y)
+            Worker--&gt;&gt;Browser: 401 INVALID_CREDENTIALS
+        else 成功
+            Worker-&gt;&gt;D1: audit_logs(operator.login.attempt, 1y)
+            Worker--&gt;&gt;Browser: 200 {requireMfa: true, mfaChallengeId}
+        end
+    end</code></pre>
+<h3 id="33-mfatotp検証">3.3 MFA(TOTP)検証</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>仕様</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>アルゴリズム</td>
+<td>TOTP(RFC 6238、SHA-1、30 秒、6 桁)</td>
+</tr>
+<tr>
+<td>シークレット保管</td>
+<td><code>operator_mfa_secrets.secret_encrypted</code>(マスター鍵 + HKDF info=<code>mfa-secret</code> で派生暗号化)</td>
+</tr>
+<tr>
+<td>初回セットアップ</td>
+<td><code>mfa-setup:&lt;operator_id&gt;</code>(72h)に QR コードトークンを格納し、SCR-AUTH-M1 で読取・確認後 <code>mfa_enabled=1</code></td>
+</tr>
+<tr>
+<td>リカバリーコード</td>
+<td>10 個、SHA-256 ハッシュで保管、使用時に該当エントリ無効化 + 監査(<code>mfa.recovery_code.used</code>)</td>
+</tr>
+<tr>
+<td>検証成功時</td>
+<td>セッション内 <code>mfaVerifiedAt = now()</code> を記録し、KV へ即時反映</td>
+</tr>
+<tr>
+<td>失敗時ロックアウト</td>
+<td>5 回連続失敗で 15 分(<code>login-lockout</code>)/ 同 IP・アカウントペア単位</td>
+</tr>
+</tbody>
+</table>
+<h3 id="34-セッション管理">3.4 セッション管理</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>仕様</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>セッショントークン</td>
+<td>ULID 26 文字 + ランダム 32 バイト + HKDF info=<code>operator-session</code> で派生 HMAC 検証用</td>
+</tr>
+<tr>
+<td>TTL</td>
+<td><strong>8 時間</strong>(D-18)、最終アクセスから滑走式に延長(最大 24h、絶対上限)</td>
+</tr>
+<tr>
+<td>Cookie 属性</td>
+<td><code>Domain=admin.open-faq.example.com; Path=/; Secure; HttpOnly; SameSite=Strict; __Host-</code> プレフィックス</td>
+</tr>
+<tr>
+<td>CSRF</td>
+<td>Cookie とは別の <code>X-CSRF-Token</code> ヘッダ(Worker 起動時に発行、セッション JSON 内に保管)</td>
+</tr>
+<tr>
+<td>KV キャッシュ</td>
+<td><code>operator-session:&lt;sid&gt;</code>、TTL 60 秒。失効時は D1 にフォールバックし <code>operator_sessions</code> テーブルを参照</td>
+</tr>
+<tr>
+<td>同時セッション</td>
+<td>アカウント毎 最大 3 セッション、超過時は最古を <code>revoked</code> 遷移(<code>operator.session.revoke</code>)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="35-再認証クリティカル操作">3.5 再認証(クリティカル操作)</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>仕様</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>対象操作</td>
+<td>4-eyes 対象 10 操作 + お知らせ schedule / 監査エクスポート / Webhook リプレイ</td>
+</tr>
+<tr>
+<td>検証ウィンドウ</td>
+<td>直近 <strong>5 分以内</strong>(FR-007)</td>
+</tr>
+<tr>
+<td>認証要素</td>
+<td>パスワード再入力 OR TOTP 再入力(運営者選択)</td>
+</tr>
+<tr>
+<td>状態保管</td>
+<td>KV <code>re-auth:&lt;sid&gt;</code> に <code>{ operatorId, reauthenticatedAt, consumed }</code>、TTL 15 分、<code>consumed=true</code> で即時失効</td>
+</tr>
+<tr>
+<td>1 回限り</td>
+<td>1 つの再認証トークンは 1 回のクリティカル操作のみで消費</td>
+</tr>
+<tr>
+<td>監査</td>
+<td><code>reauth</code>(5y、<code>{operatorId, reauthId}</code>)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="36-ip-許可リスト">3.6 IP 許可リスト</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>仕様</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>値形式</td>
+<td>CIDR 配列(IPv4 / IPv6 両対応)、<code>operator_ip_allowlists.cidr</code></td>
+</tr>
+<tr>
+<td>適用範囲</td>
+<td>エッジ Cloudflare Worker(<code>/webhooks/*</code> を除く全パス)</td>
+</tr>
+<tr>
+<td>KV キャッシュ</td>
+<td><code>operator-ip-allowlist:&lt;operator_id&gt;</code>、TTL 60 秒</td>
+</tr>
+<tr>
+<td>変更操作</td>
+<td><code>operator_ip.grant</code> / <code>operator_ip.revoke</code>(5y)、変更時に KV Invalidate</td>
+</tr>
+<tr>
+<td>緊急バイパス</td>
+<td>紙ベース回復コードで <code>master_key.emergency_bypass</code> 監査経由のみ(MVP)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="37-運営者アカウントライフサイクルfr-225">3.7 運営者アカウント・ライフサイクル(FR-225)</h3>
+<table>
+<thead>
+<tr>
+<th>状態</th>
+<th>説明</th>
+<th>遷移条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>invited</code></td>
+<td>招待メール送信済、未受諾</td>
+<td>既存運営者が招待発行</td>
+</tr>
+<tr>
+<td><code>active</code></td>
+<td>通常稼働</td>
+<td><code>operator.accept</code> 後</td>
+</tr>
+<tr>
+<td><code>disabled</code></td>
+<td>一時無効化</td>
+<td><code>operator.disable</code>(理由付き)</td>
+</tr>
+<tr>
+<td><code>revoked</code></td>
+<td>解任(永続無効)</td>
+<td><code>operator.disable</code> 後 + 90 日経過</td>
+</tr>
+</tbody>
+</table>
+<p>すべての遷移は <code>operator_accounts.lifecycle_state</code> 列で管理し、対応 action コード(<code>operator.invite</code> / <code>operator.accept</code> / <code>operator.disable</code> / <code>operator.subrole.grant</code> / <code>operator.subrole.revoke</code>、すべて 5y)を <code>audit_logs</code> に記録する。</p>
+<h3 id="38-ミドルウェア実装ガイドライン">3.8 ミドルウェア実装ガイドライン</h3>
+<p><code>admin/src/admin-console/middleware/</code> 配下に次の順序でミドルウェアを連結する:</p>
+<ol type="1">
+<li><code>ip-allowlist.ts</code> ── エッジで判定済の場合はパススルー、Worker からの直接呼び出しに備えて再判定</li>
+<li><code>session.ts</code> ── KV → D1 フォールバック、<code>mfaVerifiedAt</code> を <code>Context</code> に注入</li>
+<li><code>mfa.ts</code> ── <code>mfaVerifiedAt</code> 必須、ログインフロー専用パスは除外</li>
+<li><code>csrf.ts</code> ── <code>__Host-</code> プレフィックス Cookie + <code>X-CSRF-Token</code> 一致</li>
+<li><code>ticket-id.ts</code> ── <code>X-Op-Ticket-Id</code> ヘッダ必須(クリティカル操作のみ、<code>^[A-Za-z0-9_\-]{1,64}$</code>)</li>
+<li><code>reauth.ts</code> ── <code>re-auth:&lt;sid&gt;</code> 存在 + <code>now - reauthenticatedAt ≤ 5min</code></li>
+<li><code>four-eyes.ts</code> ── <code>feature:hard-gate:&lt;action&gt;</code> 真 → <code>X-Approval-Id</code> 必須、未付与で 403</li>
+</ol>
+<h3 id="39-hkdf-info-値リスト認証関連th-12">3.9 HKDF info 値リスト(認証関連、★TH-12)</h3>
+<table>
+<thead>
+<tr>
+<th>info 値</th>
+<th>用途</th>
+<th>キー長</th>
+<th>派生元</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>operator-session</code></td>
+<td>セッショントークン HMAC 検証</td>
+<td>32 バイト</td>
+<td>Secrets Store マスター鍵</td>
+</tr>
+<tr>
+<td><code>mfa-secret</code></td>
+<td>MFA TOTP シークレット暗号化</td>
+<td>32 バイト</td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>internal-api</code></td>
+<td>mTLS + JWT 署名</td>
+<td>32 バイト</td>
+<td>同上(連携 IF #1〜#12 共通)</td>
+</tr>
+<tr>
+<td><code>audit-chain</code></td>
+<td>ハッシュチェーン HMAC(DD03 参照)</td>
+<td>32 バイト</td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>audit-export</code></td>
+<td>監査エクスポート HMAC 署名(D-17)</td>
+<td>32 バイト</td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>pii-encryption</code></td>
+<td>PII 暗号化(メイン主管、参照のみ)</td>
+<td>32 バイト</td>
+<td>同上</td>
+</tr>
+</tbody>
+</table>
+<p>完全な HKDF info 値リストは <a href="../02_基本設計/09_セキュリティ設計.html">基本設計 / セキュリティ設計</a> §6 を正本とする。</p>
+<h3 id="310-主要エラーコード">3.10 主要エラーコード</h3>
+<table>
+<thead>
+<tr>
+<th>エラー ID</th>
+<th>HTTP</th>
+<th>発生段</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>E-OP-AUTH-001</code></td>
+<td>401</td>
+<td>段 2</td>
+<td>UNAUTHENTICATED(セッションなし / 失効)</td>
+</tr>
+<tr>
+<td><code>E-OP-AUTH-002</code></td>
+<td>401</td>
+<td>ログイン</td>
+<td>INVALID_CREDENTIALS</td>
+</tr>
+<tr>
+<td><code>E-OP-AUTH-003</code></td>
+<td>403</td>
+<td>段 3</td>
+<td>FORBIDDEN_MFA_REQUIRED</td>
+</tr>
+<tr>
+<td><code>E-OP-AUTH-004</code></td>
+<td>403</td>
+<td>段 4</td>
+<td>FORBIDDEN_ROLE</td>
+</tr>
+<tr>
+<td><code>E-OP-AUTH-005</code></td>
+<td>403</td>
+<td>段 5</td>
+<td>RE_AUTH_REQUIRED</td>
+</tr>
+<tr>
+<td><code>E-OP-AUTH-006</code></td>
+<td>403</td>
+<td>段 1</td>
+<td>IP_NOT_ALLOWED</td>
+</tr>
+<tr>
+<td><code>E-OP-AUTH-007</code></td>
+<td>429</td>
+<td>ログイン</td>
+<td>LOCKED_OUT(15 分)</td>
+</tr>
+<tr>
+<td><code>E-OP-4EYES-001</code></td>
+<td>403</td>
+<td>段 6</td>
+<td>FORBIDDEN_HARD_GATE</td>
+</tr>
+</tbody>
+</table>
+<p>完全な E-OP-AUTH-* 一覧は <a href="../02_基本設計/05_エラー設計.html">基本設計 / エラー設計</a> §4 を正本とする。</p>
+<h2 id="4-関連設計">4. 関連設計</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>参照先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>要件</td>
+<td><a href="../01_要件定義/index.html">../01_要件定義/index.html</a></td>
+</tr>
+<tr>
+<td>基本設計</td>
+<td><a href="../02_基本設計/index.html">../02_基本設計/index.html</a></td>
+</tr>
+<tr>
+<td>認証・認可設計(正本)</td>
+<td><a href="../02_基本設計/08_認証・認可設計.html">../02_基本設計/08_認証・認可設計.html</a></td>
+</tr>
+<tr>
+<td>権限設計(正本)</td>
+<td><a href="../02_基本設計/04_権限設計.html">../02_基本設計/04_権限設計.html</a></td>
+</tr>
+<tr>
+<td>セキュリティ設計(正本)</td>
+<td><a href="../02_基本設計/09_セキュリティ設計.html">../02_基本設計/09_セキュリティ設計.html</a></td>
+</tr>
+<tr>
+<td>関連 DD</td>
+<td><a href="DD02_4-eyes承認フロー.html">DD02_4-eyes承認フロー.html</a> / <a href="DD03_監査ハッシュチェーン.html">DD03_監査ハッシュチェーン.html</a></td>
+</tr>
+<tr>
+<td>運用設計</td>
+<td><a href="../04_運用設計/index.html">../04_運用設計/index.html</a></td>
+</tr>
+<tr>
+<td>将来対応</td>
+<td><a href="../05_future/index.html">../05_future/index.html</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-テスト観点">5. テスト観点</h2>
+<h3 id="51-ユニットテスト">5.1 ユニットテスト</h3>
+<ul>
+<li>IP 許可リスト判定(IPv4 / IPv6 / CIDR 境界 / KV キャッシュヒット・ミス)</li>
+<li>Argon2id パスワード検証(成功 / 失敗 / タイミング攻撃耐性)</li>
+<li>TOTP 検証(時刻スキュー ±30 秒許容 / 再使用拒否)</li>
+<li>セッション TTL 計算(8h 滑走 + 24h 絶対上限)</li>
+<li>再認証ウィンドウ判定(<code>now - reauthenticatedAt ≤ 5min</code>、<code>consumed=true</code> で失効)</li>
+<li>HKDF info 値別派生鍵の確定的計算</li>
+</ul>
+<h3 id="52-結合テストminiflare">5.2 結合テスト(Miniflare)</h3>
+<ul>
+<li>ログイン → MFA → セッション発行 → 任意 API 呼出</li>
+<li>ロックアウト(5 回失敗 → 15 分)</li>
+<li>同時セッション 3 → 4 件目で最古 revoke</li>
+<li>IP 変更時のセッション継続(セッショントークンは IP に縛らない、再認証は要)</li>
+<li>CSRF トークン不一致で 403</li>
+</ul>
+<h3 id="53-e2e-テストplaywright">5.3 E2E テスト(Playwright)</h3>
+<table>
+<thead>
+<tr>
+<th>テスト ID</th>
+<th>シナリオ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>e2e-auth-001</code></td>
+<td>ログイン正常 → ホーム表示</td>
+</tr>
+<tr>
+<td><code>e2e-auth-002</code></td>
+<td>未許可 IP → 403 Forbidden(エッジ)</td>
+</tr>
+<tr>
+<td><code>e2e-auth-003</code></td>
+<td>MFA 未セットアップ → SCR-AUTH-M1 強制表示</td>
+</tr>
+<tr>
+<td><code>e2e-auth-004</code></td>
+<td>クリティカル操作で再認証要 → モーダル表示 → 認証後実行</td>
+</tr>
+<tr>
+<td><code>e2e-auth-005</code></td>
+<td>ロックアウト 15 分計測</td>
+</tr>
+</tbody>
+</table>
+<h3 id="54-受入条件マッピング">5.4 受入条件マッピング</h3>
+<table>
+<thead>
+<tr>
+<th>AC</th>
+<th>検証手段</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AC-037(運営者 MFA + 再認証)</td>
+<td>認証テスト全件 + E2E</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-未確定事項確認事項">6. 未確定事項・確認事項</h2>
+<table>
+<thead>
+<tr>
+<th>確認事項ID</th>
+<th>確認内容</th>
+<th>優先度</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>v1.0 リリース時点で全項目確定済み</td>
+<td>低</td>
+<td>確認済</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

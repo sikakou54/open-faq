@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>詳細設計 index（メインシステム） | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/03_詳細設計/index.html">
+<article class="content" id="content">
+<h1 id="詳細設計-indexメインシステム">詳細設計 index（メインシステム）</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書名</td>
+<td>詳細設計 index（メインシステム）</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>FAQ AI ウィジェット SaaS / メインシステム（管理画面 + 公開ウィジェット + エンドユーザー画面）</td>
+</tr>
+<tr>
+<td>版数</td>
+<td>v1.1</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-17</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>承認済</td>
+</tr>
+<tr>
+<td>入力文書</td>
+<td><a href="../01_要件定義/index.html">../01_要件定義/index.html</a> / <a href="../02_基本設計/index.html">../02_基本設計/index.html</a> / 画面遷移図(<a href="../画面遷移図_オーナー.html">オーナー</a> / <a href="../画面遷移図_プロジェクト管理者.html">プロジェクト管理者</a> / <a href="../画面遷移図_プロジェクトメンバー.html">プロジェクトメンバー</a> / <a href="../画面遷移図_ウィジェット利用者.html">ウィジェット利用者</a>)</td>
+</tr>
+<tr>
+<td>実装スタック前提</td>
+<td>Cloudflare Workers / Pages / D1 / R2 / KV / Queues + TypeScript + Hono + Zod</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>位置づけ</strong>: 本書は実装関連の詳細(モジュール構成 / ロジック / 非機能 / バッチ / ログ / 監視 / テスト / リリース / 実装ガイドライン)を扱う。画面・API・DB・権限・エラー・セキュリティ・状態遷移は <strong>02_基本設計/ 配下の 10 ドキュメント体系</strong> を正本とし、本書からは参照のみ行う。</p>
+</blockquote>
+<hr />
+<h2 id="1-詳細設計方針">1. 詳細設計方針</h2>
+<h3 id="11-目的">1.1 目的</h3>
+<p>基本設計書で定義された FAQ AI ウィジェット SaaS メインシステムの設計を、Cloudflare Workers + TypeScript + Hono + Zod を用いた実装に直接落とし込めるレベルまで詳細化することを目的とする。設計の各構成要素について、「どこに何を書くか（ファイル配置）」「何をどう書くか（型・関数・テーブル・SQL・JSON スキーマ）」を明示し、実装者が翌日からコード作成に着手できる粒度を達成する。</p>
+<h3 id="12-対象システム">1.2 対象システム</h3>
+<p>本書の対象は、FAQ AI ウィジェット SaaS のメインシステムである。具体的には以下を含む。</p>
+<ul>
+<li><strong>管理画面</strong>（管理者ユーザー admin 向け、SCR-001〜027）</li>
+<li><strong>公開ウィジェット</strong>（エンドユーザー end_user 向け、JavaScript 配信、iframe sandbox）</li>
+<li><strong>公開ウィジェット</strong>（通常 / 未解決 / 制限中）</li>
+<li><strong>内部連携 API</strong>（顧客管理システムとの IF #1〜#12 送受信）</li>
+<li><strong>非同期処理基盤</strong>（cron / Queue / Webhook 受信）</li>
+</ul>
+<h3 id="13-スコープ">1.3 スコープ</h3>
+<p>リリース優先度 P0（必須）に該当する全機能要件・非機能要件を対象とする。P1 のうち P0 と密結合する以下については本書で扱う。</p>
+<ul>
+<li>AI 品質回帰テスト（FR-059 / FR-342）</li>
+</ul>
+<h3 id="14-関連ドキュメント">1.4 関連ドキュメント</h3>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>パス</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>要件</td>
+<td><a href="../01_要件定義/index.html">../01_要件定義/index.html</a></td>
+<td>機能・非機能要件の正本</td>
+</tr>
+<tr>
+<td>基本設計</td>
+<td><a href="../02_基本設計/index.html">../02_基本設計/index.html</a></td>
+<td>アーキテクチャ・データモデル・状態の正本</td>
+</tr>
+<tr>
+<td>詳細設計（本書）</td>
+<td>本ファイル</td>
+<td>実装に直結する具体仕様</td>
+</tr>
+<tr>
+<td>画面遷移図(アカウント種別別)</td>
+<td><a href="../画面遷移図_オーナー.html">オーナー</a> / <a href="../画面遷移図_プロジェクト管理者.html">プロジェクト管理者</a> / <a href="../画面遷移図_プロジェクトメンバー.html">プロジェクトメンバー</a> / <a href="../画面遷移図_ウィジェット利用者.html">ウィジェット利用者</a></td>
+<td>画面レイアウト、画面目的、権限、入出力、遷移、例外の視覚情報</td>
+</tr>
+<tr>
+<td>運用設計</td>
+<td><a href="../04_運用設計/index.html">../04_運用設計/index.html</a></td>
+<td>運用手順 / runbook</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="2-システム全体構成">2. システム全体構成</h2>
+<h3 id="21-全体構成図">2.1 全体構成図</h3>
+<pre class="mermaid"><code>flowchart TB
+  subgraph Client[&quot;クライアント層&quot;]
+    direction LR
+    EU[&quot;エンドユーザー&lt;br/&gt;(ブラウザ + 埋込ウィジェット)&quot;]
+    AD[&quot;管理者ユーザー&lt;br/&gt;(管理画面ブラウザ)&quot;]
+  end
+
+  subgraph CF[&quot;Cloudflare エッジ&quot;]
+    direction TB
+    PG[&quot;Pages&lt;br/&gt;(管理画面 SPA / 静的アセット)&quot;]
+    WJS[&quot;Pages&lt;br/&gt;(widget.js 配信)&quot;]
+    subgraph Workers[&quot;Workers&quot;]
+      direction LR
+      MW[&quot;main-api Worker&lt;br/&gt;(/api/v1/*)&quot;]
+      WW[&quot;widget-api Worker&lt;br/&gt;(/widget/v1/*)&quot;]
+      IW[&quot;internal-api Worker&lt;br/&gt;(/internal/admin-integration/v1/*)&quot;]
+      WHW[&quot;webhook Worker&lt;br/&gt;(/webhooks/*)&quot;]
+      QC[&quot;Queue Consumer Workers&lt;br/&gt;(email / fanout / export / ai-regression)&quot;]
+      CRW[&quot;Cron Worker&lt;br/&gt;(daily / monthly / 5min)&quot;]
+    end
+    D1[&quot;D1&lt;br/&gt;(main-db)&quot;]
+    KV1[&quot;KV&lt;br/&gt;(session / cache / ratelimit / dedup)&quot;]
+    R2[&quot;R2&lt;br/&gt;(exports / backups / audit-snapshots / dlq-payloads)&quot;]
+    QU[&quot;Queues&lt;br/&gt;(email / announcement-fanout / export / ai-regression / webhook-dlq)&quot;]
+    AI[&quot;Workers AI&lt;br/&gt;(LLM 推論)&quot;]
+    SS[&quot;Secrets Store&lt;br/&gt;(Master Key / JWT 鍵 / API キー)&quot;]
+  end
+
+  subgraph Ext[&quot;外部サービス&quot;]
+    direction TB
+    RS[&quot;Resend&lt;br/&gt;(メール送信 + Webhook)&quot;]
+    ST[&quot;Stripe&lt;br/&gt;(課金 + Webhook、顧管経由)&quot;]
+    TS[&quot;Turnstile&lt;br/&gt;(reCAPTCHA 代替)&quot;]
+  end
+
+  subgraph Adm[&quot;顧客管理システム&quot;]
+    AAPI[&quot;内部連携 API&lt;br/&gt;(mTLS + 短期 JWT)&quot;]
+  end
+
+  EU --&gt; WJS
+  EU --&gt; WW
+  AD --&gt; PG
+  AD --&gt; MW
+  WW --&gt; D1
+  WW --&gt; KV1
+  WW --&gt; AI
+  MW --&gt; D1
+  MW --&gt; KV1
+  MW --&gt; R2
+  MW --&gt; QU
+  IW &lt;--&gt; AAPI
+  RS -.Webhook.-&gt; WHW
+  AAPI -.IF #10 転送.-&gt; WHW
+  WHW --&gt; QU
+  QC --&gt; RS
+  QC --&gt; D1
+  QC --&gt; R2
+  CRW --&gt; D1
+  CRW --&gt; QU
+  MW -.IF #9 / #11 送信.-&gt; AAPI</code></pre>
+<h3 id="22-コンポーネント詳細責務">2.2 コンポーネント詳細責務</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>コンポーネント</th>
+<th>デプロイ単位</th>
+<th>主責務</th>
+<th>主使用バインディング</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>pages-admin</code></td>
+<td>Cloudflare Pages</td>
+<td>管理画面 SPA（SCR-001〜027）配信。静的アセット + クライアントサイドルーティング。</td>
+<td>-</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>pages-widget</code></td>
+<td>Cloudflare Pages</td>
+<td><code>widget.js</code> および iframe コンテンツ配信。CSP / HSTS 設定。</td>
+<td>-</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>pages-public</code></td>
+<td>Cloudflare Pages</td>
+<td>利用規約・プライバシーポリシー等の公開ページ配信。</td>
+<td>-</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>worker-main-api</code></td>
+<td>Workers</td>
+<td>管理画面用 API（<code>/api/v1/*</code>）。Cookie + CSRF 認証。</td>
+<td>D1 / KV / R2 / QU / AI / SS</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>worker-widget-api</code></td>
+<td>Workers</td>
+<td>ウィジェット用 API（<code>/widget/v1/*</code>）。bootstrap → session token 認証。</td>
+<td>D1 / KV / AI</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>worker-internal-api</code></td>
+<td>Workers</td>
+<td>顧客管理連携 API（<code>/internal/admin-integration/v1/*</code>）。mTLS + 短期 JWT 認証。</td>
+<td>D1 / KV / QU / SS</td>
+</tr>
+<tr>
+<td>7</td>
+<td><code>worker-webhook</code></td>
+<td>Workers</td>
+<td>外部 Webhook 受信（Resend / Stripe 経由 / Turnstile）。署名検証 → Queue 投入。</td>
+<td>D1 / KV / QU / R2 / SS</td>
+</tr>
+<tr>
+<td>8</td>
+<td><code>worker-queue-consumer</code></td>
+<td>Workers Queue Consumer</td>
+<td>Queue ジョブ実行（email / fanout / export / ai-regression / dlq）。</td>
+<td>D1 / R2 / QU / SS / 外部 API</td>
+</tr>
+<tr>
+<td>9</td>
+<td><code>worker-cron</code></td>
+<td>Workers Cron Trigger</td>
+<td>定期処理（日次 / 月次 / 5 分間隔）。</td>
+<td>D1 / KV / QU / SS</td>
+</tr>
+</tbody>
+</table>
+<h3 id="23-リクエストフロー">2.3 リクエストフロー</h3>
+<h4 id="231-管理画面-apiadmin">2.3.1 管理画面 API（admin）</h4>
+<pre class="mermaid"><code>sequenceDiagram
+  participant U as ブラウザ (admin)
+  participant P as pages-admin
+  participant W as worker-main-api
+  participant K as KV (session)
+  participant D as D1
+  participant A as audit_logs
+
+  U-&gt;&gt;P: GET /
+  P--&gt;&gt;U: SPA + HTML/JS/CSS
+  U-&gt;&gt;W: POST /api/v1/auth/login (Cookie 未保持)
+  W-&gt;&gt;D: SELECT users WHERE email_hmac=?
+  W-&gt;&gt;D: Argon2id verify
+  W-&gt;&gt;K: SET session:{sid} (TTL 12h)
+  W--&gt;&gt;U: Set-Cookie: session=...; CSRF Cookie
+  U-&gt;&gt;W: GET /api/v1/inquiries (Cookie + X-CSRF-Token)
+  W-&gt;&gt;K: GET session:{sid}
+  W-&gt;&gt;D: SELECT inquiries WHERE contract_owner_user_id=? AND ...
+  W-&gt;&gt;A: INSERT audit_logs (read 操作は省略可)
+  W--&gt;&gt;U: 200 OK + JSON</code></pre>
+<h4 id="232-ウィジェット-apiend_user">2.3.2 ウィジェット API（end_user）</h4>
+<pre class="mermaid"><code>sequenceDiagram
+  participant E as エンドユーザー
+  participant W as widget.js (iframe 内)
+  participant API as worker-widget-api
+  participant K as KV (allowed_domains / threshold / session)
+  participant D as D1
+  participant AI as Workers AI
+
+  E-&gt;&gt;W: ページ表示時にロード
+  W-&gt;&gt;API: POST /widget/v1/bootstrap (pk_live_xxx, Origin)
+  API-&gt;&gt;K: GET allowed_domains:{project_id}
+  API-&gt;&gt;D: SELECT projects (キャッシュミス時)
+  API-&gt;&gt;K: SET widget-session:{sid} (TTL 1h)
+  API--&gt;&gt;W: { session_token, project_config }
+  E-&gt;&gt;W: 質問入力 → 送信
+  W-&gt;&gt;API: POST /widget/v1/ask { question, session_token }
+  API-&gt;&gt;D: FTS5 検索 (faq_search_fts)
+  API-&gt;&gt;AI: 推論（質問 + FAQ 抜粋）
+  API-&gt;&gt;K: GET ai_threshold:{contract_owner_user_id}:{project_id}
+  API-&gt;&gt;D: INSERT question_logs (metering_billable=...)
+  API--&gt;&gt;W: { type: &quot;answered&quot; | &quot;unanswered&quot; | &quot;error&quot;, ... }</code></pre>
+<h4 id="233-内部連携-api顧客管理--メイン">2.3.3 内部連携 API（顧客管理 → メイン）</h4>
+<pre class="mermaid"><code>sequenceDiagram
+  participant ADM as 顧客管理 Worker
+  participant IW as worker-internal-api
+  participant K as KV (idempotency / ratelimit)
+  participant D as D1
+  participant Q as Queue
+
+  ADM-&gt;&gt;IW: POST /internal/admin-integration/v1/owner/forced-logout&lt;br/&gt;(mTLS + JWT + Idempotency-Key)
+  IW-&gt;&gt;IW: mTLS 証明書検証
+  IW-&gt;&gt;IW: JWT 検証 (HS256 / exp 5min / aud check)
+  IW-&gt;&gt;K: GET idempotency:{key}
+  alt 既存
+    IW--&gt;&gt;ADM: 200 OK (キャッシュ結果)
+  else 新規
+    IW-&gt;&gt;D: UPDATE users SET force_logout_at = ?
+    IW-&gt;&gt;Q: SEND session-invalidation-queue
+    IW-&gt;&gt;K: SET idempotency:{key} = result (TTL 24h)
+    IW--&gt;&gt;ADM: 201 Created
+  end</code></pre>
+<h3 id="24-環境構成">2.4 環境構成</h3>
+<table>
+<thead>
+<tr>
+<th>環境</th>
+<th>用途</th>
+<th>データ</th>
+<th>承認</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dev</code></td>
+<td>開発者個人環境</td>
+<td>テストデータのみ</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>staging</code></td>
+<td>統合テスト・MVP リリース前検証</td>
+<td>マスキング済み本番相当</td>
+<td>1 名承認</td>
+</tr>
+<tr>
+<td><code>prod</code></td>
+<td>本番運用</td>
+<td>実データ</td>
+<td><strong>2 名承認</strong>（NFR-805、AC-018）</td>
+</tr>
+</tbody>
+</table>
+<h4 id="241-wranglertoml-バインディング一覧prod-例">2.4.1 wrangler.toml バインディング一覧（prod 例）</h4>
+<div class="sourceCode" id="cb5"><pre class="sourceCode toml"><code class="sourceCode toml"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># wrangler.toml (worker-main-api)</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="dt">name</span> <span class="op">=</span> <span class="st">&quot;main-api&quot;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="dt">main</span> <span class="op">=</span> <span class="st">&quot;src/index.ts&quot;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="dt">compatibility_date</span> <span class="op">=</span> <span class="st">&quot;2026-05-12&quot;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="kw">[[d1_databases]]</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="dt">binding</span> <span class="op">=</span> <span class="st">&quot;DB&quot;</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="dt">database_name</span> <span class="op">=</span> <span class="st">&quot;main-db-prod&quot;</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="dt">database_id</span> <span class="op">=</span> <span class="st">&quot;&lt;UUID&gt;&quot;</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="kw">[[kv_namespaces]]</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="dt">binding</span> <span class="op">=</span> <span class="st">&quot;KV_SESSION&quot;</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="dt">id</span> <span class="op">=</span> <span class="st">&quot;&lt;UUID&gt;&quot;</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="kw">[[kv_namespaces]]</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="dt">binding</span> <span class="op">=</span> <span class="st">&quot;KV_CACHE&quot;</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="dt">id</span> <span class="op">=</span> <span class="st">&quot;&lt;UUID&gt;&quot;</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="kw">[[kv_namespaces]]</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="dt">binding</span> <span class="op">=</span> <span class="st">&quot;KV_RATELIMIT&quot;</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="dt">id</span> <span class="op">=</span> <span class="st">&quot;&lt;UUID&gt;&quot;</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="kw">[[kv_namespaces]]</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="dt">binding</span> <span class="op">=</span> <span class="st">&quot;KV_DEDUP&quot;</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="dt">id</span> <span class="op">=</span> <span class="st">&quot;&lt;UUID&gt;&quot;</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="kw">[[r2_buckets]]</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="dt">binding</span> <span class="op">=</span> <span class="st">&quot;R2_EXPORTS&quot;</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="dt">bucket_name</span> <span class="op">=</span> <span class="st">&quot;main-exports-prod&quot;</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="kw">[[r2_buckets]]</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="dt">binding</span> <span class="op">=</span> <span class="st">&quot;R2_AUDIT&quot;</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="dt">bucket_name</span> <span class="op">=</span> <span class="st">&quot;main-audit-prod&quot;</span></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a><span class="kw">[[r2_buckets]]</span></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a><span class="dt">binding</span> <span class="op">=</span> <span class="st">&quot;R2_DLQ&quot;</span></span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a><span class="dt">bucket_name</span> <span class="op">=</span> <span class="st">&quot;main-dlq-prod&quot;</span></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a><span class="kw">[[queues.producers]]</span></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a><span class="dt">binding</span> <span class="op">=</span> <span class="st">&quot;Q_EMAIL&quot;</span></span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a><span class="dt">queue</span> <span class="op">=</span> <span class="st">&quot;email-queue-prod&quot;</span></span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a><span class="kw">[[queues.producers]]</span></span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a><span class="dt">binding</span> <span class="op">=</span> <span class="st">&quot;Q_FANOUT&quot;</span></span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a><span class="dt">queue</span> <span class="op">=</span> <span class="st">&quot;announcement-fanout-prod&quot;</span></span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a><span class="kw">[[queues.producers]]</span></span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a><span class="dt">binding</span> <span class="op">=</span> <span class="st">&quot;Q_EXPORT&quot;</span></span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a><span class="dt">queue</span> <span class="op">=</span> <span class="st">&quot;export-queue-prod&quot;</span></span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a><span class="kw">[ai]</span></span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a><span class="dt">binding</span> <span class="op">=</span> <span class="st">&quot;AI&quot;</span></span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a><span class="kw">[vars]</span></span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a><span class="dt">ENV</span> <span class="op">=</span> <span class="st">&quot;prod&quot;</span></span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a><span class="dt">JWT_AUD</span> <span class="op">=</span> <span class="st">&quot;main.example.com&quot;</span></span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a><span class="dt">JWT_ISS_EXPECTED</span> <span class="op">=</span> <span class="st">&quot;admin.example.com&quot;</span></span></code></pre></div>
+<h4 id="242-マスキング方針staging">2.4.2 マスキング方針（staging）</h4>
+<ul>
+<li>メールアドレス: <code>user{N}@example.com</code> 置換</li>
+<li>電話番号: <code>0900-0000-{4 桁ハッシュ}</code> 置換</li>
+<li>氏名: <code>テストユーザー{N}</code> 置換</li>
+<li>チャット本文: 長さを保ったランダム文字列に置換（FAQ 本文は維持）</li>
+</ul>
+<h3 id="25-デプロイ単位">2.5 デプロイ単位</h3>
+<table>
+<thead>
+<tr>
+<th>デプロイ単位</th>
+<th>リポジトリ内パス（想定）</th>
+<th>デプロイ方式</th>
+<th>依存</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pages-admin</code></td>
+<td><code>app/admin/</code></td>
+<td>Cloudflare Pages（GitHub Actions）</td>
+<td>-</td>
+</tr>
+<tr>
+<td><code>pages-widget</code></td>
+<td><code>app/widget/</code></td>
+<td>Cloudflare Pages</td>
+<td>-</td>
+</tr>
+<tr>
+<td><code>pages-public</code></td>
+<td><code>app/public/</code></td>
+<td>Cloudflare Pages</td>
+<td>-</td>
+</tr>
+<tr>
+<td><code>worker-main-api</code></td>
+<td><code>app/workers/main-api/</code></td>
+<td>wrangler deploy</td>
+<td>D1 マイグレーション完了</td>
+</tr>
+<tr>
+<td><code>worker-widget-api</code></td>
+<td><code>app/workers/widget-api/</code></td>
+<td>wrangler deploy</td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>worker-internal-api</code></td>
+<td><code>app/workers/internal-api/</code></td>
+<td>wrangler deploy</td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>worker-webhook</code></td>
+<td><code>app/workers/webhook/</code></td>
+<td>wrangler deploy</td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>worker-queue-consumer</code></td>
+<td><code>app/workers/queue-consumer/</code></td>
+<td>wrangler deploy</td>
+<td>Queue 作成完了</td>
+</tr>
+<tr>
+<td><code>worker-cron</code></td>
+<td><code>app/workers/cron/</code></td>
+<td>wrangler deploy</td>
+<td>同上</td>
+</tr>
+</tbody>
+</table>
+<p>CI/CD は GitHub Actions を用い、以下の段階を踏む。</p>
+<ol type="1">
+<li>PR: <code>vitest</code> + <code>tsc --noEmit</code> + <code>eslint</code></li>
+<li>main マージ: dev 環境へ自動デプロイ</li>
+<li>release タグ: staging 環境へ自動デプロイ（1 名承認）</li>
+<li>prod タグ: prod 環境へデプロイ（<strong>2 名承認</strong>、 GitHub Environment Protection）</li>
+</ol>
+<hr />
+<h2 id="3-ディレクトリ構成モジュール構成">3. ディレクトリ構成・モジュール構成</h2>
+<h3 id="31-リポジトリレイアウト">3.1 リポジトリレイアウト</h3>
+<p>実装リポジトリ（本設計リポジトリとは別、想定パス）は以下のモノレポ構成を採用する。</p>
+<pre><code>faq-saas/                                # 実装リポジトリ
+├── app/
+│   ├── admin/                           # 管理画面 SPA (React + Vite, pages-admin)
+│   │   ├── src/
+│   │   │   ├── pages/                   # SCR-001..025 のページコンポーネント
+│   │   │   ├── components/              # 共通 UI 部品 (16 部品)
+│   │   │   ├── hooks/
+│   │   │   ├── lib/                     # API クライアント / バリデーション / i18n
+│   │   │   ├── routes.ts                # ルーティング定義
+│   │   │   └── main.tsx
+│   │   ├── public/
+│   │   ├── package.json
+│   │   └── vite.config.ts
+│   ├── widget/                          # widget.js + iframe コンテンツ (pages-widget)
+│   ├── public/                          # 利用規約・プライバシーポリシー等 (pages-public)
+│   ├── workers/                         # Cloudflare Workers 群
+│   │   ├── main-api/                    # /api/v1/*
+│   │   ├── widget-api/                  # /widget/v1/*
+│   │   ├── internal-api/                # /internal/admin-integration/v1/*
+│   │   ├── webhook/                     # /webhooks/*
+│   │   ├── queue-consumer/              # Queue Consumer
+│   │   └── cron/                        # Cron Trigger
+│   └── shared/                          # 全 Worker 共通の型・ロジック
+├── migrations/                          # D1 マイグレーション (forward-only)
+├── scripts/
+├── tests/
+│   ├── unit/
+│   ├── integration/
+│   ├── e2e/
+│   ├── load/                            # k6
+│   └── isolation/                       # オーナー境界によるデータ分離検証
+├── .github/
+│   └── workflows/
+├── package.json                         # ワークスペース管理 (pnpm workspace)
+├── pnpm-workspace.yaml
+├── tsconfig.base.json
+└── index.html</code></pre>
+<h3 id="32-レイヤ構成">3.2 レイヤ構成</h3>
+<p>各 Worker 内では以下の 5 層構成を採用する。<strong>依存方向は上から下のみ</strong>を許可する（ヘキサゴナルアーキテクチャ）。</p>
+<table>
+<thead>
+<tr>
+<th>層</th>
+<th>パス</th>
+<th>責務</th>
+<th>依存先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>プレゼンテーション</td>
+<td><code>routes/</code></td>
+<td>Hono のルート定義、リクエスト/レスポンスの Zod 検証、HTTP ステータス決定</td>
+<td>handlers</td>
+</tr>
+<tr>
+<td>ユースケース</td>
+<td><code>handlers/</code></td>
+<td>業務フロー（認可チェック → ドメインロジック → 永続化 → 通知 Queue 投入 → 監査ログ）</td>
+<td>domain, repository, adapter, middleware</td>
+</tr>
+<tr>
+<td>ドメイン</td>
+<td><code>domain/</code></td>
+<td>状態遷移ガード、ビジネスルール、純関数</td>
+<td>（<code>shared</code> のみ）</td>
+</tr>
+<tr>
+<td>アダプタ</td>
+<td><code>adapter/</code></td>
+<td>外部 API クライアント（Resend / Stripe / 顧客管理）、Queue 投入、KV/R2 アクセス</td>
+<td>（<code>shared</code> のみ）</td>
+</tr>
+<tr>
+<td>リポジトリ</td>
+<td><code>repository/</code></td>
+<td>D1 SQL 実行、トランザクション</td>
+<td>（<code>shared</code> のみ）</td>
+</tr>
+<tr>
+<td>ミドルウェア</td>
+<td><code>middleware/</code></td>
+<td>認証 / CSRF / 認可 / 監査 / レート制限</td>
+<td>repository, adapter, shared</td>
+</tr>
+<tr>
+<td>ライブラリ</td>
+<td><code>lib/</code></td>
+<td>Worker 固有のユーティリティ</td>
+<td>shared</td>
+</tr>
+<tr>
+<td>共通</td>
+<td><code>shared/</code></td>
+<td>全 Worker 共通の型・スキーマ・純関数</td>
+<td>（外部 npm のみ）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="33-主要モジュール">3.3 主要モジュール</h3>
+<h4 id="331-worker-main-api-モジュール構成">3.3.1 <code>worker-main-api</code> モジュール構成</h4>
+<pre><code>src/
+├── index.ts                  # Hono app entry + 全ミドルウェア配線
+├── routes/
+│   ├── auth.ts               # /auth/*
+│   ├── admin-users.ts         # /admin-users/*
+│   ├── projects.ts           # /projects/*
+│   ├── faqs.ts               # /faqs/*
+│   ├── inquiries.ts          # /inquiries/*
+│   ├── usage.ts              # /usage
+│   ├── billing.ts            # /billing/*
+│   ├── data.ts               # /data/*
+│   ├── withdrawal.ts         # /withdrawal/*
+│   ├── announcements.ts      # /me/announcements/*
+│   ├── notification-prefs.ts # /me/notification-preferences
+│   ├── terms.ts              # /me/terms*
+│   └── email-verification.ts # /me/email-verification/*
+├── handlers/                 # routes と 1:1 対応
+├── domain/
+│   ├── faq-status.ts
+│   ├── inquiry-status.ts
+│   ├── chat-room-status.ts
+│   ├── notification-status.ts
+│   ├── contract-status.ts
+│   ├── pii-scrubber.ts
+│   ├── post-check.ts
+│   ├── ai-threshold.ts
+│   ├── inquiry-code.ts
+│   └── ...
+├── repository/               # 23 テーブル × 1 ファイル
+├── adapter/
+│   ├── email-provider.ts
+│   ├── resend-email-provider.ts
+│   ├── answer-provider.ts
+│   ├── workers-ai-answer-provider.ts
+│   ├── admin-integration-client.ts
+│   └── stripe-client.ts
+├── middleware/
+│   ├── authenticate.ts
+│   ├── csrf.ts
+│   ├── authorize.ts
+│   ├── require-active-contract.ts
+│   ├── require-terms-agreement.ts
+│   ├── require-reauth.ts
+│   ├── rate-limit.ts
+│   ├── audit.ts
+│   └── error-handler.ts
+├── lib/
+│   ├── kv.ts
+│   ├── d1.ts
+│   ├── queue.ts
+│   ├── ulid.ts
+│   ├── argon2id.ts
+│   ├── token.ts
+│   ├── encrypt.ts
+│   ├── hmac.ts
+│   ├── audit-hash.ts
+│   ├── ip-mask.ts
+│   └── logger.ts
+└── types.ts</code></pre>
+<h4 id="332-worker-widget-api-モジュール構成">3.3.2 <code>worker-widget-api</code> モジュール構成</h4>
+<pre><code>src/
+├── index.ts
+├── routes/
+│   ├── bootstrap.ts
+│   ├── ask.ts
+│   └── inquiries.ts
+├── handlers/
+├── repository/
+├── adapter/
+├── middleware/
+│   ├── verify-widget-key.ts
+│   ├── widget-session.ts
+│   ├── rate-limit.ts
+│   └── audit.ts
+└── lib/</code></pre>
+<h4 id="333-worker-internal-api-モジュール構成">3.3.3 <code>worker-internal-api</code> モジュール構成</h4>
+<pre><code>src/
+├── index.ts
+├── routes/
+│   ├── owner.ts             # IF #1 (suspend/resume) / IF #2 (forced-logout)
+│   ├── restore.ts            # IF #4
+│   ├── rate-limit.ts         # IF #5
+│   ├── threshold.ts          # IF #6
+│   ├── announcement.ts       # IF #7
+│   ├── metrics.ts            # IF #8
+│   ├── billing-webhook.ts    # IF #10
+│   ├── operator-operation.ts # IF #12
+│   └── ai-regression.ts      # v2.1 新規
+├── middleware/
+│   ├── verify-mtls.ts
+│   ├── verify-jwt.ts
+│   ├── idempotency.ts
+│   └── audit.ts
+└── ...</code></pre>
+<h4 id="334-worker-webhook-モジュール構成">3.3.4 <code>worker-webhook</code> モジュール構成</h4>
+<pre><code>src/
+├── index.ts
+├── routes/
+│   ├── resend.ts
+│   └── stripe.ts             # 実質 IF #10 経由
+├── handlers/
+│   ├── resend/               # 8 イベント種別
+│   │   ├── delivered.ts
+│   │   ├── bounced.ts
+│   │   ├── complained.ts
+│   │   ├── delayed.ts
+│   │   ├── opened.ts
+│   │   ├── clicked.ts
+│   │   ├── failed.ts
+│   │   └── suppressed.ts
+│   └── stripe/               # 8 イベント種別 (IF #10)
+│       ├── invoice-paid.ts
+│       ├── invoice-payment-failed.ts
+│       ├── customer-subscription-created.ts
+│       ├── customer-subscription-updated.ts
+│       ├── customer-subscription-deleted.ts
+│       ├── charge-refunded.ts
+│       ├── charge-dispute-created.ts
+│       └── customer-tax-id-updated.ts
+├── middleware/
+│   ├── verify-resend-signature.ts
+│   ├── verify-stripe-signature.ts
+│   └── idempotency.ts
+└── ...</code></pre>
+<h4 id="335-worker-queue-consumer-モジュール構成">3.3.5 <code>worker-queue-consumer</code> モジュール構成</h4>
+<pre><code>src/
+├── index.ts                  # Queue Consumer 共通エントリ
+├── consumers/
+│   ├── email.ts              # Resend 送信
+│   ├── fanout.ts             # お知らせ fan-out
+│   ├── export.ts             # データエクスポート生成(契約全データは将来対応 / FAQ CSV のみ MVP)
+│   ├── ai-regression.ts      # AI 回帰テスト実行
+│   └── dlq.ts                # DLQ 退避 (R2 退避 + 監視通知)
+└── lib/
+    └── retry.ts              # 指数バックオフ + 最大 3 回</code></pre>
+<h4 id="336-worker-cron-モジュール構成">3.3.6 <code>worker-cron</code> モジュール構成</h4>
+<pre><code>src/
+├── index.ts                  # scheduled() ハンドラ + cron 分岐
+├── jobs/
+│   ├── monthly-aggregate.ts        # UTC 15:00 (月末日)
+│   ├── monthly-finalize.ts         # JST 02:00 (月初 1 日)
+│   ├── quota-exceeded-no-payment-check.ts  # JST 00:00 (毎日) 支払方法ゲート(FR-136)
+│   ├── open-inquiry-retention-notice.ts # JST 09:00 (毎日)
+│   ├── open-inquiry-retention.ts   # JST 02:00 (毎日)
+│   ├── auto-close-evaluation.ts    # */5 * * * * (5 分間隔)
+│   ├── audit-chain-verify.ts       # JST 03:00 (日次全件再計算)
+│   ├── tombstone-batch.ts          # JST 04:00 (毎日)
+│   ├── retention-cleanup.ts        # JST 05:00 (毎日)
+│   └── d1-capacity-check.ts        # 0 * * * * (毎時)
+└── lib/</code></pre>
+<h3 id="34-共通ライブラリ">3.4 共通ライブラリ</h3>
+<p><code>app/shared/src/</code> 配下に配置し、全 Worker から <code>@faq-saas/shared</code> として import する。</p>
+<table>
+<thead>
+<tr>
+<th>モジュール</th>
+<th>主エクスポート</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>schemas/</code></td>
+<td><code>inquirySchema</code>, <code>faqSchema</code>, <code>askRequestSchema</code>, ...</td>
+<td>Zod スキーマ（API リクエスト / レスポンス / DB レコード）</td>
+</tr>
+<tr>
+<td><code>constants/status.ts</code></td>
+<td><code>INQUIRY_STATUS</code>, <code>FAQ_STATUS</code>, <code>CHAT_ROOM_STATUS</code>, <code>REMINDER_STATE</code>, <code>NOTIFICATION_STATUS</code>, <code>TENANT_STATUS</code>, <code>DELETION_LOCAL_STATUS</code></td>
+<td>状態の文字列定数</td>
+</tr>
+<tr>
+<td><code>constants/error-codes.ts</code></td>
+<td><code>ErrorCode</code> enum</td>
+<td>全 40+ エラーコード</td>
+</tr>
+<tr>
+<td><code>constants/notification-types.ts</code></td>
+<td><code>NOTIFICATION_TYPES</code> (13 種)</td>
+<td>メール送信契機</td>
+</tr>
+<tr>
+<td><code>constants/audit-actions.ts</code></td>
+<td><code>AUDIT_ACTIONS</code> (9 カテゴリ網羅)</td>
+<td>監査ログ action コード</td>
+</tr>
+<tr>
+<td><code>domain/inquiry-status-transition.ts</code></td>
+<td><code>canTransition()</code>, <code>nextStatus()</code></td>
+<td>状態遷移ガード（純関数）</td>
+</tr>
+<tr>
+<td><code>domain/faq-status-transition.ts</code></td>
+<td>同上</td>
+<td>FAQ</td>
+</tr>
+<tr>
+<td><code>domain/chat-room-status-transition.ts</code></td>
+<td>同上</td>
+<td>部屋</td>
+</tr>
+<tr>
+<td><code>lib/ulid.ts</code></td>
+<td><code>generateUlid()</code></td>
+<td>ULID v7 風生成</td>
+</tr>
+<tr>
+<td><code>lib/hmac.ts</code></td>
+<td><code>hmacSha256(key, data)</code></td>
+<td>HMAC 計算</td>
+</tr>
+<tr>
+<td><code>lib/encrypt.ts</code></td>
+<td><code>aesGcmEncrypt()</code>, <code>aesGcmDecrypt()</code>, <code>deriveOwnerKey()</code></td>
+<td>AES-256-GCM + HKDF</td>
+</tr>
+<tr>
+<td><code>lib/argon2id.ts</code></td>
+<td><code>hashPassword()</code>, <code>verifyPassword()</code></td>
+<td>Argon2id ラッパ</td>
+</tr>
+<tr>
+<td><code>lib/token.ts</code></td>
+<td><code>generateToken()</code>, <code>verifyToken()</code></td>
+<td>HMAC-SHA256 トークン</td>
+</tr>
+<tr>
+<td><code>lib/audit-hash.ts</code></td>
+<td><code>computeChainHash()</code></td>
+<td>ハッシュチェーン</td>
+</tr>
+<tr>
+<td><code>lib/ip-mask.ts</code></td>
+<td><code>maskIp(ip)</code></td>
+<td>IPv4/IPv6 マスク</td>
+</tr>
+<tr>
+<td><code>lib/inquiry-code.ts</code></td>
+<td><code>generateInquiryCode()</code></td>
+<td>INQ-YYYYMMDD-XXXXXXXX</td>
+</tr>
+<tr>
+<td><code>lib/logger.ts</code></td>
+<td><code>Logger</code></td>
+<td>structured logging</td>
+</tr>
+<tr>
+<td><code>i18n/ja.ts</code></td>
+<td><code>messages</code></td>
+<td>日本語メッセージカタログ</td>
+</tr>
+</tbody>
+</table>
+<h3 id="35-設定ファイル">3.5 設定ファイル</h3>
+<h4 id="351-wranglertoml-の管理">3.5.1 <code>wrangler.toml</code> の管理</h4>
+<ul>
+<li>環境別ファイル: <code>wrangler.toml</code>（dev デフォルト）, <code>wrangler.staging.toml</code>, <code>wrangler.prod.toml</code></li>
+<li>デプロイ時に <code>--config</code> で切替</li>
+<li>バインディング ID は環境ごとに異なる（KV namespace / D1 database / R2 bucket / Queue は環境別に作成）</li>
+</ul>
+<h4 id="352-シークレット管理">3.5.2 シークレット管理</h4>
+<p>すべての機密値は Cloudflare Secrets Store（<code>wrangler secret put</code>）に格納し、コード・wrangler.toml に直書きしない。</p>
+<table>
+<thead>
+<tr>
+<th>シークレット名</th>
+<th>用途</th>
+<th>ローテーション</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MASTER_KEY</code></td>
+<td>オーナー派生鍵の HKDF 元 / 暗号化列 / トークン HMAC</td>
+<td>年次</td>
+</tr>
+<tr>
+<td><code>JWT_HS256_KEY</code></td>
+<td>連携 IF JWT 署名</td>
+<td>年次</td>
+</tr>
+<tr>
+<td><code>RESEND_API_KEY</code></td>
+<td>Resend API 認証</td>
+<td>必要時</td>
+</tr>
+<tr>
+<td><code>TURNSTILE_SECRET</code></td>
+<td>Turnstile 検証</td>
+<td>必要時</td>
+</tr>
+<tr>
+<td><code>ADMIN_INTEGRATION_MTLS_CERT</code></td>
+<td>顧管送信時のクライアント証明書</td>
+<td>年次</td>
+</tr>
+<tr>
+<td><code>ADMIN_INTEGRATION_MTLS_KEY</code></td>
+<td>同上の秘密鍵</td>
+<td>年次</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-共通処理方針">4. 共通処理方針</h2>
+<h3 id="41-エラー設計参照のみ">4.1 エラー設計（参照のみ）</h3>
+<p>エラー分類 11 種、エラー ID 体系（<code>E-*</code>）、ステータスコード対応、異常系共通方針の全項目は <a href="../02_基本設計/05_エラー設計.html">../02_基本設計/05_エラー設計.html</a> を正本とする。</p>
+<h3 id="42-セキュリティ詳細設計参照のみ">4.2 セキュリティ詳細設計（参照のみ）</h3>
+<p>具体的なセキュリティ施策・PII 暗号化・Web 脆弱性対策・鍵管理・監査ログ詳細・不正利用検知・メール配信信頼性の全項目は <a href="../02_基本設計/09_セキュリティ設計.html">../02_基本設計/09_セキュリティ設計.html</a> を正本とする。</p>
+<h3 id="43-ログ設計概要">4.3 ログ設計概要</h3>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>保存先</th>
+<th>保持期間</th>
+<th>PII</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>監査ログ</td>
+<td><code>audit_logs</code> (D1)</td>
+<td>1/5/7 年</td>
+<td>マスク済み</td>
+</tr>
+<tr>
+<td>エラーログ</td>
+<td><code>error_logs</code> (D1)</td>
+<td>180 日</td>
+<td>マスク済み</td>
+</tr>
+<tr>
+<td>通知ログ</td>
+<td><code>notification_logs</code> (D1)</td>
+<td>1 年</td>
+<td>HMAC のみ</td>
+</tr>
+<tr>
+<td>アクセスログ</td>
+<td>Cloudflare Logpush → R2</td>
+<td>180 日</td>
+<td>IP マスク</td>
+</tr>
+<tr>
+<td>連携 IF ログ</td>
+<td><code>integration_logs</code> (D1)</td>
+<td>90 日</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>監査・エラー・通知ログは D1 内（クエリ可能）</li>
+<li>アクセスログは R2（圧縮、長期保存）</li>
+<li>すべて Cloudflare Logpush / R2 / Analytics Engine の運用ログ基盤に集約</li>
+<li>構造化ログには <code>trace_id</code> (ULID) と <code>cf_ray</code> (Cloudflare) を必須で出力し、CDN 側ログとアプリ層ログを突合可能とする</li>
+</ul>
+<h3 id="44-監視アラート">4.4 監視・アラート</h3>
+<p>監視・アラート運用の詳細は <a href="../04_運用設計/index.html">../04_運用設計/index.html</a> の「メインシステム 監視・アラート詳細」に集約する。本書では実装・テスト設計との接点のみを扱う。</p>
+<h3 id="45-実装ガイドライン">4.5 実装ガイドライン</h3>
+<h4 id="451-typescript--hono--cloudflare-workers-の規約">4.5.1 TypeScript / Hono / Cloudflare Workers の規約</h4>
+<ul>
+<li><strong>strict mode</strong>: <code>"strict": true</code> 必須。<code>any</code> 禁止（unknown を使う）</li>
+<li><strong>import 順</strong>: 外部ライブラリ → <code>@faq-saas/shared</code> → 相対 import</li>
+<li><strong>エクスポート</strong>: named export を基本とし、default export は React コンポーネント等のみ</li>
+<li><strong>非同期</strong>: <code>Promise</code> チェーンより <code>async/await</code></li>
+<li><strong>エラー throw</strong>: <code>HTTPException</code> (Hono) または <code>Error</code> サブクラス。文字列 throw 禁止</li>
+</ul>
+<h4 id="452-命名規則">4.5.2 命名規則</h4>
+<table>
+<thead>
+<tr>
+<th>対象</th>
+<th>ルール</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ファイル</td>
+<td>kebab-case</td>
+<td><code>inquiry-status.ts</code>, <code>widget-key-rotate.ts</code></td>
+</tr>
+<tr>
+<td>クラス</td>
+<td>PascalCase</td>
+<td><code>WorkersAIAnswerProvider</code></td>
+</tr>
+<tr>
+<td>関数 / 変数</td>
+<td>camelCase</td>
+<td><code>generateInquiryCode</code>, <code>contractOwnerUserId</code></td>
+</tr>
+<tr>
+<td>定数</td>
+<td>UPPER_SNAKE_CASE</td>
+<td><code>MAX_RETRY</code>, <code>DEFAULT_LIMITS</code></td>
+</tr>
+<tr>
+<td>型</td>
+<td>PascalCase</td>
+<td><code>Inquiry</code>, <code>AnswerInput</code></td>
+</tr>
+<tr>
+<td>Zod スキーマ</td>
+<td><code>xxxSchema</code></td>
+<td><code>loginSchema</code>, <code>createFaqSchema</code></td>
+</tr>
+<tr>
+<td>DB テーブル / カラム</td>
+<td>snake_case</td>
+<td>テーブル設計</td>
+</tr>
+<tr>
+<td>API パス</td>
+<td>kebab-case</td>
+<td><code>/inquiries/{id}</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="453-エラーハンドリング規約">4.5.3 エラーハンドリング規約</h4>
+<ul>
+<li><code>handlers/</code> 層で <code>throw new HTTPException(...)</code> を使い、<code>errorHandler</code> ミドルウェアで一括変換</li>
+<li>リトライ対象 / 非対象を明示するため、<code>SystemError</code>, <code>BusinessError</code> の 2 種カスタム例外を派生</li>
+<li>Result 型は不使用（throw ベースに統一）</li>
+</ul>
+<h4 id="454-セキュアコーディングowasp-top-10">4.5.4 セキュアコーディング（OWASP Top 10）</h4>
+<table>
+<thead>
+<tr>
+<th>OWASP 項目</th>
+<th>対応</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A01 Broken Access Control</td>
+<td>認可ロジック、<code>requireProject</code> / <code>requireInquiry</code> / 境界チェック</td>
+</tr>
+<tr>
+<td>A02 Cryptographic Failures</td>
+<td>AES-256-GCM、HMAC、HKDF</td>
+</tr>
+<tr>
+<td>A03 Injection</td>
+<td>Zod 検証、D1 Prepared Statements 必須、CSP</td>
+</tr>
+<tr>
+<td>A04 Insecure Design</td>
+<td>状態遷移ガード、3 層公開禁止、再認証</td>
+</tr>
+<tr>
+<td>A05 Security Misconfiguration</td>
+<td>HTTP セキュリティヘッダ、Secrets Store</td>
+</tr>
+<tr>
+<td>A06 Vulnerable Components</td>
+<td>pnpm audit を CI に組込み</td>
+</tr>
+<tr>
+<td>A07 Identification &amp; Authentication</td>
+<td>Argon2id、Turnstile、ロックアウト</td>
+</tr>
+<tr>
+<td>A08 Software &amp; Data Integrity</td>
+<td>監査ログハッシュチェーン、forward-only マイグレーション</td>
+</tr>
+<tr>
+<td>A09 Logging Failures</td>
+<td>構造化ログ、監査ログ、PII マスク</td>
+</tr>
+<tr>
+<td>A10 SSRF</td>
+<td>外部 fetch 先を allowlist 化（Resend / Stripe API のみ）</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="5-詳細設計ファイル一覧">5. 詳細設計ファイル一覧</h2>
+<table>
+<thead>
+<tr>
+<th>ファイル</th>
+<th>ドメイン</th>
+<th>対応 FR</th>
+<th>主関連章</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="DD01_アカウント・ユーザー管理.html">DD01_アカウント・ユーザー管理.html</a></td>
+<td>アカウント・ユーザー管理 / フロント URL ルーティング / 利用状況の空状態</td>
+<td>FR-001〜022 / FR-325〜327</td>
+<td>§4 / §6 SCR-001〜003,009,016,017,023 / §7</td>
+</tr>
+<tr>
+<td><a href="DD02_プロジェクト・FAQ管理.html">DD02_プロジェクト・FAQ管理.html</a></td>
+<td>プロジェクト・FAQ 管理</td>
+<td>FR-040〜048 / FR-100〜103, FR-105, FR-106</td>
+<td>§6 SCR-004〜006 / §7 / §9</td>
+</tr>
+<tr>
+<td><a href="DD03_AI回答パイプライン.html">DD03_AI回答パイプライン.html</a></td>
+<td>AI 回答パイプライン</td>
+<td>FR-050〜060</td>
+<td>§10.1</td>
+</tr>
+<tr>
+<td><a href="DD04_AIしきい値3階層適用.html">DD04_AIしきい値3階層適用.html</a></td>
+<td>AI しきい値 3 階層適用</td>
+<td>FR-340 / FR-341</td>
+<td>§10.2</td>
+</tr>
+<tr>
+<td><a href="DD05_inquiry_code採番・未解決質問.html">DD05_inquiry_code採番・未解決質問.html</a></td>
+<td>inquiry_code 採番・未解決質問</td>
+<td>FR-070〜077 / FR-072</td>
+<td>§10.3 / §6 SCR-005 / §7</td>
+</tr>
+<tr>
+<td><a href="DD06_通知ロジック.html">DD06_通知ロジック.html</a></td>
+<td>通知ロジック</td>
+<td>FR-140〜149</td>
+<td>§10.4</td>
+</tr>
+<tr>
+<td><a href="DD07_トークン発行・検証.html">DD07_トークン発行・検証.html</a></td>
+<td>トークン発行・検証</td>
+<td>FR-003 / 004 / 006</td>
+<td>§10.5</td>
+</tr>
+<tr>
+<td><a href="DD08_認可ヘルパ.html">DD08_認可ヘルパ.html</a></td>
+<td>認可ヘルパ</td>
+<td>NFR-301 / FR-007</td>
+<td>§10.6</td>
+</tr>
+<tr>
+<td><a href="DD09_監査ログ書込・完全性検証.html">DD09_監査ログ書込・完全性検証.html</a></td>
+<td>監査ログ書込・完全性検証</td>
+<td>NFR-601 / NFR-602</td>
+<td>§10.7 / §10.8 / §15.2</td>
+</tr>
+<tr>
+<td><a href="DD10_暗号化・鍵管理.html">DD10_暗号化・鍵管理.html</a></td>
+<td>暗号化・鍵管理</td>
+<td>NFR-301 / NFR-401</td>
+<td>§10.9</td>
+</tr>
+<tr>
+<td><a href="DD11_利用量計測・課金.html">DD11_利用量計測・課金.html</a></td>
+<td>利用量計測・課金</td>
+<td>FR-120〜127 / FR-139</td>
+<td>SCR-016 利用状況 / SCR-021 プロジェクト利用量 / SCR-022 請求</td>
+</tr>
+<tr>
+<td><a href="DD12_ウィジェット配信.html">DD12_ウィジェット配信.html</a></td>
+<td>ウィジェット配信</td>
+<td>FR-150〜156, FR-156a〜d / FR-031 / FR-070〜077</td>
+<td>§6 SCR-007 / ウィジェット UI</td>
+</tr>
+<tr>
+<td><a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html</a></td>
+<td>バッチ・非同期処理</td>
+<td>FR-148 / FR-191</td>
+<td>§10.11 / §14</td>
+</tr>
+<tr>
+<td><a href="DD14_アクセシビリティ・国際化.html">DD14_アクセシビリティ・国際化.html</a></td>
+<td>アクセシビリティ・国際化</td>
+<td>NFR-401 / WCAG 2.1 AA</td>
+<td>§13.4 / §13.5</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="6-実装順序">6. 実装順序</h2>
+<p>実装順序は依存関係を考慮し、横断的基盤機能から積み上げ、ドメイン機能を後段で組み立てる。</p>
+<ol type="1">
+<li><strong>DD10 暗号化・鍵管理</strong> — <code>MASTER_KEY</code> / HKDF / AES-256-GCM の基盤が他すべての依存元</li>
+<li><strong>DD07 トークン発行・検証</strong> — メール検証・パスワードリセットで利用</li>
+<li><strong>DD08 認可ヘルパ</strong> — <code>requireTenant</code> / <code>requireProjectRole</code> / <code>requireInquiry</code> / <code>requireOwner</code> は全 API 共通</li>
+<li><strong>DD09 監査ログ書込・完全性検証</strong> — 全業務処理で <code>writeAudit</code> を必須呼出</li>
+<li><strong>DD01 アカウント・ユーザー管理</strong> — 認証・オーナー / プロジェクト管理者 / メンバーの 3 ロール</li>
+<li><strong>DD02 プロジェクト・FAQ 管理</strong> — プロジェクト / FAQ CRUD + FTS5</li>
+<li><strong>DD03 AI 回答パイプライン</strong> — Workers AI / PostCheck / PII scrubber</li>
+<li><strong>DD04 AI しきい値 3 階層適用</strong> — KV / 永続キャッシュ / フォールバック</li>
+<li><strong>DD12 ウィジェット配信</strong> — bootstrap / 丸型ランチャーバッジからの開閉 / ask / 未解決時の連絡先表示（問い合わせIDは非表示）</li>
+<li><strong>DD05 inquiry_code 採番・未解決質問</strong> — INQ-YYYYMMDD-XXXXXXXX</li>
+<li><strong>DD06 通知ロジック</strong> — Resend / Queue / Webhook</li>
+<li><strong>DD11 利用量計測・課金</strong> — 月次集計 / Stripe 連動</li>
+<li><strong>DD13 バッチ・非同期処理</strong> — cron / Queue / DLQ 全体</li>
+<li><strong>DD14 アクセシビリティ・国際化</strong> — WCAG / i18n（横断的、リリース前ゲート）</li>
+</ol>
+<hr />
+<h2 id="7-非機能設計サマリ">7. 非機能設計サマリ</h2>
+<h3 id="71-性能設計131">7.1 性能設計（§13.1）</h3>
+<ul>
+<li>公開ウィジェット <code>POST /widget/v1/bootstrap</code> p95 &lt; 200ms</li>
+<li><code>POST /widget/v1/ask</code> (FAQ ヒット) p95 &lt; 1000ms / (miss) &lt; 500ms</li>
+<li>AI 推論 p95 &lt; 2500ms（タイムアウト 5000ms）</li>
+<li>管理画面一覧 p95 ≤ 800ms（NFR-105）</li>
+<li>AI 推論タイムアウト時は <code>unanswered + 管理者ユーザー誘導</code> モードでウィジェット動作継続</li>
+</ul>
+<h3 id="72-可用性設計132">7.2 可用性設計（§13.2）</h3>
+<table>
+<thead>
+<tr>
+<th>指標</th>
+<th>SLO</th>
+<th>エラーバジェット（月）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>公開ウィジェット可用性</td>
+<td>99.9%</td>
+<td>43.2 分</td>
+</tr>
+<tr>
+<td>管理画面可用性</td>
+<td>99.5%</td>
+<td>216 分</td>
+</tr>
+<tr>
+<td>公開 API 5xx 率</td>
+<td>&lt; 0.5%</td>
+<td>-</td>
+</tr>
+<tr>
+<td>通知配信失敗率</td>
+<td>&lt; 1%</td>
+<td>-</td>
+</tr>
+<tr>
+<td>AI 推論 p95</td>
+<td>&lt; 2.5s</td>
+<td>月 5% 超過まで</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>顧客管理障害時もウィジェット応答 / 既存チャット返信 / FAQ 検索編集 / 既存ログインは継続</li>
+<li><code>announcement.kind = critical</code> は障害時に Resend 直送フォールバック経路を持つ</li>
+</ul>
+<h3 id="73-スケーラビリティ133">7.3 スケーラビリティ（§13.3）</h3>
+<ul>
+<li>D1 シャーディング判定閾値: アクティブ契約数 150 / D1 容量 80%（8 GB）/ p95 SELECT &gt; 200ms 連続</li>
+<li>AI 推論並行数: グローバル 200 / オーナー 10（KV カウンタ）</li>
+</ul>
+<h3 id="74-アクセシビリティ国際化">7.4 アクセシビリティ・国際化</h3>
+<p>詳細は DD14 参照。WCAG 2.1 AA 準拠、i18n 基盤は <code>react-i18next</code> + <code>app/shared/src/i18n/ja.ts</code>。</p>
+<h3 id="75-バックアップ復旧136">7.5 バックアップ・復旧（§13.6）</h3>
+<table>
+<thead>
+<tr>
+<th>復旧経過時間</th>
+<th>採用バックアップ</th>
+<th>RTO</th>
+<th>RPO</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0〜30 日</td>
+<td>D1 Time Travel (PITR)</td>
+<td>≤ 30 分</td>
+<td>≤ 1 分</td>
+</tr>
+<tr>
+<td>30 日超〜12 週</td>
+<td>R2 週次バックアップ</td>
+<td>≤ 2 時間</td>
+<td>週次</td>
+</tr>
+<tr>
+<td>12 週超〜12 か月</td>
+<td>R2 月次バックアップ</td>
+<td>≤ 4 時間</td>
+<td>月次</td>
+</tr>
+<tr>
+<td>12 か月超</td>
+<td>R2 監査アーカイブ (5y/7y)</td>
+<td>≤ 1 営業日</td>
+<td>法令保持内</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>AES-256-GCM <code>BACKUP_KEY</code>、年次ローテーション + 60 日 dual-decrypt 期間</li>
+<li>復元時整合性検証 4 項目（スキーマバージョン / 行件数 ±5% / チェックサム / KPI 差分）</li>
+</ul>
+<h3 id="76-データ保持削除137">7.6 データ保持・削除（§13.7）</h3>
+<p>データ保持期間は <strong>システム固定値</strong>（NFR-702、UI上の変更不可）。SCR-017個人設定およびSCR-023設定に変更UIは設けない。</p>
+<table>
+<thead>
+<tr>
+<th>データ種別</th>
+<th>保持期間</th>
+<th>起点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FAQ</td>
+<td>無期限</td>
+<td>-</td>
+</tr>
+<tr>
+<td>question_logs / inquiries / 通知 / inbox</td>
+<td>1 年</td>
+<td>created_at / closed_at</td>
+</tr>
+<tr>
+<td>監査ログ (general / billing / operator_high_priv)</td>
+<td>1y / 7y / 5y</td>
+<td>created_at</td>
+</tr>
+<tr>
+<td>エラーログ</td>
+<td>180 日</td>
+<td>occurred_at</td>
+</tr>
+</tbody>
+</table>
+<p>調整制約は <a href="../02_基本設計/03_テーブル設計.html">03_テーブル設計.html §4.7</a> を正本。短縮は法令・契約義務範囲内でサポート窓口経由運営者対応とする。</p>
+<h3 id="77-コンプライアンス13x">7.7 コンプライアンス（§13.X）</h3>
+<ul>
+<li>個人情報保護法 / GDPR / 電子帳簿保存法 / 特定電子メール法 / ISO/IEC 27017 を適用</li>
+<li>PCI-DSS はスコープ外宣言（SAQ A 相当、Stripe Elements 完全委託）</li>
+</ul>
+<h3 id="78-インフラコスト構造13y">7.8 インフラコスト構造（§13.Y）</h3>
+<p>Cloudflare Workers / Workers AI / D1 / KV / R2 / Queues / Browser Rendering / Pages / Logpush の課金単位と発生源を四半期で試算管理。<code>docs/operations/cost-estimate/YYYY-Q.xlsx</code> で記録。</p>
+<hr />
+<h2 id="8-リリース計画">8. リリース計画</h2>
+<p>移行・リリース運用の詳細は <a href="../04_運用設計/index.html">../04_運用設計/index.html</a> の「メインシステム 移行・リリース詳細」に移管した。本書では実装成果物との対応関係のみを扱う。</p>
+<h3 id="81-cicd-パイプライン">8.1 CI/CD パイプライン</h3>
+<ol type="1">
+<li>PR: <code>vitest</code> + <code>tsc --noEmit</code> + <code>eslint</code></li>
+<li>main マージ: dev 環境へ自動デプロイ</li>
+<li>release タグ: staging 環境へ自動デプロイ（1 名承認）</li>
+<li>prod タグ: prod 環境へデプロイ（<strong>2 名承認</strong>、 GitHub Environment Protection）</li>
+</ol>
+<h3 id="82-ペネトレーション">8.2 ペネトレーション</h3>
+<p>MVP リリース前に外部委託で OWASP Top 10 + Cloudflare 環境特有のチェックを実施。レポートは社内共有 + 是正計画。</p>
+<h3 id="83-リリースゲート">8.3 リリースゲート</h3>
+<ul>
+<li>AI 品質回帰テスト合格（旧モデル正答一致率 ≥ 90% / 信頼度差 ±0.10 / 回答可能率劣化 -5pt 以内）</li>
+<li>監査ハッシュチェーン整合性（直近 7 日ゼロ違反）</li>
+<li>復旧訓練成功記録（直近 1 回以上、4 時間以内 + 整合性検証 4 項目合格）</li>
+<li>AC マッピング Test ID 未紐付け 0 件</li>
+</ul>
+<hr />
+<h2 id="9-未確定事項確認事項">9. 未確定事項・確認事項</h2>
+<table>
+<thead>
+<tr>
+<th>確認事項ID</th>
+<th>確認内容</th>
+<th>優先度</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TBD-001</td>
+<td>NFR-101〜104 の p95 数値・測定ツールの最終選定</td>
+<td>高</td>
+<td>未確定（PO + SRE）</td>
+</tr>
+<tr>
+<td>TBD-002</td>
+<td>復旧訓練の所要時間ログと記録保管場所</td>
+<td>中</td>
+<td>未確定（SRE）</td>
+</tr>
+<tr>
+<td>TBD-003</td>
+<td>i18n-lint 等の翻訳カタログ検証ツール選定</td>
+<td>中</td>
+<td>未確定（フロントリード）</td>
+</tr>
+<tr>
+<td>TBD-004</td>
+<td>Workers AI Region 指定 SDK オプション名（公式仕様追随）</td>
+<td>中</td>
+<td>未確定（バックエンドリード）</td>
+</tr>
+<tr>
+<td>完了</td>
+<td>11 ドメイン分割（DD01〜DD14）</td>
+<td>-</td>
+<td>完了</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

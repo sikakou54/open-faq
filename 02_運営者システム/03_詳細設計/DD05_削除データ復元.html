@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DD05: 削除データ復元(運営者システム) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="02_運営者システム/03_詳細設計/DD05_削除データ復元.html">
+<article class="content" id="content">
+<h1 id="dd05-削除データ復元運営者システム">DD05: 削除データ復元(運営者システム)</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書名</td>
+<td>DD05: 削除データ復元(運営者システム)</td>
+</tr>
+<tr>
+<td>詳細設計ID</td>
+<td>DD05</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>FAQ AI ウィジェット SaaS / 運営者システム</td>
+</tr>
+<tr>
+<td>関連機能ID</td>
+<td>FR-200, FR-201, FR-202, FR-203, FR-204, FR-205, FR-206, FR-207, FR-208, FR-209, FR-211, FR-222, FR-223, D-07</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-17</td>
+</tr>
+<tr>
+<td>版数</td>
+<td>v1.0</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>承認済</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-対象範囲">1. 対象範囲</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>ID</th>
+<th>名称</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>機能</td>
+<td>FR-200〜FR-209, FR-211</td>
+<td>削除データ参照・復元(副作用 ロールバック)</td>
+</tr>
+<tr>
+<td>機能</td>
+<td>FR-222</td>
+<td>運営者操作監査</td>
+</tr>
+<tr>
+<td>機能</td>
+<td>FR-223</td>
+<td>削除データ参照(認可境界)</td>
+</tr>
+<tr>
+<td>画面</td>
+<td>SCR-090</td>
+<td>削除データ参照一覧</td>
+</tr>
+<tr>
+<td>画面</td>
+<td>SCR-091</td>
+<td>削除データ復元(承認ログ + 副作用ロールバック)</td>
+</tr>
+<tr>
+<td>API</td>
+<td><code>GET /admin/api/v1/deleted-resources</code></td>
+<td>一覧</td>
+</tr>
+<tr>
+<td>API</td>
+<td><code>GET /admin/api/v1/deleted-resources/{id}</code></td>
+<td>詳細</td>
+</tr>
+<tr>
+<td>API</td>
+<td><code>POST /admin/api/v1/restorations</code></td>
+<td>復元実行(4-eyes 承認ログ対象)</td>
+</tr>
+<tr>
+<td>テーブル</td>
+<td><code>accounts_retired</code></td>
+<td>退会・物理削除保持(永久)</td>
+</tr>
+<tr>
+<td>テーブル</td>
+<td><code>restorations</code></td>
+<td>復元履歴</td>
+</tr>
+<tr>
+<td>テーブル</td>
+<td><code>accounts</code>(参照、メイン主管)</td>
+<td>オーナー contract_status</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-収録ロジック対応章">2. 収録ロジック・対応章</h2>
+<table>
+<thead>
+<tr>
+<th>元章</th>
+<th>元タイトル</th>
+<th>概要</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>§5 SCR-090</td>
+<td>削除データ一覧</td>
+<td>検索 / 詳細遷移</td>
+</tr>
+<tr>
+<td>§5 SCR-091</td>
+<td>削除データ復元</td>
+<td>副作用 (a)〜(g) ロールバック + 423 ケース</td>
+</tr>
+<tr>
+<td>§6 復元機能(参照)</td>
+<td>復元実行ロジック</td>
+<td>4-eyes 承認ログ + トランザクション</td>
+</tr>
+<tr>
+<td>§7 復元 API</td>
+<td>OpenAPI</td>
+<td><code>POST /restorations</code></td>
+</tr>
+<tr>
+<td>付録 B.7</td>
+<td><code>contract_owners.contract_status</code></td>
+<td>active / suspended / deleted_pending / deleted</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-詳細設計本文">3. 詳細設計本文</h2>
+<h3 id="31-削除データのライフサイクルd-07">3.1 削除データのライフサイクル(D-07)</h3>
+<table>
+<thead>
+<tr>
+<th><code>contract_owners.contract_status</code></th>
+<th>説明</th>
+<th>物理データ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>active</code></td>
+<td>通常稼働</td>
+<td><code>contract_owners</code> テーブル本体(<code>users</code> + <code>contract_owners</code> + <code>project_users</code> で構成)</td>
+</tr>
+<tr>
+<td><code>suspended</code></td>
+<td>一時停止(運営者 <code>owner.suspend</code> 経由)</td>
+<td>本体保持、機能フラグで停止</td>
+</tr>
+<tr>
+<td><code>deleted_pending</code></td>
+<td>退会受付済、猶予期間中(30 日)</td>
+<td>本体保持、復元可能</td>
+</tr>
+<tr>
+<td><code>deleted</code></td>
+<td>物理削除済</td>
+<td>運営者側 <code>accounts_retired</code> テーブルへ証跡 INSERT、<code>contract_owners</code> / <code>users</code> / <code>project_users</code> 本体は DELETE</td>
+</tr>
+</tbody>
+</table>
+<p>復元可能範囲:</p>
+<ul>
+<li><code>suspended</code> / <code>deleted_pending</code> ── 通常復元(<code>POST /restorations</code>、承認ログ対象)</li>
+<li><code>deleted</code> ── 物理削除後の復元は <strong>不可</strong>(<code>accounts_retired</code> は法令対応で永久保持されるが、本体への戻しは MVP では不可)</li>
+</ul>
+<h3 id="32-復元時の副作用ロールバックfr-204d-07">3.2 復元時の副作用ロールバック(FR-204、D-07)</h3>
+<p>退会・無効化処理で行った 7 種類の副作用を、復元時に逆順でロールバックする:</p>
+<table>
+<thead>
+<tr>
+<th>副作用 ID</th>
+<th>削除時の処理</th>
+<th>復元時のロールバック</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>(a)</td>
+<td>全プロジェクト <code>archived</code> 遷移</td>
+<td><code>archived</code> → <code>active</code> 戻し(削除前の状態に基づく)</td>
+</tr>
+<tr>
+<td>(b)</td>
+<td>全 FAQ <code>unpublished</code> 遷移</td>
+<td><code>unpublished</code> → 削除前の状態に基づく</td>
+</tr>
+<tr>
+<td>(c)</td>
+<td>全ユーザー(管理者・メンバー)の <code>users.valid=0</code>(論理削除)</td>
+<td><code>valid=1</code> 戻し</td>
+</tr>
+<tr>
+<td>(d)</td>
+<td>API 鍵全失効</td>
+<td>旧 API 鍵は再発行せず、復元後に新規発行を促す通知</td>
+</tr>
+<tr>
+<td>(e)</td>
+<td>Webhook 配信先全停止</td>
+<td>旧 Webhook URL を <code>disabled</code> 解除</td>
+</tr>
+<tr>
+<td>(f)</td>
+<td>Stripe Subscription <code>cancel_at_period_end=true</code></td>
+<td><code>POST /v1/subscriptions/{id}</code> で <code>cancel_at_period_end=false</code></td>
+</tr>
+<tr>
+<td>(g)</td>
+<td>通知配信停止</td>
+<td>inbox 通知再開 + 復元完了メール送信</td>
+</tr>
+</tbody>
+</table>
+<p>ロールバックは <strong>全 7 ステップを単一トランザクション</strong> で実行し、途中失敗時は全件ロールバック + <code>restorations.state='failed'</code> 遷移 + 運営者 high alert。</p>
+<h3 id="33-復元実行-api">3.3 復元実行 API</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">/restorations</span><span class="kw">:</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">post</span><span class="kw">:</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">summary</span><span class="kw">:</span><span class="at"> 削除データ復元</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">parameters</span><span class="kw">:</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">$ref</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;#/components/parameters/XOpTicketId&quot;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">$ref</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;#/components/parameters/XApprovalId&quot;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">$ref</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;#/components/parameters/IdempotencyKey&quot;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">$ref</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;#/components/parameters/XCsrfToken&quot;</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">requestBody</span><span class="kw">:</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">required</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">content</span><span class="kw">:</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">application/json</span><span class="kw">:</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">schema</span><span class="kw">:</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">type</span><span class="kw">:</span><span class="at"> object</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">required</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">resourceType</span><span class="kw">,</span><span class="at"> resourceId</span><span class="kw">,</span><span class="at"> reason</span><span class="kw">]</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">properties</span><span class="kw">:</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">resourceType</span><span class="kw">:</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="at">                </span><span class="fu">type</span><span class="kw">:</span><span class="at"> string</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="at">                </span><span class="fu">enum</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">owner</span><span class="kw">,</span><span class="at"> project</span><span class="kw">,</span><span class="at"> faq</span><span class="kw">,</span><span class="at"> account</span><span class="kw">,</span><span class="at"> announcement</span><span class="kw">]</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">resourceId</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">type</span><span class="kw">:</span><span class="at"> string </span><span class="kw">}</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">reason</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">type</span><span class="kw">:</span><span class="at"> string</span><span class="kw">,</span><span class="at"> </span><span class="fu">maxLength</span><span class="kw">:</span><span class="at"> </span><span class="dv">1000</span><span class="at"> </span><span class="kw">}</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">responses</span><span class="kw">:</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">&quot;200&quot;</span><span class="kw">:</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">content</span><span class="kw">:</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">application/json</span><span class="kw">:</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">schema</span><span class="kw">:</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">type</span><span class="kw">:</span><span class="at"> object</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">properties</span><span class="kw">:</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="at">                </span><span class="fu">restorationId</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">type</span><span class="kw">:</span><span class="at"> string </span><span class="kw">}</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="at">                </span><span class="fu">restoredAt</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">type</span><span class="kw">:</span><span class="at"> string</span><span class="kw">,</span><span class="at"> </span><span class="fu">format</span><span class="kw">:</span><span class="at"> date-time </span><span class="kw">}</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="at">                </span><span class="fu">rollback</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">type</span><span class="kw">:</span><span class="at"> object </span><span class="kw">}</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">&quot;423&quot;</span><span class="kw">:</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">content</span><span class="kw">:</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">application/problem+json</span><span class="kw">:</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">schema</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">$ref</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;#/components/schemas/Problem&quot;</span><span class="at"> </span><span class="kw">}</span></span></code></pre></div>
+<p><code>423 Locked</code> は復元対象が既に物理削除済(<code>accounts_retired</code> 移行済)で復元不可。</p>
+<h3 id="34-復元実行フロー">3.4 復元実行フロー</h3>
+<pre class="mermaid"><code>sequenceDiagram
+    participant SPA as Admin SPA
+    participant Worker as AdminConsoleWorker
+    participant D1
+    participant Stripe
+    participant Main as Main Worker
+    participant Queues
+
+    SPA-&gt;&gt;Worker: POST /restorations {resourceType, resourceId, reason}&lt;br/&gt;+ X-Op-Ticket-Id + Idempotency-Key + 再認証 5min 以内
+    Worker-&gt;&gt;D1: SELECT accounts WHERE id=? AND contract_status IN (&#39;suspended&#39;,&#39;deleted_pending&#39;)
+    alt 既に物理削除済
+        Worker--&gt;&gt;SPA: 423 Locked
+    else 復元可能
+        Worker-&gt;&gt;D1: BEGIN; INSERT restorations (state=&#39;executing&#39;)
+        Worker-&gt;&gt;D1: UPDATE accounts SET contract_status=&#39;active&#39;
+        Worker-&gt;&gt;D1: ロールバック (a) (b) (c) (d) (e)
+        Worker-&gt;&gt;Stripe: ロールバック (f) Subscription resume
+        Worker-&gt;&gt;D1: COMMIT; UPDATE restorations state=&#39;succeeded&#39;
+        Worker-&gt;&gt;D1: audit_logs(owner.restore_data, 5y)
+        Worker-&gt;&gt;Main: 連携 IF #4 復元通知
+        Worker-&gt;&gt;Queues: 通知集約 (FR-211、10 分集約)
+        Worker--&gt;&gt;SPA: 200 {restorationId, rollback}
+    end</code></pre>
+<h3 id="35-4-eyes-承認ログ対象mvp">3.5 4-eyes 承認ログ対象(MVP)</h3>
+<p><code>owner.restore_data</code> は <strong>MVP Log Only / Beta Hard Gate</strong>:</p>
+<ul>
+<li>MVP: 単独実行可能、承認ログ(<code>operator_approval.*</code>)を必ず残す + 事後監査</li>
+<li>Beta 以降: ハードゲート化、<code>X-Approval-Id</code> 必須</li>
+</ul>
+<p>詳細は <a href="DD02_4-eyes承認フロー.html">DD02_4-eyes承認フロー.html</a> を参照。</p>
+<h3 id="36-検索一覧scr-090">3.6 検索・一覧(SCR-090)</h3>
+<table>
+<thead>
+<tr>
+<th>検索条件</th>
+<th>バリデーション</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>resourceType</code></td>
+<td><code>owner</code> / <code>project</code> / <code>faq</code> / <code>account</code> / <code>announcement</code></td>
+</tr>
+<tr>
+<td><code>slug</code> 部分一致</td>
+<td>1〜64 文字</td>
+</tr>
+<tr>
+<td>削除日時範囲</td>
+<td><code>from</code> ≤ <code>to</code>、最大 5 年遡及</td>
+</tr>
+<tr>
+<td><code>contract_status</code></td>
+<td><code>suspended</code> / <code>deleted_pending</code> / <code>deleted</code>(<code>deleted</code> は閲覧のみ、復元不可)</td>
+</tr>
+</tbody>
+</table>
+<p>検索結果は <code>(deleted_at, id)</code> カーソルページング(<code>limit</code> 既定 100、最大 200)。検索自体も監査(<code>audit.search</code>、1y)。</p>
+<h3 id="37-副作用-ag-ロールバック詳細">3.7 副作用 (a)〜(g) ロールバック詳細</h3>
+<h4 id="a-プロジェクト復元">(a) プロジェクト復元</h4>
+<div class="sourceCode" id="cb3"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- 削除前の状態を deleted_projects から取得し、projects に戻す</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> projects (<span class="op">..</span>.)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">..</span>. <span class="kw">FROM</span> deleted_projects <span class="kw">WHERE</span> contract_owner_user_id <span class="op">=</span> ?;</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">UPDATE</span> projects <span class="kw">SET</span> valid <span class="op">=</span> <span class="dv">1</span> <span class="kw">WHERE</span> contract_owner_user_id <span class="op">=</span> ? <span class="kw">AND</span> updated_at <span class="op">&gt;</span> ?;</span></code></pre></div>
+<h4 id="b-faq-復元">(b) FAQ 復元</h4>
+<p>削除前の <code>is_published</code> 状態を復元(削除時に <code>is_published=0</code> 強制したものは元の値に戻す)。</p>
+<h4 id="c-管理者ユーザー復元">(c) 管理者ユーザー復元</h4>
+<div class="sourceCode" id="cb4"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- メンバーは users.valid=0 で論理削除されているため valid=1 へ戻す</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">UPDATE</span> users <span class="kw">SET</span> valid <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> <span class="kw">id</span> <span class="kw">IN</span> (</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">SELECT</span> user_id <span class="kw">FROM</span> project_users <span class="kw">WHERE</span> contract_owner_user_id <span class="op">=</span> ?</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">AND</span> updated_at <span class="op">&gt;</span> ?;</span></code></pre></div>
+<h4 id="d-api-鍵">(d) API 鍵</h4>
+<p>旧 API 鍵は再発行しない(セキュリティ上、退会時点で失効済の鍵を復活させない)。復元完了後に inbox 通知で「新規 API 鍵を発行してください」と促す。</p>
+<h4 id="e-webhook-配信先">(e) Webhook 配信先</h4>
+<div class="sourceCode" id="cb5"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">UPDATE</span> webhook_endpoints <span class="kw">SET</span> disabled <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> contract_owner_user_id <span class="op">=</span> ? <span class="kw">AND</span> disabled_at <span class="op">&gt;</span> ?;</span></code></pre></div>
+<h4 id="f-stripe-subscription">(f) Stripe Subscription</h4>
+<pre class="text"><code>const subscription = await stripe.subscriptions.retrieve(owner.stripe_subscription_id);
+if (subscription.cancel_at_period_end === true) {
+  await stripe.subscriptions.update(
+    owner.stripe_subscription_id,
+    { cancel_at_period_end: false },
+    { idempotencyKey: `restore-${restorationId}-sub-resume` }
+  );
+}</code></pre>
+<h4 id="g-通知配信再開">(g) 通知配信再開</h4>
+<p><code>contract_owners.notifications_disabled=0</code> に戻し、復元完了メール(<code>MSG-SCR-091-001</code>)を強制送信。</p>
+<h3 id="38-復元結果の記録">3.8 復元結果の記録</h3>
+<div class="sourceCode" id="cb7"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> restorations (</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">id</span> TEXT <span class="kw">PRIMARY</span> <span class="kw">KEY</span>,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  resource_type TEXT <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">CHECK</span> (resource_type <span class="kw">IN</span> (<span class="st">&#39;owner&#39;</span>,<span class="st">&#39;project&#39;</span>,<span class="st">&#39;faq&#39;</span>,<span class="st">&#39;account&#39;</span>,<span class="st">&#39;announcement&#39;</span>)),</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  resource_id TEXT <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  state TEXT <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">CHECK</span> (state <span class="kw">IN</span> (<span class="st">&#39;executing&#39;</span>,<span class="st">&#39;succeeded&#39;</span>,<span class="st">&#39;failed&#39;</span>)),</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  rollback_summary TEXT,  <span class="co">-- JSON: (a)〜(g) 各ステップの結果</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  requested_by TEXT <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  approval_id TEXT,</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  reason TEXT <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  ticket_id TEXT <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  started_at <span class="dt">TIMESTAMP</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  completed_at <span class="dt">TIMESTAMP</span>,</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FOREIGN</span> <span class="kw">KEY</span> (requested_by) <span class="kw">REFERENCES</span> operator_accounts(<span class="kw">id</span>)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> idx_restorations_resource <span class="kw">ON</span> restorations(resource_type, resource_id);</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> idx_restorations_started_at <span class="kw">ON</span> restorations(started_at);</span></code></pre></div>
+<p>完全な DDL は <a href="../02_基本設計/03_テーブル設計.html">基本設計 / テーブル設計</a> を正本とする。</p>
+<h3 id="39-通知集約fr-211d-19">3.9 通知集約(FR-211、D-19)</h3>
+<p>復元完了通知は 10 分集約窓で運営者操作通知として送信:</p>
+<table>
+<thead>
+<tr>
+<th>キー</th>
+<th>値</th>
+<th>TTL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>notify-batch:&lt;contract_owner_user_id&gt;:owner.restore_data</code></td>
+<td><code>{ entries: [...], firstAt }</code></td>
+<td>10 分</td>
+</tr>
+</tbody>
+</table>
+<p>集約後、<code>OperatorNotifyAggregatorWorker</code>(1 分 cron で 10 分窓を判定)が連携 IF #12 経由でメインへ送信し、メインがオーナー + 全プロジェクト管理者(<code>project_users.role='admin'</code> を 1 件でも保持するユーザー)へ inbox 配信。</p>
+<h3 id="310-主要エラーコード">3.10 主要エラーコード</h3>
+<table>
+<thead>
+<tr>
+<th>エラー ID</th>
+<th>HTTP</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>E-OP-RESTORE-001</code></td>
+<td>423</td>
+<td>RESOURCE_PHYSICALLY_DELETED(<code>accounts_retired</code> 移行済)</td>
+</tr>
+<tr>
+<td><code>E-OP-RESTORE-002</code></td>
+<td>409</td>
+<td>RESTORATION_IN_PROGRESS(同一リソースで <code>executing</code> 状態あり)</td>
+</tr>
+<tr>
+<td><code>E-OP-RESTORE-003</code></td>
+<td>502</td>
+<td>STRIPE_RESUME_FAILED(副作用 (f) 失敗)</td>
+</tr>
+<tr>
+<td><code>E-OP-RESTORE-004</code></td>
+<td>500</td>
+<td>ROLLBACK_TRANSACTION_FAILED(副作用 (a)〜(e) 失敗)</td>
+</tr>
+</tbody>
+</table>
+<p>完全な E-OP-RESTORE-* 一覧は <a href="../02_基本設計/05_エラー設計.html">基本設計 / エラー設計</a> を正本とする。</p>
+<h2 id="4-関連設計">4. 関連設計</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>参照先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>要件</td>
+<td><a href="../01_要件定義/index.html">../01_要件定義/index.html</a></td>
+</tr>
+<tr>
+<td>基本設計</td>
+<td><a href="../02_基本設計/index.html">../02_基本設計/index.html</a></td>
+</tr>
+<tr>
+<td>API 設計(正本)</td>
+<td><a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html</a></td>
+</tr>
+<tr>
+<td>テーブル設計(正本)</td>
+<td><a href="../02_基本設計/03_テーブル設計.html">../02_基本設計/03_テーブル設計.html</a></td>
+</tr>
+<tr>
+<td>メインテーブル設計</td>
+<td><a href="../../01_メインシステム/02_基本設計/03_テーブル設計.html">../../01_メインシステム/02_基本設計/03_テーブル設計.html</a></td>
+</tr>
+<tr>
+<td>関連 DD</td>
+<td><a href="DD02_4-eyes承認フロー.html">DD02_4-eyes承認フロー.html</a> / <a href="DD03_監査ハッシュチェーン.html">DD03_監査ハッシュチェーン.html</a></td>
+</tr>
+<tr>
+<td>運用設計</td>
+<td><a href="../04_運用設計/index.html">../04_運用設計/index.html</a></td>
+</tr>
+<tr>
+<td>将来対応</td>
+<td><a href="../05_future/index.html">../05_future/index.html</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-テスト観点">5. テスト観点</h2>
+<h3 id="51-ユニットテスト">5.1 ユニットテスト</h3>
+<ul>
+<li>(a)〜(g) 各ステップのロールバック関数(個別単体)</li>
+<li>422 / 423 / 409 各エラーケース</li>
+<li>単一トランザクション内での全件成功 / 全件失敗 の保証</li>
+<li><code>contract_status</code> 遷移ガード(<code>deleted</code> からは復元不可)</li>
+</ul>
+<h3 id="52-結合テストminiflare">5.2 結合テスト(Miniflare)</h3>
+<ul>
+<li><code>suspended</code> → <code>active</code> 復元(全副作用ロールバック含む)</li>
+<li><code>deleted_pending</code> → <code>active</code> 復元</li>
+<li><code>deleted</code> 状態で 423 返却</li>
+<li>復元中(<code>executing</code>)で同一リソースに再要求 → 409</li>
+<li>Stripe Subscription resume 失敗時の全件ロールバック</li>
+</ul>
+<h3 id="53-e2e-テストplaywright">5.3 E2E テスト(Playwright)</h3>
+<table>
+<thead>
+<tr>
+<th>テスト ID</th>
+<th>シナリオ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>e2e-scr090-001</code></td>
+<td>一覧表示 + 詳細遷移</td>
+</tr>
+<tr>
+<td><code>e2e-scr091-001</code></td>
+<td>復元フロー全体 + 423 ケース</td>
+</tr>
+</tbody>
+</table>
+<h3 id="54-受入条件マッピング">5.4 受入条件マッピング</h3>
+<table>
+<thead>
+<tr>
+<th>AC</th>
+<th>検証手段</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AC-038(運営者操作監査 + 通知)</td>
+<td>E2E + 月次監査</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-未確定事項確認事項">6. 未確定事項・確認事項</h2>
+<table>
+<thead>
+<tr>
+<th>確認事項ID</th>
+<th>確認内容</th>
+<th>優先度</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>v1.0 リリース時点で全項目確定済み</td>
+<td>低</td>
+<td>確認済</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

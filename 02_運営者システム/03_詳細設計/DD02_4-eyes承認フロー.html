@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DD02: 4-eyes 承認フロー(運営者システム) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="02_運営者システム/03_詳細設計/DD02_4-eyes承認フロー.html">
+<article class="content" id="content">
+<h1 id="dd02-4-eyes-承認フロー運営者システム">DD02: 4-eyes 承認フロー(運営者システム)</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書名</td>
+<td>DD02: 4-eyes 承認フロー(運営者システム)</td>
+</tr>
+<tr>
+<td>詳細設計ID</td>
+<td>DD02</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>FAQ AI ウィジェット SaaS / 運営者システム</td>
+</tr>
+<tr>
+<td>関連機能ID</td>
+<td>FR-226, D-12</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-17</td>
+</tr>
+<tr>
+<td>版数</td>
+<td>v1.0</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>承認済</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-対象範囲">1. 対象範囲</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>ID</th>
+<th>名称</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>機能</td>
+<td>FR-226</td>
+<td>4-eyes 申請承認(MVP 3 ハードゲート + 7 承認ログ)</td>
+</tr>
+<tr>
+<td>画面</td>
+<td>SCR-APPROVALS</td>
+<td>承認待ち一覧</td>
+</tr>
+<tr>
+<td>画面</td>
+<td>SCR-APPROVALS-M1</td>
+<td>申請モーダル(CMP-E)</td>
+</tr>
+<tr>
+<td>画面</td>
+<td>SCR-APPROVALS-M2</td>
+<td>承認モーダル(CMP-F)</td>
+</tr>
+<tr>
+<td>API</td>
+<td><code>POST /approvals</code></td>
+<td>申請作成</td>
+</tr>
+<tr>
+<td>API</td>
+<td><code>POST /approvals/{id}/start-review</code></td>
+<td>レビュー開始</td>
+</tr>
+<tr>
+<td>API</td>
+<td><code>POST /approvals/{id}/approve</code></td>
+<td>承認</td>
+</tr>
+<tr>
+<td>API</td>
+<td><code>POST /approvals/{id}/reject</code></td>
+<td>却下</td>
+</tr>
+<tr>
+<td>API</td>
+<td><code>POST /approvals/{id}/withdraw</code></td>
+<td>自己取下げ</td>
+</tr>
+<tr>
+<td>API</td>
+<td><code>POST /approvals/{id}/execute</code></td>
+<td>実行</td>
+</tr>
+<tr>
+<td>テーブル</td>
+<td><code>operator_approvals</code></td>
+<td>申請・承認状態管理</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-収録ロジック対応章">2. 収録ロジック・対応章</h2>
+<table>
+<thead>
+<tr>
+<th>元章</th>
+<th>元タイトル</th>
+<th>概要</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>§5 SCR-APPROVALS</td>
+<td>画面詳細(参照)</td>
+<td>承認待ち一覧 + 申請モーダル + 承認モーダル</td>
+</tr>
+<tr>
+<td>§6.4</td>
+<td>4-eyes 機能詳細</td>
+<td>申請 → 承認 → 実行のロジック</td>
+</tr>
+<tr>
+<td>§7.4</td>
+<td>4-eyes API</td>
+<td>OpenAPI(申請 / start-review / approve / reject / withdraw)</td>
+</tr>
+<tr>
+<td>付録 C.X</td>
+<td>4-eyes フロー E2E テストシナリオ</td>
+<td>5 シナリオ(happy / self-block / expire / rollback / hash)</td>
+</tr>
+<tr>
+<td>付録 E</td>
+<td>4-eyes 操作詳細(MVP)</td>
+<td>対象 10 操作 + 申請/承認モーダル ASCII レイアウト</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-詳細設計本文">3. 詳細設計本文</h2>
+<h3 id="31-4-eyes-対象-10-操作">3.1 4-eyes 対象 10 操作</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>action_code</th>
+<th>MVP ハードゲート</th>
+<th>MVP 承認ログ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>owner.physical_delete</code></td>
+<td>必須</td>
+<td>-</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>ai_parameter.update</code></td>
+<td>必須</td>
+<td>-</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>master_key.rotate</code></td>
+<td>必須</td>
+<td>-</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>owner.suspend</code></td>
+<td>-</td>
+<td>単独 + 事後監査</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>owner.restore</code></td>
+<td>-</td>
+<td>対象</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>pricing.update</code></td>
+<td>-</td>
+<td>対象</td>
+</tr>
+<tr>
+<td>7</td>
+<td><code>rate_limit.override</code> / <code>usage_limit.override</code></td>
+<td>-</td>
+<td>対象</td>
+</tr>
+<tr>
+<td>8</td>
+<td><code>widget.force_stop</code></td>
+<td>-</td>
+<td>対象</td>
+</tr>
+<tr>
+<td>9</td>
+<td><code>feature.hard_gate.toggle</code></td>
+<td>-</td>
+<td>対象</td>
+</tr>
+<tr>
+<td>10</td>
+<td><code>owner.restore_data</code>(FR-204、削除データ復元)</td>
+<td>-</td>
+<td>対象</td>
+</tr>
+</tbody>
+</table>
+<p>ハードゲート 3 操作は <code>X-Approval-Id</code> ヘッダ必須 + 承認済(<code>approved</code> 状態)申請に紐付かない限り <strong>403 FORBIDDEN_HARD_GATE</strong> を返す。承認ログのみ 7 操作は単独実行可能だが、<code>audit_logs</code> 上に必ず 1 件の <code>operator_approval.*</code> 履歴を残す。</p>
+<h3 id="32-状態遷移operator_approvalsstate">3.2 状態遷移(<code>operator_approvals.state</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>From</th>
+<th>To</th>
+<th>トリガー</th>
+<th>ガード</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>requested</td>
+<td>POST /approvals</td>
+<td>expires_at = +72h</td>
+</tr>
+<tr>
+<td>requested</td>
+<td>reviewing</td>
+<td>start-review</td>
+<td>requested_by ≠ reviewer</td>
+</tr>
+<tr>
+<td>reviewing</td>
+<td>approved</td>
+<td>approve</td>
+<td>DB CHECK 自己承認禁止</td>
+</tr>
+<tr>
+<td>reviewing</td>
+<td>rejected</td>
+<td>reject</td>
+<td>requested_by ≠ rejected_by、コメント必須</td>
+</tr>
+<tr>
+<td>requested</td>
+<td>withdrawn</td>
+<td>withdraw(申請者本人)</td>
+<td>withdrawn_by == requested_by(自己取下げ)</td>
+</tr>
+<tr>
+<td>requested/reviewing</td>
+<td>expired</td>
+<td>72h 経過</td>
+<td>バッチ</td>
+</tr>
+<tr>
+<td>approved</td>
+<td>executed</td>
+<td>execute</td>
+<td>now &lt; approved_at + 72h、payload_hash 一致</td>
+</tr>
+<tr>
+<td>approved</td>
+<td>expired</td>
+<td>72h 経過</td>
+<td>バッチ</td>
+</tr>
+</tbody>
+</table>
+<p>詳細状態遷移は <a href="DD11_状態遷移詳細.html">DD11_状態遷移詳細.html</a> §B.3 を参照。</p>
+<h3 id="33-payload_hash-検証">3.3 payload_hash 検証</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>仕様</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>計算式</td>
+<td><code>sha256(canonical_json(payload))</code>(RFC 8785 JSON Canonicalization)</td>
+</tr>
+<tr>
+<td>申請時</td>
+<td>申請者送信の <code>payload</code> を正規化し、<code>operator_approvals.payload_hash</code> に保管</td>
+</tr>
+<tr>
+<td>承認時</td>
+<td>承認者が確認した <code>payloadHash</code> を送信(改ざん検知用)、DB 値と一致しなければ 409</td>
+</tr>
+<tr>
+<td>実行時</td>
+<td>実行 API 呼出時の <code>payload</code> を再正規化し、<code>operator_approvals.payload_hash</code> と一致確認。不一致なら 403</td>
+</tr>
+</tbody>
+</table>
+<p><code>payload_hash</code> 不一致は承認 → 実行間で <code>payload</code> を改ざんしようとする攻撃を検出する仕組み。承認モーダルでは <code>payload_hash: sha256:...(検証 OK)</code> を表示する。</p>
+<h3 id="34-自己承認禁止">3.4 自己承認禁止</h3>
+<p>実装層を 4 重で防御する:</p>
+<ol type="1">
+<li><strong>アプリケーション層</strong>: <code>start-review</code> / <code>approve</code> で <code>requestedBy === currentOperator</code> を拒否(403)</li>
+<li><strong>DB CHECK 制約</strong>: <code>CHECK (requested_by != approved_by)</code> を <code>operator_approvals</code> テーブルに付与</li>
+<li><strong>監査チェック</strong>: 監査ログ集計で同一運営者の <code>request</code> + <code>approve</code> ペアを検出する日次バッチ</li>
+<li><strong>承認モーダル UI ガード</strong>: <code>SelfApprovalGuard</code> コンポーネントでボタン無効化</li>
+</ol>
+<h3 id="35-4-eyes-申請モーダルcmp-eth-5">3.5 4-eyes 申請モーダル(CMP-E、★TH-5)</h3>
+<pre class="text"><code>+---------------------------------------------------+
+| ★ 申請モーダル: AI 推論パラメータ更新                |
++---------------------------------------------------+
+| action_code: ai_parameter.update                    |
+| 申請者: 田中(現在ログイン中)                          |
+|                                                     |
+| 申請理由 [必須、最大1000文字]                         |
+| ┌─────────────────────────────────────────────┐ |
+| │                                              │ |
+| └─────────────────────────────────────────────┘ |
+|                                                     |
+| 対応チケット ID [必須、最大64文字]                    |
+| ┌──────────────────┐                              |
+| │ TKT-               │                              |
+| └──────────────────┘                              |
+|                                                     |
+| payload プレビュー(編集不可、整形済 JSON)             |
+| ┌─────────────────────────────────────────────┐ |
+| │ {                                             │ |
+| │   &quot;scope&quot;: &quot;owner&quot;,                          │ |
+| │   &quot;scopeId&quot;: &quot;01J9...&quot;,                        │ |
+| │   &quot;confidenceThreshold&quot;: 0.65,                │ |
+| │   ...                                          │ |
+| │ }                                              │ |
+| └─────────────────────────────────────────────┘ |
+| payload_hash: sha256:abc123def...                   |
+| 承認 TTL: 72 時間                                    |
+|                                                     |
+| [キャンセル]                          [申請する] →   |
++---------------------------------------------------+</code></pre>
+<h3 id="36-4-eyes-承認モーダルcmp-fth-5">3.6 4-eyes 承認モーダル(CMP-F、★TH-5)</h3>
+<pre class="text"><code>+---------------------------------------------------+
+| ★ 承認モーダル: AI 推論パラメータ更新                |
++---------------------------------------------------+
+| 申請者: 田中(2026-05-12 10:00)                       |
+| あなた: 佐藤(承認者)                                  |
+| 申請ID: 01J9V0...                                    |
+| 申請から: 1 時間 15 分前                              |
+| 期限: 70 時間 45 分後                                 |
+|                                                     |
+| 申請理由:                                            |
+| ┌─────────────────────────────────────────────┐ |
+| │ 契約 acme 向け関連度しきい値を緩和         │ |
+| │ #TKT-1234                                      │ |
+| └─────────────────────────────────────────────┘ |
+|                                                     |
+| payload プレビュー(整形済 JSON、改ざんチェック済):   |
+| ┌─────────────────────────────────────────────┐ |
+| │ {                                             │ |
+| │   &quot;scope&quot;: &quot;owner&quot;,                          │ |
+| │   &quot;scopeId&quot;: &quot;01J9...&quot;,                        │ |
+| │   &quot;confidenceThreshold&quot;: 0.65,                │ |
+| │   ...                                          │ |
+| │ }                                              │ |
+| └─────────────────────────────────────────────┘ |
+| payload_hash: sha256:abc123def...(検証 OK)        |
+|                                                     |
+| コメント [任意]                                       |
+| ┌─────────────────────────────────────────────┐ |
+| │                                              │ |
+| └─────────────────────────────────────────────┘ |
+|                                                     |
+| [保留]               [却下(コメント必須)]  [承認]    |
++---------------------------------------------------+</code></pre>
+<h3 id="37-4-eyes-api-openapi-抜粋">3.7 4-eyes API OpenAPI 抜粋</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">paths</span><span class="kw">:</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">/approvals</span><span class="kw">:</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">post</span><span class="kw">:</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">summary</span><span class="kw">:</span><span class="at"> 4-eyes 申請作成</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">parameters</span><span class="kw">:</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="fu">$ref</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;#/components/parameters/XOpTicketId&quot;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="fu">$ref</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;#/components/parameters/IdempotencyKey&quot;</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="fu">$ref</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;#/components/parameters/XCsrfToken&quot;</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">requestBody</span><span class="kw">:</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">required</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">content</span><span class="kw">:</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">application/json</span><span class="kw">:</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">schema</span><span class="kw">:</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">type</span><span class="kw">:</span><span class="at"> object</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">required</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">actionCode</span><span class="kw">,</span><span class="at"> payload</span><span class="kw">,</span><span class="at"> reason</span><span class="kw">]</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">properties</span><span class="kw">:</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="at">                </span><span class="fu">actionCode</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">type</span><span class="kw">:</span><span class="at"> string </span><span class="kw">}</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="at">                </span><span class="fu">payload</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">type</span><span class="kw">:</span><span class="at"> object </span><span class="kw">}</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="at">                </span><span class="fu">reason</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">type</span><span class="kw">:</span><span class="at"> string</span><span class="kw">,</span><span class="at"> </span><span class="fu">maxLength</span><span class="kw">:</span><span class="at"> </span><span class="dv">1000</span><span class="at"> </span><span class="kw">}</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">responses</span><span class="kw">:</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">&quot;201&quot;</span><span class="kw">:</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">description</span><span class="kw">:</span><span class="at"> 申請完了</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">content</span><span class="kw">:</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">application/json</span><span class="kw">:</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">schema</span><span class="kw">:</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="at">                </span><span class="fu">type</span><span class="kw">:</span><span class="at"> object</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="at">                </span><span class="fu">properties</span><span class="kw">:</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="at">                  </span><span class="fu">approvalId</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">type</span><span class="kw">:</span><span class="at"> string </span><span class="kw">}</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="at">                  </span><span class="fu">expiresAt</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">type</span><span class="kw">:</span><span class="at"> string</span><span class="kw">,</span><span class="at"> </span><span class="fu">format</span><span class="kw">:</span><span class="at"> date-time </span><span class="kw">}</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="at">                  </span><span class="fu">payloadHash</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">type</span><span class="kw">:</span><span class="at"> string </span><span class="kw">}</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">&quot;409&quot;</span><span class="kw">:</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">content</span><span class="kw">:</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">application/problem+json</span><span class="kw">:</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">schema</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">$ref</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;#/components/schemas/Problem&quot;</span><span class="at"> </span><span class="kw">}</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">/approvals/{id}/start-review</span><span class="kw">:</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">post</span><span class="kw">:</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">summary</span><span class="kw">:</span><span class="at"> 4-eyes 承認確認開始</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">parameters</span><span class="kw">:</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="fu">in</span><span class="kw">:</span><span class="at"> path</span></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">name</span><span class="kw">:</span><span class="at"> id</span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">required</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">schema</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">type</span><span class="kw">:</span><span class="at"> string </span><span class="kw">}</span></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="fu">$ref</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;#/components/parameters/XOpTicketId&quot;</span></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="fu">$ref</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;#/components/parameters/IdempotencyKey&quot;</span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">responses</span><span class="kw">:</span></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">&quot;200&quot;</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">description</span><span class="kw">:</span><span class="at"> reviewing 遷移完了 </span><span class="kw">}</span></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">&quot;403&quot;</span><span class="kw">:</span></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">content</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">application/problem+json</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">schema</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">$ref</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;#/components/schemas/Problem&quot;</span><span class="at"> </span><span class="kw">}</span><span class="at"> </span><span class="kw">}</span><span class="at"> </span><span class="kw">}</span></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">/approvals/{id}/approve</span><span class="kw">:</span></span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">post</span><span class="kw">:</span></span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">summary</span><span class="kw">:</span><span class="at"> 4-eyes 承認</span></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">parameters</span><span class="kw">:</span></span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="fu">in</span><span class="kw">:</span><span class="at"> path</span></span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">name</span><span class="kw">:</span><span class="at"> id</span></span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">required</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">schema</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">type</span><span class="kw">:</span><span class="at"> string </span><span class="kw">}</span></span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="fu">$ref</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;#/components/parameters/XOpTicketId&quot;</span></span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="fu">$ref</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;#/components/parameters/IdempotencyKey&quot;</span></span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="fu">$ref</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;#/components/parameters/XCsrfToken&quot;</span></span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">requestBody</span><span class="kw">:</span></span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">required</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">content</span><span class="kw">:</span></span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">application/json</span><span class="kw">:</span></span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">schema</span><span class="kw">:</span></span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">type</span><span class="kw">:</span><span class="at"> object</span></span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">required</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">payloadHash</span><span class="kw">]</span></span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">properties</span><span class="kw">:</span></span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a><span class="at">                </span><span class="fu">payloadHash</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">type</span><span class="kw">:</span><span class="at"> string </span><span class="kw">}</span></span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a><span class="at">                </span><span class="fu">comment</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">type</span><span class="kw">:</span><span class="at"> string </span><span class="kw">}</span></span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">responses</span><span class="kw">:</span></span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">&quot;200&quot;</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">description</span><span class="kw">:</span><span class="at"> approved 遷移完了 </span><span class="kw">}</span></span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">&quot;403&quot;</span><span class="kw">:</span></span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">content</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">application/problem+json</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">schema</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">$ref</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;#/components/schemas/Problem&quot;</span><span class="at"> </span><span class="kw">}</span><span class="at"> </span><span class="kw">}</span><span class="at"> </span><span class="kw">}</span></span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">/approvals/{id}/reject</span><span class="kw">:</span></span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">post</span><span class="kw">:</span></span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">summary</span><span class="kw">:</span><span class="at"> 4-eyes 却下(別運営者)</span></span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">parameters</span><span class="kw">:</span></span>
+<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="fu">in</span><span class="kw">:</span><span class="at"> path</span></span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">name</span><span class="kw">:</span><span class="at"> id</span></span>
+<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">required</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">schema</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">type</span><span class="kw">:</span><span class="at"> string </span><span class="kw">}</span></span>
+<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="fu">$ref</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;#/components/parameters/XOpTicketId&quot;</span></span>
+<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">requestBody</span><span class="kw">:</span></span>
+<span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">required</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">content</span><span class="kw">:</span></span>
+<span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">application/json</span><span class="kw">:</span></span>
+<span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">schema</span><span class="kw">:</span></span>
+<span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">type</span><span class="kw">:</span><span class="at"> object</span></span>
+<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">required</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">comment</span><span class="kw">]</span></span>
+<span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">properties</span><span class="kw">:</span></span>
+<span id="cb3-94"><a href="#cb3-94" aria-hidden="true" tabindex="-1"></a><span class="at">                </span><span class="fu">comment</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">type</span><span class="kw">:</span><span class="at"> string </span><span class="kw">}</span></span>
+<span id="cb3-95"><a href="#cb3-95" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">responses</span><span class="kw">:</span></span>
+<span id="cb3-96"><a href="#cb3-96" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">&quot;200&quot;</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">description</span><span class="kw">:</span><span class="at"> rejected 遷移完了 </span><span class="kw">}</span></span>
+<span id="cb3-97"><a href="#cb3-97" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">&quot;403&quot;</span><span class="kw">:</span></span>
+<span id="cb3-98"><a href="#cb3-98" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">content</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">application/problem+json</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">schema</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">$ref</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;#/components/schemas/Problem&quot;</span><span class="at"> </span><span class="kw">}</span><span class="at"> </span><span class="kw">}</span><span class="at"> </span><span class="kw">}</span></span>
+<span id="cb3-99"><a href="#cb3-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-100"><a href="#cb3-100" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">/approvals/{id}/withdraw</span><span class="kw">:</span></span>
+<span id="cb3-101"><a href="#cb3-101" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">post</span><span class="kw">:</span></span>
+<span id="cb3-102"><a href="#cb3-102" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">summary</span><span class="kw">:</span><span class="at"> 4-eyes 自己取下げ(申請者本人)</span></span>
+<span id="cb3-103"><a href="#cb3-103" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">parameters</span><span class="kw">:</span></span>
+<span id="cb3-104"><a href="#cb3-104" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="fu">in</span><span class="kw">:</span><span class="at"> path</span></span>
+<span id="cb3-105"><a href="#cb3-105" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">name</span><span class="kw">:</span><span class="at"> id</span></span>
+<span id="cb3-106"><a href="#cb3-106" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">required</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb3-107"><a href="#cb3-107" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">schema</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">type</span><span class="kw">:</span><span class="at"> string </span><span class="kw">}</span></span>
+<span id="cb3-108"><a href="#cb3-108" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="fu">$ref</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;#/components/parameters/XOpTicketId&quot;</span></span>
+<span id="cb3-109"><a href="#cb3-109" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">responses</span><span class="kw">:</span></span>
+<span id="cb3-110"><a href="#cb3-110" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">&quot;200&quot;</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">description</span><span class="kw">:</span><span class="at"> withdrawn 遷移完了 </span><span class="kw">}</span></span>
+<span id="cb3-111"><a href="#cb3-111" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">&quot;403&quot;</span><span class="kw">:</span></span>
+<span id="cb3-112"><a href="#cb3-112" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">content</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">application/problem+json</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">schema</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">$ref</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;#/components/schemas/Problem&quot;</span><span class="at"> </span><span class="kw">}</span><span class="at"> </span><span class="kw">}</span><span class="at"> </span><span class="kw">}</span></span>
+<span id="cb3-113"><a href="#cb3-113" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">&quot;409&quot;</span><span class="kw">:</span></span>
+<span id="cb3-114"><a href="#cb3-114" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">content</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">application/problem+json</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">schema</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">$ref</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;#/components/schemas/Problem&quot;</span><span class="at"> </span><span class="kw">}</span><span class="at"> </span><span class="kw">}</span><span class="at"> </span><span class="kw">}</span></span></code></pre></div>
+<p>完全な API スキーマは <a href="../02_基本設計/02_API設計.html">基本設計 / API 設計</a> §4 を正本とする。</p>
+<h3 id="38-楽観ロック同時実行制御">3.8 楽観ロック・同時実行制御</h3>
+<ul>
+<li><code>operator_approvals</code> テーブルに <code>version</code> 列(INTEGER、初期値 0)を保持</li>
+<li>状態遷移 UPDATE は <code>WHERE id=? AND version=?</code> で実行し、<code>version = version + 1</code> を SET</li>
+<li>競合(同時に 2 名が承認ボタン押下)は影響行数 = 0 で検出、後勝ちを 409 で拒否</li>
+<li>負荷試験 A4(100 申請を 10 秒で集中、別運営者 100 並列承認)で楽観ロック動作を検証</li>
+</ul>
+<h3 id="39-期限切れ自動バッチ">3.9 期限切れ自動バッチ</h3>
+<p>72 時間経過で <code>requested</code> / <code>reviewing</code> / <code>approved</code> 状態を一斉 <code>expired</code> に遷移させる:</p>
+<pre class="text"><code>function approvalExpiry():
+    candidates = D1.query(&quot;SELECT id, state FROM operator_approvals
+                          WHERE state IN (&#39;requested&#39;,&#39;reviewing&#39;,&#39;approved&#39;)
+                          AND expires_at &lt;= ?&quot;, now)
+    for c in candidates:
+        D1.exec(&quot;UPDATE operator_approvals
+                 SET state=&#39;expired&#39;, expired_at=?, version=version+1
+                 WHERE id=? AND state=?&quot;, now, c.id, c.state)
+        audit_logs(operator_approval.expire, 5y, payload={approvalId: c.id})</code></pre>
+<p>バッチは 1 時間ごとに別 cron Worker(または <code>AnnouncementSchedulerWorker</code> 内のサブタスク)で実行する。</p>
+<h3 id="310-4-eyes-フロー-e2e-テストシナリオ付録-cx">3.10 4-eyes フロー E2E テストシナリオ(付録 C.X)</h3>
+<p>申請 → 承認 → 実行 → 失敗ロールバックの完全フロー E2E を別途定義し、SCR 個別 E2E と分離管理する:</p>
+<table>
+<thead>
+<tr>
+<th>シナリオ ID</th>
+<th>内容</th>
+<th>対象 action_code 例</th>
+<th>テストファイル</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>e2e-4eyes-happy-001</code></td>
+<td>正常: 申請→start_review→承認→実行 → 監査ログ 4 件記録</td>
+<td><code>ai_parameter.update</code></td>
+<td><code>apps/admin-console/e2e/4eyes/happy-path.spec.ts</code></td>
+</tr>
+<tr>
+<td><code>e2e-4eyes-self-block-001</code></td>
+<td>自己承認拒否: requester==approver で 403</td>
+<td><code>ai_parameter.update</code></td>
+<td><code>apps/admin-console/e2e/4eyes/self-approve-block.spec.ts</code></td>
+</tr>
+<tr>
+<td><code>e2e-4eyes-expire-001</code></td>
+<td>72h 期限切れ自動 expire</td>
+<td><code>owner.physical_delete</code></td>
+<td><code>apps/admin-console/e2e/4eyes/expire-flow.spec.ts</code></td>
+</tr>
+<tr>
+<td><code>e2e-4eyes-rollback-001</code></td>
+<td>実行失敗→ロールバック→監査ログ <code>execute_failed</code> 記録</td>
+<td><code>owner.restore</code></td>
+<td><code>apps/admin-console/e2e/4eyes/execute-failure-rollback.spec.ts</code></td>
+</tr>
+<tr>
+<td><code>e2e-4eyes-hash-001</code></td>
+<td>payload_hash 改ざん検出(承認時に Hash 不一致で却下)</td>
+<td><code>master_key.rotate</code></td>
+<td><code>apps/admin-console/e2e/4eyes/payload-tampering.spec.ts</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-関連設計">4. 関連設計</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>参照先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>要件</td>
+<td><a href="../01_要件定義/index.html">../01_要件定義/index.html</a></td>
+</tr>
+<tr>
+<td>基本設計</td>
+<td><a href="../02_基本設計/index.html">../02_基本設計/index.html</a></td>
+</tr>
+<tr>
+<td>API 設計(正本)</td>
+<td><a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html</a></td>
+</tr>
+<tr>
+<td>画面設計(正本)</td>
+<td><a href="../02_基本設計/01_画面設計.html">../02_基本設計/01_画面設計.html</a></td>
+</tr>
+<tr>
+<td>認証・認可設計(正本)</td>
+<td><a href="../02_基本設計/08_認証・認可設計.html">../02_基本設計/08_認証・認可設計.html</a></td>
+</tr>
+<tr>
+<td>関連 DD</td>
+<td><a href="DD01_運営者認証・6段認可.html">DD01_運営者認証・6段認可.html</a> / <a href="DD03_監査ハッシュチェーン.html">DD03_監査ハッシュチェーン.html</a> / <a href="DD11_状態遷移詳細.html">DD11_状態遷移詳細.html</a></td>
+</tr>
+<tr>
+<td>運用設計</td>
+<td><a href="../04_運用設計/index.html">../04_運用設計/index.html</a></td>
+</tr>
+<tr>
+<td>将来対応</td>
+<td><a href="../05_future/index.html">../05_future/index.html</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-テスト観点">5. テスト観点</h2>
+<h3 id="51-ユニットテスト">5.1 ユニットテスト</h3>
+<ul>
+<li><code>payload_hash</code> 計算(RFC 8785 canonical_json + sha256)</li>
+<li>自己承認禁止(アプリケーション層)</li>
+<li>状態遷移ガード(<code>requested → reviewing → approved → executed</code> のみ正常パス、その他は遷移不可)</li>
+<li>楽観ロック競合検出(影響行数 = 0)</li>
+</ul>
+<h3 id="52-結合テストminiflare">5.2 結合テスト(Miniflare)</h3>
+<ul>
+<li>申請 → 承認 → 実行の完全パスで監査ログ 4 件(<code>request</code> / <code>start_review</code> / <code>approve</code> / <code>execute</code>)が記録される</li>
+<li>自己承認試行で 403 + 監査ログ未記録</li>
+<li>72h 経過 expiry バッチで <code>expired</code> 遷移 + 監査記録</li>
+<li>payload_hash 不一致での承認・実行拒否</li>
+</ul>
+<h3 id="53-e2e-テストplaywright">5.3 E2E テスト(Playwright)</h3>
+<p>付録 C.X の 5 シナリオすべて。</p>
+<h3 id="54-負荷試験">5.4 負荷試験</h3>
+<table>
+<thead>
+<tr>
+<th>シナリオ</th>
+<th>構成</th>
+<th>合格基準</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>(A3) 4-eyes 承認バースト</td>
+<td>同時申請 50 件 / 承認 50 件</td>
+<td>楽観ロック・状態遷移整合性、レース条件で重複承認 = 0 件</td>
+</tr>
+<tr>
+<td>(A4) 4-eyes 同時申請</td>
+<td>100 申請を 10 秒で集中、別運営者から 100 並列承認</td>
+<td>レース条件で重複承認 = 0 件、申請→承認→実行が単調進行</td>
+</tr>
+</tbody>
+</table>
+<h3 id="55-受入条件マッピング">5.5 受入条件マッピング</h3>
+<table>
+<thead>
+<tr>
+<th>AC</th>
+<th>検証手段</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AC-038(運営者操作監査 + 通知)</td>
+<td>E2E + 月次監査(関連)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-未確定事項確認事項">6. 未確定事項・確認事項</h2>
+<table>
+<thead>
+<tr>
+<th>確認事項ID</th>
+<th>確認内容</th>
+<th>優先度</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>v1.0 リリース時点で全項目確定済み</td>
+<td>低</td>
+<td>確認済</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>リリース・デプロイ設計(運営者システム) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="02_運営者システム/04_運用設計/05_リリース・デプロイ設計.html">
+<article class="content" id="content">
+<h1 id="リリースデプロイ設計運営者システム">リリース・デプロイ設計(運営者システム)</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書名</td>
+<td>リリース・デプロイ設計(運営者システム)</td>
+</tr>
+<tr>
+<td>運用ID</td>
+<td>OPS-05</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>FAQ AI ウィジェット SaaS / 運営者システム</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-17</td>
+</tr>
+<tr>
+<td>版数</td>
+<td>v1.0</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>承認済</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-リリース方針参照-要件-18">1. リリース方針(参照: 要件 §18)</h2>
+<h3 id="11-リリース優先度の方針">1.1 リリース優先度の方針</h3>
+<table>
+<thead>
+<tr>
+<th>優先度</th>
+<th>方針</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P0</td>
+<td>初期リリース(MVP)に必須</td>
+</tr>
+<tr>
+<td>P1</td>
+<td>初期リリース後、早期改善で導入</td>
+</tr>
+<tr>
+<td>P2</td>
+<td>中長期で検討</td>
+</tr>
+</tbody>
+</table>
+<h3 id="12-機能ごとのリリース優先度">1.2 機能ごとのリリース優先度</h3>
+<table>
+<thead>
+<tr>
+<th>優先度</th>
+<th>対象</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P0</td>
+<td>FAQ 管理(下書き含む)、FAQ 根拠限定回答、未解決質問登録、問い合わせ ID、個別チャット、メール登録、メール通知、未解決から FAQ 登録、処理エラー表示、課金基本機能、ユーザー管理、オーナー境界によるデータ分離、HTTPS・レート制限・操作ログ</td>
+</tr>
+<tr>
+<td>P1</td>
+<td>FAQ カテゴリ、FAQ 候補の下書き支援、FAQ 登録元参照、分析、対応テンプレート、ウィジェットテーマ設定、アクセシビリティ強化、データエクスポート、データリージョン選択、AI モデル切替</td>
+</tr>
+<tr>
+<td>P2</td>
+<td>複数管理者、外部ヘルプデスク連携、添付ファイル、パスキー、SSO、多言語対応、FAQ 承認ワークフロー</td>
+</tr>
+</tbody>
+</table>
+<h3 id="13-リリース判定基準">1.3 リリース判定基準</h3>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>判定基準</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>機能</td>
+<td>全 P0 機能が実装され、受入条件 <strong>AC-001〜AC-044・AC-046・AC-047</strong> を満たす(メインシステム §18.3 と整合)</td>
+</tr>
+<tr>
+<td>性能</td>
+<td>性能目標を超える事象が発生しない</td>
+</tr>
+<tr>
+<td>セキュリティ</td>
+<td>オーナー境界によるデータ分離、ドメイン検証、レート制限、HTTPS が動作する</td>
+</tr>
+<tr>
+<td>プライバシー</td>
+<td>利用目的表示が用意されている</td>
+</tr>
+<tr>
+<td>運用</td>
+<td>監視・アラート・障害対応手順が整備されている</td>
+</tr>
+<tr>
+<td>ドキュメント</td>
+<td>利用ガイド・運用手順書が整備されている</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-mvp-リリース範囲参照-基本設計-13">2. MVP リリース範囲(参照: 基本設計 §13)</h2>
+<table>
+<thead>
+<tr>
+<th>区分</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MVP</td>
+<td>P0 機能、4-eyes ハードゲート 3 操作、PII 第 1 / 第 3 層、AI モデル初期値、課金 Webhook、監査ログ、運営者 MFA / IP 許可 / 再認証</td>
+</tr>
+<tr>
+<td>MVP リリース判定期間</td>
+<td>招待制契約で NFR-101〜106 p95 を 4 週間連続計測し、AC-046 を確認</td>
+</tr>
+</tbody>
+</table>
+<h3 id="21-4-eyes-mvp-適用範囲">2.1 4-eyes MVP 適用範囲</h3>
+<table>
+<thead>
+<tr>
+<th>区分</th>
+<th>適用範囲</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MVP ハードゲート(3)</td>
+<td>契約物理削除 / AI 推論パラメータ変更 / マスター鍵ローテーション</td>
+</tr>
+<tr>
+<td>MVP 承認ログのみ(7)</td>
+<td>契約無効化、契約復元、単価表・無料枠改定、契約別レート制限・上限件数上書き、緊急ウィジェット強制停止、削除データ復元、ハードゲート KV フラグ切替</td>
+</tr>
+</tbody>
+</table>
+<h3 id="22-顧管側-mvp-機能優先度">2.2 顧管側 MVP 機能優先度</h3>
+<table>
+<thead>
+<tr>
+<th>優先度</th>
+<th>顧客管理側の対象</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P0</td>
+<td>SCR-090〜096、4-eyes ハードゲート 3、Stripe Webhook、月次請求確定、運営者 MFA・IP 許可・再認証、監査ハッシュチェーン、AI パラメータ 3 階層、レート/上限件数上書き、お知らせ配信、運営者操作通知、PII 第 1・第 3 層</td>
+</tr>
+<tr>
+<td>P1</td>
+<td>SCR-097、SCR-098、AI モデル切替、SCA 週次、ペネトレ年 1、契約別単価上書き、訂正請求発行 UI</td>
+</tr>
+<tr>
+<td>P2</td>
+<td>MVP では定義しない</td>
+</tr>
+</tbody>
+</table>
+<h3 id="23-ac-046-達成条件">2.3 AC-046 達成条件</h3>
+<table>
+<thead>
+<tr>
+<th>AC</th>
+<th>達成条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AC-046</td>
+<td>MVP リリース判定期間で NFR-101〜106 の p95 を 4 週間連続達成。除外条件 = 計画停止 + 上流障害(Cloudflare/Resend/Stripe 全断)+ DDoS 防御発動中。計測は Cloudflare Workers Analytics Engine、5 分窓集計、日次評価</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-フィーチャーフラグ方式mvp">3. フィーチャーフラグ方式(MVP)</h2>
+<h3 id="31-フィーチャーフラグデータ管理">3.1 フィーチャーフラグデータ管理</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>仕様</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>データ</td>
+<td>KV <code>feature:&lt;name&gt;:&lt;scope&gt;</code>(scope = <code>global</code> / <code>owner:&lt;id&gt;</code> / <code>operator:&lt;id&gt;</code>)</td>
+</tr>
+<tr>
+<td>取得</td>
+<td>各 Worker は毎リクエスト KV 参照(キャッシュ TTL 60s)</td>
+</tr>
+<tr>
+<td>値</td>
+<td><code>true</code> / <code>false</code> / <code>&lt;percentage&gt;</code>(0〜100、A/B 用)</td>
+</tr>
+<tr>
+<td>MVP 主要フラグ</td>
+<td><code>feature:hard-gate:&lt;action_code&gt;</code>、<code>feature:ai-model:rollout:&lt;version&gt;</code>、<code>feature:announcement-batch-size</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-フィーチャーフラグ全表922-と整合">3.2 フィーチャーフラグ全表(§9.2.2 と整合)</h3>
+<table>
+<thead>
+<tr>
+<th>フラグ</th>
+<th>値</th>
+<th>デフォルト</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>feature:hard-gate:&lt;action&gt;</code></td>
+<td>bool</td>
+<td>MVP は 3 操作のみ true</td>
+<td>4-eyes ハードゲート切替</td>
+</tr>
+<tr>
+<td><code>feature:ai-model:rollout:&lt;version&gt;</code></td>
+<td>0/10/50/100</td>
+<td>100(既定モデル)</td>
+<td>AI モデルロールアウト</td>
+</tr>
+<tr>
+<td><code>feature:pii-rule-rollout:&lt;revision&gt;</code></td>
+<td>0/10/50/100</td>
+<td>100</td>
+<td>PII ルールロールアウト</td>
+</tr>
+<tr>
+<td><code>feature:announcement-batch-size</code></td>
+<td>int</td>
+<td>100</td>
+<td>お知らせ配信 batch size</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-環境分離参照-要件-145メイン-145-と完全同一">4. 環境分離(参照: 要件 §14.5、メイン §14.5 と完全同一)</h2>
+<table>
+<thead>
+<tr>
+<th>環境</th>
+<th>Workers / D1 / R2 / KV</th>
+<th>データ</th>
+<th>デプロイ権限</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>dev</td>
+<td>開発者個別</td>
+<td>合成データ</td>
+<td>全開発者</td>
+</tr>
+<tr>
+<td>staging</td>
+<td>共有</td>
+<td><strong>本番マスキング済みダンプ</strong>(週次更新)</td>
+<td>開発者</td>
+</tr>
+<tr>
+<td>prod</td>
+<td>共有</td>
+<td>本番</td>
+<td><strong>2 名承認</strong>(GitHub OIDC + Environment Protection Rules)</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>本番データのマスキング</strong>: メールアドレスは SHA-256 ハッシュ化、氏名・住所はダミー値、本文は先頭 100 文字 + <code>…</code> でトリミング</li>
+<li><strong>本番直接変更</strong>: 緊急時のみ運営者の対応チケット ID 必須、全クエリを監査ログに記録(FR-229 と整合)</li>
+<li><strong>マイグレーション</strong>: Wrangler D1 migrations、ダウンタイム無しのスキーマ変更は <strong>expand/contract 二段階</strong></li>
+<li><strong>デプロイ権限</strong>: 本番への書き込み権限を持つアカウントを最小化し、定期棚卸しを実施</li>
+</ul>
+<h2 id="5-デプロイプロセス参照-基本設計-124--詳細設計-1311">5. デプロイプロセス(参照: 基本設計 §12.4 / 詳細設計 §13.11)</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>仕様</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>本番デプロイ</td>
+<td>2 名承認(GitHub OIDC + Environment Protection Rules)</td>
+</tr>
+<tr>
+<td>マイグレーション</td>
+<td>Wrangler D1 migrations、expand/contract 二段階</td>
+</tr>
+<tr>
+<td>本番直接変更</td>
+<td>緊急時のみ、対応チケット ID 必須、全クエリを <code>audit_logs(prod.direct_change, retention_class=5y)</code> に記録</td>
+</tr>
+<tr>
+<td>デプロイロールバック</td>
+<td>Wrangler 直前バージョンへの即時切替(p95 5 分以内)</td>
+</tr>
+<tr>
+<td>運営者 Worker デプロイ</td>
+<td>メイン Worker と独立(別 wrangler プロジェクト、D-02)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-マイグレーション方針参照-基本設計-125--詳細設計-1312">6. マイグレーション方針(参照: 基本設計 §12.5 / 詳細設計 §13.12)</h2>
+<p>要件 §14.5 と整合。</p>
+<table>
+<thead>
+<tr>
+<th>段階</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>expand</td>
+<td>新カラム・新テーブル追加、旧コードは旧スキーマで動作可</td>
+</tr>
+<tr>
+<td>dual-write</td>
+<td>新旧両方に書込、新規読出は新スキーマ</td>
+</tr>
+<tr>
+<td>contract</td>
+<td>旧カラム・旧テーブル削除</td>
+</tr>
+</tbody>
+</table>
+<p>例: <code>user_type</code> rename(R-013)、<code>retention_class</code> 列追加、<code>accounts_retired</code>(オーナー行スナップショット)新設。</p>
+<h3 id="61-wrangler-典型コマンドフロー顧管側">6.1 Wrangler 典型コマンドフロー(顧管側)</h3>
+<p>メイン §18.4.1.a と同方針。顧管側 D1(<code>admin-db-prod</code>)のマイグレーションは以下のフローで実施:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># (1) マイグレーション作成</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">wrangler</span> d1 migrations create admin-db <span class="st">&quot;0021_add_analytics_kpi_daily&quot;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># (2) ローカル D1 適用 + 単体テスト</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">wrangler</span> d1 migrations apply admin-db <span class="at">--local</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">pnpm</span> <span class="at">--filter</span> <span class="st">&#39;@faq-saas/admin-api&#39;</span> test</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># (3) staging 適用</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="ex">wrangler</span> d1 migrations apply admin-db-staging <span class="at">--remote</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="ex">pnpm</span> test:integration <span class="at">--</span> <span class="at">--env</span><span class="op">=</span>staging</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># (4) 本番適用(4-eyes 必須)</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 申請: operator_approvals に prod_migration.apply を起票</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 別運営者の承認後に実行:</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="ex">wrangler</span> d1 migrations apply admin-db-prod <span class="at">--remote</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co"># (5) 適用済確認</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="ex">wrangler</span> d1 migrations list admin-db-prod <span class="at">--remote</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co"># (6) ANALYZE 更新(§8.4.1 ポリシーに従う)</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="ex">wrangler</span> d1 execute admin-db-prod <span class="at">--remote</span> <span class="at">--command</span><span class="op">=</span><span class="st">&quot;ANALYZE audit_logs; ANALYZE webhook_events;&quot;</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co"># (7) ロールバック(forward-only、新規 migration で前進修正)</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="ex">wrangler</span> d1 migrations create admin-db <span class="st">&quot;0022_rollback_analytics_kpi_daily&quot;</span></span></code></pre></div>
+<h3 id="62-外部キー制約の取り扱い">6.2 外部キー制約の取り扱い</h3>
+<p>D1(SQLite)は <strong>PRAGMA foreign_keys = ON を保証</strong> している。大規模マイグレーション時の <strong>FK 制約一時無効化は禁止</strong> とする。</p>
+<ul>
+<li><strong>理由</strong>: 一時無効化は整合性破綻リスク(孤児行・参照誤りの混入)があり、検出が非常に困難</li>
+<li><strong>代替</strong>: <code>expand → dual-write → contract</code> の中間で FK を持つカラムを変更する場合は、<strong>dual-write フェーズで新旧両方の FK を維持</strong> し、<code>contract</code> 時に明示削除</li>
+<li><strong>NULL 一時許容</strong>: 必要なら新 FK 列を <code>NULLABLE</code> で expand し、データバックフィル後に <code>NOT NULL</code> 制約を contract で追加(forward-only で 3 migration に分割)</li>
+</ul>
+<p>例: <code>audit_logs.target_resource_id</code> を別テーブル ID に変更する場合:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Migration 0023 (expand): 新カラム追加、FK は NULLABLE</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> audit_logs <span class="kw">ADD</span> <span class="kw">COLUMN</span> target_resource_id_v2 TEXT <span class="kw">REFERENCES</span> new_resource_table(<span class="kw">id</span>);</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">-- Migration 0024 (dual-write 開始): アプリ側で両方書込</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">-- Migration 0025 (contract): バックフィル完了後、旧カラム削除</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> audit_logs <span class="kw">DROP</span> <span class="kw">COLUMN</span> target_resource_id;</span></code></pre></div>
+<h2 id="7-テスト戦略要件-146メイン-146-と完全同一">7. テスト戦略(要件 §14.6、メイン §14.6 と完全同一)</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>範囲</th>
+<th>MVP 採用ツール(目安)</th>
+<th>実施タイミング</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ユニットテスト</td>
+<td>Workers ハンドラ・ドメインロジック</td>
+<td>Vitest</td>
+<td>コミット毎</td>
+</tr>
+<tr>
+<td>結合テスト</td>
+<td>D1 / R2 / KV を含む</td>
+<td>Miniflare + Vitest</td>
+<td>PR 毎</td>
+</tr>
+<tr>
+<td>E2E テスト(管理画面)</td>
+<td>SCR-001〜027 主要フロー</td>
+<td>Playwright</td>
+<td>nightly + リリース前</td>
+</tr>
+<tr>
+<td>E2E テスト(ウィジェット)</td>
+<td>質問送信〜回答〜未解決〜チャット</td>
+<td>Playwright</td>
+<td>nightly</td>
+</tr>
+<tr>
+<td>E2E テスト(運営画面)</td>
+<td>SCR-090〜096 + 連携 IF #1〜12</td>
+<td>Playwright</td>
+<td>nightly</td>
+</tr>
+<tr>
+<td>負荷試験</td>
+<td>100 RPS / 契約 200 / FAQ 1 万</td>
+<td>k6</td>
+<td>月次 + 主要リリース前</td>
+</tr>
+<tr>
+<td>オーナー境界によるデータ分離検証</td>
+<td>クロス契約アクセス試行(自動 50 + 手動 5)</td>
+<td>カスタムスイート</td>
+<td>月次自動 + 年次手動レビュー</td>
+</tr>
+<tr>
+<td>AI 品質回帰</td>
+<td>FAQ × 想定質問のペア(MVP <strong>50 組以上</strong>)</td>
+<td>カスタムバッチ</td>
+<td>モデル更新時・プロンプト変更時</td>
+</tr>
+<tr>
+<td>プロンプト注入回帰</td>
+<td>攻撃 20 ケース以上</td>
+<td>カスタムスイート</td>
+<td>四半期(FR-063 と整合)</td>
+</tr>
+<tr>
+<td>ペネトレーションテスト</td>
+<td>全エンドポイント</td>
+<td>外部委託または社内</td>
+<td>MVP リリース前に 1 回以上</td>
+</tr>
+</tbody>
+</table>
+<h2 id="8-関連設計">8. 関連設計</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>参照先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>要件</td>
+<td><a href="../01_要件定義/index.html">../01_要件定義/index.html</a> §14.5 / §18</td>
+</tr>
+<tr>
+<td>基本設計</td>
+<td><a href="../02_基本設計/index.html">../02_基本設計/index.html</a> §13 リリース戦略</td>
+</tr>
+<tr>
+<td>詳細設計</td>
+<td><a href="../03_詳細設計/index.html">../03_詳細設計/index.html</a> §18 リリース戦略・フィーチャーフラグ / §13.11 / §13.12</td>
+</tr>
+<tr>
+<td>関連 NFR</td>
+<td>NFR-101〜106 / R-013 / AC-046 / FR-229 / FR-302</td>
+</tr>
+<tr>
+<td>メイン側リリース</td>
+<td><a href="../../01_メインシステム/04_運用設計/05_リリース・デプロイ設計.html">../../01_メインシステム/04_運用設計/05_リリース・デプロイ設計.html</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-未確定事項確認事項">9. 未確定事項・確認事項</h2>
+<table>
+<thead>
+<tr>
+<th>確認事項ID</th>
+<th>確認内容</th>
+<th>優先度</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>v1.0 リリース時点で全項目確定済み</td>
+<td>低</td>
+<td>確認済</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

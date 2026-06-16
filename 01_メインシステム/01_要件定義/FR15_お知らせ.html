@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FR15: お知らせ | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/01_要件定義/FR15_お知らせ.html">
+<article class="content" id="content">
+<h1 id="fr15-お知らせ">FR15: お知らせ</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書名</td>
+<td>FR15: お知らせ</td>
+</tr>
+<tr>
+<td>機能グループ</td>
+<td>お知らせ</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>FAQ AI ウィジェット SaaS / メインシステム</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-17</td>
+</tr>
+<tr>
+<td>版数</td>
+<td>v1.0</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>承認済</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-機能概要">1. 機能概要</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>概要</td>
+<td>管理者向けのアプリ内お知らせ機能。3 種別(請求確定 / 運営お知らせ / システム通知)・4 段階の重要度(低 / 通常 / 重要 / 最重要)を持ち、一覧 / 詳細表示、既読管理(個別 / 一括)、種別 / 期間絞り込み、ヘッダ通知ベルの未読バッジ表示、月次請求確定や運営お知らせと連動した受信箱生成、システム通知の自動生成、退会時削除を扱う</td>
+</tr>
+<tr>
+<td>利用場面</td>
+<td>管理画面ログイン時の未読確認、月次請求確定通知、運営からのお知らせ閲覧、上限到達等のシステム通知確認</td>
+</tr>
+<tr>
+<td>優先度</td>
+<td>Must</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-収録-fr-nnn-一覧">2. 収録 FR-NNN 一覧</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>要件</th>
+<th style="text-align: center;">優先度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-180</td>
+<td>管理者は自契約宛のお知らせ一覧を取得・表示できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-181</td>
+<td>管理者はお知らせの詳細(本文・種別・重要度・配信日時)を表示できること。重要度は「低 / 通常 / 重要 / 最重要」の 4 段階とし、「最重要」は規約改定・重大セキュリティ通知・サスペンション確定時に限定使用する。重要度ごとの表示・メール配信制御は基本設計を正本とする</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-182</td>
+<td>管理者はお知らせを個別および一括で既読化できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-183</td>
+<td>管理者はお知らせを種別(請求確定 / 運営お知らせ / システム通知)、既読状態、期間で絞り込みできること</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>FR-184</td>
+<td>管理画面ヘッダの通知ベルに、未読件数のバッジを表示できること(0件時は非表示)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-185</td>
+<td>管理画面ヘッダの通知ベルから、直近10件のお知らせをドロップダウンで表示できること</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>FR-186</td>
+<td>お知らせは管理者ユーザー(<code>users</code> 行を保持する利用者)のみ閲覧可能とし、ウィジェット利用者は画面・APIともに閲覧できないこと</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-187</td>
+<td>月次請求の確定タイミングで、管理者ユーザーの受信箱に請求確定のお知らせを生成できること(FR-148 のメール通知と同期して実施)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-188</td>
+<td>運営者が運営お知らせを配信したタイミングで、対象管理者ユーザーの受信箱に運営お知らせを生成できること(FR-149 のメール通知と同期して実施)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-189</td>
+<td>上限接近(80%)・上限超過、通知配信失敗の急増、AI 利用上限到達などの運用イベントをシステム通知として受信箱に生成できること(発生イベント一覧は §12.5 お知らせ種別マッピング表を参照)</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>FR-190</td>
+<td>お知らせ受信箱は管理者ごとに保持し、アカウント無効化・退会時に削除されること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-191</td>
+<td>お知らせの未読件数は管理画面遷移時に取得し、画面滞在中も過大な負荷を生まない範囲で更新できること。更新間隔やキャッシュ方式は基本設計で規定する</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>FR-192</td>
+<td>一括既読操作は監査ログに記録できること(操作者、対象件数、実行日時)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-補足説明統合参照">3. 補足説明・統合参照</h2>
+<p>お知らせ種別と発生イベント・配信経路・オプトアウト可否の対応関係は §12.5 お知らせ種別マッピング表を参照(両書の正本)。重複生成対策として同一契約・同一イベント種別での 60 分以内の連続発火は 1 件に集約する(R-012 と整合)。</p>
+<h2 id="4-関連設計">4. 関連設計</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>参照先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>画面設計</td>
+<td><a href="../02_基本設計/01_画面設計.html">../02_基本設計/01_画面設計.html</a></td>
+</tr>
+<tr>
+<td>API 設計</td>
+<td><a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html</a></td>
+</tr>
+<tr>
+<td>テーブル設計</td>
+<td><a href="../02_基本設計/03_テーブル設計.html">../02_基本設計/03_テーブル設計.html</a></td>
+</tr>
+<tr>
+<td>権限設計</td>
+<td><a href="../02_基本設計/04_権限設計.html">../02_基本設計/04_権限設計.html</a></td>
+</tr>
+<tr>
+<td>エラー設計</td>
+<td><a href="../02_基本設計/05_エラー設計.html">../02_基本設計/05_エラー設計.html</a></td>
+</tr>
+<tr>
+<td>メッセージ</td>
+<td><a href="../02_基本設計/06_メッセージ一覧.html">../02_基本設計/06_メッセージ一覧.html</a></td>
+</tr>
+<tr>
+<td>詳細設計</td>
+<td><a href="../03_詳細設計/index.html">../03_詳細設計/index.html</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-未確定事項確認事項">5. 未確定事項・確認事項</h2>
+<table>
+<thead>
+<tr>
+<th>確認事項ID</th>
+<th>確認内容</th>
+<th>優先度</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>v1.0 リリース時点で全項目確定済み</td>
+<td>低</td>
+<td>確認済</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FR23 4-eyes 承認 | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="02_運営者システム/01_要件定義/FR23_4-eyes承認.html">
+<article class="content" id="content">
+<h1 id="fr23-4-eyes-承認">FR23 4-eyes 承認</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書種別</td>
+<td>機能要件(機能グループ別)</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>運営者システム(顧客管理システム)</td>
+</tr>
+<tr>
+<td>版</td>
+<td>v1.0</td>
+</tr>
+<tr>
+<td>機能グループ</td>
+<td>4-eyes 承認(運営者責務のうち 4-eyes 関連 + §6.2.3 ハードゲート / 承認ログ)</td>
+</tr>
+<tr>
+<td>ソース章</td>
+<td>§8.20 内 4-eyes 承認関連 + §6.2.3 4-eyes 原則対象操作</td>
+</tr>
+<tr>
+<td>派生元 BR</td>
+<td>BR-028(運営者の内部統制要件)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-機能概要">1. 機能概要</h2>
+<p>不可逆性が高い、または広範囲に影響を及ぼす運営者操作に対し、申請者と承認者を別運営者とする <strong>4-eyes 原則</strong>(2 人による相互確認)を適用する。MVP では §6.2.3 のとおり (i) ハードゲート(別運営者の事前承認必須)と (ii) 承認ログ(単独実行 + 事後レビュー)の 2 区分で統制する。</p>
+<h3 id="4-eyes-原則対象操作623">4-eyes 原則対象操作(§6.2.3)</h3>
+<table>
+<thead>
+<tr>
+<th>対象操作</th>
+<th>申請者</th>
+<th>承認者</th>
+<th>承認後の不可逆性</th>
+<th>関連 FR</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>契約無効化(利用中 → サスペンション中)</td>
+<td>運営者</td>
+<td>別運営者</td>
+<td>解除可(§9.10)</td>
+<td>FR-211 系</td>
+</tr>
+<tr>
+<td>契約復元(削除猶予中 → 利用中)</td>
+<td>運営者</td>
+<td>別運営者</td>
+<td>解除可</td>
+<td>FR-204</td>
+</tr>
+<tr>
+<td>契約物理削除(解約手続き中 → 解約完了)</td>
+<td>運営者</td>
+<td>別運営者</td>
+<td><strong>不可逆</strong></td>
+<td>NFR-707</td>
+</tr>
+<tr>
+<td>従量単価表・無料枠の改定</td>
+<td>運営者</td>
+<td>別運営者</td>
+<td>改定で巻戻し可</td>
+<td>FR-220 系</td>
+</tr>
+<tr>
+<td>AI 推論パラメータ変更(信頼度/関連度しきい値、モデル切替)</td>
+<td>運営者</td>
+<td>別運営者</td>
+<td>変更で巻戻し可</td>
+<td>FR-061</td>
+</tr>
+<tr>
+<td>契約別レート制限・上限件数の上書き</td>
+<td>運営者</td>
+<td>別運営者</td>
+<td>変更で巻戻し可</td>
+<td>FR-220 系</td>
+</tr>
+<tr>
+<td>緊急ウィジェット強制停止</td>
+<td>運営者</td>
+<td>別運営者</td>
+<td>解除可</td>
+<td>FR-211 系</td>
+</tr>
+<tr>
+<td>削除データの復元</td>
+<td>運営者</td>
+<td>別運営者</td>
+<td>復元後の整合性確認要</td>
+<td>FR-204</td>
+</tr>
+<tr>
+<td>マスター鍵ローテーション</td>
+<td>運営者</td>
+<td>別運営者</td>
+<td>基本設計で定める猶予期間内のみ巻戻し可</td>
+<td>NFR-320 / NFR-321</td>
+</tr>
+<tr>
+<td>ハードゲート一時無効化(緊急一時無効化。要件 §6.2.1 区分3 セキュリティインシデント発動時 + §6.2.2 発動条件成立時のみ)</td>
+<td>運営者</td>
+<td>別運営者</td>
+<td>切替で巻戻し可、ただしバイパス中の重大操作は不可逆</td>
+<td>FR-226 / §6.2.3(セキュリティ二段ガード)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="mvp-適用範囲">MVP 適用範囲</h3>
+<table>
+<thead>
+<tr>
+<th>区分</th>
+<th>4-eyes 適用範囲</th>
+<th>承認手段</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ハードゲート</td>
+<td>① 契約物理削除(解約手続き中 → 解約完了)、② AI 推論パラメータ変更(信頼度/関連度しきい値・モデル切替)、③ マスター鍵ローテーション</td>
+<td>別運営者の事前承認必須</td>
+</tr>
+<tr>
+<td>承認ログ</td>
+<td>その他の上表対象操作</td>
+<td>単独実行 + 事後レビュー。運営者ダッシュボードで履歴を可視化</td>
+</tr>
+</tbody>
+</table>
+<p><strong>自己取下げと他者却下の区別</strong>: 4-eyes 申請は (a) 申請者本人による <strong>自己取下げ</strong>(誤申請の撤回、業務的判断不要)と (b) 別運営者による <strong>却下</strong>(承認すべきでないと判断)を別状態で管理する。両者は監査・KPI 集計で別カウントし、誤申請の検出と業務却下を区別する。</p>
+<p><strong>ハードゲート対象操作の管理(セキュリティ二段ガード)</strong>: MVP ハードゲート対象の 3 操作は基本設計で定める固定リストとして管理し、緊急一時無効化は要件 §6.2.1 区分3 セキュリティインシデント + §6.2.2 発動条件成立時のみ使用する。一時無効化操作自体が 4-eyes 対象(上表 10 行目)であり、誤操作で重大操作が単独実行可能になるリスクを排除する。</p>
+<h2 id="2-収録-fr-nnn-一覧">2. 収録 FR-NNN 一覧</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>要件</th>
+<th style="text-align: center;">優先度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-226</td>
+<td>運営者操作のうち、契約全体に影響する高権限操作は、MVP で §6.2.3 のハードゲート / 承認ログに従って統制できること</td>
+<td style="text-align: center;">P2</td>
+</tr>
+</tbody>
+</table>
+<p>「緊急区分」の定義(§6.2.1)・発動条件 4 項目(§6.2.2)はメインシステム要件を正本として参照する。検知 → 承認 → 記録の HOW フローおよび SLA は <a href="../02_基本設計/index.html">../02_基本設計/index.html</a> §6.2.13(顧客管理側発行責務)を参照。</p>
+<h2 id="3-補足説明統合参照">3. 補足説明・統合参照</h2>
+<ul>
+<li>FR-204(契約復元)・FR-061(AI 推論パラメータ変更)・FR-021(メンバー数ハード上限引上げ)・FR-035(プロジェクト数ハード上限引上げ)・FR-121(c)(上限件数上書き)等は本表の 4-eyes 対象として制御される。</li>
+<li>緊急対応 FR-224((a) ウィジェット強制停止 / (b) レート制限緊急引下げ / (c) IP・ドメイン遮断 / (d) AI ロールバック)は本書 <a href="FR18_運営者の責務.html">FR18_運営者の責務.html</a> を参照。本表の「緊急ウィジェット強制停止」「契約別レート制限上書き」「AI 推論パラメータ変更」等が該当。</li>
+<li>4-eyes 申請の <code>payload_hash</code> 整合性チェックは本書 <a href="FR19_UI・UX共通.html">FR19_UI・UX共通.html</a> FR-455 と整合(UI 表示要件)。自己承認禁止 UI は FR-456。</li>
+<li>4-eyes 承認基盤の正本は運営者側(リポジトリ 保守ルール / 共有概念正本ルール参照)。</li>
+</ul>
+<h2 id="4-関連設計">4. 関連設計</h2>
+<ul>
+<li><a href="../02_基本設計/index.html">../02_基本設計/index.html</a> 基本設計書 index(§6.2.13 顧客管理側発行責務)</li>
+<li><a href="../02_基本設計/01_画面設計.html">../02_基本設計/01_画面設計.html</a> §SCR-APPROVALS(承認待ち一覧)/ SCR-APPROVALS-M1(申請モーダル)/ SCR-APPROVALS-M2(承認・却下モーダル)</li>
+<li><a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html</a> 4-eyes 承認 API・payload_hash 検査</li>
+<li><a href="../02_基本設計/03_テーブル設計.html">../02_基本設計/03_テーブル設計.html</a> <code>operator_approvals</code> テーブル(申請状態 / 自己取下げ / 他者却下 区別 / payload_hash)</li>
+<li><a href="../02_基本設計/04_権限設計.html">../02_基本設計/04_権限設計.html</a> 4-eyes 10 操作カバレッジ</li>
+<li><a href="../02_基本設計/05_エラー設計.html">../02_基本設計/05_エラー設計.html</a> <code>E-OP-4EYES-*</code> 体系</li>
+<li><a href="../02_基本設計/08_認証・認可設計.html">../02_基本設計/08_認証・認可設計.html</a> 4-eyes 承認フロー §7</li>
+<li><a href="../02_基本設計/09_セキュリティ設計.html">../02_基本設計/09_セキュリティ設計.html</a> ハードゲート / 承認ログ / セキュリティ二段ガード §7</li>
+<li><a href="../02_基本設計/07_トレーサビリティマトリクス.html">../02_基本設計/07_トレーサビリティマトリクス.html</a></li>
+<li><a href="../03_詳細設計/index.html">../03_詳細設計/index.html</a> 詳細設計書 index</li>
+</ul>
+<h2 id="5-未確定事項確認事項">5. 未確定事項・確認事項</h2>
+<ul>
+<li>緊急一時無効化(ハードゲートバイパス)の発動時の二人承認 SLA は基本設計で確定する。</li>
+<li>自己取下げ・他者却下の KPI 集計対象期間は基本設計で確定する。</li>
+</ul>
+
+</article>
+</body>
+</html>

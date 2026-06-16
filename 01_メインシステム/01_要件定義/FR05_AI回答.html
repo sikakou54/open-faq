@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FR05: AI 回答 | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/01_要件定義/FR05_AI回答.html">
+<article class="content" id="content">
+<h1 id="fr05-ai-回答">FR05: AI 回答</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書名</td>
+<td>FR05: AI 回答</td>
+</tr>
+<tr>
+<td>機能グループ</td>
+<td>AI 回答</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>FAQ AI ウィジェット SaaS / メインシステム</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-17</td>
+</tr>
+<tr>
+<td>版数</td>
+<td>v1.4</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>承認済</td>
+</tr>
+<tr>
+<td>更新履歴</td>
+<td>v1.4(2026-06-14): ウィジェット返信から問い合わせID表示を削除 / v1.3(2026-06-12): 未解決時は問い合わせIDと連絡先案内を表示</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-機能概要">1. 機能概要</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>概要</td>
+<td>エンドユーザーの質問に対し、公開中の登録済み FAQ のみを根拠に AI が回答する。回答可否判定(信頼度 / 関連度)、参照 FAQ 記録、矛盾検知、プロンプト注入耐性、出力検査(固有名詞・PII)を含む</td>
+</tr>
+<tr>
+<td>利用場面</td>
+<td>ウィジェットでのエンドユーザー質問応答、運営者によるしきい値調整(3 階層)、AI モデル切替時の品質回帰確認</td>
+</tr>
+<tr>
+<td>優先度</td>
+<td>Must</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-収録-fr-nnn-一覧">2. 収録 FR-NNN 一覧</h2>
+<h3 id="ai-スコアリング定義両書共通">AI スコアリング定義(両書共通)</h3>
+<p>本節では、回答可否判定に用いる指標の名称と MVP 初期値だけを要件として定義する。算出方法、適用順位、矛盾検知方式、キャッシュ方式は <a href="../02_基本設計/index.html">基本設計書 §6.4.0〜§6.4.3</a> を正本とする。</p>
+<table>
+<thead>
+<tr>
+<th>指標</th>
+<th>要件上の意味</th>
+<th>MVP 初期値</th>
+<th>設定階層</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>関連度(relevance)</td>
+<td>質問に該当する FAQ が存在するかを判定する指標</td>
+<td>0.50</td>
+<td>グローバル &lt; オーナー &lt; プロジェクト</td>
+</tr>
+<tr>
+<td>信頼度(confidence)</td>
+<td>AI 回答を確定回答として提示してよいかを判定する指標</td>
+<td>0.60</td>
+<td>グローバル &lt; オーナー &lt; プロジェクト</td>
+</tr>
+</tbody>
+</table>
+<p>FAQ 矛盾検知は FR-054 の WHAT として扱い、MVP 方式は基本設計 §6.4.1 を正本とする。</p>
+<h3 id="機能要件">機能要件</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>要件</th>
+<th style="text-align: center;">優先度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-050</td>
+<td>エンドユーザーの質問に対し、公開中の登録済みFAQのみを根拠として回答できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-051</td>
+<td>FAQに根拠がない内容をAIが独自に作成しないこと</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-052</td>
+<td>AIはFAQの内容を要約・言い換え・整理できるが、新しい事実・数値・固有名詞・手順を追加しないこと</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-053</td>
+<td>回答に利用したFAQを記録し、利用者にも参照FAQを提示できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-054</td>
+<td>FAQ同士に矛盾がある場合、断定回答せず未解決として扱えること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-055</td>
+<td>回答可否の判定に信頼度・関連度のしきい値を運営者がグローバル / 契約別 / プロジェクト別の <strong>3 階層</strong>で調整できること。優先順位は <strong>プロジェクト &gt; オーナー &gt; グローバル</strong>(より具体的な設定が優先)。設定値は保存と同時に有効化されること。MVP 初期値は <strong>信頼度 0.60 / 関連度 0.50</strong>(顧客管理システム FR-061 と整合)。動作ルールは基本設計 §6.4.0 を正本とする</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>FR-056</td>
+<td>FAQ登録済みデータでは回答できなかった場合、管理用の問い合わせ ID を付与して未解決質問を登録し、同じウィジェットの会話欄へは回答できなかった旨・確認済みプロジェクト連絡先メール(設定済みの場合)を表示すること。問い合わせ ID はウィジェットに表示せず、FAQ 質問入力は継続可能とすること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-057</td>
+<td>処理エラーの場合は、未解決質問登録ではなくエラー表示を行えること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-058</td>
+<td>エンドユーザー入力により AI の動作方針(FAQ 限定回答方針)が変更されないこと(プロンプト注入耐性)。代表的な攻撃パターンを含む回帰テストを AI モデル更新時およびプロンプト変更時に実行すること。入力隔離、出力フィルタ、テストセットの構成は基本設計を正本とする(顧客管理システム NFR-318 と整合)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-059</td>
+<td>利用する AI モデルや基盤の変更時に、運営者が動作確認・切替・品質回帰確認・必要時のロールバックを行えること。標準テストデータセットは FAQ × 想定質問のペア <strong>50 組以上</strong> とする。品質劣化判定、ロールバック条件、メトリクス観測方法は基本設計 §6.4.5 / 詳細設計を正本とする</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>FR-060</td>
+<td>AI 回答の出力前に検査を行い、参照 FAQ 外の固有名詞・数値・手順を検出した AI 回答は返却せず未解決登録に倒せること。個人情報を検出した場合は <code>[情報型]</code> 形式でマスキングして返却し、検出種別を監査ログに記録できること。検出層の詳細方式は基本設計 §6.4.2 を正本とする</td>
+<td style="text-align: center;">P1</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-補足説明統合参照">3. 補足説明・統合参照</h2>
+<p>§8.6.1 AI スコアリング定義は両書共通の正本。算出方法・適用順位・矛盾検知方式・キャッシュ方式は基本設計書 §6.4 を正本とする。FR-061〜069(AI 推論パラメータ設定の正本)は顧客管理側で正本管理されるため、本書 FR-055 から参照のみ。</p>
+<h2 id="4-関連設計">4. 関連設計</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>参照先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>画面設計</td>
+<td><a href="../02_基本設計/01_画面設計.html">../02_基本設計/01_画面設計.html</a></td>
+</tr>
+<tr>
+<td>API 設計</td>
+<td><a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html</a></td>
+</tr>
+<tr>
+<td>テーブル設計</td>
+<td><a href="../02_基本設計/03_テーブル設計.html">../02_基本設計/03_テーブル設計.html</a></td>
+</tr>
+<tr>
+<td>権限設計</td>
+<td><a href="../02_基本設計/04_権限設計.html">../02_基本設計/04_権限設計.html</a></td>
+</tr>
+<tr>
+<td>エラー設計</td>
+<td><a href="../02_基本設計/05_エラー設計.html">../02_基本設計/05_エラー設計.html</a></td>
+</tr>
+<tr>
+<td>メッセージ</td>
+<td><a href="../02_基本設計/06_メッセージ一覧.html">../02_基本設計/06_メッセージ一覧.html</a></td>
+</tr>
+<tr>
+<td>詳細設計</td>
+<td><a href="../03_詳細設計/index.html">../03_詳細設計/index.html</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-未確定事項確認事項">5. 未確定事項・確認事項</h2>
+<table>
+<thead>
+<tr>
+<th>確認事項ID</th>
+<th>確認内容</th>
+<th>優先度</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>v1.0 リリース時点で全項目確定済み</td>
+<td>低</td>
+<td>確認済</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

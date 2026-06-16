@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FR12: ウィジェット | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/01_要件定義/FR12_ウィジェット.html">
+<article class="content" id="content">
+<h1 id="fr12-ウィジェット">FR12: ウィジェット</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書名</td>
+<td>FR12: ウィジェット</td>
+</tr>
+<tr>
+<td>機能グループ</td>
+<td>ウィジェット</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>FAQ AI ウィジェット SaaS / メインシステム</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-17</td>
+</tr>
+<tr>
+<td>版数</td>
+<td>v1.6</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>承認済</td>
+</tr>
+<tr>
+<td>更新履歴</td>
+<td>v1.6(2026-06-14): 初期表示を丸型ランチャーバッジとし、クリックでチャット UI を展開する開閉仕様を追加 / v1.5(2026-06-14): 未解決返信から問い合わせID表示を削除 / v1.4(2026-06-14): エンドユーザー向けヘッダーからメニューと規約導線を削除 / v1.3(2026-06-12): 未解決質問の問い合わせID・連絡先案内を定義</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-機能概要">1. 機能概要</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>概要</td>
+<td>管理者サイトに埋め込む JavaScript ウィジェットを提供する。初期表示は右下固定の丸型ランチャーバッジ(カスタマーバッジ)とし、利用者の操作でエンドユーザー向け FAQ チャット UI を展開する。未解決時の連絡先案内、質問受付制限時の案内、許可ドメイン制限、見た目(主色)のカスタマイズ、運営者ロゴ必須表示、モバイル対応、アクセシビリティ、CDN 配信高速化を扱う。チャット UI の角丸度は 8px 固定(MVP では設定不可)</td>
+</tr>
+<tr>
+<td>利用場面</td>
+<td>管理者サイトへのウィジェット設置、エンドユーザーがウィジェットから質問する一連の体験</td>
+</tr>
+<tr>
+<td>優先度</td>
+<td>Must</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-収録-fr-nnn-一覧">2. 収録 FR-NNN 一覧</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>要件</th>
+<th style="text-align: center;">優先度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-150</td>
+<td>管理者は埋め込みコードを取得し、自社サイトに設置できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-151</td>
+<td>ウィジェットは指定された許可ドメイン上でのみ動作すること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-152</td>
+<td>ウィジェットのカラーテーマ等の基本的な見た目をプロジェクトごとに設定できること。<strong>設定可能項目</strong>: (a) 主色(プライマリカラー、HEX 指定)。<strong>固定仕様(MVP では設定不可)</strong>: 配置は右下固定、初期表示の丸型ランチャーバッジは直径 56px、展開後のチャット UI の角丸度は 8px 固定。<strong>運営者ロゴ表示</strong>: 本サービスの運営者ロゴ(Powered by ○○)を必須表示とする</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>FR-153</td>
+<td>ウィジェットはモバイル端末でも利用できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-154</td>
+<td>ウィジェットがアクセシビリティ要件(キーボード操作、スクリーンリーダー、コントラスト等)に配慮していること</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>FR-155</td>
+<td>ウィジェットはサポート対象ブラウザで動作すること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-156</td>
+<td>ウィジェット配信は高速化(CDN/キャッシュ)できること</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>FR-156a</td>
+<td>ウィジェットは初期状態で右下固定の直径 56px の丸型ランチャーバッジ(メッセージアイコン)として表示し、クリックまたはキーボード操作(Enter / Space)で、質問と回答の履歴、質問入力欄、送信操作を備えたチャット UI を展開すること。閉じる操作ではランチャーバッジ表示へ戻り、同一ページ内の会話履歴と受付状態を保持すること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-156b</td>
+<td>チャット UI のヘッダーはウィジェットタイトル、現在状態、チャット UI を閉じるボタンのみを表示し、ハンバーガーメニューその他の操作メニュー、および「利用規約」「プライバシーポリシー」への導線を表示しないこと</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-156c</td>
+<td>質問数の月次上限到達または支払方法ゲートにより新規質問を受け付けない場合、ウィジェットは 429 応答をチャット内のシステム返信として表示し、確認済みプロジェクト連絡先メールがある場合はそのメールアドレスを案内すること。制限中は質問入力と送信を無効化すること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-156d</td>
+<td>AI が質問を解決できなかった場合、管理用の問い合わせ ID を付与して未解決質問を登録するが、問い合わせ ID はウィジェットに表示しないこと。同じチャット UI の会話履歴を保持したまま、回答できなかった旨・確認済みプロジェクト連絡先メール(設定済みの場合)をシステム返信として表示し、別の FAQ 質問は引き続き入力・送信できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-補足説明統合参照">3. 補足説明・統合参照</h2>
+<h3 id="31-エンドユーザー向け表示状態">3.1 エンドユーザー向け表示状態</h3>
+<table>
+<thead>
+<tr>
+<th>状態</th>
+<th>表示・操作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>起動前</td>
+<td>右下固定の丸型ランチャーバッジのみを表示する。クリックまたは Enter / Space でチャット UI を展開する</td>
+</tr>
+<tr>
+<td>通常</td>
+<td>チャット形式で質問と AI 回答を表示し、質問入力・送信を可能とする</td>
+</tr>
+<tr>
+<td>未解決</td>
+<td>AI が回答できなかった旨と、確認済みの場合はお問い合わせ先メールを同じ会話欄に表示する。管理用の問い合わせ ID は表示しない。有人チャットへは切り替えず、別の FAQ 質問入力を継続できる</td>
+</tr>
+<tr>
+<td>制限中</td>
+<td>新規質問を受け付けられない旨と、確認済みの場合はお問い合わせ先メールをシステム返信として表示する。入力欄と送信操作は無効化する</td>
+</tr>
+</tbody>
+</table>
+<p>展開中のチャット UI はヘッダーの閉じるボタンで起動前表示へ戻る。再度展開した場合は、同一ページ内の会話履歴、入力可否、通常 / 制限中の受付状態を復元する。</p>
+<p>配布形式・アクセス制御・対応端末・対応ブラウザの詳細は §11.2 ウィジェット配信要件を参照する。</p>
+<h2 id="4-関連設計">4. 関連設計</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>参照先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>画面設計</td>
+<td><a href="../02_基本設計/01_画面設計.html">../02_基本設計/01_画面設計.html</a></td>
+</tr>
+<tr>
+<td>API 設計</td>
+<td><a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html</a></td>
+</tr>
+<tr>
+<td>テーブル設計</td>
+<td><a href="../02_基本設計/03_テーブル設計.html">../02_基本設計/03_テーブル設計.html</a></td>
+</tr>
+<tr>
+<td>権限設計</td>
+<td><a href="../02_基本設計/04_権限設計.html">../02_基本設計/04_権限設計.html</a></td>
+</tr>
+<tr>
+<td>エラー設計</td>
+<td><a href="../02_基本設計/05_エラー設計.html">../02_基本設計/05_エラー設計.html</a></td>
+</tr>
+<tr>
+<td>メッセージ</td>
+<td><a href="../02_基本設計/06_メッセージ一覧.html">../02_基本設計/06_メッセージ一覧.html</a></td>
+</tr>
+<tr>
+<td>詳細設計</td>
+<td><a href="../03_詳細設計/index.html">../03_詳細設計/index.html</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-未確定事項確認事項">5. 未確定事項・確認事項</h2>
+<table>
+<thead>
+<tr>
+<th>確認事項ID</th>
+<th>確認内容</th>
+<th>優先度</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>v1.0 リリース時点で全項目確定済み</td>
+<td>低</td>
+<td>確認済</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

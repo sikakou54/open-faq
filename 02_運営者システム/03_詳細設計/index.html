@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>詳細設計 index(運営者システム) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="02_運営者システム/03_詳細設計/index.html">
+<article class="content" id="content">
+<h1 id="詳細設計-index運営者システム">詳細設計 index(運営者システム)</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書種別</td>
+<td>詳細設計 index</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>FAQ AI ウィジェット SaaS / 運営者システム(顧客管理システム / <code>admin.open-faq.example.com</code>)</td>
+</tr>
+<tr>
+<td>版数</td>
+<td>v1.0</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-17</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>承認済</td>
+</tr>
+<tr>
+<td>クラウド前提</td>
+<td>Cloudflare(Workers / D1 / KV / R2 / Queues / Workers AI / Secrets Store / Cron Triggers)</td>
+</tr>
+<tr>
+<td>メール配信</td>
+<td>Resend</td>
+</tr>
+<tr>
+<td>課金プロバイダ</td>
+<td>Stripe(Webhook 一次受信は運営者側)</td>
+</tr>
+<tr>
+<td>上位文書</td>
+<td><a href="../02_基本設計/index.html">基本設計</a> / <a href="../01_要件定義/index.html">要件定義</a></td>
+</tr>
+<tr>
+<td>兄弟文書</td>
+<td><a href="../../01_メインシステム/03_詳細設計/index.html">メインシステム 詳細設計 index</a></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="1-詳細設計方針">1. 詳細設計方針</h2>
+<h3 id="11-本書の位置付け">1.1 本書の位置付け</h3>
+<p>本書は基本設計 v3.0 を実装着手可能な粒度に詳細化した文書である。基本設計が「方式・全体像」を確定するのに対し、本書は「DDL・API スキーマ・KV キー命名・Cron UTC 式・HKDF info 値・action コード一覧・エラーログスキーマなど、実装担当者が即時着手できる具体値」を確定する。</p>
+<p>表記、採番、文書同期、基本設計と詳細設計の境界などの文書保守ルールは 保守ルール に置く。</p>
+<h3 id="12-用語とスコープ">1.2 用語とスコープ</h3>
+<ul>
+<li>用語: 基本設計 付録 A の用語を参照する。</li>
+<li>主語: 「運営者」「管理者ユーザー」「エンドユーザー」を厳密に区別。本書のスコープは運営者(<code>service_operator</code>)が触れる機能のみ。</li>
+<li>本書は <strong>MVP 範囲のみ</strong> を記載する。MVP で実現する実装仕様、初期値、運用制約だけを本文に置く。</li>
+</ul>
+<h3 id="13-実装データ形式命名">1.3 実装データ形式・命名</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>規約</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ID 形式</td>
+<td>ULID 26 文字(運営者・チケット・申請・リプレイ等)/ Stripe ID は <code>evt_*</code> <code>sub_*</code> <code>inv_*</code> <code>cn_*</code> をそのまま PK</td>
+</tr>
+<tr>
+<td>命名</td>
+<td>テーブル: snake_case 複数形 / カラム: snake_case 単数形 / 状態列: <code>state</code> または <code>status</code> / KV キー: <code>&lt;feature&gt;:&lt;scope&gt;:&lt;id&gt;</code> コロン区切り英小文字 + ハイフン</td>
+</tr>
+<tr>
+<td>日時</td>
+<td><code>TIMESTAMP</code> 型 ISO 8601 UTC(<code>2026-05-12T10:00:00Z</code>)。表示時に JST 変換</td>
+</tr>
+<tr>
+<td>真偽値</td>
+<td><code>INTEGER</code> 0/1</td>
+</tr>
+<tr>
+<td>JSON</td>
+<td><code>TEXT</code> 列に JSON 文字列で保存</td>
+</tr>
+<tr>
+<td>エラー</td>
+<td>RFC 7807 <code>application/problem+json</code>(<code>type</code> / <code>title</code> / <code>status</code> / <code>code</code> / <code>detail</code> / <code>trace_id</code>)</td>
+</tr>
+<tr>
+<td>改行</td>
+<td>ファイル末尾は LF 改行で終わる</td>
+</tr>
+</tbody>
+</table>
+<h3 id="14-詳細化区分">1.4 詳細化区分</h3>
+<table>
+<thead>
+<tr>
+<th>区分</th>
+<th>本書で確定する内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>API</td>
+<td>エンドポイントごとの OpenAPI スキーマ、JSON Schema、エラーコード一覧(TH-1)</td>
+</tr>
+<tr>
+<td>DDL</td>
+<td>NULL 制約、外部キー、CHECK 制約、インデックスの正確な構文(TH-2)</td>
+</tr>
+<tr>
+<td>画面詳細</td>
+<td>SCR-090〜098 のコンポーネント、項目、API 呼出、4-eyes UI(TH-3, TH-5)</td>
+</tr>
+<tr>
+<td>HTML サニタイザ</td>
+<td>許可タグ・属性ホワイトリスト具体値(TH-4)</td>
+</tr>
+<tr>
+<td>監査 action コード</td>
+<td><code>&lt;resource&gt;.&lt;verb&gt;</code> 全コード一覧 + retention_class(TH-6)</td>
+</tr>
+<tr>
+<td>KV キー一覧</td>
+<td>個別キーの命名・TTL 値・サンプル値(TH-7)</td>
+</tr>
+<tr>
+<td>Webhook 除外フィールド</td>
+<td>D-06 付録 H 列挙の Stripe API バージョン別拡充(TH-8)</td>
+</tr>
+<tr>
+<td>Stripe API</td>
+<td>Subscription resume / Invoice / Credit Note の具体パラメータ(TH-9)</td>
+</tr>
+<tr>
+<td>Cron 実装</td>
+<td>UTC 表現の cron 式(TH-10)</td>
+</tr>
+<tr>
+<td>エラーログ詳細</td>
+<td>構造化ログのスキーマ、必須フィールド、機密項目マスキング(TH-11)</td>
+</tr>
+<tr>
+<td>HKDF info 値</td>
+<td>正式リスト(TH-12)</td>
+</tr>
+<tr>
+<td>その他</td>
+<td>連携 IF #1〜#12 通信スキーマ、Runbook 雛形、SLA 計測ロジック、状態遷移詳細</td>
+</tr>
+</tbody>
+</table>
+<h3 id="15-最重要方針再掲">1.5 最重要方針(再掲)</h3>
+<p>基本設計 §0 / 要件 §2 を継承:</p>
+<ol type="1">
+<li>運営者は本サービス全契約横断の最小限の運用権限のみを持ち、利用者側業務(FAQ 公開・チャット返信・退会受付など)を肩代わりしない。</li>
+<li>4-eyes 原則は MVP ハードゲート 3 操作 + 承認ログのみ 7 操作で実装する。</li>
+<li>すべての運営者操作は監査ログ(ハッシュチェーン)に記録し、3 区分保持(1y / 5y / 7y)で物理管理する。</li>
+<li>課金 Webhook の一次受信は本書側のみが行い、メイン側は受けない(D-10)。</li>
+<li>運営者プレーンと利用者プレーンはサブドメイン分離(D-01)、Worker 分離(D-02)で攻撃面を最小化する。</li>
+</ol>
+<h3 id="16-スコープ運営者コンソール限定">1.6 スコープ(運営者コンソール限定)</h3>
+<p>本書はメイン §1.4 で「運営者主管」と区分されたものを詳細化する:</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>機能ブロック</th>
+<th>主管 SCR</th>
+<th>主管 FR / NFR</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>運営者認証(MFA + IP 許可 + 再認証 5 分)</td>
+<td>ログイン画面、全画面</td>
+<td>FR-220, FR-221, FR-222, FR-007, NFR-311</td>
+</tr>
+<tr>
+<td>2</td>
+<td>4-eyes 申請承認(MVP 3 ハードゲート + 7 承認ログ)</td>
+<td>承認待ち一覧、各操作モーダル</td>
+<td>FR-226, §6.2.1(基本設計)</td>
+</tr>
+<tr>
+<td>3</td>
+<td>削除データ参照・復元(副作用 (a)〜(g) ロールバック)</td>
+<td>SCR-090 / SCR-091</td>
+<td>FR-200〜FR-211, FR-222, FR-223</td>
+</tr>
+<tr>
+<td>4</td>
+<td>AI 推論パラメータ 3 階層上書き</td>
+<td>SCR-092</td>
+<td>FR-055, FR-061〜FR-066, AC-034</td>
+</tr>
+<tr>
+<td>5</td>
+<td>契約別レート/上限件数上書き + サプレスリスト復帰</td>
+<td>SCR-093</td>
+<td>FR-121, FR-128, FR-224, NFR-503, NFR-504</td>
+</tr>
+<tr>
+<td>6</td>
+<td>お知らせ作成・配信(運営者)</td>
+<td>SCR-094</td>
+<td>FR-149, FR-188, FR-189</td>
+</tr>
+<tr>
+<td>7</td>
+<td>監査ログ閲覧・エクスポート(HMAC 署名)</td>
+<td>SCR-095</td>
+<td>FR-229, FR-230, FR-232, NFR-306, NFR-602</td>
+</tr>
+<tr>
+<td>8</td>
+<td>課金 Webhook リプレイ・DLQ 操作</td>
+<td>SCR-096</td>
+<td>FR-302, NFR-808, NFR-809</td>
+</tr>
+<tr>
+<td>9</td>
+<td>PII 誤検出報告管理(3 営業日判定)</td>
+<td>SCR-097</td>
+<td>FR-060, FR-064, NFR-805</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Webhook ペイロード差分検出</td>
+<td>SCR-098</td>
+<td>FR-302 異常系, AC-041</td>
+</tr>
+<tr>
+<td>11</td>
+<td>月次請求確定 cron(月初 02:00 JST)</td>
+<td>バックグラウンド</td>
+<td>FR-303, AC-042</td>
+</tr>
+<tr>
+<td>12</td>
+<td>監査ハッシュチェーン日次検証</td>
+<td>バックグラウンド</td>
+<td>NFR-306, RB-017</td>
+</tr>
+<tr>
+<td>13</td>
+<td>運営者操作通知(FR-211、10 分集約)</td>
+<td>連携 IF #12</td>
+<td>FR-211, D-19</td>
+</tr>
+</tbody>
+</table>
+<h3 id="17-メインシステム正本範囲">1.7 メインシステム正本範囲</h3>
+<p>次はメインシステム詳細設計の正本対象であり、本書では連携境界として扱う:</p>
+<ul>
+<li>利用者認証・管理者ユーザー登録完了・パスワードリセット(<code>/auth/*</code>)</li>
+<li>公開ウィジェット(<code>/widget/*</code>)</li>
+<li>未解決質問・個別チャット(<code>/inquiries/*</code>, <code>/chat/*</code>)</li>
+<li>FAQ CRUD・FTS 検索(<code>/projects/*/faqs/*</code>)</li>
+<li>管理者ユーザー inbox(主管はメイン、本書は連携 IF #12 で配信指示のみ)</li>
+<li>ウィジェット側レート制限の実適用(主管はメイン、本書は連携 IF #5 で上書き値同期)</li>
+<li>メール送信(主管はメイン、本書は運営者通知 + テスト送信のみ Resend 直叩き)</li>
+<li>サプレスリスト本体(主管はメイン、本書は SCR-093 経由で個別アドレス復帰承認のみ)</li>
+</ul>
+<p>メイン主管エンティティ(<code>accounts</code>, <code>projects</code>, <code>faqs</code>, <code>question_logs</code>, <code>chat_rooms</code>, <code>chat_messages</code>, <code>inquiries</code>, <code>inbox_messages</code> 等)は <a href="../../01_メインシステム/02_基本設計/03_テーブル設計.html">メインテーブル設計</a> を正本参照し、本書では運営者側主管 20 エンティティのみ DDL を書き下す。</p>
+<h3 id="18-mvp-初期値">1.8 MVP 初期値</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>本書での扱い</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Workers AI 利用モデル</td>
+<td><code>@cf/meta/llama-3.1-8b-instruct</code></td>
+</tr>
+<tr>
+<td>データリージョン</td>
+<td>Cloudflare apac</td>
+</tr>
+<tr>
+<td>AI しきい値初期値</td>
+<td>信頼度 0.60 / 関連度 0.50</td>
+</tr>
+<tr>
+<td>PII 検出</td>
+<td>第 1 層(正規表現) + 第 3 層(FAQ 整合性検査)</td>
+</tr>
+<tr>
+<td>4-eyes</td>
+<td>ハードゲート 3 操作 + 承認ログのみ 7 操作</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="2-システム全体構成">2. システム全体構成</h2>
+<h3 id="21-worker-トポロジー">2.1 Worker トポロジー</h3>
+<p>本書側は <strong>メインシステムと別の wrangler プロジェクト</strong>(D-02)としてデプロイする。攻撃面の縮小、MFA / IP 許可ミドルウェアの分離、独立デプロイ・独立ロールバックを目的とする。</p>
+<pre class="mermaid"><code>flowchart TB
+    subgraph Browser[運営者ブラウザ]
+        SPA[Admin SPA&lt;br/&gt;admin.open-faq.example.com&lt;br/&gt;Cloudflare Pages]
+    end
+
+    subgraph External[外部サービス]
+        Stripe[Stripe API / Webhook]
+        Resend[Resend API / Webhook]
+    end
+
+    subgraph AdminPlane[運営者プレーン Worker 群]
+        AdminConsole[AdminConsoleWorker&lt;br/&gt;SPA 配信 + 全運営 API&lt;br/&gt;/admin/api/v1/*]
+        BillingWebhook[BillingWebhookWorker&lt;br/&gt;POST /webhooks/stripe&lt;br/&gt;POST /webhooks/resend]
+        Scheduler[AnnouncementSchedulerWorker&lt;br/&gt;1 分 cron]
+        ChainVerifier[AuditChainVerifierWorker&lt;br/&gt;日次 02:00 JST cron]
+        MonthlyBilling[MonthlyBillingCronWorker&lt;br/&gt;月初 02:00 JST cron]
+        RetentionPurge[RetentionPurgeWorker&lt;br/&gt;日次 03:00 JST cron]
+        AuditArchive[R2AuditArchiveWorker&lt;br/&gt;年次 12/31 04:00 JST cron]
+        DlqBackoff[DLQAutoBackoffWorker&lt;br/&gt;5 分 cron]
+    end
+
+    subgraph DataPlane[データプレーン]
+        D1Admin[(D1: admin_db&lt;br/&gt;運営者主管 21 テーブル)]
+        KV[(KV: admin_cache&lt;br/&gt;セッション / レート / AI パラメータ / フラグ)]
+        R2[(R2: admin_archive&lt;br/&gt;DLQ 退避 / 監査エクスポート / アーカイブ)]
+        Queues[(Queues: admin_queues&lt;br/&gt;webhook-dlq / notification-batch / restore-rollback)]
+        AI[(Workers AI&lt;br/&gt;AI 推論 / PII 検査)]
+        Secrets[Secrets Store&lt;br/&gt;マスター鍵 / API キー]
+    end
+
+    subgraph Main[メインシステム]
+        MainWorker[Main Worker&lt;br/&gt;app.open-faq.example.com&lt;br/&gt;/internal/admin-integration/v1/*]
+        MainDB[(メイン D1)]
+    end
+
+    SPA -- Cookie + CSRF --&gt; AdminConsole
+    Stripe -- POST /webhooks/stripe&lt;br/&gt;HMAC-SHA256 署名 --&gt; BillingWebhook
+    Resend -- POST /webhooks/resend --&gt; BillingWebhook
+
+    AdminConsole --&gt; D1Admin
+    AdminConsole --&gt; KV
+    AdminConsole --&gt; Secrets
+    BillingWebhook --&gt; D1Admin
+    BillingWebhook --&gt; R2
+    BillingWebhook --&gt; Queues
+    Scheduler --&gt; D1Admin
+    Scheduler --&gt; Queues
+    ChainVerifier --&gt; D1Admin
+    MonthlyBilling --&gt; D1Admin
+    MonthlyBilling --&gt; Stripe
+    RetentionPurge --&gt; D1Admin
+    RetentionPurge --&gt; R2
+    AuditArchive --&gt; D1Admin
+    AuditArchive --&gt; R2
+    DlqBackoff --&gt; Queues
+    DlqBackoff --&gt; D1Admin
+
+    AdminConsole -- mTLS + JWT&lt;br/&gt;連携 IF #1, #2, #4, #5, #6, #7, #12 --&gt; MainWorker
+    MainWorker -- mTLS + JWT&lt;br/&gt;連携 IF #8, #9 --&gt; AdminConsole
+    BillingWebhook -- mTLS + JWT&lt;br/&gt;連携 IF #10 --&gt; MainWorker
+    Scheduler -- 連携 IF #7 --&gt; MainWorker
+    AdminConsole -.読取参照(必要時).-&gt; MainDB</code></pre>
+<h3 id="22-worker-責務マトリクス">2.2 Worker 責務マトリクス</h3>
+<table>
+<thead>
+<tr>
+<th>Worker</th>
+<th>責務</th>
+<th>バインド</th>
+<th>主な処理時間</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AdminConsoleWorker</code></td>
+<td>運営者ログイン、MFA、IP 許可、再認証、4-eyes 承認、SCR-090〜098 の全 API、内部 API クライアント(連携 IF 発信側)</td>
+<td><code>D1: admin_db</code> / <code>KV: admin_cache</code> / <code>Secrets</code> / Queues producer / R2 reader</td>
+<td>リクエスト駆動</td>
+</tr>
+<tr>
+<td><code>BillingWebhookWorker</code></td>
+<td>Stripe / Resend Webhook 一次受信、署名検証、event_id 冪等、ペイロード正規化 + 差分検出、内部転送(連携 IF #10)、DLQ 投入 + R2 退避</td>
+<td><code>D1</code> / <code>R2</code> / <code>Queues</code> / <code>Secrets</code></td>
+<td>リクエスト駆動(30 秒以内)</td>
+</tr>
+<tr>
+<td><code>AnnouncementSchedulerWorker</code></td>
+<td>お知らせ配信予約の 1 分ポーリング、<code>scheduled_at ≤ now+5min</code> を <code>sending</code> 遷移、連携 IF #7 でメイン転送</td>
+<td><code>D1</code> / <code>Queues</code></td>
+<td>1 分間隔</td>
+</tr>
+<tr>
+<td><code>AuditChainVerifierWorker</code></td>
+<td>監査ログ全件のハッシュチェーン再計算(D-04)、不一致時の運営者 inbox + メール通知</td>
+<td><code>D1</code> / <code>Secrets</code>(チェーン鍵)</td>
+<td>日次 02:00 JST</td>
+</tr>
+<tr>
+<td><code>MonthlyBillingCronWorker</code></td>
+<td>月初 02:00 JST の請求書発行(D-11)、<code>(contract_owner_user_id, billing_year_month)</code> 冪等、Stripe Invoice API 発行、契約通知 + 監査記録</td>
+<td><code>D1</code> / Stripe / Queues</td>
+<td>月次</td>
+</tr>
+<tr>
+<td><code>RetentionPurgeWorker</code></td>
+<td>監査ログの 3 区分(1y / 5y / 7y)物理削除バッチ、R2 アーカイブ書出後に DELETE</td>
+<td><code>D1</code> / <code>R2</code></td>
+<td>日次 03:00 JST</td>
+</tr>
+<tr>
+<td><code>R2AuditArchiveWorker</code></td>
+<td>5y / 7y の年次 R2 圧縮アーカイブ書出</td>
+<td><code>D1</code> / <code>R2</code></td>
+<td>年次 12/31 04:00 JST</td>
+</tr>
+<tr>
+<td><code>DLQAutoBackoffWorker</code></td>
+<td>Cloudflare Queues DLQ の自動指数 BO(1m → 4m → 16m、最大 3 回)、1 時間経過で <code>dlq_manual_replay</code> 遷移</td>
+<td><code>Queues</code> / <code>D1</code></td>
+<td>5 分間隔</td>
+</tr>
+</tbody>
+</table>
+<h3 id="23-ドメインurl-分離d-01">2.3 ドメイン・URL 分離(D-01)</h3>
+<table>
+<thead>
+<tr>
+<th>ホスト</th>
+<th>用途</th>
+<th>入口制御</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>admin.open-faq.example.com</code></td>
+<td>運営者プレーン全機能</td>
+<td>IP 許可リスト(エッジで <code>403 Forbidden</code> 早期返却)</td>
+</tr>
+<tr>
+<td><code>admin.open-faq.example.com/login</code></td>
+<td>運営者ログイン</td>
+<td>利用者側からのリンクなし(発見可能性を下げる)</td>
+</tr>
+<tr>
+<td><code>admin.open-faq.example.com/webhooks/stripe</code></td>
+<td>Stripe Webhook 受信専用(D-10、唯一の受信先)</td>
+<td>Stripe-Signature 検証、IP 許可リスト適用外</td>
+</tr>
+<tr>
+<td><code>admin.open-faq.example.com/webhooks/resend</code></td>
+<td>Resend Webhook 受信</td>
+<td>Resend Signature 検証、IP 許可リスト適用外</td>
+</tr>
+<tr>
+<td><code>app.open-faq.example.com</code></td>
+<td>利用者プレーン(メインシステム正本)</td>
+<td>本書側 SPA からは Cookie スコープ分離(<code>Domain=admin.open-faq.example.com</code>)</td>
+</tr>
+<tr>
+<td><code>app.open-faq.example.com/internal/admin-integration/v1/*</code></td>
+<td>メイン側内部 API(連携 IF #1〜#12)</td>
+<td>mTLS + JWT(本書側 Worker からのみアクセス可能)</td>
+</tr>
+</tbody>
+</table>
+<p><code>/webhooks/stripe</code> と <code>/webhooks/resend</code> は IP 許可リストの適用外とする(外部サービスからのコールバックを受信するため)が、署名検証で代替する。それ以外のすべてのパスは IP 許可リスト適用後にルーティングされる。</p>
+<h3 id="24-環境構成">2.4 環境構成</h3>
+<table>
+<thead>
+<tr>
+<th>環境</th>
+<th>用途</th>
+<th>wrangler.toml 環境名</th>
+<th>データ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dev</code></td>
+<td>開発(各開発者ローカル)</td>
+<td><code>local</code></td>
+<td>Miniflare 内 D1 / KV / R2</td>
+</tr>
+<tr>
+<td><code>stg</code></td>
+<td>結合テスト・E2E</td>
+<td><code>staging</code></td>
+<td>本番別 D1 / 別 R2 バケット</td>
+</tr>
+<tr>
+<td><code>prod</code></td>
+<td>本番</td>
+<td><code>production</code></td>
+<td><code>admin_db</code> / <code>admin_cache</code> / <code>admin_archive</code></td>
+</tr>
+</tbody>
+</table>
+<p>各環境で個別の Stripe / Resend Webhook Secret、HKDF マスター鍵、JWT 署名鍵を発行する。staging から本番への昇格は GitHub OIDC + Environment Protection Rules で 2 名承認を必須化。</p>
+<h3 id="25-リクエストフロー">2.5 リクエストフロー</h3>
+<pre class="mermaid"><code>sequenceDiagram
+    participant Browser as 運営者ブラウザ
+    participant Edge as Cloudflare Edge
+    participant Worker as AdminConsoleWorker
+    participant KV
+    participant D1
+    participant Main as Main Worker
+
+    Browser-&gt;&gt;Edge: GET /admin/api/v1/...
+    Edge-&gt;&gt;Edge: IP 許可リスト判定&lt;br/&gt;(KV: operator-ip-allowlist:*)
+    alt 未許可 IP
+        Edge--&gt;&gt;Browser: 403 Forbidden
+    else 許可 IP
+        Edge-&gt;&gt;Worker: ルーティング
+        Worker-&gt;&gt;KV: GET operator-session:&lt;sid&gt;
+        alt セッションなし / 失効
+            Worker--&gt;&gt;Browser: 401 UNAUTHENTICATED
+        else 有効
+            Worker-&gt;&gt;D1: SELECT operator_sessions WHERE id=?&lt;br/&gt;(KV TTL 60s ヒット時はスキップ)
+            Worker-&gt;&gt;Worker: MFA 検証フラグ確認
+            alt MFA 未完了
+                Worker--&gt;&gt;Browser: 403 FORBIDDEN_MFA_REQUIRED
+            else MFA 完了
+                Worker-&gt;&gt;Worker: 再認証要否判定&lt;br/&gt;(5 分以内のクリティカル操作)
+                alt 再認証必須 &amp; 期限切れ
+                    Worker--&gt;&gt;Browser: 403 RE_AUTH_REQUIRED
+                else
+                    Worker-&gt;&gt;Worker: 4-eyes 要否判定&lt;br/&gt;(KV: feature:hard-gate:&lt;action&gt;)
+                    alt ハードゲート ON &amp; 未承認
+                        Worker--&gt;&gt;Browser: 403 FORBIDDEN_HARD_GATE
+                    else
+                        Worker-&gt;&gt;D1: 処理実行
+                        Worker-&gt;&gt;D1: audit_logs INSERT
+                        Worker-&gt;&gt;Main: 連携 IF 発火(必要時)
+                        Worker--&gt;&gt;Browser: 200 OK
+                    end
+                end
+            end
+        end
+    end</code></pre>
+<h3 id="26-ディレクトリ構成例">2.6 ディレクトリ構成例</h3>
+<p>実装プロジェクトの参考レイアウト(別 wrangler プロジェクト):</p>
+<pre class="text"><code>admin/
+├── wrangler.toml                 # AdminConsoleWorker
+├── wrangler.billing-webhook.toml # BillingWebhookWorker
+├── wrangler.scheduler.toml       # AnnouncementSchedulerWorker, ...
+├── src/
+│   ├── admin-console/
+│   │   ├── handlers/             # /admin/api/v1/* ハンドラ
+│   │   │   ├── auth.ts
+│   │   │   ├── approvals.ts
+│   │   │   ├── deleted-resources.ts
+│   │   │   ├── restorations.ts
+│   │   │   ├── ai-parameters.ts
+│   │   │   ├── overrides.ts
+│   │   │   ├── announcements.ts
+│   │   │   ├── audit-logs.ts
+│   │   │   ├── webhooks-ops.ts
+│   │   │   └── pii-fp-reports.ts
+│   │   ├── middleware/
+│   │   │   ├── ip-allowlist.ts
+│   │   │   ├── session.ts
+│   │   │   ├── mfa.ts
+│   │   │   ├── reauth.ts
+│   │   │   ├── csrf.ts
+│   │   │   ├── ticket-id.ts
+│   │   │   └── four-eyes.ts
+│   │   └── lib/
+│   │       ├── audit.ts          # audit_logs INSERT + ハッシュチェーン
+│   │       ├── hkdf.ts           # HKDF info 値別派生鍵
+│   │       ├── totp.ts
+│   │       ├── argon2.ts
+│   │       ├── pii.ts
+│   │       └── stripe.ts
+│   ├── billing-webhook/
+│   │   ├── handler.ts
+│   │   ├── verify.ts             # HMAC-SHA256 署名検証
+│   │   ├── canonical.ts          # JSON 正規化 + SHA-256
+│   │   └── forward.ts            # 連携 IF #10 mTLS+JWT
+│   ├── scheduler/
+│   │   ├── announcements.ts      # 1 分 cron
+│   │   ├── audit-chain.ts        # 日次 02:00 JST
+│   │   ├── monthly-billing.ts    # 月初 02:00 JST
+│   │   ├── retention-purge.ts    # 日次 03:00 JST
+│   │   └── r2-audit-archive.ts   # 年次 12/31
+│   └── shared/
+│       ├── errors.ts             # 全エラーコード定義
+│       ├── action-codes.ts       # 監査 action コード列挙
+│       ├── kv-keys.ts            # KV キー定数
+│       ├── logger.ts             # 構造化ログ
+│       └── types.ts
+├── migrations/
+│   └── d1-admin/
+│       ├── 0001_init_operators.sql
+│       ├── 0002_init_audit_logs.sql
+│       ├── 0003_init_webhook_events.sql
+│       └── ...
+├── tests/
+│   ├── unit/                     # Vitest
+│   ├── integration/              # Miniflare
+│   ├── e2e/                      # Playwright(SCR-090〜094, SCR-095〜098)
+│   └── webhook/                  # Stripe Test Mode
+├── scripts/
+│   ├── audit-export-verify.ts    # HMAC 署名検証ツール(運営者配布)
+│   └── canonical-json.ts         # 正規化アルゴリズム参考実装
+└── openapi/
+    └── admin-api.yaml            # OpenAPI v3.1 抜粋</code></pre>
+<p>実装プロジェクトの実際のディレクトリ名は実装段階で確定して構わない(本書はあくまで責務マッピングの参考)。</p>
+<hr />
+<h2 id="3-共通処理方針">3. 共通処理方針</h2>
+<h3 id="31-メール通知">3.1 メール通知</h3>
+<p>メール通知の正本は <a href="../02_基本設計/06_メッセージ一覧.html">基本設計 / メッセージ一覧</a> §8(運営者向け通知 + IF #12 経由通知)。通知契機 13 種(運営者宛)+ 5 種(IF #12 経由 利用者向け)+ テンプレートは当該ドキュメントを正本とする。</p>
+<p>通知重要度は <code>low</code> / <code>normal</code> / <code>high</code> / <code>critical</code> の 4 値。<code>critical</code> は強制送信(オーナー + 全プロジェクト管理者(<code>project_users.role='admin'</code> を 1 件でも保持するユーザー)に必ずメール配信)を予約する。10 分集約窓(<code>notify-batch:&lt;contract_owner_user_id&gt;:&lt;kind&gt;</code>)は D-19 で確定。</p>
+<h3 id="32-セキュリティ">3.2 セキュリティ</h3>
+<p>セキュリティ詳細は <a href="../02_基本設計/09_セキュリティ設計.html">基本設計 / セキュリティ設計</a> を正本とする。本書では以下のサブ領域を詳細化する:</p>
+<ul>
+<li>監査ログハッシュチェーン構造(prev_hash + record_hash、HKDF info=<code>audit-chain</code>)</li>
+<li>3 区分保持(<code>general</code> / <code>billing</code> / <code>operator_high_priv</code>)の物理対応</li>
+<li><code>accounts_retired</code> 永久保持(法令対応)</li>
+<li>GDPR 越境移転対応</li>
+<li>Webhook ペイロード差分検出(D-06、付録 H の除外フィールドリスト)</li>
+<li>HKDF info 値リスト(<code>internal-api</code> / <code>audit-chain</code> / <code>audit-export</code> / <code>pii-encryption</code> 等)</li>
+</ul>
+<h3 id="33-構造化ログ">3.3 構造化ログ</h3>
+<p>エラー設計の正本は <a href="../02_基本設計/05_エラー設計.html">基本設計 / エラー設計</a>。本書では構造化ログ JSON Schema、必須フィールド、機密項目マスキング規約を確定する(DD12 参照)。</p>
+<h3 id="34-リリース戦略">3.4 リリース戦略</h3>
+<p>リリース運用とフィーチャーフラグ運用は <a href="../04_運用設計/index.html">運用設計</a> 配下の運用手順書へ移管した。本書では設計決定(D-01〜D-20)との対応のみを扱う(§7 リリース戦略参照)。</p>
+<hr />
+<h2 id="4-詳細設計ファイル一覧">4. 詳細設計ファイル一覧</h2>
+<table>
+<thead>
+<tr>
+<th>ファイル</th>
+<th>ドメイン</th>
+<th>対応 FR</th>
+<th>主関連章</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="DD01_運営者認証・6段認可.html">DD01_運営者認証・6段認可.html</a></td>
+<td>運営者認証・6 段認可(MFA / IP / 再認証)</td>
+<td>FR-007, FR-220〜FR-225, NFR-311</td>
+<td>§3, §5 SCR-AUTH/HOME, §12</td>
+</tr>
+<tr>
+<td><a href="DD02_4-eyes承認フロー.html">DD02_4-eyes承認フロー.html</a></td>
+<td>4-eyes 申請・承認・実行・自己承認禁止</td>
+<td>FR-226</td>
+<td>§5 SCR-APPROVALS, §6.4, §7.4, 付録 C.X</td>
+</tr>
+<tr>
+<td><a href="DD03_監査ハッシュチェーン.html">DD03_監査ハッシュチェーン.html</a></td>
+<td>監査ハッシュチェーン構造・日次検証</td>
+<td>FR-229〜FR-232, NFR-306, NFR-602</td>
+<td>§6 監査機能, §12 ハッシュチェーン, §16</td>
+</tr>
+<tr>
+<td><a href="DD04_Stripe_Webhook一次受信.html">DD04_Stripe_Webhook一次受信.html</a></td>
+<td>Stripe Webhook 一次受信・冪等性・差分検出</td>
+<td>FR-302, NFR-808, NFR-809</td>
+<td>§10 IF #10, §6 webhook, §7, 付録 B.2</td>
+</tr>
+<tr>
+<td><a href="DD05_削除データ復元.html">DD05_削除データ復元.html</a></td>
+<td>削除データ参照・復元(副作用 a〜g)</td>
+<td>FR-200〜FR-211, FR-222, FR-223</td>
+<td>§5 SCR-090/091, §6 復元, §7.5, 付録 B.7</td>
+</tr>
+<tr>
+<td><a href="DD06_お知らせ承認・配信.html">DD06_お知らせ承認・配信.html</a></td>
+<td>お知らせ作成・予約・配信・取消</td>
+<td>FR-149, FR-188, FR-189</td>
+<td>§5 SCR-094, §6 お知らせ, §7.7, 付録 B.4</td>
+</tr>
+<tr>
+<td><a href="DD07_KV・R2オブジェクト.html">DD07_KV・R2オブジェクト.html</a></td>
+<td>KV キー全表 + R2 オブジェクトパス</td>
+<td>TH-7 全般</td>
+<td>§9 全文, 付録 J</td>
+</tr>
+<tr>
+<td><a href="DD08_Cron実装.html">DD08_Cron実装.html</a></td>
+<td>Cron UTC 式 + 擬似コード + 失敗時通知</td>
+<td>FR-303, AC-042, D-04/05/09/11</td>
+<td>§14 全文, 付録 L</td>
+</tr>
+<tr>
+<td><a href="DD09_監査actionコード.html">DD09_監査actionコード.html</a></td>
+<td>監査 action コード一覧(約 60 件)</td>
+<td>NFR-602, D-08</td>
+<td>§15 全文, 付録 F</td>
+</tr>
+<tr>
+<td><a href="DD10_PII偽陽性報告.html">DD10_PII偽陽性報告.html</a></td>
+<td>PII 誤検出報告 3 営業日判定 + ルール改定</td>
+<td>FR-060, FR-064, NFR-805, AC-036</td>
+<td>§5 SCR-097, §6 PII, 付録 B.5</td>
+</tr>
+<tr>
+<td><a href="DD11_状態遷移詳細.html">DD11_状態遷移詳細.html</a></td>
+<td>主要 5 状態機械 + ペイロード差分 state</td>
+<td>D-08, AC-041</td>
+<td>付録 B 全文</td>
+</tr>
+<tr>
+<td><a href="DD12_運営者用ログ・テスト.html">DD12_運営者用ログ・テスト.html</a></td>
+<td>構造化ログ + テスト戦略 + 受入条件</td>
+<td>NFR-103〜106, AC-036〜046</td>
+<td>§16, §17 全文</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="5-実装順序">5. 実装順序</h2>
+<p>依存関係を踏まえた MVP 実装順序の推奨は次のとおり:</p>
+<ol type="1">
+<li><strong>認証 / 認可基盤</strong>(DD01)── 全機能の前提。MFA / IP / 再認証 / セッション。</li>
+<li><strong>監査ログ基盤</strong>(DD03、DD09)── ハッシュチェーン + action コード一覧。以降の全ての操作で <code>audit_logs INSERT</code> が必須となる。</li>
+<li><strong>4-eyes 基盤</strong>(DD02)── ハードゲート 3 操作の前提。<code>operator_approvals</code> テーブル + 6 段認可判定。</li>
+<li><strong>KV / R2 / Cron 基盤</strong>(DD07、DD08)── 機能フラグ / レート上書き / 月次請求 / ハッシュ検証の土台。</li>
+<li><strong>個別運営機能</strong>(DD05 削除復元 / DD06 お知らせ / DD10 PII)── 4-eyes と監査の上に乗る業務機能。</li>
+<li><strong>Webhook / 差分検出</strong>(DD04、DD11)── Stripe 連携 + 差分検出 + ペイロードレビュー。</li>
+<li><strong>構造化ログ / テスト</strong>(DD12)── 横串で全機能の検証。</li>
+</ol>
+<p>順序は CI/CD パイプライン構築と並行可能。E2E テスト(Playwright)は DD02 / DD05 / DD06 の各 PR で追加し、4-eyes E2E は基盤完成後にまとめて整備する。</p>
+<hr />
+<h2 id="6-非機能運用設計サマリ">6. 非機能・運用設計サマリ</h2>
+<p>非機能・運用詳細は <a href="../04_運用設計/index.html">運用設計</a> の「顧客管理システム 非機能・運用詳細由来」へ移管した。本書では cron、監査 action、API、DB など実装詳細との接点のみを扱う。</p>
+<p>代表的な非機能目標(運用設計から再掲):</p>
+<ul>
+<li>管理画面一覧 p95 ≤ 800ms(NFR-105)</li>
+<li>監査ログ検索 p95 ≤ 1000ms(100 万件以下)</li>
+<li>監査ログエクスポート ≤ 60s(10 万行)</li>
+<li>ハッシュチェーン日次検証 ≤ 3600s(1000 万行以下)</li>
+<li>DLQ 1h 超過件数 = 0(高アラート閾値)</li>
+<li>4-eyes 承認待ち 72h 超過件数 = 0(高アラート閾値)</li>
+</ul>
+<p>詳細な KPI 動的閾値の初期値は <a href="DD07_KV・R2オブジェクト.html">DD07_KV・R2オブジェクト.html</a> §J.X を参照。</p>
+<hr />
+<h2 id="7-リリース戦略">7. リリース戦略</h2>
+<h3 id="71-リリース運用">7.1 リリース運用</h3>
+<p>リリース運用とフィーチャーフラグ運用は <a href="../04_運用設計/index.html">運用設計</a> 配下の「顧客管理システム リリース戦略由来」へ移管した。本書では設計決定との対応のみを扱う。</p>
+<h3 id="72-設計決定-d-01d-20-詳細化マッピング">7.2 設計決定 D-01〜D-20 詳細化マッピング</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>決定事項</th>
+<th>採用方針(基本設計 §15 抜粋)</th>
+<th>本書での詳細化箇所</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D-01</td>
+<td>運営者ログイン URL 分離</td>
+<td><code>admin.open-faq.example.com</code> 専用</td>
+<td>index §2.3, DD01</td>
+</tr>
+<tr>
+<td>D-02</td>
+<td>運営者 Worker のデプロイ単位</td>
+<td>別 wrangler プロジェクト</td>
+<td>index §2.1, §2.6</td>
+</tr>
+<tr>
+<td>D-03</td>
+<td>mTLS + JWT 鍵管理</td>
+<td>Origin CA + HKDF info=<code>internal-api</code>、60 日 dual-decrypt</td>
+<td>DD01, DD04</td>
+</tr>
+<tr>
+<td>D-04</td>
+<td>ハッシュチェーン検証バッチ</td>
+<td>日次 02:00 JST 全件再計算</td>
+<td>DD03, DD08</td>
+</tr>
+<tr>
+<td>D-05</td>
+<td>祝日マスタ取得バッチ</td>
+<td>年次 11/1 03:00 JST</td>
+<td>DD08</td>
+</tr>
+<tr>
+<td>D-06</td>
+<td>Webhook ペイロード比較除外フィールド</td>
+<td>付録 H に固定列挙</td>
+<td>DD04</td>
+</tr>
+<tr>
+<td>D-07</td>
+<td>FR-204 副作用ロールバック (a)〜(g)</td>
+<td>7 ステップ具体手順</td>
+<td>DD05</td>
+</tr>
+<tr>
+<td>D-08</td>
+<td>監査ログ 3 区分の物理分離方式</td>
+<td>単一テーブル + <code>retention_class</code> 列</td>
+<td>DD03, DD09</td>
+</tr>
+<tr>
+<td>D-09</td>
+<td>お知らせ配信予約スケジューラ</td>
+<td>Cron Triggers + D1 ポーリング 1 分</td>
+<td>DD06, DD08</td>
+</tr>
+<tr>
+<td>D-10</td>
+<td>課金 Webhook 一次受信エンドポイント</td>
+<td>唯一の受信先</td>
+<td>DD04</td>
+</tr>
+<tr>
+<td>D-11</td>
+<td>月次請求確定 cron 実装方式</td>
+<td>月初 02:00 JST、(contract_owner_user_id, year_month) UNIQUE</td>
+<td>DD08</td>
+</tr>
+<tr>
+<td>D-12</td>
+<td>4-eyes 申請承認 UI/データモデル</td>
+<td><code>operator_approvals</code> テーブル</td>
+<td>DD02</td>
+</tr>
+<tr>
+<td>D-13</td>
+<td>PII 誤検出ルール更新の即時反映</td>
+<td>KV <code>pii-rules:*</code>、過去データ修正なし</td>
+<td>DD10, DD07</td>
+</tr>
+<tr>
+<td>D-14</td>
+<td>契約別レート/上限件数上書き即時反映</td>
+<td>KV TTL 30s + IF #5</td>
+<td>DD07</td>
+</tr>
+<tr>
+<td>D-15</td>
+<td>AI 推論パラメータ 3 階層</td>
+<td>KV <code>ai-params:*</code>、project &gt; owner &gt; global</td>
+<td>DD07</td>
+</tr>
+<tr>
+<td>D-17</td>
+<td>監査エクスポート HMAC 署名</td>
+<td>HKDF info=<code>audit-export</code>、SHA-256</td>
+<td>DD03</td>
+</tr>
+<tr>
+<td>D-18</td>
+<td>運営者セッショントークン TTL</td>
+<td>MVP 8h</td>
+<td>DD01</td>
+</tr>
+<tr>
+<td>D-19</td>
+<td>運営者操作通知の集約窓</td>
+<td>10 分集約(contract_owner_user_id, operation_kind)</td>
+<td>DD06</td>
+</tr>
+<tr>
+<td>D-20</td>
+<td>運営者 inbox の保持</td>
+<td>1 年 + retention_class='5y' リンク</td>
+<td>DD06</td>
+</tr>
+</tbody>
+</table>
+<h3 id="73-詳細設計引継ぎ事項-確定マッピング">7.3 詳細設計引継ぎ事項 確定マッピング</h3>
+<p>基本設計 §16 引継ぎ事項 12 区分の本書での確定箇所:</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>引継ぎ事項(基本設計 §16)</th>
+<th>本書での確定箇所</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TH-1</td>
+<td>API 詳細</td>
+<td>各 DD + <a href="../02_基本設計/02_API設計.html">基本設計 / API 設計</a></td>
+</tr>
+<tr>
+<td>TH-2</td>
+<td>DDL</td>
+<td><a href="../02_基本設計/03_テーブル設計.html">基本設計 / テーブル設計</a></td>
+</tr>
+<tr>
+<td>TH-3</td>
+<td>画面詳細</td>
+<td><a href="../02_基本設計/01_画面設計.html">基本設計 / 画面設計</a></td>
+</tr>
+<tr>
+<td>TH-4</td>
+<td>HTML サニタイザ</td>
+<td>DD06(お知らせ)</td>
+</tr>
+<tr>
+<td>TH-5</td>
+<td>4-eyes UI</td>
+<td>DD02</td>
+</tr>
+<tr>
+<td>TH-6</td>
+<td>監査 action コード</td>
+<td>DD09</td>
+</tr>
+<tr>
+<td>TH-7</td>
+<td>KV キー一覧</td>
+<td>DD07</td>
+</tr>
+<tr>
+<td>TH-8</td>
+<td>Webhook 除外フィールド</td>
+<td>DD04</td>
+</tr>
+<tr>
+<td>TH-9</td>
+<td>Stripe API</td>
+<td>DD04</td>
+</tr>
+<tr>
+<td>TH-10</td>
+<td>Cron 実装</td>
+<td>DD08</td>
+</tr>
+<tr>
+<td>TH-11</td>
+<td>エラーログ詳細</td>
+<td>DD12</td>
+</tr>
+<tr>
+<td>TH-12</td>
+<td>HKDF info 値</td>
+<td>DD01, DD03</td>
+</tr>
+</tbody>
+</table>
+<p><strong>全 12 区分確定済</strong>。未確定が発生した場合は運用設計の残課題管理へエスカレーション。</p>
+<hr />
+<h2 id="8-未確定事項確認事項">8. 未確定事項・確認事項</h2>
+<table>
+<thead>
+<tr>
+<th>確認事項ID</th>
+<th>確認内容</th>
+<th>優先度</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>v1.0 リリース時点で全項目確定済み</td>
+<td>低</td>
+<td>確認済</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

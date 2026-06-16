@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FUT01: 認証・セキュリティ強化 | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/05_future/FUT01_認証・セキュリティ強化.html">
+<article class="content" id="content">
+<h1 id="fut01-認証セキュリティ強化">FUT01: 認証・セキュリティ強化</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書名</td>
+<td>FUT01: 認証・セキュリティ強化</td>
+</tr>
+<tr>
+<td>将来対応ID</td>
+<td>FUT-01</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>FAQ AI ウィジェット SaaS / メインシステム</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-17</td>
+</tr>
+<tr>
+<td>版数</td>
+<td>v1.1</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>検討中(MVP 外)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="1-概要">1. 概要</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>概要</td>
+<td>MVP では補完策(パスワード再入力、ロックアウト、Turnstile、操作通知、監査ログ、DB 操作者制限・月次棚卸し・全クエリ監査)でリスク受容している認証・セキュリティ領域について、Post-MVP で MFA / 列単位暗号化 / SSO・パスキーを順次強化する。</td>
+</tr>
+<tr>
+<td>背景</td>
+<td>単一プラン・最小構成での MVP リリース後、限定公開〜GA フェーズで利用者側の認証強度・チャット本文の機密性・運営者操作の二重承認をエンタープライズ水準まで引き上げる必要がある。</td>
+</tr>
+<tr>
+<td>期待効果</td>
+<td>アカウント乗っ取りリスクの低減、個別チャット本文漏洩時の影響範囲限定、特権操作の証跡強化、エンタープライズ契約獲得余地の拡大。</td>
+</tr>
+<tr>
+<td>優先度(将来対応内)</td>
+<td>高</td>
+</tr>
+<tr>
+<td>想定時期</td>
+<td>T2(ベータ判定まで)〜 T3(GA 判定まで)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="2-関連要件候補">2. 関連要件・候補</h2>
+<h3 id="21-要件候補将来-fr">2.1 要件候補(将来 FR)</h3>
+<h4 id="認証セキュリティ">認証・セキュリティ</h4>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>要件候補</th>
+<th>MVP の前提</th>
+<th>判定時期</th>
+<th>判定基準 / 完了条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FUT-REQ-SEC-001</td>
+<td>個別チャット本文の列単位暗号化</td>
+<td>平文保存 + DB 操作者 2 名以下・月次棚卸し・全クエリ監査の補完策</td>
+<td>GA</td>
+<td>AES-256-GCM + オーナー派生鍵による列単位暗号化方式が承認され、staging 復元 E2E スモークが合格すること</td>
+</tr>
+<tr>
+<td>FUT-REQ-SEC-002</td>
+<td>利用者側 admin / operator MFA</td>
+<td>パスワード再入力、ロックアウト、Turnstile、操作通知、監査ログでリスク受容</td>
+<td>限定公開 / ベータ / GA</td>
+<td>限定公開で admin opt-in、ベータで契約単位強制可、GA で新規契約既定 ON とするか判定</td>
+</tr>
+<tr>
+<td>FUT-REQ-SEC-003</td>
+<td>4-eyes 原則の完全強制</td>
+<td>3 操作をハードゲート化し、7 操作は承認ログのみ</td>
+<td>ベータ / GA</td>
+<td>ベータで全 10 操作ワークフロー化、GA でバイパス禁止。SCR-095 の承認バイパス検出 KPI が 4 週間連続 0 件</td>
+</tr>
+<tr>
+<td>FUT-REQ-SEC-004</td>
+<td>運営者サブロール分割</td>
+<td>単一 <code>service_operator</code> ロール(利用者側は MVP v2.6 で 3 ロール制(オーナー / プロジェクト管理者 / メンバー)に整理済み。本項は運営者ロール側の分割のみを扱う)</td>
+<td>Post-MVP</td>
+<td>運営者人数、職務分掌要件、内部統制レビュー、サポート運用の分離ニーズで導入可否を判定</td>
+</tr>
+<tr>
+<td>FUT-REQ-SEC-005</td>
+<td>SSO / ソーシャルログイン / パスキー</td>
+<td>自前アカウント + パスワード + メール確認</td>
+<td>Post-MVP</td>
+<td>エンタープライズ要望、認証リスク低減効果、サポート負荷をもとに判定</td>
+</tr>
+<tr>
+<td>FUT-REQ-SEC-006</td>
+<td>データ保持期間の利用者側調整 UI(短縮 / 長期化)</td>
+<td>MVP は NFR-702 によりシステム固定値で固定し UI を提供しない。短縮はサポート窓口経由の運営者対応、長期化は契約調整(運営者側 FUT)で対応</td>
+<td>Post-MVP</td>
+<td>エンタープライズ顧客のコンプライアンス要件・契約条項としてのデータ保持カスタマイズ需要、運営者側の長期化承認フロー整備、電子帳簿保存法等の法定下限を下回らないガード設計を踏まえて再開判定</td>
+</tr>
+</tbody>
+</table>
+<h3 id="22-基本設計論点">2.2 基本設計論点</h3>
+<h4 id="認証セキュリティ-1">認証・セキュリティ</h4>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>基本設計で具体化すること</th>
+<th>関連 Future 要件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>利用者側 admin / operator MFA</td>
+<td>SCR-017 個人設定での MFA 登録・解除・リカバリ、SCR-023 設定での契約単位強制状態、未設定ユーザーのログイン制御</td>
+<td>FUT-REQ-SEC-002</td>
+</tr>
+<tr>
+<td>4-eyes 完全強制</td>
+<td>10 操作の申請・承認・実行状態、SCR-095 のバイパス検出 KPI、緊急例外 RB-014 との分岐</td>
+<td>FUT-REQ-SEC-003</td>
+</tr>
+<tr>
+<td>運営者サブロール分割</td>
+<td>権限マトリクス、メニュー表示制御、API 認可境界、監査ログの role / subrole 記録粒度</td>
+<td>FUT-REQ-SEC-004</td>
+</tr>
+<tr>
+<td>SSO / パスキー</td>
+<td>認証プロバイダ選定、既存自前認証との併存、招待・退会・ロックアウトとの状態整合</td>
+<td>FUT-REQ-SEC-005</td>
+</tr>
+<tr>
+<td>個別チャット列単位暗号化</td>
+<td>鍵階層、検索・復元・監査への影響、障害時の復旧設計、運用者が本文を扱う導線の制限</td>
+<td>FUT-REQ-SEC-001</td>
+</tr>
+</tbody>
+</table>
+<h3 id="23-詳細設計バックログ">2.3 詳細設計バックログ</h3>
+<h4 id="契約-mfa-強制ddl-候補">契約 MFA 強制(DDL 候補)</h4>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- 契約オーナー専有属性に追加(v1.11 で `accounts` を `users` / `contract_owners` / `project_users` に 3 表分割済み)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> contract_owners</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">ADD</span> <span class="kw">COLUMN</span> mfa_enforcement TEXT <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">DEFAULT</span> <span class="st">&#39;off&#39;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">CHECK</span> (mfa_enforcement <span class="kw">IN</span> (<span class="st">&#39;off&#39;</span>, <span class="st">&#39;admin_only&#39;</span>, <span class="st">&#39;all_members&#39;</span>));</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> owner_mfa_policy_audit_logs (</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">id</span>                      TEXT <span class="kw">PRIMARY</span> <span class="kw">KEY</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  contract_owner_user_id  TEXT <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">REFERENCES</span> contract_owners(user_id) <span class="kw">ON</span> <span class="kw">DELETE</span> <span class="kw">CASCADE</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  changed_by              TEXT <span class="kw">REFERENCES</span> users(<span class="kw">id</span>) <span class="kw">ON</span> <span class="kw">DELETE</span> <span class="kw">SET</span> <span class="kw">NULL</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  before_policy           TEXT <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  after_policy            TEXT <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  reason                  TEXT,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  created_at              TEXT <span class="kw">NOT</span> <span class="kw">NULL</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div>
+<h4 id="個別チャット本文の列単位暗号化ddl-候補">個別チャット本文の列単位暗号化(DDL 候補)</h4>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> chat_messages</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">ADD</span> <span class="kw">COLUMN</span> body_ciphertext <span class="dt">BLOB</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">ADD</span> <span class="kw">COLUMN</span> body_nonce TEXT,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">ADD</span> <span class="kw">COLUMN</span> body_key_version <span class="dt">INTEGER</span>;</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> owner_key_versions (</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">id</span>                      TEXT <span class="kw">PRIMARY</span> <span class="kw">KEY</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  contract_owner_user_id  TEXT <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">REFERENCES</span> contract_owners(user_id) <span class="kw">ON</span> <span class="kw">DELETE</span> <span class="kw">CASCADE</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  key_version             <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  status                  TEXT <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  created_at              TEXT <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  rotated_at              TEXT,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="kw">UNIQUE</span> (contract_owner_user_id, key_version),</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="kw">CHECK</span> (status <span class="kw">IN</span> (<span class="st">&#39;active&#39;</span>, <span class="st">&#39;retired&#39;</span>))</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div>
+<h4 id="実装設計バックログ関連分">実装設計バックログ(関連分)</h4>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>対象</th>
+<th>実装設計で具体化すること</th>
+<th>関連 Future 要件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FUT-DD-SEC-001</td>
+<td>個別チャット列単位暗号化</td>
+<td>暗号化カラム、鍵派生、ローテーション、バックフィル、復元手順、検索制約、監査ログ</td>
+<td>FUT-REQ-SEC-001</td>
+</tr>
+<tr>
+<td>FUT-DD-SEC-002</td>
+<td>利用者側 MFA</td>
+<td><code>contract_owners.mfa_enforcement</code>、MFA 登録 API、回復コード、未設定時ログイン制御、監査ログ</td>
+<td>FUT-REQ-SEC-002</td>
+</tr>
+</tbody>
+</table>
+<h4 id="api--worker-候補関連分">API / Worker 候補(関連分)</h4>
+<table>
+<thead>
+<tr>
+<th>領域</th>
+<th>候補</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>契約 MFA</td>
+<td><code>POST /api/v1/settings/mfa-policy</code>、<code>POST /api/v1/auth/mfa/setup</code>、<code>POST /api/v1/auth/mfa/recovery-code</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="テスト検証候補関連分">テスト・検証候補(関連分)</h4>
+<table>
+<thead>
+<tr>
+<th>領域</th>
+<th>検証項目</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MFA</td>
+<td>未登録ユーザーのログイン遮断、回復コード、強制 ON 変更時の既存セッション扱い、監査ログ</td>
+</tr>
+<tr>
+<td>暗号化</td>
+<td>key rotation、dual read、復元、検索不可項目のエラー、バックフィル再実行性</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="3-影響範囲">3. 影響範囲</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>影響内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>要件</td>
+<td>FR-005(MFA 段階導入)、NFR-319(個別チャット平文 → 暗号化)、4-eyes(3 操作ハードゲート → 全 10 操作ワークフロー)、SSO / パスキーは新規要件として追加</td>
+</tr>
+<tr>
+<td>画面</td>
+<td>SCR-017 個人設定(MFA 登録・解除・回復コード)、SCR-023 設定(MFA 強制ポリシー)、ログイン画面(MFA 入力)、招待受諾フロー(契約単位強制下)</td>
+</tr>
+<tr>
+<td>API</td>
+<td><code>POST /api/v1/settings/mfa-policy</code>、<code>POST /api/v1/auth/mfa/setup</code>、<code>POST /api/v1/auth/mfa/recovery-code</code>、SSO 連携 OAuth / OIDC エンドポイント</td>
+</tr>
+<tr>
+<td>テーブル</td>
+<td><code>contract_owners.mfa_enforcement</code> 列追加、<code>owner_mfa_policy_audit_logs</code>、<code>chat_messages.body_ciphertext</code> / <code>body_nonce</code> / <code>body_key_version</code>、<code>owner_key_versions</code></td>
+</tr>
+<tr>
+<td>運用</td>
+<td>MFA 未設定者向けの猶予期間運用、回復コード再発行手順、鍵ローテーション Runbook、列単位暗号化への dual read 期間運用、SSO IdP との連携運用</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-実施条件">4. 実施条件</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>実施判断条件</td>
+<td>限定公開での admin MFA opt-in 率(50% 以上)、SCR-095 承認バイパス検出 KPI(4 週間連続 0 件)、AES-256-GCM 列単位暗号化方式の設計承認、staging 復元 E2E 合格</td>
+</tr>
+<tr>
+<td>期限</td>
+<td>T2(MFA opt-in、4-eyes 全 10 操作ワークフロー化、招待トークン期限短縮判定)、T3(MFA 契約単位強制 ON、列単位暗号化、4-eyes バイパス削除)、Post-MVP(SSO / パスキー、運営者サブロール分割)</td>
+</tr>
+<tr>
+<td>依存関係</td>
+<td>運営者システム側 4-eyes 完全強制(FUT-01 運営者サブロール)、共有概念の <code>accounts</code> モデル拡張、PII 暗号化(メイン正本)・暗号鍵管理(メイン正本)との整合</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="5-関連設計">5. 関連設計</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>参照先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>要件</td>
+<td><a href="../01_要件定義/index.html">../01_要件定義/index.html</a></td>
+</tr>
+<tr>
+<td>基本設計</td>
+<td><a href="../02_基本設計/index.html">../02_基本設計/index.html</a></td>
+</tr>
+<tr>
+<td>詳細設計</td>
+<td><a href="../03_詳細設計/index.html">../03_詳細設計/index.html</a></td>
+</tr>
+<tr>
+<td>運用設計</td>
+<td><a href="../04_運用設計/index.html">../04_運用設計/index.html</a></td>
+</tr>
+<tr>
+<td>共有概念(正本)</td>
+<td><a href="../../共有/共有概念.html">../../共有/共有概念.html</a></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="6-未確定事項確認事項">6. 未確定事項・確認事項</h2>
+<table>
+<thead>
+<tr>
+<th>確認事項ID</th>
+<th>確認内容</th>
+<th>優先度</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FUT-SEC-Q-001</td>
+<td>MFA 契約単位強制 ON 時の既存ユーザー猶予期間と通知方式</td>
+<td>高</td>
+<td>検討中</td>
+</tr>
+<tr>
+<td>FUT-SEC-Q-002</td>
+<td>個別チャット列単位暗号化の dual read 期間とバックフィル実行ウィンドウ</td>
+<td>高</td>
+<td>検討中</td>
+</tr>
+<tr>
+<td>FUT-SEC-Q-003</td>
+<td>SSO / パスキー導入時の自前アカウントとの併存方式(同一メールでの統合可否)</td>
+<td>中</td>
+<td>検討中</td>
+</tr>
+<tr>
+<td>FUT-SEC-Q-004</td>
+<td>4-eyes 全 10 操作ワークフロー化での緊急例外(RB-014 物理金庫)維持可否</td>
+<td>中</td>
+<td>検討中</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

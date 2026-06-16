@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>エラー設計書(メイン) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/05_エラー設計.html">
+<article class="content" id="content">
+<h1 id="エラー設計書メイン">エラー設計書(メイン)</h1>
+<h2 id="1-文書概要">1. 文書概要</h2>
+<h3 id="11-目的">1.1 目的</h3>
+<p>メインシステムで発生するすべてのエラーについて、分類 / 発生条件 / システム動作 / ユーザー表示 / 復旧方法 / ログレベルを一元化する。エラーコード体系 <code>E-&lt;分類&gt;-&lt;連番&gt;</code> を統一する。</p>
+<h3 id="12-対象範囲">1.2 対象範囲</h3>
+<ul>
+<li>対象: 入力 / 認証 / 認可 / オーナー境界 / 契約上限 / 課金 / 業務 / システム / 外部連携 / Webhook / 規約 関連エラー</li>
+<li>対象外: 運営者側エラー(<a href="../../02_運営者システム/個別設計書群/06_エラー設計書.html">02_運営者システム/個別設計書群/06_エラー設計書.html</a> 参照、プレフィックス <code>E-OP-*</code>)</li>
+</ul>
+<h3 id="13-版数">1.3 版数</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>版数</td>
+<td>1.2</td>
+</tr>
+<tr>
+<td>更新日</td>
+<td>2026-06-14</td>
+</tr>
+</tbody>
+</table>
+<h3 id="14-関連ドキュメント">1.4 関連ドキュメント</h3>
+<table>
+<thead>
+<tr>
+<th>ドキュメント名</th>
+<th>役割</th>
+<th>参照先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>索引</td>
+<td>11 ドキュメント体系の俯瞰</td>
+<td><a href="00_索引.html">00_索引.html</a></td>
+</tr>
+<tr>
+<td>API 設計書</td>
+<td>ステータスコードとの対応</td>
+<td><a href="03_API設計書.html">03_API設計書.html</a></td>
+</tr>
+<tr>
+<td>メッセージ一覧</td>
+<td>エラー文言</td>
+<td><a href="07_メッセージ一覧.html">07_メッセージ一覧.html</a></td>
+</tr>
+<tr>
+<td>認証・認可設計書</td>
+<td>認証 / 認可エラーの根拠</td>
+<td><a href="09_認証認可設計書.html">09_認証認可設計書.html</a></td>
+</tr>
+<tr>
+<td>権限設計書</td>
+<td>権限不足時の動作</td>
+<td><a href="05_権限設計書.html">05_権限設計書.html</a></td>
+</tr>
+<tr>
+<td>セキュリティ設計書</td>
+<td>エラー時の監査 / ログ出力</td>
+<td><a href="10_セキュリティ設計書.html">10_セキュリティ設計書.html</a></td>
+</tr>
+<tr>
+<td>課金・請求設計書</td>
+<td>課金エラーの根拠</td>
+<td><a href="11_課金請求設計書.html">11_課金請求設計書.html</a></td>
+</tr>
+<tr>
+<td>テーブル定義書</td>
+<td><code>error_logs</code> テーブル</td>
+<td><a href="04_テーブル定義書.html">04_テーブル定義書.html</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-エラー分類">2. エラー分類</h2>
+<table>
+<thead>
+<tr>
+<th>エラー分類</th>
+<th>概要</th>
+<th>プレフィックス</th>
+<th>代表例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>入力エラー</td>
+<td>バリデーション失敗</td>
+<td><code>E-INPUT-*</code></td>
+<td>必須項目欠落 / 形式不正 / 重複</td>
+</tr>
+<tr>
+<td>認証エラー</td>
+<td>認証失敗・期限切れ</td>
+<td><code>E-AUTH-*</code></td>
+<td>パスワード不一致 / ロックアウト / トークン期限切れ</td>
+</tr>
+<tr>
+<td>認可エラー</td>
+<td>権限不足</td>
+<td><code>E-AUTHZ-*</code></td>
+<td>プロジェクトロール不足 / オーナー境界違反 / オーナー専有機能 / 最後の管理者保護</td>
+</tr>
+<tr>
+<td>業務エラー</td>
+<td>ビジネスルール違反</td>
+<td><code>E-BIZ-*</code></td>
+<td>未解決質問状況の直接変更禁止 / 退会済み / 論理削除済みリソースへの操作</td>
+</tr>
+<tr>
+<td>利用上限エラー</td>
+<td>プロジェクト上限件数到達 / 全体キャパシティ</td>
+<td><code>E-QUOTA-*</code></td>
+<td>プロジェクト月次上限件数 100% / 125% 到達(プロジェクト単位)/ 同時契約・同時接続上限(全体)</td>
+</tr>
+<tr>
+<td>課金エラー</td>
+<td>決済 / 課金処理エラー</td>
+<td><code>E-BILL-*</code></td>
+<td>Stripe 連携失敗 / 支払い方法未登録 / サスペンション中</td>
+</tr>
+<tr>
+<td>システムエラー</td>
+<td>サーバー内部エラー</td>
+<td><code>E-SYS-*</code></td>
+<td>DB エラー / 内部例外 / OOM</td>
+</tr>
+<tr>
+<td>外部連携エラー</td>
+<td>外部 API エラー</td>
+<td><code>E-EXT-*</code></td>
+<td>Workers AI 推論失敗 / Resend 配信失敗</td>
+</tr>
+<tr>
+<td>連携 IF エラー</td>
+<td>連携 IF #1〜#12 エラー</td>
+<td><code>E-IF-NNN-*</code></td>
+<td>IF 受信時の冪等性違反 / 認証失敗</td>
+</tr>
+<tr>
+<td>Webhook エラー</td>
+<td>外部 Webhook(Resend など)受信エラー</td>
+<td><code>E-WH-*</code></td>
+<td>署名検証失敗 / 冪等性違反</td>
+</tr>
+<tr>
+<td>規約エラー</td>
+<td>規約・プライバシー関連</td>
+<td><code>E-LEGAL-*</code></td>
+<td>規約未同意状態でのアクセス</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-主要設計原則エラー分類-ad6213-から移管">3. 主要設計原則(エラー分類 A〜D、§6.2.13 から移管)</h2>
+<table>
+<thead>
+<tr>
+<th>カテゴリ</th>
+<th>自動リトライ</th>
+<th>利用者提示</th>
+<th>HTTP</th>
+<th>未解決登録</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>A. 透過再試行可</strong></td>
+<td>◯ 指数 BO 3 回</td>
+<td>「しばらくしてから再度お試しください」</td>
+<td>200(成功)/ 503(失敗)</td>
+<td>しない</td>
+</tr>
+<tr>
+<td><strong>B. ユーザー再試行</strong></td>
+<td>×</td>
+<td>「再試行してください」+ 待機時間表示</td>
+<td>429 / 423</td>
+<td>しない</td>
+</tr>
+<tr>
+<td><strong>C. 即時 fail-fast</strong></td>
+<td>×</td>
+<td>エラー固有メッセージ + 是正案内</td>
+<td>400 / 401 / 403 / 404 / 409 / 422</td>
+<td>しない</td>
+</tr>
+<tr>
+<td><strong>D. 業務分岐(正常)</strong></td>
+<td>(該当なし)</td>
+<td>「回答できなかった旨、確認済み連絡先を表示」。管理用の問い合わせIDは表示しない</td>
+<td>200</td>
+<td><strong>する</strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-エラー一覧">4. エラー一覧</h2>
+<h3 id="41-入力エラーe-input-">4.1 入力エラー(<code>E-INPUT-*</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>エラーID</th>
+<th>発生条件</th>
+<th>メッセージID</th>
+<th>ステータスコード</th>
+<th>システム動作</th>
+<th>ログレベル</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>E-INPUT-REQUIRED</td>
+<td>必須項目欠落</td>
+<td>(フィールド別)</td>
+<td>400</td>
+<td>フィールド単位のエラー配列を返却</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td>E-INPUT-FORMAT</td>
+<td>形式不正(メール / URL / 日付等)</td>
+<td>(フィールド別)</td>
+<td>400</td>
+<td>同上</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td>E-INPUT-LENGTH</td>
+<td>文字数超過 / 不足</td>
+<td>(フィールド別)</td>
+<td>400</td>
+<td>同上</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td>E-INPUT-DOMAIN</td>
+<td>ドメイン形式不正</td>
+<td>MSG-SCR-004-M1-ERROR-001</td>
+<td>400</td>
+<td>-</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td>E-INPUT-OPTIMISTIC-LOCK</td>
+<td>楽観ロック衝突(<code>version</code> 不一致)</td>
+<td>(画面別)</td>
+<td>409</td>
+<td>「他のユーザーが更新したため保存できませんでした」</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td>E-INPUT-TURNSTILE</td>
+<td>Turnstile 検証失敗(FR-177)</td>
+<td>-</td>
+<td>400</td>
+<td>再表示</td>
+<td>WARN</td>
+</tr>
+<tr>
+<td>E-INPUT-CSV-INVALID</td>
+<td>FAQ インポート CSV 不正(文字コード非 UTF-8 / ヘッダ列不一致 / 1000 行超過。FR-310。文字コードは D&amp;D / 選択時にクライアント側で事前検証)</td>
+<td>MSG-SCR-006-M1-ERR-001 / ERR-002 / ERR-005</td>
+<td>400</td>
+<td>非 UTF-8 はアップロード前に即エラー。その他は失敗行を画面のエラー一覧(行番号 + 理由)に表示(SCR-006-M1)</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td>E-INPUT-CSV-FAQID-NOTFOUND</td>
+<td>FAQ インポート CSV の FAQ ID が当該契約内に存在しない(行単位失敗。FR-310)</td>
+<td>MSG-SCR-006-M1-ERR-004</td>
+<td>400</td>
+<td>当該行のみ失敗とし画面のエラー一覧に理由を表示。他行は成功扱い(SCR-006-M1)</td>
+<td>INFO</td>
+</tr>
+</tbody>
+</table>
+<h3 id="42-認証エラーe-auth-">4.2 認証エラー(<code>E-AUTH-*</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>エラーID</th>
+<th>発生条件</th>
+<th>メッセージID</th>
+<th>ステータスコード</th>
+<th>システム動作</th>
+<th>ログレベル</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>E-AUTH-CREDENTIAL</td>
+<td>パスワード不一致</td>
+<td>MSG-SCR-001-ERROR-001</td>
+<td>401</td>
+<td>失敗カウント +1。攻撃者にヒントを与えない</td>
+<td>WARN</td>
+</tr>
+<tr>
+<td>E-AUTH-LOCKED</td>
+<td>5 回失敗(<code>IP × user_id</code>)</td>
+<td>MSG-SCR-001-ERROR-003</td>
+<td>423</td>
+<td>15 分ロック。本人 + オーナー + 全プロジェクト管理者へ通知</td>
+<td>WARN</td>
+</tr>
+<tr>
+<td>E-AUTH-SESSION-EXPIRED</td>
+<td>セッション期限切れ(無操作 30 分 / 絶対 12 時間)</td>
+<td>-</td>
+<td>401</td>
+<td>SCR-001 へリダイレクト</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td>E-AUTH-TOKEN-EXPIRED</td>
+<td>トークン期限切れ(パスワード再設定 1h / 招待 7 日 / メール確認 24h / プロジェクト連絡先確認 24h)。SCR-018 では <code>MSG-SCR-018-ERROR-EXPIRED</code>、SCR-019 では <code>MSG-SCR-019-ERROR-EXPIRED</code> を表示</td>
+<td>MSG-SCR-003-ERROR-001(SCR-003)/ MSG-SCR-018-ERROR-EXPIRED(SCR-018)/ MSG-SCR-019-ERROR-EXPIRED(SCR-019)</td>
+<td>410</td>
+<td>用途別の復旧 CTA を返却</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td>E-AUTH-TOKEN-USED</td>
+<td>トークン使用済み(招待リンク既使用 / 連絡先確認リンク既使用含む)。SCR-018 では <code>MSG-SCR-018-ERROR-USED</code>、SCR-019 では <code>MSG-SCR-019-ERROR-USED</code> を表示</td>
+<td>(画面別)/ MSG-SCR-018-ERROR-USED(SCR-018)/ MSG-SCR-019-ERROR-USED(SCR-019)</td>
+<td>410</td>
+<td>同上</td>
+<td>WARN</td>
+</tr>
+<tr>
+<td>E-AUTH-VERIFICATION</td>
+<td>メール未確認</td>
+<td>MSG-SCR-013-*</td>
+<td>403</td>
+<td>SCR-013 へ</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td>E-AUTH-REAUTH-REQUIRED</td>
+<td>重要操作で再認証期限切れ(15 分超)</td>
+<td>-</td>
+<td>403</td>
+<td>再認証モーダル表示</td>
+<td>INFO</td>
+</tr>
+</tbody>
+</table>
+<h3 id="43-認可エラーe-authz-">4.3 認可エラー(<code>E-AUTHZ-*</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>エラーID</th>
+<th>発生条件</th>
+<th>メッセージID</th>
+<th>ステータスコード</th>
+<th>システム動作</th>
+<th>ログレベル</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>E-AUTHZ-FORBIDDEN</td>
+<td>プロジェクトロール不足(<code>member</code> で <code>admin</code> 限定操作 等)</td>
+<td>MSG-COMMON-AUTHZ-403</td>
+<td><strong>403 統一</strong></td>
+<td>「この操作を行う権限がありません。必要な場合は、契約オーナーまたはプロジェクト管理者に依頼してください」</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td>E-AUTHZ-OWNER-BOUNDARY</td>
+<td>オーナー境界違反(他契約のリソース参照)</td>
+<td>MSG-COMMON-NOT-FOUND</td>
+<td><strong>404 偽装</strong></td>
+<td>「指定された情報は見つかりませんでした。URLや選択中のワークスペースを確認してください」(相手契約の存在を漏らさない)</td>
+<td>WARN(必須記録、月次自動検証 AC-017)</td>
+</tr>
+<tr>
+<td>E-AUTHZ-PROJECT-DENIED</td>
+<td>プロジェクト割当不足(<code>project_users</code> に該当行なし)</td>
+<td>MSG-COMMON-NOT-FOUND</td>
+<td><strong>404 偽装</strong></td>
+<td>同上</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td>E-AUTHZ-OWNER-ONLY</td>
+<td>オーナー専有機能(<code>contract_owners</code> 行を持たないユーザーがプロジェクト作成・編集・削除 / 課金 / 退会 / 規約再同意 等にアクセス)</td>
+<td>MSG-COMMON-OWNER-ONLY</td>
+<td>403</td>
+<td>UI 非表示</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td>E-AUTHZ-OWNER-PROTECTED</td>
+<td>オーナー停止 / 削除 / 降格 試行(FR-333)</td>
+<td>MSG-COMMON-OWNER-PROTECTED</td>
+<td>403</td>
+<td>-</td>
+<td>WARN</td>
+</tr>
+<tr>
+<td>E-AUTHZ-SELF-MUTATION</td>
+<td>自分自身の操作禁止(FR-334、自分が <code>admin</code> を持つ最後のプロジェクトで自己降格 / 割当解除)</td>
+<td>MSG-COMMON-SELF-MUTATION</td>
+<td>403</td>
+<td>UI 非活性</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td>E-AUTHZ-LAST-ADMIN-PROTECTED</td>
+<td>メンバー由来の最後の <code>admin</code> を <code>member</code> へ降格する試行</td>
+<td>MSG-COMMON-LAST-ADMIN</td>
+<td>403</td>
+<td>別のプロジェクト管理者追加を案内</td>
+<td>WARN</td>
+</tr>
+<tr>
+<td>E-AUTHZ-TERMS</td>
+<td>規約未同意</td>
+<td>MSG-SCR-015-*</td>
+<td>403 → SCR-015 へリダイレクト</td>
+<td>規約再同意フロー</td>
+<td>INFO</td>
+</tr>
+</tbody>
+</table>
+<h3 id="44-業務エラーe-biz-">4.4 業務エラー(<code>E-BIZ-*</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>エラーID</th>
+<th>発生条件</th>
+<th>メッセージID</th>
+<th>ステータスコード</th>
+<th>システム動作</th>
+<th>ログレベル</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>E-BIZ-ACCOUNT-INACTIVE</td>
+<td>既に論理削除済(<code>users.valid=0</code>)のアカウントを対象とする操作試行(招待リンク再開 等)</td>
+<td>MSG-COMMON-ACCOUNT-INACTIVE</td>
+<td>409 Conflict</td>
+<td>「対象アカウントは既に削除されています」</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td>E-BIZ-PROJECT-INACTIVE</td>
+<td>既に論理削除済(<code>projects.valid=0</code>)のプロジェクトを対象とする操作試行</td>
+<td>MSG-COMMON-PROJECT-INACTIVE</td>
+<td>409 Conflict</td>
+<td>「対象プロジェクトは既に削除されています」</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td>E-BIZ-NOT-FOUND</td>
+<td>リソース不在(404 偽装ではない)</td>
+<td>-</td>
+<td>404</td>
+<td>-</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td>E-BIZ-CONTRACT-SUSPENDED</td>
+<td>契約停止中の操作</td>
+<td>MSG-BILL-CONTRACT-SUSPENDED</td>
+<td>403</td>
+<td>課金 / 退会のみ許可</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td>E-BIZ-CONTRACT-DELETED</td>
+<td>退会済み契約</td>
+<td>MSG-BILL-DELETED</td>
+<td>403</td>
+<td>ログイン不可</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td>E-BIZ-WIDGET-SUSPENDED</td>
+<td>ウィジェット応答(サスペンション中)</td>
+<td>-</td>
+<td><strong>423</strong>(FR-138)</td>
+<td>機能停止旨を返す</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td>E-BIZ-CHAT-RATE</td>
+<td>チャット投稿頻度超過(EU 10 件/分)</td>
+<td>-</td>
+<td>429</td>
+<td>UI 警告</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td>E-BIZ-AI-CONFIDENCE</td>
+<td>AI 信頼度しきい値未達(&lt; 0.60、分類 D 業務分岐)</td>
+<td>-</td>
+<td>200</td>
+<td>未解決登録(<code>branch_reason=confidence_below_threshold</code>)</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td>E-BIZ-AI-NO-FAQ</td>
+<td>FAQ 参照なし(関連度 &lt; 0.50)</td>
+<td>-</td>
+<td>200</td>
+<td>同上(<code>branch_reason=faq_not_found</code>)</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td>E-BIZ-AI-CONTRADICTION</td>
+<td>AI 矛盾検知</td>
+<td>-</td>
+<td>200</td>
+<td>同上(<code>branch_reason=faq_contradiction</code>)</td>
+<td>INFO</td>
+</tr>
+</tbody>
+</table>
+<h3 id="45-利用上限エラーe-quota-プロジェクト上限件数--全体キャパシティ">4.5 利用上限エラー(<code>E-QUOTA-*</code>、プロジェクト上限件数 + 全体キャパシティ)</h3>
+<table>
+<thead>
+<tr>
+<th>エラーID</th>
+<th>発生条件</th>
+<th>メッセージID</th>
+<th>ステータスコード</th>
+<th>システム動作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>E-QUOTA-QUESTIONS-LIMIT</td>
+<td><strong>当該プロジェクトの</strong>月次質問数が設定上限件数 100% 到達(オーナー / 当該 PJ 管理者設定。支払方法の有無に関わらず)</td>
+<td>ウィジェット: MSG-WIDGET-QUESTION-LIMIT / 管理画面: MSG-SCR-008-LIMIT-REACHED</td>
+<td>429(<code>Retry-After</code>=当月末まで)</td>
+<td><strong>当該プロジェクトのウィジェット新規質問受付を停止</strong>(契約は <code>active</code> のまま)。エンドユーザーへチャット内のシステム返信として連絡先メールを案内し、質問入力と送信を無効化する。管理者向けメールはSCR-021-M1で100%アラートを選択している場合だけ送信。復帰=翌月リセット or SCR-021-M1 で上限引き上げ</td>
+</tr>
+<tr>
+<td>E-QUOTA-CONTRACT-LIMIT</td>
+<td>同時契約上限超過(NFR-110、200 で新規受付停止)</td>
+<td>-</td>
+<td>503</td>
+<td><code>Retry-After: 60</code></td>
+</tr>
+<tr>
+<td>E-QUOTA-ONLINE-ADMIN</td>
+<td>同時オンライン管理者 1,000 名超過</td>
+<td>-</td>
+<td>503</td>
+<td><code>Retry-After: 60</code></td>
+</tr>
+<tr>
+<td>E-QUOTA-WIDGET-PARALLEL</td>
+<td>ウィジェット同時接続 10,000 並列超過</td>
+<td>-</td>
+<td>503</td>
+<td><code>Retry-After: 30</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="46-課金エラーe-bill-">4.6 課金エラー(<code>E-BILL-*</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>エラーID</th>
+<th>発生条件</th>
+<th>メッセージID</th>
+<th>ステータスコード</th>
+<th>システム動作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>E-BILL-CONTRACT-SUSPENDED</td>
+<td>契約サスペンション中</td>
+<td>MSG-BILL-CONTRACT-SUSPENDED</td>
+<td>403</td>
+<td>課金 / 退会のみ許可</td>
+</tr>
+<tr>
+<td>E-BILL-PAYMENT-FAILED</td>
+<td>支払い失敗 Webhook 受信</td>
+<td>MSG-BILL-PAYMENT-FAILED</td>
+<td>(Webhook 200)</td>
+<td>7 日猶予開始、<code>critical</code> メール強制送信</td>
+</tr>
+<tr>
+<td>E-BILL-PAYMENT-METHOD-REQUIRED</td>
+<td><strong>いずれかのプロジェクトが当該プロジェクトの無料枠超過</strong> + 支払方法未登録(支払方法ゲート、FR-136。無料枠判定はプロジェクト単位、支払方法は契約単位)</td>
+<td>MSG-BILL-PAYMENT-METHOD-REQUIRED</td>
+<td>429(<code>Retry-After</code>)</td>
+<td>契約 <code>active</code> 維持、<strong>当該プロジェクトのウィジェット新規質問受付を停止</strong>(エンドユーザーへ連絡先メール誘導)。管理画面は全機能利用可。<code>critical</code> メール強制送信。支払方法登録で即時再開</td>
+</tr>
+<tr>
+<td>E-BILL-DELETED</td>
+<td>退会済み契約のアクセス</td>
+<td>MSG-BILL-DELETED</td>
+<td>403</td>
+<td>ログイン不可</td>
+</tr>
+<tr>
+<td>E-BILL-PAYMENT-METHOD-MISSING</td>
+<td>支払方法未登録</td>
+<td>-</td>
+<td>422</td>
+<td>SCR-022 請求へ誘導</td>
+</tr>
+</tbody>
+</table>
+<h3 id="47-システムエラーe-sys-">4.7 システムエラー(<code>E-SYS-*</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>エラーID</th>
+<th>発生条件</th>
+<th>ステータスコード</th>
+<th>システム動作</th>
+<th>ログレベル</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>E-SYS-INTERNAL</td>
+<td>サーバー内部エラー / 予期しない例外</td>
+<td><strong>500</strong></td>
+<td>エラー ID を利用者提示(FR-113)、内部詳細は応答に含めない</td>
+<td>ERROR</td>
+</tr>
+<tr>
+<td>E-SYS-DB</td>
+<td>DB エラー</td>
+<td>500</td>
+<td>同上</td>
+<td>ERROR</td>
+</tr>
+<tr>
+<td>E-SYS-WORKERS-AI-TIMEOUT</td>
+<td>Workers AI 推論時間超過(&gt; 8s)</td>
+<td>503</td>
+<td>未解決登録(分類 D)</td>
+<td>WARN</td>
+</tr>
+<tr>
+<td>E-SYS-NETWORK-TRANSIENT</td>
+<td>一時ネットワーク断</td>
+<td>503 → 200(成功)</td>
+<td>サーバ側指数 BO 3 回(分類 A 透過再試行可)</td>
+<td>INFO</td>
+</tr>
+</tbody>
+</table>
+<h3 id="48-外部連携エラーe-ext-">4.8 外部連携エラー(<code>E-EXT-*</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>エラーID</th>
+<th>発生条件</th>
+<th>システム動作</th>
+<th>ログレベル</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>E-EXT-AI-FAILED</td>
+<td>Workers AI 推論失敗</td>
+<td><code>question_logs.metering_billable=false</code> で計測のみ</td>
+<td>WARN</td>
+</tr>
+<tr>
+<td>E-EXT-EMAIL-FAILED</td>
+<td>Resend 配信失敗</td>
+<td><code>notification_logs.delivery_state='failed'</code> → 自動 BO 3 回(最大 24h)</td>
+<td>WARN</td>
+</tr>
+<tr>
+<td>E-EXT-EMAIL-BOUNCED</td>
+<td>メール bounce(hard)</td>
+<td><code>email_suppression_list</code> 即時追加(全契約横断)</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td>E-EXT-EMAIL-SOFT-BOUNCE</td>
+<td>メール bounce(soft)5 連続</td>
+<td>サプレス登録(復帰可、SCR-093 経由)</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td>E-EXT-EMAIL-COMPLAINT</td>
+<td>メール苦情(<code>email.complained</code>)</td>
+<td>永久サプレス(<strong>復帰不可</strong>)</td>
+<td>WARN</td>
+</tr>
+</tbody>
+</table>
+<h3 id="49-連携-if-エラーe-if-nnn-">4.9 連携 IF エラー(<code>E-IF-NNN-*</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>エラーID</th>
+<th>発生条件</th>
+<th>システム動作</th>
+<th>ログレベル</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>E-IF-COMMON-AUTH</td>
+<td>mTLS / JWT 認証失敗</td>
+<td>401 + 監査記録</td>
+<td>WARN</td>
+</tr>
+<tr>
+<td>E-IF-COMMON-IDEMPOTENCY</td>
+<td>冪等性違反</td>
+<td>200 + 既存処理結果(リトライ安全性)</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td>E-IF-COMMON-SCHEMA</td>
+<td>JSON Schema 不整合</td>
+<td>400</td>
+<td>WARN</td>
+</tr>
+<tr>
+<td>E-IF-001-*</td>
+<td>IF #1(契約停止イベント)関連</td>
+<td>-</td>
+<td>WARN</td>
+</tr>
+<tr>
+<td>E-IF-002-*</td>
+<td>IF #2(強制ログアウト)関連</td>
+<td>-</td>
+<td>WARN</td>
+</tr>
+<tr>
+<td>E-IF-004-*</td>
+<td>IF #4(復元実行)関連</td>
+<td>-</td>
+<td>WARN</td>
+</tr>
+<tr>
+<td>E-IF-005-*</td>
+<td>IF #5(レート制限上書き)関連</td>
+<td>-</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td>E-IF-006-*</td>
+<td>IF #6(AI しきい値上書き)関連</td>
+<td>-</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td>E-IF-007-*</td>
+<td>IF #7(お知らせ生成)関連</td>
+<td>-</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td>E-IF-008-*</td>
+<td>IF #8(監視メトリクス取得、送信側)関連</td>
+<td>-</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td>E-IF-009-*</td>
+<td>IF #9(不正利用検知通知、送信側)関連</td>
+<td>-</td>
+<td>WARN</td>
+</tr>
+<tr>
+<td>E-IF-010-*</td>
+<td>IF #10(課金 Webhook 受信)関連</td>
+<td>-</td>
+<td>WARN</td>
+</tr>
+<tr>
+<td>E-IF-012-*</td>
+<td>IF #12(運営者操作通知)関連</td>
+<td>-</td>
+<td>INFO</td>
+</tr>
+</tbody>
+</table>
+<h3 id="410-webhook-エラーe-wh-">4.10 Webhook エラー(<code>E-WH-*</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>エラーID</th>
+<th>発生条件</th>
+<th>システム動作</th>
+<th>ログレベル</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>E-WH-SIGNATURE-INVALID</td>
+<td>Resend / Stripe 署名 HMAC 不正</td>
+<td>401 + 監査記録 + 運営者 <code>high</code> alert</td>
+<td>WARN</td>
+</tr>
+<tr>
+<td>E-WH-IDEMPOTENCY-VIOLATION</td>
+<td>event_id 重複</td>
+<td>200 + 既存処理結果</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td>E-WH-PAYLOAD-DIFF</td>
+<td>同 event_id + ハッシュ不一致</td>
+<td>200 + <code>webhook_payload_diffs</code> INSERT + 運営者 high alert + <strong>自動上書き禁止</strong></td>
+<td>WARN</td>
+</tr>
+<tr>
+<td>E-WH-DLQ-FAILED</td>
+<td>DLQ 自動 BO 3 回失敗</td>
+<td>永久失敗 → 運営者手動リプレイ待ち</td>
+<td>WARN</td>
+</tr>
+</tbody>
+</table>
+<h3 id="411-規約エラーe-legal-">4.11 規約エラー(<code>E-LEGAL-*</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>エラーID</th>
+<th>発生条件</th>
+<th>システム動作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>E-LEGAL-TERMS-NOT-AGREED</td>
+<td>規約未同意</td>
+<td>SCR-015 へリダイレクト</td>
+</tr>
+<tr>
+<td>E-LEGAL-TERMS-EXPIRED</td>
+<td>同意期限超過(発効 + 14 日)</td>
+<td>機能制限ガード(課金 / 新規プロジェクト不可、FAQ / ウィジェット稼働は継続)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-異常系共通方針">5. 異常系共通方針</h2>
+<h3 id="51-入力エラー時の方針">5.1 入力エラー時の方針</h3>
+<ul>
+<li>必須項目欠落 / 形式不正は <strong>400 + フィールド単位のエラー配列</strong> を返却</li>
+<li>メッセージは画面側で項目近くにインライン表示</li>
+<li>文字数 / 範囲チェックは Zod スキーマ(API 設計書 §3 参照)</li>
+</ul>
+<h3 id="52-認証エラー時の方針">5.2 認証エラー時の方針</h3>
+<ul>
+<li>パスワード不一致 / トークン期限切れは <strong>401 統一</strong></li>
+<li>ログイン失敗 5 回で <code>(IP × user_id)</code> を <strong>15 分ロックアウト</strong>(基本設計書 §10.1.1 / FR-007 / FR-177)</li>
+<li>ロックアウト解除は時間経過のみ(管理者解除なし)</li>
+<li>攻撃者へのヒント禁止(メール / パスワードのどちらが誤りかを示さない)</li>
+</ul>
+<h3 id="53-認可エラー時の方針">5.3 認可エラー時の方針</h3>
+<ul>
+<li>プロジェクトロール不足は <strong>403 統一</strong></li>
+<li><strong>オーナー境界違反は 404 偽装</strong>(403 だと相手契約のリソース存在が漏れる)</li>
+<li>レスポンスボディには具体的な権限名を含めない(列挙攻撃対策)</li>
+<li>AC-017(クロス契約アクセス検知)は <strong>月次自動検証</strong></li>
+</ul>
+<h3 id="54-業務エラー時の方針">5.4 業務エラー時の方針</h3>
+<ul>
+<li>FAQ の状態(<code>draft</code> / <code>published</code> / <code>hidden</code>)は相互に自由遷移でき、専用の公開ガード・公開エラーは設けない(SCR-006「保存」で状態をそのまま保存)。<code>status</code> の値域は CHECK 制約(<code>draft</code>/<code>published</code>/<code>hidden</code>/<code>deleted</code>)で検証する</li>
+<li>ステータス値域の妥当性は API 側で必ず検証(画面側だけの判定に頼らない)</li>
+</ul>
+<h3 id="55-利用上限エラー時の方針プロジェクト単位">5.5 利用上限エラー時の方針(プロジェクト単位)</h3>
+<ul>
+<li><strong>質問数の月次上限件数 100% 到達</strong>は <strong>429 + <code>Retry-After</code></strong>(秒数 = 月末までの秒数)。支払方法の有無に関わらず当該プロジェクトのウィジェット新規質問受付を停止し、エンドユーザーへ連絡先メール誘導する(<code>E-QUOTA-QUESTIONS-LIMIT</code>、§4.5)。FAQには月次上限エラーを設けない</li>
+<li><strong>無料枠超過分の課金</strong>(<code>無料枠</code> の超過)は事後課金(支払方法登録済)。これはウィジェット停止の <code>上限件数</code> 判定とは別概念(FR-122)</li>
+<li>同時接続上限は <strong>503 + <code>Retry-After</code></strong>(NFR-114)</li>
+</ul>
+<h3 id="56-課金エラー時の方針">5.6 課金エラー時の方針</h3>
+<ul>
+<li>契約停止中(<code>contract_status=suspended</code>)は <strong>403 + 専用コード</strong> <code>E-BILL-CONTRACT-SUSPENDED</code></li>
+<li>課金画面 / 退会画面のみ許可(基本設計書 §6.2.7 / FR-124)</li>
+<li>支払い失敗 → 7 日猶予期間カウント開始 + メール通知(<code>critical</code>)</li>
+</ul>
+<h3 id="57-外部連携エラー時の方針">5.7 外部連携エラー時の方針</h3>
+<ul>
+<li><strong>Workers AI 推論失敗</strong>: 質問数は計測するが <code>metering_billable=false</code>(基本設計書 §6.6.1)</li>
+<li><strong>Resend 配信失敗</strong>: <code>notification_logs.delivery_state='failed'</code> → DLQ 投入 + 自動 BO 3 回(最大 24h)</li>
+<li><strong>メール bounce</strong>: <code>email_suppression_list</code> 即時追加(全契約横断、R-003 共通ドメイン対策)</li>
+<li><strong>メール苦情(complained)</strong>: 永久サプレス、<strong>復帰不可</strong></li>
+</ul>
+<h3 id="58-連携-if-エラー時の方針">5.8 連携 IF エラー時の方針</h3>
+<ul>
+<li>冪等性違反: <strong>200 + 既存処理結果</strong> を返却(リトライ安全性)</li>
+<li>認証失敗(mTLS / JWT): 401 統一、署名検証失敗は別ログ出力</li>
+<li>JSON Schema 不整合: 400 + 監査記録</li>
+</ul>
+<h3 id="59-webhook-エラー時の方針">5.9 Webhook エラー時の方針</h3>
+<ul>
+<li>署名検証失敗: <strong>401 + 監査記録 + 運営者 <code>high</code> alert</strong> + 即時破棄</li>
+<li>冪等性違反: 200 + 既存処理結果</li>
+<li>ペイロード差分検出: 200 + <code>webhook_payload_diffs</code> INSERT + <strong>自動上書き禁止</strong>(SCR-098 レビュー待ち)</li>
+</ul>
+<h3 id="510-システムエラー時の方針">5.10 システムエラー時の方針</h3>
+<ul>
+<li>500 統一、内部詳細は応答に含めない</li>
+<li><strong>エラー ID を利用者提示</strong>(FR-113、カテゴリ C の 5xx 系)</li>
+<li><code>error_logs</code> テーブルに記録(180 日保持、JST 05:00 Cron で自動物理削除)</li>
+<li>監査が必要な操作の途中で発生した場合は <code>audit_logs</code> にも記録</li>
+<li>再試行ボタン 3 秒クールダウン(FR-112)</li>
+</ul>
+<h3 id="511-不正利用検知エラー時の方針fr-195">5.11 不正利用検知エラー時の方針(FR-195)</h3>
+<ul>
+<li>不正利用検知パターン(FR-195 / NFR-308)に該当 → IF #9 送出 + 運営者通知</li>
+<li>閾値超過時は自動 suspension + 管理者 + email 通知</li>
+</ul>
+<h2 id="6-ステータスコード対応表">6. ステータスコード対応表</h2>
+<table>
+<thead>
+<tr>
+<th>ステータスコード</th>
+<th>用途</th>
+<th>主なエラーID</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>業務分岐成功(分類 D)/ Webhook 受信</td>
+<td>E-BIZ-AI-* / E-WH-* / E-IF-COMMON-IDEMPOTENCY</td>
+</tr>
+<tr>
+<td>400</td>
+<td>入力エラー / Schema 不整合 / 業務不変条件違反</td>
+<td>E-INPUT-* / E-IF-COMMON-SCHEMA</td>
+</tr>
+<tr>
+<td>401</td>
+<td>認証エラー / 署名失敗</td>
+<td>E-AUTH-* / E-WH-SIGNATURE-INVALID / E-IF-COMMON-AUTH</td>
+</tr>
+<tr>
+<td>403</td>
+<td>認可エラー / 契約停止 / 規約未同意</td>
+<td>E-AUTHZ-* / E-BIZ-CONTRACT-* / E-LEGAL-*</td>
+</tr>
+<tr>
+<td>404</td>
+<td>リソース不在 / <strong>オーナー境界違反偽装</strong> / プロジェクト割当不足</td>
+<td>E-AUTHZ-OWNER-BOUNDARY / E-AUTHZ-PROJECT-DENIED / E-BIZ-NOT-FOUND</td>
+</tr>
+<tr>
+<td>409</td>
+<td>楽観ロック衝突</td>
+<td>E-INPUT-OPTIMISTIC-LOCK</td>
+</tr>
+<tr>
+<td>410</td>
+<td>トークン期限切れ / 使用済み</td>
+<td>E-AUTH-TOKEN-*</td>
+</tr>
+<tr>
+<td>422</td>
+<td>業務エラー(前提条件未充足など)</td>
+<td>E-BILL-PAYMENT-METHOD-MISSING</td>
+</tr>
+<tr>
+<td>423</td>
+<td>ロックアウト / ウィジェット停止</td>
+<td>E-AUTH-LOCKED / E-BIZ-WIDGET-SUSPENDED</td>
+</tr>
+<tr>
+<td>429</td>
+<td>契約上限到達 / レート制限</td>
+<td>E-QUOTA-* / E-BIZ-CHAT-RATE</td>
+</tr>
+<tr>
+<td>500</td>
+<td>システムエラー</td>
+<td>E-SYS-*</td>
+</tr>
+<tr>
+<td>502/503</td>
+<td>外部連携エラー / 一時的サービス停止</td>
+<td>E-EXT-* / E-SYS-NETWORK-TRANSIENT / E-QUOTA-ONLINE-*</td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-error_logs-テーブル設計運用">7. <code>error_logs</code> テーブル設計・運用</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>仕様</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>保持期間</td>
+<td><strong>180 日</strong>(NFR-704)</td>
+</tr>
+<tr>
+<td>削除スケジュール</td>
+<td>JST 05:00 Cron で自動物理削除(UC-140)</td>
+</tr>
+<tr>
+<td>記録内容</td>
+<td>エラーコード / エラーメッセージ / スタックトレース</td>
+</tr>
+<tr>
+<td><strong>除外項目</strong></td>
+<td><strong>個人情報(PII)/ 認証トークン / パスワードハッシュ</strong>(FR-114)</td>
+</tr>
+<tr>
+<td>入力値ログ</td>
+<td>先頭 100 文字 + SHA-256 ハッシュのみ記録</td>
+</tr>
+<tr>
+<td>エラー ID 提示</td>
+<td>カテゴリ C の 5xx 系エラーは利用者に提示(FR-113)</td>
+</tr>
+<tr>
+<td>再試行防止</td>
+<td>再試行ボタン 3 秒クールダウン(FR-112)</td>
+</tr>
+</tbody>
+</table>
+<p>詳細は <a href="03_テーブル設計.html">03_テーブル設計.html §3.19</a> を参照。</p>
+<h2 id="8-未決事項">8. 未決事項</h2>
+<table>
+<thead>
+<tr>
+<th>No</th>
+<th>内容</th>
+<th>確認先</th>
+<th>期限</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

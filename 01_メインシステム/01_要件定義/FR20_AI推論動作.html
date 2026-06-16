@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FR20: AI 推論動作 | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/01_要件定義/FR20_AI推論動作.html">
+<article class="content" id="content">
+<h1 id="fr20-ai-推論動作">FR20: AI 推論動作</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書名</td>
+<td>FR20: AI 推論動作</td>
+</tr>
+<tr>
+<td>機能グループ</td>
+<td>AI 推論動作</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>FAQ AI ウィジェット SaaS / メインシステム</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-17</td>
+</tr>
+<tr>
+<td>版数</td>
+<td>v1.0</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>承認済</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-機能概要">1. 機能概要</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>概要</td>
+<td>AI 推論のタイムアウト 8 秒、しきい値反映の即時性とフォールバック(顧客管理障害時)、プロンプトテンプレートの運営者専有編集と AI 品質回帰テスト連動を扱う</td>
+</tr>
+<tr>
+<td>利用場面</td>
+<td>エンドユーザーの質問送信時の推論動作、運営者のしきい値変更時の即時反映、プロンプト変更時の品質確認</td>
+</tr>
+<tr>
+<td>優先度</td>
+<td>Must</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-収録-fr-nnn-一覧">2. 収録 FR-NNN 一覧</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>要件</th>
+<th style="text-align: center;">優先度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-340</td>
+<td>AI 推論のタイムアウト上限は <strong>8 秒</strong> とし、超過時は処理エラー(FR-110)として扱うこと</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-341</td>
+<td>AI しきい値変更(連携 IF #6)は短時間で反映できること。顧客管理システムの長期障害時も、最後に取得できた設定またはグローバル既定値(信頼度 0.60 / 関連度 0.50、§8.6.1 と整合)で動作継続し、運営者へアラート通知できること。反映方式、キャッシュ無効化、フォールバック、ログ記録は基本設計を正本とする</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-342</td>
+<td>プロンプトテンプレートの編集は <strong>運営者のみ</strong> が実施可能とし、編集時に AI 品質回帰テスト(顧客管理 FR-066 / 本書 FR-059)を連動して実行すること。回帰テストに合格しない場合は本番反映不可とする</td>
+<td style="text-align: center;">P0</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-補足説明統合参照">3. 補足説明・統合参照</h2>
+<p>(該当なし。AI スコアリング定義は §8.6.1、AI 推論基盤の外部 IF 要件は §11.4 を参照)</p>
+<h2 id="4-関連設計">4. 関連設計</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>参照先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>画面設計</td>
+<td><a href="../02_基本設計/01_画面設計.html">../02_基本設計/01_画面設計.html</a></td>
+</tr>
+<tr>
+<td>API 設計</td>
+<td><a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html</a></td>
+</tr>
+<tr>
+<td>テーブル設計</td>
+<td><a href="../02_基本設計/03_テーブル設計.html">../02_基本設計/03_テーブル設計.html</a></td>
+</tr>
+<tr>
+<td>権限設計</td>
+<td><a href="../02_基本設計/04_権限設計.html">../02_基本設計/04_権限設計.html</a></td>
+</tr>
+<tr>
+<td>エラー設計</td>
+<td><a href="../02_基本設計/05_エラー設計.html">../02_基本設計/05_エラー設計.html</a></td>
+</tr>
+<tr>
+<td>メッセージ</td>
+<td><a href="../02_基本設計/06_メッセージ一覧.html">../02_基本設計/06_メッセージ一覧.html</a></td>
+</tr>
+<tr>
+<td>詳細設計</td>
+<td><a href="../03_詳細設計/index.html">../03_詳細設計/index.html</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-未確定事項確認事項">5. 未確定事項・確認事項</h2>
+<table>
+<thead>
+<tr>
+<th>確認事項ID</th>
+<th>確認内容</th>
+<th>優先度</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>v1.0 リリース時点で全項目確定済み</td>
+<td>低</td>
+<td>確認済</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

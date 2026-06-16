@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>メール設計書 | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/11_メール設計.html">
+<article class="content" id="content">
+<h1 id="メール設計書">メール設計書</h1>
+<h2 id="1-文書概要">1. 文書概要</h2>
+<h3 id="11-目的">1.1 目的</h3>
+<p>本書は <strong>メインシステム(利用者向け FAQ ウィジェット SaaS)が送信する全電子メールの件名・本文・テンプレート変数・送信契機を集中定義する正本</strong> である。実装者・QA・カスタマーサポートが本書の文言と差分なくメール内容を確認できることを保証する。</p>
+<h3 id="12-対象範囲">1.2 対象範囲</h3>
+<ul>
+<li>システムから自動送信される全メール(本書 §4 のテンプレート ID <code>TPL-*</code> 全件)</li>
+<li>各テンプレートの件名 / プレーンテキスト本文 / HTML 本文(プレースホルダ含む)</li>
+<li>送信契機(通知 ID <code>NOTIF-*</code>)/ 配信先 / 重要度 / 添付の有無 / 失効・リンク有効期限</li>
+<li>メール共通要件(送信元・Reply-To・i18n・サニタイズ・配信信頼性)</li>
+</ul>
+<p><strong>対象外</strong>:</p>
+<ul>
+<li>アプリ内お知らせ受信箱のテンプレート(<code>inbox</code> チャネル限定の <code>NOTIF-CHAT_HOLD_CHECK</code> のように email を含まないものは <a href="06_メッセージ一覧.html">06_メッセージ一覧.html</a> §6 を正本とする)</li>
+<li>個別の文言バリエーション(<code>MSG-SCR-*</code> 系の画面文言)</li>
+<li>運営者システムから送信されるメール(別ドキュメント <a href="../../02_運営者システム/02_基本設計/11_メール設計.html">../../02_運営者システム/02_基本設計/11_メール設計.html</a>)</li>
+</ul>
+<h3 id="13-版数">1.3 版数</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>版数</td>
+<td>1.1</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-19</td>
+</tr>
+<tr>
+<td>更新日</td>
+<td>2026-06-12</td>
+</tr>
+</tbody>
+</table>
+<h3 id="14-関連ドキュメント">1.4 関連ドキュメント</h3>
+<ul>
+<li>通知契機・チャネル・配信先 / 重要度: <a href="06_メッセージ一覧.html">06_メッセージ一覧.html</a> §6.1</li>
+<li>通知重要度の正本ルール: <a href="../../共有/共有概念.html">../../共有/共有概念.html</a> §通知重要度 4 値</li>
+<li>セキュリティ要件(配信信頼性 / DMARC 等): <a href="09_セキュリティ設計.html">09_セキュリティ設計.html</a> §11</li>
+<li>機能要件: <a href="../01_要件定義/index.html">../01_要件定義/index.html</a> FR-140〜149b</li>
+<li>エラー設計: <a href="05_エラー設計.html">05_エラー設計.html</a>(<code>E-MAIL-*</code>)</li>
+<li>利用規約再同意 / 課金イベントとの整合: <a href="10_課金・請求設計.html">10_課金・請求設計.html</a></li>
+</ul>
+<hr />
+<h2 id="2-共通基準">2. 共通基準</h2>
+<h3 id="21-送信元--reply-to--差出人表記">2.1 送信元 / Reply-To / 差出人表記</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Envelope From</td>
+<td><code>bounces+&lt;deliveryId&gt;@&lt;service-domain&gt;</code> (VERP)</td>
+</tr>
+<tr>
+<td>Header From</td>
+<td><code>open-faq &lt;noreply@&lt;service-domain&gt;&gt;</code> 固定</td>
+</tr>
+<tr>
+<td>Reply-To</td>
+<td>設定しない(NULL)</td>
+</tr>
+<tr>
+<td>List-Unsubscribe</td>
+<td>マーケティング系 <code>low</code> 通知にのみ設定</td>
+</tr>
+<tr>
+<td>DMARC / DKIM / SPF</td>
+<td>全テンプレートで pass を必須(NFR-905、09 セキュリティ §11.3)</td>
+</tr>
+</tbody>
+</table>
+<p>「このメールに直接返信せず、お問い合わせ画面または各プロジェクトのお問い合わせ先からご返信ください」のフッタ文言を必ず本文末尾に付与する。</p>
+<h3 id="22-件名規則">2.2 件名規則</h3>
+<ul>
+<li>件名長: 半角換算 70 文字以内(モバイル一覧で折り返しが発生しない目安)</li>
+<li>プレースホルダ <code>{...}</code> は本書 §4 各テンプレートの変数表で定義</li>
+<li><code>critical</code> 重要度の利用規約改定通知のみ <code>【重要】</code> プレフィックスを付与</li>
+<li><code>【open-faq】</code> のサービス名プレフィックスは付けない(<code>Header From</code> で識別可能なため)</li>
+</ul>
+<h3 id="23-本文構造">2.3 本文構造</h3>
+<p>全テンプレートは以下の 6 ブロックで構成される:</p>
+<ol type="1">
+<li>宛名(<code>{recipient_display_name} 様</code> / 不明時は <code>お客様</code>)</li>
+<li>一段落の状況説明(何が起きたか)</li>
+<li>行動を促す主要 CTA(リンクまたはボタン)</li>
+<li>副次情報(失効日時・対象ID等のメタデータ表)</li>
+<li>不審な操作の場合の連絡先案内(<code>critical</code> テンプレートのみ)</li>
+<li>共通フッタ(返信不可注意 / サービス名 / 配信元署名)</li>
+</ol>
+<h3 id="24-文字コード--言語--時刻">2.4 文字コード / 言語 / 時刻</h3>
+<ul>
+<li>文字コード: UTF-8</li>
+<li>HTML 版とテキスト版を両方生成し、<code>multipart/alternative</code> で送信</li>
+<li>全文 i18n キー化必須。MVP 対応言語: 日本語(<code>ja</code>)</li>
+<li>本文内の時刻表記は <strong>JST 固定</strong> で <code>YYYY-MM-DD HH:mm</code>(秒は含めない)。タイムゾーンを <code>(JST)</code> と明示</li>
+</ul>
+<h3 id="25-サニタイズ">2.5 サニタイズ</h3>
+<ul>
+<li>エンドユーザー入力(質問本文等)を埋め込む場合は HTML エスケープ + 200 字制限 + 末尾省略記号 <code>…</code> を付与</li>
+<li>引用ブロックは罫線で視覚的に分離し、サービスからの文言と区別</li>
+</ul>
+<h3 id="26-配信失敗時の挙動">2.6 配信失敗時の挙動</h3>
+<ul>
+<li>一時失敗(4xx SMTP / network): 指数バックオフで最大 3 回再送</li>
+<li>恒久失敗(5xx SMTP / hard bounce): <code>users.email_bounced_at</code> を記録、以降同一宛先への自動配信を抑止</li>
+<li><code>critical</code> 重要度の <code>LOCKOUT_NOTIFY</code> のみ、bounce 状態でも再送試行を続行(認証関連の到達性最優先)</li>
+</ul>
+<h3 id="27-添付ファイル">2.7 添付ファイル</h3>
+<table>
+<thead>
+<tr>
+<th>テンプレート</th>
+<th>添付ファイル</th>
+<th>形式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TPL-BILLING_INVOICE_ISSUED</code></td>
+<td>請求明細 PDF</td>
+<td><code>invoice_{year}{month}.pdf</code>、≤ 1 MB</td>
+</tr>
+</tbody>
+</table>
+<p>その他のテンプレートには添付ファイルを付けない。</p>
+<hr />
+<h2 id="3-テンプレート一覧">3. テンプレート一覧</h2>
+<p>メール送信を含む全 14 テンプレートを以下に索引する。詳細(件名 + 本文)は §4 を参照。</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>テンプレートID</th>
+<th>通知ID</th>
+<th>重要度</th>
+<th>配信先</th>
+<th>強制送信</th>
+<th>リンク有効期限</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>TPL-EMAIL_VERIFY</td>
+<td>NOTIF-EMAIL_VERIFY</td>
+<td>critical</td>
+<td>admin(本人)</td>
+<td>◯</td>
+<td>24h</td>
+</tr>
+<tr>
+<td>2</td>
+<td>TPL-PASSWORD_RESET</td>
+<td>NOTIF-PASSWORD_RESET</td>
+<td>critical</td>
+<td>admin(本人)</td>
+<td>◯</td>
+<td>1h</td>
+</tr>
+<tr>
+<td>3</td>
+<td>TPL-ADMIN_USER_REGISTER</td>
+<td>NOTIF-ADMIN_USER_REGISTER</td>
+<td>critical</td>
+<td>admin(招待対象)</td>
+<td>◯</td>
+<td>7d</td>
+</tr>
+<tr>
+<td>4</td>
+<td>TPL-PROJECT_ADMIN_INVITE</td>
+<td>NOTIF-PROJECT_ADMIN_INVITE</td>
+<td>critical</td>
+<td>admin(招待対象)</td>
+<td>◯</td>
+<td>7d</td>
+</tr>
+<tr>
+<td>5</td>
+<td>TPL-PROJECT_CONTACT_VERIFY</td>
+<td>(オーナー操作派生)</td>
+<td>critical</td>
+<td>プロジェクト連絡先</td>
+<td>◯</td>
+<td>24h</td>
+</tr>
+<tr>
+<td>6</td>
+<td>TPL-LOCKOUT_NOTIFY</td>
+<td>NOTIF-LOCKOUT_NOTIFY</td>
+<td>critical</td>
+<td>ロック本人 + オーナー + 全 PJ 管理者</td>
+<td>◯</td>
+<td>(リンクなし)</td>
+</tr>
+<tr>
+<td>7</td>
+<td>TPL-DELETION_REMINDER</td>
+<td>NOTIF-DELETION_REMINDER</td>
+<td>high</td>
+<td>admin(オーナー)</td>
+<td>◯</td>
+<td>退会発効日まで</td>
+</tr>
+<tr>
+<td>8</td>
+<td>TPL-BILLING_INVOICE_ISSUED</td>
+<td>NOTIF-BILLING_INVOICE_ISSUED</td>
+<td>high</td>
+<td>admin(オーナー)</td>
+<td>◯</td>
+<td>30d(PDF 再 DL)</td>
+</tr>
+<tr>
+<td>9</td>
+<td>TPL-BILLING_PAYMENT_FAILED</td>
+<td>NOTIF-BILLING_PAYMENT_FAILED</td>
+<td>high</td>
+<td>admin(オーナー)</td>
+<td>◯</td>
+<td>(再決済リンク)</td>
+</tr>
+<tr>
+<td>10</td>
+<td>TPL-BILLING_SUSPENSION</td>
+<td>NOTIF-BILLING_SUSPENSION</td>
+<td>critical</td>
+<td>admin(オーナー + 全 PJ 管理者)</td>
+<td>◯</td>
+<td>(リンクなし)</td>
+</tr>
+<tr>
+<td>11</td>
+<td>TPL-PAYMENT_METHOD_REQUIRED</td>
+<td>NOTIF-PAYMENT_METHOD_REQUIRED</td>
+<td>critical</td>
+<td>admin(オーナー)</td>
+<td>◯</td>
+<td>(課金設定リンク)</td>
+</tr>
+<tr>
+<td>12</td>
+<td>TPL-TERMS_REVISION</td>
+<td>NOTIF-TERMS_REVISION</td>
+<td>critical</td>
+<td>admin(オーナー + 全 PJ 管理者)</td>
+<td>◯</td>
+<td>発効日 + 14d</td>
+</tr>
+<tr>
+<td>13</td>
+<td>TPL-SERVICE_ANNOUNCEMENT</td>
+<td>NOTIF-SERVICE_ANNOUNCEMENT</td>
+<td>normal/high/critical</td>
+<td>admin(範囲指定可)</td>
+<td>運営者選択</td>
+<td>運営者入力 URL</td>
+</tr>
+<tr>
+<td>14</td>
+<td>TPL-SYSTEM_NOTICE</td>
+<td>NOTIF-SYSTEM_NOTICE</td>
+<td>normal/high</td>
+<td>admin(対象者)</td>
+<td>契機による</td>
+<td>(画面内リンク)</td>
+</tr>
+</tbody>
+</table>
+<p><code>NOTIF-CHAT_HOLD_CHECK</code> はチャネルが <code>inbox</code> 限定(メール送信なし)のため本書の対象外。<code>NOTIF-SYSTEM_NOTICE</code> は inbox/email 兼用で、サブ契機ごとに動的に件名・本文を組み立てるメタテンプレートとして定義する。</p>
+<hr />
+<h2 id="4-テンプレート詳細">4. テンプレート詳細</h2>
+<p>各テンプレートは以下のセクション構造で記載する:</p>
+<ul>
+<li><strong>発火条件</strong>: どの操作・イベントで送信されるか</li>
+<li><strong>テンプレート変数</strong>: 本文中の <code>{...}</code> 変数</li>
+<li><strong>件名</strong>: 件名(JA)</li>
+<li><strong>本文(テキスト版)</strong>: プレーンテキスト本文</li>
+<li><strong>本文(HTML 版)</strong>: HTML 版の構造(本文要素を箇条書きで定義)</li>
+<li><strong>備考</strong>: 注意事項</li>
+</ul>
+<h3 id="41-tpl-email_verifyアカウント登録-メール確認">4.1 TPL-EMAIL_VERIFY(アカウント登録: メール確認)</h3>
+<p><strong>発火条件</strong>: SCR-002 新規登録の「アカウント作成」ボタン押下直後、<code>access_tokens.purpose='email_verify'</code> 発行時。</p>
+<p><strong>テンプレート変数</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>変数</th>
+<th>説明</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>{recipient_display_name}</code></td>
+<td>受信者の表示名(未設定時は空文字)</td>
+<td>佐藤 太郎</td>
+</tr>
+<tr>
+<td><code>{verify_url}</code></td>
+<td>確認 URL(24h 有効)</td>
+<td><a href="https://app.example.com/auth/verify?token=">https://app.example.com/auth/verify?token=</a>...</td>
+</tr>
+<tr>
+<td><code>{expire_at_jst}</code></td>
+<td>失効日時(JST、<code>YYYY-MM-DD HH:mm</code>)</td>
+<td>2026-05-20 14:30</td>
+</tr>
+<tr>
+<td><code>{requester_ip}</code></td>
+<td>リクエスト元 IP(国情報を補助表記)</td>
+<td>203.0.113.42(JP)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>件名</strong>: <code>メール確認をお願いします</code></p>
+<p><strong>本文(テキスト版)</strong>:</p>
+<pre><code>{recipient_display_name} 様
+
+open-faq へのご登録ありがとうございます。
+以下のリンクからメールアドレスの確認を完了してください。
+
+▶ メールを確認する
+{verify_url}
+
+このリンクは {expire_at_jst}(JST) まで有効です。
+
+リクエスト元:
+  - IP: {requester_ip}
+
+ご自身でこの操作を行っていない場合は、本メールを破棄してください。第三者が
+あなたのメールアドレスで登録を試みた可能性がありますが、リンクをクリックし
+ない限り、アカウントは作成されません。
+
+──────────────────────────────────────────────
+このメールに直接返信しないでください。
+open-faq &lt;noreply@&lt;service-domain&gt;&gt;</code></pre>
+<p><strong>本文(HTML 版)</strong>: テキスト版と同等の段落構造 + 「メールを確認する」プライマリボタン(リンク <code>{verify_url}</code>)。失効日時とリクエスト元 IP は背景色 <code>#f5f5f5</code> のメタデータ表で表示。</p>
+<p><strong>備考</strong>: 失敗(リンク有効期限切れ等)時はログインページで <code>E-AUTH-EMAIL_VERIFY-EXPIRED</code> を表示し、再送導線を提供。</p>
+<hr />
+<h3 id="42-tpl-password_resetパスワード再設定">4.2 TPL-PASSWORD_RESET(パスワード再設定)</h3>
+<p><strong>発火条件</strong>: SCR-003 パスワード再設定の「再設定リンクを送信する」ボタン押下時、<code>access_tokens.purpose='password_reset'</code> 発行時。</p>
+<p><strong>テンプレート変数</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>変数</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>{recipient_display_name}</code></td>
+<td>受信者の表示名</td>
+</tr>
+<tr>
+<td><code>{reset_url}</code></td>
+<td>再設定 URL(1h 有効)</td>
+</tr>
+<tr>
+<td><code>{expire_at_jst}</code></td>
+<td>失効日時(JST)</td>
+</tr>
+<tr>
+<td><code>{requester_ip}</code></td>
+<td>リクエスト元 IP</td>
+</tr>
+<tr>
+<td><code>{requester_ua_summary}</code></td>
+<td>User-Agent 要約(ブラウザ名 + OS のみ)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>件名</strong>: <code>パスワード再設定のご案内</code></p>
+<p><strong>本文(テキスト版)</strong>:</p>
+<pre><code>{recipient_display_name} 様
+
+open-faq のパスワード再設定リクエストを受け付けました。
+以下のリンクから新しいパスワードを設定してください。
+
+▶ パスワードを再設定する
+{reset_url}
+
+このリンクは {expire_at_jst}(JST) まで有効です(発行から 1 時間)。
+
+リクエスト元:
+  - IP: {requester_ip}
+  - 端末: {requester_ua_summary}
+
+ご自身で操作を行っていない場合は、本メールを破棄しアカウントの不正利用を
+ご確認ください。心当たりのないリクエストが続く場合はサポートまでご連絡く
+ださい。
+
+──────────────────────────────────────────────
+このメールに直接返信しないでください。
+open-faq &lt;noreply@&lt;service-domain&gt;&gt;</code></pre>
+<p><strong>本文(HTML 版)</strong>: プライマリボタン「パスワードを再設定する」+ リクエスト元のメタデータ表 + 警告ボックス(背景色 <code>#fff3cd</code>)で「心当たりのないリクエストの場合」案内。</p>
+<p><strong>備考</strong>: 連続失敗ロックアウト(FR-007)発動時は本テンプレートは送信せず <code>TPL-LOCKOUT_NOTIFY</code> に切り替わる。</p>
+<hr />
+<h3 id="43-tpl-admin_user_registerメンバー招待再送-共通">4.3 TPL-ADMIN_USER_REGISTER(メンバー招待・再送 共通)</h3>
+<p><strong>発火条件</strong>: SCR-009-M1 メンバー招待モーダルの「招待メールを送信する」/「招待メールを再送する」ボタン押下時、<code>access_tokens.purpose='activation'</code> 発行時。</p>
+<p><strong>テンプレート変数</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>変数</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>{recipient_email}</code></td>
+<td>招待対象のメールアドレス(招待時点で <code>users.name=NULL</code> のため宛先表示は email を用いる。FR-016e)</td>
+</tr>
+<tr>
+<td><code>{inviter_owner_name}</code></td>
+<td>招待元オーナーの表示名</td>
+</tr>
+<tr>
+<td><code>{inviter_admin_name}</code></td>
+<td>招待操作者の表示名(オーナー以外の管理者の場合)</td>
+</tr>
+<tr>
+<td><code>{project_name}</code></td>
+<td>招待対象プロジェクト名</td>
+</tr>
+<tr>
+<td><code>{assigned_role_label}</code></td>
+<td>付与ロール表示(<code>プロジェクト管理者</code> / <code>プロジェクトメンバー</code>)</td>
+</tr>
+<tr>
+<td><code>{activation_url}</code></td>
+<td>アクティベーション URL(7d 有効、SCR-018 メンバーアカウント有効化ページに着地)</td>
+</tr>
+<tr>
+<td><code>{expire_at_jst}</code></td>
+<td>失効日時(JST)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>件名</strong>: <code>open-faq の管理者ユーザー登録を完了してください</code></p>
+<p><strong>本文(テキスト版)</strong>:</p>
+<pre><code>{recipient_email} 様
+
+{inviter_owner_name} 様の open-faq アカウントから、{project_name} のメン
+バーとして招待を受けました。以下のリンクからお名前(表示名)と初回パスワー
+ドを設定し、利用規約・プライバシーポリシーに同意のうえ、アカウント登録を
+完了してください。
+
+▶ アカウント登録を完了する
+{activation_url}
+
+このリンクは {expire_at_jst}(JST) まで有効です(発行から 7 日)。
+失効後に登録する場合は、招待元の管理者へ再送をご依頼ください。
+
+招待内容:
+  - プロジェクト: {project_name}
+  - 付与ロール: {assigned_role_label}
+  - 招待元オーナー: {inviter_owner_name}
+  - 招待操作者: {inviter_admin_name}
+
+心当たりがない場合は本メールを破棄してください。リンクをクリックしない限
+りアカウントは有効化されません。
+
+──────────────────────────────────────────────
+このメールに直接返信しないでください。
+open-faq &lt;noreply@&lt;service-domain&gt;&gt;</code></pre>
+<p><strong>本文(HTML 版)</strong>: 招待内容を背景色 <code>#eef6ff</code> のパネルで表示 + プライマリボタン「アカウント登録を完了する」+ 失効日時を強調表示。本文の必須項目に「氏名(表示名)入力 + 初回パスワード設定 + 利用規約・プライバシーポリシー同意」を含める。</p>
+<p><strong>着地ページ</strong>: SCR-018 メンバーアカウント有効化(01_画面設計.html §5.25)。</p>
+<p><strong>備考</strong>: 再送時は <strong>旧 <code>access_tokens</code> を失効させ新トークンを発行</strong> したうえで本テンプレートで再送信(<code>MSG-SCR-009-M1-TOAST-002</code> と整合)。本文は新規招待時と同一で、差出人による文脈は本文中の「招待操作者」フィールドで補足する。氏名は招待時点で未登録のため、宛先表示は <code>{recipient_email}</code> を用いる。</p>
+<hr />
+<h3 id="44-tpl-project_admin_inviteプロジェクト管理者招待">4.4 TPL-PROJECT_ADMIN_INVITE(プロジェクト管理者招待)</h3>
+<p><strong>発火条件</strong>: SCR-009-M1 メンバー招待モーダルで <code>role='admin'</code> を指定して招待を実行した時、招待対象メールアドレスへ送信(FR-015 / FR-015e / FR-030a)。</p>
+<p><strong>テンプレート変数</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>変数</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>{recipient_email}</code></td>
+<td>招待対象メールアドレス(表示名は未登録のため使用しない)</td>
+</tr>
+<tr>
+<td><code>{inviter_owner_name}</code></td>
+<td>招待元オーナーの表示名</td>
+</tr>
+<tr>
+<td><code>{project_name}</code></td>
+<td>新規作成されたプロジェクト名</td>
+</tr>
+<tr>
+<td><code>{activation_url}</code></td>
+<td>アクティベーション URL(7d 有効、SCR-018 メンバーアカウント有効化ページに着地)またはログイン URL(既存アカウントの場合)</td>
+</tr>
+<tr>
+<td><code>{expire_at_jst}</code></td>
+<td>失効日時(JST)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>件名</strong>: <code>{project_name} のプロジェクト管理者に招待されました</code></p>
+<p><strong>本文(テキスト版)</strong>:</p>
+<pre><code>{recipient_email} 様
+
+{inviter_owner_name} 様から open-faq の {project_name} のプロジェクト管理
+者として招待されました。以下のリンクからお名前(表示名)と初回パスワード
+を設定し、利用規約・プライバシーポリシーに同意のうえ、アカウントを有効化
+してください。
+
+▶ アクティベーションを完了する
+{activation_url}
+
+このリンクは {expire_at_jst}(JST) まで有効です(発行から 7 日)。
+
+付与される権限:
+  - プロジェクト: {project_name}
+  - ロール: プロジェクト管理者(プロジェクトの設定変更、メンバー招待・
+    ロール変更、アカウント削除が可能)
+
+すでに open-faq のアカウントをお持ちの場合は、リンク先で同一メールアドレ
+スのアカウントに当該プロジェクトの管理者割当が追加されます。
+
+心当たりがない場合は本メールを破棄してください。
+
+──────────────────────────────────────────────
+このメールに直接返信しないでください。
+open-faq &lt;noreply@&lt;service-domain&gt;&gt;</code></pre>
+<p><strong>本文(HTML 版)</strong>: プロジェクト名を大きく表示 + 「付与される権限」をリスト表示 + プライマリボタン「アクティベーションを完了する」。本文の必須項目に「氏名(表示名)入力 + 初回パスワード設定 + 利用規約・プライバシーポリシー同意」を含める。</p>
+<p><strong>着地ページ</strong>: SCR-018 メンバーアカウント有効化(01_画面設計.html §5.25)。</p>
+<p><strong>備考</strong>: 既存アカウントがある場合(FR-021c 名前解決)は <code>{activation_url}</code> がログイン URL になり、ログイン後に当該プロジェクトに <code>project_users.role='admin'</code> 行が追加される(SCR-018 はバイパス、氏名は既存値を保持)。</p>
+<hr />
+<h3 id="45-tpl-project_contact_verifyプロジェクト連絡先メール確認">4.5 TPL-PROJECT_CONTACT_VERIFY(プロジェクト連絡先メール確認)</h3>
+<p><strong>発火条件</strong>: SCR-004-M1 プロジェクト作成・編集モーダルで連絡先メールアドレスが新規入力 / 変更された時、ウィジェット上での表示前確認用に送信。</p>
+<p><strong>テンプレート変数</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>変数</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>{project_name}</code></td>
+<td>プロジェクト名</td>
+</tr>
+<tr>
+<td><code>{verify_url}</code></td>
+<td>確認 URL(24h 有効)</td>
+</tr>
+<tr>
+<td><code>{expire_at_jst}</code></td>
+<td>失効日時(JST)</td>
+</tr>
+<tr>
+<td><code>{operator_owner_name}</code></td>
+<td>設定操作したオーナーの表示名</td>
+</tr>
+</tbody>
+</table>
+<p><strong>件名</strong>: <code>{project_name} のお問い合わせ先メールアドレスを確認してください</code></p>
+<p><strong>本文(テキスト版)</strong>:</p>
+<pre><code>お客様
+
+{operator_owner_name} 様が open-faq の {project_name} のお問い合わせ先メー
+ルアドレスとしてこのアドレスを登録しました。FAQ ウィジェット上でお問い合
+わせ先として表示するため、以下のリンクから確認をお願いします。
+
+▶ メールアドレスを確認する
+{verify_url}
+
+このリンクは {expire_at_jst}(JST) まで有効です(発行から 24 時間)。
+
+確認が完了するまで、FAQ ウィジェット上にお問い合わせ先は表示されません。
+
+心当たりがない場合は本メールを破棄してください。
+
+──────────────────────────────────────────────
+このメールに直接返信しないでください。
+open-faq &lt;noreply@&lt;service-domain&gt;&gt;</code></pre>
+<p><strong>本文(HTML 版)</strong>: プロジェクト名を強調 + 確認用プライマリボタン + 確認前は非表示である旨を注記。</p>
+<p><strong>着地ページ</strong>: <strong>SCR-019 プロジェクト連絡先メール確認完了</strong>(01_画面設計.html §5.26、共通領域、未認証可)。トークン検証成功時に <code>projects.contact_email_verified_at=now()</code> をセットし、結果(完了 / 期限切れ / 既使用)を表示する。</p>
+<p><strong>備考</strong>: 受信者はオーナーや管理者である必要はなく、第三者(例: サポート窓口担当者の共有メールアドレス)でも構わない。アカウント作成や認証は不要で、トークン保有者のみが本フローを進められる。トークンは <code>access_tokens.purpose='contact_verify'</code>(24 時間)、<code>meta</code> に <code>projectId</code> を JSON 保持(FR-033a)。</p>
+<hr />
+<h3 id="46-tpl-lockout_notifyログインロックアウト発動">4.6 TPL-LOCKOUT_NOTIFY(ログインロックアウト発動)</h3>
+<p><strong>発火条件</strong>: FR-007 連続ログイン失敗閾値到達時。本人 + 同一オーナースコープで <code>project_users.role='admin' AND valid=1</code> を 1 件でも保持する全ユーザー(オーナーは作成時に自動で admin 行を保持するため本クエリ単独でオーナー + 全プロジェクト管理者を網羅)へ送信。</p>
+<p><strong>テンプレート変数</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>変数</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>{recipient_display_name}</code></td>
+<td>受信者の表示名</td>
+</tr>
+<tr>
+<td><code>{locked_account_email}</code></td>
+<td>ロックされたアカウントのメールアドレス</td>
+</tr>
+<tr>
+<td><code>{lockout_started_at_jst}</code></td>
+<td>ロックアウト開始日時(JST)</td>
+</tr>
+<tr>
+<td><code>{lockout_window_minutes}</code></td>
+<td>自動解除までの分数(MVP: 30)</td>
+</tr>
+<tr>
+<td><code>{requester_ip}</code></td>
+<td>最後の失敗試行 IP</td>
+</tr>
+<tr>
+<td><code>{requester_geo}</code></td>
+<td>IP からの推定国・地域(IP geolocation)</td>
+</tr>
+<tr>
+<td><code>{contact_url}</code></td>
+<td>サポート問い合わせ URL(<strong>サービス提供者が運用する外部サポートページ</strong>、環境変数 <code>SUPPORT_CONTACT_URL</code> 等で設定可能)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>件名</strong>: <code>【セキュリティ】ログインロックアウトが発動しました</code></p>
+<p><strong>本文(テキスト版)</strong>:</p>
+<pre><code>{recipient_display_name} 様
+
+open-faq のアカウントで連続ログイン失敗を検知し、ロックアウトが発動しまし
+た。
+
+  - 対象アカウント: {locked_account_email}
+  - ロックアウト開始: {lockout_started_at_jst}(JST)
+  - 自動解除: {lockout_window_minutes} 分後
+  - 最終試行元: {requester_ip}({requester_geo})
+
+ご自身による試行の場合、自動解除後に正しいパスワードでログインしてくださ
+い。パスワードを失念した場合は SCR-003 パスワード再設定をご利用ください。
+
+ご自身による試行でない場合、第三者が認証情報を試行している可能性がありま
+す。直ちに以下を実施してください:
+
+  1. パスワードを再設定する
+  2. 心当たりのないログイン履歴がないか確認する
+  3. 必要に応じて以下からサポートへ連絡する
+     {contact_url}
+
+──────────────────────────────────────────────
+このメールに直接返信しないでください。
+open-faq &lt;noreply@&lt;service-domain&gt;&gt;</code></pre>
+<p><strong>本文(HTML 版)</strong>: 警告アイコン + 赤系背景 <code>#fff5f5</code> のヘッダ + 「ロック詳細」「ご自身による試行の場合」「不正試行が疑われる場合」の 3 ブロック。</p>
+<p><strong>着地ページ</strong>: <code>{contact_url}</code> は <strong>外部サポートページ</strong>(管理画面外、本書 SCR 体系の対象外)。SCR ID は付与しない。</p>
+<p><strong>備考</strong>: 同一インシデントで同一受信者に短時間で複数回送信されないよう、<code>notification_logs</code> で 60 分以内の重複配信を抑止。</p>
+<hr />
+<h3 id="47-tpl-deletion_reminder退会猶予期間案内">4.7 TPL-DELETION_REMINDER(退会猶予期間案内)</h3>
+<p><strong>発火条件</strong>: SCR-014 退会申請後、退会発効日(申請当月末)の 7 日前 / 当日 / 完全削除 3 日前の 3 回送信。</p>
+<p><strong>テンプレート変数</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>変数</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>{recipient_display_name}</code></td>
+<td>オーナー表示名</td>
+</tr>
+<tr>
+<td><code>{withdrawal_phase}</code></td>
+<td>フェーズ(<code>pre7d</code> / <code>effective</code> / <code>pre3d_purge</code>)</td>
+</tr>
+<tr>
+<td><code>{service_stop_at_jst}</code></td>
+<td>サービス停止日時(申請当月末日 23:59 JST)</td>
+</tr>
+<tr>
+<td><code>{data_purge_at_jst}</code></td>
+<td>完全削除日時(停止 + 30 日)</td>
+</tr>
+<tr>
+<td><code>{cancel_withdrawal_url}</code></td>
+<td>退会取消 URL(発効前のみ)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>件名</strong>:</p>
+<ul>
+<li>pre7d: <code>退会まで残り 7 日: サービス停止のご案内</code></li>
+<li>effective: <code>退会が発効しました: データ完全削除のご案内</code></li>
+<li>pre3d_purge: <code>【最終案内】データ完全削除まで残り 3 日</code></li>
+</ul>
+<p><strong>本文(テキスト版・pre7d)</strong>:</p>
+<pre><code>{recipient_display_name} 様
+
+open-faq へのご退会申請ありがとうございました。
+{service_stop_at_jst}(JST) にサービス利用が停止されます。
+
+退会を取り消す場合は発効日まで以下のリンクからキャンセル可能です。
+
+▶ 退会を取り消す
+{cancel_withdrawal_url}
+
+データ完全削除予定日: {data_purge_at_jst}(JST、サービス停止から 30 日)
+完全削除後は復元できません。
+
+──────────────────────────────────────────────
+このメールに直接返信しないでください。
+open-faq &lt;noreply@&lt;service-domain&gt;&gt;</code></pre>
+<p><strong>本文(HTML 版)</strong>: フェーズに応じてヘッダ色を変える(pre7d: 黄、effective: 橙、pre3d_purge: 赤)+ 退会取消リンクは <code>pre7d</code> フェーズのみ表示。</p>
+<p><strong>備考</strong>: フェーズごとに件名・本文を分岐させる単一テンプレート。<code>{withdrawal_phase}</code> で本文セクションの出し分けを行う。</p>
+<hr />
+<h3 id="48-tpl-billing_invoice_issued月次請求確定通知">4.8 TPL-BILLING_INVOICE_ISSUED(月次請求確定通知)</h3>
+<p><strong>発火条件</strong>: FR-148 月次請求確定バッチ完了時、当該契約のオーナーへ送信。</p>
+<p><strong>テンプレート変数</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>変数</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>{recipient_display_name}</code></td>
+<td>オーナー表示名</td>
+</tr>
+<tr>
+<td><code>{billing_period_label}</code></td>
+<td>対象期間(<code>2026 年 4 月</code>)</td>
+</tr>
+<tr>
+<td><code>{invoice_amount_jpy}</code></td>
+<td>請求金額(¥1,234)</td>
+</tr>
+<tr>
+<td><code>{question_count}</code></td>
+<td>質問数</td>
+</tr>
+<tr>
+<td><code>{overage_amount_jpy}</code></td>
+<td>上限超過分(¥0 の場合は記載省略)</td>
+</tr>
+<tr>
+<td><code>{invoice_pdf_url}</code></td>
+<td>明細 PDF DL URL(30d 有効)</td>
+</tr>
+<tr>
+<td><code>{billing_screen_url}</code></td>
+<td>SCR-022 請求 deeplink</td>
+</tr>
+</tbody>
+</table>
+<p><strong>件名</strong>: <code>{billing_period_label} の請求書が発行されました(¥{invoice_amount_jpy})</code></p>
+<p><strong>本文(テキスト版)</strong>:</p>
+<pre><code>{recipient_display_name} 様
+
+open-faq の {billing_period_label} ご利用分の請求書を発行しました。
+
+  - 請求金額: ¥{invoice_amount_jpy}
+  - 対象期間: {billing_period_label}
+  - 質問数: {question_count}
+  - 上限超過分: ¥{overage_amount_jpy}
+
+明細 PDF を添付しています。また以下からも DL いただけます(30 日間有効)。
+
+▶ 請求明細 PDF を開く
+{invoice_pdf_url}
+
+請求書一覧および過去の請求は以下からご確認いただけます。
+
+▶ 請求画面を開く
+{billing_screen_url}
+
+──────────────────────────────────────────────
+このメールに直接返信しないでください。
+open-faq &lt;noreply@&lt;service-domain&gt;&gt;</code></pre>
+<p><strong>本文(HTML 版)</strong>: 請求サマリ表 + プライマリボタン「請求画面を開く」+ PDF DL セカンダリボタン。</p>
+<p><strong>備考</strong>: PDF は §2.7 のとおり必ず添付。<code>{overage_amount_jpy}</code> が <code>0</code> の場合は当該行を出力しない。</p>
+<hr />
+<h3 id="49-tpl-billing_payment_failed支払い失敗通知">4.9 TPL-BILLING_PAYMENT_FAILED(支払い失敗通知)</h3>
+<p><strong>発火条件</strong>: Stripe Webhook で支払い失敗(<code>invoice.payment_failed</code>)を受信、Smart Retries が継続中の場合に送信。</p>
+<p><strong>テンプレート変数</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>変数</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>{recipient_display_name}</code></td>
+<td>オーナー表示名</td>
+</tr>
+<tr>
+<td><code>{billing_period_label}</code></td>
+<td>対象期間</td>
+</tr>
+<tr>
+<td><code>{invoice_amount_jpy}</code></td>
+<td>請求金額</td>
+</tr>
+<tr>
+<td><code>{failure_reason}</code></td>
+<td>Stripe 失敗理由(<code>card_declined</code> 等の人間可読版)</td>
+</tr>
+<tr>
+<td><code>{retry_count}</code></td>
+<td>再試行回数(1〜3)</td>
+</tr>
+<tr>
+<td><code>{next_retry_at_jst}</code></td>
+<td>次回再試行日時(JST、最終再試行時は「再試行なし」)</td>
+</tr>
+<tr>
+<td><code>{payment_method_url}</code></td>
+<td>SCR-022 請求の支払い方法変更 URL</td>
+</tr>
+<tr>
+<td><code>{suspension_at_jst}</code></td>
+<td>サスペンション開始予定日時(最終再試行失敗時)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>件名</strong>: <code>【重要】請求のお支払いに失敗しました({billing_period_label})</code></p>
+<p><strong>本文(テキスト版)</strong>:</p>
+<pre><code>{recipient_display_name} 様
+
+open-faq {billing_period_label} 分(¥{invoice_amount_jpy})のお支払いに失敗
+しました。
+
+  - 失敗理由: {failure_reason}
+  - 再試行回数: {retry_count} / 3
+  - 次回再試行: {next_retry_at_jst}(JST)
+  - サスペンション予定: {suspension_at_jst}(JST)
+
+支払い方法の更新で多くの場合解決できます。以下から速やかにご確認・ご更新
+ください。
+
+▶ 支払い方法を更新する
+{payment_method_url}
+
+最終再試行も失敗した場合、サスペンションが発動しサービス利用が制限されま
+すのでご注意ください。
+
+──────────────────────────────────────────────
+このメールに直接返信しないでください。
+open-faq &lt;noreply@&lt;service-domain&gt;&gt;</code></pre>
+<p><strong>本文(HTML 版)</strong>: 警告色背景 + 再試行回数を視覚的に表示 + プライマリボタン。</p>
+<p><strong>備考</strong>: Stripe Smart Retries のスケジュール(発生から 3 / 5 / 7 日後)に従い最大 3 回送信。失敗理由テキストは英→日変換マップを用意。</p>
+<hr />
+<h3 id="410-tpl-billing_suspensionサスペンション開始解除">4.10 TPL-BILLING_SUSPENSION(サスペンション開始/解除)</h3>
+<p><strong>発火条件</strong>: Stripe Smart Retries 最終失敗時のサスペンション開始、または支払い完了時の解除。</p>
+<p><strong>テンプレート変数</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>変数</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>{recipient_display_name}</code></td>
+<td>受信者表示名</td>
+</tr>
+<tr>
+<td><code>{suspension_event}</code></td>
+<td><code>start</code> / <code>release</code></td>
+</tr>
+<tr>
+<td><code>{suspension_at_jst}</code></td>
+<td>サスペンション開始日時(JST、<code>start</code> 時)</td>
+</tr>
+<tr>
+<td><code>{released_at_jst}</code></td>
+<td>サスペンション解除日時(JST、<code>release</code> 時)</td>
+</tr>
+<tr>
+<td><code>{billing_period_label}</code></td>
+<td>対象期間</td>
+</tr>
+<tr>
+<td><code>{invoice_amount_jpy}</code></td>
+<td>請求金額(<code>start</code> 時)</td>
+</tr>
+<tr>
+<td><code>{payment_method_url}</code></td>
+<td>支払い方法変更 URL(<code>start</code> 時)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>件名</strong>:</p>
+<ul>
+<li>start: <code>【重要】サービス利用が停止されました(請求未払い)</code></li>
+<li>release: <code>サービス利用が再開されました</code></li>
+</ul>
+<p><strong>本文(テキスト版・start)</strong>:</p>
+<pre><code>{recipient_display_name} 様
+
+{billing_period_label} 分(¥{invoice_amount_jpy})のお支払いが完了しなかっ
+たため、{suspension_at_jst}(JST) より open-faq の管理画面および FAQ ウィ
+ジェットの利用を停止しました。
+
+サービスを再開するには支払い方法を更新し、未払い分を決済してください。
+
+▶ 支払い方法を更新する
+{payment_method_url}
+
+ご不明な点はサポートまでご連絡ください。
+
+──────────────────────────────────────────────
+このメールに直接返信しないでください。
+open-faq &lt;noreply@&lt;service-domain&gt;&gt;</code></pre>
+<p><strong>本文(テキスト版・release)</strong>:</p>
+<pre><code>{recipient_display_name} 様
+
+{released_at_jst}(JST) にサービス利用が再開されました。
+ご対応ありがとうございました。引き続きどうぞよろしくお願いいたします。
+
+──────────────────────────────────────────────
+このメールに直接返信しないでください。
+open-faq &lt;noreply@&lt;service-domain&gt;&gt;</code></pre>
+<p><strong>本文(HTML 版)</strong>: <code>start</code> は赤系警告 + 停止範囲リスト、<code>release</code> は緑系 + 簡潔な解除通知。</p>
+<p><strong>備考</strong>: オーナー + 全プロジェクト管理者へ配信(<code>critical</code>)。</p>
+<hr />
+<h3 id="411-tpl-payment_method_required無料枠超過支払方法登録要請通知">4.11 TPL-PAYMENT_METHOD_REQUIRED(無料枠超過・支払方法登録要請通知)</h3>
+<p><strong>発火条件</strong>: 支払方法未登録の契約の <strong>いずれかのプロジェクト</strong> が質問数無料枠を超過し、支払方法ゲート(FR-136)により当該プロジェクトのウィジェットの新規質問受付を停止した時点で送信。FAQ 件数の無料枠超過は本テンプレートの停止契機にしない。</p>
+<p><strong>テンプレート変数</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>変数</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>{recipient_display_name}</code></td>
+<td>受信者表示名(オーナー / 当該 PJ 管理者)</td>
+</tr>
+<tr>
+<td><code>{project_name}</code></td>
+<td>無料枠を超過したプロジェクト名</td>
+</tr>
+<tr>
+<td><code>{exceeded_resource_label}</code></td>
+<td>超過した無料枠の種別(<code>質問数</code> / <code>FAQ 件数</code>)</td>
+</tr>
+<tr>
+<td><code>{stopped_at_jst}</code></td>
+<td>ウィジェット質問受付停止日時(JST)</td>
+</tr>
+<tr>
+<td><code>{billing_setup_url}</code></td>
+<td>請求 URL(SCR-022)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>件名</strong>: <code>【重要】{project_name} が無料枠を超過しました — お支払い方法の登録が必要です</code></p>
+<p><strong>本文(テキスト版)</strong>:</p>
+<pre><code>{recipient_display_name} 様
+
+open-faq のプロジェクト「{project_name}」の月次無料枠({exceeded_resource_label})を超過しました。
+お支払い方法が未登録のため、{stopped_at_jst}(JST) より当該プロジェクトのウィジェットの
+新規質問受付を停止しています(管理画面は引き続きご利用いただけます)。
+
+ウィジェットの質問受付を再開するには、お支払い方法を登録してください。
+登録後ただちに再開し、超過分は事後課金となります。
+
+▶ 支払い方法を登録する
+{billing_setup_url}
+
+──────────────────────────────────────────────
+このメールに直接返信しないでください。
+open-faq &lt;noreply@&lt;service-domain&gt;&gt;</code></pre>
+<p><strong>本文(HTML 版)</strong>: 超過種別カード + ウィジェット停止の案内 + プライマリボタン(支払い方法を登録する)。</p>
+<hr />
+<h3 id="412-tpl-terms_revision利用規約改定告知">4.12 TPL-TERMS_REVISION(利用規約改定告知)</h3>
+<p><strong>発火条件</strong>: FR-148b 利用規約改定発効日の 30 日前に送信。オーナー + 全プロジェクト管理者へ配信。</p>
+<p><strong>テンプレート変数</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>変数</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>{recipient_display_name}</code></td>
+<td>受信者表示名</td>
+</tr>
+<tr>
+<td><code>{effective_at_jst}</code></td>
+<td>改定発効日時(JST)</td>
+</tr>
+<tr>
+<td><code>{summary_text}</code></td>
+<td>改定要約(運営者入力、HTML sanitize 済)</td>
+</tr>
+<tr>
+<td><code>{new_terms_url}</code></td>
+<td>新規約 URL</td>
+</tr>
+<tr>
+<td><code>{consent_deadline_jst}</code></td>
+<td>同意期限(発効日 + 14d、JST)</td>
+</tr>
+<tr>
+<td><code>{consent_screen_url}</code></td>
+<td>SCR-015 規約再同意割込み deeplink</td>
+</tr>
+</tbody>
+</table>
+<p><strong>件名</strong>: <code>【重要】利用規約改定のお知らせ(発効日: {effective_at_jst})</code></p>
+<p><strong>本文(テキスト版)</strong>:</p>
+<pre><code>{recipient_display_name} 様
+
+open-faq の利用規約を {effective_at_jst}(JST) より改定いたします。
+
+改定要約:
+{summary_text}
+
+新しい利用規約全文は以下をご確認ください。
+
+▶ 新しい利用規約を読む
+{new_terms_url}
+
+ご利用継続のためには、{consent_deadline_jst}(JST、発効日 + 14 日) までに
+管理画面で再同意をお願いいたします。期限を過ぎると一部機能の利用が制限さ
+れる場合があります。
+
+▶ 管理画面で再同意する
+{consent_screen_url}
+
+──────────────────────────────────────────────
+このメールに直接返信しないでください。
+open-faq &lt;noreply@&lt;service-domain&gt;&gt;</code></pre>
+<p><strong>本文(HTML 版)</strong>: 改定要約をパネル表示 + 「新規約を読む」「再同意する」の 2 プライマリボタン。<code>critical</code> 重要度のため強制送信。</p>
+<hr />
+<h3 id="413-tpl-service_announcement運営からのお知らせ">4.13 TPL-SERVICE_ANNOUNCEMENT(運営からのお知らせ)</h3>
+<p><strong>発火条件</strong>: 連携 IF #7 で運営者システムが配信トリガーした時。重要度 <code>normal</code> / <code>high</code> / <code>critical</code> は配信時に運営者が選択。</p>
+<p><strong>テンプレート変数</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>変数</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>{recipient_display_name}</code></td>
+<td>受信者表示名</td>
+</tr>
+<tr>
+<td><code>{announcement_title}</code></td>
+<td>お知らせタイトル(運営者入力)</td>
+</tr>
+<tr>
+<td><code>{announcement_body_html}</code></td>
+<td>お知らせ本文(運営者入力、HTML sanitize 済)</td>
+</tr>
+<tr>
+<td><code>{operator_signature}</code></td>
+<td>配信元署名(<code>open-faq 運営事務局</code>)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>件名</strong>: <code>{announcement_title}</code>(運営者入力。<code>critical</code> の場合は <code>【重要】</code> プレフィックスを自動付与)</p>
+<p><strong>本文(テキスト版)</strong>:</p>
+<pre><code>{recipient_display_name} 様
+
+open-faq 運営事務局よりお知らせいたします。
+
+{announcement_body_html}
+
+──────────────────────────────────────────────
+このメールに直接返信しないでください。
+{operator_signature}</code></pre>
+<p><strong>本文(HTML 版)</strong>: 運営者入力本文は HTML 版でリッチテキスト(リスト・太字・リンクのみ許可)で表示。</p>
+<p><strong>備考</strong>: 運営者システム側 SCR-API_KEY-ANNOUNCE 等の配信トリガー画面が正本(別ドキュメント)。本書ではメインシステム側の受信時表現のみを定義する。</p>
+<hr />
+<h3 id="414-tpl-system_noticeサブ契機ごとの定型文--メタテンプレート">4.14 TPL-SYSTEM_NOTICE(サブ契機ごとの定型文 = メタテンプレート)</h3>
+<p><strong>発火条件</strong>: 質問数の選択アラート閾値到達、契約上書き反映等の運用系イベント(FR-127 / FR-149a)。サブ契機ごとに別 i18n キーを持つ。</p>
+<p><strong>テンプレート変数(共通)</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>変数</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>{recipient_display_name}</code></td>
+<td>受信者表示名</td>
+</tr>
+<tr>
+<td><code>{event_type}</code></td>
+<td>サブ契機名(<code>question_limit_threshold_reached</code> / <code>operator_override_applied</code> 等)</td>
+</tr>
+<tr>
+<td><code>{event_at_jst}</code></td>
+<td>発生日時(JST)</td>
+</tr>
+<tr>
+<td><code>{related_resource}</code></td>
+<td>関連リソース名(プロジェクト名)。上限系はプロジェクト単位</td>
+</tr>
+<tr>
+<td><code>{threshold_percent}</code></td>
+<td>到達したアラート閾値(<code>25</code> / <code>50</code> / <code>80</code> / <code>90</code> / <code>100</code>)</td>
+</tr>
+<tr>
+<td><code>{used_count}</code></td>
+<td>到達時点の当月質問数</td>
+</tr>
+<tr>
+<td><code>{limit_count}</code></td>
+<td>設定中の当月質問数上限</td>
+</tr>
+<tr>
+<td><code>{action_url}</code></td>
+<td>対応画面 URL(上限系は SCR-021、請求系は SCR-022、個人設定は SCR-017)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>件名</strong>: サブ契機ごとに以下のマッピング(上限系はプロジェクト名を含める):</p>
+<table>
+<thead>
+<tr>
+<th>event_type</th>
+<th>件名</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>question_limit_threshold_reached</td>
+<td>{related_resource}: 当月の質問数が上限の {threshold_percent}% に達しました</td>
+</tr>
+<tr>
+<td>operator_override_applied</td>
+<td>運営者によりプロジェクト上限が更新されました</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>質問数上限アラートの配信先はオーナー + 当該プロジェクトの有効な管理者。画面上で送信先は変更できず、ユーザーIDと正規化メールアドレスで重複排除する。</p>
+</blockquote>
+<p><strong>本文(テキスト版・テンプレート骨格)</strong>:</p>
+<pre><code>{recipient_display_name} 様
+
+(event_type 別の定型文。例: question_limit_threshold_reached)
+{event_at_jst}(JST) 時点で、プロジェクト「{related_resource}」の当月の質問数が
+設定上限件数の {threshold_percent}% に達しました。
+
+  - 対象: {related_resource}
+  - 当月の質問数: {used_count} 件
+  - 今月の利用上限: {limit_count} 件
+  - 到達割合: {threshold_percent}%
+  - 発生日時: {event_at_jst}(JST)
+
+詳細・対応方法は以下からご確認ください。
+
+▶ 詳細を見る
+{action_url}
+
+──────────────────────────────────────────────
+このメールに直接返信しないでください。
+open-faq &lt;noreply@&lt;service-domain&gt;&gt;</code></pre>
+<p><strong>本文(HTML 版)</strong>: サブ契機ごとに色を変える(警告系: 黄、超過系: 赤、情報系: 青)。</p>
+<p><strong>備考</strong>: 新規イベント追加時は本書 + <code>06_メッセージ一覧.html</code> §6.1 + i18n キー定義の 3 か所を同期更新する。</p>
+<hr />
+<h2 id="5-配信運用">5. 配信運用</h2>
+<h3 id="51-配信先解決ロジック">5.1 配信先解決ロジック</h3>
+<table>
+<thead>
+<tr>
+<th>通知 ID</th>
+<th>配信先解決</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TPL-EMAIL_VERIFY / PASSWORD_RESET</td>
+<td>操作者本人のメールアドレス(セッションから)</td>
+</tr>
+<tr>
+<td>TPL-ADMIN_USER_REGISTER / PROJECT_ADMIN_INVITE</td>
+<td>招待時に入力されたメールアドレス(<code>access_tokens.target_email</code>)</td>
+</tr>
+<tr>
+<td>TPL-PROJECT_CONTACT_VERIFY</td>
+<td>プロジェクト連絡先メールアドレス</td>
+</tr>
+<tr>
+<td>TPL-LOCKOUT_NOTIFY</td>
+<td>ロック対象者 + 同一オーナースコープで <code>project_users.role='admin' AND valid=1</code> を 1 件でも保持する全ユーザー(オーナー + 全プロジェクト管理者を網羅)</td>
+</tr>
+<tr>
+<td>TPL-DELETION_REMINDER / PAYMENT_METHOD_REQUIRED / BILLING_INVOICE_ISSUED / BILLING_PAYMENT_FAILED</td>
+<td>契約のオーナー(<code>contract_owners</code> 行が存在するユーザー)のみ</td>
+</tr>
+<tr>
+<td>TPL-BILLING_SUSPENSION / TERMS_REVISION</td>
+<td>オーナー + 同一オーナースコープ配下の全プロジェクト管理者</td>
+</tr>
+<tr>
+<td>TPL-SERVICE_ANNOUNCEMENT</td>
+<td>配信時に運営者が指定する範囲(全契約 / 単一契約 / 特定プロジェクト)</td>
+</tr>
+<tr>
+<td>TPL-SYSTEM_NOTICE</td>
+<td><code>question_limit_threshold_reached</code> はオーナー + 当該プロジェクトの <code>project_users.role='admin' AND valid=1</code>。その他はサブ契機ごとに定義</td>
+</tr>
+</tbody>
+</table>
+<h3 id="52-重要度別の強制送信ルール共有概念正本">5.2 重要度別の強制送信ルール(共有概念正本)</h3>
+<ul>
+<li><code>critical</code>: 受信オプトアウト不可、必ずメール送信。<code>TPL-EMAIL_VERIFY</code> / <code>PASSWORD_RESET</code> / <code>ADMIN_USER_REGISTER</code> / <code>PROJECT_ADMIN_INVITE</code> / <code>PROJECT_CONTACT_VERIFY</code> / <code>LOCKOUT_NOTIFY</code> / <code>BILLING_SUSPENSION</code> / <code>PAYMENT_METHOD_REQUIRED</code> / <code>TERMS_REVISION</code> / <code>SERVICE_ANNOUNCEMENT</code>(<code>critical</code> 選択時)</li>
+<li><code>high</code>: 強制送信(オプトアウト不可)</li>
+<li><code>normal</code>: 受信オプトアウト可能(プロジェクト関連通知トグルで一括制御)</li>
+<li><code>low</code>: 個別オプトアウト + <code>List-Unsubscribe</code> ヘッダで RFC 8058 対応</li>
+</ul>
+<h3 id="53-重複配信抑止">5.3 重複配信抑止</h3>
+<table>
+<thead>
+<tr>
+<th>抑止対象</th>
+<th>抑止窓</th>
+<th>実装方針</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TPL-LOCKOUT_NOTIFY 同一受信者</td>
+<td>60 分</td>
+<td><code>notification_logs(user_id, template_id, sent_at)</code> 検索</td>
+</tr>
+<tr>
+<td>TPL-BILLING_PAYMENT_FAILED 同一 invoice</td>
+<td>Stripe Smart Retries 1 回につき 1 通</td>
+<td><code>invoice_id</code> で重複検知</td>
+</tr>
+<tr>
+<td>TPL-SYSTEM_NOTICE 質問数上限アラート</td>
+<td>同一プロジェクト × 同一請求月 × 同一閾値につき1通/受信者</td>
+<td>冪等キー <code>question-limit-alert:{projectId}:{yyyyMM}:{thresholdPercent}</code> + 受信者ID</td>
+</tr>
+</tbody>
+</table>
+<h3 id="54-配信ログ">5.4 配信ログ</h3>
+<ul>
+<li>全送信は <code>notification_logs</code> に行を記録(03 テーブル設計参照)</li>
+<li>列: <code>id</code> / <code>user_id</code> / <code>template_id</code> / <code>subject</code> / <code>recipient_email</code> / <code>sent_at</code> / <code>delivery_status</code>(<code>queued</code> / <code>sent</code> / <code>bounced</code> / <code>failed</code>)/ <code>provider_message_id</code> / <code>error_text</code></li>
+<li>保持期間: 90 日(NFR-704 一般ログ準拠)</li>
+</ul>
+<h3 id="55-テスト送信">5.5 テスト送信</h3>
+<ul>
+<li>開発・ステージング環境では <code>MAIL_SAFE_SINK</code> 環境変数で全宛先を <code>dev-mail-sink@&lt;internal-domain&gt;</code> に強制リダイレクト</li>
+<li>件名にプレフィックス <code>[STAGING]</code> / <code>[DEV]</code> を自動付与</li>
+</ul>
+<hr />
+<h2 id="6-テンプレート開発運用フロー">6. テンプレート開発・運用フロー</h2>
+<h3 id="61-新規テンプレート追加手順">6.1 新規テンプレート追加手順</h3>
+<ol type="1">
+<li>通知契機を <a href="06_メッセージ一覧.html">06_メッセージ一覧.html</a> §6.1 に追加(NOTIF-* 行)</li>
+<li>本書 §3 索引 + §4 詳細にテンプレート行を追加</li>
+<li>テンプレート変数を確定し i18n キーファイル(<code>locales/ja/email_templates.yml</code>)に追加</li>
+<li>HTML / テキスト両版を実装し、ステージング <code>MAIL_SAFE_SINK</code> で目視確認</li>
+<li><code>check-spec-sync.sh</code> を実行し SC-001〜SC-012 全パスを確認</li>
+</ol>
+<h3 id="62-既存テンプレート変更手順">6.2 既存テンプレート変更手順</h3>
+<ul>
+<li>軽微な文言修正(誤字 / 表現変更): 本書 §4 のみ更新 + 変更履歴に記載</li>
+<li>件名変更 / 主要 CTA 変更: 本書 §4 + 06 メッセージ一覧 §6 + ステージング再送テスト</li>
+<li>配信先・重要度変更: 本書 §5.1 / §5.2 + 06 メッセージ一覧 §6.1 + 共有概念.html の整合確認</li>
+</ul>
+
+</article>
+</body>
+</html>

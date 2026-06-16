@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FR14: セキュリティ | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/01_要件定義/FR14_セキュリティ.html">
+<article class="content" id="content">
+<h1 id="fr14-セキュリティ">FR14: セキュリティ</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書名</td>
+<td>FR14: セキュリティ</td>
+</tr>
+<tr>
+<td>機能グループ</td>
+<td>セキュリティ</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>FAQ AI ウィジェット SaaS / メインシステム</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-17</td>
+</tr>
+<tr>
+<td>版数</td>
+<td>v1.2</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>承認済</td>
+</tr>
+<tr>
+<td>更新履歴</td>
+<td>v1.2(2026-06-12): MVPの認証・アクセス制御要件を整理</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-機能概要">1. 機能概要</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>概要</td>
+<td>通信暗号化(HTTPS)、機密データの暗号化保存、API・ウィジェットへのレート制限、ウィジェット埋め込み元ドメイン検証、最小権限、Bot 対策、不審リクエスト検知、ユーザー管理操作の監査ログ、API キーローテーション・有効期限、不正利用検知連携を扱う</td>
+</tr>
+<tr>
+<td>利用場面</td>
+<td>日常的な認証認可運用、ウィジェット不正利用検知、API キー管理、不正利用発生時の自動ブロック</td>
+</tr>
+<tr>
+<td>優先度</td>
+<td>Must</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-収録-fr-nnn-一覧">2. 収録 FR-NNN 一覧</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>要件</th>
+<th style="text-align: center;">優先度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-170</td>
+<td>通信は暗号化されること(HTTPS)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-171</td>
+<td>保存データのうち機密度の高い項目(パスワード、トークン、課金情報等)は暗号化または安全なハッシュで保存されること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-172</td>
+<td>API・ウィジェットに対してレート制限ができること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-173</td>
+<td>ウィジェットの埋め込み元ドメインを検証できること(許可ドメイン以外からの読み込み拒否)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-175</td>
+<td>管理者の操作ログを監査用に保持できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-176</td>
+<td>アクセス制御は最小権限の原則に従うこと(オーナー境界によるデータ分離、ユーザー種別別認可)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-177</td>
+<td>Bot対策(CAPTCHA等)を必要に応じて実施できること</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>FR-178</td>
+<td>不審なリクエスト(大量アクセス、未許可ドメイン等)を検知・記録できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-178a</td>
+<td>メンバー招待、招待再送、プロジェクト別ロール割当の変更、プロジェクトからの離脱、メンバー削除のいずれの操作も監査ログに記録できること。記録項目は操作者・対象メンバー・変更前後のプロジェクト × ロール差分(該当時)・対応理由(任意)・実行時刻を含むこと</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-193</td>
+<td>API キー(公開キー)のローテーション機能を管理者操作で提供すること。新キー発行と同時に旧キーは <strong>24 時間の猶予期間</strong> 付きで失効予告状態となり、猶予中は両キーで認証を許可する。猶予中のアクセスログは両キーで記録(どちらの利用率が高いかを管理者が確認可能)。猶予期間経過後は旧キーを完全失効とすること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-194</td>
+<td>ウィジェット公開キーには <strong>有効期限を設けない</strong>(無期限)。キーの失効は再発行(ローテーション、FR-193)によってのみ行い、再発行時に旧キーを 24 時間猶予で失効させる。キー形式・失効方式・ローテーション猶予期間は基本設計を正本とする(FR-193 / NFR-322 と整合)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-195</td>
+<td>不正利用検知(大量送信・Bot 疑い・規約違反)について、(a) 自動検知はメインシステム側で行うこと、(b) 判定ルール・しきい値は顧客管理システムから契約別に上書き可能とすること、(c) 自動ブロックはメインシステム側で実行すること、(d) 自動ブロック発火時は管理者ユーザーへ即時通知し、申し立て窓口を案内すること、(e) 運営者の手動判断による緊急停止は顧客管理システム FR-224 から実行されること。連携方式と通知種別は基本設計を正本とする</td>
+<td style="text-align: center;">P1</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-補足説明統合参照">3. 補足説明・統合参照</h2>
+<p>(該当なし。セキュリティ非機能要件は NFR-301〜332 を、鍵管理は NFR-320〜324 を参照)</p>
+<h2 id="4-関連設計">4. 関連設計</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>参照先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>画面設計</td>
+<td><a href="../02_基本設計/01_画面設計.html">../02_基本設計/01_画面設計.html</a></td>
+</tr>
+<tr>
+<td>API 設計</td>
+<td><a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html</a></td>
+</tr>
+<tr>
+<td>テーブル設計</td>
+<td><a href="../02_基本設計/03_テーブル設計.html">../02_基本設計/03_テーブル設計.html</a></td>
+</tr>
+<tr>
+<td>権限設計</td>
+<td><a href="../02_基本設計/04_権限設計.html">../02_基本設計/04_権限設計.html</a></td>
+</tr>
+<tr>
+<td>エラー設計</td>
+<td><a href="../02_基本設計/05_エラー設計.html">../02_基本設計/05_エラー設計.html</a></td>
+</tr>
+<tr>
+<td>メッセージ</td>
+<td><a href="../02_基本設計/06_メッセージ一覧.html">../02_基本設計/06_メッセージ一覧.html</a></td>
+</tr>
+<tr>
+<td>認証・認可設計</td>
+<td><a href="../02_基本設計/08_認証・認可設計.html">../02_基本設計/08_認証・認可設計.html</a></td>
+</tr>
+<tr>
+<td>詳細設計</td>
+<td><a href="../03_詳細設計/index.html">../03_詳細設計/index.html</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-未確定事項確認事項">5. 未確定事項・確認事項</h2>
+<table>
+<thead>
+<tr>
+<th>確認事項ID</th>
+<th>確認内容</th>
+<th>優先度</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>v1.0 リリース時点で全項目確定済み</td>
+<td>低</td>
+<td>確認済</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

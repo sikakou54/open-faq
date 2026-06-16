@@ -33,13 +33,14 @@
     #er-svg-wrap svg { width: 100% !important; height: auto !important; }
   }
 </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body>
 
 <header>
         <h1>FAQ AI ウィジェット SaaS - メインシステム ER 図(30 テーブル)</h1>
   <div class="meta">
-    <span>正本: <a href="03_テーブル設計.md" style="color:#93c5fd;">03_テーブル設計.md §3</a></span>
+    <span>正本: <a href="03_テーブル設計.html" style="color:#93c5fd;">03_テーブル設計.html §3</a></span>
     &nbsp;|&nbsp;
         <span>版数 v1.15(MVP構成)</span>
   </div>
@@ -49,7 +50,7 @@
   <button type="button" id="btn-zoom-in">+ 拡大</button>
   <button type="button" id="btn-zoom-out">- 縮小</button>
   <button type="button" id="btn-reset">⤾ リセット</button>
-  <button type="button" id="btn-fit">⛶ 全体表示</button>
+  <button type="button" id="btn-fit"><i class="bi bi-arrows-fullscreen" aria-hidden="true"></i> 全体表示</button>
   <span class="legend">
     操作: ドラッグでパン / マウスホイールでズーム / 凡例: <code>PK</code> 主キー <code>FK</code> 外部キー <code>PK,FK</code> 複合(主キー兼外部キー)
   </span>
@@ -65,7 +66,7 @@
   <h2>ER 図の見方</h2>
   <ul>
     <li><b>掲載カラム</b>: MVPの主要キー(PK / FK)+ 業務キー(<code>inquiry_code</code> / <code>widget_public_key</code> 等)+ 状態カラム(<code>inquiries.status</code> / <code>contract_status</code> 等)+ 特徴的なカラム(<code>actor_user_id</code> 等)。</li>
-    <li><b>省略カラム</b>: <code>created_at</code> / <code>updated_at</code> / <code>valid</code> / <code>*_encrypted</code> / <code>*_key_version</code> / <code>metadata</code> 等の共通技術カラム。完全なカラム定義は <a href="03_テーブル設計.md">03_テーブル設計.md §3</a> を参照。</li>
+    <li><b>省略カラム</b>: <code>created_at</code> / <code>updated_at</code> / <code>valid</code> / <code>*_encrypted</code> / <code>*_key_version</code> / <code>metadata</code> 等の共通技術カラム。完全なカラム定義は <a href="03_テーブル設計.html">03_テーブル設計.html §3</a> を参照。</li>
     <li><b>関係性</b>: 実線 = FK 制約あり / 注記 <code>FK制約なし</code> = 論理参照のみ(<code>error_logs</code> / <code>announcement_recipients</code> の一部カラム)。</li>
     <li><b>MVP主体モデル</b>: <code>users</code>(管理者:オーナー / プロジェクト管理者 / メンバー)+ <code>contract_owners</code>(オーナー専有属性、行存在 = オーナー判定)+ <code>project_users</code>(プロジェクト割当 + 別ロール)。ウィジェット利用者は永続アカウントを持たない。</li>
     <li><b>SaaS 境界キー</b>: <code>contract_owner_user_id</code>(全契約スコープのテーブルに冗長保持、認可境界クエリ高速化)。</li>

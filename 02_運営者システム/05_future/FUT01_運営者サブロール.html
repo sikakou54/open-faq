@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FUT01: 運営者サブロール | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="02_運営者システム/05_future/FUT01_運営者サブロール.html">
+<article class="content" id="content">
+<h1 id="fut01-運営者サブロール">FUT01: 運営者サブロール</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書名</td>
+<td>FUT01: 運営者サブロール</td>
+</tr>
+<tr>
+<td>将来対応ID</td>
+<td>FUT-01</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>FAQ AI ウィジェット SaaS / 運営者システム</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-17</td>
+</tr>
+<tr>
+<td>版数</td>
+<td>v1.0</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>検討中(MVP 外)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="1-概要">1. 概要</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>概要</td>
+<td>MVP では単一 <code>service_operator</code> ロールで運用している運営者ロールを、Post-MVP で職務分掌に応じたサブロール(billing_only / audit_read_only / support_operator / security_admin)へ分割する。</td>
+</tr>
+<tr>
+<td>背景</td>
+<td>運営者人数の拡大、内部統制レビュー、サポート運用と監査・課金運用の分離ニーズが顕在化した時点で、最小権限原則に基づく役割分担が必要となる。利用者側は MVP v2.6 で 3 ロール制(オーナー / プロジェクト管理者 / メンバー)に整理済みのため、本項は運営者ロール側の分割のみを扱う。</td>
+</tr>
+<tr>
+<td>期待効果</td>
+<td>最小権限原則の徹底、職務分掌違反リスクの低減、サポート業務と高権限業務の分離、監査ログの role / subrole 粒度向上。</td>
+</tr>
+<tr>
+<td>優先度(将来対応内)</td>
+<td>中</td>
+</tr>
+<tr>
+<td>想定時期</td>
+<td>Post-MVP</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="2-関連要件候補">2. 関連要件・候補</h2>
+<h3 id="21-要件候補将来-fr">2.1 要件候補(将来 FR)</h3>
+<h4 id="認証セキュリティ運営者関連分">認証・セキュリティ(運営者関連分)</h4>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>要件候補</th>
+<th>MVP の前提</th>
+<th>判定時期</th>
+<th>判定基準 / 完了条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FUT-REQ-SEC-004</td>
+<td>運営者サブロール分割</td>
+<td>単一 <code>service_operator</code> ロール(利用者側は MVP v2.6 で 3 ロール制(オーナー / プロジェクト管理者 / メンバー)に整理済み。本項は運営者ロール側の分割のみを扱う)</td>
+<td>Post-MVP</td>
+<td>運営者人数、職務分掌要件、内部統制レビュー、サポート運用の分離ニーズで導入可否を判定</td>
+</tr>
+</tbody>
+</table>
+<h3 id="22-基本設計論点">2.2 基本設計論点</h3>
+<h4 id="認証セキュリティ運営者関連分-1">認証・セキュリティ(運営者関連分)</h4>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>基本設計で具体化すること</th>
+<th>関連 Future 要件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>運営者サブロール分割</td>
+<td>権限マトリクス、メニュー表示制御、API 認可境界、監査ログの role / subrole 記録粒度</td>
+<td>FUT-REQ-SEC-004</td>
+</tr>
+</tbody>
+</table>
+<h3 id="23-詳細設計バックログ">2.3 詳細設計バックログ</h3>
+<h4 id="運営者サブロールddl-候補">運営者サブロール(DDL 候補)</h4>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> operator_subroles (</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">id</span>              TEXT <span class="kw">PRIMARY</span> <span class="kw">KEY</span>,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  operator_id     TEXT <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  subrole         TEXT <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  granted_at      TEXT <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  granted_by      TEXT <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  revoked_at      TEXT,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FOREIGN</span> <span class="kw">KEY</span> (operator_id) <span class="kw">REFERENCES</span> service_operators(<span class="kw">id</span>),</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FOREIGN</span> <span class="kw">KEY</span> (granted_by) <span class="kw">REFERENCES</span> service_operators(<span class="kw">id</span>),</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">CHECK</span> (subrole <span class="kw">IN</span> (<span class="st">&#39;billing_only&#39;</span>, <span class="st">&#39;audit_read_only&#39;</span>, <span class="st">&#39;support_operator&#39;</span>, <span class="st">&#39;security_admin&#39;</span>))</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> idx_operator_subroles_operator</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="kw">ON</span> operator_subroles(operator_id, revoked_at);</span></code></pre></div>
+<h4 id="実装設計バックログ運営者関連分">実装設計バックログ(運営者関連分)</h4>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>対象</th>
+<th>実装設計で具体化すること</th>
+<th>関連 Future 要件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FUT-DD-SEC-004</td>
+<td>運営者サブロール</td>
+<td><code>operator_subroles</code> 相当テーブル、認可ミドルウェア、メニュー制御、監査ログ role snapshot</td>
+<td>FUT-REQ-SEC-004</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="3-影響範囲">3. 影響範囲</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>影響内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>要件</td>
+<td>認証・認可 FR(運営者ロール定義)、監査ログ FR(role / subrole 記録粒度)、6 段認可判定の追加段(subrole レベル)</td>
+</tr>
+<tr>
+<td>画面</td>
+<td>運営者ホーム(SCR-HOME)・各機能画面のメニュー表示制御、SCR-APPROVALS(承認権限の subrole 制限)、運営者管理画面(subrole 割当 UI)</td>
+</tr>
+<tr>
+<td>API</td>
+<td><code>/admin/v1/*</code> 全 API での subrole 認可ミドルウェア、<code>POST /admin/v1/operators/{id}/subroles</code> 等の subrole 管理 API</td>
+</tr>
+<tr>
+<td>テーブル</td>
+<td><code>operator_subroles</code>、<code>audit_logs.subrole_snapshot</code> 列追加(監査ログ正本の運営者システムで対応)</td>
+</tr>
+<tr>
+<td>運用</td>
+<td>subrole 割当・剥奪手順、最小権限レビュー(月次 / 四半期)、subrole 別 SLA、緊急例外時の subrole 一時昇格手順(RB-014 連携)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-実施条件">4. 実施条件</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>実施判断条件</td>
+<td>運営者人数の拡大(目安: 10 名以上)、職務分掌要件、内部統制レビュー結果、サポート運用と高権限業務の分離ニーズ</td>
+</tr>
+<tr>
+<td>期限</td>
+<td>Post-MVP(導入可否判定を継続)</td>
+</tr>
+<tr>
+<td>依存関係</td>
+<td>共有概念の 4-eyes 承認基盤(運営者正本)・ハッシュチェーン監査(運営者正本)との整合、運営者システム 09 認証認可設計書の 6 段認可判定拡張</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="5-関連設計">5. 関連設計</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>参照先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>要件</td>
+<td><a href="../01_要件定義/index.html">../01_要件定義/index.html</a></td>
+</tr>
+<tr>
+<td>基本設計</td>
+<td><a href="../02_基本設計/index.html">../02_基本設計/index.html</a></td>
+</tr>
+<tr>
+<td>詳細設計</td>
+<td><a href="../03_詳細設計/index.html">../03_詳細設計/index.html</a></td>
+</tr>
+<tr>
+<td>運用設計</td>
+<td><a href="../04_運用設計/index.html">../04_運用設計/index.html</a></td>
+</tr>
+<tr>
+<td>共有概念(正本)</td>
+<td><a href="../../共有/共有概念.html">../../共有/共有概念.html</a></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="6-未確定事項確認事項">6. 未確定事項・確認事項</h2>
+<table>
+<thead>
+<tr>
+<th>確認事項ID</th>
+<th>確認内容</th>
+<th>優先度</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FUT-OP-SUB-Q-001</td>
+<td>サブロール 4 種(billing_only / audit_read_only / support_operator / security_admin)の権限マトリクス確定</td>
+<td>高</td>
+<td>検討中</td>
+</tr>
+<tr>
+<td>FUT-OP-SUB-Q-002</td>
+<td>既存 <code>service_operator</code> ロールから subrole 体系への移行手順(全員 security_admin 暫定割当 → 段階剥奪)</td>
+<td>中</td>
+<td>検討中</td>
+</tr>
+<tr>
+<td>FUT-OP-SUB-Q-003</td>
+<td>緊急時の subrole 一時昇格手順(RB-014 物理金庫連携の要否)</td>
+<td>中</td>
+<td>検討中</td>
+</tr>
+<tr>
+<td>FUT-OP-SUB-Q-004</td>
+<td>監査ログ <code>subrole_snapshot</code> のハッシュチェーン正本での扱い</td>
+<td>中</td>
+<td>検討中</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

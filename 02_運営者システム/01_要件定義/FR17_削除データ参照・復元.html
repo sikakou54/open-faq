@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FR17 削除データ参照・復元(運営者専用) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="02_運営者システム/01_要件定義/FR17_削除データ参照・復元.html">
+<article class="content" id="content">
+<h1 id="fr17-削除データ参照復元運営者専用">FR17 削除データ参照・復元(運営者専用)</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書種別</td>
+<td>機能要件(機能グループ別)</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>運営者システム(顧客管理システム)</td>
+</tr>
+<tr>
+<td>版</td>
+<td>v1.0</td>
+</tr>
+<tr>
+<td>機能グループ</td>
+<td>削除データ参照・復元(運営者専用)</td>
+</tr>
+<tr>
+<td>ソース章</td>
+<td>§8.18 削除データ参照・復元</td>
+</tr>
+<tr>
+<td>派生元 BR</td>
+<td>BR-014, BR-028</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-機能概要">1. 機能概要</h2>
+<p>利用者から「誤って削除した」等の問い合わせを受けた際の救済手段として、顧客管理システムは論理削除済み(DB 上は残るが利用上は削除済み扱いとなった状態)データの参照と復元を行う。<strong>復元の非対称性</strong>(削除は利用者側で行えるが、復元は運営者側でのみ行える設計)を採用し、メインシステムの管理画面側にはこの機能を提供しない。</p>
+<p><strong>本書側で正本管理する FR 範囲</strong>: FR-200〜FR-212(削除データ参照・復元 + 管理者ユーザー運営者操作通知)。</p>
+<h2 id="2-収録-fr-nnn-一覧">2. 収録 FR-NNN 一覧</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>要件</th>
+<th style="text-align: center;">優先度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-200</td>
+<td>運営者は論理削除済み(削除済み / 無効化 / 解約手続き中)の FAQ・プロジェクト・アカウント・契約・お知らせを一覧・検索・詳細閲覧できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-201</td>
+<td>運営者は論理削除済みの FAQ を復元(復元後は下書き状態とする)できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-202</td>
+<td>運営者は論理削除済みのプロジェクトを復元(復元後はアーカイブ状態とする)できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-203</td>
+<td>運営者は無効化されたアカウントを復元(復元後は有効状態とする)できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-204</td>
+<td>運営者は退会猶予期間中の契約を復元できること(物理削除キュー投入後は不可)。復元には理由・チケット ID と §6.2.3 の承認を必須とし、復元時のロック、関連リソース有効化、副作用ロールバック、通知、失敗時の扱いは基本設計 / 詳細設計を正本とする</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-205</td>
+<td>運営者は下書き状態で削除されたお知らせを復元(復元後は下書き状態とする)できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-206</td>
+<td>復元操作にあたり、運営者は復元理由(自由記述、必須)および対応する問い合わせチケット ID(任意)を入力できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-207</td>
+<td>復元の権限は運営者(プラットフォームオペレーター)ロールのみに限定すること。管理者ユーザーは復元機能を実行できないこと</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-208</td>
+<td>復元操作は監査ログに記録できること(操作種別、操作者、対象、復元理由、チケット ID、変更前後ステータス)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-209</td>
+<td>物理削除済みのレコードは復元対象外とし、復元機能はリソース不在の応答を返すこと</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-211</td>
+<td>管理者ユーザーには、自契約配下のリソースに対する高権限の運営者操作が発生した際にメールおよび受信箱で通知できること。対象操作、集約、通知期限、メール永久失敗時の扱いは基本設計 / 詳細設計を正本とする</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>FR-212</td>
+<td>バックアップからのリストアは障害復旧専用とし、利用者からの個別問い合わせ対応(誤削除救済)には用いないこと</td>
+<td style="text-align: center;">P0</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-補足説明統合参照">3. 補足説明・統合参照</h2>
+<ul>
+<li>FR-204 契約復元は §6.2.3 の 4-eyes 対象(承認ログ区分)。物理削除キュー投入後(NFR-704 の 30 日経過後)は復元不可。</li>
+<li>復元後の状態(下書き / アーカイブ / 有効 / 利用中)は本書 §9.9 削除データ復元フローを参照。</li>
+<li>連携 IF #4(復元実行)を通じてメイン側の論理削除データを復元する(本書 §11.2)。</li>
+<li>復元通知は連携 IF #12(運営者操作通知)経由でメイン側の管理者ユーザーへ届く。</li>
+<li>管理画面からの復元は提供しない(FR-040b: 「FAQ・プロジェクト・管理者ユーザー・お知らせ・契約の削除は管理画面から復元できないこと」を参照)。</li>
+</ul>
+<h2 id="4-関連設計">4. 関連設計</h2>
+<ul>
+<li><a href="../02_基本設計/index.html">../02_基本設計/index.html</a> 基本設計書 index</li>
+<li><a href="../02_基本設計/01_画面設計.html">../02_基本設計/01_画面設計.html</a> §SCR-090(削除データ参照)/ SCR-091(削除データ復元)</li>
+<li><a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html</a> 削除データ参照・復元 API(連携 IF #4 経由)</li>
+<li><a href="../02_基本設計/03_テーブル設計.html">../02_基本設計/03_テーブル設計.html</a> 論理削除フラグ・物理削除キュー設計</li>
+<li><a href="../02_基本設計/04_権限設計.html">../02_基本設計/04_権限設計.html</a> <code>service_operator</code> ロール限定</li>
+<li><a href="../02_基本設計/05_エラー設計.html">../02_基本設計/05_エラー設計.html</a> 物理削除済みリソースエラー・復元競合エラー</li>
+<li><a href="../02_基本設計/06_メッセージ一覧.html">../02_基本設計/06_メッセージ一覧.html</a> 運営者操作通知テンプレート(FR-211)</li>
+<li><a href="../02_基本設計/08_認証・認可設計.html">../02_基本設計/08_認証・認可設計.html</a> 4-eyes 承認フロー(FR-204 等)</li>
+<li><a href="../02_基本設計/09_セキュリティ設計.html">../02_基本設計/09_セキュリティ設計.html</a> ハッシュチェーン監査記録</li>
+<li><a href="../02_基本設計/07_トレーサビリティマトリクス.html">../02_基本設計/07_トレーサビリティマトリクス.html</a></li>
+<li><a href="../03_詳細設計/index.html">../03_詳細設計/index.html</a> 詳細設計書 index</li>
+</ul>
+<h2 id="5-未確定事項確認事項">5. 未確定事項・確認事項</h2>
+<ul>
+<li>FR-211 の運営者操作通知の集約ウィンドウは基本設計で確定する。</li>
+<li>FR-204 復元時の関連リソース有効化(プロジェクト・FAQ・お知らせ等)の副作用ロールバック方式は基本設計を正本とする。</li>
+</ul>
+
+</article>
+</body>
+</html>

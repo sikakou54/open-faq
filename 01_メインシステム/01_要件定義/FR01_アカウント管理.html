@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FR01: アカウント管理 | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/01_要件定義/FR01_アカウント管理.html">
+<article class="content" id="content">
+<h1 id="fr01-アカウント管理">FR01: アカウント管理</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書名</td>
+<td>FR01: アカウント管理</td>
+</tr>
+<tr>
+<td>機能グループ</td>
+<td>アカウント管理</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>FAQ AI ウィジェット SaaS / メインシステム</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-17</td>
+</tr>
+<tr>
+<td>版数</td>
+<td>v1.0</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>承認済</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-機能概要">1. 機能概要</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>概要</td>
+<td>利用者の登録、ログイン、再認証、パスワード再設定、退会といったアカウントライフサイクル全般を担う。重要操作前の本人確認、セッション管理、ロックアウト、規約再同意も含む</td>
+</tr>
+<tr>
+<td>利用場面</td>
+<td>管理者ユーザーの新規登録、日常的なログイン、パスワード再設定、退会申請、運営者による契約停止連動でのセッション失効</td>
+</tr>
+<tr>
+<td>優先度</td>
+<td>Must</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-収録-fr-nnn-一覧">2. 収録 FR-NNN 一覧</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>要件</th>
+<th style="text-align: center;">優先度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-001</td>
+<td>管理者はメールアドレスとパスワードでアカウント登録できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-002</td>
+<td>登録時に利用規約とプライバシーポリシーへの同意を取得できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-003</td>
+<td>メールアドレス確認(本人確認メール)ができること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-004</td>
+<td>ログイン、ログアウト、パスワード再設定ができること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-005</td>
+<td>重要操作(パスワード変更、退会、課金情報変更、管理者ユーザー登録・停止・削除、月次上限件数変更)前に本人確認(再認証)を求めること。再認証方式は <strong>パスワード再入力</strong> とする。<strong>運営者は顧客管理システム NFR-311 / FR-222 のとおり MFA 必須</strong>。再認証の有効期間は <strong>当該操作 1 回のみかつ 15 分以内</strong>とし、実装方式は基本設計を正本とする(顧客管理システム FR-005 と整合)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-006</td>
+<td>パスワードに最低長・複雑性要件を適用できること(最低 12 文字、英大文字・小文字・数字・記号のうち 3 種類以上)。パスワードリセットリンクの有効期限は <strong>1 時間</strong> とする</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-007</td>
+<td>ログイン試行の失敗回数制限ができること。<strong>5 回連続失敗</strong> で <strong>15 分間ロック</strong>し、時間経過または管理者解除で復旧できること。ロック発動時は該当本人および必要な管理者へ通知し、正規利用者の救済導線を提供すること。ロック単位、通知経路、監査記録の方式は基本設計を正本とする(顧客管理システム FR-007 と整合)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-008</td>
+<td>セッションタイムアウトを以下のとおり実装すること: (a) <strong>無操作タイムアウト 30 分</strong>、(b) <strong>絶対タイムアウト 12 時間</strong>(1 営業日内に再認証を要求)、(c) タイムアウト直前の操作と同時にセッション失効した場合は明示的なメッセージを表示し、再ログインを誘導すること(顧客管理システム FR-008 と整合)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-009</td>
+<td>退会できること(猶予期間付き)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-011</td>
+<td>利用規約・プライバシーポリシー改定時に再同意を取得できること。フロー詳細(発効 30 日前通知、同意期限 = 発効日 + 14 日、期限超過時は SCR-015 強制割込み + 機能制限、非同意時は退会フロー誘導、契約単位段階的実施)は §14.7.3 を参照</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-022</td>
+<td>運営者操作により契約が停止された場合、配下の管理者ユーザーの全セッションを <strong>5 秒以内</strong>に無効化すること(連携 IF #1 タイムアウト 5 秒と整合)。進行中の長時間リクエスト(大量インポート等)は<strong>完了まで継続</strong>し、中断はしないが、完了後の次回操作で再認証を要求する。再ログイン時はサスペンション状態の場合 §9.10 のルールに従う。失効方式の実装手段は<a href="../02_基本設計/08_認証・認可設計.html">基本設計書 §10.1</a> を正本とする</td>
+<td style="text-align: center;">P0</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-補足説明統合参照">3. 補足説明・統合参照</h2>
+<h3 id="821-セッション管理統合参照">8.2.1 セッション管理(統合参照)</h3>
+<p>セッションに関する<strong>業務要件</strong>は本書の複数箇所に分散しているため、本節で統合参照を提供する。実装方式(Cookie 属性、CSRF 防御の方式、セッションストアの構成、失効通知の伝搬方法など)は <a href="../02_基本設計/08_認証・認可設計.html">基本設計書 §10.1</a> を正本とする。</p>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>業務要件</th>
+<th>関連 FR / NFR</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>認証方式(初回)</td>
+<td>パスワード(NFR-304 に従い安全に保管)</td>
+<td>FR-001, FR-004, NFR-304</td>
+</tr>
+<tr>
+<td>再認証(重要操作前)</td>
+<td>パスワード再入力。運営者は MFA 必須(顧客管理 NFR-311)。有効期間 = 当該操作 1 回のみかつ 15 分以内</td>
+<td>FR-005</td>
+</tr>
+<tr>
+<td>ログインロックアウト</td>
+<td>5 回連続失敗で 15 分ロック、または管理者解除で復旧。ロック単位・通知経路は基本設計を正本とする</td>
+<td>FR-007</td>
+</tr>
+<tr>
+<td>無操作タイムアウト</td>
+<td>30 分</td>
+<td>FR-008 (a)</td>
+</tr>
+<tr>
+<td>絶対タイムアウト</td>
+<td>12 時間(1 営業日内に再認証要求)</td>
+<td>FR-008 (b)</td>
+</tr>
+<tr>
+<td>同時ログイン</td>
+<td>複数デバイス可(利用者自身のアクティブセッション一覧表示・自己終了は MVP 対象外・将来対応)</td>
+<td>FR-332</td>
+</tr>
+<tr>
+<td>強制ログアウト(運営者操作)</td>
+<td>連携 IF #2 経由、5 秒以内に全セッション無効化</td>
+<td>FR-022, FR-332</td>
+</tr>
+<tr>
+<td>サスペンション時のセッション</td>
+<td>サスペンション直後は継続(課金・退会画面のみアクセス可)、新規ログインは §9.10 のルールに従う</td>
+<td>FR-022, FR-138, §9.10</td>
+</tr>
+<tr>
+<td>なりすまし・改ざん対策</td>
+<td>セッションの不正利用と状態変更操作の改ざんを検知・防止できること。具体方式は基本設計を正本とする</td>
+<td>NFR-311, NFR-318</td>
+</tr>
+</tbody>
+</table>
+<p><strong>優先順位</strong>: 運営者強制ログアウト(FR-022) &gt; 絶対タイムアウト(FR-008) &gt; 無操作タイムアウト &gt; 通常セッション。重要操作の再認証(FR-005)は通常セッション維持下でも追加の認証を要求する。</p>
+<h2 id="4-関連設計">4. 関連設計</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>参照先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>画面設計</td>
+<td><a href="../02_基本設計/01_画面設計.html">../02_基本設計/01_画面設計.html</a></td>
+</tr>
+<tr>
+<td>API 設計</td>
+<td><a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html</a></td>
+</tr>
+<tr>
+<td>テーブル設計</td>
+<td><a href="../02_基本設計/03_テーブル設計.html">../02_基本設計/03_テーブル設計.html</a></td>
+</tr>
+<tr>
+<td>権限設計</td>
+<td><a href="../02_基本設計/04_権限設計.html">../02_基本設計/04_権限設計.html</a></td>
+</tr>
+<tr>
+<td>エラー設計</td>
+<td><a href="../02_基本設計/05_エラー設計.html">../02_基本設計/05_エラー設計.html</a></td>
+</tr>
+<tr>
+<td>メッセージ</td>
+<td><a href="../02_基本設計/06_メッセージ一覧.html">../02_基本設計/06_メッセージ一覧.html</a></td>
+</tr>
+<tr>
+<td>認証・認可設計</td>
+<td><a href="../02_基本設計/08_認証・認可設計.html">../02_基本設計/08_認証・認可設計.html</a></td>
+</tr>
+<tr>
+<td>詳細設計</td>
+<td><a href="../03_詳細設計/index.html">../03_詳細設計/index.html</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-未確定事項確認事項">5. 未確定事項・確認事項</h2>
+<table>
+<thead>
+<tr>
+<th>確認事項ID</th>
+<th>確認内容</th>
+<th>優先度</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>v1.0 リリース時点で全項目確定済み</td>
+<td>低</td>
+<td>確認済</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

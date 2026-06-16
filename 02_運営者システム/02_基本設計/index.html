@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>基本設計 index(運営者システム) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="02_運営者システム/02_基本設計/index.html">
+<article class="content" id="content">
+<h1 id="基本設計-index運営者システム">基本設計 index(運営者システム)</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書名</td>
+<td>基本設計 index(運営者システム)</td>
+</tr>
+<tr>
+<td>対象システム名</td>
+<td>FAQ AI ウィジェット SaaS / 運営者システム(SaaS 提供事業者向け管理コンソール)</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-17</td>
+</tr>
+<tr>
+<td>作成者</td>
+<td>プロジェクト設計チーム</td>
+</tr>
+<tr>
+<td>版数</td>
+<td>v1.0</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>承認済(v1.0 初版)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-目的対象範囲">1. 目的・対象範囲</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>目的</td>
+<td>運営者システム(SaaS 提供者 = <code>open-faq</code> 運営)の全体方針 + 設計方針 + 個別設計書への索引。詳細仕様は本ディレクトリ配下の 10 個別設計書を正本とする。</td>
+</tr>
+<tr>
+<td>対象範囲</td>
+<td><code>service_operator</code> 単一ロール + 4-eyes 多段ガード + 監査ハッシュチェーン + Stripe Webhook 一次受信</td>
+</tr>
+<tr>
+<td>対象外</td>
+<td>利用者向けメインシステム(<a href="../../01_メインシステム/02_基本設計/">../../01_メインシステム/02_基本設計/</a>)</td>
+</tr>
+<tr>
+<td>想定読者</td>
+<td>設計レビュアー / 実装担当者 / 監査担当 / 運用担当</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-設計方針全体像">2. 設計方針(全体像)</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>方針</th>
+<th>概要</th>
+<th>詳細</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>6 段認可判定方針</td>
+<td>IP allowlist → セッション → MFA → role → 再認証 → 4-eyes の順で全 API・全画面に適用</td>
+<td><a href="08_認証・認可設計.html">08_認証・認可設計.html</a></td>
+</tr>
+<tr>
+<td>2</td>
+<td>4-eyes 承認フロー方針</td>
+<td>対象 10 操作のうち 3 操作はハードゲート(承認なし実行不可)、7 操作は承認ログ(実行と承認ログを別運営者で実施)</td>
+<td><a href="04_権限設計.html">04_権限設計.html</a></td>
+</tr>
+<tr>
+<td>3</td>
+<td>監査ハッシュチェーン方針</td>
+<td><code>audit_logs</code> 全行に前行ハッシュを連鎖し改竄不能化。日次完全性検証 cron。3 区分保持(1y / 5y / 7y)。</td>
+<td><a href="09_セキュリティ設計.html">09_セキュリティ設計.html</a></td>
+</tr>
+<tr>
+<td>4</td>
+<td>Stripe Webhook 一次受信方針</td>
+<td>運営者側で一次受信し DLQ 30 日リプレイ。署名検証 + payload 差分検出 + メインへの転送</td>
+<td><a href="10_課金・請求設計.html">10_課金・請求設計.html</a></td>
+</tr>
+<tr>
+<td>5</td>
+<td>画面設計方針</td>
+<td>SCR-090〜098 + SCR-AUTH / SCR-HOME / SCR-APPROVALS。承認待ち一覧 + モーダル承認/却下。</td>
+<td><a href="01_画面設計.html">01_画面設計.html</a></td>
+</tr>
+<tr>
+<td>6</td>
+<td>API 設計方針</td>
+<td><code>/v1/operator/*</code> 配下。連携 IF #1〜#12 の主管責任(送信 8 + 受信 2)。</td>
+<td><a href="02_API設計.html">02_API設計.html</a></td>
+</tr>
+<tr>
+<td>7</td>
+<td>データ設計方針</td>
+<td><code>operator_*</code> テーブル群 + <code>audit_logs</code>(ハッシュチェーン)+ <code>webhook_events</code> + <code>operator_approvals</code> + <code>accounts_retired</code>。</td>
+<td><a href="03_テーブル設計.html">03_テーブル設計.html</a></td>
+</tr>
+<tr>
+<td>8</td>
+<td>エラー設計方針</td>
+<td><code>E-OP-*</code> プレフィックス。4-eyes 未承認 / IP allowlist 拒否 / 再認証期限切れの専用エラー。</td>
+<td><a href="05_エラー設計.html">05_エラー設計.html</a></td>
+</tr>
+<tr>
+<td>9</td>
+<td>メッセージ設計方針</td>
+<td>運営者画面文言 + IF #12 経由通知 + お知らせテンプレート。重要度 <code>critical</code> メール強制送信。</td>
+<td><a href="06_メッセージ一覧.html">06_メッセージ一覧.html</a></td>
+</tr>
+<tr>
+<td>10</td>
+<td>トレーサビリティ方針</td>
+<td>要件 → 機能 → 画面 → API → DB → 権限 → エラー → メッセージ → テスト観点。4-eyes 操作 10 件のマッピング表を含む。</td>
+<td><a href="07_トレーサビリティマトリクス.html">07_トレーサビリティマトリクス.html</a></td>
+</tr>
+<tr>
+<td>11</td>
+<td>メール設計方針</td>
+<td>運営者システム送信の全 <code>TPL-OP-*</code> 件名・本文の正本。運営者宛 13 + IF #12 経由 5 = 計 18 テンプレート + 集約窓 10 分。</td>
+<td><a href="11_メール設計.html">11_メール設計.html</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-システム構成全体像">3. システム構成(全体像)</h2>
+<table>
+<thead>
+<tr>
+<th>レイヤ</th>
+<th>構成要素</th>
+<th>補足</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>フロントエンド</td>
+<td>運営者専用 SPA(管理画面)</td>
+<td><code>admin.&lt;domain&gt;</code> の独立サブドメイン</td>
+</tr>
+<tr>
+<td>API バックエンド</td>
+<td>Cloudflare Workers + REST API</td>
+<td><code>/v1/operator/*</code></td>
+</tr>
+<tr>
+<td>データストア</td>
+<td>D1(SQLite 互換)+ KV(セッション / IP allowlist)+ R2(エクスポート)</td>
+<td>RDB は運営者専用</td>
+</tr>
+<tr>
+<td>外部連携</td>
+<td>Stripe(Webhook 一次受信)/ メインシステム / SMTP / 監視 SaaS</td>
+<td>連携 IF #1〜#12 主管</td>
+</tr>
+<tr>
+<td>認証基盤</td>
+<td>TOTP(MFA)+ 再認証チャレンジ + IP allowlist + 4-eyes</td>
+<td>6 段認可判定</td>
+</tr>
+</tbody>
+</table>
+<p>詳細構成図と Worker トポロジーは <a href="../03_詳細設計/index.html">../03_詳細設計/index.html</a> §2 を参照。</p>
+<h2 id="4-機能一覧frxx_md-と基本設計成果物の対応">4. 機能一覧(FRxx_*.html と基本設計成果物の対応)</h2>
+<table>
+<thead>
+<tr>
+<th>FRxx ファイル</th>
+<th>概要</th>
+<th>主関連画面</th>
+<th>主関連 API</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../01_要件定義/FR01_アカウント管理.html">../01_要件定義/FR01_アカウント管理.html</a></td>
+<td>アカウント管理(メイン側を正本として参照)</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td><a href="../01_要件定義/FR02_ユーザー管理.html">../01_要件定義/FR02_ユーザー管理.html</a></td>
+<td>ユーザー管理(メイン側を正本として参照)</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td><a href="../01_要件定義/FR03_プロジェクト管理.html">../01_要件定義/FR03_プロジェクト管理.html</a></td>
+<td>プロジェクト管理(メイン側を正本として参照)</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td><a href="../01_要件定義/FR04_FAQ管理.html">../01_要件定義/FR04_FAQ管理.html</a></td>
+<td>FAQ 管理(メイン側を正本として参照)</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td><a href="../01_要件定義/FR05_AIパラメータ設定.html">../01_要件定義/FR05_AIパラメータ設定.html</a></td>
+<td>AI 推論パラメータの本番上書き(4-eyes ハードゲート)</td>
+<td>SCR-092</td>
+<td><code>PATCH /v1/operator/ai-parameters</code></td>
+</tr>
+<tr>
+<td><a href="../01_要件定義/FR06_未解決質問登録.html">../01_要件定義/FR06_未解決質問登録.html</a></td>
+<td>未解決質問関連(メイン側を正本として参照)</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td><a href="../01_要件定義/FR07_個別チャット.html">../01_要件定義/FR07_個別チャット.html</a></td>
+<td>個別チャット関連(メイン側を正本として参照)</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td><a href="../01_要件定義/FR08_未解決質問からFAQ登録.html">../01_要件定義/FR08_未解決質問からFAQ登録.html</a></td>
+<td>未解決 → FAQ 関連(メイン側を正本として参照)</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td><a href="../01_要件定義/FR09_処理エラー.html">../01_要件定義/FR09_処理エラー.html</a></td>
+<td>処理エラー対応(運営者側エラーチケット連携)</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td><a href="../01_要件定義/FR10_利用量・課金.html">../01_要件定義/FR10_利用量・課金.html</a></td>
+<td>利用量・課金(運営者主管: Stripe Webhook 一次受信 / 月次請求確定)</td>
+<td>SCR-096</td>
+<td><code>POST /v1/operator/webhook/replay</code></td>
+</tr>
+<tr>
+<td><a href="../01_要件定義/FR11_管理ダッシュボード.html">../01_要件定義/FR11_管理ダッシュボード.html</a></td>
+<td>運営者ホームダッシュボード</td>
+<td>SCR-HOME</td>
+<td><code>GET /v1/operator/home</code></td>
+</tr>
+<tr>
+<td><a href="../01_要件定義/FR12_通知.html">../01_要件定義/FR12_通知.html</a></td>
+<td>通知(IF #12 経由でメインへ転送)</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td><a href="../01_要件定義/FR13_ウィジェット.html">../01_要件定義/FR13_ウィジェット.html</a></td>
+<td>ウィジェット(メイン側を正本として参照)</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td><a href="../01_要件定義/FR14_プライバシー・データ管理.html">../01_要件定義/FR14_プライバシー・データ管理.html</a></td>
+<td>プライバシー / GDPR 越境移転ガード / <code>accounts_retired</code> 永久保持</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td><a href="../01_要件定義/FR15_セキュリティ.html">../01_要件定義/FR15_セキュリティ.html</a></td>
+<td>セキュリティ(運営者主管: 監査ハッシュチェーン / IP allowlist / MFA)</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td><a href="../01_要件定義/FR16_お知らせ.html">../01_要件定義/FR16_お知らせ.html</a></td>
+<td>お知らせ作成・配信</td>
+<td>SCR-094</td>
+<td><code>POST /v1/operator/announcements</code></td>
+</tr>
+<tr>
+<td><a href="../01_要件定義/FR17_削除データ参照・復元.html">../01_要件定義/FR17_削除データ参照・復元.html</a></td>
+<td>削除データ参照 / 復元(運営者専用 / 4-eyes 承認ログ)</td>
+<td>SCR-090 / SCR-091</td>
+<td><code>GET /v1/operator/deleted/:type/:id</code>, <code>POST /v1/operator/restore</code></td>
+</tr>
+<tr>
+<td><a href="../01_要件定義/FR18_運営者の責務.html">../01_要件定義/FR18_運営者の責務.html</a></td>
+<td>運営者の責務(SLA / オンコール / 監査 / GDPR)</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td><a href="../01_要件定義/FR19_UI・UX共通.html">../01_要件定義/FR19_UI・UX共通.html</a></td>
+<td>運営者画面 UI/UX 共通要件</td>
+<td>全画面</td>
+<td>-</td>
+</tr>
+<tr>
+<td><a href="../01_要件定義/FR20_ナビゲーション・情報構造.html">../01_要件定義/FR20_ナビゲーション・情報構造.html</a></td>
+<td>ナビゲーション・情報構造要件</td>
+<td>全画面</td>
+<td>-</td>
+</tr>
+<tr>
+<td><a href="../01_要件定義/FR21_ローディング・フィードバック.html">../01_要件定義/FR21_ローディング・フィードバック.html</a></td>
+<td>ローディング・フィードバック要件</td>
+<td>全画面</td>
+<td>-</td>
+</tr>
+<tr>
+<td><a href="../01_要件定義/FR22_アクセシビリティ強化.html">../01_要件定義/FR22_アクセシビリティ強化.html</a></td>
+<td>アクセシビリティ強化要件</td>
+<td>全画面</td>
+<td>-</td>
+</tr>
+<tr>
+<td><a href="../01_要件定義/FR23_4-eyes承認.html">../01_要件定義/FR23_4-eyes承認.html</a></td>
+<td>4-eyes 承認(対象 10 操作)</td>
+<td>SCR-APPROVALS</td>
+<td><code>POST /v1/operator/approvals</code> ほか</td>
+</tr>
+<tr>
+<td><a href="../01_要件定義/FR24_監査・SLA.html">../01_要件定義/FR24_監査・SLA.html</a></td>
+<td>監査ログ参照 / SLA 監視 / 運営者活動ダッシュボード</td>
+<td>SCR-095</td>
+<td><code>GET /v1/operator/audit-logs</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-scr--ドキュメント-カバレッジ表">5. SCR × ドキュメント カバレッジ表</h2>
+<table>
+<thead>
+<tr>
+<th>SCR ID</th>
+<th>画面名</th>
+<th>画面</th>
+<th>API</th>
+<th>テーブル</th>
+<th>権限</th>
+<th>エラー</th>
+<th>メッセージ</th>
+<th>認証認可</th>
+<th>セキュリティ</th>
+<th>課金</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SCR-AUTH</td>
+<td>運営者ログイン</td>
+<td>§5.SCR-AUTH</td>
+<td><code>POST /v1/operator/sessions</code></td>
+<td><code>operator_sessions</code>, <code>service_operators</code></td>
+<td>§2 単一ロール</td>
+<td>E-OP-AUTH-*</td>
+<td>MSG-SCR-AUTH-*</td>
+<td>§3 ログイン</td>
+<td>§5 ロックアウト</td>
+<td>-</td>
+</tr>
+<tr>
+<td>SCR-AUTH-M1</td>
+<td>MFA 初回セットアップ</td>
+<td>§5.SCR-AUTH-M1</td>
+<td><code>POST /v1/operator/mfa/enroll</code></td>
+<td><code>operator_mfa_secrets</code></td>
+<td>-</td>
+<td>E-OP-MFA-*</td>
+<td>MSG-SCR-AUTH-M1-*</td>
+<td>§3 MFA / §4 TOTP</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td>SCR-HOME</td>
+<td>ホームダッシュボード</td>
+<td>§5.SCR-HOME</td>
+<td><code>GET /v1/operator/home</code></td>
+<td>(各種)</td>
+<td>全運営者</td>
+<td>-</td>
+<td>MSG-SCR-HOME-*</td>
+<td>§6 セッション検証</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td>SCR-090</td>
+<td>削除データ参照</td>
+<td>§5.SCR-090</td>
+<td><code>GET /v1/operator/deleted/:type/:id</code></td>
+<td><code>accounts_retired</code>, <code>audit_logs</code></td>
+<td>4-eyes 不要</td>
+<td>E-OP-AUTHZ-*</td>
+<td>MSG-SCR-090-*</td>
+<td>§6 再認証</td>
+<td>§7 監査</td>
+<td>-</td>
+</tr>
+<tr>
+<td>SCR-091</td>
+<td>削除データ復元</td>
+<td>§5.SCR-091</td>
+<td><code>POST /v1/operator/restore</code></td>
+<td><code>accounts_retired</code>, <code>audit_logs</code></td>
+<td>4-eyes 承認ログ</td>
+<td>E-OP-RESTORE-*</td>
+<td>MSG-SCR-091-*</td>
+<td>§6 4-eyes 承認</td>
+<td>§7 監査</td>
+<td>-</td>
+</tr>
+<tr>
+<td>SCR-092</td>
+<td>AI 推論パラメータ設定</td>
+<td>§5.SCR-092</td>
+<td><code>PATCH /v1/operator/ai-parameters</code></td>
+<td><code>ai_parameter_overrides</code>, <code>audit_logs</code></td>
+<td><strong>4-eyes ハードゲート</strong></td>
+<td>E-OP-4EYES-*</td>
+<td>MSG-SCR-092-*</td>
+<td>§6 ハードゲート</td>
+<td>§7 監査</td>
+<td>-</td>
+</tr>
+<tr>
+<td>SCR-093</td>
+<td>レート制限(契約単位)・上限件数(プロジェクト単位)上書き</td>
+<td>§5.SCR-093</td>
+<td><code>PUT /admin/v1/overrides/rate-limit/{owner_id}</code>(契約)/ <code>.../usage-limit/{owner_id}/{project_id}</code>(プロジェクト)</td>
+<td><code>owner_quota_overrides</code>(レート)/ メイン <code>project_quota_limits</code>(月次上限件数)</td>
+<td>4-eyes 承認ログ</td>
+<td>E-OP-OVERRIDE-*</td>
+<td>MSG-SCR-093-*</td>
+<td>§6 4-eyes 承認</td>
+<td>§7 監査</td>
+<td>§3 利用上限上書き</td>
+</tr>
+<tr>
+<td>SCR-094</td>
+<td>お知らせ作成・配信</td>
+<td>§5.SCR-094</td>
+<td><code>POST /v1/operator/announcements</code> ほか</td>
+<td><code>announcement_drafts</code>, <code>service_announcements</code></td>
+<td>全運営者</td>
+<td>E-OP-INPUT-*</td>
+<td>MSG-SCR-094-*</td>
+<td>§6 認可判定</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td>SCR-095</td>
+<td>運営者活動ダッシュボード</td>
+<td>§5.SCR-095</td>
+<td><code>GET /v1/operator/audit-logs</code></td>
+<td><code>audit_logs</code></td>
+<td>全運営者(参照)</td>
+<td>-</td>
+<td>MSG-SCR-095-*</td>
+<td>§6 認可判定</td>
+<td>§7 監査参照</td>
+<td>-</td>
+</tr>
+<tr>
+<td>SCR-096</td>
+<td>Webhook リプレイ・DLQ 操作</td>
+<td>§5.SCR-096</td>
+<td><code>POST /v1/operator/webhook/replay</code> ほか</td>
+<td><code>webhook_events</code>, <code>dlq_replay_log</code></td>
+<td>4-eyes 承認ログ</td>
+<td>E-OP-WEBHOOK-*</td>
+<td>MSG-SCR-096-*</td>
+<td>§6 4-eyes 承認</td>
+<td>§7 監査</td>
+<td>§13 DLQ</td>
+</tr>
+<tr>
+<td>SCR-097</td>
+<td>PII 誤検出報告管理</td>
+<td>§5.SCR-097</td>
+<td><code>GET /v1/operator/pii-reports</code> ほか</td>
+<td><code>pii_false_positive_reports</code></td>
+<td>全運営者</td>
+<td>E-OP-PII-*</td>
+<td>MSG-SCR-097-*</td>
+<td>§6 認可判定</td>
+<td>§13 PII マスキング</td>
+<td>-</td>
+</tr>
+<tr>
+<td>SCR-098</td>
+<td>Webhook ペイロード差分検出</td>
+<td>§5.SCR-098</td>
+<td><code>GET /v1/operator/webhook/diffs</code></td>
+<td><code>webhook_payload_diffs</code></td>
+<td>全運営者</td>
+<td>-</td>
+<td>MSG-SCR-098-*</td>
+<td>§6 認可判定</td>
+<td>§7 監査</td>
+<td>§13 差分検出</td>
+</tr>
+<tr>
+<td>SCR-APPROVALS</td>
+<td>承認待ち一覧(4-eyes)</td>
+<td>§5.SCR-APPROVALS</td>
+<td><code>GET /v1/operator/approvals</code></td>
+<td><code>operator_approvals</code></td>
+<td>4-eyes 申請者/承認者</td>
+<td>E-OP-4EYES-*</td>
+<td>MSG-SCR-APPROVALS-*</td>
+<td>§6 4-eyes フロー</td>
+<td>§7 監査</td>
+<td>-</td>
+</tr>
+<tr>
+<td>SCR-APPROVALS-M1</td>
+<td>4-eyes 承認申請モーダル</td>
+<td>§5.SCR-APPROVALS-M1</td>
+<td><code>POST /v1/operator/approvals</code></td>
+<td><code>operator_approvals</code></td>
+<td>4-eyes 申請者</td>
+<td>E-OP-4EYES-*</td>
+<td>MSG-SCR-APPROVALS-M1-*</td>
+<td>§6 申請 / payload_hash</td>
+<td>§7 監査</td>
+<td>-</td>
+</tr>
+<tr>
+<td>SCR-APPROVALS-M2</td>
+<td>4-eyes 承認/却下モーダル</td>
+<td>§5.SCR-APPROVALS-M2</td>
+<td><code>POST /v1/operator/approvals/:id/approve</code> ほか</td>
+<td><code>operator_approvals</code></td>
+<td>4-eyes 承認者</td>
+<td>E-OP-4EYES-*</td>
+<td>MSG-SCR-APPROVALS-M2-*</td>
+<td>§6 承認 / 自己承認禁止</td>
+<td>§7 監査</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-4-eyes-対象-10-操作カバレッジ表">6. 4-eyes 対象 10 操作カバレッジ表</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>操作</th>
+<th>種別</th>
+<th>SCR</th>
+<th>action code</th>
+<th>retention_class</th>
+<th>API</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>契約物理削除</td>
+<td><strong>ハードゲート</strong></td>
+<td>SCR-091 派生</td>
+<td><code>owner.physical_delete</code></td>
+<td>7y(operator_high_priv)</td>
+<td><code>DELETE /v1/operator/owners/:id/physical</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>AI パラメータ変更(本番)</td>
+<td><strong>ハードゲート</strong></td>
+<td>SCR-092</td>
+<td><code>ai_parameter.update</code></td>
+<td>5y(operator_high_priv)</td>
+<td><code>PATCH /v1/operator/ai-parameters</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td>マスター鍵ローテーション</td>
+<td><strong>ハードゲート</strong></td>
+<td>(運用 CLI)</td>
+<td><code>key.master_rotate</code></td>
+<td>5y(operator_high_priv)</td>
+<td>(CLI)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>契約無効化 / サスペンション解除</td>
+<td>承認ログ</td>
+<td>SCR-091 派生</td>
+<td><code>owner.suspend</code>, <code>owner.restore</code></td>
+<td>5y(billing)</td>
+<td><code>POST /v1/operator/owners/:id/suspend</code> ほか</td>
+</tr>
+<tr>
+<td>5</td>
+<td>契約別レート制限上書き</td>
+<td>承認ログ</td>
+<td>SCR-093</td>
+<td><code>rate_limit.override</code></td>
+<td>5y(general)</td>
+<td><code>PATCH /v1/operator/rate-limits</code></td>
+</tr>
+<tr>
+<td>6</td>
+<td>プロジェクト別上限件数上書き</td>
+<td>承認ログ</td>
+<td>SCR-093</td>
+<td><code>usage_limit.override</code></td>
+<td>5y(billing)</td>
+<td><code>PUT /admin/v1/overrides/usage-limit/{owner_id}/{project_id}</code></td>
+</tr>
+<tr>
+<td>7</td>
+<td>強制停止(契約単位)</td>
+<td>承認ログ</td>
+<td>SCR-093 派生</td>
+<td><code>owner.force_stop</code></td>
+<td>5y(operator_high_priv)</td>
+<td><code>POST /v1/operator/owners/:id/force-stop</code></td>
+</tr>
+<tr>
+<td>8</td>
+<td>削除データ復元</td>
+<td>承認ログ</td>
+<td>SCR-091</td>
+<td><code>owner.restore_data</code></td>
+<td>5y(operator_high_priv)</td>
+<td><code>POST /v1/operator/restore</code></td>
+</tr>
+<tr>
+<td>9</td>
+<td>課金 Webhook リプレイ</td>
+<td>承認ログ</td>
+<td>SCR-096</td>
+<td><code>webhook.replay</code></td>
+<td>5y(billing)</td>
+<td><code>POST /v1/operator/webhook/replay</code></td>
+</tr>
+<tr>
+<td>10</td>
+<td>法的レビュー結果記録</td>
+<td>承認ログ</td>
+<td>SCR-097 派生</td>
+<td><code>owner.legal_review.record</code></td>
+<td>7y(operator_high_priv)</td>
+<td><code>POST /v1/operator/legal-review</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-連携-if--ドキュメント-カバレッジ">7. 連携 IF × ドキュメント カバレッジ</h2>
+<table>
+<thead>
+<tr>
+<th>IF #</th>
+<th>方向</th>
+<th>概要</th>
+<th>API</th>
+<th>エラー</th>
+<th>セキュリティ</th>
+<th>課金</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>#1</td>
+<td>顧管 → メ</td>
+<td>契約停止イベント送信</td>
+<td>§5 IF #1(送信主管)</td>
+<td>E-OP-IF-001-*</td>
+<td>§7 監査</td>
+<td>§5 サスペンション</td>
+</tr>
+<tr>
+<td>#2</td>
+<td>顧管 → メ</td>
+<td>強制ログアウト送信</td>
+<td>§5 IF #2</td>
+<td>E-OP-IF-002-*</td>
+<td>§7 監査</td>
+<td>-</td>
+</tr>
+<tr>
+<td>#4</td>
+<td>顧管 → メ</td>
+<td>復元実行</td>
+<td>§5 IF #4</td>
+<td>E-OP-IF-004-*</td>
+<td>§7 監査</td>
+<td>-</td>
+</tr>
+<tr>
+<td>#5</td>
+<td>顧管 → メ</td>
+<td>レート制限上書き</td>
+<td>§5 IF #5</td>
+<td>E-OP-IF-005-*</td>
+<td>§7 監査</td>
+<td>§3 契約上書き</td>
+</tr>
+<tr>
+<td>#6</td>
+<td>顧管 → メ</td>
+<td>AI パラメータ上書き</td>
+<td>§5 IF #6</td>
+<td>E-OP-IF-006-*</td>
+<td>§7 監査</td>
+<td>-</td>
+</tr>
+<tr>
+<td>#7</td>
+<td>顧管 → メ</td>
+<td>お知らせ生成</td>
+<td>§5 IF #7</td>
+<td>E-OP-IF-007-*</td>
+<td>§7 監査</td>
+<td>-</td>
+</tr>
+<tr>
+<td>#8</td>
+<td>メ → 顧管</td>
+<td>監視メトリクス取得</td>
+<td>§5 IF #8(受信主管)</td>
+<td>-</td>
+<td>§10 監視</td>
+<td>-</td>
+</tr>
+<tr>
+<td>#9</td>
+<td>メ → 顧管</td>
+<td>不正利用検知通知</td>
+<td>§5 IF #9(受信主管)</td>
+<td>-</td>
+<td>§10 不正利用検知</td>
+<td>-</td>
+</tr>
+<tr>
+<td>#10</td>
+<td>外 → 顧管 → メ</td>
+<td>課金 Webhook 一次受信(Stripe)</td>
+<td>§5 IF #10(送信主管)</td>
+<td>E-OP-IF-010-*</td>
+<td>§7 監査</td>
+<td>§13 Webhook 処理</td>
+</tr>
+<tr>
+<td>#12</td>
+<td>顧管 → メ → 利用者</td>
+<td>運営者操作通知</td>
+<td>§5 IF #12</td>
+<td>E-OP-IF-012-*</td>
+<td>§7 監査</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<h2 id="8-関連ドキュメント">8. 関連ドキュメント</h2>
+<table>
+<thead>
+<tr>
+<th>ドキュメント</th>
+<th>役割</th>
+<th>リンク</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>要件定義</td>
+<td>WHAT(運営者要件)</td>
+<td><a href="../01_要件定義/index.html">../01_要件定義/index.html</a></td>
+</tr>
+<tr>
+<td>詳細設計</td>
+<td>実装関連の詳細(モジュール構成 / バッチ / マイグレーション)</td>
+<td><a href="../03_詳細設計/index.html">../03_詳細設計/index.html</a></td>
+</tr>
+<tr>
+<td>運用設計</td>
+<td>監視 / バックアップ / ログ / 障害対応 / リリース / 運用手順</td>
+<td><a href="../04_運用設計/index.html">../04_運用設計/index.html</a></td>
+</tr>
+<tr>
+<td>将来対応</td>
+<td>運営者サブロール ほか</td>
+<td><a href="../05_future/index.html">../05_future/index.html</a></td>
+</tr>
+<tr>
+<td>ワイヤーフレーム</td>
+<td>運営者画面表現</td>
+<td><a href="../画面遷移図.html">../画面遷移図.html</a></td>
+</tr>
+<tr>
+<td>メイン側ドキュメント</td>
+<td>利用者側設計書</td>
+<td><a href="../../01_メインシステム/02_基本設計/index.html">../../01_メインシステム/02_基本設計/index.html</a></td>
+</tr>
+<tr>
+<td>共有概念対応表</td>
+<td>メイン / 運営者の正本所在</td>
+<td><a href="../../共有/共有概念.html">../../共有/共有概念.html</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-未確定事項確認事項">9. 未確定事項・確認事項</h2>
+<table>
+<thead>
+<tr>
+<th>確認事項ID</th>
+<th>確認内容</th>
+<th>関連箇所</th>
+<th>優先度</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Q-BASE-OP-001</td>
+<td>(現時点で未確定事項なし — v1.0 リリース時点で全項目確定済み)</td>
+<td>-</td>
+<td>低</td>
+<td>確認済</td>
+</tr>
+</tbody>
+</table>
+<h2 id="10-変更履歴">10. 変更履歴</h2>
+<table>
+<thead>
+<tr>
+<th>日付</th>
+<th>版数</th>
+<th>変更内容</th>
+<th>変更者</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2026-05-17</td>
+<td>1.0</td>
+<td>初版作成(新構成への再編)</td>
+<td>プロジェクト設計チーム</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

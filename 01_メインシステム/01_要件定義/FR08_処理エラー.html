@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FR08: 処理エラー | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/01_要件定義/FR08_処理エラー.html">
+<article class="content" id="content">
+<h1 id="fr08-処理エラー">FR08: 処理エラー</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書名</td>
+<td>FR08: 処理エラー</td>
+</tr>
+<tr>
+<td>機能グループ</td>
+<td>処理エラー</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>FAQ AI ウィジェット SaaS / メインシステム</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-17</td>
+</tr>
+<tr>
+<td>版数</td>
+<td>v1.0</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>承認済</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-機能概要">1. 機能概要</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>概要</td>
+<td>通信障害・上流障害・入力不備・認可エラーといった「処理エラー」を「未解決質問登録」と明確に区別し、適切なエラー表示・再試行案内・運用記録を提供する</td>
+</tr>
+<tr>
+<td>利用場面</td>
+<td>AI 推論基盤や外部サービスの一時的障害、ユーザー入力不備、システム内部エラー発生時</td>
+</tr>
+<tr>
+<td>優先度</td>
+<td>Must</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-収録-fr-nnn-一覧">2. 収録 FR-NNN 一覧</h2>
+<h3 id="8101-エラー分類--挙動マトリクス">8.10.1 エラー分類 × 挙動マトリクス</h3>
+<p>本書では、処理エラーと未解決登録分岐を混同しないことを要件として定義する。分類表、応答コード、リトライ回数、記録項目は <a href="../02_基本設計/index.html">基本設計書 §6.2.13</a> / 詳細設計を正本とする。</p>
+<p><strong>重要原則</strong>:</p>
+<ul>
+<li>通信障害、上流障害、入力不備、認可エラーなどの処理エラーは、未解決質問として自動登録しない(FR-111)。</li>
+<li>FAQ が見つからない、信頼度が足りない、FAQ 矛盾を検出した場合は、処理エラーではなく通常の未解決登録分岐として扱う。</li>
+<li>エラー記録には個人情報・認証トークン・パスワードハッシュ・カード情報を含めない(FR-114)。</li>
+</ul>
+<h3 id="8102-機能要件">8.10.2 機能要件</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>要件</th>
+<th style="text-align: center;">優先度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-110</td>
+<td>§8.10.1 のカテゴリ A〜C に該当する処理エラーを検知し、利用者向けにエラー表示と適切な応答ができること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-111</td>
+<td>カテゴリ A〜C(処理エラー)はカテゴリ D(未解決登録分岐)と区別し、未解決質問として自動登録しないこと</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-112</td>
+<td>カテゴリ A(透過再試行可)失敗確定時およびカテゴリ B(ユーザー再試行)で、再試行案内を表示できること。再試行ボタンの連打防止(クールダウン 3 秒)を備えること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-113</td>
+<td>カテゴリ C のうちサーバー内部起因のエラーは運用確認できるように記録すること(エラー ID を利用者にも提示し、サポート問い合わせで紐付け可能にする)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-114</td>
+<td>エラー記録には個人情報・認証トークン・パスワードハッシュ・カード情報を含めないこと(エンドユーザー入力は先頭 100 文字 + ハッシュのみ)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-補足説明統合参照">3. 補足説明・統合参照</h2>
+<p>エラーカテゴリの分類表(A: 透過再試行可、B: ユーザー再試行、C: サーバー内部起因、D: 未解決登録分岐)・応答コード・リトライ回数・記録項目の詳細は基本設計書 §6.2.13 を正本とする。</p>
+<h2 id="4-関連設計">4. 関連設計</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>参照先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>画面設計</td>
+<td><a href="../02_基本設計/01_画面設計.html">../02_基本設計/01_画面設計.html</a></td>
+</tr>
+<tr>
+<td>API 設計</td>
+<td><a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html</a></td>
+</tr>
+<tr>
+<td>テーブル設計</td>
+<td><a href="../02_基本設計/03_テーブル設計.html">../02_基本設計/03_テーブル設計.html</a></td>
+</tr>
+<tr>
+<td>権限設計</td>
+<td><a href="../02_基本設計/04_権限設計.html">../02_基本設計/04_権限設計.html</a></td>
+</tr>
+<tr>
+<td>エラー設計</td>
+<td><a href="../02_基本設計/05_エラー設計.html">../02_基本設計/05_エラー設計.html</a></td>
+</tr>
+<tr>
+<td>メッセージ</td>
+<td><a href="../02_基本設計/06_メッセージ一覧.html">../02_基本設計/06_メッセージ一覧.html</a></td>
+</tr>
+<tr>
+<td>詳細設計</td>
+<td><a href="../03_詳細設計/index.html">../03_詳細設計/index.html</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-未確定事項確認事項">5. 未確定事項・確認事項</h2>
+<table>
+<thead>
+<tr>
+<th>確認事項ID</th>
+<th>確認内容</th>
+<th>優先度</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>v1.0 リリース時点で全項目確定済み</td>
+<td>低</td>
+<td>確認済</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

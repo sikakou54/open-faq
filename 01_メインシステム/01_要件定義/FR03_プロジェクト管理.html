@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FR03: プロジェクト管理 | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/01_要件定義/FR03_プロジェクト管理.html">
+<article class="content" id="content">
+<h1 id="fr03-プロジェクト管理">FR03: プロジェクト管理</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書名</td>
+<td>FR03: プロジェクト管理</td>
+</tr>
+<tr>
+<td>機能グループ</td>
+<td>プロジェクト管理</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>FAQ AI ウィジェット SaaS / メインシステム</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-17</td>
+</tr>
+<tr>
+<td>版数</td>
+<td>v1.1</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>承認済</td>
+</tr>
+<tr>
+<td>更新履歴</td>
+<td>v1.1(2026-06-10): 作成と設定編集を分離し、編集・削除をプロジェクト設定へ集約</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-機能概要">1. 機能概要</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>概要</td>
+<td>オーナー配下で FAQ・ウィジェット・ログを分けて管理する単位「プロジェクト」を作成・編集・削除する。許可ドメイン設定、ウィジェット設定、プロジェクト連絡先メールも含む</td>
+</tr>
+<tr>
+<td>利用場面</td>
+<td>製品別 / サイト別にプロジェクトを分けて運用する場合、ウィジェット設置先サイトの追加、プロジェクト終了時の整理</td>
+</tr>
+<tr>
+<td>優先度</td>
+<td>Must</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-収録-fr-nnn-一覧">2. 収録 FR-NNN 一覧</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>要件</th>
+<th style="text-align: center;">優先度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-030</td>
+<td>オーナーはプロジェクトを作成、編集、削除できること。新規作成・編集・削除はいずれも SCR-004-M1(作成・編集兼用モーダル)で行う。プロジェクト一覧(SCR-004)ではプロジェクト名を主リンクとし、クリックで SCR-004-M1 を編集モードで開く。一覧に ID 列・更新日時列は設けず、プロジェクト ID は編集モーダル内に読み取り専用 + コピー可能な補助情報として表示する。削除動線は SCR-004-M1 のモーダル内 DangerSection のみに置き、プロジェクト名タイプ確認 + 再認証(レベル L3)を必須とする</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-030a</td>
+<td>プロジェクト作成時には、当該プロジェクトの作成者であるオーナー自身が常にプロジェクト管理者となる。SCR-004-M1 は作成・編集兼用とし、管理者指定は扱わない(作成時にオーナーが自動で当該プロジェクトの管理者となる)。一般メンバー追加・他者をプロジェクト管理者として招待する操作は SCR-009 / SCR-009-M1 で行う</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-030b</td>
+<td>プロジェクト削除時は当該プロジェクトの <code>project_users</code> を全行<strong>論理削除</strong>(<code>UPDATE … SET valid=0</code>)する。削除の結果、他プロジェクト割当(<code>valid=1</code> の <code>project_users</code> 行)が 0 件かつ <code>contract_owners</code> 行を持たない(=非オーナー)ユーザーは <code>users.valid=0</code> で<strong>論理削除</strong>する(孤立メンバー cleanup)。他プロジェクト割当があるメンバーは <code>users.valid=1</code> を維持し、当該プロジェクトに対する <code>project_users</code> 行のみ <code>valid=0</code> で論理削除する。オーナー(<code>contract_owners</code> 行を保持するユーザー)の <code>users</code> 行は本処理の対象外(オーナー自身が当該プロジェクトに対し保持していた <code>project_users(role='admin')</code> 行は <code>valid=0</code> に更新するが、オーナー <code>users</code> 行と <code>contract_owners</code> 行は維持)。論理削除データは <code>updated_at</code> から 90 日経過後に物理削除バッチで物理削除する</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-031</td>
+<td>プロジェクトごとにウィジェット設定(公開キー・埋め込みコード・見た目・プレビュー)を管理できること。公開キーはプロジェクト単位で発行・ローテーションし、契約共通ではない。公開キーの再発行は当該プロジェクトの管理者(<code>project_users.role='admin'</code>)以上に許可し、誤操作防止レベル L3(再認証 + 「既存埋め込みコードが即座に無効化される」旨の確認)を必須とする。メンバー(<code>role='member'</code>)は閲覧と埋め込みコードのコピーのみ可。SCR-007 はプロジェクトワークスペース内に配置する(契約ワークスペースには配置しない)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-032</td>
+<td>プロジェクトごとにFAQ、質問ログ、未解決質問を分けて管理できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-033</td>
+<td>許可するWebサイトのドメインを複数設定できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-033a</td>
+<td>プロジェクトごとに連絡先メールアドレスを 1 件設定でき、確認メール(TPL-PROJECT_CONTACT_VERIFY、24h 有効、<code>access_tokens.purpose='contact_verify'</code>、<code>meta.projectId</code> を JSON 保持)を経て有効化できること。確認メール内リンクは <strong>SCR-019 プロジェクト連絡先メール確認完了ページ</strong>(未認証可、共通領域)に着地し、トークン検証成功時に <code>projects.contact_email_verified_at=now()</code> をセットする。確認完了前のアドレスはウィジェット表示に用いない。メール送信時の Reply-To としては利用しない(エンドユーザー向けメールは常に共通ドメインの no-reply 送信で固定)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-033c</td>
+<td>公開ウィジェットにおいて、確認完了済みのプロジェクト連絡先メールを未解決時・質問受付制限時のお問い合わせ先として表示できること。未設定または未確認の場合はメールアドレスを表示しないこと</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-034</td>
+<td>プロジェクト削除時の関連データ(FAQ、質問ログ、未解決質問)の取扱いを利用者が確認・選択できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-035</td>
+<td>プロジェクト数に固定の上限を設けず、利用状況を監視し急激な増加を検知してオーナーへ通知できること</td>
+<td style="text-align: center;">P1</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-補足説明統合参照">3. 補足説明・統合参照</h2>
+<p>(該当なし)</p>
+<h2 id="4-関連設計">4. 関連設計</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>参照先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>画面設計</td>
+<td><a href="../02_基本設計/01_画面設計.html">../02_基本設計/01_画面設計.html</a></td>
+</tr>
+<tr>
+<td>API 設計</td>
+<td><a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html</a></td>
+</tr>
+<tr>
+<td>テーブル設計</td>
+<td><a href="../02_基本設計/03_テーブル設計.html">../02_基本設計/03_テーブル設計.html</a></td>
+</tr>
+<tr>
+<td>権限設計</td>
+<td><a href="../02_基本設計/04_権限設計.html">../02_基本設計/04_権限設計.html</a></td>
+</tr>
+<tr>
+<td>エラー設計</td>
+<td><a href="../02_基本設計/05_エラー設計.html">../02_基本設計/05_エラー設計.html</a></td>
+</tr>
+<tr>
+<td>メッセージ</td>
+<td><a href="../02_基本設計/06_メッセージ一覧.html">../02_基本設計/06_メッセージ一覧.html</a></td>
+</tr>
+<tr>
+<td>詳細設計</td>
+<td><a href="../03_詳細設計/index.html">../03_詳細設計/index.html</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-未確定事項確認事項">5. 未確定事項・確認事項</h2>
+<table>
+<thead>
+<tr>
+<th>確認事項ID</th>
+<th>確認内容</th>
+<th>優先度</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>v1.0 リリース時点で全項目確定済み</td>
+<td>低</td>
+<td>確認済</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

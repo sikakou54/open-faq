@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FR02: ユーザー管理(オーナー + メンバー) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/01_要件定義/FR02_ユーザー管理.html">
+<article class="content" id="content">
+<h1 id="fr02-ユーザー管理オーナー--メンバー">FR02: ユーザー管理(オーナー + メンバー)</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書名</td>
+<td>FR02: ユーザー管理(オーナー + メンバー)</td>
+</tr>
+<tr>
+<td>機能グループ</td>
+<td>ユーザー管理(オーナー + メンバー)</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>FAQ AI ウィジェット SaaS / メインシステム</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-17</td>
+</tr>
+<tr>
+<td>版数</td>
+<td>v1.2</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>承認済</td>
+</tr>
+<tr>
+<td>更新履歴</td>
+<td>v1.2(2026-06-14): オーナー向け契約横断メンバー画面を廃止し、メンバー管理をプロジェクト単位へ統合 / v1.1(2026-06-10): プロジェクト割当解除と契約メンバーのアカウント削除を分離し、契約横断メンバー画面を追加</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-機能概要">1. 機能概要</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>概要</td>
+<td>オーナーアカウント(1 契約 = 1 アカウント固定)とメンバーアカウント(0..N、プロジェクト単位のロール <code>admin</code> / <code>member</code> で制御)のユーザーモデルを管理する。招待・アクティベーション・ロール変更・削除の各操作を扱う</td>
+</tr>
+<tr>
+<td>利用場面</td>
+<td>オーナーまたはプロジェクト管理者ロール保持者による、該当プロジェクト範囲のメンバー招待・ロール変更・離脱</td>
+</tr>
+<tr>
+<td>優先度</td>
+<td>Must</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-収録-fr-nnn-一覧">2. 収録 FR-NNN 一覧</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>要件</th>
+<th style="text-align: center;">優先度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-015</td>
+<td>オーナーおよびプロジェクト管理者(<code>project_users.role='admin'</code> 保持者)は、自分が現在開いているプロジェクトワークスペースにおいて、メールアドレス・当該プロジェクトに対するロール(<code>admin</code> / <code>member</code>)を指定してメンバーを招待できること。<strong>招待モーダル(SCR-009-M1)では氏名(表示名)を入力しない</strong>(個人情報原則により、他人の氏名を管理者が任意に登録することを禁止)。氏名は招待された本人が SCR-018 メンバーアカウント有効化ページで入力する(FR-016d)。<strong>メンバー管理は常にプロジェクト単位</strong>で行い、SCR-009-M1 では当該プロジェクトの 1 件の割当のみを扱う。同一メンバーを複数プロジェクトに参加させる場合は各プロジェクト WS で個別に招待操作を行い、同一オーナースコープでメールアドレスが一致するアカウントは名前解決により単一ユーザーに紐付き、新規プロジェクト分の <code>project_users</code> 行のみが追加される(FR-021c と整合)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-015a</td>
+<td>オーナーはアカウント新規登録時に自動的に決定され、全プロジェクトに対する全権(プロジェクト管理者ロール相当)とオーナー専有機能を恒久的に保持すること。<strong>オーナーは「プロジェクト作成時に <code>project_users(role='admin', valid=1)</code> 行が自動 INSERT される明示的なプロジェクト管理者」となる</strong>。認可フロー先頭の <code>isOwner=true</code> bypass(<code>contract_owners</code> 行存在で判定)は維持し、<code>project_users</code> 行は通知宛先解決と画面表示の事実情報として参照する。オーナーはロールの編集対象外とし、降格・譲渡操作は提供しない(MVP)。1 契約 = 1 オーナー(<code>contract_owners.user_id</code> の PRIMARY KEY で担保)とする</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-015b</td>
+<td>メンバーの権限は「プロジェクトごとに付与するロール」で表現し、ロールは <code>admin</code>(プロジェクト管理者)と <code>member</code>(メンバー)の 2 種とすること。<code>admin</code> は該当プロジェクトに対する FAQ 管理 + 未解決質問管理 + ログ参照 + ユーザー管理(該当プロジェクト範囲の招待・離脱)を、<code>member</code> は該当プロジェクトに対する FAQ 管理 + 未解決質問管理 + ログ参照のみを許可する。個別の権限フラグ、プリセットロール、権限テンプレートは提供しない</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-015c</td>
+<td>契約単位の課金情報・支払方法・請求履歴・退会申請・規約再同意・契約設定、およびプロジェクトの作成・編集・削除はオーナー専有機能とし、いずれのロールでも付与できないこと。プロジェクト単位の利用上限・無料利用枠は、オーナーまたは当該プロジェクト管理者が変更できること(FR-121 / FR-125 と整合)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-015d</td>
+<td>メンバーは割当されたプロジェクトに帰属するデータ(FAQ・要対応の質問・質問ログ等)のみアクセス可能とすること。プロジェクトから外す操作は対象の <code>project_users</code> 行を論理削除し、他プロジェクトの有効な割当がある場合は <code>users</code> 行と他割当に影響させない。他プロジェクトの有効な割当がない場合は、対象アカウントを自動的に無効化し、セッションと未使用招待トークンを失効する。オーナーは割当の有無に関わらず全プロジェクトを閲覧・操作でき、各プロジェクトの <code>admin</code> 行も保持する</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-015e</td>
+<td>プロジェクト作成時、オーナーは自動で当該プロジェクトのプロジェクト管理者となる(<code>project_users(role='admin', valid=1)</code> を自動 INSERT。FR-030a と整合)。SCR-004-M1 には「このプロジェクトの管理者を指定」セクション(自己管理者チェックボックス + 他者管理者メール指定)を設けない。他者をプロジェクト管理者として招待する操作は、当該プロジェクトの SCR-009 / SCR-009-M1(プロジェクト WS)で行う</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-016</td>
+<td>招待されたメンバーは招待リンクから <strong>SCR-018 メンバーアカウント有効化ページ</strong> に遷移し、本人による <strong>氏名(表示名)入力 + 初回パスワード設定 + 利用規約・プライバシーポリシー同意</strong> を行ってアカウントを有効化できること。招待リンクの有効期限は <strong>7 日</strong>(FR-020 と整合)。期限切れの場合はオーナーまたは該当プロジェクトの管理者ロール保持者が再送信する</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-016a</td>
+<td>招待時に指定されたロール割当(プロジェクト × <code>admin</code> / <code>member</code>)は、招待対象者が SCR-018 でアクティベーション(氏名入力 + パスワード設定 + 規約同意)を完了した時点で有効化されること(<code>project_users.valid</code> を <code>0</code> → <code>1</code> に更新)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-016b</td>
+<td>招待リンクの再送信は、オーナーまたは該当プロジェクト管理者のみが実行できること。再送信時は旧リンクを失効させ、新リンクを発行する。再送 API リクエストには氏名(<code>displayName</code>)を含めない。招待中メンバーをキャンセルしたい場合は招待取消ではなくメンバー削除(FR-019)で対応する</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-016c</td>
+<td>アクティベーション完了前のメンバーは、招待時に指定されたロール割当を予約状態(<code>project_users.valid=0</code>)として保持するが、ログインおよび認可チェックは通らないこと(SCR-018 完了時点で初めて有効化される)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-016d</td>
+<td>招待されたメンバーは、招待リンク先の <strong>SCR-018 メンバーアカウント有効化ページ</strong> で氏名(表示名)・初回パスワード・<strong>利用規約同意・プライバシーポリシー同意(それぞれ独立した必須同意)</strong> を入力してアカウント有効化を完了する。利用規約とプライバシーポリシーは個別の文書として版管理され、双方の最新版への同意が有効化の必須条件となる。氏名は本人のみが入力でき、招待元の管理者は事前に氏名を入力できない(個人情報原則)。氏名は本人が SCR-017 個人設定で後から変更できる</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-016e</td>
+<td>招待時点で <code>users</code> レコードは <code>name=NULL</code> / <code>status='pending_activation'</code> で作成され、SCR-018 有効化完了時に <code>users.name</code> 更新 + <code>users.status='active'</code> + <code>project_users.valid=1</code> + <code>terms_agreements</code> INSERT(<strong>利用規約・プライバシーポリシーで各 1 行、計 2 行を <code>doc_type</code> 別に記録</strong>)+ <code>access_tokens.used_at</code> セットを同一トランザクションで実行する。招待トークン(<code>access_tokens.purpose='activation'</code>)の <code>meta</code> フィールド(JSON)には <code>invitedProjectId</code> / <code>invitedRole</code> を保持し、有効化完了時に当該プロジェクトの予約行の特定に用いる</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-017</td>
+<td>利用者は SCR-009 プロジェクトメンバーで、現在開いているプロジェクトに割当のあるメンバー一覧と詳細を参照できること。詳細には種別(契約オーナー / プロジェクト管理者 / プロジェクトメンバー)、ステータス(<code>利用中</code> / <code>招待中</code>)、当該プロジェクトのロールを含める。最終ログイン日時は表示せず、招待期限と再送導線は SCR-009-M1 に集約する。契約横断のメンバー一覧は提供しない</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-018</td>
+<td>オーナーおよびプロジェクト管理者は、自分(オーナー)に紐づくメンバーの <strong>メールアドレスのみ</strong> を更新できること(氏名の更新は不可)。<strong>氏名(表示名)は本人のみが SCR-018 メンバーアカウント有効化ページおよび SCR-017 個人設定で変更可能</strong>(個人情報原則により、管理者は他人の氏名を編集できない)。SCR-009-M1 編集モードでは氏名は read-only 表示(未入力時は「未設定」を灰色テキストで表示)。オーナーの氏名・メールの更新はオーナー本人のみが行えること。プロジェクト管理者が更新できる対象は、当該プロジェクトに割当のあるメンバーに限る。<strong>個人ごとの通知受信オプトアウト(重要/通常/低の受信切替)は MVP では提供しない</strong>。プロジェクト関連通知は v2.0 で常時 ON 固定とし、当該プロジェクトの全メンバー(オーナー + admin + member)に即時配信する(画面設定なし)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-018a</td>
+<td>プロジェクト管理者(オーナー含む)は、SCR-009-M1 で当該プロジェクトの 1 件の割当のみを編集できること(<code>admin</code> / <code>member</code> のラジオ選択 + 「プロジェクトから外す」操作)。他プロジェクトの割当には影響しない。自分自身の降格・割当解除は不可とする。他メンバーを <code>admin</code> から <code>member</code> へ降格する操作は誤操作防止レベル L2を必須とする</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-018b</td>
+<td>ロール変更・削除時には、変更前後のプロジェクト × ロール差分を監査ログに記録し、当該メンバーへお知らせ受信箱とメールで通知できること(FR-145a と整合)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-018c</td>
+<td>オーナーは、メンバーを別プロジェクトへ追加で割当する場合、当該別プロジェクトの WS に切り替えて SCR-009-M1 から招待する。プロジェクト管理者は他プロジェクトへの割当はできず、自分が管理者であるプロジェクト範囲でのみ招待・ロール変更・削除ができる(範囲内のロール制約は FR-019 を正本)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-019</td>
+<td>メンバーの利用終了は SCR-009-M1 の「プロジェクトから外す」に統合すること。対象が他プロジェクトに有効な割当を持たない場合、対象 <code>project_users.valid=0</code> と <code>users.valid=0</code> を同一トランザクションで更新し、全セッションと未使用招待トークンを失効する。オーナー自身は対象外とし、契約横断のメンバー削除画面・APIは提供しない</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-019a</td>
+<td>SCR-009-M1 の「プロジェクトから外す」は当該 <code>project_users</code> 行を <code>valid=0</code> にする。対象が他プロジェクトに有効な割当を持つ場合は <code>users</code> と他割当を維持し、次回認可チェックから反映する。他に有効な割当がない場合はアカウント自動無効化の影響を確認ダイアログに明示する</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-019b</td>
+<td>最後の有効なプロジェクト割当を解除した場合は、全セッション失効、未使用招待トークン失効、90日後の物理削除予定を確認文に明示する。無効化後に同じメールアドレスで再招待された場合は、論理削除済み行を維持して新規 <code>users</code> 行を作成する</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-020</td>
+<td>招待リンクには有効期限を設けること。<strong>有効期限: 7 日</strong>(顧客管理システム FR-020 と整合)。期限切れ後は招待の再送信で新リンクが発行される</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-021</td>
+<td>メンバー数に固定の上限を設けず、利用量しきい値に基づいて上限接近や急増を検知し、利用者(オーナー / メンバー)へアラート通知できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-021a</td>
+<td>メンバー数しきい値接近・超過時のアラート通知先は、オーナーおよび同一契約内で 1 件以上の <code>admin</code> ロールを保持する全プロジェクト管理者とすること(critical 通知の宛先と一致)</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>FR-021b</td>
+<td>契約にメンバーが 1 人も登録されていない状態でも、オーナーが単独で契約運営を継続できること(オーナーは全機能保持)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-021c</td>
+<td>同一オーナーに紐づく既存の有効・招待中アカウントと同一メールアドレスでメンバーを重複招待できないこと。別オーナー配下では別アカウントとして扱う(FR-335 と整合)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-補足説明統合参照">3. 補足説明・統合参照</h2>
+<p>(該当なし。本節に関連する追加サブセクションはなく、ユーザーモデルの定義は §6.2.0 / §6.2.0a を参照する形で運用する)</p>
+<h2 id="4-関連設計">4. 関連設計</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>参照先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>画面設計</td>
+<td><a href="../02_基本設計/01_画面設計.html">../02_基本設計/01_画面設計.html</a></td>
+</tr>
+<tr>
+<td>API 設計</td>
+<td><a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html</a></td>
+</tr>
+<tr>
+<td>テーブル設計</td>
+<td><a href="../02_基本設計/03_テーブル設計.html">../02_基本設計/03_テーブル設計.html</a></td>
+</tr>
+<tr>
+<td>権限設計</td>
+<td><a href="../02_基本設計/04_権限設計.html">../02_基本設計/04_権限設計.html</a></td>
+</tr>
+<tr>
+<td>エラー設計</td>
+<td><a href="../02_基本設計/05_エラー設計.html">../02_基本設計/05_エラー設計.html</a></td>
+</tr>
+<tr>
+<td>メッセージ</td>
+<td><a href="../02_基本設計/06_メッセージ一覧.html">../02_基本設計/06_メッセージ一覧.html</a></td>
+</tr>
+<tr>
+<td>認証・認可設計</td>
+<td><a href="../02_基本設計/08_認証・認可設計.html">../02_基本設計/08_認証・認可設計.html</a></td>
+</tr>
+<tr>
+<td>詳細設計</td>
+<td><a href="../03_詳細設計/index.html">../03_詳細設計/index.html</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-未確定事項確認事項">5. 未確定事項・確認事項</h2>
+<table>
+<thead>
+<tr>
+<th>確認事項ID</th>
+<th>確認内容</th>
+<th>優先度</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>v1.0 リリース時点で全項目確定済み</td>
+<td>低</td>
+<td>確認済</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DD05: inquiry_code 採番・未解決質問 | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/03_詳細設計/DD05_inquiry_code採番・未解決質問.html">
+<article class="content" id="content">
+<h1 id="dd05-inquiry_code-採番未解決質問">DD05: inquiry_code 採番・未解決質問</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書名</td>
+<td>DD05: inquiry_code 採番・未解決質問</td>
+</tr>
+<tr>
+<td>詳細設計ID</td>
+<td>DD05</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>FAQ AI ウィジェット SaaS / メインシステム</td>
+</tr>
+<tr>
+<td>関連機能ID</td>
+<td>FR-070〜077（未解決質問一覧 / 詳細 / 状況管理 open/closed）/ FR-072（inquiry_code 採番）/ AC-010 / AC-012 / AC-013</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-17</td>
+</tr>
+<tr>
+<td>版数</td>
+<td>v1.0</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>承認済</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-対象範囲">1. 対象範囲</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>ID</th>
+<th>名称</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>機能</td>
+<td>FR-070〜077</td>
+<td>未解決質問一覧 / 詳細 / 状況管理（2 値: open / closed、手動操作のみ）</td>
+</tr>
+<tr>
+<td>機能</td>
+<td>FR-072</td>
+<td>inquiry_code 採番（<code>INQ-YYYYMMDD-XXXXXXXX</code>）</td>
+</tr>
+<tr>
+<td>画面</td>
+<td>SCR-005</td>
+<td>FAQ 一覧（未解決質問は派生表示）</td>
+</tr>
+<tr>
+<td>API</td>
+<td><code>/inquiries/*</code></td>
+<td>未解決質問操作</td>
+</tr>
+<tr>
+<td>テーブル</td>
+<td><code>inquiries</code></td>
+<td>未解決質問</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-収録ロジック対応章">2. 収録ロジック・対応章</h2>
+<table>
+<thead>
+<tr>
+<th>元章</th>
+<th>元タイトル</th>
+<th>概要</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>§10.3</td>
+<td>inquiry_code 採番</td>
+<td>Base32 + 衝突 1.1×10^12 / リトライ最大 3 回</td>
+</tr>
+<tr>
+<td>§6 SCR-005</td>
+<td>FAQ 一覧</td>
+<td>未解決質問派生表示（正本は基本設計）</td>
+</tr>
+<tr>
+<td>§7</td>
+<td>機能詳細設計（未解決質問関連）</td>
+<td>状況 2 値（正本は基本設計）</td>
+</tr>
+<tr>
+<td>§14.1.4-14.1.5</td>
+<td>730 日保持期間処理</td>
+<td>未解決質問の保持期間通知 + 物理削除</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-詳細設計本文">3. 詳細設計本文</h2>
+<h3 id="31-inquiry_code-採番">3.1 inquiry_code 採番</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// app/shared/src/lib/inquiry-code.ts</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> BASE32 <span class="op">=</span> <span class="st">&#39;ABCDEFGHJKLMNPQRSTVWXYZ23456789&#39;</span><span class="op">;</span>  <span class="co">// 紛らわしい文字除外</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">function</span> <span class="fu">generateInquiryCode</span>(now <span class="op">=</span> <span class="kw">new</span> <span class="bu">Date</span>())<span class="op">:</span> <span class="dt">string</span> {</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> yyyymmdd <span class="op">=</span> now<span class="op">.</span><span class="fu">toISOString</span>()<span class="op">.</span><span class="fu">slice</span>(<span class="dv">0</span><span class="op">,</span> <span class="dv">10</span>)<span class="op">.</span><span class="fu">replace</span>(<span class="ss">/-/g</span><span class="op">,</span> <span class="st">&#39;&#39;</span>)<span class="op">;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> suffix <span class="op">=</span> <span class="st">&#39;&#39;</span><span class="op">;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> rand <span class="op">=</span> crypto<span class="op">.</span><span class="fu">getRandomValues</span>(<span class="kw">new</span> <span class="bu">Uint8Array</span>(<span class="dv">8</span>))<span class="op">;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (<span class="kw">let</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> <span class="dv">8</span><span class="op">;</span> i<span class="op">++</span>) suffix <span class="op">+=</span> BASE32[rand[i] <span class="op">%</span> <span class="dv">32</span>]<span class="op">;</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="vs">`INQ-</span><span class="sc">${</span>yyyymmdd<span class="sc">}</span><span class="vs">-</span><span class="sc">${</span>suffix<span class="sc">}</span><span class="vs">`</span><span class="op">;</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>衝突確率: 32^8 ≈ 1.1 × 10^12。日次 100 万件でも 4 × 10^-7。UNIQUE インデックス（<code>uq_inquiries_code</code>）違反時はリトライ（最大 3 回）。</p>
+<h3 id="32-未解決質問画面参照のみ">3.2 未解決質問画面（参照のみ）</h3>
+<p>未解決質問一覧 / 詳細 / 状況管理は <a href="../02_基本設計/01_画面設計.html">../02_基本設計/01_画面設計.html</a> を正本とする。<code>inquiries.status</code> の 2 値（<code>open</code> / <code>closed</code>）と SCR-005 詳細画面からの手動操作のみで更新する仕様は <a href="../02_基本設計/03_テーブル設計.html">../02_基本設計/03_テーブル設計.html</a> §4.5.2 を正本とする。</p>
+<h3 id="33-未解決質問の保持期間通知cron-jst-0900">3.3 未解決質問の保持期間通知（cron JST 09:00）</h3>
+<p><code>status=open</code> の未解決質問が保持期間に近づいた場合に、管理者ユーザーへ滞留通知を送信する。<code>closed</code> は対象外。状況は本処理で変更しない。詳細は <a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html</a> §14.1.4 を参照。</p>
+<h3 id="34-730-日保持期間処理cron-jst-0200">3.4 730 日保持期間処理（cron JST 02:00）</h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fu">processOpenInquiryRetention</span>(env<span class="op">:</span> Env) {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> cutoff <span class="op">=</span> <span class="kw">new</span> <span class="bu">Date</span>(<span class="bu">Date</span><span class="op">.</span><span class="fu">now</span>() <span class="op">-</span> <span class="dv">730</span> <span class="op">*</span> <span class="dv">86400000</span>)<span class="op">.</span><span class="fu">toISOString</span>()<span class="op">;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> stuck <span class="op">=</span> <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="vs">    SELECT id, contract_owner_user_id, status FROM inquiries</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="vs">    WHERE status = &#39;open&#39;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="vs">      AND created_at &lt;= ?1</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="vs">      AND deleted_at IS NULL</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="vs">  `</span>)<span class="op">.</span><span class="fu">bind</span>(cutoff)<span class="op">.</span><span class="fu">all</span>()<span class="op">;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (<span class="kw">const</span> i <span class="kw">of</span> stuck<span class="op">.</span><span class="at">results</span>) {</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> <span class="fu">enqueueNotification</span>(env<span class="op">,</span> {</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>      contractOwnerUserId<span class="op">:</span> i<span class="op">.</span><span class="at">contract_owner_user_id</span><span class="op">,</span> kind<span class="op">:</span> <span class="st">&#39;OPEN_INQUIRY_RETENTION_NOTICE&#39;</span><span class="op">,</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>      refType<span class="op">:</span> <span class="st">&#39;inquiry&#39;</span><span class="op">,</span> refId<span class="op">:</span> i<span class="op">.</span><span class="at">id</span><span class="op">,</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> <span class="fu">writeAudit</span>(env<span class="op">,</span> {</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>      action<span class="op">:</span> <span class="st">&#39;inquiry.retention_notice&#39;</span><span class="op">,</span> contractOwnerUserId<span class="op">:</span> i<span class="op">.</span><span class="at">contract_owner_user_id</span><span class="op">,</span> targetId<span class="op">:</span> i<span class="op">.</span><span class="at">id</span><span class="op">,</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>      retentionClass<span class="op">:</span> <span class="st">&#39;general&#39;</span><span class="op">,</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<blockquote>
+<p><strong>注</strong>: retention 処理と FAQ 操作は <code>inquiries.status</code> を変更しない。</p>
+</blockquote>
+<h3 id="35-実装モジュール構成">3.5 実装モジュール構成</h3>
+<pre><code>src/
+├── routes/
+│   └── inquiries.ts          # /inquiries/* 参照 + 状況 open/closed 手動操作(担当者概念なし)
+├── handlers/
+├── domain/
+│   └── inquiry-status.ts     # 状況 2 値(open / closed)の遷移ガード(手動操作のみ)
+├── repository/
+│   └── inquiries.ts
+└── lib/
+    └── inquiry-code.ts       # generateInquiryCode（@faq-saas/shared 経由）</code></pre>
+<h2 id="4-関連設計">4. 関連設計</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>参照先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>要件</td>
+<td><a href="../01_要件定義/index.html">../01_要件定義/index.html</a></td>
+</tr>
+<tr>
+<td>基本設計</td>
+<td><a href="../02_基本設計/index.html">../02_基本設計/index.html</a></td>
+</tr>
+<tr>
+<td>画面設計</td>
+<td><a href="../02_基本設計/01_画面設計.html">../02_基本設計/01_画面設計.html</a></td>
+</tr>
+<tr>
+<td>テーブル設計</td>
+<td><a href="../02_基本設計/03_テーブル設計.html">../02_基本設計/03_テーブル設計.html</a></td>
+</tr>
+<tr>
+<td>API 設計</td>
+<td><a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html</a></td>
+</tr>
+<tr>
+<td>運用設計</td>
+<td><a href="../04_運用設計/index.html">../04_運用設計/index.html</a></td>
+</tr>
+<tr>
+<td>関連 DD</td>
+<td><a href="DD06_通知ロジック.html">DD06_通知ロジック.html</a> / <a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-テスト観点">5. テスト観点</h2>
+<table>
+<thead>
+<tr>
+<th>AC ID</th>
+<th>テスト ID</th>
+<th>テスト方式</th>
+<th>テストファイル</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AC-010</td>
+<td><code>e2e-inquiry-flow-001</code></td>
+<td>E2E</td>
+<td><code>apps/admin/e2e/inquiries/flow.spec.ts</code></td>
+</tr>
+<tr>
+<td>AC-012</td>
+<td><code>u-inquiry-transition-001</code></td>
+<td>Unit</td>
+<td><code>workers/main-api/test/unit/inquiry/transition.test.ts</code></td>
+</tr>
+<tr>
+<td>AC-013</td>
+<td><code>u-inquiry-code-001</code></td>
+<td>Unit</td>
+<td><code>workers/main-api/test/unit/inquiry/code-issue.test.ts</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="51-単体テスト例">5.1 単体テスト例</h3>
+<div class="sourceCode" id="cb4"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">// tests/unit/domain/inquiry-status-transition.test.ts</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { describe<span class="op">,</span> it<span class="op">,</span> expect } <span class="im">from</span> <span class="st">&#39;vitest&#39;</span><span class="op">;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { canTransition<span class="op">,</span> assertTransition } <span class="im">from</span> <span class="st">&#39;@faq-saas/shared&#39;</span><span class="op">;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">describe</span>(<span class="st">&#39;inquiry status transition (manual only)&#39;</span><span class="op">,</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">it</span>(<span class="st">&#39;open → closed は手動で許可&#39;</span><span class="op">,</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">expect</span>(<span class="fu">canTransition</span>(<span class="st">&#39;open&#39;</span><span class="op">,</span> <span class="st">&#39;closed&#39;</span>))<span class="op">.</span><span class="fu">toBe</span>(<span class="kw">true</span>)<span class="op">;</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">it</span>(<span class="st">&#39;closed → open(再オープン)は手動で許可&#39;</span><span class="op">,</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">expect</span>(<span class="fu">canTransition</span>(<span class="st">&#39;closed&#39;</span><span class="op">,</span> <span class="st">&#39;open&#39;</span>))<span class="op">.</span><span class="fu">toBe</span>(<span class="kw">true</span>)<span class="op">;</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">it</span>(<span class="st">&#39;不正値は拒否&#39;</span><span class="op">,</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">expect</span>(<span class="fu">canTransition</span>(<span class="st">&#39;open&#39;</span><span class="op">,</span> <span class="st">&#39;drafted&#39;</span> <span class="im">as</span> <span class="dt">any</span>))<span class="op">.</span><span class="fu">toBe</span>(<span class="kw">false</span>)<span class="op">;</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">expect</span>(() <span class="kw">=&gt;</span> <span class="fu">assertTransition</span>(<span class="st">&#39;open&#39;</span><span class="op">,</span> <span class="st">&#39;drafted&#39;</span> <span class="im">as</span> <span class="dt">any</span>))<span class="op">.</span><span class="fu">toThrow</span>(<span class="st">&#39;INVALID_STATE&#39;</span>)<span class="op">;</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div>
+<h3 id="52-その他観点">5.2 その他観点</h3>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>単体</td>
+<td><code>generateInquiryCode</code> 衝突リトライ最大 3 回 / <code>inquiries.status</code> 全 2 値遷移(<code>open</code> ↔︎ <code>closed</code>)</td>
+</tr>
+<tr>
+<td>結合</td>
+<td>inquiry_code UNIQUE 制約違反 → リトライ → 成功</td>
+</tr>
+<tr>
+<td>異常系</td>
+<td>不正値(<code>open</code> / <code>closed</code> 以外)は 400 <code>INVALID_STATE</code> / FAQ 保存(状態を <code>published</code> 等に変更)後に <code>inquiries.status</code> が変化しないこと(連動ロジックなし)</td>
+</tr>
+<tr>
+<td>境界値</td>
+<td>保持期間 729 / 730 / 731 日経過時の通知挙動</td>
+</tr>
+<tr>
+<td>性能</td>
+<td><code>GET /api/v1/inquiries</code> p95 &lt; 500ms（<code>idx_inquiries_contract_status_created</code> 利用）</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-未確定事項確認事項">6. 未確定事項・確認事項</h2>
+<table>
+<thead>
+<tr>
+<th>確認事項ID</th>
+<th>確認内容</th>
+<th>優先度</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>v1.0 リリース時点で全項目確定済み</td>
+<td>低</td>
+<td>確認済</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

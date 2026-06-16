@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DD02: プロジェクト・FAQ 管理 | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/03_詳細設計/DD02_プロジェクト・FAQ管理.html">
+<article class="content" id="content">
+<h1 id="dd02-プロジェクトfaq-管理">DD02: プロジェクト・FAQ 管理</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書名</td>
+<td>DD02: プロジェクト・FAQ 管理</td>
+</tr>
+<tr>
+<td>詳細設計ID</td>
+<td>DD02</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>FAQ AI ウィジェット SaaS / メインシステム</td>
+</tr>
+<tr>
+<td>関連機能ID</td>
+<td>FR-040〜048（FAQ CRUD / 状態保存）/ FR-100〜103, FR-105, FR-106（未解決質問 → FAQ 登録）</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-17</td>
+</tr>
+<tr>
+<td>版数</td>
+<td>v1.0</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>承認済</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-対象範囲">1. 対象範囲</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>ID</th>
+<th>名称</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>機能</td>
+<td>FR-040〜048</td>
+<td>FAQ CRUD / 自動公開禁止 / 公開・取下 / 一括インポート</td>
+</tr>
+<tr>
+<td>機能</td>
+<td>FR-100〜103, FR-105, FR-106</td>
+<td>未解決質問 → FAQ 登録（初期反映 / 確認・編集 / 登録元トレース）</td>
+</tr>
+<tr>
+<td>画面</td>
+<td>SCR-004</td>
+<td>プロジェクト一覧</td>
+</tr>
+<tr>
+<td>画面</td>
+<td>SCR-005</td>
+<td>FAQ 一覧</td>
+</tr>
+<tr>
+<td>画面</td>
+<td>SCR-006</td>
+<td>FAQ 編集</td>
+</tr>
+<tr>
+<td>API</td>
+<td><code>/projects/*</code> <code>/faqs/*</code></td>
+<td>プロジェクト・FAQ 操作</td>
+</tr>
+<tr>
+<td>テーブル</td>
+<td><code>projects</code> <code>faqs</code> <code>faq_embeddings</code> <code>faq_search_fts</code></td>
+<td>FAQ 基盤</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-収録ロジック対応章">2. 収録ロジック・対応章</h2>
+<table>
+<thead>
+<tr>
+<th>元章</th>
+<th>元タイトル</th>
+<th>概要</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>§6 SCR-004〜006</td>
+<td>画面詳細設計</td>
+<td>プロジェクト一覧 / FAQ 一覧 / FAQ 編集（正本は基本設計）</td>
+</tr>
+<tr>
+<td>§7</td>
+<td>機能詳細設計（FAQ 関連）</td>
+<td>FAQ CRUD / 状態保存 / 一括インポート（正本は基本設計）</td>
+</tr>
+<tr>
+<td>§9</td>
+<td>データベース詳細設計</td>
+<td><code>projects</code> / <code>faqs</code> テーブル詳細（正本は基本設計）</td>
+</tr>
+<tr>
+<td>§3.3.1</td>
+<td><code>worker-main-api</code> モジュール構成</td>
+<td><code>routes/projects.ts</code> <code>routes/faqs.ts</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-詳細設計本文">3. 詳細設計本文</h2>
+<h3 id="31-画面詳細設計参照のみ">3.1 画面詳細設計（参照のみ）</h3>
+<p>SCR-004 プロジェクト一覧 / SCR-005 FAQ 一覧 / SCR-006 FAQ 編集の画面詳細は <a href="../02_基本設計/01_画面設計.html">../02_基本設計/01_画面設計.html</a> を正本とする。メッセージ ID は <a href="../02_基本設計/06_メッセージ一覧.html">../02_基本設計/06_メッセージ一覧.html</a> を参照。</p>
+<h3 id="32-機能詳細設計参照のみ">3.2 機能詳細設計（参照のみ）</h3>
+<p>FAQ CRUD / 状態保存 / 一括インポートの全項目は <a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html</a> を正本とする。</p>
+<h3 id="33-データベース詳細設計参照のみ">3.3 データベース詳細設計（参照のみ）</h3>
+<p><code>projects</code> / <code>faqs</code> / <code>faq_embeddings</code> / <code>faq_search_fts</code> の DDL、CHECK 制約、インデックス、外部キー、コード値、SaaS データ分離観点（<code>contract_owner_user_id</code>）、保持期間は <a href="../02_基本設計/03_テーブル設計.html">../02_基本設計/03_テーブル設計.html</a> を正本とする。</p>
+<h3 id="34-実装モジュール構成">3.4 実装モジュール構成</h3>
+<pre><code>src/
+├── routes/
+│   ├── projects.ts           # /projects/* CRUD + メンバー割当
+│   └── faqs.ts               # /faqs/* CRUD（状態は PATCH の status で保存）+ 一括インポート
+├── handlers/
+├── domain/
+│   └── faq-status.ts         # FAQ 状態の値域検証（draft / published / hidden / deleted）
+├── repository/
+│   ├── projects.ts
+│   ├── faqs.ts
+│   └── faq-embeddings.ts
+└── middleware/
+    └── authorize.ts          # requireProject / requireRole 連動</code></pre>
+<h3 id="35-faq-状態の保存">3.5 FAQ 状態の保存</h3>
+<p><code>faqs.status</code> は CHECK 制約（<code>draft</code> / <code>published</code> / <code>hidden</code> / <code>deleted</code>）で値域固定。状態は SCR-006 編集画面の「状態」ラジオで選択した値を <code>PATCH /api/v1/faqs/{id}</code> の <code>status</code> フィールドで保存する。<code>draft</code> / <code>published</code> / <code>hidden</code> は相互に自由遷移でき、専用の公開 API・状態遷移ガードは持たない。<code>domain/faq-status.ts</code> の責務は <code>status</code> 値域の妥当性検証のみ（<code>deleted</code> への直接遷移は <code>DELETE /faqs/{id}</code> 経由に限定、<code>deleted → draft</code> の復元は運営者の IF #4 経由に限定）。<code>status='published'</code> を選択して保存する操作が管理者(admin)・メンバー(member)による公開前の内容確認（FR-045）を兼ね、UI 上は保存前に確認ダイアログを表示する。<code>published</code> 設定時は <code>published_at</code> をサーバ側で記録する。</p>
+<h3 id="36-fts5-検索">3.6 FTS5 検索</h3>
+<p><code>faq_search_fts</code> は SQLite の FTS5 virtual table で構築し、<code>faqs.title || faqs.body</code> をインデックス対象とする。FAQ 公開・更新時に同期更新。検索クエリは BM25 ランキングを利用：</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> f.<span class="op">*</span>, bm25(faq_search_fts) <span class="kw">AS</span> <span class="fu">rank</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> faq_search_fts <span class="kw">JOIN</span> faqs f <span class="kw">ON</span> f.<span class="dt">rowid</span> <span class="op">=</span> faq_search_fts.<span class="dt">rowid</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> faq_search_fts MATCH ?<span class="dv">1</span> <span class="kw">AND</span> f.project_id <span class="op">=</span> ?<span class="dv">2</span> <span class="kw">AND</span> f.status <span class="op">=</span> <span class="st">&#39;published&#39;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> <span class="fu">rank</span> <span class="kw">LIMIT</span> <span class="dv">20</span></span></code></pre></div>
+<p>詳細は <a href="DD03_AI回答パイプライン.html">DD03_AI回答パイプライン.html</a> §3.2 関連度計算を参照。</p>
+<h3 id="37-埋め込みベクトル事前計算">3.7 埋め込みベクトル事前計算</h3>
+<p>FAQ 公開時に <code>@cf/baai/bge-base-en-v1.5</code> で埋め込みベクトルを計算し、<code>faq_embeddings</code> テーブル（または KV <code>embedding:{faqId}</code>）に保存。AI 推論時のリランキング用。</p>
+<h3 id="38-一括インポートfaqbulk_import">3.8 一括インポート（<code>faq.bulk_import</code>）</h3>
+<p>CSV ファイル（UTF-8、BOM 許容）→ R2 ステージング → Queue 投入 → consumer が分割 INSERT。1 リクエスト最大 1000 件。<strong>JSON 形式は受理しない</strong>（不正形式は E-INPUT-CSV-INVALID）。UI は SCR-006-M1 FAQ CSV インポートモーダル（<code>POST /faqs/import</code>）。詳細は <a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html</a> を参照。</p>
+<p><strong>文字コード事前検証</strong>（クライアント側）: SCR-006-M1 のドラッグ&amp;ドロップ / ファイル選択の時点で、ファイル先頭バイト（BOM）および本文のバイト列から文字コードを判定し、<strong>UTF-8（BOM 許容）以外はアップロードせず即エラー</strong>（E-INPUT-CSV-INVALID / MSG-SCR-006-M1-ERR-005、検出した文字コード名を併記）。これによりサーバ側の文字化け INSERT を未然に防ぐ。</p>
+<p><strong>CSV 列定義</strong>（ヘッダ行必須）: <code>FAQ ID, 質問, 回答, カテゴリ</code>。<code>status</code>（状態）列は受理しない。</p>
+<p><strong>テンプレート生成</strong>（<code>GET /faqs/import/template</code>）: ヘッダ行のみ（<code>FAQ ID,質問,回答,カテゴリ</code>）を <code>text/csv; charset=utf-8</code>（BOM 付与）でストリーム返却。動的データなし（静的文字列）、Queue 不経由の同期レスポンス。</p>
+<p><strong>FAQ ID 行判定ロジック</strong>（consumer 側、行単位）:</p>
+<ol type="1">
+<li><code>FAQ ID</code> 空欄 → 新規 INSERT（<code>status='draft'</code>、<code>version=1</code>）。</li>
+<li><code>FAQ ID</code> が当該契約（<code>contract_owner_user_id</code> 境界）内の既存 <code>faqs.id</code> と一致 → UPDATE（<code>status</code> は維持、<code>faq_revisions</code> に改訂行を追記、<code>version</code> をインクリメント）。</li>
+<li><code>FAQ ID</code> が当該契約内に存在しない → 当該行を失敗（E-INPUT-CSV-FAQID-NOTFOUND）。他行は継続（部分成功）。</li>
+<li>質問・回答の欠落 / 文字数超過 → 当該行を失敗（E-INPUT-CSV-INVALID 包含）。カテゴリは任意。</li>
+</ol>
+<p>失敗行は「行番号 + エラー理由」の構造化リストとしてジョブ結果（<code>GET /faqs/import/jobs/{jobId}</code> 等のポーリング応答）に含め、SCR-006-M1 進捗パネル内のスクロール領域に画面表示する（エラー CSV のダウンロードは行わない）。</p>
+<h3 id="39-リミット">3.9 リミット</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>警告</th>
+<th>拒否</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FAQ 件数 / 契約</td>
+<td>8,000</td>
+<td>12,000（409 <code>FAQ_LIMIT_EXCEEDED</code>）</td>
+</tr>
+<tr>
+<td>プロジェクト数 / 契約</td>
+<td>40</td>
+<td>50（409 <code>PROJECT_LIMIT_EXCEEDED</code>）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="310-プロジェクト作成時のオーナー自動-admin-付与fr-015e--fr-030a">3.10 プロジェクト作成時のオーナー自動 admin 付与(FR-015e / FR-030a)</h3>
+<p><code>POST /projects</code> 実行時は SCR-004-M1(新規作成モード)から <code>name</code> / <code>allowedDomains</code> 等の基本情報のみを受け取る(<code>initialAdmins</code> フィールドは受け取らない)。オーナーは作成時に自動で当該プロジェクトの管理者となる(<code>project_users(role='admin', valid=1)</code> 自動 INSERT)。他者をプロジェクト管理者として招待する操作は、プロジェクト作成後に SCR-009-M1 経由(<code>POST /projects/{id}/members</code> + <code>role='admin'</code>)で行う。</p>
+<p>処理ステップ:</p>
+<ol type="1">
+<li>リクエスト検証: <code>name</code>(1〜100 文字必須)、<code>allowedDomains</code>(1 件以上必須、形式チェック)。違反は 400 <code>VALIDATION_ERROR</code></li>
+<li><code>projects</code> INSERT(ウィジェット公開鍵を発行、<code>valid=1</code>)</li>
+<li><strong>オーナー自動 admin 行 INSERT</strong>: <code>INSERT INTO project_users(user_id=actor.contractOwnerUserId, project_id=newPid, contract_owner_user_id=actor.contractOwnerUserId, role='admin', valid=1, granted_at=now(), granted_by=actor.userId)</code></li>
+<li>監査ログ <code>project.created_with_owner_admin</code>(<code>metadata</code> に <code>{ projectId, contractOwnerUserId }</code>、<code>retention_class=general</code>)を記録</li>
+</ol>
+<p>擬似コード:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">function</span> <span class="fu">createProject</span>(actor<span class="op">:</span> Principal<span class="op">,</span> req<span class="op">:</span> CreateProjectRequest) {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">requireOwner</span>(actor)<span class="op">;</span> <span class="co">// E-AUTHZ-OWNER-ONLY</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">validateCreateProjectRequest</span>(req)<span class="op">;</span> <span class="co">// 400</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="cf">await</span> db<span class="op">.</span><span class="fu">transaction</span>(<span class="kw">async</span> (tx) <span class="kw">=&gt;</span> {</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> project <span class="op">=</span> <span class="cf">await</span> tx<span class="op">.</span><span class="fu">insert</span>(<span class="st">&#39;projects&#39;</span><span class="op">,</span> {</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>      <span class="op">...</span>req<span class="op">,</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>      contract_owner_user_id<span class="op">:</span> actor<span class="op">.</span><span class="at">contractOwnerUserId</span><span class="op">,</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>      valid<span class="op">:</span> <span class="dv">1</span><span class="op">,</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">// オーナー admin 行を自動 INSERT(project_users)</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> tx<span class="op">.</span><span class="fu">insert</span>(<span class="st">&#39;project_users&#39;</span><span class="op">,</span> {</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>      user_id<span class="op">:</span> actor<span class="op">.</span><span class="at">contractOwnerUserId</span><span class="op">,</span>  <span class="co">// オーナー本人 = contract_owners.user_id = users.id</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>      project_id<span class="op">:</span> project<span class="op">.</span><span class="at">id</span><span class="op">,</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>      contract_owner_user_id<span class="op">:</span> actor<span class="op">.</span><span class="at">contractOwnerUserId</span><span class="op">,</span>  <span class="co">// 認可境界クエリ高速化の冗長保持</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>      role<span class="op">:</span> <span class="st">&#39;admin&#39;</span><span class="op">,</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>      valid<span class="op">:</span> <span class="dv">1</span><span class="op">,</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>      granted_by<span class="op">:</span> actor<span class="op">.</span><span class="at">userId</span><span class="op">,</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>      granted_at<span class="op">:</span> <span class="fu">now</span>()<span class="op">,</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> tx<span class="op">.</span><span class="fu">insertAudit</span>({</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>      action<span class="op">:</span> <span class="st">&#39;project.created_with_owner_admin&#39;</span><span class="op">,</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>      target_type<span class="op">:</span> <span class="st">&#39;project&#39;</span><span class="op">,</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>      target_id<span class="op">:</span> project<span class="op">.</span><span class="at">id</span><span class="op">,</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>      metadata<span class="op">:</span> { contractOwnerUserId<span class="op">:</span> actor<span class="op">.</span><span class="at">contractOwnerUserId</span> }<span class="op">,</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>      retention_class<span class="op">:</span> <span class="st">&#39;general&#39;</span><span class="op">,</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> project<span class="op">;</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h3 id="311-プロジェクト削除時の論理削除カスケード--孤立メンバー-cleanupfr-030b">3.11 プロジェクト削除時の論理削除カスケード + 孤立メンバー cleanup(FR-030b)</h3>
+<p><code>DELETE /projects/{id}</code> 実行時は <strong>SCR-004-M1 プロジェクト作成・編集モーダル(編集モード)のオーナー専有 DangerSectionのみ</strong> から起動可能。以下のトランザクション境界で論理削除する:</p>
+<ol type="1">
+<li>削除前のスナップショット: 当該プロジェクトに <code>valid=1</code> で割当のあるメンバー userId 一覧を取得(オーナー含む)</li>
+<li><code>UPDATE project_users SET valid=0, updated_at=now() WHERE project_id=? AND valid=1</code>(オーナー自身の admin 行も含む全行を論理削除)</li>
+<li>孤立メンバーの抽出: 「ステップ 1 のメンバーのうち、他プロジェクト割当(<code>valid=1</code> の <code>project_users</code>)が 0 件かつ <code>contract_owners</code> 行を持たない(非オーナー)もの」</li>
+<li>孤立メンバーの全セッションを失効(<code>UPDATE sessions SET revoked_at=now()</code>)+ 未使用招待トークンを失効(<code>UPDATE access_tokens SET used_at=now() WHERE used_at IS NULL</code>)+ <code>UPDATE users SET valid=0, updated_at=now()</code> で論理削除</li>
+<li><code>UPDATE projects SET status='deleted', valid=0, deleted_at=now(), updated_at=now() WHERE id=?</code> + 関連テーブル(<code>allowed_domains</code> / <code>faqs</code> / <code>inquiries</code> / <code>question_logs</code> / <code>project_quota_limits</code>)を <code>valid=0, updated_at=now()</code> に伝播(<code>usage_metering</code> は法定保管 7 年のため論理削除せず保持)</li>
+<li>監査ログ <code>project.logical_delete</code>(<code>metadata</code> に <code>{ projectId, logicallyDeletedUserIds: [...] }</code>、<code>retention_class=general</code>)を記録</li>
+</ol>
+<p>オーナーの <code>users</code> 行は本処理の論理削除対象外(<code>contract_owners</code> 行を持つユーザーは常に <code>valid=1</code> 維持)。当該プロジェクトに対するオーナー自身の <code>project_users</code> admin 行は他のメンバー行と同様に <code>valid=0</code> に論理削除される。論理削除データは <code>updated_at &lt; now() - 90d AND valid=0</code> の物理削除バッチ(<a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html §3.12</a>)で 90 日後に物理削除される。</p>
+<h3 id="311a-プロジェクト連絡先メール確認フローfr-033a--scr-019">3.11a プロジェクト連絡先メール確認フロー(FR-033a / SCR-019)</h3>
+<p>SCR-004-M1(新規モードで初期入力、または編集モードで <code>projects.contact_email</code> を変更)した時に、TPL-PROJECT_CONTACT_VERIFY確認メールを送信する。受信者はSCR-019へ着地し、<code>POST /auth/contact-verifications/{token}</code> で確認完了する。</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">// (1) 連絡先メール変更時(POST/PATCH /projects 内)</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="vs">`UPDATE projects SET contact_email = ?1, contact_email_verified_at = NULL, updated_at = ?2 WHERE id = ?3`</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">.</span><span class="fu">bind</span>(newContactEmail<span class="op">,</span> now<span class="op">,</span> projectId)<span class="op">.</span><span class="fu">run</span>()<span class="op">;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> rawToken <span class="op">=</span> <span class="cf">await</span> <span class="fu">generateToken</span>(<span class="st">&#39;contact_verify&#39;</span><span class="op">,</span> { projectId }<span class="op">,</span> env<span class="op">,</span> <span class="dv">24</span> <span class="op">*</span> <span class="dv">3600</span>)<span class="op">;</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> <span class="fu">enqueueEmail</span>({</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  template<span class="op">:</span> <span class="st">&#39;TPL-PROJECT_CONTACT_VERIFY&#39;</span><span class="op">,</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  to<span class="op">:</span> newContactEmail<span class="op">,</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  verifyUrl<span class="op">:</span> <span class="vs">`</span><span class="sc">${</span>env<span class="op">.</span><span class="at">WEB_BASE</span><span class="sc">}</span><span class="vs">/auth/contact-verify?token=</span><span class="sc">${</span><span class="pp">encodeURIComponent</span>(rawToken)<span class="sc">}</span><span class="vs">`</span><span class="op">,</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">// (2) SCR-019 着地時(POST /auth/contact-verifications/{token})</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> { payload } <span class="op">=</span> <span class="cf">await</span> <span class="fu">verifyToken</span>(rawToken<span class="op">,</span> <span class="st">&#39;contact_verify&#39;</span><span class="op">,</span> env)<span class="op">;</span>  <span class="co">// 410 if expired/used</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> { projectId } <span class="op">=</span> payload<span class="op">;</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">batch</span>([</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`UPDATE projects SET contact_email_verified_at = ?1, updated_at = ?1 WHERE id = ?2`</span>)<span class="op">.</span><span class="fu">bind</span>(now<span class="op">,</span> projectId)<span class="op">,</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>])<span class="op">;</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> <span class="fu">consumeToken</span>(rawToken<span class="op">,</span> <span class="st">&#39;contact_verify&#39;</span><span class="op">,</span> env)<span class="op">;</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> <span class="fu">writeAudit</span>({ action<span class="op">:</span> <span class="st">&#39;project.contact_email_verified&#39;</span><span class="op">,</span> target_project_id<span class="op">:</span> projectId })<span class="op">;</span></span></code></pre></div>
+<p>注意:</p>
+<ul>
+<li>連絡先メール再変更時は旧トークンを <code>consumeToken()</code> で失効させ、新トークンを発行する</li>
+<li><code>contact_email_verified_at</code> が <code>NULL</code> の間はウィジェット表示に用いない(FR-033c)</li>
+<li>受信者(連絡先メール所有者)はアカウントを持つ必要がない ── 第三者の共有メールアドレスでも本フローを進められる</li>
+<li>Turnstile は不要(状態変更は単純な <code>verified_at</code> セットのみ、トークン HMAC + レート制限で十分)</li>
+<li>詳細なトークン発行ロジックは <a href="DD07_トークン発行・検証.html">DD07_トークン発行・検証.html §3.3b</a> を参照</li>
+</ul>
+<h3 id="312-90-日後物理削除バッチ概要">3.12 90 日後物理削除バッチ(概要)</h3>
+<p>詳細は <a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html §3.12</a> を正本とする。日次バッチで <code>valid=0 AND updated_at &lt; now() - 90d</code> の行を物理削除する。<code>users</code> 行が物理 DELETE されると <code>ON DELETE CASCADE</code> で関連 <code>contract_owners</code> / <code>project_users</code> / <code>sessions</code> / <code>access_tokens</code> / <code>terms_agreements</code> 等が連鎖物理削除される。<code>projects</code> 行が物理 DELETE されると <code>ON DELETE CASCADE</code> で関連 <code>faqs</code> / <code>inquiries</code> / <code>chat_*</code> / <code>project_quota_limits</code> 等が連鎖物理削除される。<code>billing_subscriptions</code> / <code>usage_metering</code> は物理削除バッチの対象外(電子帳簿保存法 7 年保持、永久維持。<code>usage_metering</code> はプロジェクト単位行も含め 7 年保持)。匿名化モード(<code>contract_owners.data_deletion_mode='anonymize'</code>)は物理削除前に匿名化処理を実施する。</p>
+<h3 id="313-関連する横断設計">3.13 関連する横断設計</h3>
+<ul>
+<li>認可: <a href="DD08_認可ヘルパ.html">DD08_認可ヘルパ.html</a> の <code>requireProjectRole</code> でオーナー境界 + プロジェクトロール(<code>admin</code> / <code>member</code>)を検証</li>
+<li>監査ログ: <code>faq.create</code> / <code>faq.update</code>(状態変更を含む。<code>metadata</code> に <code>status</code> の from/to を記録)/ <code>faq.delete</code> / <code>faq.bulk_import</code> / <code>project.created_with_owner_admin</code> / <code>project.logical_delete</code> / <code>project.member_invited</code> / <code>project.hard_delete_by_batch</code>(90 日後物理削除バッチ起動)を <code>retention_class=general</code> で記録</li>
+<li>リアルタイム反映: FAQ 保存(状態変更含む)・編集時に <code>widget-api</code> 側の KV キャッシュ(<code>embedding:{faqId}</code>、<code>ai_threshold:{owner}:{project}</code> は別系統)を invalidate</li>
+<li>論理削除フィルタ: 全 GET 系クエリで <code>WHERE valid=1</code> を必須付与(漏れは IDOR 類似の脆弱性、09_セキュリティ設計参照)</li>
+</ul>
+<h2 id="4-関連設計">4. 関連設計</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>参照先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>要件</td>
+<td><a href="../01_要件定義/index.html">../01_要件定義/index.html</a></td>
+</tr>
+<tr>
+<td>基本設計</td>
+<td><a href="../02_基本設計/index.html">../02_基本設計/index.html</a></td>
+</tr>
+<tr>
+<td>画面設計</td>
+<td><a href="../02_基本設計/01_画面設計.html">../02_基本設計/01_画面設計.html</a></td>
+</tr>
+<tr>
+<td>テーブル設計</td>
+<td><a href="../02_基本設計/03_テーブル設計.html">../02_基本設計/03_テーブル設計.html</a></td>
+</tr>
+<tr>
+<td>API 設計</td>
+<td><a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html</a></td>
+</tr>
+<tr>
+<td>運用設計</td>
+<td><a href="../04_運用設計/index.html">../04_運用設計/index.html</a></td>
+</tr>
+<tr>
+<td>関連 DD</td>
+<td><a href="DD03_AI回答パイプライン.html">DD03_AI回答パイプライン.html</a> / <a href="DD08_認可ヘルパ.html">DD08_認可ヘルパ.html</a> / <a href="DD09_監査ログ書込・完全性検証.html">DD09_監査ログ書込・完全性検証.html</a> / <a href="DD12_ウィジェット配信.html">DD12_ウィジェット配信.html</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-テスト観点">5. テスト観点</h2>
+<table>
+<thead>
+<tr>
+<th>AC ID</th>
+<th>テスト ID</th>
+<th>テスト方式</th>
+<th>テストファイル</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AC-014</td>
+<td><code>e2e-faq-crud-001</code></td>
+<td>E2E</td>
+<td><code>apps/admin/e2e/faq/crud.spec.ts</code></td>
+</tr>
+<tr>
+<td>FR-042</td>
+<td><code>u-faq-status-001</code> / <code>it-faq-status-001</code></td>
+<td>Unit + Integration</td>
+<td><code>workers/main-api/test/{unit,integration}/faq/status-save.test.ts</code>（状態 <code>draft</code>/<code>published</code>/<code>hidden</code> の相互保存 + <code>status</code> 値域 CHECK）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="51-その他観点">5.1 その他観点</h3>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>単体</td>
+<td><code>faq-status.ts</code> の status 値域検証(draft/published/hidden/deleted 以外を拒否、deleted への直接保存拒否)</td>
+</tr>
+<tr>
+<td>結合</td>
+<td>FTS5 検索の MATCH 構文 / BM25 ランキング</td>
+</tr>
+<tr>
+<td>異常系</td>
+<td>他オーナーのプロジェクトに対する FAQ CRUD アクセス時 404</td>
+</tr>
+<tr>
+<td>境界値</td>
+<td>FAQ 件数 7999 / 8000 / 8001 / 11999 / 12000 / 12001</td>
+</tr>
+<tr>
+<td>権限</td>
+<td>該当プロジェクトに割当のないメンバー(<code>project_users</code> 行なし)による FAQ 編集試行で 404 偽装 / 該当 PJ の <code>member</code>+ ロールを持つメンバーは編集可</td>
+</tr>
+<tr>
+<td>性能</td>
+<td><code>PATCH /api/v1/faqs/{id}</code>(状態変更含む) p95 &lt; 300ms（UPDATE 1 行 + KV invalidate）</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-未確定事項確認事項">6. 未確定事項・確認事項</h2>
+<table>
+<thead>
+<tr>
+<th>確認事項ID</th>
+<th>確認内容</th>
+<th>優先度</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>v1.0 リリース時点で全項目確定済み</td>
+<td>低</td>
+<td>確認済</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

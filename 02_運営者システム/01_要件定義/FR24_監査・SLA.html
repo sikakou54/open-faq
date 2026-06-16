@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FR24 監査・SLA | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="02_運営者システム/01_要件定義/FR24_監査・SLA.html">
+<article class="content" id="content">
+<h1 id="fr24-監査sla">FR24 監査・SLA</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書種別</td>
+<td>機能要件(機能グループ別)</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>運営者システム(顧客管理システム)</td>
+</tr>
+<tr>
+<td>版</td>
+<td>v1.0</td>
+</tr>
+<tr>
+<td>機能グループ</td>
+<td>監査・SLA(運営者責務のうち監査ログ閲覧・エクスポート・運営者活動ダッシュボード)</td>
+</tr>
+<tr>
+<td>ソース章</td>
+<td>§8.20 内 監査・SLA 関連 / §12.6.1 / §7 業務要件の関連</td>
+</tr>
+<tr>
+<td>派生元 BR</td>
+<td>BR-028(運営者の内部統制要件)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-機能概要">1. 機能概要</h2>
+<p>運営者操作の事後監査(操作者・操作元 IP・対応チケット ID・操作種別・対象・操作前後の値の記録)、運営者活動ダッシュボード(直近 90 日の時系列表示)、操作頻度異常の検知、監査ログ閲覧・検索・エクスポート機能(SCR-095)を扱う。本書側で正本管理する監査ログ閲覧・エクスポート機能(FR-232)もここに含める。</p>
+<p>監査ログの保持期間は、(a) 業務監査ログ = 1 年(NFR-602a)、(b) 課金関連監査ログ = 7 年(NFR-602b、電帳法・国税法)、(c) 運営者高権限操作監査ログ = 5 年(NFR-602d、SOX 類似・係争耐性)。完全性検証は日次バッチ(NFR-602c)。改ざん検知方式 = ハッシュチェーン(NFR-306、運営者側を正本)。</p>
+<h2 id="2-収録-fr-nnn-一覧">2. 収録 FR-NNN 一覧</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>要件</th>
+<th style="text-align: center;">優先度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-229</td>
+<td>運営者操作の事後監査として、(a) 監査ログには操作者アカウントID・操作元IP(マスク可)・対応チケットID・操作種別・対象・操作前後の値を記録すること、(b) 直近90日の運営者操作を時系列で運営者活動ダッシュボードで表示できること、(c) 操作頻度の異常(同一運営者による短時間での大量操作)を検知し、運営者全体に通知できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-232</td>
+<td>運営者は監査ログを Web UI(<strong>SCR-095 運営者活動ダッシュボード(監査)</strong>)で閲覧・検索・エクスポートできること。検索・エクスポート操作自体も監査ログに記録し、誰がどの条件で監査ログへアクセスしたかを追跡できること。検索項目、ページング、エクスポート形式、改ざん検知方式、上限超過時の扱いは基本設計 / 詳細設計を正本とする。<strong>派生元</strong>: BR-028</td>
+<td style="text-align: center;">P0</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-補足説明統合参照">3. 補足説明・統合参照</h2>
+<h3 id="関連する-nfr監査sla-系">関連する NFR(監査・SLA 系)</h3>
+<ul>
+<li><strong>NFR-306</strong>: 監査ログを改ざん検知可能な形で保持。レコード列改ざん検知バッチ・日次全件検証・不一致時の運営者高重要度通知・IP 匿名化(運営者側を正本)。</li>
+<li><strong>NFR-602a</strong>: 一般監査ログ(業務監査ログ)保持期間 = 1 年。期間経過後はメインシステム §12.2.1 に従い本文物理削除しつつハッシュチェーン連続性を維持。</li>
+<li><strong>NFR-602b</strong>: 課金関連監査ログ保持期間 = 7 年(国税通則法・法人税法施行規則、電帳法)。真正性・可視性・検索性を確保。</li>
+<li><strong>NFR-602c</strong>: 監査ログ完全性検証バッチを日次で全件検証。不一致検出時は新規追記を一時停止し運営者へ高重要度アラート。</li>
+<li><strong>NFR-602d</strong>: 運営者高権限操作監査ログ保持期間 = 5 年。対象 9 操作: (a) 削除データ復元、(b) 契約停止/復元/物理削除、(c) AI 推論パラメータ変更、(d) 契約別レート制限/上限件数上書き、(e) お知らせ配信、(f) 運営者アカウント発行/無効化、(g) 課金 Webhook リプレイ、(h) 本番直接変更、(i) 監査ログエクスポート操作。</li>
+<li><strong>NFR-603</strong>: 監査ログには操作者・対象・時刻・IP(マスク可)を記録。</li>
+<li><strong>NFR-311</strong>: 運営者画面(SCR-090〜098)へのアクセスログは全件保持(サンプリング省略不可)、NFR-602d に従い 5 年。</li>
+</ul>
+<h3 id="sla--障害対応-sla-関連">SLA / 障害対応 SLA 関連</h3>
+<ul>
+<li><strong>NFR-330(脆弱性対応 SLA)</strong>: Critical(CVSS 9.0以上 / 既に悪用観測あり)= 24 時間以内 / High(CVSS 7.0〜8.9)= 7 日以内 / Medium(CVSS 4.0〜6.9)= 30 日以内 / Low(CVSS 4.0未満)= 次定例リリース内。SLA 超過は運営者ダッシュボードで可視化し、超過事案は §20.1 リスク管理の対象。</li>
+<li><strong>NFR-331(SCA 必須組込)</strong>: 依存ライブラリ脆弱性スキャンを CI に必須組込、週次フルスキャン実行。Critical 脆弱性が未対応のままリリースをブロック。</li>
+<li><strong>NFR-332(ペネトレーションテスト)</strong>: 年 1 回以上 + 重大機能変更時に追加実施。実施記録は監査対象として 5 年保持。</li>
+<li><strong>AC-036(PII 誤検出判定 SLA)</strong>: 運営者は 3 営業日以内に判定。</li>
+<li><strong>AC-041(Webhook 30 日リプレイ)</strong>: 直近 30 日のリプレイ実行が運営者操作から可能。</li>
+</ul>
+<h3 id="業務要件との対応7-br-028">業務要件との対応(§7 BR-028)</h3>
+<p>BR-028 は「サービス運営者は、内部統制(セキュリティ・コンプライアンス・障害対応・課金正確性)を担保するために必要な運用機能(監査ログ閲覧、削除データ復元、4-eyes 原則対象操作、契約単位の運営者操作通知など)を持つこと」を定める。本書 FR-229 / FR-232 はこの BR-028 を中核に派生する。</p>
+<h3 id="監査ログコード体系">監査ログコード体系</h3>
+<p>監査ログの操作種別コードは「対象リソース」と「操作動詞」の組合せで一意に識別できる命名規則とする(§12.6)。具体命名規則・操作コード一覧は基本設計および詳細設計書を参照。メインシステムと顧客管理システムで共通の体系とし、両者の操作コードに重複・衝突がないこと。</p>
+<h3 id="audit_logsretention_class"><code>audit_logs.retention_class</code></h3>
+<p>リポジトリ 保守ルール / 共有概念に従い、<code>audit_logs.retention_class</code> はクラス名表記(<code>general</code> / <code>billing</code> / <code>operator_high_priv</code>)に統一する。人間可読補助としての期間表記(<code>1y</code> / <code>5y</code> / <code>7y</code>)も併記可。</p>
+<h2 id="4-関連設計">4. 関連設計</h2>
+<ul>
+<li><a href="../02_基本設計/index.html">../02_基本設計/index.html</a> 基本設計書 index</li>
+<li><a href="../02_基本設計/01_画面設計.html">../02_基本設計/01_画面設計.html</a> §SCR-095(運営者活動ダッシュボード(監査))</li>
+<li><a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html</a> 監査ログ検索・エクスポート API</li>
+<li><a href="../02_基本設計/03_テーブル設計.html">../02_基本設計/03_テーブル設計.html</a> <code>audit_logs</code> テーブル(ハッシュチェーン・retention_class)</li>
+<li><a href="../02_基本設計/05_エラー設計.html">../02_基本設計/05_エラー設計.html</a> 監査ログ完全性検証エラー(E-OP-AUTH-*)</li>
+<li><a href="../02_基本設計/09_セキュリティ設計.html">../02_基本設計/09_セキュリティ設計.html</a> §7 ハッシュチェーン監査(運営者側を正本) / 3 区分保持 / GDPR</li>
+<li><a href="../02_基本設計/07_トレーサビリティマトリクス.html">../02_基本設計/07_トレーサビリティマトリクス.html</a></li>
+<li><a href="../03_詳細設計/index.html">../03_詳細設計/index.html</a> 詳細設計書 index</li>
+</ul>
+<h2 id="5-未確定事項確認事項">5. 未確定事項・確認事項</h2>
+<ul>
+<li>FR-229(c) 操作頻度の異常(同一運営者の短時間大量操作)の具体しきい値は基本設計で確定する。</li>
+<li>FR-232 エクスポート形式(CSV / JSON / NDJSON)・件数上限は基本設計で確定する。</li>
+<li>監査ログ完全性検証バッチの実行時刻(JST)は基本設計および運用手順書で確定する。</li>
+</ul>
+
+</article>
+</body>
+</html>

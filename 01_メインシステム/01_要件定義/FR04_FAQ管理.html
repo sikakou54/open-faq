@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FR04: FAQ 管理 | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/01_要件定義/FR04_FAQ管理.html">
+<article class="content" id="content">
+<h1 id="fr04-faq-管理">FR04: FAQ 管理</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書名</td>
+<td>FR04: FAQ 管理</td>
+</tr>
+<tr>
+<td>機能グループ</td>
+<td>FAQ 管理</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>FAQ AI ウィジェット SaaS / メインシステム</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-17</td>
+</tr>
+<tr>
+<td>版数</td>
+<td>v1.0</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>承認済</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-機能概要">1. 機能概要</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>概要</td>
+<td>AI 回答の唯一の根拠となる FAQ の登録・編集・削除・状態管理(下書き / 公開中 / 非公開)・カテゴリ整理・検索・件数および文字数上限管理を扱う。FAQ の登録元(未解決質問 ID or 手動登録)もトレースする</td>
+</tr>
+<tr>
+<td>利用場面</td>
+<td>FAQ 整備・公開、定期的な内容見直し、未解決質問からの FAQ 化、登録元トレースによる改善ループ</td>
+</tr>
+<tr>
+<td>優先度</td>
+<td>Must</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-収録-fr-nnn-一覧">2. 収録 FR-NNN 一覧</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>要件</th>
+<th style="text-align: center;">優先度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-040</td>
+<td>FAQを登録、編集、削除できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-040b</td>
+<td>FAQ・プロジェクト・管理者ユーザー・お知らせ・契約の削除は管理画面から復元できないこと(誤削除時はサポート窓口経由でのみ救済される)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-041</td>
+<td>FAQに質問と回答を登録できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-042</td>
+<td>FAQを下書き、公開中、非公開の状態で管理できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-043</td>
+<td>FAQをカテゴリで整理できること</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>FR-044</td>
+<td>FAQの検索、並び替え、絞り込みができること</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>FR-045</td>
+<td>FAQの公開前に管理者が内容を確認できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-046</td>
+<td>FAQ件数および1件あたりの文字数の上限は契約共通の基準とし、極端に大きい場合は警告または登録拒否できること。<strong>MVP 初期値</strong>: (a) 1 契約あたり FAQ 件数 = 警告 <strong>8,000 件</strong>、登録拒否 <strong>12,000 件</strong>(NFR-111 と整合)、(b) FAQ 質問 文字数上限 = <strong>500 文字</strong>、(c) FAQ 回答 文字数上限 = <strong>5,000 文字</strong>。文字数超過は登録時にエラー、件数上限は段階通知(80%/100%)で警告し 120% で新規登録拒否</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-047</td>
+<td>FAQ更新時、楽観ロックで競合を検出できること</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>FR-048</td>
+<td>FAQの登録元(未解決質問IDまたは手動登録)を保持できること</td>
+<td style="text-align: center;">P1</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-補足説明統合参照">3. 補足説明・統合参照</h2>
+<p>(該当なし)</p>
+<h2 id="4-関連設計">4. 関連設計</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>参照先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>画面設計</td>
+<td><a href="../02_基本設計/01_画面設計.html">../02_基本設計/01_画面設計.html</a></td>
+</tr>
+<tr>
+<td>API 設計</td>
+<td><a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html</a></td>
+</tr>
+<tr>
+<td>テーブル設計</td>
+<td><a href="../02_基本設計/03_テーブル設計.html">../02_基本設計/03_テーブル設計.html</a></td>
+</tr>
+<tr>
+<td>権限設計</td>
+<td><a href="../02_基本設計/04_権限設計.html">../02_基本設計/04_権限設計.html</a></td>
+</tr>
+<tr>
+<td>エラー設計</td>
+<td><a href="../02_基本設計/05_エラー設計.html">../02_基本設計/05_エラー設計.html</a></td>
+</tr>
+<tr>
+<td>メッセージ</td>
+<td><a href="../02_基本設計/06_メッセージ一覧.html">../02_基本設計/06_メッセージ一覧.html</a></td>
+</tr>
+<tr>
+<td>詳細設計</td>
+<td><a href="../03_詳細設計/index.html">../03_詳細設計/index.html</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-未確定事項確認事項">5. 未確定事項・確認事項</h2>
+<table>
+<thead>
+<tr>
+<th>確認事項ID</th>
+<th>確認内容</th>
+<th>優先度</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>v1.0 リリース時点で全項目確定済み</td>
+<td>低</td>
+<td>確認済</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

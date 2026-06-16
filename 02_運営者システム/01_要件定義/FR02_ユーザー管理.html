@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FR02 ユーザー管理(オーナー + メンバー) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="02_運営者システム/01_要件定義/FR02_ユーザー管理.html">
+<article class="content" id="content">
+<h1 id="fr02-ユーザー管理オーナー--メンバー">FR02 ユーザー管理(オーナー + メンバー)</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書種別</td>
+<td>機能要件(機能グループ別)</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>運営者システム(顧客管理システム)</td>
+</tr>
+<tr>
+<td>版</td>
+<td>v1.0</td>
+</tr>
+<tr>
+<td>機能グループ</td>
+<td>ユーザー管理(オーナー + メンバー)</td>
+</tr>
+<tr>
+<td>ソース章</td>
+<td>§8.3 ユーザー管理(オーナー + メンバー)</td>
+</tr>
+<tr>
+<td>派生元 BR</td>
+<td>BR-013</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-機能概要">1. 機能概要</h2>
+<p>利用者(オーナー / メンバー)の招待・有効化・参照・更新・削除・上限到達アラート等を扱う。<strong>本書は参照側であり、ユーザー管理の機能要件正本はメインシステム §8.3</strong>。実装はメインシステムが担い、運営者側は契約単位の上限引上げ等の管理(本書 <a href="FR23_4-eyes承認.html">FR23_4-eyes承認.html</a> §6.2.3 の対象)を担う。</p>
+<p>新規 ID(FR-015a〜c / FR-016a〜c / FR-018a〜b / FR-021a〜c / FR-336〜338)はメインシステム要件定義書を参照する。</p>
+<h2 id="2-収録-fr-nnn-一覧">2. 収録 FR-NNN 一覧</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>要件</th>
+<th style="text-align: center;">優先度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-015</td>
+<td>オーナーおよびプロジェクト管理者(<code>project_users.role='admin'</code>)は、メールアドレス、氏名、プロジェクト別ロール割当(<code>admin</code> / <code>member</code>)を指定して同一契約へメンバーを招待できること(メインシステム FR-015 と整合)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-016</td>
+<td>招待されたメンバーは招待リンクからアカウントを有効化できること。招待リンクの有効期限は <strong>MVP 初期値 7 日</strong>。期限切れの場合はオーナーまたは該当プロジェクト管理者が再送信する(メインシステム FR-016 と整合)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-017</td>
+<td>利用者(オーナー / メンバー)は同一契約内のオーナーおよびメンバーの一覧および詳細を参照できること(メインシステム FR-017 と整合)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-018</td>
+<td>オーナーおよびプロジェクト管理者は、同一契約内のメンバーの氏名、メールアドレス、通知設定を更新できること(メインシステム FR-018 と整合)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-019</td>
+<td>オーナーは、同一契約内のメンバーアカウントを完全削除できること。プロジェクト管理者は該当プロジェクトからの離脱のみ可能(アカウント完全削除はオーナー専有)。オーナーは削除の対象外とする(メインシステム FR-019 / FR-333 と整合)。MVP では一時的な利用停止 / 再開機能は提供しない</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-020</td>
+<td>招待リンクには有効期限を設けること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-021</td>
+<td>メンバー数の <strong>ハード上限は NFR-113(管理者ユーザー 100 名/契約)に従う</strong> ものとし、利用量しきい値(80%=80 名で警告、100%=登録拒否)に基づいて上限接近・超過を検知し、オーナーおよび全プロジェクト管理者へアラート通知できること。ハード上限の引上げは運営者承認(§6.2.3 4-eyes 対象)で個別契約単位に上書き可能とすること(メインシステム FR-021 / FR-021a と整合)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-補足説明統合参照">3. 補足説明・統合参照</h2>
+<ul>
+<li>プロジェクト別ロール(<code>project_users.role</code> = <code>admin</code> / <code>member</code>)とオーナーの 3 ロール体系の運用ルールは <a href="../02_基本設計/04_権限設計.html">../02_基本設計/04_権限設計.html</a>(参照のみ。正本はメイン側)を経由してメイン側 04 を正本とする。</li>
+<li>オーナー専有機能(プロジェクト作成・編集・削除、課金、退会、規約再同意の承諾、メンバーアカウント完全削除)はプロジェクト別ロールでは付与できない(§3 用語定義参照)。</li>
+<li>FR-021 のハード上限の運営者上書きは <a href="FR23_4-eyes承認.html">FR23_4-eyes承認.html</a> で扱う 4-eyes ハードゲート/承認ログ対象とは別軸(承認ログ対象)であり、対応チケット ID 入力と監査ログ記録が必須(FR-231 / FR-229 と整合)。</li>
+</ul>
+<h2 id="4-関連設計">4. 関連設計</h2>
+<ul>
+<li><a href="../02_基本設計/index.html">../02_基本設計/index.html</a> 基本設計書 index</li>
+<li><a href="../02_基本設計/01_画面設計.html">../02_基本設計/01_画面設計.html</a> §SCR-009(管理者ユーザー管理)/ SCR-093(契約別レート制限・上限件数 = メンバー数上限上書き)</li>
+<li><a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html</a> ユーザー招待・更新・削除 API(連携 IF #1, #12 経由)</li>
+<li><a href="../02_基本設計/04_権限設計.html">../02_基本設計/04_権限設計.html</a> プロジェクト別ロール(参照、正本はメイン側)</li>
+<li><a href="../02_基本設計/06_メッセージ一覧.html">../02_基本設計/06_メッセージ一覧.html</a> ユーザー上限到達アラートテンプレート</li>
+<li><a href="../02_基本設計/08_認証・認可設計.html">../02_基本設計/08_認証・認可設計.html</a> オーナー境界・ユーザー種別認可</li>
+<li><a href="../02_基本設計/07_トレーサビリティマトリクス.html">../02_基本設計/07_トレーサビリティマトリクス.html</a></li>
+<li><a href="../03_詳細設計/index.html">../03_詳細設計/index.html</a> 詳細設計書 index</li>
+</ul>
+<h2 id="5-未確定事項確認事項">5. 未確定事項・確認事項</h2>
+<ul>
+<li>ユーザー管理 UI(SCR-009)の画面項目はメインシステム正本。本書側で扱う運営者上書き UI は SCR-093 を参照。</li>
+</ul>
+
+</article>
+</body>
+</html>

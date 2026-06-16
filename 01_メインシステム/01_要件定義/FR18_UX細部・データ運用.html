@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FR18: UX 細部・データ運用 | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/01_要件定義/FR18_UX細部・データ運用.html">
+<article class="content" id="content">
+<h1 id="fr18-ux-細部データ運用">FR18: UX 細部・データ運用</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書名</td>
+<td>FR18: UX 細部・データ運用</td>
+</tr>
+<tr>
+<td>機能グループ</td>
+<td>UX 細部・データ運用</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>FAQ AI ウィジェット SaaS / メインシステム</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-17</td>
+</tr>
+<tr>
+<td>版数</td>
+<td>v1.4</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>承認済</td>
+</tr>
+<tr>
+<td>更新履歴</td>
+<td>v1.4(2026-06-14): オーナー主ナビゲーションを利用状況・請求・設定の3項目へ簡素化 / v1.3(2026-06-11): PageHeader・設定モーダル見出しから契約名・プロジェクト名・サイト名の連結表示を撤廃</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-機能概要">1. 機能概要</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>概要</td>
+<td>FAQ 編集の同時編集衝突検出、下書きの 30 秒自動保存、改訂履歴(直近 50 件)・差分表示・ロールバック、一括操作の上限値(お知らせ 100 件 / FAQ 50 件)、画面 URL のスコープ別 4 系列規約、初回セットアップガイド、契約共通項目の影響範囲表示といった UX 細部とデータ運用要件を扱う</td>
+</tr>
+<tr>
+<td>利用場面</td>
+<td>複数管理者による FAQ 同時編集、長文編集中のデータ保護、改訂履歴を辿った修正、まとめ操作、契約ホーム初回着地時のオンボーディング、契約共通項目の影響把握</td>
+</tr>
+<tr>
+<td>優先度</td>
+<td>Must</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-収録-fr-nnn-一覧">2. 収録 FR-NNN 一覧</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>要件</th>
+<th style="text-align: center;">優先度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-320</td>
+<td>FAQ 編集は同時編集時の衝突を検出できること。衝突時は SCR-006 で「最新版を確認してください」を表示し再読み込み導線を提供すること。衝突制御方式は基本設計を正本とする</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>FR-321</td>
+<td>FAQ 下書きは <strong>30 秒ごと自動保存</strong> し、未保存変更がある状態でページ離脱を試みた際は警告ダイアログを表示すること</td>
+<td style="text-align: center;">P2</td>
+</tr>
+<tr>
+<td>FR-322</td>
+<td>FAQ 改訂履歴は本文変更および状態変更(下書き/公開/非公開)を保持すること。直近 <strong>50 件</strong> を保持し、差分表示および任意版へのロールバックを可能とする</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>FR-323</td>
+<td>お知らせの一括既読は <strong>最大 100 件</strong>、FAQ の一括状態変更は <strong>最大 50 件</strong> を 1 操作の上限とすること。複数タブ同時ログイン時の既読同期方式は基本設計を正本とする</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>FR-324</td>
+<td>削除・公開キー再発行・退会・上限件数変更・規約再同意拒否などの不可逆または影響範囲の大きい操作は、誤操作防止レベル L1(確認ダイアログ)/ L2(L1 + 対象名のタイプ確認)/ L3(L2 + 再認証)の三段モデルで分類し、各操作にレベルを必ず割り当てること。レベルの正本(各操作と対応レベルのマトリクス)は基本設計 01_画面設計.html §4 に置く</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-325</td>
+<td>利用者向け管理コンソールの画面 URL はスコープ別に <strong>4 系列</strong>(契約ワークスペース = <code>/owner/*</code> / プロジェクトワークスペース = <code>/projects/:projectId/*</code> / 認証フロー = <code>/auth/*</code> / 共通領域 = <code>/account/*</code>)に分離し、URL から現在の管理スコープを判別可能とする。SCR ↔︎ URL の対応マスタは基本設計 01_画面設計.html §4 に置く</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>FR-326</td>
+<td>SCR-016 利用状況でプロジェクトが0件の場合は、説明文と「新規プロジェクトを作成」CTAだけを持つ空状態を表示すること。段階型のセットアップチェックリストは表示しない</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>FR-327</td>
+<td>契約スコープの参照表示には、影響範囲を示す「利用中のプロジェクト: N」を併記すること。N=0の場合は「未使用」と表示する。月次利用上限・無料利用枠はプロジェクト単位のため対象外とする</td>
+<td style="text-align: center;">P2</td>
+</tr>
+<tr>
+<td>FR-328</td>
+<td>主ナビゲーションはユーザーの目的語を優先し、契約範囲では「利用状況 / プロジェクト / 請求 / 設定」の4項目だけを用いること。プロジェクト範囲では「概要 / 要対応の質問 / FAQ / ウィジェット / メンバー / 利用量と上限」を用いる。プロジェクトの作成・編集・削除は契約サイドメニュー「プロジェクト」(SCR-004 / SCR-004-M1)、通知はヘッダー、法務文書はヘルプまたはフッターへ配置する</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-329</td>
+<td>一覧では名称を主リンク、システムIDをコピー可能な補助情報として表示すること。内部英語値(<code>open</code> / <code>closed</code>等)はユーザー向け表示へ直接露出させず、日本語の業務語彙へ変換すること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-330</td>
+<td>個人設定(SCR-017)、契約設定(SCR-023)、プロジェクト編集(SCR-004-M1 編集モード)を分離し、設定対象と影響範囲を画面タイトル・説明・URLから判別できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-331</td>
+<td>PageHeaderおよび設定モーダルの見出しは画面名だけを表示し、契約名・プロジェクト名・サイト名を「—」等で連結しないこと。現在の管理範囲名は WorkspaceSwitcher / WorkspaceBar に集約すること。ただし、削除・公開キー再発行等の対象確認文やデータ名称そのものを扱う編集画面では、誤操作防止に必要な対象名表示を維持すること</td>
+<td style="text-align: center;">P1</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-補足説明統合参照">3. 補足説明・統合参照</h2>
+<p>(該当なし。UI/UX 共通要件は §8.24、ナビゲーション・情報構造要件は §8.25、ローディング・フィードバック要件は §8.26 を参照)</p>
+<h2 id="4-関連設計">4. 関連設計</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>参照先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>画面設計</td>
+<td><a href="../02_基本設計/01_画面設計.html">../02_基本設計/01_画面設計.html</a></td>
+</tr>
+<tr>
+<td>API 設計</td>
+<td><a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html</a></td>
+</tr>
+<tr>
+<td>テーブル設計</td>
+<td><a href="../02_基本設計/03_テーブル設計.html">../02_基本設計/03_テーブル設計.html</a></td>
+</tr>
+<tr>
+<td>権限設計</td>
+<td><a href="../02_基本設計/04_権限設計.html">../02_基本設計/04_権限設計.html</a></td>
+</tr>
+<tr>
+<td>エラー設計</td>
+<td><a href="../02_基本設計/05_エラー設計.html">../02_基本設計/05_エラー設計.html</a></td>
+</tr>
+<tr>
+<td>メッセージ</td>
+<td><a href="../02_基本設計/06_メッセージ一覧.html">../02_基本設計/06_メッセージ一覧.html</a></td>
+</tr>
+<tr>
+<td>詳細設計</td>
+<td><a href="../03_詳細設計/index.html">../03_詳細設計/index.html</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-未確定事項確認事項">5. 未確定事項・確認事項</h2>
+<table>
+<thead>
+<tr>
+<th>確認事項ID</th>
+<th>確認内容</th>
+<th>優先度</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>v1.0 リリース時点で全項目確定済み</td>
+<td>低</td>
+<td>確認済</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

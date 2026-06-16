@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FR06: 未解決質問登録 | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/01_要件定義/FR06_未解決質問登録.html">
+<article class="content" id="content">
+<h1 id="fr06-未解決質問登録">FR06: 未解決質問登録</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書名</td>
+<td>FR06: 未解決質問登録</td>
+</tr>
+<tr>
+<td>機能グループ</td>
+<td>未解決質問登録</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>FAQ AI ウィジェット SaaS / メインシステム</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-17</td>
+</tr>
+<tr>
+<td>版数</td>
+<td>v1.1</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>承認済</td>
+</tr>
+<tr>
+<td>更新履歴</td>
+<td>v1.1(2026-06-12): 未解決質問を問い合わせIDと手動状況管理に整理</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-機能概要">1. 機能概要</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>概要</td>
+<td>FAQ で回答できなかった質問、またはユーザーが「解決しなかった」と選択した質問を未解決質問として登録し、対応状況を「open」「closed」の 2 区分で管理する</td>
+</tr>
+<tr>
+<td>利用場面</td>
+<td>AI 回答不能時の未解決登録、FAQ 下書き作成、FAQ 公開完了までの進捗確認</td>
+</tr>
+<tr>
+<td>優先度</td>
+<td>Must</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-収録-fr-nnn-一覧">2. 収録 FR-NNN 一覧</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>要件</th>
+<th style="text-align: center;">優先度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-070</td>
+<td>FAQ登録済みデータでは回答できなかった質問を未解決質問として登録できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-071</td>
+<td>ユーザーが「解決しなかった」を選択した場合、未解決質問として登録できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-072</td>
+<td>未解決質問には、質問、未解決理由、発生日時、関連プロジェクト、関連質問ログIDを記録できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-073</td>
+<td>未解決質問には問い合わせIDを付与できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-074</td>
+<td>未解決質問の状況は「open」「closed」の 2 区分とし、永続値として保持すること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-075</td>
+<td>状況は未解決質問の登録時に「open」とすること。状況変更は SCR-005 詳細画面からの手動操作のみで行い、FAQ 下書き保存・FAQ 公開成功とは連動しない</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-076</td>
+<td>未解決質問について、現在の状況(open / closed)を一覧画面・詳細画面で確認できること。状況はSCR-005からの手動切替のみを表し、FAQ 操作から派生または更新しないこと</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-077</td>
+<td>未解決質問の状況変更は SCR-005 詳細画面からの手動操作のみとすること。FAQ 下書き保存・FAQ 公開成功からは変更しない。<code>open</code> ↔︎ <code>closed</code> の双方向遷移を許可し、再オープン回数に制限を設けない</td>
+<td style="text-align: center;">P0</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-補足説明統合参照">3. 補足説明・統合参照</h2>
+<h3 id="871-faq-登録状況の状態遷移">8.7.1 FAQ 登録状況の状態遷移</h3>
+<p>本表は FR-074 / FR-075 / FR-076 / FR-077 の業務要件としての正本。実装上の識別子は <strong><a href="../02_基本設計/index.html">基本設計書 §4.3</a></strong> を正本とする。</p>
+<table>
+<thead>
+<tr>
+<th>状況</th>
+<th>永続値</th>
+<th>更新契機</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>open</td>
+<td><code>open</code></td>
+<td>未解決質問の登録(初期値)/ SCR-005 詳細画面での「open に戻す」操作(再オープン)</td>
+</tr>
+<tr>
+<td>closed</td>
+<td><code>closed</code></td>
+<td>SCR-005 詳細画面での「closed にする」操作</td>
+</tr>
+</tbody>
+</table>
+<p><code>open</code> ↔︎ <code>closed</code> の遷移はいずれも SCR-005 詳細画面からの手動操作のみ。FAQ 下書き保存・FAQ 公開成功は本状況を変更しない。</p>
+<h2 id="4-関連設計">4. 関連設計</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>参照先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>画面設計</td>
+<td><a href="../02_基本設計/01_画面設計.html">../02_基本設計/01_画面設計.html</a></td>
+</tr>
+<tr>
+<td>API 設計</td>
+<td><a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html</a></td>
+</tr>
+<tr>
+<td>テーブル設計</td>
+<td><a href="../02_基本設計/03_テーブル設計.html">../02_基本設計/03_テーブル設計.html</a></td>
+</tr>
+<tr>
+<td>権限設計</td>
+<td><a href="../02_基本設計/04_権限設計.html">../02_基本設計/04_権限設計.html</a></td>
+</tr>
+<tr>
+<td>エラー設計</td>
+<td><a href="../02_基本設計/05_エラー設計.html">../02_基本設計/05_エラー設計.html</a></td>
+</tr>
+<tr>
+<td>メッセージ</td>
+<td><a href="../02_基本設計/06_メッセージ一覧.html">../02_基本設計/06_メッセージ一覧.html</a></td>
+</tr>
+<tr>
+<td>詳細設計</td>
+<td><a href="../03_詳細設計/index.html">../03_詳細設計/index.html</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-未確定事項確認事項">5. 未確定事項・確認事項</h2>
+<table>
+<thead>
+<tr>
+<th>確認事項ID</th>
+<th>確認内容</th>
+<th>優先度</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>v1.0 リリース時点で全項目確定済み</td>
+<td>低</td>
+<td>確認済</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

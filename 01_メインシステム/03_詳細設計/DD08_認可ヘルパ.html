@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DD08: 認可ヘルパ | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/03_詳細設計/DD08_認可ヘルパ.html">
+<article class="content" id="content">
+<h1 id="dd08-認可ヘルパ">DD08: 認可ヘルパ</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書名</td>
+<td>DD08: 認可ヘルパ</td>
+</tr>
+<tr>
+<td>詳細設計ID</td>
+<td>DD08</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>FAQ AI ウィジェット SaaS / メインシステム</td>
+</tr>
+<tr>
+<td>関連機能ID</td>
+<td>NFR-301（オーナー境界によるデータ分離）/ FR-007 / AC-017</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-17</td>
+</tr>
+<tr>
+<td>版数</td>
+<td>v1.2</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>承認済</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-対象範囲">1. 対象範囲</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>ID</th>
+<th>名称</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>機能</td>
+<td>NFR-301</td>
+<td>オーナー境界によるデータ分離</td>
+</tr>
+<tr>
+<td>機能</td>
+<td>FR-007</td>
+<td>認証セッション + 認可</td>
+</tr>
+<tr>
+<td>ライブラリ</td>
+<td><code>app/workers/main-api/src/lib/authz.ts</code></td>
+<td>requireTenant / requireProjectRole / requireInquiry / requireOwner</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-収録ロジック対応章">2. 収録ロジック・対応章</h2>
+<table>
+<thead>
+<tr>
+<th>元章</th>
+<th>元タイトル</th>
+<th>概要</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>§10.6</td>
+<td>認可ヘルパ</td>
+<td><code>requireTenant</code> / <code>requireProjectRole</code> / <code>requireInquiry</code> / <code>requireOwner</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-詳細設計本文">3. 詳細設計本文</h2>
+<h3 id="31-認可ヘルパ実装">3.1 認可ヘルパ実装</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// app/workers/main-api/src/lib/authz.ts</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">export type</span> ProjectRole <span class="op">=</span> <span class="st">&#39;admin&#39;</span> <span class="op">|</span> <span class="st">&#39;member&#39;</span><span class="op">;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">function</span> <span class="fu">requireTenant</span>(c<span class="op">:</span> Context<span class="op">,</span> expectedTenantId<span class="op">:</span> <span class="dt">string</span>) {</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> principal <span class="op">=</span> c<span class="op">.</span><span class="fu">get</span>(<span class="st">&#39;principal&#39;</span>)<span class="op">;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (principal<span class="op">.</span><span class="at">contractOwnerUserId</span> <span class="op">!==</span> expectedTenantId) <span class="cf">throw</span> <span class="kw">new</span> <span class="fu">HTTPException</span>(<span class="dv">404</span>)<span class="op">;</span> <span class="co">// 404 偽装</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">function</span> <span class="fu">requireOwner</span>(c<span class="op">:</span> Context) {</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> principal <span class="op">=</span> c<span class="op">.</span><span class="fu">get</span>(<span class="st">&#39;principal&#39;</span>)<span class="op">;</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="op">!</span>principal<span class="op">.</span><span class="at">isOwner</span>) <span class="cf">throw</span> <span class="kw">new</span> <span class="fu">HTTPException</span>(<span class="dv">403</span>)<span class="op">;</span> <span class="co">// E-AUTHZ-OWNER-ONLY</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fu">requireProjectRole</span>(c<span class="op">:</span> Context<span class="op">,</span> projectId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span> minRole<span class="op">:</span> ProjectRole) {</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> principal <span class="op">=</span> c<span class="op">.</span><span class="fu">get</span>(<span class="st">&#39;principal&#39;</span>)<span class="op">;</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> project <span class="op">=</span> <span class="cf">await</span> c<span class="op">.</span><span class="at">env</span><span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="vs">`SELECT contract_owner_user_id FROM projects WHERE id = ?1`</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  )<span class="op">.</span><span class="fu">bind</span>(projectId)<span class="op">.</span><span class="fu">first</span><span class="op">&lt;</span>{ contract_owner_user_id<span class="op">:</span> <span class="dt">string</span> }<span class="op">&gt;</span>()<span class="op">;</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="op">!</span>project) <span class="cf">throw</span> <span class="kw">new</span> <span class="fu">HTTPException</span>(<span class="dv">404</span>)<span class="op">;</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (project<span class="op">.</span><span class="at">contract_owner_user_id</span> <span class="op">!==</span> principal<span class="op">.</span><span class="at">contractOwnerUserId</span>) <span class="cf">throw</span> <span class="kw">new</span> <span class="fu">HTTPException</span>(<span class="dv">404</span>)<span class="op">;</span> <span class="co">// 404 偽装</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (principal<span class="op">.</span><span class="at">isOwner</span>) <span class="cf">return</span><span class="op">;</span> <span class="co">// オーナーは全プロジェクト bypass(暗黙の admin)</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> granted <span class="op">=</span> principal<span class="op">.</span><span class="at">projectRoles</span><span class="op">.</span><span class="fu">get</span>(projectId)<span class="op">;</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="op">!</span>granted) <span class="cf">throw</span> <span class="kw">new</span> <span class="fu">HTTPException</span>(<span class="dv">404</span>)<span class="op">;</span> <span class="co">// E-AUTHZ-PROJECT-DENIED(404 偽装)</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (minRole <span class="op">===</span> <span class="st">&#39;admin&#39;</span> <span class="op">&amp;&amp;</span> granted <span class="op">!==</span> <span class="st">&#39;admin&#39;</span>) <span class="cf">throw</span> <span class="kw">new</span> <span class="fu">HTTPException</span>(<span class="dv">403</span>)<span class="op">;</span> <span class="co">// E-AUTHZ-FORBIDDEN</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  <span class="co">// minRole=&#39;member&#39; は admin/member いずれでも通過</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fu">requireInquiry</span>(c<span class="op">:</span> Context<span class="op">,</span> inquiryId<span class="op">:</span> <span class="dt">string</span>) {</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> principal <span class="op">=</span> c<span class="op">.</span><span class="fu">get</span>(<span class="st">&#39;principal&#39;</span>)<span class="op">;</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> row <span class="op">=</span> <span class="cf">await</span> c<span class="op">.</span><span class="at">env</span><span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    <span class="vs">`SELECT contract_owner_user_id, project_id FROM inquiries WHERE id = ?1`</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>  )<span class="op">.</span><span class="fu">bind</span>(inquiryId)<span class="op">.</span><span class="fu">first</span><span class="op">&lt;</span>{ contract_owner_user_id<span class="op">:</span> <span class="dt">string</span><span class="op">;</span> project_id<span class="op">:</span> <span class="dt">string</span> }<span class="op">&gt;</span>()<span class="op">;</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="op">!</span>row) <span class="cf">throw</span> <span class="kw">new</span> <span class="fu">HTTPException</span>(<span class="dv">404</span>)<span class="op">;</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (row<span class="op">.</span><span class="at">contract_owner_user_id</span> <span class="op">!==</span> principal<span class="op">.</span><span class="at">contractOwnerUserId</span>) <span class="cf">throw</span> <span class="kw">new</span> <span class="fu">HTTPException</span>(<span class="dv">404</span>)<span class="op">;</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> <span class="fu">requireProjectRole</span>(c<span class="op">,</span> row<span class="op">.</span><span class="at">project_id</span><span class="op">,</span> <span class="st">&#39;member&#39;</span>)<span class="op">;</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">function</span> <span class="fu">requireRole</span>(<span class="op">...</span>roles<span class="op">:</span> Role[])<span class="op">:</span> MiddlewareHandler {</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="kw">async</span> (c<span class="op">,</span> next) <span class="kw">=&gt;</span> {</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> principal <span class="op">=</span> c<span class="op">.</span><span class="fu">get</span>(<span class="st">&#39;principal&#39;</span>)<span class="op">;</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="op">!</span>roles<span class="op">.</span><span class="fu">includes</span>(principal<span class="op">.</span><span class="at">role</span>)) <span class="cf">throw</span> <span class="kw">new</span> <span class="fu">HTTPException</span>(<span class="dv">403</span>)<span class="op">;</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> <span class="fu">next</span>()<span class="op">;</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h3 id="31a-プロジェクトの質問数上限アラート-api-の認可と上限解決">3.1a プロジェクトの質問数上限・アラート API の認可と上限解決</h3>
+<p>プロジェクト利用設定(SCR-021 / SCR-021-M1)は <strong>オーナー専有ではない</strong>。<code>GET /projects/{id}/quota-limits</code> は <code>member</code>、<code>PATCH /projects/{id}/quota-limits/questions</code> は <code>admin</code> で認可する。利用者向け API は質問数の上限とアラート閾値だけを参照・更新し、無料枠・FAQの設定ルートは提供しない。</p>
+<p>質問数設定の <strong>解決ヘルパ</strong>は KV を一次参照し、ミス時は <code>project_quota_limits.resource_kind='question_monthly_limit'</code> を引く。優先順位で採用した行の <code>threshold=null</code> は明示的な上限OFFとして扱い、下位の運営者上書きやデフォルト上限へフォールバックしない。</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fu">resolveProjectQuestionLimit</span>(c<span class="op">:</span> Context<span class="op">,</span> projectId<span class="op">:</span> <span class="dt">string</span>) {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> cached <span class="op">=</span> <span class="cf">await</span> c<span class="op">.</span><span class="at">env</span><span class="op">.</span><span class="at">KV</span><span class="op">.</span><span class="fu">get</span>(<span class="vs">`usage-limit:</span><span class="sc">${</span><span class="fu">ownerOf</span>(projectId)<span class="sc">}</span><span class="vs">:</span><span class="sc">${</span>projectId<span class="sc">}</span><span class="vs">`</span><span class="op">,</span> <span class="st">&#39;json&#39;</span>)<span class="op">;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (cached<span class="op">?.</span><span class="at">question</span>) <span class="cf">return</span> cached<span class="op">.</span><span class="at">question</span><span class="op">;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> rows <span class="op">=</span> <span class="cf">await</span> c<span class="op">.</span><span class="at">env</span><span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="vs">`SELECT threshold, free_quota, alert_thresholds, source, valid_until FROM project_quota_limits</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="vs">       WHERE project_id = ?1 AND resource_kind = &#39;question_monthly_limit&#39; AND valid = 1`</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  )<span class="op">.</span><span class="fu">bind</span>(projectId)<span class="op">.</span><span class="fu">all</span>()<span class="op">;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> owner <span class="op">=</span> rows<span class="op">.</span><span class="at">results</span><span class="op">.</span><span class="fu">find</span>(r <span class="kw">=&gt;</span> r<span class="op">.</span><span class="at">source</span> <span class="op">===</span> <span class="st">&#39;owner&#39;</span>)<span class="op">;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> operator <span class="op">=</span> rows<span class="op">.</span><span class="at">results</span><span class="op">.</span><span class="fu">find</span>(r <span class="kw">=&gt;</span> r<span class="op">.</span><span class="at">source</span> <span class="op">===</span> <span class="st">&#39;operator&#39;</span> <span class="co">/* &amp;&amp; valid_until 未経過 */</span>)<span class="op">;</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> owner <span class="op">??</span> operator <span class="op">??</span> <span class="fu">defaultQuestionLimitFromKV</span>(c)<span class="op">;</span> <span class="co">// owner &gt; operator &gt; default</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><code>PATCH</code> 成功時は質問数の <code>source='owner'</code> 行だけを upsert する。FAQ無料枠の内部解決は請求処理用ヘルパで「運営者上書き &gt; デフォルト値」とし、SCR-021 の認可・レスポンス・更新処理から分離する。</p>
+<h3 id="31b-メンバー割当解除の認可">3.1b メンバー割当解除の認可</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fu">requireRemovableProjectGrant</span>(c<span class="op">:</span> Context<span class="op">,</span> projectId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span> userId<span class="op">:</span> <span class="dt">string</span>) {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> <span class="fu">requireProjectRole</span>(c<span class="op">,</span> projectId<span class="op">,</span> <span class="st">&#39;admin&#39;</span>)<span class="op">;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> principal <span class="op">=</span> c<span class="op">.</span><span class="fu">get</span>(<span class="st">&#39;principal&#39;</span>)<span class="op">;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (principal<span class="op">.</span><span class="at">userId</span> <span class="op">===</span> userId) <span class="cf">throw</span> <span class="fu">appError</span>(<span class="st">&#39;E-AUTHZ-SELF-MUTATION&#39;</span>)<span class="op">;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="cf">await</span> <span class="fu">isContractOwner</span>(c<span class="op">.</span><span class="at">env</span><span class="op">.</span><span class="at">DB</span><span class="op">,</span> userId)) <span class="cf">throw</span> <span class="fu">appError</span>(<span class="st">&#39;E-AUTHZ-OWNER-PROTECTED&#39;</span>)<span class="op">;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> <span class="fu">requireSameTenantUser</span>(c<span class="op">,</span> userId)<span class="op">;</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><code>DELETE /projects/{id}/members/{userId}</code> は <code>requireRemovableProjectGrant</code> を使用する。他プロジェクト有効割当数は認可エラーには使わず、割当解除後にアカウントを論理削除するかを決める業務処理で参照する。</p>
+<h3 id="32-principal-構築参照のみ">3.2 Principal 構築（参照のみ）</h3>
+<p><code>c.get('principal')</code> で取得する Principal の構築フローは <a href="../02_基本設計/08_認証・認可設計.html">../02_基本設計/08_認証・認可設計.html §6.1</a> を正本とする。Principal には以下を含む。</p>
+<ul>
+<li><code>userId</code>: ユーザー ID(オーナー / プロジェクト管理者 / メンバー全員)</li>
+<li><code>contractOwnerUserId</code>: 所属契約の owner user_id(本人がオーナーなら自身の userId、メンバーなら所属契約の owner user_id)</li>
+<li><code>actorRole</code>: 操作者種別(管理者 = <code>users</code> 行 / 運営者 = 別 D1 / システム)。Principal 構築時に決定され、<code>audit_logs.actor_role</code> の値(<code>admin</code> / <code>service_operator</code> / <code>system</code>)に対応。ウィジェット利用者は管理コンソールPrincipalを構築しない</li>
+<li><code>isOwner</code>: オーナー判定(<code>contract_owners</code> 行存在で判定 = <code>co.user_id IS NOT NULL</code>)</li>
+<li><code>projectRoles</code>: <code>Map&lt;projectId, 'admin' | 'member'&gt;</code>。オーナー / メンバー共通で <code>project_users WHERE valid=1</code> を 1 クエリで取得して構築する。認可ヘルパは <code>isOwner=true</code> のときに <code>projectRoles</code> の中身を参照せず bypass する優先順位を保つ。<code>projectRoles</code> は通知宛先解決と画面表示の事実情報として参照可能</li>
+</ul>
+<h4 id="principal-構築クエリ参考基本設計と同期">Principal 構築クエリ(参考、基本設計と同期)</h4>
+<div class="sourceCode" id="cb4"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> u.<span class="kw">id</span>, u.<span class="kw">role</span>, u.status, u.valid,</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>       (co.user_id <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw">NULL</span>)                          <span class="kw">AS</span> is_owner,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>       <span class="fu">COALESCE</span>(co.user_id, pu.contract_owner_user_id)   <span class="kw">AS</span> contract_owner_user_id</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> users u</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">LEFT</span> <span class="kw">JOIN</span> contract_owners co <span class="kw">ON</span> co.user_id <span class="op">=</span> u.<span class="kw">id</span> <span class="kw">AND</span> co.valid <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">LEFT</span> <span class="kw">JOIN</span> project_users   pu <span class="kw">ON</span> pu.user_id <span class="op">=</span> u.<span class="kw">id</span> <span class="kw">AND</span> pu.valid <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> u.<span class="kw">id</span> <span class="op">=</span> ?<span class="dv">1</span> <span class="kw">AND</span> u.valid <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="kw">LIMIT</span> <span class="dv">1</span>;</span></code></pre></div>
+<p><code>projectRoles</code> は別途 <code>SELECT project_id, role FROM project_users WHERE user_id=? AND valid=1</code> で取得する。</p>
+<h3 id="33-オーナー境界nfr-301">3.3 オーナー境界（NFR-301）</h3>
+<p>すべての CRUD API は <strong><code>contract_owner_user_id</code> フィルタを必須</strong> とする。<code>requireTenant</code> / <code>requireProject</code> / <code>requireInquiry</code> で境界チェックを実施し、他オーナーのデータには 404 を返す（漏洩防止のため 403 ではなく 404）。</p>
+<h3 id="34-不正アクセスの監査記録">3.4 不正アクセスの監査記録</h3>
+<p>境界違反検知時は <code>authz.owner_boundary_violation</code> / <code>authz.project_boundary_violation</code> を <code>retention_class=general</code> で記録する。詳細は <a href="DD09_監査ログ書込・完全性検証.html">DD09_監査ログ書込・完全性検証.html</a> を参照。</p>
+<h2 id="4-関連設計">4. 関連設計</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>参照先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>要件</td>
+<td><a href="../01_要件定義/index.html">../01_要件定義/index.html</a></td>
+</tr>
+<tr>
+<td>基本設計</td>
+<td><a href="../02_基本設計/index.html">../02_基本設計/index.html</a></td>
+</tr>
+<tr>
+<td>権限設計</td>
+<td><a href="../02_基本設計/04_権限設計.html">../02_基本設計/04_権限設計.html</a></td>
+</tr>
+<tr>
+<td>認証・認可設計</td>
+<td><a href="../02_基本設計/08_認証・認可設計.html">../02_基本設計/08_認証・認可設計.html</a></td>
+</tr>
+<tr>
+<td>運用設計</td>
+<td><a href="../04_運用設計/index.html">../04_運用設計/index.html</a></td>
+</tr>
+<tr>
+<td>関連 DD</td>
+<td><a href="DD01_アカウント・ユーザー管理.html">DD01_アカウント・ユーザー管理.html</a> / <a href="DD02_プロジェクト・FAQ管理.html">DD02_プロジェクト・FAQ管理.html</a> / <a href="DD09_監査ログ書込・完全性検証.html">DD09_監査ログ書込・完全性検証.html</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-テスト観点">5. テスト観点</h2>
+<table>
+<thead>
+<tr>
+<th>AC ID</th>
+<th>テスト ID</th>
+<th>テスト方式</th>
+<th>テストファイル</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AC-017</td>
+<td><code>iso-cross-owner-001</code></td>
+<td>Isolation</td>
+<td><code>workers/main-api/test/isolation/cross-owner.test.ts</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="51-オーナー境界によるデータ分離検証">5.1 オーナー境界によるデータ分離検証</h3>
+<div class="sourceCode" id="cb5"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">// tests/isolation/cross-owner.test.ts</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">describe</span>(<span class="st">&#39;クロス契約アクセス試行&#39;</span><span class="op">,</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">it</span>(<span class="st">&#39;他契約の inquiry にアクセスできない&#39;</span><span class="op">,</span> <span class="kw">async</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> ownerA <span class="op">=</span> <span class="cf">await</span> <span class="fu">createOwnerAccount</span>()<span class="op">;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> ownerB <span class="op">=</span> <span class="cf">await</span> <span class="fu">createOwnerAccount</span>()<span class="op">;</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> inquiryB <span class="op">=</span> <span class="cf">await</span> <span class="fu">createInquiry</span>(ownerB)<span class="op">;</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> sessionA <span class="op">=</span> <span class="cf">await</span> <span class="fu">loginAs</span>(ownerA<span class="op">.</span><span class="at">adminEmail</span>)<span class="op">;</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> res <span class="op">=</span> <span class="cf">await</span> <span class="fu">fetch</span>(<span class="vs">`/api/v1/inquiries/</span><span class="sc">${</span>inquiryB<span class="op">.</span><span class="at">id</span><span class="sc">}</span><span class="vs">`</span><span class="op">,</span> { headers<span class="op">:</span> { Cookie<span class="op">:</span> sessionA } })<span class="op">;</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">expect</span>(res<span class="op">.</span><span class="at">status</span>)<span class="op">.</span><span class="fu">toBe</span>(<span class="dv">404</span>)<span class="op">;</span>  <span class="co">// 漏洩しないために 403 ではなく 404</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 50 ケース x 月次 + 5 ケース x 年次手動</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div>
+<h3 id="52-その他観点">5.2 その他観点</h3>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>単体</td>
+<td><code>requireTenant</code> / <code>requireProject</code> / <code>requireInquiry</code> / <code>requireRole</code> の各分岐</td>
+</tr>
+<tr>
+<td>結合</td>
+<td>プロジェクト割当がない(<code>project_users</code> 行なし)メンバーによる FAQ 編集試行で 404 偽装(<code>E-AUTHZ-PROJECT-DENIED</code>)/ 該当 PJ の <code>member</code>+ なら 200</td>
+</tr>
+<tr>
+<td>異常系</td>
+<td>削除済オーナー所属メンバーのアクセス時 401 + セッション失効</td>
+</tr>
+<tr>
+<td>境界値</td>
+<td>最後のプロジェクト割当解除では対象行に加えてアカウントとセッションを失効し、他割当がある場合は対象行のみ解除すること</td>
+</tr>
+<tr>
+<td>月次</td>
+<td>クロス契約侵入試行 50 ケース月次 + 5 ケース年次手動</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-未確定事項確認事項">6. 未確定事項・確認事項</h2>
+<table>
+<thead>
+<tr>
+<th>確認事項ID</th>
+<th>確認内容</th>
+<th>優先度</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>v1.0 リリース時点で全項目確定済み</td>
+<td>低</td>
+<td>確認済</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

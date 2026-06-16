@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DD04: Stripe Webhook 一次受信(運営者システム) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="02_運営者システム/03_詳細設計/DD04_Stripe_Webhook一次受信.html">
+<article class="content" id="content">
+<h1 id="dd04-stripe-webhook-一次受信運営者システム">DD04: Stripe Webhook 一次受信(運営者システム)</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書名</td>
+<td>DD04: Stripe Webhook 一次受信(運営者システム)</td>
+</tr>
+<tr>
+<td>詳細設計ID</td>
+<td>DD04</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>FAQ AI ウィジェット SaaS / 運営者システム</td>
+</tr>
+<tr>
+<td>関連機能ID</td>
+<td>FR-302, NFR-808, NFR-809, AC-041, D-06, D-10, TH-8, TH-9</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-17</td>
+</tr>
+<tr>
+<td>版数</td>
+<td>v1.0</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>承認済</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-対象範囲">1. 対象範囲</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>ID</th>
+<th>名称</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>機能</td>
+<td>FR-302</td>
+<td>Webhook 受信(Stripe / Resend)</td>
+</tr>
+<tr>
+<td>画面</td>
+<td>SCR-096</td>
+<td>Webhook リプレイ・DLQ 操作</td>
+</tr>
+<tr>
+<td>画面</td>
+<td>SCR-098</td>
+<td>Webhook ペイロード差分検出レビュー</td>
+</tr>
+<tr>
+<td>API</td>
+<td><code>POST /webhooks/stripe</code></td>
+<td>Stripe Webhook 一次受信(IP 制限適用外)</td>
+</tr>
+<tr>
+<td>API</td>
+<td><code>POST /webhooks/resend</code></td>
+<td>Resend Webhook 一次受信(同上)</td>
+</tr>
+<tr>
+<td>API</td>
+<td><code>POST /webhooks/replay</code></td>
+<td>手動リプレイ</td>
+</tr>
+<tr>
+<td>API</td>
+<td><code>POST /webhook-payload-diffs/{id}/reprocess</code></td>
+<td>差分検出後の再処理</td>
+</tr>
+<tr>
+<td>API</td>
+<td><code>POST /webhook-payload-diffs/{id}/dismiss</code></td>
+<td>差分検出の却下</td>
+</tr>
+<tr>
+<td>テーブル</td>
+<td><code>webhook_events</code></td>
+<td>受信イベント主台帳</td>
+</tr>
+<tr>
+<td>テーブル</td>
+<td><code>webhook_payload_diffs</code></td>
+<td>ペイロード差分検出記録</td>
+</tr>
+<tr>
+<td>テーブル</td>
+<td><code>dlq_replay_log</code></td>
+<td>DLQ リプレイ履歴</td>
+</tr>
+<tr>
+<td>連携 IF</td>
+<td>#10</td>
+<td>課金 Webhook 一次受信 → メイン転送(本書主管)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-収録ロジック対応章">2. 収録ロジック・対応章</h2>
+<table>
+<thead>
+<tr>
+<th>元章</th>
+<th>元タイトル</th>
+<th>概要</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>§10 連携 IF #10 詳細</td>
+<td>Stripe Webhook 一次受信 → メイン転送</td>
+<td>唯一の受信先(D-10)</td>
+</tr>
+<tr>
+<td>§6 webhook 機能(参照)</td>
+<td>署名検証 / 冪等性 / 差分検出 / DLQ</td>
+<td>一次受信ロジック</td>
+</tr>
+<tr>
+<td>§7 webhook API</td>
+<td>手動リプレイ + 差分 reprocess/dismiss</td>
+<td>API スキーマ</td>
+</tr>
+<tr>
+<td>付録 B.2</td>
+<td><code>webhook_events.state</code></td>
+<td>12 状態遷移</td>
+</tr>
+<tr>
+<td>付録 H</td>
+<td>Webhook 除外フィールド完全リスト(★TH-8)</td>
+<td>正規化対象除外</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-詳細設計本文">3. 詳細設計本文</h2>
+<h3 id="31-受信エンドポイントd-10">3.1 受信エンドポイント(D-10)</h3>
+<table>
+<thead>
+<tr>
+<th>エンドポイント</th>
+<th>用途</th>
+<th>IP 制限</th>
+<th>署名検証</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>POST /webhooks/stripe</code></td>
+<td>Stripe イベント受信(唯一の受信先)</td>
+<td>適用外</td>
+<td><code>Stripe-Signature</code> HMAC-SHA256</td>
+</tr>
+<tr>
+<td><code>POST /webhooks/resend</code></td>
+<td>Resend バウンス・配信通知</td>
+<td>適用外</td>
+<td>Resend Signature(HMAC)</td>
+</tr>
+</tbody>
+</table>
+<p>メイン側は <code>/webhooks/stripe</code> を一切受けない(D-10)。本書側のみが Stripe との接続点を持つ。</p>
+<h3 id="32-受信処理フロー">3.2 受信処理フロー</h3>
+<pre class="mermaid"><code>sequenceDiagram
+    participant Stripe
+    participant Worker as BillingWebhookWorker
+    participant KV
+    participant D1
+    participant R2
+    participant Main as Main Worker
+
+    Stripe-&gt;&gt;Worker: POST /webhooks/stripe + Stripe-Signature
+    Worker-&gt;&gt;Worker: HMAC-SHA256 署名検証
+    alt 署名 NG
+        Worker-&gt;&gt;D1: audit_logs(webhook.signature.invalid, 5y)
+        Worker--&gt;&gt;Stripe: 401
+    else 署名 OK
+        Worker-&gt;&gt;D1: INSERT webhook_events (state=&#39;received&#39;, payload_hash計算済)
+        Worker-&gt;&gt;KV: GET webhook:idempotency:&lt;event_id&gt;
+        alt 既処理 + payload_hash 一致
+            Worker-&gt;&gt;D1: UPDATE state=&#39;duplicate_skipped_hash_match&#39;
+            Worker--&gt;&gt;Stripe: 200(冪等成功)
+        else 既処理 + payload_hash 不一致
+            Worker-&gt;&gt;D1: INSERT webhook_payload_diffs (state=&#39;detected&#39;)
+            Worker-&gt;&gt;D1: UPDATE webhook_events state=&#39;duplicate_diff_detected_high_alert&#39;
+            Worker-&gt;&gt;R2: PUT webhook-payload-snapshots/&lt;event_id&gt;-&lt;ts&gt;.json
+            Worker-&gt;&gt;Main: 通知 (SCR-098 へ運営者誘導)
+            Worker--&gt;&gt;Stripe: 200(差分は SCR-098 レビュー待ち)
+        else 未処理
+            Worker-&gt;&gt;D1: UPDATE state=&#39;processing&#39;
+            Worker-&gt;&gt;R2: PUT dlq-stripe-events/&lt;event_id&gt;.json
+            Worker-&gt;&gt;Main: 連携 IF #10 (mTLS + JWT)
+            alt メイン 200
+                Worker-&gt;&gt;D1: UPDATE state=&#39;succeeded&#39;
+                Worker-&gt;&gt;D1: audit_logs(stripe.event.processed, 7y)
+                Worker--&gt;&gt;Stripe: 200
+            else メイン 5xx/Timeout
+                Worker-&gt;&gt;D1: UPDATE state=&#39;failed&#39;, next_retry_at=now+1min
+                Worker--&gt;&gt;Stripe: 200(後続リトライ)
+            end
+        end
+    end</code></pre>
+<h3 id="33-状態遷移webhook_eventsstate">3.3 状態遷移(<code>webhook_events.state</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>From</th>
+<th>To</th>
+<th>トリガー</th>
+<th>副作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>received</td>
+<td>POST 受信</td>
+<td>row INSERT</td>
+</tr>
+<tr>
+<td>received</td>
+<td>verifying_signature</td>
+<td>即時</td>
+<td>-</td>
+</tr>
+<tr>
+<td>verifying_signature</td>
+<td>rejected</td>
+<td>HMAC NG</td>
+<td>401 + high alert</td>
+</tr>
+<tr>
+<td>verifying_signature</td>
+<td>checking_idempotency</td>
+<td>HMAC OK</td>
+<td>payload_hash 計算</td>
+</tr>
+<tr>
+<td>checking_idempotency</td>
+<td>processing</td>
+<td>未処理</td>
+<td>INSERT + R2 退避</td>
+</tr>
+<tr>
+<td>checking_idempotency</td>
+<td>duplicate_skipped_hash_match</td>
+<td>既処理 + 一致</td>
+<td>200 + ログ</td>
+</tr>
+<tr>
+<td>checking_idempotency</td>
+<td>duplicate_diff_detected_high_alert</td>
+<td>既処理 + 不一致</td>
+<td>webhook_payload_diffs INSERT、SCR-098 待ち</td>
+</tr>
+<tr>
+<td>processing</td>
+<td>succeeded</td>
+<td>IF #10 200</td>
+<td>audit:stripe.event.processed(7y)</td>
+</tr>
+<tr>
+<td>processing</td>
+<td>failed</td>
+<td>5xx/Timeout</td>
+<td>DLQ 投入</td>
+</tr>
+<tr>
+<td>failed</td>
+<td>dlq_retrying</td>
+<td>DLQAutoBackoffWorker</td>
+<td>指数 BO</td>
+</tr>
+<tr>
+<td>dlq_retrying</td>
+<td>succeeded</td>
+<td>再試行成功</td>
+<td>-</td>
+</tr>
+<tr>
+<td>dlq_retrying</td>
+<td>dlq_manual_replay</td>
+<td>1h 経過</td>
+<td>運営者 high</td>
+</tr>
+<tr>
+<td>dlq_manual_replay</td>
+<td>succeeded</td>
+<td>SCR-096 リプレイ</td>
+<td>audit:webhook.replay(5y)</td>
+</tr>
+<tr>
+<td>dlq_manual_replay</td>
+<td>dlq_archived</td>
+<td>30 日経過</td>
+<td>リプレイ不可</td>
+</tr>
+</tbody>
+</table>
+<h3 id="34-冪等性ストア">3.4 冪等性ストア</h3>
+<table>
+<thead>
+<tr>
+<th>キー</th>
+<th>値</th>
+<th>TTL</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>webhook:idempotency:&lt;event_id&gt;</code></td>
+<td><code>{ payloadHash, state, processedAt }</code></td>
+<td>30 日</td>
+<td>D1 <code>webhook_events</code> のキャッシュ</td>
+</tr>
+</tbody>
+</table>
+<p>冪等性判定の正本は <code>webhook_events.event_id</code> UNIQUE 制約(D1)。KV は高速判定のためのキャッシュ層であり、KV ミス時は D1 にフォールバック。</p>
+<h3 id="35-ペイロード正規化--差分検出d-06">3.5 ペイロード正規化 + 差分検出(D-06)</h3>
+<h4 id="351-正規化アルゴリズム">3.5.1 正規化アルゴリズム</h4>
+<pre class="text"><code>function canonical_json(payload, api_version):
+    excludeFields = getExcludeFields(api_version)
+    filtered = removeFields(payload, excludeFields)
+    return RFC8785_canonicalize(filtered)  // キーソート + Unicode NFC + 数値正規化
+
+function payload_hash(payload, api_version):
+    return sha256(canonical_json(payload, api_version))</code></pre>
+<h4 id="352-全バージョン共通除外フィールドルートレベル">3.5.2 全バージョン共通除外フィールド(ルートレベル)</h4>
+<pre class="text"><code>created
+request.id
+request.idempotency_key
+idempotency_key_resent
+livemode
+api_version
+pending_webhooks</code></pre>
+<h4 id="353-全バージョン共通除外dataobject-レベル">3.5.3 全バージョン共通除外(<code>data.object</code> レベル)</h4>
+<pre class="text"><code>data.object.created
+data.object.updated_at
+data.object.test_clock
+data.object.metadata.test_*
+data.object.metadata._stripe_internal_*
+data.previous_attributes</code></pre>
+<h4 id="354-全バージョン共通除外配列再帰">3.5.4 全バージョン共通除外(配列再帰)</h4>
+<pre class="text"><code>*.created
+*.updated_at</code></pre>
+<h4 id="355-stripe-api-バージョン-2024-06-20-固有">3.5.5 Stripe API バージョン <code>2024-06-20</code> 固有</h4>
+<p>(現時点で追加除外なし)</p>
+<h3 id="36-複数バージョン併存運用ルール">3.6 複数バージョン併存運用ルール</h3>
+<p>Stripe ダッシュボードで API バージョンをアップグレードすると、<strong>同一契約への Webhook が新旧バージョンを跨いで配信される</strong>。この前提で本書では以下のルールを定める:</p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>仕様</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>バージョン保管</td>
+<td><code>webhook_events.stripe_api_version</code> 列に受信時の <code>api_version</code> を保管</td>
+</tr>
+<tr>
+<td>ハッシュ計算</td>
+<td><code>EXCLUDE_FIELDS_BY_VERSION[stripe_api_version]</code> を選択して <code>canonical_json</code> 呼出</td>
+</tr>
+<tr>
+<td>マップ未登録時</td>
+<td><code>EXCLUDE_FIELDS_BY_VERSION["default"]</code> = 共通リストにフォールバックし、運営者 inbox normal(<code>webhook.unknown_api_version</code>、5y)で通知</td>
+</tr>
+<tr>
+<td>同 <code>event_id</code> 異 API バージョン</td>
+<td>既処理 <code>event_id</code> + <code>api_version</code> 不一致 → 通常フローでは <code>webhook_payload_diffs</code> に記録するが、<code>stripe_api_version_mismatch</code> フラグを立てて SCR-098 で見分け可能にする</td>
+</tr>
+<tr>
+<td>廃止予告</td>
+<td>Stripe が API バージョンを EOL 通知してから 180 日以内に該当バージョンのサポートを終了。本書改訂で <code>EXCLUDE_FIELDS_BY_VERSION</code> から削除</td>
+</tr>
+<tr>
+<td>サポート対象範囲</td>
+<td>同時にサポートするバージョン数は <strong>最大 2</strong>(現行 + 直前の 1 つ)。3 つ以上は技術的負債とみなし要件レビュー対象</td>
+</tr>
+</tbody>
+</table>
+<h4 id="361-バージョン管理マップ実装例">3.6.1 バージョン管理マップ実装例</h4>
+<pre class="text"><code>const EXCLUDE_FIELDS_BY_VERSION: Record&lt;string, string[]&gt; = {
+  &quot;default&quot;: [...H1_FIELDS, ...H2_FIELDS, ...H3_FIELDS],
+  &quot;2024-06-20&quot;: [...H1_FIELDS, ...H2_FIELDS, ...H3_FIELDS], // 追加なし
+  // バージョン追加時:
+  // &quot;2024-12-XX&quot;: [...H1_FIELDS, ..., &quot;data.object.new_field_xxx&quot;],
+};
+
+function getExcludeFields(apiVersion: string): string[] {
+  if (EXCLUDE_FIELDS_BY_VERSION[apiVersion]) {
+    return EXCLUDE_FIELDS_BY_VERSION[apiVersion];
+  }
+  log.warn(&quot;unknown_api_version&quot;, { apiVersion });
+  notifyOperator(&quot;normal&quot;, `Stripe API version ${apiVersion} not in exclude list`);
+  return EXCLUDE_FIELDS_BY_VERSION[&quot;default&quot;];
+}</code></pre>
+<h4 id="362-バージョン追加手順">3.6.2 バージョン追加手順</h4>
+<ol type="1">
+<li>Stripe 公式変更履歴を確認</li>
+<li>同一 event の再送で値が変わるフィールドを特定</li>
+<li>本書の除外フィールド表に追記</li>
+<li><code>BillingWebhookWorker</code> の正規化関数(<code>canonical_json</code>)の <code>EXCLUDE_FIELDS_BY_VERSION</code> マップを更新</li>
+<li>既存 Webhook イベントの再ハッシュ計算は実施しない(同 API バージョンでの整合性のみ保証)</li>
+<li>監査記録: <code>audit:webhook.exclude_list.update</code>(5y)を追加(action コードを <a href="DD09_監査actionコード.html">DD09_監査actionコード.html</a> に追加)</li>
+</ol>
+<h4 id="363-監視">3.6.3 監視</h4>
+<ul>
+<li><code>webhook_events.stripe_api_version</code> の分布を SCR-095 KPI セクションで可視化(同時稼働バージョン数の追跡)</li>
+<li>未登録バージョン受信時の通知頻度が日次 10 件超で運営者 high(<code>webhook.unknown_api_version.spike</code>、5y)</li>
+</ul>
+<h3 id="37-除外フィールド適用例">3.7 除外フィールド適用例</h3>
+<p>入力 payload:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;evt_xxx&quot;</span><span class="fu">,</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;created&quot;</span><span class="fu">:</span> <span class="dv">1715500000</span><span class="fu">,</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;livemode&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;api_version&quot;</span><span class="fu">:</span> <span class="st">&quot;2024-06-20&quot;</span><span class="fu">,</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;request&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;req_xxx&quot;</span><span class="fu">,</span> <span class="dt">&quot;idempotency_key&quot;</span><span class="fu">:</span> <span class="st">&quot;abc&quot;</span> <span class="fu">},</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;pending_webhooks&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;object&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;in_xxx&quot;</span><span class="fu">,</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;created&quot;</span><span class="fu">:</span> <span class="dv">1715500000</span><span class="fu">,</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;amount_paid&quot;</span><span class="fu">:</span> <span class="dv">10000</span><span class="fu">,</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;metadata&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">&quot;contract_owner_user_id&quot;</span><span class="fu">:</span> <span class="st">&quot;01J...&quot;</span><span class="fu">,</span> <span class="dt">&quot;test_run&quot;</span><span class="fu">:</span> <span class="st">&quot;true&quot;</span> <span class="fu">}</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">},</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;previous_attributes&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;open&quot;</span> <span class="fu">}</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;invoice.paid&quot;</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>除外後の正規化対象:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;evt_xxx&quot;</span><span class="fu">,</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;object&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;in_xxx&quot;</span><span class="fu">,</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;amount_paid&quot;</span><span class="fu">:</span> <span class="dv">10000</span><span class="fu">,</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;metadata&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">&quot;contract_owner_user_id&quot;</span><span class="fu">:</span> <span class="st">&quot;01J...&quot;</span> <span class="fu">}</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;invoice.paid&quot;</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p><code>payload_hash = sha256(canonical_json(filtered_payload))</code></p>
+<h3 id="38-dlq-自動指数バックオフ--手動リプレイ">3.8 DLQ 自動指数バックオフ + 手動リプレイ</h3>
+<p><code>DLQAutoBackoffWorker</code>(5 分 cron)が <code>state='failed'</code> のイベントを最大 3 回リトライする:</p>
+<table>
+<thead>
+<tr>
+<th>attempt</th>
+<th>バックオフ</th>
+<th>累計経過</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>1 分</td>
+<td>1 分</td>
+</tr>
+<tr>
+<td>2</td>
+<td>4 分</td>
+<td>5 分</td>
+</tr>
+<tr>
+<td>3</td>
+<td>16 分</td>
+<td>21 分</td>
+</tr>
+<tr>
+<td>失敗継続(1h 経過)</td>
+<td><code>dlq_manual_replay</code> 遷移</td>
+<td>運営者 high alert</td>
+</tr>
+</tbody>
+</table>
+<p>詳細擬似コードは <a href="DD08_Cron実装.html">DD08_Cron実装.html</a> §14.2.6 を参照。</p>
+<p><strong>手動リプレイ API</strong>:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">/webhooks/replay</span><span class="kw">:</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">post</span><span class="kw">:</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">summary</span><span class="kw">:</span><span class="at"> Webhook 手動リプレイ</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">parameters</span><span class="kw">:</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">$ref</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;#/components/parameters/XOpTicketId&quot;</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">$ref</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;#/components/parameters/IdempotencyKey&quot;</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">$ref</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;#/components/parameters/XCsrfToken&quot;</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">requestBody</span><span class="kw">:</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">required</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">content</span><span class="kw">:</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">application/json</span><span class="kw">:</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">schema</span><span class="kw">:</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">type</span><span class="kw">:</span><span class="at"> object</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">required</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">eventId</span><span class="kw">]</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">properties</span><span class="kw">:</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">eventId</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">type</span><span class="kw">:</span><span class="at"> string </span><span class="kw">}</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">responses</span><span class="kw">:</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">&quot;200&quot;</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">description</span><span class="kw">:</span><span class="at"> リプレイ実行完了 </span><span class="kw">}</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">&quot;409&quot;</span><span class="kw">:</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">content</span><span class="kw">:</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">application/problem+json</span><span class="kw">:</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">schema</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">$ref</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;#/components/schemas/Problem&quot;</span><span class="at"> </span><span class="kw">}</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">&quot;410&quot;</span><span class="kw">:</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">content</span><span class="kw">:</span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">application/problem+json</span><span class="kw">:</span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">schema</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="at"> </span><span class="fu">$ref</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;#/components/schemas/Problem&quot;</span><span class="at"> </span><span class="kw">}</span></span></code></pre></div>
+<p><code>409</code> は既処理(成功状態)、<code>410</code> は 30 日経過 <code>dlq_archived</code> 状態。</p>
+<h3 id="39-ペイロード差分検出後のレビューscr-098">3.9 ペイロード差分検出後のレビュー(SCR-098)</h3>
+<p>差分検出後は <code>webhook_payload_diffs.state</code> で SCR-098 上のレビューフローを管理:</p>
+<table>
+<thead>
+<tr>
+<th>From</th>
+<th>To</th>
+<th>トリガー</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>detected</td>
+<td>BillingWebhookWorker が差分検出</td>
+</tr>
+<tr>
+<td>detected</td>
+<td>reviewed</td>
+<td>start-review</td>
+</tr>
+<tr>
+<td>reviewed</td>
+<td>reprocessed_manually</td>
+<td>reprocess(再認証 + チケット必須)</td>
+</tr>
+<tr>
+<td>reviewed</td>
+<td>dismissed_no_action</td>
+<td>dismiss(理由必須)</td>
+</tr>
+</tbody>
+</table>
+<p>詳細は <a href="DD11_状態遷移詳細.html">DD11_状態遷移詳細.html</a> §B.6 を参照。</p>
+<h3 id="310-stripe-api-呼出th-9">3.10 Stripe API 呼出(★TH-9)</h3>
+<p>月次請求 cron で Stripe API を呼び出す:</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>エンドポイント</th>
+<th>冪等キー</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Invoice 作成</td>
+<td><code>POST /v1/invoices</code></td>
+<td><code>monthly-billing-${owner.id}-${target_month}</code></td>
+</tr>
+<tr>
+<td>Invoice Item 作成</td>
+<td><code>POST /v1/invoiceitems</code></td>
+<td>同上 + <code>-item</code></td>
+</tr>
+<tr>
+<td>Invoice Finalize</td>
+<td><code>POST /v1/invoices/{id}/finalize</code></td>
+<td>同上 + <code>-final</code></td>
+</tr>
+<tr>
+<td>Credit Note 発行</td>
+<td><code>POST /v1/credit_notes</code></td>
+<td><code>credit-note-${invoiceId}-${reason}</code></td>
+</tr>
+<tr>
+<td>Subscription Resume</td>
+<td><code>POST /v1/subscriptions/{id}</code> <code>cancel_at_period_end=false</code></td>
+<td><code>sub-resume-${subscriptionId}</code></td>
+</tr>
+</tbody>
+</table>
+<p>詳細擬似コードは <a href="DD08_Cron実装.html">DD08_Cron実装.html</a> §14.2.1 を参照。</p>
+<h3 id="311-連携-if-10本書--メイン">3.11 連携 IF #10(本書 → メイン)</h3>
+<p>本書側 BillingWebhookWorker は受信 → 正規化 → メイン側 <code>/internal/admin-integration/v1/billing/webhook-event</code> へ mTLS + JWT で転送する。完全な JSON Schema は <a href="../02_基本設計/02_API設計.html">基本設計 / API 設計</a> §5.8 + <a href="../02_基本設計/10_課金・請求設計.html">基本設計 / 課金・請求設計</a> §13 を正本とする。</p>
+<h3 id="312-主要エラーコード">3.12 主要エラーコード</h3>
+<table>
+<thead>
+<tr>
+<th>エラー ID</th>
+<th>HTTP</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>E-OP-WEBHOOK-001</code></td>
+<td>401</td>
+<td>SIGNATURE_INVALID</td>
+</tr>
+<tr>
+<td><code>E-OP-WEBHOOK-002</code></td>
+<td>409</td>
+<td>EVENT_ALREADY_PROCESSED(リプレイ拒否)</td>
+</tr>
+<tr>
+<td><code>E-OP-WEBHOOK-003</code></td>
+<td>410</td>
+<td>EVENT_ARCHIVED(30 日経過)</td>
+</tr>
+<tr>
+<td><code>E-OP-WEBHOOK-004</code></td>
+<td>502</td>
+<td>UPSTREAM_MAIN_FAILED(連携 IF #10 5xx)</td>
+</tr>
+</tbody>
+</table>
+<p>完全な E-OP-WEBHOOK-* 一覧は <a href="../02_基本設計/05_エラー設計.html">基本設計 / エラー設計</a> を正本とする。</p>
+<h2 id="4-関連設計">4. 関連設計</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>参照先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>要件</td>
+<td><a href="../01_要件定義/index.html">../01_要件定義/index.html</a></td>
+</tr>
+<tr>
+<td>基本設計</td>
+<td><a href="../02_基本設計/index.html">../02_基本設計/index.html</a></td>
+</tr>
+<tr>
+<td>API 設計(正本)</td>
+<td><a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html</a></td>
+</tr>
+<tr>
+<td>課金・請求設計(正本)</td>
+<td><a href="../02_基本設計/10_課金・請求設計.html">../02_基本設計/10_課金・請求設計.html</a></td>
+</tr>
+<tr>
+<td>メインテーブル設計</td>
+<td><a href="../../01_メインシステム/02_基本設計/03_テーブル設計.html">../../01_メインシステム/02_基本設計/03_テーブル設計.html</a></td>
+</tr>
+<tr>
+<td>関連 DD</td>
+<td><a href="DD08_Cron実装.html">DD08_Cron実装.html</a> / <a href="DD11_状態遷移詳細.html">DD11_状態遷移詳細.html</a></td>
+</tr>
+<tr>
+<td>運用設計</td>
+<td><a href="../04_運用設計/index.html">../04_運用設計/index.html</a></td>
+</tr>
+<tr>
+<td>将来対応</td>
+<td><a href="../05_future/index.html">../05_future/index.html</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-テスト観点">5. テスト観点</h2>
+<h3 id="51-ユニットテスト">5.1 ユニットテスト</h3>
+<ul>
+<li>HMAC-SHA256 署名検証(正当 / 改ざん / タイミング攻撃耐性)</li>
+<li><code>canonical_json</code> 正規化(除外フィールド + キーソート + 配列再帰)</li>
+<li>同 event_id + 同 payload_hash → duplicate_skipped_hash_match</li>
+<li>同 event_id + 異 payload_hash → diff detected</li>
+<li>指数バックオフ計算(1m / 4m / 16m)</li>
+<li>30 日経過判定(dlq_archived)</li>
+</ul>
+<h3 id="52-結合テストminiflare--stripe-test-mode">5.2 結合テスト(Miniflare + Stripe Test Mode)</h3>
+<ul>
+<li>正常受信 → 連携 IF #10 → succeeded</li>
+<li>一時失敗 → 自動 BO 3 回 → dlq_manual_replay</li>
+<li>手動リプレイ → succeeded</li>
+<li>差分検出 → reviewed → reprocess</li>
+<li>30 日経過 → dlq_archived</li>
+<li>不明な API バージョン → デフォルトリスト + 通知</li>
+</ul>
+<h3 id="53-e2e-テストplaywright">5.3 E2E テスト(Playwright)</h3>
+<table>
+<thead>
+<tr>
+<th>テスト ID</th>
+<th>シナリオ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>e2e-scr097-001</code></td>
+<td>DLQ 一覧 → 30 日ウィンドウ → 手動リプレイ</td>
+</tr>
+<tr>
+<td><code>e2e-scr099-001</code></td>
+<td>差分検出 → SCR-098 表示 → reprocess / dismiss</td>
+</tr>
+</tbody>
+</table>
+<h3 id="54-負荷試験">5.4 負荷試験</h3>
+<table>
+<thead>
+<tr>
+<th>シナリオ</th>
+<th>構成</th>
+<th>合格基準</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>(A4) Stripe Webhook 受信</td>
+<td>100 event/分 + 10% で差分検出</td>
+<td>冪等性 + DLQ 挙動</td>
+</tr>
+<tr>
+<td>(A3) Webhook 集中受信</td>
+<td>Stripe Webhook 1000 件/分 × 5 分</td>
+<td>p95 ≤ 500ms、<code>webhook_events.state</code> 整合性 100%</td>
+</tr>
+<tr>
+<td>(A5) DLQ 大量リプレイ</td>
+<td>1000 件の <code>dlq_manual_replay</code> を同時起動</td>
+<td>サーキットブレーカ open 率が想定通り、5xx → 自動 BO で全件最終完了</td>
+</tr>
+</tbody>
+</table>
+<h3 id="55-受入条件マッピング">5.5 受入条件マッピング</h3>
+<table>
+<thead>
+<tr>
+<th>AC</th>
+<th>検証手段</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AC-041(Webhook 冪等性 + 差分検出)</td>
+<td>統合テスト(差分検出ケース含)+ リプレイ運用</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-未確定事項確認事項">6. 未確定事項・確認事項</h2>
+<table>
+<thead>
+<tr>
+<th>確認事項ID</th>
+<th>確認内容</th>
+<th>優先度</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>v1.0 リリース時点で全項目確定済み</td>
+<td>低</td>
+<td>確認済</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

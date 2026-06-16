@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FR19: アクセス制御細部 | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/01_要件定義/FR19_アクセス制御細部.html">
+<article class="content" id="content">
+<h1 id="fr19-アクセス制御細部">FR19: アクセス制御細部</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書名</td>
+<td>FR19: アクセス制御細部</td>
+</tr>
+<tr>
+<td>機能グループ</td>
+<td>アクセス制御細部</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>FAQ AI ウィジェット SaaS / メインシステム</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-17</td>
+</tr>
+<tr>
+<td>版数</td>
+<td>v1.2</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>承認済</td>
+</tr>
+<tr>
+<td>更新履歴</td>
+<td>v1.2(2026-06-14): 契約横断メンバー画面を廃止し、最後のプロジェクト割当解除時のアカウント自動無効化を追加 / v1.1(2026-06-10): 管理範囲スイッチャーとプロジェクト割当解除の権限モデルへ更新</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-機能概要">1. 機能概要</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>概要</td>
+<td>海外 IP 遮断(運営者画面のみデフォルト ON)、複数デバイス同時ログイン、オーナーの退会・停止・削除・降格・譲渡の不可制約、自己操作不可制約、メンバーの 1 オーナー固定、プロジェクト別ロール選択 UI、ダッシュボードの権限不問アクセス、ロール変更後のセッション扱い、未割当メンバーの 403 拒否を扱う</td>
+</tr>
+<tr>
+<td>利用場面</td>
+<td>運営者の海外 IP 制限、ユーザー管理画面でのプロジェクト別ロール変更、URL 直アクセス時の拒否</td>
+</tr>
+<tr>
+<td>優先度</td>
+<td>Must</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-収録-fr-nnn-一覧">2. 収録 FR-NNN 一覧</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>要件</th>
+<th style="text-align: center;">優先度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-331</td>
+<td>海外 IP 遮断は <strong>運営者画面のみデフォルト ON</strong> とする。利用者側 API およびウィジェットは海外エンドユーザーから到達するため対象外</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>FR-332</td>
+<td>同一アカウントの複数デバイス同時ログインは可能とすること。運営者は連携 IF #2 で強制ログアウトを実行できる。<strong>利用者自身によるアクティブセッション一覧の表示・自己セッション終了(SCR-017)は MVP 対象外・将来対応</strong>(<a href="../05_future/index.html">05_future</a>)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-333</td>
+<td>オーナーは <strong>退会・停止・削除・降格・譲渡の不可制約</strong> とすること。1 アカウント = 1 オーナーの自存により、orphan 状態は構造的に発生しない。オーナー譲渡機能は MVP 対象外とし、緊急時はサポート窓口経由の運営者対応とする</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-334</td>
+<td>利用者(オーナー / メンバー)は <strong>自分自身の利用状態変更・削除・ロール降格不可</strong> とすること。特に自分が当該プロジェクトで <code>admin</code> ロールを持つ最後の管理者である場合、自身を降格する操作(<code>admin</code> → <code>member</code>)は不可で、別の <code>admin</code> 保持者(またはオーナー)経由で実行する必要がある。自分自身のアカウント削除は常に不可とし、オーナーが他人を経由して削除する経路もない(オーナー自身の操作のみが他者を削除する。FR-019)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-335</td>
+<td>メンバーは 1 アカウント = 1 オーナー配下に固定し、同一メールアドレスでも別オーナー配下では別アカウントとして扱うこと</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>FR-336</td>
+<td>プロジェクト別ロールの指定は当該プロジェクトごとに「割当しない / メンバー / 管理者」の 3 値ラジオで行うこととし、契約横断のプリセットロールは持たないこと</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-337</td>
+<td>ダッシュボード(自分の通知・お知らせ受信箱)は、オーナーおよびメンバーが閲覧できること(アカウント削除はアカウントレベル論理削除のため、現存メンバーは常に 1 件以上の割当を保持する)。それ以外の画面はそれぞれのロールとプロジェクト境界を要求する</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-338</td>
+<td>プロジェクト別ロールおよびプロジェクト割当の追加・剥奪はアクティブセッションを即時失効させず、次回認可チェック時点で反映することで足りること。反映上限時間とキャッシュ方式は基本設計を正本とする</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>FR-339</td>
+<td>非オーナーの最後の有効なプロジェクト割当を解除した場合は、対象アカウントを自動無効化して全セッションと未使用招待トークンを失効すること。契約横断のメンバー管理画面は提供しない。割当のないプロジェクトURLへの直アクセスは403とする</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-340</td>
+<td>現在の管理範囲と適用ロールはヘッダーの「管理範囲を切り替え」およびアカウントメニューで確認できること。独立したロールバッジを全画面へ重複表示する必要はない。複合ロールの場合は現在のプロジェクトで適用されるロールを表示する</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-341</td>
+<td>権限外の主ナビゲーションと操作は原則として表示しないこと。共同作業上、存在を知らせる価値がある項目は読み取り専用で表示し、必要権限と依頼先を説明する。URL直アクセスの403では同等の説明と戻り先を提示する</td>
+<td style="text-align: center;">P0</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-補足説明統合参照">3. 補足説明・統合参照</h2>
+<p>(該当なし。権限マトリクス本体は §6.2 を、ロール定義は §6.2.0 を、プロジェクト境界は §6.2.0a を、緊急区分の客観条件は §6.2.1 / §6.2.2 を参照)</p>
+<h2 id="4-関連設計">4. 関連設計</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>参照先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>画面設計</td>
+<td><a href="../02_基本設計/01_画面設計.html">../02_基本設計/01_画面設計.html</a></td>
+</tr>
+<tr>
+<td>API 設計</td>
+<td><a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html</a></td>
+</tr>
+<tr>
+<td>テーブル設計</td>
+<td><a href="../02_基本設計/03_テーブル設計.html">../02_基本設計/03_テーブル設計.html</a></td>
+</tr>
+<tr>
+<td>権限設計</td>
+<td><a href="../02_基本設計/04_権限設計.html">../02_基本設計/04_権限設計.html</a></td>
+</tr>
+<tr>
+<td>エラー設計</td>
+<td><a href="../02_基本設計/05_エラー設計.html">../02_基本設計/05_エラー設計.html</a></td>
+</tr>
+<tr>
+<td>メッセージ</td>
+<td><a href="../02_基本設計/06_メッセージ一覧.html">../02_基本設計/06_メッセージ一覧.html</a></td>
+</tr>
+<tr>
+<td>認証・認可設計</td>
+<td><a href="../02_基本設計/08_認証・認可設計.html">../02_基本設計/08_認証・認可設計.html</a></td>
+</tr>
+<tr>
+<td>詳細設計</td>
+<td><a href="../03_詳細設計/index.html">../03_詳細設計/index.html</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-未確定事項確認事項">5. 未確定事項・確認事項</h2>
+<table>
+<thead>
+<tr>
+<th>確認事項ID</th>
+<th>確認内容</th>
+<th>優先度</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>v1.0 リリース時点で全項目確定済み</td>
+<td>低</td>
+<td>確認済</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

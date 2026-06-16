@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DD07: KV・R2 オブジェクト(運営者システム) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="02_運営者システム/03_詳細設計/DD07_KV・R2オブジェクト.html">
+<article class="content" id="content">
+<h1 id="dd07-kvr2-オブジェクト運営者システム">DD07: KV・R2 オブジェクト(運営者システム)</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書名</td>
+<td>DD07: KV・R2 オブジェクト(運営者システム)</td>
+</tr>
+<tr>
+<td>詳細設計ID</td>
+<td>DD07</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>FAQ AI ウィジェット SaaS / 運営者システム</td>
+</tr>
+<tr>
+<td>関連機能ID</td>
+<td>TH-7, D-13, D-14, D-15, D-17, D-19</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-17</td>
+</tr>
+<tr>
+<td>版数</td>
+<td>v1.0</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>承認済</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-対象範囲">1. 対象範囲</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>ID</th>
+<th>名称</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>機能</td>
+<td>TH-7</td>
+<td>KV キー・R2 オブジェクト一覧の確定</td>
+</tr>
+<tr>
+<td>KV namespace</td>
+<td><code>admin_cache</code></td>
+<td>運営者プレーン専用 KV</td>
+</tr>
+<tr>
+<td>R2 bucket</td>
+<td><code>admin_archive</code></td>
+<td>運営者プレーン専用 R2</td>
+</tr>
+<tr>
+<td>API</td>
+<td>全機能横断</td>
+<td>KV 参照型機能フラグ / レート上書き / AI パラメータ等</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-収録ロジック対応章">2. 収録ロジック・対応章</h2>
+<table>
+<thead>
+<tr>
+<th>元章</th>
+<th>元タイトル</th>
+<th>概要</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>§9 全文</td>
+<td>KV キー・R2 オブジェクト一覧(★TH-7)</td>
+<td>全 KV キーの命名・値スキーマ・TTL・サンプル・参照 Worker</td>
+</tr>
+<tr>
+<td>付録 J</td>
+<td>KV キー早見表</td>
+<td>1 ページ集約 + 監視 KPI 動的閾値 + サーキットブレーカ</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-詳細設計本文">3. 詳細設計本文</h2>
+<h3 id="31-kv-キー命名規則">3.1 KV キー命名規則</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>規約</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>一般形式</td>
+<td><code>&lt;feature&gt;:&lt;scope&gt;:&lt;id&gt;</code>(英小文字 + ハイフン + コロン区切り)</td>
+</tr>
+<tr>
+<td>機能ごとに TTL を設定</td>
+<td>認証系 60s〜15min、フラグ系 60s、ルール系 60s、レート/上限件数 30s、トークン系 個別</td>
+</tr>
+<tr>
+<td>文字制限</td>
+<td>英数 + <code>-</code> + <code>_</code> + <code>:</code>、最大 512 バイト</td>
+</tr>
+<tr>
+<td>値形式</td>
+<td>JSON 文字列、bool、数値、または ID 文字列</td>
+</tr>
+<tr>
+<td>Namespace</td>
+<td><code>admin_cache</code>(本書側専用 KV namespace)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-kv-キー全表">3.2 KV キー全表</h3>
+<h4 id="321-認証セッション">3.2.1 認証・セッション</h4>
+<table>
+<thead>
+<tr>
+<th>キー形式</th>
+<th>値スキーマ</th>
+<th>TTL</th>
+<th>更新タイミング</th>
+<th>参照 Worker</th>
+<th>サンプル</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>operator-session:&lt;session_id&gt;</code></td>
+<td><code>{ operatorId, mfaVerifiedAt, reauthenticatedAt, csrfToken, expiresAt }</code></td>
+<td>60 秒(キャッシュ)</td>
+<td>ログイン時、ログアウト時失効</td>
+<td>AdminConsoleWorker</td>
+<td><code>{"operatorId":"01J...","mfaVerifiedAt":"...","csrfToken":"abc"}</code></td>
+</tr>
+<tr>
+<td><code>operator-ip-allowlist:&lt;operator_id&gt;</code></td>
+<td><code>["203.0.113.0/24","2001:db8::/48"]</code>(CIDR 配列)</td>
+<td>60 秒</td>
+<td>IP リスト変更時に Invalidate</td>
+<td>エッジ(AdminConsoleWorker)</td>
+<td><code>["203.0.113.0/24"]</code></td>
+</tr>
+<tr>
+<td><code>mfa-setup:&lt;operator_id&gt;</code></td>
+<td><code>{ token, secret, expiresAt }</code></td>
+<td>72 時間</td>
+<td>MFA セットアップ開始時</td>
+<td>AdminConsoleWorker</td>
+<td>-</td>
+</tr>
+<tr>
+<td><code>password-reset:&lt;token_hash&gt;</code></td>
+<td><code>{ operatorId, expiresAt }</code></td>
+<td>60 分</td>
+<td>リセット要求時</td>
+<td>AdminConsoleWorker</td>
+<td>-</td>
+</tr>
+<tr>
+<td><code>re-auth:&lt;session_id&gt;</code></td>
+<td><code>{ operatorId, reauthenticatedAt, consumed }</code></td>
+<td>15 分(1 回限り、<code>consumed=true</code> で即時失効)</td>
+<td>再認証成功時</td>
+<td>AdminConsoleWorker</td>
+<td><code>{"operatorId":"01J...","consumed":false}</code></td>
+</tr>
+<tr>
+<td><code>login-lockout:&lt;ip_hash&gt;:&lt;operator_id&gt;</code></td>
+<td><code>{ failedCount, lockedUntil }</code></td>
+<td>15 分</td>
+<td>ログイン失敗時</td>
+<td>AdminConsoleWorker</td>
+<td><code>{"failedCount":5,"lockedUntil":"..."}</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="322-機能フラグ">3.2.2 機能フラグ</h4>
+<table>
+<thead>
+<tr>
+<th>キー形式</th>
+<th>値</th>
+<th>TTL</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>feature:hard-gate:&lt;action_code&gt;</code></td>
+<td><code>true</code> / <code>false</code></td>
+<td>60 秒(キャッシュ)</td>
+<td>MVP ハードゲート 3 操作を制御</td>
+</tr>
+<tr>
+<td><code>feature:ai-model:rollout:&lt;version&gt;</code></td>
+<td><code>{ percentage: 0|10|50|100 }</code></td>
+<td>60 秒</td>
+<td>AI モデルロールアウト</td>
+</tr>
+<tr>
+<td><code>feature:pii-rule-rollout:&lt;revision_id&gt;</code></td>
+<td><code>{ percentage: 0|10|50|100 }</code></td>
+<td>60 秒</td>
+<td>PII ルールロールアウト</td>
+</tr>
+<tr>
+<td><code>feature:announcement-batch-size</code></td>
+<td>数値</td>
+<td>60 秒</td>
+<td>1 cron tick あたりのお知らせ最大処理件数(既定 100)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="323-ルールパラメータ">3.2.3 ルール・パラメータ</h4>
+<table>
+<thead>
+<tr>
+<th>キー形式</th>
+<th>値スキーマ</th>
+<th>TTL</th>
+<th>主管</th>
+<th>更新元</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pii-rules:regex</code></td>
+<td><code>[{ id, pattern, enabled }, ...]</code></td>
+<td>60 秒(D-13)</td>
+<td>本書</td>
+<td>SCR-097 <code>POST /pii-rules/revisions</code></td>
+</tr>
+<tr>
+<td><code>pii-rules:classifier</code></td>
+<td><code>{ threshold, weights, modelId }</code></td>
+<td>60 秒(D-13)</td>
+<td>本書</td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>ai-params:global</code></td>
+<td><code>{ confidenceThreshold, relevanceThreshold, modelId }</code></td>
+<td>60 秒(D-15)</td>
+<td>本書</td>
+<td>SCR-092</td>
+</tr>
+<tr>
+<td><code>ai-params:owner:&lt;contract_owner_user_id&gt;</code></td>
+<td>同上</td>
+<td>60 秒</td>
+<td>本書</td>
+<td>SCR-092</td>
+</tr>
+<tr>
+<td><code>ai-params:project:&lt;project_id&gt;</code></td>
+<td>同上</td>
+<td>60 秒</td>
+<td>本書</td>
+<td>SCR-092</td>
+</tr>
+<tr>
+<td><code>ai-models:available</code></td>
+<td><code>["@cf/meta/llama-3.1-8b-instruct", ...]</code></td>
+<td>60 秒</td>
+<td>本書</td>
+<td>運営者手動</td>
+</tr>
+<tr>
+<td><code>ai-cost:unit-prices</code></td>
+<td><code>{ "&lt;model_id&gt;": { "input_per_1k_tokens": &lt;yen&gt;, "output_per_1k_tokens": &lt;yen&gt; } }</code></td>
+<td>60 秒</td>
+<td>本書</td>
+<td>運営者手動(NFR-804 (m) FR-304)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="324-レート契約単位--月次上限件数無料枠プロジェクト単位上書き">3.2.4 レート(契約単位) / 月次上限件数・無料枠(プロジェクト単位)上書き</h4>
+<table>
+<thead>
+<tr>
+<th>キー形式</th>
+<th>値スキーマ</th>
+<th>TTL</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>rate-limit:&lt;contract_owner_user_id&gt;</code></td>
+<td><code>{ widgetAskPerMin, chatEndUserPerMin, chatStaffPerMin }</code></td>
+<td>30 秒(D-14)</td>
+<td>メイン側参照(レート、契約単位)</td>
+</tr>
+<tr>
+<td><code>usage-limit:&lt;contract_owner_user_id&gt;:&lt;project_id&gt;</code></td>
+<td><code>{ questionMonthlyLimit, questionFreeQuota, faqFreeQuota, chatRoomFreeQuota, paymentGateStopped }</code></td>
+<td>30 秒</td>
+<td>メイン側参照(質問数上限・課金対象別無料枠、<strong>プロジェクト単位</strong>)</td>
+</tr>
+<tr>
+<td><code>usage-limit:default:&lt;kind&gt;</code></td>
+<td>件数</td>
+<td>永続(運営者更新時のみ Invalidate)</td>
+<td>プロジェクト別デフォルト上限件数</td>
+</tr>
+<tr>
+<td><code>usage-limit:free-default:&lt;kind&gt;</code></td>
+<td>件数</td>
+<td>永続</td>
+<td>プロジェクト別デフォルト無料枠</td>
+</tr>
+<tr>
+<td><code>usage-limit:min</code></td>
+<td><code>{ question }</code></td>
+<td>永続</td>
+<td>質問数上限のバリデーション下限</td>
+</tr>
+<tr>
+<td><code>usage-limit:max</code></td>
+<td><code>{ question }</code></td>
+<td>永続</td>
+<td>質問数上限のバリデーション上限</td>
+</tr>
+</tbody>
+</table>
+<h4 id="325-webhookトークン">3.2.5 Webhook・トークン</h4>
+<table>
+<thead>
+<tr>
+<th>キー形式</th>
+<th>値スキーマ</th>
+<th>TTL</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>webhook:idempotency:&lt;event_id&gt;</code></td>
+<td><code>{ payloadHash, state, processedAt }</code></td>
+<td>30 日</td>
+<td>event_id 冪等(D1 <code>webhook_events</code> のキャッシュ)</td>
+</tr>
+<tr>
+<td><code>audit-export:&lt;job_id&gt;</code></td>
+<td><code>{ status, files, signature }</code></td>
+<td>24 時間</td>
+<td>エクスポート進捗</td>
+</tr>
+</tbody>
+</table>
+<h4 id="326-通知集約">3.2.6 通知集約</h4>
+<table>
+<thead>
+<tr>
+<th>キー形式</th>
+<th>値スキーマ</th>
+<th>TTL</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>notify-batch:&lt;contract_owner_user_id&gt;:&lt;operation_kind&gt;</code></td>
+<td><code>{ entries: [...], firstAt }</code></td>
+<td>10 分(D-19)</td>
+<td>FR-211 集約窓</td>
+</tr>
+</tbody>
+</table>
+<h3 id="33-r2-オブジェクトパス">3.3 R2 オブジェクトパス</h3>
+<p>Namespace: <code>admin_archive</code>(本書側専用 R2 バケット)</p>
+<table>
+<thead>
+<tr>
+<th>パス</th>
+<th>用途</th>
+<th>保持</th>
+<th>アクセス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dlq-stripe-events/&lt;event_id&gt;.json</code></td>
+<td>DLQ 退避 Webhook ペイロード</td>
+<td>30 日(life-cycle rule)</td>
+<td>BillingWebhookWorker / SCR-096</td>
+</tr>
+<tr>
+<td><code>audit-export/&lt;job_id&gt;-&lt;seq&gt;.csv</code></td>
+<td>監査ログエクスポート(CSV)</td>
+<td>24 時間</td>
+<td>AdminConsoleWorker</td>
+</tr>
+<tr>
+<td><code>audit-export/&lt;job_id&gt;-&lt;seq&gt;.jsonl</code></td>
+<td>同(JSONL)</td>
+<td>24 時間</td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>audit-export/&lt;job_id&gt;-&lt;seq&gt;.sig</code></td>
+<td>HMAC 署名ファイル(D-17)</td>
+<td>24 時間</td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>webhook-payload-snapshots/&lt;event_id&gt;-&lt;received_at&gt;.json</code></td>
+<td>ペイロード差分検出時のスナップショット</td>
+<td>30 日</td>
+<td>BillingWebhookWorker</td>
+</tr>
+<tr>
+<td><code>audit-archive/&lt;retention_class&gt;/&lt;year&gt;/&lt;month&gt;.tar.gz</code></td>
+<td>監査ログ年次アーカイブ</td>
+<td>法令対応期間内</td>
+<td>R2AuditArchiveWorker</td>
+</tr>
+<tr>
+<td><code>backup/d1-snapshots/&lt;env&gt;/&lt;date&gt;.sqlite</code></td>
+<td>D1 日次バックアップ(NFR-803 三層)</td>
+<td>日次 30 日 / 週次 12 週 / 月次 12 ヶ月</td>
+<td>Backup Worker(別 Worker)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="34-kv-キー早見表付録-j-同等">3.4 KV キー早見表(付録 J 同等)</h3>
+<table>
+<thead>
+<tr>
+<th>キー形式</th>
+<th>値</th>
+<th>TTL</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>operator-session:&lt;sid&gt;</code></td>
+<td>JSON</td>
+<td>60s</td>
+<td>セッションキャッシュ</td>
+</tr>
+<tr>
+<td><code>operator-ip-allowlist:&lt;operator_id&gt;</code></td>
+<td>JSON 配列</td>
+<td>60s</td>
+<td>エッジ IP 判定</td>
+</tr>
+<tr>
+<td><code>mfa-setup:&lt;operator_id&gt;</code></td>
+<td>JSON</td>
+<td>72h</td>
+<td>初回 MFA</td>
+</tr>
+<tr>
+<td><code>password-reset:&lt;token_hash&gt;</code></td>
+<td>JSON</td>
+<td>60m</td>
+<td>リセット</td>
+</tr>
+<tr>
+<td><code>re-auth:&lt;sid&gt;</code></td>
+<td>JSON</td>
+<td>15m</td>
+<td>1 回限り</td>
+</tr>
+<tr>
+<td><code>login-lockout:&lt;ip_hash&gt;:&lt;operator_id&gt;</code></td>
+<td>JSON</td>
+<td>15m</td>
+<td>ロックアウト</td>
+</tr>
+<tr>
+<td><code>feature:hard-gate:&lt;action_code&gt;</code></td>
+<td>bool</td>
+<td>60s</td>
+<td>4-eyes 切替</td>
+</tr>
+<tr>
+<td><code>feature:pii-layer2:enabled</code></td>
+<td>bool</td>
+<td>60s</td>
+<td>PII NER</td>
+</tr>
+<tr>
+<td><code>feature:ai-model:rollout:&lt;version&gt;</code></td>
+<td>JSON</td>
+<td>60s</td>
+<td>モデル段階展開</td>
+</tr>
+<tr>
+<td><code>feature:pii-rule-rollout:&lt;revision&gt;</code></td>
+<td>JSON</td>
+<td>60s</td>
+<td>PII ルール段階</td>
+</tr>
+<tr>
+<td><code>feature:announcement-batch-size</code></td>
+<td>int</td>
+<td>60s</td>
+<td>お知らせバッチ</td>
+</tr>
+<tr>
+<td><code>pii-rules:regex</code></td>
+<td>JSON 配列</td>
+<td>60s</td>
+<td>PII 第 1 層</td>
+</tr>
+<tr>
+<td><code>ai-params:global</code></td>
+<td>JSON</td>
+<td>60s</td>
+<td>AI 既定値</td>
+</tr>
+<tr>
+<td><code>ai-params:owner:&lt;contract_owner_user_id&gt;</code></td>
+<td>JSON</td>
+<td>60s</td>
+<td>契約上書き</td>
+</tr>
+<tr>
+<td><code>ai-params:project:&lt;project_id&gt;</code></td>
+<td>JSON</td>
+<td>60s</td>
+<td>プロジェクト上書き</td>
+</tr>
+<tr>
+<td><code>ai-models:available</code></td>
+<td>JSON 配列</td>
+<td>60s</td>
+<td>モデル一覧</td>
+</tr>
+<tr>
+<td><code>ai-cost:unit-prices</code></td>
+<td>JSON</td>
+<td>60s</td>
+<td>単価表(FR-304)</td>
+</tr>
+<tr>
+<td><code>rate-limit:&lt;contract_owner_user_id&gt;</code></td>
+<td>JSON</td>
+<td>30s</td>
+<td>レート上書き(契約単位)</td>
+</tr>
+<tr>
+<td><code>usage-limit:&lt;contract_owner_user_id&gt;:&lt;project_id&gt;</code></td>
+<td>JSON</td>
+<td>30s</td>
+<td>月次上限件数・無料枠上書き(プロジェクト単位)</td>
+</tr>
+<tr>
+<td><code>usage-limit:default:&lt;kind&gt;</code> / <code>free-default:&lt;kind&gt;</code></td>
+<td>件数</td>
+<td>永続</td>
+<td>プロジェクト別デフォルト上限 / 無料枠</td>
+</tr>
+<tr>
+<td><code>usage-limit:min</code> / <code>max</code></td>
+<td>JSON</td>
+<td>永続</td>
+<td>質問数上限のバリデーション</td>
+</tr>
+<tr>
+<td><code>webhook:idempotency:&lt;event_id&gt;</code></td>
+<td>JSON</td>
+<td>30d</td>
+<td>冪等キャッシュ</td>
+</tr>
+<tr>
+<td><code>audit-export:&lt;job_id&gt;</code></td>
+<td>JSON</td>
+<td>24h</td>
+<td>エクスポート進捗</td>
+</tr>
+<tr>
+<td><code>notify-batch:&lt;contract_owner_user_id&gt;:&lt;kind&gt;</code></td>
+<td>JSON</td>
+<td>10m</td>
+<td>FR-211 集約</td>
+</tr>
+<tr>
+<td><code>monitoring:thresholds:&lt;kpi_id&gt;</code></td>
+<td>JSON</td>
+<td>永続</td>
+<td>KPI 動的閾値(下表で初期値定義)</td>
+</tr>
+<tr>
+<td><code>cb:internal-api:&lt;endpoint&gt;</code></td>
+<td>JSON</td>
+<td>60s (open 時)</td>
+<td>サーキットブレーカ状態</td>
+</tr>
+<tr>
+<td><code>sre:planned-outage:&lt;id&gt;</code></td>
+<td>JSON</td>
+<td>永続</td>
+<td>計画停止期間(SLA 除外用)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="35-監視-kpi-動的閾値の初期値monitoringthresholdskpi_id">3.5 監視 KPI 動的閾値の初期値(<code>monitoring:thresholds:&lt;kpi_id&gt;</code>)</h3>
+<p><code>SLAComputeWorker</code> が KPI 集計時に参照する。MVP の初期値を以下に固定し、運営が <code>wrangler kv key put</code> で CLI 更新する。</p>
+<table>
+<thead>
+<tr>
+<th>kpi_id</th>
+<th>初期値</th>
+<th>単位</th>
+<th>意味</th>
+<th>チューニングガイド</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NFR-103-ai-p95</code></td>
+<td>2500</td>
+<td>ms</td>
+<td>AI 推論 p95 目標</td>
+<td>MVP で 2500ms を維持。p95 が 80% を超える日が月内 3 回以上 → 緩和判定(運営合議)</td>
+</tr>
+<tr>
+<td><code>NFR-105-admin-p95</code></td>
+<td>800</td>
+<td>ms</td>
+<td>管理画面一覧 p95</td>
+<td>4 週連続達成で AC-046 判定</td>
+</tr>
+<tr>
+<td><code>NFR-106-unread-p95</code></td>
+<td>200</td>
+<td>ms</td>
+<td>未読件数バッジ p95</td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>audit-search-p95</code></td>
+<td>1000</td>
+<td>ms</td>
+<td>監査ログ検索 p95</td>
+<td>100 万件超過時に運営者へ通知</td>
+</tr>
+<tr>
+<td><code>audit-export-duration-p95</code></td>
+<td>60</td>
+<td>s</td>
+<td>エクスポート完了時間 p95</td>
+<td>行平均サイズ実測値で運営者へ通知</td>
+</tr>
+<tr>
+<td><code>chain-verify-duration</code></td>
+<td>3600</td>
+<td>s</td>
+<td>ハッシュチェーン日次検証時間</td>
+<td>1000 万行超過時に分割検証へ</td>
+</tr>
+<tr>
+<td><code>dlq-stale-1h-count</code></td>
+<td>0</td>
+<td>count</td>
+<td>1h 超過 DLQ 件数</td>
+<td>0 維持、1 件で high alert</td>
+</tr>
+<tr>
+<td><code>four-eyes-pending-72h</code></td>
+<td>0</td>
+<td>count</td>
+<td>72h 経過承認待ち件数</td>
+<td>0 維持、1 件で high alert</td>
+</tr>
+<tr>
+<td><code>webhook-payload-diff-detected-24h</code></td>
+<td>0</td>
+<td>count</td>
+<td>24h 内 detected 件数</td>
+<td>0 維持、1 件で normal alert</td>
+</tr>
+<tr>
+<td><code>pii-fp-pending-3bd</code></td>
+<td>0</td>
+<td>count</td>
+<td>3 営業日経過 PII 誤検出報告</td>
+<td>0 維持、1 件で normal alert</td>
+</tr>
+<tr>
+<td><code>owner-mau-total</code></td>
+<td>—</td>
+<td>count</td>
+<td>全契約横断 MAU</td>
+<td>観測のみ、閾値なし</td>
+</tr>
+<tr>
+<td><code>ai-cost-per-owner-monthly</code></td>
+<td>50000</td>
+<td>yen</td>
+<td>契約月次 AI 原価(運営判断用)</td>
+<td>5 万円超過契約は月次レビュー対象</td>
+</tr>
+</tbody>
+</table>
+<p><strong>変更履歴監査</strong>: 閾値変更時は <code>monitoring.threshold.update</code> action コード(<code>retention_class='5y'</code>)で <code>audit_logs</code> に記録。<code>before</code> / <code>after</code> 値を <code>audit_logs.diff</code> に格納。</p>
+<h3 id="36-サーキットブレーカ-kvcbinternal-apiendpoint">3.6 サーキットブレーカ KV(<code>cb:internal-api:&lt;endpoint&gt;</code>)</h3>
+<p>値の形式:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;state&quot;</span><span class="fu">:</span> <span class="st">&quot;closed&quot;</span> <span class="er">|</span> <span class="st">&quot;open&quot;</span> <span class="er">|</span> <span class="st">&quot;half_open&quot;</span><span class="fu">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;openedAt&quot;</span><span class="fu">:</span> <span class="dv">1715600000000</span><span class="fu">,</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;failureCount&quot;</span><span class="fu">:</span> <span class="dv">3</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>TTL は <code>open</code> 状態時 60s、<code>closed</code> 復帰時は明示 DELETE。</p>
+<h3 id="37-計画停止-kvsreplanned-outageid">3.7 計画停止 KV(<code>sre:planned-outage:&lt;id&gt;</code>)</h3>
+<p>SLA 集計時に除外する計画停止期間を管理:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;outageId&quot;</span><span class="fu">:</span> <span class="st">&quot;01J...&quot;</span><span class="fu">,</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;scope&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;api&quot;</span><span class="ot">,</span><span class="st">&quot;webhook&quot;</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;startsAt&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-06-01T19:00:00Z&quot;</span><span class="fu">,</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;endsAt&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-06-01T20:00:00Z&quot;</span><span class="fu">,</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;reason&quot;</span><span class="fu">:</span> <span class="st">&quot;Cloudflare maintenance&quot;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p><code>SLAComputeWorker</code> が集計時に重複期間を除外する。</p>
+<h3 id="38-kv-運用ガイドライン">3.8 KV 運用ガイドライン</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>ガイドライン</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TTL 既定</td>
+<td>キャッシュ 60 秒、レート/上限件数 30 秒、トークン 個別、フラグ 60 秒</td>
+</tr>
+<tr>
+<td>Invalidate</td>
+<td>値変更後に必ず <code>DELETE</code>(TTL 待ちでは設計上の遅延が許容できる場合のみ放置)</td>
+</tr>
+<tr>
+<td>値サイズ</td>
+<td>1 KB 以下を推奨、超過時は R2 退避を検討</td>
+</tr>
+<tr>
+<td>KV API レート</td>
+<td><code>admin_cache</code> namespace 全体で 1000 RPS 上限を想定。超過時は L1 cache(Worker メモリ)併用</td>
+</tr>
+<tr>
+<td>監査</td>
+<td>KV 値の運営者操作変更は対応する <code>&lt;resource&gt;.&lt;verb&gt;</code> action_code を必ず記録(<code>feature.hard_gate.toggle</code> 等)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="39-r2-運用ガイドライン">3.9 R2 運用ガイドライン</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>ガイドライン</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Lifecycle Rule</td>
+<td><code>dlq-stripe-events/*</code> は 30 日後自動削除、<code>webhook-payload-snapshots/*</code> も 30 日</td>
+</tr>
+<tr>
+<td>監査エクスポート</td>
+<td>24 時間後自動削除(必要なら運営者が手元 PC へダウンロード)</td>
+</tr>
+<tr>
+<td>アーカイブ</td>
+<td><code>audit-archive/*</code> は法令保持期間まで保持、Lifecycle なし</td>
+</tr>
+<tr>
+<td>バックアップ</td>
+<td><code>backup/d1-snapshots/&lt;env&gt;/*</code> は日次 30 / 週次 12 / 月次 12</td>
+</tr>
+<tr>
+<td>アクセス制御</td>
+<td>公開 URL は Pre-signed URL のみ、TTL 24h、HMAC 署名(HKDF info=<code>r2-presigned</code>)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-関連設計">4. 関連設計</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>参照先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>要件</td>
+<td><a href="../01_要件定義/index.html">../01_要件定義/index.html</a></td>
+</tr>
+<tr>
+<td>基本設計</td>
+<td><a href="../02_基本設計/index.html">../02_基本設計/index.html</a></td>
+</tr>
+<tr>
+<td>セキュリティ設計(正本)</td>
+<td><a href="../02_基本設計/09_セキュリティ設計.html">../02_基本設計/09_セキュリティ設計.html</a></td>
+</tr>
+<tr>
+<td>関連 DD</td>
+<td><a href="DD01_運営者認証・6段認可.html">DD01_運営者認証・6段認可.html</a> / <a href="DD03_監査ハッシュチェーン.html">DD03_監査ハッシュチェーン.html</a> / <a href="DD04_Stripe_Webhook一次受信.html">DD04_Stripe_Webhook一次受信.html</a> / <a href="DD06_お知らせ承認・配信.html">DD06_お知らせ承認・配信.html</a> / <a href="DD10_PII偽陽性報告.html">DD10_PII偽陽性報告.html</a></td>
+</tr>
+<tr>
+<td>運用設計</td>
+<td><a href="../04_運用設計/index.html">../04_運用設計/index.html</a></td>
+</tr>
+<tr>
+<td>将来対応</td>
+<td><a href="../05_future/index.html">../05_future/index.html</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-テスト観点">5. テスト観点</h2>
+<h3 id="51-ユニットテスト">5.1 ユニットテスト</h3>
+<ul>
+<li>KV キー命名規則バリデーション(英小文字 + ハイフン + コロン)</li>
+<li>TTL 設定値の確認(KV 値書込時に <code>expirationTtl</code> 指定)</li>
+<li>機能フラグ KV キャッシュヒット・ミス</li>
+</ul>
+<h3 id="52-結合テストminiflare">5.2 結合テスト(Miniflare)</h3>
+<ul>
+<li>レート上書き → KV 書込 → 30 秒以内のメイン側参照で反映</li>
+<li>ハードゲート KV トグル → 60 秒以内に該当 action ハードゲート発動</li>
+<li>KV 値変更後の Invalidate 動作確認</li>
+</ul>
+<h3 id="53-e2e-テスト">5.3 E2E テスト</h3>
+<ul>
+<li>監視 KPI 閾値変更 → <code>monitoring.threshold.update</code> 監査記録</li>
+<li>サーキットブレーカ open / half_open / closed 遷移</li>
+</ul>
+<h3 id="54-運用テスト">5.4 運用テスト</h3>
+<ul>
+<li>R2 Lifecycle Rule 30 日後の自動削除動作確認(月次運用テスト)</li>
+<li>バックアップ三層保持の最古ファイル参照可能性</li>
+</ul>
+<h2 id="6-未確定事項確認事項">6. 未確定事項・確認事項</h2>
+<table>
+<thead>
+<tr>
+<th>確認事項ID</th>
+<th>確認内容</th>
+<th>優先度</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>v1.0 リリース時点で全項目確定済み</td>
+<td>低</td>
+<td>確認済</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

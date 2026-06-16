@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FR11: 通知 | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/01_要件定義/FR11_通知.html">
+<article class="content" id="content">
+<h1 id="fr11-通知">FR11: 通知</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書名</td>
+<td>FR11: 通知</td>
+</tr>
+<tr>
+<td>機能グループ</td>
+<td>通知</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>FAQ AI ウィジェット SaaS / メインシステム</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-17</td>
+</tr>
+<tr>
+<td>版数</td>
+<td>v1.2</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>承認済</td>
+</tr>
+<tr>
+<td>更新履歴</td>
+<td>v1.2(2026-06-12): MVPの通知契機と配信先を整理</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-機能概要">1. 機能概要</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>概要</td>
+<td>請求確定・運営お知らせなどの通知契機におけるメール送信、失敗時再送、バウンス・苦情検知と送信停止、配信状態管理、運営お知らせの一斉配信、運用イベントのシステム通知自動生成、プロジェクト別ロール割当変更通知を扱う</td>
+</tr>
+<tr>
+<td>利用場面</td>
+<td>月次請求確定通知、運営からのお知らせ配信、バウンス検知時の自動停止、不正利用検知時の管理者通知</td>
+</tr>
+<tr>
+<td>優先度</td>
+<td>Must</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-収録-fr-nnn-一覧">2. 収録 FR-NNN 一覧</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>要件</th>
+<th style="text-align: center;">優先度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-140</td>
+<td>請求確定、運営からのお知らせなどの契機で、対象となる管理者ユーザーへメールまたは受信箱通知できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-141</td>
+<td>通知の送信失敗時に再送できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-142</td>
+<td>バウンスや無効アドレスを検知し、通知停止と管理者通知ができること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-143</td>
+<td>管理者ユーザーのアカウント認証関連通知(パスワード再設定等)はオプトアウト不可とすること</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>FR-144</td>
+<td>契約/プロジェクト単位で送信レート制限・バウンス率・苦情率を監視し、しきい値超過時に送信抑制・運営者通知ができること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-145</td>
+<td>エンドユーザーが入力した文字列を、メール件名・送信元情報など外部に露出する箇所にそのまま使わないこと(スパム埋め込み・なりすまし対策)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-146</td>
+<td>通知配信状態(送信待ち/送信済み/配信済み/失敗/バウンス/苦情/停止)を可視化できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-147</td>
+<td>通知再送回数の上限を設けること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-148</td>
+<td>月次の請求が確定したタイミング(月次の確定処理タイミングは §8.11.1 と整合)で、管理者ユーザーにメール通知できること。通知には請求対象期間、請求金額、内訳(質問数・各種上限の超過分など)、請求書/明細の確認導線を含めること。同タイミングで対象管理者のお知らせ受信箱に「請求確定」のお知らせを生成すること(FR-187 と整合)。同一契約・同一請求月での重複請求を行わず、月次確定処理は冪等に動作すること(冪等キーの構成等の実装仕様は基本設計書を正本とする。顧客管理システム FR-303 と整合)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-149</td>
+<td>サービス運営者が、特定契約または全契約に対して任意のお知らせ(メンテナンス予告、機能追加、規約改定、価格改定など)をメール通知できること。通知の作成・送信は運営者のみが行い、宛先範囲(全契約/特定契約/特定ユーザー種別)、件名、本文、送信予定日時を指定できること。受信者は管理者ユーザーを対象とし、種別ごとにオプトアウトの可否を設定できること(ただし規約改定・重要セキュリティ通知などは強制送信としオプトアウト不可)。同タイミングで対象契約の管理者ユーザーのお知らせ受信箱に「運営お知らせ」のお知らせを生成すること(FR-188 と整合)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-149a</td>
+<td>運用イベント(FAQ 利用上限 80%/100% 接近、AI 利用上限到達、通知失敗急増、サスペンション、復元、規約改定、価格改定 等)を契機に「システム通知」のお知らせを自動生成できること。発生イベント一覧は §12.5 お知らせ種別マッピング表を参照</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>FR-149b</td>
+<td>バウンス・苦情検知時のメールサプレスリストは全契約横断で共有し、宛先別に再送停止すること(R-003 共通ドメイン使用に伴う対策)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-145a</td>
+<td>メンバーのプロジェクト別ロール割当(<code>project_users.role</code>)が追加・変更・剥奪された場合、当該メンバーへお知らせ受信箱(「運営お知らせ」種別・「通常」重要度)とメールで通知できること(FR-018b と整合)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-補足説明統合参照">3. 補足説明・統合参照</h2>
+<p>通知契機別の重要度・配信経路・オプトアウト可否は §12.5 お知らせ種別マッピング表を参照。通知信頼性の非機能要件は NFR-501〜507 を参照(再送 = 当方制御 3 回、Webhook 冪等性、再処理待ち滞留 1 時間以内アラート など)。</p>
+<h2 id="4-関連設計">4. 関連設計</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>参照先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>画面設計</td>
+<td><a href="../02_基本設計/01_画面設計.html">../02_基本設計/01_画面設計.html</a></td>
+</tr>
+<tr>
+<td>API 設計</td>
+<td><a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html</a></td>
+</tr>
+<tr>
+<td>テーブル設計</td>
+<td><a href="../02_基本設計/03_テーブル設計.html">../02_基本設計/03_テーブル設計.html</a></td>
+</tr>
+<tr>
+<td>権限設計</td>
+<td><a href="../02_基本設計/04_権限設計.html">../02_基本設計/04_権限設計.html</a></td>
+</tr>
+<tr>
+<td>エラー設計</td>
+<td><a href="../02_基本設計/05_エラー設計.html">../02_基本設計/05_エラー設計.html</a></td>
+</tr>
+<tr>
+<td>メッセージ</td>
+<td><a href="../02_基本設計/06_メッセージ一覧.html">../02_基本設計/06_メッセージ一覧.html</a></td>
+</tr>
+<tr>
+<td>詳細設計</td>
+<td><a href="../03_詳細設計/index.html">../03_詳細設計/index.html</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-未確定事項確認事項">5. 未確定事項・確認事項</h2>
+<table>
+<thead>
+<tr>
+<th>確認事項ID</th>
+<th>確認内容</th>
+<th>優先度</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>v1.0 リリース時点で全項目確定済み</td>
+<td>低</td>
+<td>確認済</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>監視設計(運営者システム) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="02_運営者システム/04_運用設計/01_監視設計.html">
+<article class="content" id="content">
+<h1 id="監視設計運営者システム">監視設計(運営者システム)</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書名</td>
+<td>監視設計(運営者システム)</td>
+</tr>
+<tr>
+<td>運用ID</td>
+<td>OPS-01</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>FAQ AI ウィジェット SaaS / 運営者システム</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-17</td>
+</tr>
+<tr>
+<td>版数</td>
+<td>v1.0</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>承認済</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-監視方針">1. 監視方針</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>計測基盤</td>
+<td>Cloudflare Workers Analytics Engine、5 分窓集計、日次評価</td>
+</tr>
+<tr>
+<td>ダッシュボード</td>
+<td>SCR-095 KPI セクション(NFR-804 (a)〜(l)、グラフ + 直近 30 日履歴)、SCR-096(DLQ 滞留、Webhook 受信失敗率、自動 BO 進捗)、SCR-097(PII 誤検出報告状態別)、SCR-098(ペイロード差分検出件数)</td>
+</tr>
+<tr>
+<td>ホーム</td>
+<td>サイドメニューのバッジ集約、KPI ハイライト、未承認件数、SLA 違反、DLQ 滞留</td>
+</tr>
+<tr>
+<td>しきい値の動的管理</td>
+<td>監視 KPI しきい値(「直近 7 日平均から 20pt 低下」など)は KV <code>monitoring:thresholds:&lt;kpi_id&gt;</code> で動的管理。変更時は <code>monitoring.threshold.update</code> action コード(<code>retention_class='5y'</code>)で監査記録。MVP は実装定数 + KV による緊急上書きの 2 段構え</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-resend-webhook-監視参照-基本設計-86">2. Resend Webhook 監視(参照: 基本設計 §8.6)</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>仕様</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>受信エンドポイント</td>
+<td><code>https://admin.open-faq.example.com/webhooks/resend</code>(運営者側で集計用に受信)</td>
+</tr>
+<tr>
+<td>署名検証</td>
+<td>Resend Webhook Signature</td>
+</tr>
+<tr>
+<td>監視対象</td>
+<td>バウンス率・苦情率(全契約横断・契約別)</td>
+</tr>
+<tr>
+<td>サプレスリスト管理</td>
+<td>メイン側が正本。本書側は SCR-093 経由で個別アドレス復帰承認のみ(連携 IF #5)</td>
+</tr>
+<tr>
+<td>しきい値</td>
+<td>NFR-503 / NFR-504、超過時に運営者通知</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-kpi-監視一覧参照-基本設計-113">3. KPI 監視一覧(参照: 基本設計 §11.3)</h2>
+<p>KPI 一覧(メイン NFR-804 (a)〜(h) を正本参照 + 本書独自 (k)(l)):</p>
+<table>
+<thead>
+<tr>
+<th>KPI</th>
+<th>主管</th>
+<th>しきい値 / 重大度</th>
+<th>通知先</th>
+<th>データソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>(a)〜(h)</td>
+<td>メイン</td>
+<td>メイン NFR-804</td>
+<td>-</td>
+<td>メイン</td>
+</tr>
+<tr>
+<td>(k) 運営者操作頻度異常</td>
+<td>本書</td>
+<td>同一運営者 1h で 50 件超</td>
+<td>全運営者 inbox + メール</td>
+<td><code>audit_logs(actor_id, occurred_at)</code></td>
+</tr>
+<tr>
+<td>(l) 全契約横断 MAU・解決率</td>
+<td>本書</td>
+<td>急減で <code>high</code>(直近 7 日平均から 20 ポイント低下)</td>
+<td>運営者 inbox</td>
+<td>メイン側集計を参照</td>
+</tr>
+<tr>
+<td>Webhook 受信失敗率(NFR-808)</td>
+<td>本書</td>
+<td>1h で 5% 超</td>
+<td>運営者 high</td>
+<td><code>webhook_events</code></td>
+</tr>
+<tr>
+<td>DLQ 滞留(NFR-808)</td>
+<td>本書</td>
+<td>30 分以上未処理</td>
+<td>運営者 high</td>
+<td><code>webhook_events</code></td>
+</tr>
+<tr>
+<td>AI 推論基盤の品質劣化(NFR-807)</td>
+<td>本書</td>
+<td>1h 回答可能率が 7d 平均から 20pt 低下</td>
+<td>運営者 high</td>
+<td>メイン側集計</td>
+</tr>
+<tr>
+<td>監査ハッシュチェーン不一致(NFR-306)</td>
+<td>本書</td>
+<td>検出時即時</td>
+<td>運営者 high</td>
+<td>AuditChainVerifierWorker</td>
+</tr>
+<tr>
+<td><strong>AI 内部原価(FR-304)</strong></td>
+<td>本書</td>
+<td>月次集計、契約別、Workers AI 実績 token 数 × 単価。集計遅延 24h 超で normal、72h 超で high</td>
+<td>運営者 inbox(SCR-095)</td>
+<td><code>question_logs.ai_token_count_input</code> / <code>question_logs.ai_token_count_output</code> + KV <code>ai-cost:unit-prices</code></td>
+</tr>
+<tr>
+<td><strong>SCR-HOME / SCR-095 ダッシュボード集計遅延</strong>(運営者画面 FR-135d / FR-135g 相当)</td>
+<td>本書</td>
+<td>集計バッチ最終実行時刻が 5 分以上前で normal、15 分以上で high</td>
+<td>運営者 inbox(SCR-HOME 上の集計遅延バナーと連動)</td>
+<td><code>GET /admin/v1/home</code> の <code>meta.last_aggregated_at</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>計測基盤</strong>: Cloudflare Workers Analytics Engine、5 分窓集計、日次評価。AC-046(MVP リリース判定期間 NFR-101〜106 p95 4 週間連続達成)はメイン主管だが、本書側は SCR-095 KPI ダッシュボードで観測。</p>
+<h3 id="31-ai-内部原価集計仕様fr-304--詳細設計引継ぎ">3.1 AI 内部原価集計仕様(FR-304 / 詳細設計引継ぎ)</h3>
+<ul>
+<li>集計粒度: 契約別月次(粗利分析用)、グローバル日次(運用監視用)</li>
+<li>データソース: Workers AI の token 使用量実績(<code>question_logs.ai_token_count_input</code> / <code>question_logs.ai_token_count_output</code> 列)+ KV <code>ai-cost:unit-prices</code>(モデル別単価表、運営者管理)</li>
+<li>表示先: SCR-095 KPI セクション、SCR-093 契約別利用状況参考値</li>
+<li>用途制限: 契約請求には含めない(FR-304(d))、運営者の単価設定の根拠データおよび粗利分析のみ</li>
+</ul>
+<h2 id="4-ac-046-達成判定-sla-エンジン仕様">4. AC-046 達成判定 SLA エンジン仕様</h2>
+<p>AC-046(MVP リリース判定期間 NFR-101〜106 p95 4 週間連続達成、メイン主管)を本書側 SCR-095 で観測する際の <strong>除外条件と判定主体</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>除外条件</th>
+<th>判定主体</th>
+<th>検知方法</th>
+<th>集計時の扱い</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DDoS 防御発動</td>
+<td>AdminConsoleWorker</td>
+<td>Cloudflare Workers の <code>cf.bot_management.ja3_hash</code> が当該 5 分窓で非空、または <code>cf.threat_score &gt; 50</code> のリクエストが全体の 30% 超</td>
+<td>該当 5 分窓を <code>excluded_windows</code> テーブルに記録、集計時 WHERE で除外</td>
+</tr>
+<tr>
+<td>上流障害(Cloudflare 部分断)</td>
+<td>SREWorker</td>
+<td>Cloudflare Status API(<code>https://www.cloudflarestatus.com/api/v2/status.json</code>)を 1 分間隔ポーリング、<code>status.indicator IN ('minor','major','critical')</code> を検出</td>
+<td>該当期間を <code>excluded_windows(reason='cf_outage')</code> に記録</td>
+</tr>
+<tr>
+<td>上流障害(Resend 全断)</td>
+<td>SREWorker</td>
+<td>Resend Status API 監視、メール送信失敗率 &gt; 90% で疑い</td>
+<td>通知系 KPI のみ除外、API レイテンシ判定には影響なし</td>
+</tr>
+<tr>
+<td>上流障害(Stripe 全断)</td>
+<td>SREWorker</td>
+<td>Stripe Status API 監視</td>
+<td>Webhook 受信成功率判定から除外、<code>webhook_events</code> 集計時 WHERE で除外</td>
+</tr>
+<tr>
+<td>計画停止</td>
+<td>SREWorker</td>
+<td><code>maintenance_windows</code> テーブル(MVP は KV <code>sre:planned-outage:&lt;id&gt;</code> でも可)を参照</td>
+<td>該当期間を <code>excluded_windows(reason='planned')</code> に記録</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Analytics Engine クエリ例</strong>(NFR-103 p95 レイテンシ判定):</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- AC-046 達成判定: 4 週間連続で p95 ≤ NFR-103 を満たすか</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  date_trunc(<span class="st">&#39;day&#39;</span>, <span class="dt">timestamp</span>) <span class="kw">AS</span> <span class="dt">day</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  approx_quantile(response_ms, <span class="fl">0.95</span>) <span class="kw">AS</span> p95_ms</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> workers_analytics</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> service <span class="op">=</span> <span class="st">&#39;admin-console&#39;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">AND</span> <span class="dt">timestamp</span> <span class="op">&gt;=</span> now() <span class="op">-</span> <span class="dt">INTERVAL</span> <span class="st">&#39;28 days&#39;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- 除外窓を JOIN で除外</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">AND</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> (</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">SELECT</span> <span class="dv">1</span> <span class="kw">FROM</span> excluded_windows ew</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">WHERE</span> workers_analytics.<span class="dt">timestamp</span> <span class="kw">BETWEEN</span> ew.start_at <span class="kw">AND</span> ew.end_at</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> <span class="dt">day</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="kw">HAVING</span> p95_ms <span class="op">&gt;</span> <span class="dv">500</span>  <span class="co">-- NFR-103 SLO</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> <span class="dt">day</span> <span class="kw">DESC</span>;</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co">-- 結果が 0 行であれば AC-046 達成</span></span></code></pre></div>
+<p><strong>判定主体の分担</strong>:</p>
+<ul>
+<li><code>AdminConsoleWorker</code>: 短時間(5 分窓)の DDoS / 攻撃検知、<code>excluded_windows</code> への即時 INSERT</li>
+<li><code>SREWorker</code>(別 Worker、Cron 1 分間隔): 上流ステータス API ポーリング、計画停止反映</li>
+<li>集計バッチ(<code>AnalyticsBatchWorker</code>、日次 04:00 JST): SCR-095 ダッシュボード用に AC-046 達成可否を <code>analytics_kpi_daily</code> テーブルへ書き出し</li>
+</ul>
+<h2 id="5-監視ダッシュボードscr-090-系">5. 監視ダッシュボード(SCR-090 系)</h2>
+<table>
+<thead>
+<tr>
+<th>ダッシュボード</th>
+<th>表示内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ホーム</td>
+<td>サイドメニューのバッジ集約、KPI ハイライト、未承認件数、SLA 違反、DLQ 滞留</td>
+</tr>
+<tr>
+<td>SCR-095 KPI セクション</td>
+<td>NFR-804 (a)〜(l)、グラフ + 直近 30 日履歴</td>
+</tr>
+<tr>
+<td>SCR-096</td>
+<td>DLQ 滞留状況、Webhook 受信失敗率、自動 BO 進捗</td>
+</tr>
+<tr>
+<td>SCR-098</td>
+<td>ペイロード差分検出件数</td>
+</tr>
+<tr>
+<td>SCR-097</td>
+<td>PII 誤検出報告状態別カウンタ、3 営業日タイマー</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-sli-計測ツール--メトリクス対応表">6. SLI 計測ツール × メトリクス対応表</h2>
+<table>
+<thead>
+<tr>
+<th>SLO 指標</th>
+<th>計測ツール(一次)</th>
+<th>メトリクス名 / クエリ</th>
+<th>補助計測</th>
+<th>ダッシュボード責任者</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>運営者画面可用性(NFR-202)</td>
+<td>Cloudflare Workers Analytics Engine</td>
+<td><code>admin_console_success_rate</code> = success / total(5 分窓)</td>
+<td>Cloudflare ダッシュボード Health</td>
+<td>SRE</td>
+</tr>
+<tr>
+<td>監査ログ検索 p95</td>
+<td>Workers Analytics Engine</td>
+<td><code>audit_search_p95_ms</code>(quantile 0.95)</td>
+<td>D1 <code>EXPLAIN QUERY PLAN</code> 監視</td>
+<td>バックエンド</td>
+</tr>
+<tr>
+<td>監査ログエクスポート所要時間</td>
+<td>Workers Analytics Engine</td>
+<td><code>audit_export_duration_ms</code></td>
+<td>R2 PUT 完了ログ</td>
+<td>バックエンド</td>
+</tr>
+<tr>
+<td>運営者操作頻度異常(KPI(k))</td>
+<td>D1(audit_logs)</td>
+<td>actor_id × 1h 集計(Analytics Engine)</td>
+<td>—</td>
+<td>セキュリティ</td>
+</tr>
+<tr>
+<td>Webhook 受信失敗率(NFR-808)</td>
+<td>D1(webhook_events)</td>
+<td>1h 集計、5% 超で <code>high</code></td>
+<td>Stripe ダッシュボード</td>
+<td>バックエンド</td>
+</tr>
+<tr>
+<td>DLQ 滞留(NFR-808)</td>
+<td>D1(webhook_events)</td>
+<td>30 分以上未処理件数</td>
+<td>R2 DLQ ファイル数</td>
+<td>SRE</td>
+</tr>
+<tr>
+<td>監査ハッシュチェーン不一致</td>
+<td>D1(audit_logs)</td>
+<td>AuditChainVerifierWorker の不一致件数</td>
+<td>—</td>
+<td>セキュリティ</td>
+</tr>
+<tr>
+<td>AI 内部原価集計遅延(FR-304)</td>
+<td>D1(analytics_kpi_daily)</td>
+<td>集計遅延 24h 超で normal、72h 超で high</td>
+<td>KV <code>ai-cost:unit-prices</code></td>
+<td>運営</td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-p99--p999-目標とアラート閾値">7. p99 / p999 目標とアラート閾値</h2>
+<p>メイン §13.1.0 と同方針。p99 / p999 を補助指標として計測。</p>
+<table>
+<thead>
+<tr>
+<th>指標</th>
+<th>p95 目標</th>
+<th>p99 目標</th>
+<th>p999 目標</th>
+<th>アラート対象</th>
+<th>アラート閾値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>監査ログ検索(<code>GET /audit-logs</code>)</td>
+<td>&lt; 1000ms</td>
+<td>&lt; 1500ms</td>
+<td>&lt; 3000ms</td>
+<td>p95 / p99</td>
+<td>p95 5 分連続超過 / p99 30 分連続超過</td>
+</tr>
+<tr>
+<td>監査ログエクスポート開始(<code>POST /audit-logs/exports</code>)</td>
+<td>&lt; 500ms</td>
+<td>&lt; 750ms</td>
+<td>&lt; 1500ms</td>
+<td>p95</td>
+<td>5 分連続超過</td>
+</tr>
+<tr>
+<td>監査ログエクスポート完了時間(10 万行)</td>
+<td>&lt; 60s</td>
+<td>&lt; 90s</td>
+<td>&lt; 120s</td>
+<td>p99</td>
+<td>1 回連続(個別ジョブ単位)</td>
+</tr>
+<tr>
+<td>4-eyes 申請(<code>POST /approvals</code>)</td>
+<td>&lt; 500ms</td>
+<td>&lt; 750ms</td>
+<td>&lt; 1500ms</td>
+<td>p95</td>
+<td>5 分連続超過</td>
+</tr>
+<tr>
+<td>4-eyes 承認(<code>POST /approvals/{id}/approve</code>)</td>
+<td>&lt; 500ms</td>
+<td>&lt; 750ms</td>
+<td>&lt; 1500ms</td>
+<td>p95</td>
+<td>5 分連続超過</td>
+</tr>
+<tr>
+<td>4-eyes 実行(<code>POST /approvals/{id}/execute</code>)</td>
+<td>&lt; 2000ms(内部 IF 呼出込み)</td>
+<td>&lt; 3000ms</td>
+<td>&lt; 5000ms</td>
+<td>p95 / p99</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>Webhook リプレイ起動</td>
+<td>&lt; 500ms</td>
+<td>&lt; 750ms</td>
+<td>&lt; 1500ms</td>
+<td>p95</td>
+<td>5 分連続超過</td>
+</tr>
+<tr>
+<td>DLQ 一覧(<code>GET /webhooks/stripe/events</code>)</td>
+<td>&lt; 800ms</td>
+<td>&lt; 1200ms</td>
+<td>&lt; 2000ms</td>
+<td>p95</td>
+<td>5 分連続超過</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>目安式</strong>: p99 ≤ p95 × 1.5、p999 ≤ p95 × 2.5(外れ値が極端な API は個別緩和)</li>
+<li><strong>計測ツール</strong>: Cloudflare Workers Analytics Engine(<code>approx_quantile(response_ms, 0.95/0.99/0.999)</code>)</li>
+<li><strong>アラート対象</strong>: p95 を主、p99 を従。p999 は外れ値分析専用で個別アラート化せず、週次レビューで傾向把握</li>
+</ul>
+<h2 id="8-関連設計">8. 関連設計</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>参照先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>要件</td>
+<td><a href="../01_要件定義/index.html">../01_要件定義/index.html</a> §10.8 / §14</td>
+</tr>
+<tr>
+<td>基本設計</td>
+<td><a href="../02_基本設計/index.html">../02_基本設計/index.html</a> §8.6 / §11.3</td>
+</tr>
+<tr>
+<td>詳細設計</td>
+<td><a href="../03_詳細設計/index.html">../03_詳細設計/index.html</a> §13.3</td>
+</tr>
+<tr>
+<td>関連 NFR</td>
+<td>NFR-202 / NFR-306 / NFR-503 / NFR-504 / NFR-804 / NFR-807 / NFR-808 / FR-304 / AC-046</td>
+</tr>
+<tr>
+<td>メイン側監視</td>
+<td><a href="../../01_メインシステム/04_運用設計/01_監視設計.html">../../01_メインシステム/04_運用設計/01_監視設計.html</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-未確定事項確認事項">9. 未確定事項・確認事項</h2>
+<table>
+<thead>
+<tr>
+<th>確認事項ID</th>
+<th>確認内容</th>
+<th>優先度</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>v1.0 リリース時点で全項目確定済み</td>
+<td>低</td>
+<td>確認済</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

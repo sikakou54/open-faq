@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FR10: 管理ダッシュボード | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/01_要件定義/FR10_管理ダッシュボード.html">
+<article class="content" id="content">
+<h1 id="fr10-管理ダッシュボード">FR10: 管理ダッシュボード</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書名</td>
+<td>FR10: 管理ダッシュボード</td>
+</tr>
+<tr>
+<td>機能グループ</td>
+<td>管理ダッシュボード</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>FAQ AI ウィジェット SaaS / メインシステム</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-17</td>
+</tr>
+<tr>
+<td>版数</td>
+<td>v1.3</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>承認済</td>
+</tr>
+<tr>
+<td>更新履歴</td>
+<td>v1.3(2026-06-14): オーナー向け契約概要を利用状況へ簡素化し、各プロジェクトの利用状況を1画面へ統合 / v1.2(2026-06-10): 契約概要 / プロジェクト概要を次の対応への起点に再定義し、利用量・料金請求を分離</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-機能概要">1. 機能概要</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>概要</td>
+<td>管理範囲スイッチャーで契約とプロジェクトを切り替える。オーナー向け SCR-016 利用状況では契約全体と各プロジェクトの利用量を一覧し、プロジェクト概要では選択中プロジェクトの質問数・未解決数・公開FAQ件数を表示する。課金情報は SCR-022 請求へ分離する</td>
+</tr>
+<tr>
+<td>利用場面</td>
+<td>管理者の日次運用、対応案件の俯瞰、FAQ 改善ターゲット候補の確認</td>
+</tr>
+<tr>
+<td>優先度</td>
+<td>Must</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-収録-fr-nnn-一覧">2. 収録 FR-NNN 一覧</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>要件</th>
+<th style="text-align: center;">優先度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-130</td>
+<td>質問数、未解決数を確認できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-132</td>
+<td>要対応の質問の状況をユーザー向けには「対応中 / 対応済み」で確認できること。永続値・API値は <code>open</code> / <code>closed</code> を維持する</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-133</td>
+<td>よく聞かれる質問や未解決傾向を確認できること</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>FR-134</td>
+<td>期間絞り込みができること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-135</td>
+<td>通知失敗・バウンス件数を確認できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-135a</td>
+<td>オーナーはヘッダーの「管理範囲を切り替え」から、利用状況(SCR-016)と各プロジェクトの概要(SCR-008)を切り替えられること。プロジェクト管理者・メンバーには参加プロジェクトのみを表示し、契約範囲は表示しない。現在の管理範囲と適用ロールはスイッチャー内で確認できること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-135b</td>
+<td>SCR-016 利用状況は当月固定・読み取り専用のスナップショットとし、プロジェクト別一覧にリンクを設けない。プロジェクトを開く・作成・編集はサイドメニュー「プロジェクト」(SCR-004)に集約し、各プロジェクトの SCR-008 概要へは管理範囲スイッチャーから1操作で遷移できること。オーナーはスイッチャーから1操作で利用状況へ戻れること</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-135c</td>
+<td>SCR-008 / SCR-016 は画面冒頭に目的を1行で宣言すること。SCR-008 は選択中プロジェクトの利用状況、SCR-016 は契約全体と各プロジェクトの当月利用状況の把握を目的とする</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-135d</td>
+<td>最終更新タイムスタンプを表示する画面では、KPI カード群の右上に「最終更新: YYYY-MM-DD HH:MM(JST)」を統一表示すること。集計バッチが遅延している場合は「<i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i> 集計遅延(最終: YYYY-MM-DD HH:MM)」と警告色で表示し、ユーザーがリアルタイム値と勘違いするリスクを抑止する。最終更新時刻の取得元は集計バッチ最終実行時刻またはマテビュー最終更新時刻とする。なお SCR-016 利用状況は読み取り専用スナップショットのため最終更新タイムスタンプを表示しない</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-135e</td>
+<td>KPI カード(質問数 / 未解決数 / 公開 FAQ 件数等)はクリックで該当一覧画面に遷移できること。遷移先 SCR ID とフィルタ条件は基本設計 01_画面設計.html の項目表に明記する。0 件 / 集計中 / 取得失敗 状態のときはクリック不可とする</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>FR-135f</td>
+<td>比較値を表示する画面では「(前月比 +N.N%)」「(前週比 -M.M%)」形式に統一すること。SCR-008 の KPI カードは項目名と件数だけを表示し、前月比・状態説明等のコメントやゲージは表示しないこと</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>FR-135g</td>
+<td>KPI / 一覧 / アラートの各表示要素は、0 件・null(未集計)・集計中・取得失敗・期間外 の 5 状態を区別して表示できること。状態ごとの文言と配色ルールは基本設計 01_画面設計.html の「§0 共通表示ルール」に正本化し、各画面はそれを参照する</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>FR-135h</td>
+<td>SCR-016 利用状況でプロジェクトが0件の場合は、複雑なセットアップチェックリストを表示せず、「プロジェクトがまだありません」と「新規プロジェクトを作成」の単一CTAを持つ空状態を表示すること</td>
+<td style="text-align: center;">P2</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-補足説明統合参照">3. 補足説明・統合参照</h2>
+<h3 id="31-画面目的の宣言fr-135c-詳細">3.1 画面目的の宣言(FR-135c 詳細)</h3>
+<table>
+<thead>
+<tr>
+<th>SCR ID</th>
+<th>画面目的(1 行宣言)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SCR-008 概要</td>
+<td>当該プロジェクトの質問数・未解決数・公開 FAQ 件数を確認するための画面</td>
+</tr>
+<tr>
+<td>SCR-016 利用状況</td>
+<td>契約全体と各プロジェクトの当月利用状況を比較・把握するための読み取り専用画面(プロジェクトを開く・作成・編集はサイドメニュー「プロジェクト」へ)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-表示ルールの正本化方針">3.2 表示ルールの正本化方針</h3>
+<p>数値・単位・期間・最終更新・色語彙・状態表現の各共通ルールは、本書では概要のみ示し、正本は基本設計 <a href="../02_基本設計/01_画面設計.html">01_画面設計.html §0 共通表示ルール</a> に置く。SCR ごとに表記を発明せず、参照のみとする。</p>
+<h2 id="4-関連設計">4. 関連設計</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>参照先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>画面設計</td>
+<td><a href="../02_基本設計/01_画面設計.html">../02_基本設計/01_画面設計.html</a></td>
+</tr>
+<tr>
+<td>API 設計</td>
+<td><a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html</a></td>
+</tr>
+<tr>
+<td>テーブル設計</td>
+<td><a href="../02_基本設計/03_テーブル設計.html">../02_基本設計/03_テーブル設計.html</a></td>
+</tr>
+<tr>
+<td>権限設計</td>
+<td><a href="../02_基本設計/04_権限設計.html">../02_基本設計/04_権限設計.html</a></td>
+</tr>
+<tr>
+<td>エラー設計</td>
+<td><a href="../02_基本設計/05_エラー設計.html">../02_基本設計/05_エラー設計.html</a></td>
+</tr>
+<tr>
+<td>メッセージ</td>
+<td><a href="../02_基本設計/06_メッセージ一覧.html">../02_基本設計/06_メッセージ一覧.html</a></td>
+</tr>
+<tr>
+<td>詳細設計</td>
+<td><a href="../03_詳細設計/index.html">../03_詳細設計/index.html</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-未確定事項確認事項">5. 未確定事項・確認事項</h2>
+<table>
+<thead>
+<tr>
+<th>確認事項ID</th>
+<th>確認内容</th>
+<th>優先度</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>v1.0 リリース時点で全項目確定済み</td>
+<td>低</td>
+<td>確認済</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

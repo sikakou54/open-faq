@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DD12: 運営者用ログ・テスト(運営者システム) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="02_運営者システム/03_詳細設計/DD12_運営者用ログ・テスト.html">
+<article class="content" id="content">
+<h1 id="dd12-運営者用ログテスト運営者システム">DD12: 運営者用ログ・テスト(運営者システム)</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書名</td>
+<td>DD12: 運営者用ログ・テスト(運営者システム)</td>
+</tr>
+<tr>
+<td>詳細設計ID</td>
+<td>DD12</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>FAQ AI ウィジェット SaaS / 運営者システム</td>
+</tr>
+<tr>
+<td>関連機能ID</td>
+<td>TH-11, NFR-103, NFR-105, NFR-106, AC-034, AC-036, AC-037, AC-038, AC-040, AC-041, AC-042, AC-044, AC-046</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-17</td>
+</tr>
+<tr>
+<td>版数</td>
+<td>v1.0</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>承認済</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-対象範囲">1. 対象範囲</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>ID</th>
+<th>名称</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>機能</td>
+<td>TH-11</td>
+<td>エラーログ詳細(構造化ログ)</td>
+</tr>
+<tr>
+<td>テスト</td>
+<td>ユニット / 結合 / E2E / Webhook 統合 / 負荷 / ペネトレ</td>
+<td>全テストレベル</td>
+</tr>
+<tr>
+<td>受入条件</td>
+<td>AC-034〜046</td>
+<td>本書側主管 AC + メイン共同 AC</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-収録ロジック対応章">2. 収録ロジック・対応章</h2>
+<table>
+<thead>
+<tr>
+<th>元章</th>
+<th>元タイトル</th>
+<th>概要</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>§16</td>
+<td>エラーログ・構造化ログ(★TH-11)</td>
+<td>エラー ID 体系 + 構造化ログスキーマ(個別設計書参照)</td>
+</tr>
+<tr>
+<td>§17 全文</td>
+<td>テスト戦略・受入条件マッピング</td>
+<td>テスト種別 × 責務 + AC マッピング + 負荷シナリオ + 品質回帰データセット</td>
+</tr>
+<tr>
+<td>付録 K</td>
+<td>構造化ログ JSON Schema</td>
+<td>実装ファイルとの一致要求</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-詳細設計本文">3. 詳細設計本文</h2>
+<h3 id="31-構造化ログ-json-schemath-11">3.1 構造化ログ JSON Schema(★TH-11)</h3>
+<p>すべての Worker は標準出力に JSON 1 行形式で構造化ログを出力する。Logpush / Logflare 等の集約基盤に送出され、Trace ID で横串集計可能。</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;level&quot;</span><span class="fu">:</span> <span class="st">&quot;debug | info | warn | error | critical&quot;</span><span class="fu">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;timestamp&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-05-12T10:00:00Z&quot;</span><span class="fu">,</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;worker&quot;</span><span class="fu">:</span> <span class="st">&quot;AdminConsoleWorker&quot;</span><span class="fu">,</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;request_id&quot;</span><span class="fu">:</span> <span class="st">&quot;&lt;cf-ray&gt;&quot;</span><span class="fu">,</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;trace_id&quot;</span><span class="fu">:</span> <span class="st">&quot;01J...&quot;</span><span class="fu">,</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;operator_id&quot;</span><span class="fu">:</span> <span class="st">&quot;01J... | null&quot;</span><span class="fu">,</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;contract_owner_user_id&quot;</span><span class="fu">:</span> <span class="st">&quot;01J... | null&quot;</span><span class="fu">,</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;action&quot;</span><span class="fu">:</span> <span class="st">&quot;&lt;action_code&gt; | null&quot;</span><span class="fu">,</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;endpoint&quot;</span><span class="fu">:</span> <span class="st">&quot;/admin/api/v1/...&quot;</span><span class="fu">,</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;method&quot;</span><span class="fu">:</span> <span class="st">&quot;GET | POST | PUT | DELETE&quot;</span><span class="fu">,</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;status_code&quot;</span><span class="fu">:</span> <span class="dv">200</span><span class="fu">,</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;duration_ms&quot;</span><span class="fu">:</span> <span class="dv">123</span><span class="fu">,</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;error_code&quot;</span><span class="fu">:</span> <span class="st">&quot;E-OP-... | null&quot;</span><span class="fu">,</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;error_message&quot;</span><span class="fu">:</span> <span class="st">&quot;...&quot;</span><span class="fu">,</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;stack_trace&quot;</span><span class="fu">:</span> <span class="st">&quot;...&quot;</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>必須フィールド: <code>level</code>、<code>timestamp</code>、<code>worker</code>、<code>request_id</code>。 任意フィールド: <code>trace_id</code>、<code>operator_id</code>、<code>contract_owner_user_id</code>、<code>action</code>、<code>endpoint</code>、<code>method</code>、<code>status_code</code>、<code>duration_ms</code>、<code>error_code</code>、<code>error_message</code>、<code>stack_trace</code>。</p>
+<p>実装ファイル <code>admin/src/shared/logger.ts</code> の型定義と一致させること。</p>
+<h3 id="32-機密項目マスキング">3.2 機密項目マスキング</h3>
+<p>ログ出力前に必ず次のフィールドをマスクする:</p>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>マスキング</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Authorization</code> ヘッダ</td>
+<td>完全削除</td>
+</tr>
+<tr>
+<td><code>X-CSRF-Token</code></td>
+<td>最初の 4 文字 + <code>***</code></td>
+</tr>
+<tr>
+<td>パスワード / MFA コード / リカバリーコード</td>
+<td>完全削除</td>
+</tr>
+<tr>
+<td>メール本文 PII / 電話番号 / クレカ</td>
+<td>DD10 と同方式でマスク</td>
+</tr>
+<tr>
+<td>Stripe <code>customer.id</code></td>
+<td>末尾 4 文字 + <code>***</code>(法令対応で完全削除は避ける)</td>
+</tr>
+<tr>
+<td>IP アドレス</td>
+<td><code>/24</code>(IPv4) / <code>/48</code>(IPv6)単位で切り捨て</td>
+</tr>
+</tbody>
+</table>
+<h3 id="33-エラー-id-体系">3.3 エラー ID 体系</h3>
+<p>エラー ID 体系の正本は <a href="../02_基本設計/05_エラー設計.html">基本設計 / エラー設計</a>。<code>E-OP-*</code> 87 件、エラー分類 13 種、異常系共通方針、<code>critical</code> レベルエラーは当該ドキュメントを参照。</p>
+<p>主な接頭辞:</p>
+<table>
+<thead>
+<tr>
+<th>接頭辞</th>
+<th>範囲</th>
+<th>DD 参照</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>E-OP-AUTH-*</code></td>
+<td>認証 / 認可</td>
+<td>DD01</td>
+</tr>
+<tr>
+<td><code>E-OP-4EYES-*</code></td>
+<td>4-eyes</td>
+<td>DD02</td>
+</tr>
+<tr>
+<td><code>E-OP-AUDIT-*</code></td>
+<td>監査ログ</td>
+<td>DD03</td>
+</tr>
+<tr>
+<td><code>E-OP-WEBHOOK-*</code></td>
+<td>Webhook</td>
+<td>DD04</td>
+</tr>
+<tr>
+<td><code>E-OP-RESTORE-*</code></td>
+<td>削除データ復元</td>
+<td>DD05</td>
+</tr>
+<tr>
+<td><code>E-OP-ANN-*</code></td>
+<td>お知らせ</td>
+<td>DD06</td>
+</tr>
+<tr>
+<td><code>E-OP-PII-*</code></td>
+<td>PII 報告</td>
+<td>DD10</td>
+</tr>
+<tr>
+<td><code>E-OP-STATE-*</code></td>
+<td>状態遷移共通</td>
+<td>DD11</td>
+</tr>
+</tbody>
+</table>
+<h3 id="34-rfc-7807-problemjson-形式">3.4 RFC 7807 problem+json 形式</h3>
+<p>エラーレスポンスは RFC 7807 に準拠:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;https://admin.open-faq.example.com/errors/E-OP-AUTH-005&quot;</span><span class="fu">,</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;title&quot;</span><span class="fu">:</span> <span class="st">&quot;Re-authentication required&quot;</span><span class="fu">,</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="dv">403</span><span class="fu">,</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;code&quot;</span><span class="fu">:</span> <span class="st">&quot;E-OP-AUTH-005&quot;</span><span class="fu">,</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;detail&quot;</span><span class="fu">:</span> <span class="st">&quot;Critical operation requires re-authentication within 5 minutes&quot;</span><span class="fu">,</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;trace_id&quot;</span><span class="fu">:</span> <span class="st">&quot;01J...&quot;</span><span class="fu">,</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;instance&quot;</span><span class="fu">:</span> <span class="st">&quot;/admin/api/v1/owners/01J.../suspend&quot;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p><code>type</code> フィールドは <code>code</code> フィールドと同一のエラー ID を URL 末尾に持ち、運営者がドキュメントへ到達可能にする。</p>
+<h3 id="35-テスト種別--責務基本設計-141-準拠">3.5 テスト種別 × 責務(基本設計 §14.1 準拠)</h3>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>範囲</th>
+<th>ツール</th>
+<th>実施タイミング</th>
+<th>責務</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ユニット</td>
+<td>Workers ハンドラ・ドメインロジック・SLA 計測・ハッシュチェーン計算</td>
+<td>Vitest</td>
+<td>コミット毎</td>
+<td>本書</td>
+</tr>
+<tr>
+<td>結合</td>
+<td>D1 / R2 / KV を含む、運営者認証・4-eyes 承認・Webhook 受信</td>
+<td>Miniflare + Vitest</td>
+<td>PR 毎</td>
+<td>本書</td>
+</tr>
+<tr>
+<td>E2E(運営画面)</td>
+<td>SCR-090〜098 主要フロー、4-eyes 承認、削除データ復元、お知らせ配信</td>
+<td>Playwright</td>
+<td>nightly + リリース前</td>
+<td>本書</td>
+</tr>
+<tr>
+<td>Webhook 統合</td>
+<td>Stripe 署名検証、event_id 冪等、ペイロード差分検出、DLQ 自動 BO、手動リプレイ</td>
+<td>カスタム + Stripe Test Mode</td>
+<td>リリース前 + 月次</td>
+<td>本書</td>
+</tr>
+<tr>
+<td>AI 品質回帰</td>
+<td>FAQ × 想定質問ペア(MVP 50)</td>
+<td>カスタムバッチ</td>
+<td>モデル更新時 + プロンプト変更時</td>
+<td>データセット = 本書、実行 = メイン CI</td>
+</tr>
+<tr>
+<td>プロンプト注入回帰</td>
+<td>20 ケース以上</td>
+<td>カスタム</td>
+<td>モデル更新時 + 四半期</td>
+<td>テストセット = 本書、実行 = メイン CI</td>
+</tr>
+<tr>
+<td>ペネトレーション</td>
+<td>全エンドポイント(運営者プレーン重点)</td>
+<td>外部委託</td>
+<td>年 1 回 + 重大機能変更時</td>
+<td>共同(本書側で実施記録 5 年保持)</td>
+</tr>
+<tr>
+<td>オーナー境界によるデータ分離</td>
+<td>クロス契約アクセス試行(自動 50 + 手動 5)</td>
+<td>カスタム</td>
+<td>月次自動 + 年次手動</td>
+<td>メイン主管 + 本書側で運営者横断クエリ境界</td>
+</tr>
+<tr>
+<td>負荷試験</td>
+<td>監査ログ検索(100 万件以下)/ エクスポート(10 万行/60s)/ 4-eyes 承認 API</td>
+<td>k6</td>
+<td>月次 + 主要リリース前</td>
+<td>本書</td>
+</tr>
+<tr>
+<td>4-eyes E2E</td>
+<td>申請 → 承認 → 実行 → 失敗ロールバック</td>
+<td>Playwright</td>
+<td>nightly</td>
+<td>本書</td>
+</tr>
+</tbody>
+</table>
+<p><strong>カバレッジ目標</strong>(MVP リリース判定で達成必須):</p>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>目標値</th>
+<th>補足</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ユニット statements</td>
+<td>≥ 80%</td>
+<td>SLA 計測 / ハッシュチェーン計算は ≥ 90%</td>
+</tr>
+<tr>
+<td>ユニット branches</td>
+<td>≥ 75%</td>
+<td>状態遷移ガード系は ≥ 90%</td>
+</tr>
+<tr>
+<td>結合(Miniflare)</td>
+<td>API エンドポイント網羅率 100%</td>
+<td>認可境界・状態遷移 1 件以上</td>
+</tr>
+<tr>
+<td>E2E(Playwright)</td>
+<td>SCR-090〜098 各画面で主要フロー 1 件以上 + 4-eyes 完全フロー</td>
+<td>—</td>
+</tr>
+<tr>
+<td>AC マッピング</td>
+<td>§3.8 受入条件すべてに対応するテスト ID</td>
+<td>AC 識別子をテスト記述に埋め込み</td>
+</tr>
+</tbody>
+</table>
+<p><strong>負荷試験シナリオ詳細</strong>(本書主管):</p>
+<table>
+<thead>
+<tr>
+<th>シナリオ</th>
+<th>構成</th>
+<th>目的</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>(A1) 監査ログ検索負荷</td>
+<td>audit_logs 100 万件、SCR-095 検索 50 RPS</td>
+<td>p95 ≤ 1000ms 検証</td>
+</tr>
+<tr>
+<td>(A2) 監査ログエクスポート</td>
+<td>10 万行/ファイル、5 並列実行</td>
+<td>≤ 60s + メモリ上限遵守</td>
+</tr>
+<tr>
+<td>(A3) 4-eyes 承認バースト</td>
+<td>同時申請 50 件 / 承認 50 件</td>
+<td>楽観ロック・状態遷移整合性</td>
+</tr>
+<tr>
+<td>(A4) Stripe Webhook 受信</td>
+<td>100 event/分 + 10% で差分検出</td>
+<td>冪等性 + DLQ 挙動</td>
+</tr>
+</tbody>
+</table>
+<p>合格基準: 全シナリオで基本設計 §13.1 目標値 + http_req_failed &lt; 1%。</p>
+<p><strong>ペネトレーション実施記録テンプレート</strong>(5 年保持):</p>
+<ul>
+<li>保管場所: <code>docs/security/pentest/YYYY-MM-DD.md</code>(TBD: 初回実施時に確定)</li>
+<li>記載項目: scope / 実施者 / 日付 / findings(Critical/High/Medium/Low)/ retest 結果 / 残課題チケット ID</li>
+<li>整合: GitHub Issue に findings を同期(Critical/High はセキュリティ SLA で対応)</li>
+</ul>
+<h3 id="36-scr--fr--ac--テストレベル早見表">3.6 SCR × FR × AC × テストレベル早見表</h3>
+<table>
+<thead>
+<tr>
+<th>SCR</th>
+<th>主 FR</th>
+<th>AC</th>
+<th>ユニット</th>
+<th>結合</th>
+<th>E2E</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SCR-090</td>
+<td>FR-200, FR-223</td>
+<td>-</td>
+<td>検索条件バリデーション</td>
+<td>API 経由表示</td>
+<td>一覧表示 + 詳細遷移</td>
+</tr>
+<tr>
+<td>SCR-091</td>
+<td>FR-201〜211</td>
+<td>-</td>
+<td>(a)〜(g) 各ステップ</td>
+<td>トランザクション + ロールバック</td>
+<td>復元フロー全体 + 423 ケース</td>
+</tr>
+<tr>
+<td>SCR-092</td>
+<td>FR-055, FR-061〜066</td>
+<td>AC-034</td>
+<td>階層解決</td>
+<td>KV PUT + メイン同期</td>
+<td>4-eyes ハードゲート + 段階ロールアウト</td>
+</tr>
+<tr>
+<td>SCR-093</td>
+<td>FR-121, FR-128</td>
+<td>AC-040, AC-044</td>
+<td>質問数上限・課金対象別無料枠のバリデーション。FAQ・チャットの上限入力不可</td>
+<td>KV PUT + プロジェクト × 課金対象テーブル応答</td>
+<td>FAQ・チャットは上限なし、質問数のみ上限上書き + IF #5 同期</td>
+</tr>
+<tr>
+<td>SCR-094</td>
+<td>FR-149, FR-188-189</td>
+<td>-</td>
+<td>サニタイズ</td>
+<td>1 分 cron 配信</td>
+<td>予約 + 取消 + テスト送信 + 訂正告知</td>
+</tr>
+<tr>
+<td>SCR-095</td>
+<td>FR-229, FR-230, FR-232</td>
+<td>AC-038</td>
+<td>ハッシュチェーン計算</td>
+<td>カーソル検索</td>
+<td>エクスポート + HMAC 検証</td>
+</tr>
+<tr>
+<td>SCR-096</td>
+<td>FR-302, NFR-808</td>
+<td>AC-041</td>
+<td>状態遷移</td>
+<td>DLQ 自動 BO + 手動リプレイ</td>
+<td>30 日ウィンドウ</td>
+</tr>
+<tr>
+<td>SCR-097</td>
+<td>FR-060, FR-064</td>
+<td>AC-036</td>
+<td>ルール更新</td>
+<td>KV 即時反映</td>
+<td>3 営業日タイマー</td>
+</tr>
+<tr>
+<td>SCR-098</td>
+<td>FR-302 異常系</td>
+<td>AC-041</td>
+<td>差分検出アルゴリズム</td>
+<td>同 event_id 再送</td>
+<td>dismiss / reprocess</td>
+</tr>
+</tbody>
+</table>
+<h3 id="37-受入条件マッピング本書側主管">3.7 受入条件マッピング(本書側主管)</h3>
+<table>
+<thead>
+<tr>
+<th>AC</th>
+<th>主管</th>
+<th>検証手段</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AC-036(PII 3 層 + 報告フロー)</td>
+<td>本書</td>
+<td>単体 + 報告 E2E + 都度運用</td>
+</tr>
+<tr>
+<td>AC-037(運営者 MFA + 再認証)</td>
+<td>本書</td>
+<td>認証テスト</td>
+</tr>
+<tr>
+<td>AC-038(運営者操作監査 + 通知)</td>
+<td>本書</td>
+<td>E2E + 月次監査</td>
+</tr>
+<tr>
+<td>AC-041(Webhook 冪等性 + 差分検出)</td>
+<td>本書</td>
+<td>統合テスト(差分検出ケース含)+ リプレイ運用</td>
+</tr>
+<tr>
+<td>AC-042(月次請求 cron 冪等)</td>
+<td>本書</td>
+<td>統合テスト</td>
+</tr>
+<tr>
+<td>AC-046(p95 4 週間達成)</td>
+<td>メイン主管 / 本書観測</td>
+<td>Analytics Engine ダッシュボード</td>
+</tr>
+</tbody>
+</table>
+<h3 id="38-品質回帰データセット">3.8 品質回帰データセット</h3>
+<table>
+<thead>
+<tr>
+<th>データセット</th>
+<th>件数(MVP)</th>
+<th>管理</th>
+<th>実行</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AI 品質回帰(質問→FAQ→回答)</td>
+<td>50</td>
+<td>本書 SCR-095 経由</td>
+<td>メイン CI</td>
+</tr>
+<tr>
+<td>プロンプト注入</td>
+<td>20+(役割再定義 / タグ脱出 / コード注入 / 言語切替 / 指示上書き / ロール変更 / SP 開示 / FAQ 外事実 / 機密抽出)</td>
+<td>本書</td>
+<td>メイン CI</td>
+</tr>
+<tr>
+<td>PII 第 1 層</td>
+<td>陽性 100 + 陰性 100 / 各国内パターン</td>
+<td>本書</td>
+<td>本書 CI</td>
+</tr>
+<tr>
+<td>HTML サニタイズ攻撃</td>
+<td>50 ペイロード</td>
+<td>本書</td>
+<td>本書 CI</td>
+</tr>
+</tbody>
+</table>
+<h3 id="39-負荷試験顧管側メイン-175-と対称形">3.9 負荷試験(顧管側、メイン §17.5 と対称形)</h3>
+<p>メイン §17.5 で定義した 5 シナリオ(S1〜S5)に加え、本書側(運営者画面)固有のシナリオを以下に定義する。</p>
+<table>
+<thead>
+<tr>
+<th>シナリオ</th>
+<th>構成</th>
+<th>目的</th>
+<th>合格基準</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>(A1) 監査ログ大量検索</td>
+<td>200 契約 × 5 年分監査ログ(約 550 万行)を <code>GET /audit-logs</code> で <code>(action, occurred_at)</code> 範囲検索 100 並列</td>
+<td>SCR-095 検索性能 / インデックス選択性</td>
+<td>p95 ≤ 1000ms</td>
+</tr>
+<tr>
+<td>(A2) 監査ログ大量エクスポート</td>
+<td>10 万行エクスポートを 5 並列で同時起動</td>
+<td>R2 chunk PUT のスループット、メモリ上限 128MB の遵守</td>
+<td>全ジョブ完了 ≤ 90s、メモリ上限ヒット率 0%</td>
+</tr>
+<tr>
+<td>(A3) Webhook 集中受信</td>
+<td>Stripe Webhook 1000 件/分 × 5 分間</td>
+<td>署名検証 + 冪等性ストア(KV)のスループット</td>
+<td>p95 ≤ 500ms、<code>webhook_events.state</code> 整合性 100%</td>
+</tr>
+<tr>
+<td>(A4) 4-eyes 同時申請</td>
+<td>100 申請を 10 秒間に集中投入、別運営者から 100 並列承認</td>
+<td><code>operator_approvals</code> テーブルの楽観ロック、同時実行制御</td>
+<td>レース条件で重複承認 = 0 件、申請 → 承認 → 実行が単調進行</td>
+</tr>
+<tr>
+<td>(A5) DLQ 大量リプレイ</td>
+<td>1000 件の <code>dlq_manual_replay</code> を同時起動</td>
+<td>サーキットブレーカ・指数 BO の挙動</td>
+<td>サーキットブレーカ open 率が想定通り、5xx → 自動 BO で全件最終完了</td>
+</tr>
+</tbody>
+</table>
+<p>実行: k6 + Miniflare 組合せ。月次 + 主要リリース前。初回実施日 + k6 シナリオファイル所在は SRE が運用設計に記載する(TBD)。</p>
+<h3 id="310-トレース-id-採番">3.10 トレース ID 採番</h3>
+<table>
+<thead>
+<tr>
+<th>採番場所</th>
+<th>形式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>エッジ(Cloudflare)</td>
+<td><code>&lt;cf-ray&gt;</code>(自動付与、<code>request_id</code> フィールド)</td>
+</tr>
+<tr>
+<td>Worker 内</td>
+<td>ULID 26 文字を新規発行、<code>trace_id</code> フィールド</td>
+</tr>
+<tr>
+<td>クライアント送出</td>
+<td><code>X-Trace-Id</code> ヘッダ(任意、Worker は受け取った値を継承)</td>
+</tr>
+<tr>
+<td>連携 IF #1〜#12</td>
+<td>mTLS + JWT に <code>trace_id</code> クレーム含有</td>
+</tr>
+</tbody>
+</table>
+<p><code>trace_id</code> は構造化ログ・<code>audit_logs.trace_id</code> 列・エラーレスポンス <code>trace_id</code> フィールドのすべてで一致する。</p>
+<h3 id="311-ログ集約--検索">3.11 ログ集約 + 検索</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>仕様</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>集約基盤</td>
+<td>Cloudflare Logpush → 外部ストア(MVP では R2 + 必要時に DuckDB クエリ)</td>
+</tr>
+<tr>
+<td>保持</td>
+<td>エラーログ 90 日、トレースログ 30 日(R2 lifecycle rule)</td>
+</tr>
+<tr>
+<td>検索</td>
+<td>運営者は SCR-095 経由でエラーログをフィルタ可能(action_code = <code>error.log</code> で監査記録)</td>
+</tr>
+<tr>
+<td>アラート</td>
+<td><code>level=critical</code> で運営者 critical alert(オーナー + 全プロジェクト管理者(<code>project_users.role='admin'</code> を 1 件でも保持するユーザー)、強制送信)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3111-scr-095-異常検知バッジ--フィルタ自動投入画面側ロジック">3.11.1 SCR-095 異常検知バッジ → フィルタ自動投入(画面側ロジック)</h3>
+<p>SCR-095 運営者活動ダッシュボードの「ハッシュチェーン検証バッジ」「運営者操作頻度異常検知バッジ」は、基本設計 <a href="../02_基本設計/01_画面設計.html">01_画面設計.html §5.9</a> で「異常時はクリックで一覧フィルタに条件を自動投入」と定義する。本節はその画面側ロジックを補足する。</p>
+<table>
+<thead>
+<tr>
+<th>バッジ</th>
+<th>平常時表示</th>
+<th>異常時表示</th>
+<th>クリック時のフィルタ自動投入</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ハッシュチェーン検証バッジ(MSG-SCR-095-BADGE-001 / 002)</td>
+<td><i class="bi bi-check-circle-fill" style="color:#1a7f37" aria-hidden="true"></i> 検証済(過去 24h)、クリック不可</td>
+<td><i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i> 確認が必要(該当区間 <code>[from, to]</code> 含む)、クリック活性</td>
+<td><code>occurred_at</code> フィルタに <code>[from, to]</code> を自動投入し、一覧を再検索。クイックフィルタチップ「異常検知あり」を選択状態にする</td>
+</tr>
+<tr>
+<td>運営者操作頻度異常検知バッジ(MSG-SCR-095-BADGE-003 / 004)</td>
+<td><i class="bi bi-check-circle-fill" style="color:#1a7f37" aria-hidden="true"></i> 操作頻度: 正常、クリック不可</td>
+<td><i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i> 操作頻度異常 <code>actor_id={op_xxx}</code>、クリック活性</td>
+<td><code>actor_id</code> フィルタに該当 <code>op_xxx</code> を自動投入し、<code>occurred_at</code> に検知ウィンドウ(直近 1 時間等)を自動投入。一覧を再検索</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>異常検知の出元は <code>AuditChainVerifierWorker</code>(運営者 <a href="DD03_監査ハッシュチェーン.html">DD03_監査ハッシュチェーン.html</a>)および <code>OperatorActivityAnomalyDetector</code>(検知ロジックはアラート閾値: 直近 1 時間で 200 操作以上 / actor)。検知結果は <code>GET /admin/v1/home</code> および <code>GET /admin/v1/audit-logs/anomalies</code> レスポンスに含めて画面に渡す。</li>
+<li>画面側は、フィルタ自動投入後の URL にクエリパラメータを付与(<code>?actor_id=op_xxx&amp;from=...&amp;to=...</code>)して、戻る操作 / シェアにも対応する。</li>
+<li>「<i class="bi bi-x-lg" aria-hidden="true"></i> 全クリア(現在の絞り込み解除)」チップ(MSG-SCR-095-CHIP-CLEAR-001)はクイックフィルタチップ群に常時併置し、クリックで全フィルタを初期値に戻す。</li>
+</ul>
+<h3 id="3112-scr-home-緊急アラート-0-件時の異常なしバナー画面側ロジック">3.11.2 SCR-HOME 緊急アラート 0 件時の「異常なし」バナー(画面側ロジック)</h3>
+<p>基本設計 <a href="../02_基本設計/01_画面設計.html">01_画面設計.html §5.3</a> で定義する SCR-HOME 緊急アラート帯は、件数が 1 件以上ある場合は赤系アラートを表示するが、<strong>全アラートが 0 件のときは緑系の「<i class="bi bi-check-circle-fill" style="color:#1a7f37" aria-hidden="true"></i> 異常なし」バナー(MSG-SCR-HOME-OK-001)を表示する</strong>。これは「アラート表示が壊れているのか平常なのか」をユーザーが判別できるようにするための明示的な肯定表示。</p>
+<ul>
+<li>表示判定: <code>GET /admin/v1/home</code> のレスポンスで以下がすべて 0 のとき。
+<ul>
+<li><code>approval.expiring_within_24h_count</code></li>
+<li><code>webhook.dlq_stalled_24h_count</code></li>
+<li><code>pii.sla_exceeded_count</code></li>
+<li><code>audit.hash_chain_breach_count</code></li>
+</ul></li>
+<li>バナー文言: 「<i class="bi bi-check-circle-fill" style="color:#1a7f37" aria-hidden="true"></i> 緊急対応が必要な事案はありません(ハッシュチェーン: 検証済 / 操作頻度: 正常)」</li>
+<li>ハッシュチェーン / 操作頻度の状態は同じ API レスポンスに含めて返す(運営者 API 設計参照)。</li>
+</ul>
+<h3 id="312-テストインフラ">3.12 テストインフラ</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>仕様</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ユニット</td>
+<td>Vitest(<code>vitest.config.ts</code>、CI: GitHub Actions)</td>
+</tr>
+<tr>
+<td>結合</td>
+<td>Miniflare(<code>vitest --pool=workers</code>)</td>
+</tr>
+<tr>
+<td>E2E</td>
+<td>Playwright(<code>playwright.config.ts</code>、CI: nightly + リリース前)</td>
+</tr>
+<tr>
+<td>Webhook 統合</td>
+<td>Stripe Test Mode + カスタムフィクスチャ</td>
+</tr>
+<tr>
+<td>負荷</td>
+<td>k6 + Miniflare(<code>tests/load/*.js</code>)</td>
+</tr>
+<tr>
+<td>カバレッジレポート</td>
+<td>Vitest coverage + CodeCov 連携</td>
+</tr>
+</tbody>
+</table>
+<h3 id="313-リリース判定チェックリストmvp">3.13 リリース判定チェックリスト(MVP)</h3>
+<ul class="task-list">
+<li><label><input type="checkbox" />ユニット statements ≥ 80%、branches ≥ 75%</label></li>
+<li><label><input type="checkbox" />結合 API エンドポイント網羅率 100%</label></li>
+<li><label><input type="checkbox" />E2E: SCR-090〜098 主要フロー + 4-eyes 完全フロー(5 シナリオ)</label></li>
+<li><label><input type="checkbox" />Webhook 統合: 署名検証 / 冪等 / 差分 / DLQ / リプレイ</label></li>
+<li><label><input type="checkbox" />AI 品質回帰: 50 件 + プロンプト注入 20 件</label></li>
+<li><label><input type="checkbox" />PII 第 1 層: 陽性 100 + 陰性 100</label></li>
+<li><label><input type="checkbox" />HTML サニタイズ: 50 ペイロード</label></li>
+<li><label><input type="checkbox" />負荷試験: A1〜A5 全合格</label></li>
+<li><label><input type="checkbox" />ペネトレ: Critical/High 0 件(年 1 回 + 重大機能変更時)</label></li>
+<li><label><input type="checkbox" />AC-036 / AC-037 / AC-038 / AC-041 / AC-042 すべて緑</label></li>
+</ul>
+<h2 id="4-関連設計">4. 関連設計</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>参照先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>要件</td>
+<td><a href="../01_要件定義/index.html">../01_要件定義/index.html</a></td>
+</tr>
+<tr>
+<td>基本設計</td>
+<td><a href="../02_基本設計/index.html">../02_基本設計/index.html</a></td>
+</tr>
+<tr>
+<td>エラー設計(正本)</td>
+<td><a href="../02_基本設計/05_エラー設計.html">../02_基本設計/05_エラー設計.html</a></td>
+</tr>
+<tr>
+<td>トレーサビリティマトリクス</td>
+<td><a href="../02_基本設計/07_トレーサビリティマトリクス.html">../02_基本設計/07_トレーサビリティマトリクス.html</a></td>
+</tr>
+<tr>
+<td>関連 DD</td>
+<td>DD01 〜 DD11 全 11 ファイル</td>
+</tr>
+<tr>
+<td>運用設計</td>
+<td><a href="../04_運用設計/index.html">../04_運用設計/index.html</a></td>
+</tr>
+<tr>
+<td>将来対応</td>
+<td><a href="../05_future/index.html">../05_future/index.html</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-テスト観点">5. テスト観点</h2>
+<p>(本書自体がテスト戦略を定義する文書のため、テスト観点はメタとして以下を含む。)</p>
+<h3 id="51-構造化ログのスキーマ整合性">5.1 構造化ログのスキーマ整合性</h3>
+<ul>
+<li><code>admin/src/shared/logger.ts</code> の TypeScript 型定義と JSON Schema の一致を CI で検証</li>
+<li>機密項目マスキング関数のユニットテスト(各種 PII / 認証情報)</li>
+<li>ログ集約後の検索 SLO(p95 ≤ 5s 以内に取得可能)</li>
+</ul>
+<h3 id="52-テストインフラ自体の検証">5.2 テストインフラ自体の検証</h3>
+<ul>
+<li>Miniflare 環境での D1 / KV / R2 のローカル動作確認</li>
+<li>k6 シナリオの本番モック性(統計分布の妥当性)</li>
+<li>Playwright の並列実行とレース条件耐性</li>
+</ul>
+<h3 id="53-受入条件カバレッジ計算">5.3 受入条件カバレッジ計算</h3>
+<ul>
+<li>AC ID をテスト記述に埋め込み、<code>03_script/check-ac-coverage.sh</code>(TODO: 整備中)で網羅率を計算</li>
+<li>カバレッジ &lt; 95% で CI fail</li>
+</ul>
+<h2 id="6-未確定事項確認事項">6. 未確定事項・確認事項</h2>
+<table>
+<thead>
+<tr>
+<th>確認事項ID</th>
+<th>確認内容</th>
+<th>優先度</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>v1.0 リリース時点で全項目確定済み</td>
+<td>低</td>
+<td>確認済</td>
+</tr>
+<tr>
+<td>TBD-DD12-001</td>
+<td>k6 シナリオファイルの初回実施日(SRE 主管、運用設計に記載予定)</td>
+<td>中</td>
+<td>未確定</td>
+</tr>
+<tr>
+<td>TBD-DD12-002</td>
+<td>ペネトレーション実施記録の正式パス(<code>docs/security/pentest/YYYY-MM-DD.md</code>)の運用開始</td>
+<td>中</td>
+<td>未確定</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>
