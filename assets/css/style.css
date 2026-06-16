@@ -137,6 +137,9 @@ details.nav-cat>summary:hover{background:var(--surface-2)}
 .content pre{background:var(--pre-bg);color:var(--pre-text);padding:16px 18px;border-radius:8px;
   overflow-x:auto;margin:1em 0;line-height:1.6;font-size:13px}
 .content pre code{background:none;border:none;color:inherit;padding:0;font-size:inherit}
+.content pre.mermaid[data-processed]{background:transparent;color:inherit;border:none;padding:0;
+  margin:1.2em 0;text-align:center;white-space:normal;line-height:normal}
+.content pre.mermaid[data-processed] svg{max-width:100%;height:auto}
 .content table{border-collapse:collapse;width:100%;font-size:13.5px;margin:1.1em 0}
 .table-scroll{overflow-x:auto;border:1px solid var(--table-border);border-radius:8px;margin:1.1em 0}
 .table-scroll table{margin:0;border:none}

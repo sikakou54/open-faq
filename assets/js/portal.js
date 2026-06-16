@@ -182,6 +182,41 @@
     tb.parentNode.insertBefore(w, tb); w.appendChild(tb);
   });
 
+  /* --- Mermaid 図(CDN)を描画 ---
+     本文内の <pre class="mermaid"> / .mermaid をフロー図・遷移図として描画する。
+     ライブラリは CDN から動的読み込み(アイコンと同様に通信が必要)。
+     読み込めない場合はソース(コードブロック)がそのまま残る(グレースフルデグレード)。 */
+  (function(){
+    var mNodes = Array.prototype.slice.call(article.querySelectorAll('.mermaid'));
+    if(!mNodes.length) return;
+    mNodes.forEach(function(el){
+      if(!el.hasAttribute('data-mermaid-src'))
+        el.setAttribute('data-mermaid-src', (el.textContent||'').replace(/^\s*\n/,''));
+    });
+    function themeName(){ return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'default'; }
+    var busy = false;
+    function renderMermaid(){
+      if(busy) return; busy = true;
+      import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs')
+        .then(function(mod){
+          var mermaid = mod.default;
+          mNodes.forEach(function(el){
+            el.removeAttribute('data-processed');
+            el.textContent = el.getAttribute('data-mermaid-src');
+          });
+          mermaid.initialize({ startOnLoad:false, theme: themeName(),
+            securityLevel:'loose', flowchart:{ htmlLabels:true, useMaxWidth:true } });
+          return mermaid.run({ nodes: mNodes });
+        })
+        .then(function(){ busy = false; })
+        .catch(function(err){ busy = false; if(window.console) console.error('Mermaid 描画失敗:', err); });
+    }
+    renderMermaid();
+    /* テーマ切替に追従して再描画(切替ハンドラが dataset.theme を更新した後に実行) */
+    var tBtn = document.getElementById('theme-toggle');
+    if(tBtn) tBtn.addEventListener('click', function(){ setTimeout(renderMermaid, 0); });
+  })();
+
   /* --- 見出しアンカー + 目次 + スクロールスパイ --- */
   var heads = article.querySelectorAll('h2, h3');
   heads.forEach(function(h){
