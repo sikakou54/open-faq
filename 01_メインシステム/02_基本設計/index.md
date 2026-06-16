@@ -145,7 +145,7 @@ graph LR
 | SCR-014 | 退会申請 | §5.SCR-014 | `POST /v1/withdrawal-requests` | `withdrawal_requests` | オーナー専有 | E-BIZ-WITHDRAWAL | MSG-SCR-014-* | §6 オーナー専有 | - | §5 退会フロー |
 | SCR-015 | 規約再同意割込み | §5.SCR-015 | `POST /v1/terms/agree` | `terms_agreements` | 全ユーザー | E-AUTHZ-TERMS | MSG-SCR-015-* | §3 規約再同意 | - | - |
 | SCR-016 | 利用状況 | §5.SCR-016 | `GET /owner/projects/usage` | `usage_metering`, `question_logs`, `faqs`, `projects.valid` | オーナー専有 | E-AUTHZ-OWNER-ONLY | MSG-SCR-016-* | §6 認可判定 | - | - |
-| SCR-017 | 個人設定 | §5.SCR-017 | `PATCH /v1/me`, `POST /v1/me/password`, `GET /v1/me/sessions` | `accounts`, `sessions`, `project_users` | 全認証ユーザー(自分のみ)| E-AUTH-* | MSG-SCR-017-* | §3 | §7 | - |
+| SCR-017 | 個人設定 | §5.SCR-017 | `PATCH /v1/me`, `POST /v1/me/password` | `accounts`, `project_users` | 全認証ユーザー(自分のみ)| E-AUTH-* | MSG-SCR-017-* | §3 | §7 | - |
 | SCR-022 | 請求 | §5.SCR-022 | `GET /billing/summary`, `GET /billing/invoices` | `billing_*` | オーナー専有 | E-BILL-* | MSG-SCR-022-* | §6 | - | §5〜§16 |
 | SCR-023 | 設定 | §5.SCR-023 | `PATCH /v1/me/contact-email`, 退会/出力API | `contract_owners` | オーナー専有 | E-AUTHZ-OWNER-ONLY | MSG-SCR-023-* | §6 | §7 | §5 |
 
