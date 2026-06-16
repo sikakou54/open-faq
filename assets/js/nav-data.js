@@ -117,7 +117,7 @@ window.NAV = [
      },
      {
       "url": "01_メインシステム/01_要件定義/FR21_SCR画面マスタ.html",
-      "title": "FR21: SCR 画面一覧(マスタ)",
+      "title": "FR21: 画面・機能要件一覧",
       "kind": "md"
      }
     ]
