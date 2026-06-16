@@ -286,72 +286,6 @@ body { padding-top: 54px; }
   <td>契約オーナーのみ。確認と再認証を伴う。</td>
 </tr>
 <tr>
-  <td><a href="#scr-008">概要（プロジェクトダッシュボード）</a><br><span class="small">scr-008</span></td>
-  <td>選択中プロジェクトの状況を把握し、日常業務の各画面へ進む。</td>
-  <td>閲覧・操作可</td>
-  <td>対象プロジェクトへの有効な割当。</td>
-</tr>
-<tr>
-  <td><a href="#scr-005-list">要対応の質問一覧</a><br><span class="small">scr-005-list</span></td>
-  <td>AIで解決できなかった質問を状況別に確認する。</td>
-  <td>閲覧・操作可</td>
-  <td>対象プロジェクトへの割当とFAQまたはログ参照権限。</td>
-</tr>
-<tr>
-  <td><a href="#scr-005-detail">要対応の質問詳細</a><br><span class="small">scr-005-detail</span></td>
-  <td>質問内容・未解決理由を確認し、対応状況を手動更新する。</td>
-  <td>閲覧・操作可</td>
-  <td>対象プロジェクトへの有効な割当。</td>
-</tr>
-<tr>
-  <td><a href="#scr-006-list">FAQ 一覧</a><br><span class="small">scr-006-list</span></td>
-  <td>FAQを検索・一覧し、新規作成、公開管理、CSV操作へ進む。</td>
-  <td>閲覧・操作可</td>
-  <td>対象プロジェクトへの有効な割当とFAQ権限。</td>
-</tr>
-<tr>
-  <td><a href="#scr-006-edit">FAQ 編集</a><br><span class="small">scr-006-edit</span></td>
-  <td>FAQの質問・回答・カテゴリ・公開状態を編集する。</td>
-  <td>閲覧・操作可</td>
-  <td>対象プロジェクトへの有効な割当とFAQ権限。</td>
-</tr>
-<tr>
-  <td><a href="#scr-006-m1">FAQ CSV インポートモーダル</a><br><span class="small">scr-006-m1</span></td>
-  <td>UTF-8 CSVでFAQを一括登録・更新する。</td>
-  <td>閲覧・操作可</td>
-  <td>SCR-006のCSVインポートから起動。FAQ権限が必要。</td>
-</tr>
-<tr>
-  <td><a href="#scr-007">ウィジェット(プロジェクト WS / 公開キー + 見た目 + プレビュー)</a><br><span class="small">scr-007</span></td>
-  <td>公開キー、埋め込みコード、見た目、プレビューを確認・設定する。</td>
-  <td>閲覧・操作可</td>
-  <td>対象プロジェクトへの割当。操作範囲はロールで変わる。</td>
-</tr>
-<tr>
-  <td><a href="#scr-009">メンバー</a><br><span class="small">scr-009</span></td>
-  <td>対象プロジェクトの参加者とロールを一覧・管理する。</td>
-  <td>閲覧・操作可</td>
-  <td>対象プロジェクトの管理者または契約オーナー。</td>
-</tr>
-<tr>
-  <td><a href="#scr-009-m1">メンバー招待 / 編集モーダル(プロジェクト単位)</a><br><span class="small">scr-009-m1</span></td>
-  <td>メンバー招待、ロール変更、プロジェクト割当解除を行う。</td>
-  <td>閲覧・操作可</td>
-  <td>SCR-009から起動。対象プロジェクトの管理者以上。</td>
-</tr>
-<tr>
-  <td><a href="#scr-021">利用量と上限(質問数)</a><br><span class="small">scr-021</span></td>
-  <td>対象プロジェクトの当月質問数と月次上限を確認する。</td>
-  <td>閲覧・操作可</td>
-  <td>対象プロジェクトへの有効な割当。変更範囲はロールで変わる。</td>
-</tr>
-<tr>
-  <td><a href="#scr-021-m1">質問数上限設定モーダル</a><br><span class="small">scr-021-m1</span></td>
-  <td>質問数上限のON/OFF、件数、通知閾値を設定する。</td>
-  <td>閲覧・操作可</td>
-  <td>対象プロジェクトの管理者または契約オーナー。再認証必須。</td>
-</tr>
-<tr>
   <td><a href="#scr-019">プロジェクト連絡先メール確認完了(TPL-PROJECT_CONTACT_VERIFY 着地 / 共通領域)</a><br><span class="small">scr-019</span></td>
   <td>プロジェクト連絡先メールの所有確認を完了する。</td>
   <td>確認メール送信と完了状態の管理</td>
@@ -398,8 +332,8 @@ body { padding-top: 54px; }
   <div class="small">遷移条件: メール確認と初回規約同意が完了していること。</div>
 </div><div class="flow-card">
   <strong>プロジェクト作成・運用</strong>
-  <div class="flow-steps"><span class="flow-step">SCR-016</span><span class="flow-arrow" aria-hidden="true">→</span><span class="flow-step">SCR-004</span><span class="flow-arrow" aria-hidden="true">→</span><span class="flow-step">SCR-004-M1 作成</span><span class="flow-arrow" aria-hidden="true">→</span><span class="flow-step">SCR-008 プロジェクト概要</span></div>
-  <div class="small">遷移条件: 契約オーナー。作成後は自動でプロジェクト管理者となる。</div>
+  <div class="flow-steps"><span class="flow-step">SCR-016</span><span class="flow-arrow" aria-hidden="true">→</span><span class="flow-step">SCR-004</span><span class="flow-arrow" aria-hidden="true">→</span><span class="flow-step">SCR-004-M1 作成</span><span class="flow-arrow" aria-hidden="true">→</span><span class="flow-step">プロジェクト運用(SCR-008 以降)</span></div>
+  <div class="small">遷移条件: 契約オーナー。作成後は自動でプロジェクト管理者となる。作成後のプロジェクト運用画面(SCR-008 概要 / 要対応の質問 / FAQ / ウィジェット / メンバー / 利用量と上限)は<a href="画面遷移図_プロジェクト管理者.html">プロジェクト管理者の画面遷移図</a>を参照。</div>
 </div><div class="flow-card">
   <strong>利用状況・請求・設定</strong>
   <div class="flow-steps"><span class="flow-step">SCR-016 利用状況</span><span class="flow-arrow" aria-hidden="true">→</span><span class="flow-step">SCR-022 請求</span><span class="flow-arrow" aria-hidden="true">→</span><span class="flow-step">SCR-023 設定</span></div>
@@ -425,7 +359,7 @@ body { padding-top: 54px; }
     </section>
     <section class="doc-section">
       <h2>このページから除外した画面・遷移</h2>
-      <ul class="plain-list"><li>WIDGETのエンドユーザー本人向け画面</li><li>SCR-018の招待メンバー有効化画面（オーナー自身は新規登録フローを利用）</li><li>運営者システム主管のSCR-090〜098</li></ul>
+      <ul class="plain-list"><li>プロジェクトワークスペースの運用画面(SCR-008 概要 / SCR-005 要対応の質問 / SCR-006 FAQ / SCR-006-M1 / SCR-007 ウィジェット / SCR-009 メンバー / SCR-009-M1 / SCR-021 利用量と上限 / SCR-021-M1)── オーナーは全プロジェクトで暗黙の管理者として利用するが、画面定義は<a href="画面遷移図_プロジェクト管理者.html">プロジェクト管理者の画面遷移図</a>に集約(重複定義を避ける)</li><li>WIDGETのエンドユーザー本人向け画面</li><li>SCR-018の招待メンバー有効化画面（オーナー自身は新規登録フローを利用）</li><li>運営者システム主管のSCR-090〜098</li></ul>
     </section>
   </div>
 
@@ -468,150 +402,6 @@ body { padding-top: 54px; }
   </div></div>
 </div>
 <div class="screen" id="scr-014" role="region" aria-labelledby="scr-014-title"> <div class="screen-header"> <div><span class="scr-id">SCR-014</span><span class="scr-name" id="scr-014-title">退会手続き</span></div> <div class="scr-user">利用者: オーナー専有</div> </div> <div class="app-layout"> <div class="app-header" role="banner"> <div class="left"> <span class="logo" role="link" aria-label="open-faq ホーム">open-faq</span> <span class="ws-switcher" role="button" aria-haspopup="menu" aria-label="管理範囲を切り替え(現在地: 契約ダッシュボード)">契約 <i data-lucide="link"></i></span> </div> <div class="right"> <span class="bell" role="button" aria-label="お知らせ通知ベル(未読 3 件)"><i data-lucide="bell"></i><span class="badge" aria-hidden="true">3</span></span> <span class="role-badge" aria-label="RoleBadge(オーナー)"><i data-lucide="crown"></i>OWNER</span> <span class="user-menu" role="button" aria-haspopup="menu" aria-label="アカウントメニュー(owner@example.com)">▼ owner@example.com</span> </div> </div> <div class="app-sidebar" role="navigation" aria-label="契約ワークスペース ナビゲーション"><div class="item"><i data-lucide="bar-chart-3"></i>利用状況</div><div class="item"><i data-lucide="folder"></i>プロジェクト</div><div class="item"><i data-lucide="credit-card"></i>請求</div><div class="item"><i data-lucide="settings"></i>設定</div></div><div class="app-main" role="main" aria-label="メインコンテンツ"> <nav class="breadcrumb" aria-label="現在位置"><a>個人設定</a> / <span aria-current="page">退会申請</span></nav> <header class="page-header"><div><h1>退会申請</h1><p class="page-description">退会するとサービスがご利用いただけなくなります</p></div></header> <div class="panel" style="border-color: var(--warning-border);"> <div class="panel-title"><i data-lucide="alert-triangle"></i>注意事項</div> <ul class="small" style="margin: 0; padding-left: 16px;"><li>当月末(例: 2026-05-31)でサービスが停止します</li><li>2026-06-30 にすべてのデータが完全削除されます(復元不可)</li><li>当月分の従量課金は通常通り請求され、次月以降の請求は発生しません</li><li>全メンバーのアクセス権が当月末で失効し、招待中のメンバーは自動的にキャンセルされます</li></ul> </div> <div class="panel"> <div class="panel-title">退会理由(任意)</div> <div class="textarea" style="min-height: 80px;"><span class="placeholder">サービス改善のため、よろしければご記入ください…</span></div> <div class="helper">0 / 500</div> </div> <div style="display: flex; justify-content: space-between; margin-top: 12px; padding-top: 8px; border-top: 1px solid var(--border);"> <button class="btn">キャンセル</button> <button class="btn danger">退会を申請する</button> </div> </div> </div> </div>
-<div class="screen" id="scr-008" role="region" aria-labelledby="scr-008-title">
-  <div class="screen-header">
-    <div><span class="scr-id">SCR-008</span><span class="scr-name" id="scr-008-title">概要（プロジェクトダッシュボード）</span></div>
-    <div class="scr-user">利用者: オーナー / プロジェクト管理者 / メンバー</div>
-  </div>
-  <div class="app-layout">
-    <div class="app-header" role="banner">
-      <div class="left">
-        <span class="logo" role="link" aria-label="open-faq ホーム">open-faq</span>
-        <span class="ws-switcher" role="button" aria-haspopup="menu" aria-label="管理範囲を切り替え(現在地: サポートサイト)">サポートサイト <i data-lucide="folder"></i></span>
-      </div>
-      <div class="right">
-        <span class="bell" role="button" aria-label="お知らせ通知ベル(未読 3 件)"><i data-lucide="bell"></i><span class="badge" aria-hidden="true">3</span></span>
-        <span class="user-menu" role="button" aria-haspopup="menu" aria-label="アカウントメニュー(admin@example.com)">▼ admin@example.com</span>
-      </div>
-    </div>
-    <div class="app-sidebar" role="navigation" aria-label="メインナビゲーション">
-      <div class="item active" role="link" aria-current="page"><i data-lucide="home"></i>概要</div>
-      <div class="group" role="heading" aria-level="2">対応</div>
-      <div class="item" role="link"><i data-lucide="inbox"></i>要対応の質問<span class="badge">87</span></div>
-
-      <div class="group" role="heading" aria-level="2">通知</div>
-      <div class="item" role="link"><i data-lucide="bell"></i>お知らせ<span class="badge">3</span></div>
-      <div class="group" role="heading" aria-level="2">コンテンツ</div>
-      <div class="item" role="link"><i data-lucide="book-open"></i>FAQ</div>
-
-      <div class="item" role="link"><i data-lucide="puzzle"></i>ウィジェット</div>
-      <div class="group" role="heading" aria-level="2">プロジェクト</div>
-      <div class="item" role="link"><i data-lucide="users"></i>メンバー</div>
-      <div class="item" role="link"><i data-lucide="gauge"></i>利用量と上限</div>
-            <div class="group" role="heading" aria-level="2">共通</div>
-      <div class="item" role="link"><i data-lucide="scroll-text"></i>利用規約</div>
-      <div class="item" role="link"><i data-lucide="shield"></i>プライバシーポリシー</div>
-    </div>
-    <div class="app-main" role="main" aria-label="メインコンテンツ">
-      <nav class="breadcrumb" aria-label="現在位置"><a>ホーム</a> / <span aria-current="page">概要</span></nav>
-      <header class="page-header">
-        <div><h1>概要</h1><p class="page-description">このプロジェクトの利用状況を確認できます</p></div>
-        <div style="display:flex; gap:6px; align-items:center;"><label class="small">期間:</label><div class="select" style="width:110px;">▼ 当月</div></div>
-      </header>
-      <div class="trial-banner warning" role="alert" aria-live="assertive">
-        <span><strong>⚠ 無料利用枠を超過しました</strong> — お支払い方法が未登録のため、ウィジェットは現在制限中です。</span>
-        <a class="link">支払い方法を登録 →</a>
-      </div>
-      <div class="alert-bar danger" role="alert" aria-live="assertive"><i data-lucide="siren"></i>質問数が上限に達しました ― ウィジェットは現在制限中です。<a class="link">利用量と上限へ →</a></div>
-      <div style="display:flex; justify-content:flex-end; margin-bottom:6px;"><span class="small">最終更新: 2026-06-11 09:12(JST)</span></div>
-      <div class="panel">
-        <div class="panel-title">利用状況</div>
-        <div class="summary-card-grid" role="group" aria-label="利用状況">
-          <div class="summary-card"><div class="label">質問数</div><div class="value">1,247<span class="unit">件</span></div></div>
-          <div class="summary-card"><div class="label">未解決数</div><div class="value">139<span class="unit">件</span></div></div>
-          <div class="summary-card"><div class="label">公開 FAQ 件数</div><div class="value">156<span class="unit">件</span></div></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="screen" id="scr-005-list" role="region" aria-labelledby="scr-005-list-title"> <div class="screen-header"> <div><span class="scr-id">SCR-005</span><span class="scr-name" id="scr-005-list-title">要対応の質問一覧</span></div> <div class="scr-user">利用者: 利用者(オーナー / メンバー)(「FAQ」または「ログ参照」権限保持)</div> </div> <div class="app-layout"> <div class="app-header" role="banner"> <div class="left"> <span class="logo" role="link" aria-label="open-faq ホーム">open-faq</span> <span class="ws-switcher" role="button" aria-haspopup="menu" aria-label="管理範囲を切り替え(現在地: サポートサイト)">サポートサイト <i data-lucide="folder"></i></span> </div> <div class="right"> <span class="bell" role="button" aria-label="お知らせ通知ベル(未読 3 件)"><i data-lucide="bell"></i><span class="badge" aria-hidden="true">3</span></span> <span class="user-menu" role="button" aria-haspopup="menu" aria-label="アカウントメニュー(admin@example.com)">▼ admin@example.com</span> </div> </div> <div class="app-sidebar" role="navigation" aria-label="メインナビゲーション"> <div class="item" role="link"><i data-lucide="home"></i>概要</div> <div class="group" role="heading" aria-level="2">対応</div> <div class="item active" role="link" aria-current="page"><i data-lucide="inbox"></i>要対応の質問<span class="badge">87</span></div>  <div class="group" role="heading" aria-level="2">通知</div> <div class="item" role="link"><i data-lucide="bell"></i>お知らせ<span class="badge">3</span></div> <div class="group" role="heading" aria-level="2">コンテンツ</div> <div class="item" role="link"><i data-lucide="book-open"></i>FAQ</div>  <div class="item" role="link"><i data-lucide="puzzle"></i>ウィジェット</div> <div class="group" role="heading" aria-level="2">プロジェクト</div> <div class="item" role="link"><i data-lucide="users"></i>メンバー</div> <div class="item" role="link"><i data-lucide="gauge"></i>利用量と上限</div>  <div class="group" role="heading" aria-level="2">共通</div> <div class="item" role="link"><i data-lucide="scroll-text"></i>利用規約</div> <div class="item" role="link"><i data-lucide="shield"></i>プライバシーポリシー</div> </div> <div class="app-main" role="main" aria-label="メインコンテンツ"> <nav class="breadcrumb" aria-label="現在位置"><a>ホーム</a> / <span aria-current="page">要対応の質問</span></nav> <header class="page-header"><div><h1>要対応の質問</h1><p class="page-description">ウィジェットで回答できなかった質問を管理します</p></div><div><button class="btn">CSV をエクスポート</button></div></header> <div style="margin-bottom: 8px;"> <div class="filter-bar" role="search" aria-label="詳細絞り込み"> <div class="filter-item">状況: <label class="checkbox">対応中</label> <label class="checkbox">対応済み</label> </div> <div class="filter-item">期間: <div class="input" style="width: 110px;">2026-05-01</div> 〜 <div class="input" style="width: 110px;">2026-05-11</div></div> <div class="filter-item"><i data-lucide="search"></i><div class="input" style="width: 140px;"><span class="placeholder">要対応の質問 ID / 質問</span></div></div> </div> </div> <div class="small" style="margin-bottom: 6px;">表示中: 1-50 / 全 12 件</div> <table class="wf"> <thead> <tr> <th style="width: 24px;">□</th> <th>問い合わせ ID</th> <th>状況</th> <th>質問抜粋</th> <th>更新日時</th> </tr> </thead> <tbody> <tr> <td>□</td> <td><a class="link" aria-label="INQ-7K9N4 の詳細を開く"><code>INQ-7K9N4</code></a></td> <td><span class="case-status-badge open">対応中</span></td> <td>料金プランの変更方法について教えてください<br><span class="small" style="color: var(--text-muted);">未解決理由: 該当 FAQ なし</span></td> <td>3 分前</td> </tr> <tr> <td>□</td> <td><a class="link" aria-label="INQ-7K9N3 の詳細を開く"><code>INQ-7K9N3</code></a></td> <td><span class="case-status-badge open">対応中</span></td> <td>パスワードを忘れた場合の手順は?<br><span class="small" style="color: var(--text-muted);">未解決理由: FAQ 間で矛盾</span></td> <td>2 時間前</td> </tr> <tr> <td>□</td> <td><a class="link" aria-label="INQ-7K9M2 の詳細を開く"><code>INQ-7K9M2</code></a></td> <td><span class="case-status-badge open">対応中</span></td> <td>サポート時間外の問い合わせ対応<br><span class="small" style="color: var(--text-muted);">未解決理由: 信頼度 0.42(しきい値 0.60 未達)</span></td> <td>1 日前</td> </tr> <tr> <td>□</td> <td><a class="link" aria-label="INQ-7K9L1 の詳細を開く"><code>INQ-7K9L1</code></a></td> <td><span class="case-status-badge closed">対応済み</span></td> <td>請求書の発行サイクル<br><span class="small" style="color: var(--text-muted);">未解決理由: 利用者が未解決と回答</span></td> <td>2 日前</td> </tr> <tr> <td>□</td> <td><a class="link" aria-label="INQ-7K9K0 の詳細を開く"><code>INQ-7K9K0</code></a></td> <td><span class="case-status-badge closed">対応済み</span></td> <td>退会後のデータ取扱について<br><span class="small" style="color: var(--text-muted);">未解決理由: 該当 FAQ なし</span></td> <td>4 日前</td> </tr> </tbody> </table> <div class="pager">表示中: 1-12 / 全 12 件 <span class="pg">‹</span><span class="pg">1</span><span class="pg">›</span></div> </div> </div> </div>
-<div class="screen" id="scr-005-detail" role="region" aria-labelledby="scr-005-detail-title"> <div class="screen-header"> <div><span class="scr-id">SCR-005</span><span class="scr-name" id="scr-005-detail-title">要対応の質問詳細</span></div> <div class="scr-user">利用者: オーナー / プロジェクト管理者 / メンバー(当該プロジェクト)</div> </div> <div class="app-layout"> <div class="app-header" role="banner"> <div class="left"> <span class="logo" role="link" aria-label="open-faq ホーム">open-faq</span> <span class="ws-switcher" role="button" aria-haspopup="menu" aria-label="管理範囲を切り替え(現在地: サポートサイト)">サポートサイト <i data-lucide="folder"></i></span> </div> <div class="right"> <span class="bell" role="button" aria-label="お知らせ通知ベル(未読 3 件)"><i data-lucide="bell"></i><span class="badge" aria-hidden="true">3</span></span> <span class="user-menu" role="button" aria-haspopup="menu" aria-label="アカウントメニュー(admin@example.com)">▼ admin@example.com</span> </div> </div> <div class="app-sidebar" role="navigation" aria-label="メインナビゲーション"> <div class="item" role="link"><i data-lucide="home"></i>概要</div> <div class="group" role="heading" aria-level="2">対応</div> <div class="item active" role="link" aria-current="page"><i data-lucide="inbox"></i>要対応の質問<span class="badge">87</span></div>  <div class="group" role="heading" aria-level="2">通知</div> <div class="item" role="link"><i data-lucide="bell"></i>お知らせ<span class="badge">3</span></div> <div class="group" role="heading" aria-level="2">コンテンツ</div> <div class="item" role="link"><i data-lucide="book-open"></i>FAQ</div>  <div class="item" role="link"><i data-lucide="puzzle"></i>ウィジェット</div> <div class="group" role="heading" aria-level="2">プロジェクト</div> <div class="item" role="link"><i data-lucide="users"></i>メンバー</div> <div class="item" role="link"><i data-lucide="gauge"></i>利用量と上限</div>  <div class="group" role="heading" aria-level="2">共通</div> <div class="item" role="link"><i data-lucide="scroll-text"></i>利用規約</div> <div class="item" role="link"><i data-lucide="shield"></i>プライバシーポリシー</div> </div> <div class="app-main" role="main" aria-label="メインコンテンツ"> <nav class="breadcrumb" aria-label="現在位置"><a>ホーム</a> / <a>要対応の質問</a> / <span aria-current="page">INQ-7K9N4</span></nav> <header class="page-header"><div><h1>要対応の質問 — <code>INQ-7K9N4</code></h1><p class="page-description"><span class="case-status-badge open">対応中</span></p></div></header> <div class="grid-3-2"> <div> <div class="panel"> <div class="panel-title">質問</div> <div style="font-size: 11px;">サポート時間外(夜間や週末)に問い合わせを送信した場合、回答が届くのはいつ頃になりますか?営業時間内に必ず確認していただけますか?</div> <div class="small" style="margin-top: 4px;">投稿: 2026-05-09 10:20</div> </div> <div class="panel"> <div class="panel-title">未解決理由</div> <div><span class="badge-pill orange">信頼度不足</span> 信頼度 0.42(しきい値 0.60 未達)</div> <div class="small">候補 FAQ はありますが信頼度が不足しているため自動回答していません</div> </div> </div> <div> <div class="panel"> <div class="panel-title">状況</div> <div class="field"> <label>状況</label> <div class="select"><span class="placeholder">▼ 対応中 / 対応済み</span></div> <div class="helper">プルダウン変更で即時保存。手動操作のみで、FAQ 操作・チャットとは連動しない</div> </div> <div class="field" style="margin-top: 8px;"> <label>登録先 FAQ</label> <div><a class="link">FAQ-3478: サポート時間外の対応について(下書き)</a></div> </div> </div> <div class="panel"> <div class="panel-title">候補 FAQ(関連度しきい値超え)</div> <a class="link">FAQ-3221: 営業時間について(関連度 0.61)</a><br> <a class="link">FAQ-3105: お問い合わせの返答時間(関連度 0.55)</a> <div style="margin-top: 6px;"><button class="btn small primary">FAQ 登録へ</button></div> </div> </div> </div> </div> </div> </div>
-<div class="screen" id="scr-006-list" role="region" aria-labelledby="scr-006-list-title"> <div class="screen-header"> <div><span class="scr-id">SCR-006</span><span class="scr-name" id="scr-006-list-title">FAQ 一覧</span></div> <div class="scr-user">利用者: 利用者(オーナー / メンバー)(オーナーまたは「FAQ」権限保持メンバー)</div> </div> <div class="app-layout"> <div class="app-header" role="banner"> <div class="left"> <span class="logo" role="link" aria-label="open-faq ホーム">open-faq</span> <span class="ws-switcher" role="button" aria-haspopup="menu" aria-label="管理範囲を切り替え(現在地: サポートサイト)">サポートサイト <i data-lucide="folder"></i></span> </div> <div class="right"> <span class="bell" role="button" aria-label="お知らせ通知ベル(未読 3 件)"><i data-lucide="bell"></i><span class="badge" aria-hidden="true">3</span></span> <span class="user-menu" role="button" aria-haspopup="menu" aria-label="アカウントメニュー(admin@example.com)">▼ admin@example.com</span> </div> </div> <div class="app-sidebar" role="navigation" aria-label="メインナビゲーション"> <div class="item" role="link"><i data-lucide="home"></i>概要</div> <div class="group" role="heading" aria-level="2">対応</div> <div class="item" role="link"><i data-lucide="inbox"></i>要対応の質問<span class="badge">87</span></div>  <div class="group" role="heading" aria-level="2">通知</div> <div class="item" role="link"><i data-lucide="bell"></i>お知らせ<span class="badge">3</span></div> <div class="group" role="heading" aria-level="2">コンテンツ</div> <div class="item active" role="link" aria-current="page"><i data-lucide="book-open"></i>FAQ</div>  <div class="item" role="link"><i data-lucide="puzzle"></i>ウィジェット</div> <div class="group" role="heading" aria-level="2">プロジェクト</div> <div class="item" role="link"><i data-lucide="users"></i>メンバー</div> <div class="item" role="link"><i data-lucide="gauge"></i>利用量と上限</div>  <div class="group" role="heading" aria-level="2">共通</div> <div class="item" role="link"><i data-lucide="scroll-text"></i>利用規約</div> <div class="item" role="link"><i data-lucide="shield"></i>プライバシーポリシー</div> </div> <div class="app-main" role="main" aria-label="メインコンテンツ"> <nav class="breadcrumb" aria-label="現在位置"><a>ホーム</a> / <span aria-current="page">FAQ</span></nav> <header class="page-header"><div><h1>FAQ</h1><p class="page-description">ウィジェットで自動回答される FAQ を管理します</p></div><div><button class="btn primary">+ 新規作成</button> <button class="btn" aria-haspopup="dialog" aria-label="CSV をインポート(SCR-006-M1 モーダルを開く)">CSV をインポート</button> <button class="btn">CSV をエクスポート</button></div></header> <div class="filter-bar" role="search" aria-label="絞り込み・検索"> <div class="filter-item"><i data-lucide="search"></i><div class="input" style="width: 200px;"><span class="placeholder">質問・回答を全文検索</span></div></div> <div class="filter-item">カテゴリ: <div class="select" style="width: 110px;">▼ すべて</div></div> <div class="filter-item">並び順: <div class="select" style="width: 110px;">▼ 関連度</div></div> </div> <div class="small" style="margin-bottom: 6px;">表示中: 1-50 / 全 101 件</div> <table class="wf"> <thead> <tr> <th style="width: 24px;">□</th> <th>FAQ ID</th> <th>質問</th> <th>カテゴリ</th> <th>状態</th> <th>更新日時</th> </tr> </thead> <tbody> <tr> <td>☑</td> <td><a class="link" role="button" aria-label="faq_01HMK7P2 を編集(SCR-006 編集モード)"><code>faq_01HMK7P2</code></a></td> <td>料金プランの変更方法について</td> <td>料金・契約</td> <td><span class="badge-pill green">公開中</span></td> <td>3 時間前</td> </tr> <tr> <td>☑</td> <td><a class="link" role="button" aria-label="faq_01HMK7P1 を編集(SCR-006 編集モード)"><code>faq_01HMK7P1</code></a></td> <td>パスワードを忘れた場合の手順</td> <td>アカウント</td> <td><span class="badge-pill green">公開中</span></td> <td>1 日前</td> </tr> <tr> <td>□</td> <td><a class="link" role="button" aria-label="faq_01HMK6N4 を編集(SCR-006 編集モード)"><code>faq_01HMK6N4</code></a></td> <td>退会後のデータ取扱について</td> <td>プライバシー</td> <td><span class="badge-pill orange">下書き</span></td> <td>2 日前</td> </tr> </tbody> </table> <div class="pager">表示中: 1-50 / 全 101 件 <span class="pg">‹</span><span class="pg">1</span><span class="pg">2</span><span class="pg">…</span><span class="pg">8</span><span class="pg">›</span></div> <div class="bulk-action-bar"><span class="count">2 件選択中</span><button class="btn">公開する</button><button class="btn">非公開化する</button><button class="btn">削除する</button><button class="btn-link">選択を解除</button></div> </div> </div> </div>
-<div class="screen" id="scr-006-edit" role="region" aria-labelledby="scr-006-edit-title"> <div class="screen-header"> <div><span class="scr-id">SCR-006</span><span class="scr-name" id="scr-006-edit-title">FAQ 編集</span></div> <div class="scr-user">利用者: 利用者(オーナー / メンバー)(オーナーまたは「FAQ」権限保持メンバー)</div> </div> <div class="app-layout"> <div class="app-header" role="banner"> <div class="left"> <span class="logo" role="link" aria-label="open-faq ホーム">open-faq</span> <span class="ws-switcher" role="button" aria-haspopup="menu" aria-label="管理範囲を切り替え(現在地: サポートサイト)">サポートサイト <i data-lucide="folder"></i></span> </div> <div class="right"> <span class="bell" role="button" aria-label="お知らせ通知ベル(未読 3 件)"><i data-lucide="bell"></i><span class="badge" aria-hidden="true">3</span></span> <span class="user-menu" role="button" aria-haspopup="menu" aria-label="アカウントメニュー(admin@example.com)">▼ admin@example.com</span> </div> </div> <div class="app-sidebar" role="navigation" aria-label="メインナビゲーション"> <div class="item" role="link"><i data-lucide="home"></i>概要</div> <div class="group" role="heading" aria-level="2">対応</div> <div class="item" role="link"><i data-lucide="inbox"></i>要対応の質問<span class="badge">87</span></div>  <div class="group" role="heading" aria-level="2">通知</div> <div class="item" role="link"><i data-lucide="bell"></i>お知らせ<span class="badge">3</span></div> <div class="group" role="heading" aria-level="2">コンテンツ</div> <div class="item active" role="link" aria-current="page"><i data-lucide="book-open"></i>FAQ</div>  <div class="item" role="link"><i data-lucide="puzzle"></i>ウィジェット</div> <div class="group" role="heading" aria-level="2">プロジェクト</div> <div class="item" role="link"><i data-lucide="users"></i>メンバー</div> <div class="item" role="link"><i data-lucide="gauge"></i>利用量と上限</div>  <div class="group" role="heading" aria-level="2">共通</div> <div class="item" role="link"><i data-lucide="scroll-text"></i>利用規約</div> <div class="item" role="link"><i data-lucide="shield"></i>プライバシーポリシー</div> </div> <div class="app-main" role="main" aria-label="メインコンテンツ"> <nav class="breadcrumb" aria-label="現在位置"><a>ホーム</a> / <a>FAQ</a> / <span aria-current="page">faq_01HMK... 編集</span></nav> <header class="page-header"><div><h1>FAQ 編集</h1><p class="page-description">faq_01HMK... の内容を編集します。30 秒ごとに自動保存されます</p></div><div><span class="autosave-indicator">30 秒前に保存しました</span></div></header> <div> <div class="field"> <label>質問<span class="req">●</span></label> <div class="textarea" style="min-height: 60px;"><span class="placeholder">退会後のデータ取扱について教えてください</span></div> <div class="helper">142 / 500</div> </div> <div class="field"> <label>回答<span class="req">●</span></label> <div class="textarea rich" style="min-height: 180px;"><span class="placeholder">退会手続きの受付後、30 日の猶予期間中はデータの確認とダウンロードが可能です...</span></div> <div class="helper">482 / 5,000</div> </div> <div class="field"> <label>カテゴリ <span class="small">(サジェスト付き)</span></label> <div class="input"><span class="placeholder">例: プライバシー(既存カテゴリから選択 or 新規入力)</span></div> </div> <div class="field"> <label>状態</label> <div>○ 下書き &nbsp; ◉ 公開中 &nbsp; ○ 非公開</div> </div> </div> <div style="display: flex; justify-content: space-between; margin-top: 12px; padding-top: 8px; border-top: 1px solid var(--border);"> <button class="btn">キャンセル</button> <div> <button class="btn danger">削除</button> <button class="btn primary">保存</button> </div> </div> </div> </div> </div>
-<div class="screen" id="scr-006-m1" role="region" aria-labelledby="scr-006-m1-title"> <div class="screen-header"> <div><span class="scr-id">SCR-006-M1</span><span class="scr-name" id="scr-006-m1-title">FAQ CSV インポートモーダル</span></div> <div class="scr-user">利用者: オーナー / 該当プロジェクトの管理者・メンバー(FAQ権限)</div> </div> <div class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="scr-006-m1-modal-title"> <div class="modal-card" style="width: 560px;"> <h3 id="scr-006-m1-modal-title">FAQ を CSV でインポート</h3> <div style="margin: 12px 0;"><a class="link" role="button" aria-label="テンプレート CSV をダウンロード"><i data-lucide="download" style="width: 13px; height: 13px; vertical-align: -2px;"></i> テンプレートをダウンロード</a></div> <div class="field"> <label>ファイル選択<span class="req">●</span></label> <div class="captcha-box" role="button" tabindex="0" aria-label="CSV ファイルをドラッグ&amp;ドロップ、またはクリックして選択" style="padding: 20px; cursor: pointer;"> <div style="font-size: 24px; margin-bottom: 8px; color: var(--text-secondary);"><i data-lucide="upload-cloud"></i></div> <div style="color: var(--text-secondary);">CSV ファイルをここに<strong>ドラッグ&amp;ドロップ</strong></div> <div class="small">または <a class="link">クリックして選択</a></div> </div> <div class="helper">FAQ ID 空欄=新規・既存 =上書き</div> <div class="alert-bar danger" role="alert" style="margin-top: 6px; font-size: var(--fs-xs); display: none;"><i data-lucide="alert-triangle"></i>このファイルは UTF-8 ではありません(検出: Shift_JIS)。UTF-8 で保存し直してください</div> </div> <div class="panel" style="margin-top: 8px;"> <div class="panel-title">進捗</div> <div class="gauge"><div class="bar" style="width: 65%;"></div></div> <div class="small" style="margin-top: 4px;">処理中…(320 / 500 件)</div> <div class="small" style="margin-top: 6px; color: var(--danger);">失敗した行: 3 件</div> <div style="margin-top: 4px; max-height: 96px; overflow-y: auto; border: 1px solid var(--danger-border); border-radius: var(--r-md); background: var(--danger-bg);"> <table class="wf" style="border: none; font-size: var(--fs-xs);"> <thead><tr><th style="width: 56px;">行</th><th>エラー理由</th></tr></thead> <tbody> <tr><td>12</td><td>指定された FAQ ID が見つかりません(空欄にすると新規登録されます)</td></tr> <tr><td>34</td><td>質問は必須です</td></tr> <tr><td>58</td><td>回答が 5,000 文字を超えています</td></tr> </tbody> </table> </div> </div> <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px;"> <button class="btn">キャンセル</button> <button class="btn primary">読み込みを開始</button> </div> </div> </div> <div class="note" style="margin-top: 10px;"><strong>備考</strong><ul style="margin: 4px 0 0; padding-left: 18px;"><li>SCR-006 一覧の「CSV をインポート」ボタンから開く全画面モーダル(FR-310)</li><li>受理形式は CSV のみ(不正形式は E-INPUT-CSV-INVALID)</li><li>ドラッグ&amp;ドロップ / ファイル選択の時点で文字コードを判定し、UTF-8(BOM 許容)以外はアップロードせず即エラー(E-INPUT-CSV-INVALID / MSG-SCR-006-M1-ERR-005)</li><li>各行の FAQ ID 列で判定: 空欄=新規登録(下書き)/ 既存 ID=上書き(状態維持・改訂履歴に記録)/ 無効 ID=当該行を失敗(E-INPUT-CSV-FAQID-NOTFOUND)</li><li>失敗行は進捗パネル内のスクロール領域に「行番号 + エラー理由」で画面表示(CSV ダウンロードは行わない)</li><li>テンプレート CSV(ヘッダ行のみ)は「テンプレートをダウンロード」から取得。`GET /faqs/import/template`</li><li>100 件超は非同期ジョブ化、24h タイムアウト。`POST /faqs/import`(202 + jobId)</li></ul></div> </div>
-<div class="screen" id="scr-007" role="region" aria-labelledby="scr-007-title"> <div class="screen-header"> <div><span class="scr-id">SCR-007</span><span class="scr-name" id="scr-007-title">ウィジェット(プロジェクト WS / 公開キー + 見た目 + プレビュー)</span></div> <div class="scr-user">利用者: プロジェクト管理者 admin 主、メンバー member は閲覧 + 埋め込みコードのコピーのみ(再発行は L3)</div> </div> <div class="app-layout"> <div class="app-header" role="banner"> <div class="left"> <span class="logo" role="link" aria-label="open-faq ホーム">open-faq</span> <span class="ws-switcher" role="button" aria-haspopup="menu" aria-label="管理範囲を切り替え(現在地: サポートサイト)">サポートサイト <i data-lucide="folder"></i></span> </div> <div class="right"> <span class="bell" role="button" aria-label="お知らせ通知ベル(未読 3 件)"><i data-lucide="bell"></i><span class="badge" aria-hidden="true">3</span></span> <span class="user-menu" role="button" aria-haspopup="menu" aria-label="アカウントメニュー(admin@example.com)">▼ admin@example.com</span> </div> </div> <div class="app-sidebar" role="navigation" aria-label="メインナビゲーション"> <div class="item" role="link"><i data-lucide="home"></i>概要</div> <div class="group" role="heading" aria-level="2">対応</div> <div class="item" role="link"><i data-lucide="inbox"></i>要対応の質問<span class="badge">87</span></div>  <div class="group" role="heading" aria-level="2">通知</div> <div class="item" role="link"><i data-lucide="bell"></i>お知らせ<span class="badge">3</span></div> <div class="group" role="heading" aria-level="2">コンテンツ</div> <div class="item" role="link"><i data-lucide="book-open"></i>FAQ</div>  <div class="item active" role="link" aria-current="page"><i data-lucide="puzzle"></i>ウィジェット</div> <div class="group" role="heading" aria-level="2">プロジェクト</div> <div class="item" role="link"><i data-lucide="users"></i>メンバー</div> <div class="item" role="link"><i data-lucide="gauge"></i>利用量と上限</div>  <div class="group" role="heading" aria-level="2">共通</div> <div class="item" role="link"><i data-lucide="scroll-text"></i>利用規約</div> <div class="item" role="link"><i data-lucide="shield"></i>プライバシーポリシー</div> </div> <div class="app-main" role="main" aria-label="メインコンテンツ"> <nav class="breadcrumb" aria-label="現在位置"><a>ホーム</a> / <span aria-current="page">ウィジェット</span></nav> <header class="page-header"><div><h1>ウィジェット</h1><p class="page-description">サイトに埋め込むウィジェットの公開キー・見た目(主色)を設定します</p></div><div><button class="btn primary">設定を保存</button></div></header> <div class="grid-2"> <div> <div class="panel"> <div class="panel-title"><i data-lucide="key"></i>公開キー管理</div> <div class="field"><label>現在のキー</label> <div style="display: flex; gap: 6px; align-items: center;"><div class="input" style="flex: 1;"><code>pk_live_8K3mN9pQ2rT5wX7yZ1aB4cD6eF8gH0jK</code></div><button class="btn small">コピーしました</button></div> </div> <div class="alert-bar warn" role="status" style="display: none; font-size: 9px;"><i data-lucide="alert-triangle"></i>旧公開キーがまだ使われています。3 件のアクセスを検知(最終 3 時間前)</div> <button class="btn danger">公開キーを再発行する</button> <div class="helper">再発行すると旧キーは24時間のみ有効です。早めに差し替えてください。</div> </div> <div class="panel"> <div class="panel-title"><i data-lucide="clipboard"></i>埋め込みコード</div> <div class="codeblock" style="position: relative;"><button class="btn small" aria-label="埋め込みコードをコピー" title="コピー" style="position: absolute; top: 6px; right: 6px; padding: 4px 6px;"><i data-lucide="copy"></i></button>&lt;script async src="https://cdn.open-faq.com/widget.js" data-public-key="pk_live_8K3mN9pQ2rT5wX7yZ1aB4cD6eF8gH0jK" data-project-id="prj_01HMK..."&gt;
-&lt;/script&gt;</div> </div> <div class="panel"> <div class="panel-title"><i data-lucide="palette"></i>見た目の設定</div> <div class="field"><label>主色(プライマリカラー)</label> <div style="display: flex; gap: 6px; align-items: center;"><div class="input" style="width: 100px;"><code>#3366CC</code></div><div style="width: 24px; height: 24px; border-radius: var(--r-sm); background: var(--accent-500); border: 1px solid var(--border-strong);"></div><button class="btn small"><i data-lucide="palette"></i>ピッカー</button></div></div> </div> </div> <div> <div class="panel"> <div class="panel-title"><i data-lucide="eye"></i>プレビュー</div> <div class="widget-frame"> <div class="widget-header">FAQ <span>—</span></div> <div class="widget-body"> <div style="background: var(--gray-50); padding: 8px; border-radius: var(--r-sm);">何かお困りですか?</div> <div style="margin-top: 6px;"><span class="placeholder">例: 料金プランの変更</span></div> <button class="btn small primary" style="margin-top: 6px;">送信する</button> <div style="text-align: right; font-size: var(--fs-xs); color: var(--text-muted); margin-top: 8px;">Powered by open-faq</div> </div> </div> <div class="helper" style="margin-top: 6px;">設定変更時にリアルタイム反映されます。サイト側に反映されるまで最大 60 秒かかります</div> </div> </div> </div> </div> </div> </div>
-<div class="screen" id="scr-009" role="region" aria-labelledby="scr-009-title"> <div class="screen-header"> <div><span class="scr-id">SCR-009</span><span class="scr-name" id="scr-009-title">メンバー</span></div> <div class="scr-user">利用者: オーナー / プロジェクト管理者(担当プロジェクト範囲)</div> </div> <div class="app-layout"> <div class="app-header" role="banner"> <div class="left"> <span class="logo" role="link" aria-label="open-faq ホーム">open-faq</span> <span class="ws-switcher" role="button" aria-haspopup="menu" aria-label="管理範囲を切り替え(現在地: サポートサイト)">サポートサイト <i data-lucide="folder"></i></span> </div> <div class="right"> <span class="bell" role="button" aria-label="お知らせ通知ベル(未読 3 件)"><i data-lucide="bell"></i><span class="badge" aria-hidden="true">3</span></span> <span class="role-badge" aria-label="RoleBadge(プロジェクト管理者)"><i data-lucide="circle" class="dot dot-green"></i>ADMIN</span> <span class="user-menu" role="button" aria-haspopup="menu" aria-label="アカウントメニュー(admin@example.com)">▼ admin@example.com</span> </div> </div> <div class="app-sidebar" role="navigation" aria-label="プロジェクトワークスペース ナビゲーション"> <div class="item" role="link"><i data-lucide="home"></i>概要</div> <div class="group" role="heading" aria-level="2">対応</div> <div class="item" role="link"><i data-lucide="inbox"></i>要対応の質問<span class="badge">87</span></div>  <div class="group" role="heading" aria-level="2">コンテンツ</div> <div class="item" role="link"><i data-lucide="book-open"></i>FAQ</div>  <div class="item" role="link"><i data-lucide="puzzle"></i>ウィジェット</div> <div class="group" role="heading" aria-level="2">プロジェクト</div> <div class="item active" role="link" aria-current="page"><i data-lucide="users"></i>メンバー<span class="badge">1</span></div> <div class="item" role="link"><i data-lucide="gauge"></i>利用量と上限</div> <div class="group" role="heading" aria-level="2">通知</div> <div class="item" role="link"><i data-lucide="bell"></i>お知らせ<span class="badge">3</span></div> <div class="group" role="heading" aria-level="2">共通</div> <div class="item" role="link"><i data-lucide="scroll-text"></i>利用規約</div> <div class="item" role="link"><i data-lucide="shield"></i>プライバシーポリシー</div> </div> <div class="app-main" role="main" aria-label="メインコンテンツ"> <nav class="breadcrumb" aria-label="現在位置"><a>ホーム</a> / <span aria-current="page">メンバー</span></nav> <header class="page-header"><div><h1>メンバー</h1><p class="page-description">プロジェクトごとのメンバーと権限を管理します</p></div><div><button class="btn primary">+ メンバーを招待</button></div></header> <div class="filter-bar" role="search"><div class="filter-item"><i data-lucide="search"></i><div class="input" style="width: 180px;"><span class="placeholder">表示名・メール部分一致</span></div></div><div class="filter-item">招待状態: <div class="select" style="width: 140px;">▼ すべて</div></div></div> <div class="small" style="margin-bottom: 6px;">表示中: 1-7 / 全 7 件</div> <table class="wf"> <thead> <tr> <th>名前</th> <th>メールアドレス</th> <th>ロール <span title="ロールの種類:&#10;・オーナー: 契約全体を管理&#10;・管理者: 担当プロジェクトを管理&#10;・メンバー: 担当プロジェクトを利用" aria-label="ロールの説明" tabindex="0" style="cursor: help; color: var(--link);"><i data-lucide="info"></i></span></th> <th>ステータス</th> </tr> </thead> <tbody> <tr> <td>佐藤 太郎(自分)</td> <td>sato@example.com</td> <td><span class="badge-pill blue">オーナー</span></td> <td><span class="badge-pill green">認証済</span></td> </tr> <tr style="background: var(--warning-bg);"> <td><a class="link" role="button" aria-label="田中 一郎 を編集(SCR-009-M1)">田中 一郎</a></td> <td>tanaka@example.com</td> <td><span class="badge-pill green">管理者</span></td> <td><span class="badge-pill orange">招待中</span></td> </tr> <tr> <td><a class="link" role="button" aria-label="鈴木 良子 を編集(SCR-009-M1)">鈴木 良子</a></td> <td>suzuki@example.com</td> <td><span class="badge-pill gray">メンバー</span></td> <td><span class="badge-pill green">認証済</span></td> </tr> <tr> <td><a class="link" role="button" aria-label="山田 花子 を編集(SCR-009-M1)">山田 花子</a></td> <td>yamada@example.com</td> <td><span class="badge-pill gray">メンバー</span></td> <td><span class="badge-pill green">認証済</span></td> </tr> </tbody> </table> <div class="pager">表示中: 1-7 / 全 7 件 <span class="pg">‹</span><span class="pg">1</span><span class="pg">›</span></div> </div> </div> </div>
-<div class="screen" id="scr-009-m1" role="region" aria-labelledby="scr-009-m1-title"> <div class="screen-header"> <div><span class="scr-id">SCR-009-M1</span><span class="scr-name" id="scr-009-m1-title">メンバー招待 / 編集モーダル(プロジェクト単位)</span></div> <div class="scr-user">利用者: オーナー / プロジェクト管理者(当該プロジェクトの admin)</div> </div> <div class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="scr-009-m1-modal-title"> <div class="modal-card" style="width: 560px;"> <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;"><h3 id="scr-009-m1-modal-title" style="margin: 0;">サポートサイト のメンバー編集 — 田中 一郎 <span class="badge-pill orange" style="margin-left: 6px; font-size: 10px;">招待中</span></h3><button class="btn small" aria-label="モーダルを閉じる" title="閉じる(Esc)" style="padding: 2px 8px;">×</button></div> <div class="field"><label>メールアドレス(変更不可)</label><div>tanaka@example.com</div></div> <div class="field"><label>表示名(氏名・編集不可)</label><div>田中 一郎 <span class="small" style="color: var(--text-muted);">※ v1.6: 氏名は招待されたご本人が SCR-018 メンバーアカウント有効化ページで入力します。本人未入力時は「未設定」と表示します(個人情報原則により管理者は他人の氏名を編集できません)</span></div></div> <div class="panel"><div class="panel-title">このプロジェクトでのロール</div> <div class="helper">このプロジェクトに対する権限を指定します。プロジェクト管理者はメンバーの招待・ロール変更も行えます。</div> <div class="field"> <label class="checkbox"><input type="radio" name="role" />プロジェクトメンバー — FAQ / 要対応質問 / ログ参照</label> <label class="checkbox"><input type="radio" name="role" checked />プロジェクト管理者 — プロジェクトメンバーが可能な操作に加え、招待・ロール変更ができます</label> </div> </div> <div class="alert-bar info" role="status" style="margin-top: 8px; font-size: 10px;"><i data-lucide="info"></i>他のプロジェクトに参加させる場合は、対象プロジェクトのワークスペースに切り替えて当該プロジェクトの SCR-009-M1 から招待してください</div> <div style="display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin-top: 12px;"> <button class="btn">招待メールを再送する</button> <button class="btn danger">アカウントを削除</button> <button class="btn primary">変更を保存する</button> </div> <div class="small" style="margin-top: 8px; color: var(--text-muted);">※ v1.10: アカウント削除は<strong>論理削除</strong>です(`users.valid=0`、関連 `project_users.valid=0` + 全セッション失効)。同じメールアドレスでの再招待は可能ですが、過去のアカウントへの復元はサポート経由(運営者の連携 IF #4)となります。論理削除データは 90 日経過後に物理削除バッチで物理削除されます。v1.10 でオーナーは作成時に自動付与される `admin` 行を保持するため、最後の管理者が 0 件になる状態は構造的に発生しません</div> </div> </div> </div>
-<div class="screen" id="scr-021" role="region" aria-labelledby="scr-021-title">
-  <div class="screen-header">
-    <div><span class="scr-id">SCR-021</span><span class="scr-name" id="scr-021-title">利用量と上限(質問数)</span></div>
-    <div class="scr-user">利用者: 閲覧 = オーナー / プロジェクト管理者 / メンバー、変更 = オーナー / プロジェクト管理者</div>
-  </div>
-  <div class="app-layout">
-    <div class="app-header" role="banner">
-      <div class="left">
-        <span class="logo" role="link" aria-label="open-faq ホーム">open-faq</span>
-        <span class="ws-switcher" role="button" aria-haspopup="menu" aria-label="管理範囲を切り替え(現在地: サポートサイト)">サポートサイト <i data-lucide="folder"></i></span>
-      </div>
-      <div class="right">
-        <span class="bell" role="button" aria-label="お知らせ通知ベル(未読 3 件)"><i data-lucide="bell"></i><span class="badge" aria-hidden="true">3</span></span>
-        <span class="role-badge" aria-label="RoleBadge(プロジェクト管理者)"><i data-lucide="circle" class="dot dot-green"></i>ADMIN</span>
-        <span class="user-menu" role="button" aria-haspopup="menu" aria-label="アカウントメニュー(admin@example.com)">▼ admin@example.com</span>
-      </div>
-    </div>
-    <div class="app-sidebar" role="navigation" aria-label="プロジェクトワークスペース ナビゲーション">
-      <div class="item" role="link"><i data-lucide="home"></i>概要</div>
-      <div class="group" role="heading" aria-level="2">対応</div>
-      <div class="item" role="link"><i data-lucide="inbox"></i>要対応の質問</div>
-
-      <div class="group" role="heading" aria-level="2">コンテンツ</div>
-      <div class="item" role="link"><i data-lucide="book-open"></i>FAQ</div>
-
-      <div class="item" role="link"><i data-lucide="puzzle"></i>ウィジェット</div>
-      <div class="group" role="heading" aria-level="2">プロジェクト</div>
-      <div class="item" role="link"><i data-lucide="users"></i>メンバー</div>
-      <div class="item active" role="link" aria-current="page"><i data-lucide="gauge"></i>利用量と上限</div>
-            <div class="group" role="heading" aria-level="2">共通</div>
-      <div class="item" role="link"><i data-lucide="scroll-text"></i>利用規約</div>
-      <div class="item" role="link"><i data-lucide="shield"></i>プライバシーポリシー</div>
-    </div>
-    <div class="app-main" role="main">
-      <h3>利用量と上限</h3>
-      <p class="small">このプロジェクトの質問数と今月の利用上限を確認します。最終更新: 2026-06-11 09:12(JST)</p>
-      <div class="grid-2" role="group" aria-label="質問数の利用状況">
-        <div class="summary-card"><div class="label">当月利用</div><div class="value">1,247<span class="unit"> 件</span></div></div>
-        <div class="summary-card"><div class="label">今月の利用上限</div><div class="value">OFF</div><div class="delta">上限は設定されていません</div></div>
-      </div>
-      <div class="panel" style="margin-top:12px;">
-        <div><strong>利用量</strong></div>
-        <div class="small" style="margin-top:8px;">上限設定がOFFのため、消化率は表示されません。</div>
-        <div style="display:flex; justify-content:flex-end; margin-top:10px;"><button class="btn primary" aria-label="質問数のアラートを設定">アラート設定</button></div>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="screen" id="scr-021-m1" role="region" aria-labelledby="scr-021-m1-title">
-  <div class="screen-header">
-    <div><span class="scr-id">SCR-021-M1</span><span class="scr-name" id="scr-021-m1-title">質問数上限設定モーダル</span></div>
-    <div class="scr-user">利用者: オーナー / プロジェクト管理者(SCR-021 の「アラート設定」から起動)</div>
-  </div>
-  <div class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="scr-021-m1-modal-title">
-    <div class="modal-card" style="width: 580px;">
-      <h3 id="scr-021-m1-modal-title">質問数の上限設定</h3>
-      <p class="small">質問数の今月の利用上限とアラートを設定します。</p>
-      <div class="field"><label>上限設定</label><div style="display:flex; gap:12px;"><label><input type="radio" name="limit036" checked> ON</label><label><input type="radio" name="limit036"> OFF</label></div></div>
-      <div class="field">
-        <label>今月の利用上限</label>
-        <div style="display:flex; gap:8px; align-items:center;"><div class="input" style="width:140px;"><strong>5,000</strong> 件</div><span class="small">5,000件 - 1,000件(無料枠) = 4,000件 (¥2,000 / 月)</span></div>
-      </div>
-      <hr>
-      <div class="field">
-        <label>アラート設定</label>
-        <div style="display:flex; gap:14px; flex-wrap:wrap;">
-          <label><input type="checkbox"> 25%</label>
-          <label><input type="checkbox"> 50%</label>
-          <label><input type="checkbox" checked> 80%</label>
-          <label><input type="checkbox"> 90%</label>
-          <label><input type="checkbox" checked> 100%</label>
-        </div>
-      </div>
-      <div class="small" style="margin:6px 0;">複数選択できます。選択した割合に到達すると、オーナーとプロジェクト管理者へメールでお知らせします。</div>
-      <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:10px;"><button class="btn">キャンセル</button><button class="btn primary">保存</button></div>
-    </div>
-  </div>
-</div>
 <div class="screen" id="scr-019" role="region" aria-labelledby="scr-019-title"><div class="role-screen-note"><strong>外部確認ステップ:</strong> オーナーが送信した確認メールを、連絡先メール所有者が開いて完了します。</div>
 <div class="screen-header"><div><span class="scr-id">SCR-019</span><span class="scr-name" id="scr-019-title">プロジェクト連絡先メール確認完了(TPL-PROJECT_CONTACT_VERIFY 着地 / 共通領域)</span></div><div class="scr-user">利用者: プロジェクト連絡先メール所有者(未認証 / `access_tokens.purpose='contact_verify'` 有効時のみ到達可能、アカウント不要)</div></div>
 <div class="public-form-layout"> <div class="simple-header"><i data-lucide="mail"></i>お問い合わせ先メール確認 — open-faq</div> <div style="width: 480px;">
