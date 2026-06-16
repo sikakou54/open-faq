@@ -82,7 +82,7 @@
 | 種別 | 影響内容 |
 |---|---|
 | 要件 | FR-300(検索方式)、FR-323 / FR-340(応答方式)、FR-054(矛盾検知)、FR-059(AI 品質テストセット)、FR-060(PII 検出層) |
-| 画面 | ウィジェット応答表示(ストリーミング)、FAQ 画面(矛盾検知結果表示)、運営者・利用者の PII 誤検出報告画面、契約別プロンプト選択 UI(SCR-026 契約設定で具体化)|
+| 画面 | ウィジェット応答表示(ストリーミング)、FAQ 画面(矛盾検知結果表示)、運営者・利用者の PII 誤検出報告画面、契約別プロンプト選択 UI(SCR-023 設定で具体化)|
 | API | `GET /widget/v1/questions/{id}/stream`、`GET /api/v1/inbox/stream`、`POST /internal/v1/faqs/{id}/embedding-refresh`、`POST /internal/v1/pii/evaluate`、検索 API の `mode=semantic` パラメータ |
 | テーブル | embedding 保管テーブル、PII 検出結果テーブル拡張、プロンプトテンプレート契約上書きテーブル(Future で具体化) |
 | 運用 | Vectorize コストメトリクス監視、SSE 接続観測、NER モデル更新フロー、品質テストセット運用、プロンプト注入回帰 AC-035 自動実行 |

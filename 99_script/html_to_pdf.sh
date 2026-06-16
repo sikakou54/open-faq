@@ -12,15 +12,15 @@ set -euo pipefail
 #
 # 使い方:
 #   bash 99_script/html_to_pdf.sh input.html output.pdf
-#   bash 99_script/html_to_pdf.sh 01_メインシステム/画面遷移図.html
-#   bash 99_script/html_to_pdf.sh --out PDF出力/01_メインシステム 01_メインシステム/画面遷移図.html
-#   bash 99_script/html_to_pdf.sh --engine chrome 画面遷移図.html
+#   bash 99_script/html_to_pdf.sh 01_メインシステム/画面遷移図_オーナー.html
+#   bash 99_script/html_to_pdf.sh --out PDF出力/01_メインシステム 01_メインシステム/画面遷移図_オーナー.html
+#   bash 99_script/html_to_pdf.sh --engine chrome 画面遷移図_オーナー.html
 #
 # 引数のパターン:
 #   - 引数 2 個 (input.html output.pdf): プロンプト指定形式。指定パスに 1 ファイル出力。
 #   - 引数 1 個 (input.html): カレントディレクトリに同名 .pdf を出力。
 #   - --out OUT_DIR 指定: OUT_DIR に <basename>.pdf を出力(複数 HTML 可)。
-#   - 引数 0 個: スクリプト同階層の画面遷移図.html / index.html を自動検出。
+#   - 引数 0 個: メイン(アカウント種別別 4 ファイル)+ 運営者(画面遷移図.html)を自動検出。
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 OUT_DIR="."
@@ -39,8 +39,8 @@ Options:
   -h, --help           このヘルプを表示
 
 Examples:
-  $0 01_メインシステム/画面遷移図.html PDF出力/01_メインシステム/画面遷移図.pdf
-  $0 --out PDF出力/01_メインシステム 01_メインシステム/画面遷移図.html
+  $0 01_メインシステム/画面遷移図_オーナー.html PDF出力/01_メインシステム/画面遷移図_オーナー.pdf
+  $0 --out PDF出力/01_メインシステム 01_メインシステム/画面遷移図_オーナー.html
   $0 --engine weasyprint 02_運営者システム/画面遷移図.html
 
 依存(いずれか1つ):
@@ -83,7 +83,10 @@ fi
 if [[ ${#HTML_FILES[@]} -eq 0 ]]; then
   REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
   for f in \
-    "${REPO_ROOT}/01_メインシステム/画面遷移図.html" \
+    "${REPO_ROOT}/01_メインシステム/画面遷移図_ウィジェット利用者.html" \
+    "${REPO_ROOT}/01_メインシステム/画面遷移図_プロジェクトメンバー.html" \
+    "${REPO_ROOT}/01_メインシステム/画面遷移図_プロジェクト管理者.html" \
+    "${REPO_ROOT}/01_メインシステム/画面遷移図_オーナー.html" \
     "${REPO_ROOT}/02_運営者システム/画面遷移図.html"; do
     [[ -f "$f" ]] && HTML_FILES+=("$f")
   done
