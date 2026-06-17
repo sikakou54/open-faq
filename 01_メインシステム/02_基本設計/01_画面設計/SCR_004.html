@@ -100,21 +100,20 @@
 <th>項目 ID</th>
 <th>項目</th>
 <th>説明</th>
-<th>入出力</th>
 <th>種類</th>
 <th>表示条件</th>
-<th>備考</th>
+<th>表示</th>
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>+ 新規プロジェクトを作成</td><td>新規プロジェクト作成モーダルを開く</td><td>入力</td><td>ボタン(Primary)</td><td>—</td><td>ページヘッダー右上に 1 件のみ配置</td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>プロジェクト名</td><td>各プロジェクトの名称を表示し、編集モーダルへの導線を兼ねる</td><td>出力</td><td>テキストリンク(主)</td><td>—</td><td>一覧先頭列</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>許可ドメイン</td><td>プロジェクトに登録された許可ドメインを表示する</td><td>出力</td><td>タグバッジ群</td><td>—</td><td>最大 3 件表示、超過分は <code>+N 件</code> で折り畳み。<code>*.example.com</code> 形式も表示。<code>allowed_domains</code></td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>ステータス</td><td>連絡先メールの確認状態を表示する(<code>確認済み</code> / <code>確認待ち</code> / <code>未設定</code>)</td><td>出力</td><td>状態バッジ</td><td>—</td><td><code>確認済み</code>(緑)/ <code>確認待ち</code>(黄)/ <code>未設定</code>(灰)。<code>projects.contact_email</code> / <code>projects.contact_email_verified_at</code> から UI 自動判定。色のみ依存禁止(テキストラベル併記)</td></tr>
-<tr><td id="IT-05"><code>IT-05</code></td><td>連絡先メール</td><td>プロジェクトの連絡先メールアドレスを表示する</td><td>出力</td><td>テキスト</td><td>—</td><td>本文のみ。未設定行は <code>—</code></td></tr>
-<tr><td id="IT-06"><code>IT-06</code></td><td>件数表示</td><td>一覧の表示範囲と総件数を表示する</td><td>出力</td><td>テキスト</td><td>1 件以上ある時</td><td>「1-50 / 全 N 件」形式</td></tr>
-<tr><td id="IT-07"><code>IT-07</code></td><td>空状態</td><td>プロジェクトが 0 件の場合に作成を促す案内を表示する</td><td>出力</td><td>EmptyState</td><td>0 件時(空状態)</td><td>「プロジェクトがまだありません。最初のプロジェクトを作成しましょう」+「+ 新規プロジェクトを作成」CTA</td></tr>
-<tr><td id="IT-08"><code>IT-08</code></td><td>ローディング状態</td><td>一覧取得中にスケルトンを表示する</td><td>出力</td><td>LoadingSkeleton</td><td>読み込み中のみ</td><td>テーブル / カード行スケルトン 3 行</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>+ 新規プロジェクトを作成</td><td>新規プロジェクト作成モーダルを開く(ページヘッダー右上に 1 件のみ配置)</td><td>ボタン(Primary)</td><td>—</td><td>「+ 新規プロジェクトを作成」</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>プロジェクト名</td><td>各プロジェクトの名称を表示し、編集モーダルへの導線を兼ねる(一覧先頭列)</td><td>リンク</td><td>—</td><td>プロジェクト名(例「サポートサイト」)</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>許可ドメイン</td><td>プロジェクトに登録された許可ドメインを表示する(最大 3 件、超過分は折り畳み)</td><td>バッジ</td><td>—</td><td>ドメイン名(例「support.example.com」「*.help.example.com」)、超過分は「+N 件」</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>ステータス</td><td>連絡先メールの確認状態を表示する(色のみ依存禁止・テキストラベル併記)</td><td>バッジ</td><td>—</td><td>「確認済み」(緑)/「確認待ち」(黄)/「未設定」(灰)</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>連絡先メール</td><td>プロジェクトの連絡先メールアドレスを表示する</td><td>ラベル</td><td>—</td><td>メールアドレス(例「support@example.com」)、未設定行は <code>—</code></td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>件数表示</td><td>一覧の表示範囲と総件数を表示する</td><td>ラベル</td><td>1 件以上ある時</td><td>「1-50 / 全 N 件」形式</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>空状態</td><td>プロジェクトが 0 件の場合に作成を促す案内を表示する</td><td>空状態表示</td><td>0 件時(空状態)</td><td>「プロジェクトがまだありません。最初のプロジェクトを作成しましょう」+「+ 新規プロジェクトを作成」</td></tr>
+<tr><td id="IT-08"><code>IT-08</code></td><td>ローディング状態</td><td>一覧取得中にスケルトンを表示する</td><td>プログレスバー</td><td>読み込み中のみ</td><td>テーブル行スケルトン 3 行</td></tr>
 </tbody>
 </table>
 

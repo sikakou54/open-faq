@@ -96,24 +96,23 @@
 <th>項目 ID</th>
 <th>項目</th>
 <th>説明</th>
-<th>入出力</th>
 <th>種類</th>
 <th>表示条件</th>
-<th>備考</th>
+<th>表示</th>
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>検索</td><td>表示名・メールアドレスの部分一致でメンバーを絞り込む</td><td>入力</td><td>テキストボックス</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>招待状態フィルタ</td><td>招待状態でメンバーを絞り込む(すべて / 招待中のみ / アクティベーション済み)</td><td>入力</td><td>プルダウン</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>件数表示</td><td>一覧の表示範囲と総件数を表示する</td><td>出力</td><td>テキスト</td><td>—</td><td>「1-50 / 全 N 件」形式</td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>利用者表示名</td><td>メンバーの表示名を示し、編集モーダルへの遷移リンクとなる</td><td>出力</td><td>テキストリンク</td><td>オーナー行・自分の行はテキスト表示のみ(リンク化しない)。招待中は名前隣に「招待中」バッジ</td><td><code>users.name</code></td></tr>
-<tr><td id="IT-05"><code>IT-05</code></td><td>メールアドレス</td><td>メンバーのメールアドレスを表示する</td><td>出力</td><td>テキスト</td><td>—</td><td><code>users.email</code></td></tr>
-<tr><td id="IT-06"><code>IT-06</code></td><td>このプロジェクトでのロール</td><td>当該プロジェクトでのロールをバッジで表示する</td><td>出力</td><td>バッジ</td><td>—</td><td><code>オーナー</code>(青、<code>project_users(role='admin')</code> 自動付与・削除対象外)/ <code>管理者</code>(緑、当該 PJ に <code>admin</code>)/ <code>メンバー</code>(灰、当該 PJ に <code>member</code>)。契約横断の「プロジェクト別ロール」列は持たない</td></tr>
-<tr><td id="IT-07"><code>IT-07</code></td><td>ステータス</td><td>アカウントの有効化状態をバッジで表示する</td><td>出力</td><td>バッジ</td><td>—</td><td><code>利用中</code> / <code>招待中</code> の 2 値。残日数は併記しない。<code>users.status</code>(<code>active</code> / <code>pending_activation</code>)</td></tr>
-<tr><td id="IT-08"><code>IT-08</code></td><td>招待中行強調</td><td>招待中(本人未有効化)の行を背景色で強調し視認性を確保する</td><td>出力</td><td>行背景色</td><td>対象者が招待中(本人未有効化)の行のみ黄色背景</td><td>—</td></tr>
-<tr><td id="IT-09"><code>IT-09</code></td><td>+ メンバーを招待</td><td>招待モーダル(SCR-009-M1)を招待モードで開く</td><td>入力</td><td>ボタン(Primary)</td><td>—</td><td>招待操作は当該プロジェクトの 1 件の割当のみを扱う</td></tr>
-<tr><td id="IT-10"><code>IT-10</code></td><td>空状態</td><td>割当メンバーが 0 件のときに案内文と招待導線を表示する</td><td>出力</td><td>EmptyState</td><td>割当メンバーが 0 件のとき</td><td>「このプロジェクトにはまだメンバーが割当されていません。」</td></tr>
-<tr><td id="IT-11"><code>IT-11</code></td><td>権限不足ガード</td><td>権限を持たないユーザーの直アクセス時に権限不足を表示する</td><td>出力</td><td>PermissionTooltip</td><td>当該プロジェクトのプロジェクト管理者権限を持たないユーザーが URL に直接アクセスした場合</td><td>権限不足表示(403)</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>検索</td><td>表示名・メールアドレスの部分一致でメンバーを絞り込む</td><td>テキストボックス</td><td>—</td><td>—</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>招待状態フィルタ</td><td>招待状態でメンバーを絞り込む</td><td>ドロップダウン</td><td>—</td><td>「すべて」/「招待中のみ」/「アクティベーション済み」</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>件数表示</td><td>一覧の表示範囲と総件数を表示する</td><td>ラベル</td><td>—</td><td>「1-50 / 全 N 件」形式</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>利用者表示名</td><td>メンバーの表示名を示し、編集モーダルへの遷移リンクとなる</td><td>リンク</td><td>オーナー行・自分の行はテキスト表示のみ(リンク化しない)</td><td>メンバーの表示名。招待中は名前隣に「招待中」バッジ</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>メールアドレス</td><td>メンバーのメールアドレスを表示する</td><td>ラベル</td><td>—</td><td>メンバーのメールアドレス</td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>このプロジェクトでのロール</td><td>当該プロジェクトでのロールをバッジで表示する</td><td>バッジ</td><td>—</td><td>「オーナー」(青)/「管理者」(緑)/「メンバー」(灰)</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>ステータス</td><td>アカウントの有効化状態をバッジで表示する(残日数は併記しない)</td><td>バッジ</td><td>—</td><td>「利用中」/「招待中」</td></tr>
+<tr><td id="IT-08"><code>IT-08</code></td><td>招待中行強調</td><td>招待中(本人未有効化)の行を背景色で強調し視認性を確保する</td><td>行ハイライト</td><td>対象者が招待中(本人未有効化)の行のみ黄色背景</td><td>—</td></tr>
+<tr><td id="IT-09"><code>IT-09</code></td><td>+ メンバーを招待</td><td>招待モーダル(SCR-009-M1)を招待モードで開く</td><td>ボタン</td><td>—</td><td>「+ メンバーを招待」</td></tr>
+<tr><td id="IT-10"><code>IT-10</code></td><td>空状態</td><td>割当メンバーが 0 件のときに案内文と招待導線を表示する</td><td>空状態表示</td><td>割当メンバーが 0 件のとき</td><td>「このプロジェクトにはまだメンバーが割当されていません。」+「+ メンバーを招待」</td></tr>
+<tr><td id="IT-11"><code>IT-11</code></td><td>権限不足ガード</td><td>権限を持たないユーザーの直アクセス時に権限不足を表示する</td><td>空状態表示</td><td>当該プロジェクトのプロジェクト管理者権限を持たないユーザーが URL に直接アクセスした場合</td><td>「このページを表示する権限がありません。」(403)+「ダッシュボードへ戻る」</td></tr>
 </tbody>
 </table>
 

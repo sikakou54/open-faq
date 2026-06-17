@@ -337,20 +337,19 @@
 <th>項目 ID</th>
 <th>項目</th>
 <th>説明</th>
-<th>入出力</th>
 <th>種類</th>
 <th>表示条件</th>
-<th>備考</th>
+<th>表示</th>
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>PageHeader</td><td>画面見出し「利用量と上限」を表示する</td><td>出力</td><td>見出し</td><td>—</td><td>プロジェクト名・サイト名は付加しない</td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>集計対象期間</td><td>集計対象期間(当月)と最終更新タイムスタンプを表示する</td><td>出力</td><td>テキスト</td><td>—</td><td>当月固定。準リアルタイム(5 分以内)</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>質問数サマリー</td><td>当月利用・今月の利用上限の 2 値と、上限 ON 時は課金計算式を表示する</td><td>出力</td><td>SummaryCard 群</td><td>計算式併記は上限 ON 時のみ</td><td>上限 ON 時は「{limit}件 - {freeQuota}件(無料枠) = {billableCount}件 (¥{yen} / 月)」を併記、OFF 時は値を「OFF」とし計算式を表示しない</td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>利用量</td><td>当月利用 ÷ 今月の利用上限の消化率を ProgressBar と件数比で表示する</td><td>出力</td><td>ProgressBar + テキスト</td><td>割合・ProgressBar・状態バッジは上限 ON 時のみ</td><td>80% 未満通常 / 80% 以上黄 / 100% 以上赤。「N / M 件」併記。OFF 時は割合・件数比・ProgressBar・状態バッジを出さず OFF 説明文のみ。アラート状態・設定元は表示しない</td></tr>
-<tr><td id="IT-05"><code>IT-05</code></td><td>アラート設定</td><td>上限・アラート設定モーダル(SCR-021-M1)を開く</td><td>入力</td><td>ボタン(Secondary、L3)</td><td><strong>オーナー / 当該プロジェクト管理者の場合のみ表示</strong>。メンバーには表示しない</td><td>—</td></tr>
-<tr><td id="IT-06"><code>IT-06</code></td><td>空状態</td><td>集計前・取得失敗時の EmptyState を表示する</td><td>出力</td><td>EmptyState</td><td>集計前 / 取得失敗時</td><td>集計前は「集計中です」、取得失敗は §1.5.3 のフォールバック表示</td></tr>
-<tr><td id="IT-07"><code>IT-07</code></td><td>権限不足ガード</td><td>閲覧のみのロールに対し変更ボタンを非表示にする</td><td>出力</td><td>PermissionTooltip</td><td>ロールがメンバーの場合は閲覧のみ(変更ボタン非表示)</td><td>当該 PJ に割当のないユーザーは閲覧不可(変更ボタンも非表示)</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>PageHeader</td><td>画面見出しを表示する。プロジェクト名・サイト名は付加しない</td><td>見出し</td><td>—</td><td>利用量と上限</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>集計対象期間</td><td>集計対象期間(当月固定)と最終更新タイムスタンプを表示する。準リアルタイム(5 分以内)</td><td>ラベル</td><td>—</td><td>当月の集計対象期間、最終更新日時</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>質問数サマリー</td><td>当月利用・今月の利用上限の 2 値と、上限 ON 時は課金計算式を表示する</td><td>カード</td><td>計算式併記は上限 ON 時のみ</td><td>当月利用 / 今月の利用上限。上限 ON 時は「{limit}件 - {freeQuota}件(無料枠) = {billableCount}件 (¥{yen} / 月)」を併記、OFF 時は値を「OFF」とし計算式を表示しない</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>利用量</td><td>当月利用 ÷ 今月の利用上限の消化率を表示する。アラート状態・設定元は表示しない</td><td>プログレスバー</td><td>割合・ProgressBar・状態バッジは上限 ON 時のみ</td><td>消化率(80% 未満通常 / 80% 以上黄 / 100% 以上赤)、「N / M 件」。OFF 時は OFF 説明文のみ</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>アラート設定</td><td>上限・アラート設定モーダル(SCR-021-M1)を開く</td><td>ボタン</td><td><strong>オーナー / 当該プロジェクト管理者の場合のみ表示</strong>。メンバーには表示しない</td><td>アラート設定</td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>空状態</td><td>集計前・取得失敗時の空状態を表示する</td><td>空状態表示</td><td>集計前 / 取得失敗時</td><td>集計前は「集計中です」、取得失敗は §1.5.3 のフォールバック表示</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>権限不足ガード</td><td>閲覧のみのロールに対し変更ボタンを非表示にする。当該 PJ に割当のないユーザーは閲覧不可</td><td>ツールチップ</td><td>ロールがメンバーの場合は閲覧のみ(変更ボタン非表示)</td><td>—</td></tr>
 </tbody>
 </table>
 

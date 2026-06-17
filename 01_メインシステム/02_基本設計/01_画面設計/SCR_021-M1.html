@@ -182,20 +182,19 @@
 <th>項目 ID</th>
 <th>項目</th>
 <th>説明</th>
-<th>入出力</th>
 <th>種類</th>
 <th>表示条件</th>
-<th>備考</th>
+<th>表示</th>
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>上限設定</td><td>質問数の月次上限を ON / OFF で切り替える</td><td>入力</td><td>トグル</td><td>—</td><td>OFF 時は保存時 <code>limitEnabled=false</code>(OFF 時に無効化される項目は IT-02 / IT-04 の表示条件参照)</td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>今月の利用上限</td><td>月次上限件数を入力し、課金計算式をリアルタイム併記する</td><td>入力</td><td>数値入力(件、ON 時必須)</td><td>上限 ON 時のみ表示・活性</td><td>1 件刻み、最小〜最大件数の入力ガード(KV <code>usage-limit:min</code> / <code>usage-limit:max</code>)。併記式「{limit}件 - {freeQuota}件(無料枠) = {billableCount}件 (¥{yen} / 月)」</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>設定適用の説明</td><td>未設定時にデフォルト推奨値が適用される旨を説明する</td><td>出力</td><td>helper</td><td>—</td><td>無料利用枠は本モーダルに表示せず更新対象にも含めない</td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>アラート設定</td><td>通知するアラート閾値(複数可)を選択する</td><td>入力</td><td>チェックボックス群</td><td>上限 OFF 時は全未選択・非活性</td><td>25% / 50% / 80% / 90% / 100% を表示、複数選択可。当月初回到達時にメール送信。全未選択は通知なし</td></tr>
-<tr><td id="IT-05"><code>IT-05</code></td><td>アラートメール送信(動作)</td><td>選択閾値到達時にオーナーと当該 PJ の有効な管理者へアラートメールを送信する</td><td>出力</td><td>システム動作</td><td>—</td><td>同一アドレスは重複排除。送信先の表示・編集項目は設けない</td></tr>
-<tr><td id="IT-06"><code>IT-06</code></td><td>キャンセル</td><td>変更を破棄してモーダルを閉じる</td><td>入力</td><td>ボタン(Secondary)</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-07"><code>IT-07</code></td><td>保存</td><td>再認証後に上限・アラート設定を保存する</td><td>入力</td><td>ボタン(Primary、L3)</td><td>—</td><td>保存は <strong>再認証(パスワード再入力)</strong>を要する(<code>PATCH /projects/{id}/quota-limits/questions</code>)</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>上限設定</td><td>質問数の月次上限を ON / OFF で切り替える。OFF 時は IT-02 / IT-04 を無効化する</td><td>トグル</td><td>—</td><td>ON / OFF</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>今月の利用上限</td><td>月次上限件数を入力し、課金計算式をリアルタイム併記する。1 件刻み、上限 ON 時必須、最小〜最大件数の範囲内</td><td>テキストボックス</td><td>上限 ON 時のみ表示・活性</td><td>件数(件)、併記式「{limit}件 - {freeQuota}件(無料枠) = {billableCount}件 (¥{yen} / 月)」</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>設定適用の説明</td><td>未設定時にデフォルト推奨値が適用される旨を説明する。無料利用枠は本モーダルに表示せず更新対象にも含めない</td><td>ラベル</td><td>—</td><td>未設定時はデフォルト推奨値が適用される旨の説明文</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>アラート設定</td><td>通知するアラート閾値(複数選択可)を選択する。当月初回到達時にメール送信、全未選択は通知なし</td><td>チェックボックス</td><td>上限 OFF 時は全未選択・非活性</td><td>25% / 50% / 80% / 90% / 100%</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>アラートメール送信(動作)</td><td>選択閾値到達時にオーナーと当該 PJ の有効な管理者へアラートメールを送信する。同一アドレスは重複排除。送信先の表示・編集項目は設けない</td><td>ラベル</td><td>—</td><td>—</td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>キャンセル</td><td>変更を破棄してモーダルを閉じる</td><td>ボタン</td><td>—</td><td>キャンセル</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>保存</td><td>再認証(パスワード再入力)後に上限・アラート設定を保存する</td><td>ボタン</td><td>—</td><td>保存</td></tr>
 </tbody>
 </table>
 <div class="callout warning"><i class="bi bi-exclamation-triangle"></i><div><span class="c-title">注意</span>バリデーション: 上限件数は上限 ON 時のみ必須・1 件刻み・最小〜最大件数の範囲内(範囲外は <code>E-INPUT-*</code>、MSG-SCR-021-M1-ERR-001)、OFF 時は <code>limit=null</code>。アラート閾値は <code>25</code> / <code>50</code> / <code>80</code> / <code>90</code> / <code>100</code> の配列として保存し、重複値・許可値以外は受け付けない(上限 OFF 時は <code>alertThresholds=[]</code>)。課金対象件数 = <code>max(0, 今月の利用上限 - 無料利用枠)</code>、最大課金額 = <code>課金対象件数 × 質問単価</code> をサーバ側で算出します。保存は再認証成功が前提(失敗時は <code>E-AUTH-REAUTH-FAILED</code> で保存中断)。</div></div>

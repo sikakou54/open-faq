@@ -96,20 +96,19 @@
 <th>項目 ID</th>
 <th>項目</th>
 <th>説明</th>
-<th>入出力</th>
 <th>種類</th>
 <th>表示条件</th>
-<th>備考</th>
+<th>表示</th>
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>メールアドレス</td><td>ログインに用いるメールアドレスを入力する</td><td>入力</td><td>メールアドレスボックス</td><td>—</td><td>必須。形式チェック</td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>パスワード</td><td>ログインに用いるパスワードを入力する</td><td>入力</td><td>パスワードボックス</td><td>—</td><td>必須</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>ログインボタン</td><td>入力内容で認証を実行しセッションを確立する</td><td>入力</td><td>ボタン(Primary)</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>パスワードを忘れた場合</td><td>パスワード再設定画面へ遷移する導線</td><td>入力</td><td>リンク</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-05"><code>IT-05</code></td><td>アカウント登録</td><td>アカウント登録画面へ遷移する導線</td><td>入力</td><td>リンク</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-06"><code>IT-06</code></td><td>認証エラーメッセージ</td><td>認証失敗時に共通文言のエラーを表示する(メールアドレスの存在有無を区別しない)</td><td>出力</td><td>アラート</td><td>認証失敗時のみ</td><td><code>MSG-SCR-001-*</code></td></tr>
-<tr><td id="IT-07"><code>IT-07</code></td><td>ロックアウト警告</td><td>連続失敗による一時ロック中である旨を表示する</td><td>出力</td><td>アラート</td><td>5 回連続失敗後のみ</td><td><a href="../../01_要件定義/FR01_アカウント管理.html#FR-007">FR-007</a>(15 分ロック)</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>メールアドレス</td><td>ログインに用いるメールアドレスを入力する(必須・形式チェック)</td><td>テキストボックス(メールアドレス)</td><td>—</td><td>placeholder「admin@example.com」</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>パスワード</td><td>ログインに用いるパスワードを入力する(必須)</td><td>テキストボックス(パスワード)</td><td>—</td><td>マスク表示</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>ログインボタン</td><td>入力内容で認証を実行しセッションを確立する</td><td>ボタン(Primary)</td><td>—</td><td>「ログイン」</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>パスワードを忘れた場合</td><td>パスワード再設定画面へ遷移する導線</td><td>リンク</td><td>—</td><td>「パスワードを忘れた場合」</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>アカウント登録</td><td>アカウント登録画面へ遷移する導線</td><td>リンク</td><td>—</td><td>「アカウント登録」</td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>認証エラーメッセージ</td><td>認証失敗時に共通文言のエラーを表示する(メールアドレスの存在有無を区別しない)</td><td>アラート</td><td>認証失敗時のみ</td><td>「認証エラー: メールアドレスまたはパスワードが正しくありません」</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>ロックアウト警告</td><td>連続失敗(5 回)による一時ロック(15 分)中である旨を表示する</td><td>アラート</td><td>5 回連続失敗後のみ</td><td>「ログインが一時的にロックされています。しばらく経ってからお試しください(15 分)」</td></tr>
 </tbody>
 </table>
 

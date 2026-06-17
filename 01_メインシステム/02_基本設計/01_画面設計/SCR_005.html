@@ -93,22 +93,21 @@
 <th>項目 ID</th>
 <th>項目</th>
 <th>説明</th>
-<th>入出力</th>
 <th>種類</th>
 <th>表示条件</th>
-<th>備考</th>
+<th>表示</th>
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>状況フィルタ</td><td>状況で一覧を絞り込む</td><td>入力</td><td>プルダウン</td><td>—</td><td><code>open</code> / <code>closed</code> / 未指定。値とラベルの対応: <code>open</code>=対応中 / <code>closed</code>=対応済み</td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>期間フィルタ</td><td>更新日時の期間で一覧を絞り込む</td><td>入力</td><td>日付範囲</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>問い合わせ ID</td><td>未解決質問の ID を表示し、詳細画面への導線を兼ねる</td><td>出力</td><td>テキストリンク</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>状況</td><td>未解決質問の対応状況を表示する</td><td>出力</td><td>バッジ</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-05"><code>IT-05</code></td><td>質問抜粋</td><td>質問本文の冒頭を抜粋表示する</td><td>出力</td><td>テキスト</td><td>—</td><td>先頭 60 文字</td></tr>
-<tr><td id="IT-06"><code>IT-06</code></td><td>未解決理由</td><td>AI が回答できなかった理由を表示する</td><td>出力</td><td>サブテキスト</td><td>—</td><td><code>inquiries.question_log_id</code> 経由で結合</td></tr>
-<tr><td id="IT-07"><code>IT-07</code></td><td>更新日時</td><td>未解決質問の最終更新日時を表示する</td><td>出力</td><td>テキスト</td><td>—</td><td>相対表記 + tooltip 絶対日時</td></tr>
-<tr><td id="IT-08"><code>IT-08</code></td><td>件数表示</td><td>一覧の表示範囲と総件数を表示する</td><td>出力</td><td>テキスト</td><td>1 件以上ある時</td><td>「1-50 / 全 248 件」形式</td></tr>
-<tr><td id="IT-09"><code>IT-09</code></td><td>空状態</td><td>未解決質問が 0 件の場合に正常状態である旨を案内する</td><td>出力</td><td>EmptyState</td><td>0 件時(空状態)</td><td>「未解決質問はありません。ウィジェットを設置済みなら正常な状態です。」+「ウィジェット設定を見る」リンク</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>状況フィルタ</td><td>状況で一覧を絞り込む</td><td>チェックボックス</td><td>—</td><td>「対応中」/「対応済み」</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>期間フィルタ</td><td>更新日時の期間で一覧を絞り込む</td><td>テキストボックス(日付範囲)</td><td>—</td><td>開始日 〜 終了日(例「2026-05-01 〜 2026-05-11」)</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>問い合わせ ID</td><td>未解決質問の ID を表示し、詳細画面への導線を兼ねる</td><td>リンク</td><td>—</td><td>問い合わせ ID(例「INQ-7K9N4」)</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>状況</td><td>未解決質問の対応状況を表示する</td><td>バッジ</td><td>—</td><td>「対応中」/「対応済み」</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>質問抜粋</td><td>質問本文の冒頭(先頭 60 文字)を抜粋表示する</td><td>ラベル</td><td>—</td><td>質問本文の先頭 60 文字(例「料金プランの変更方法について教えてください」)</td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>未解決理由</td><td>AI が回答できなかった理由を表示する</td><td>ラベル</td><td>—</td><td>「未解決理由: 該当 FAQ なし / FAQ 間で矛盾 / 信頼度しきい値未達 / 利用者が未解決と回答」等</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>更新日時</td><td>未解決質問の最終更新日時を表示する</td><td>ラベル</td><td>—</td><td>相対表記(例「3 分前」「2 時間前」)+ ツールチップに絶対日時</td></tr>
+<tr><td id="IT-08"><code>IT-08</code></td><td>件数表示</td><td>一覧の表示範囲と総件数を表示する</td><td>ラベル</td><td>1 件以上ある時</td><td>「1-50 / 全 248 件」形式</td></tr>
+<tr><td id="IT-09"><code>IT-09</code></td><td>空状態</td><td>未解決質問が 0 件の場合に正常状態である旨を案内する</td><td>空状態表示</td><td>0 件時(空状態)</td><td>「未解決質問はありません。ウィジェットを設置済みなら正常な状態です。」+「ウィジェット設定を見る」</td></tr>
 </tbody>
 </table>
 

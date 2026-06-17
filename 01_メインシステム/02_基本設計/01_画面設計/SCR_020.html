@@ -93,16 +93,15 @@
 <th>項目 ID</th>
 <th>項目</th>
 <th>説明</th>
-<th>入出力</th>
 <th>種類</th>
 <th>表示条件</th>
-<th>備考</th>
+<th>表示</th>
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>パンくず</td><td>現在位置「ホーム / プライバシーポリシー」を表示する</td><td>出力</td><td>Breadcrumb</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>同意状態バッジ</td><td>最新版プライバシーポリシーへの同意済み(同意日付き・緑)/ 未同意(赤・SCR-015 へのリンク併記)を上部に表示する</td><td>出力</td><td>バッジ(上部固定)</td><td>ログイン済み時のみ表示</td><td><code>doc_type='privacy_policy'</code> 最新版に対する同意状態のみ</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>最新版の全文</td><td>プライバシーポリシー最新版の全文を 1 枚のページに連続表示する</td><td>出力</td><td>リッチテキスト表示(sanitize 済)</td><td>—</td><td>目次・章ナビ・セクション分け・過去バージョン履歴・差分表示は設けない。<code>GET /privacy/current</code> の最新版を取得</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>パンくず</td><td>現在位置「ホーム / プライバシーポリシー」を表示する</td><td>パンくず</td><td>—</td><td>ホーム / プライバシーポリシー</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>同意状態バッジ</td><td>最新版プライバシーポリシーへの同意状態を上部に表示する</td><td>バッジ</td><td>ログイン済み時のみ表示</td><td>同意済み(同意日付き・緑)/ 未同意(赤・SCR-015 へのリンク併記)</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>最新版の全文</td><td>プライバシーポリシー最新版の全文を 1 枚のページに連続表示する。目次・章ナビ・セクション分け・過去バージョン履歴・差分表示は設けない</td><td>ラベル</td><td>—</td><td>プライバシーポリシー本文</td></tr>
 </tbody>
 </table>
 

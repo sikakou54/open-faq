@@ -94,17 +94,16 @@
 <th>項目 ID</th>
 <th>項目</th>
 <th>説明</th>
-<th>入出力</th>
 <th>種類</th>
 <th>表示条件</th>
-<th>備考</th>
+<th>表示</th>
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>注意事項</td><td>退会時の影響を 1 セクションに集約して表示する: 当月末でサービス停止、{当月末日 + 30 日} に全データを完全削除(復元不可)、当月分の従量課金は通常請求で次月以降の請求なし、全メンバーのアクセス権が当月末で失効し招待中メンバーは自動キャンセル</td><td>出力</td><td>パネル(警告色)</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>退会理由(任意)</td><td>退会理由を任意で入力する</td><td>入力</td><td>テキストエリア</td><td>—</td><td>最大 500 文字</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>個人設定へ戻る</td><td>SCR-017 個人設定へ戻る</td><td>入力</td><td>ボタン(Secondary)</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>退会を申請する</td><td>再認証付きで退会を申請し、契約状態を <code>deleted_pending</code> へ変更する</td><td>入力</td><td>ボタン(Danger / 確認ダイアログ + 再認証)</td><td>—</td><td><code>contract_owners.contract_status=deleted_pending</code> を設定</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>注意事項</td><td>退会時の影響を 1 セクションに集約して表示する</td><td>アラート</td><td>—</td><td>「当月末でサービス停止」「当月末日 + 30 日に全データを完全削除(復元不可)」「当月分の従量課金は通常請求・次月以降の請求なし」「全メンバーのアクセス権が当月末で失効、招待中メンバーは自動キャンセル」</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>退会理由(任意)</td><td>退会理由を任意で入力する(最大 500 文字)</td><td>テキストエリア</td><td>—</td><td>—</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>個人設定へ戻る</td><td>個人設定へ戻る</td><td>ボタン</td><td>—</td><td>「個人設定へ戻る」</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>退会を申請する</td><td>再認証付きで退会を申請する(確認ダイアログ + 再認証)</td><td>ボタン</td><td>—</td><td>「退会を申請する」</td></tr>
 </tbody>
 </table>
 

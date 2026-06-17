@@ -92,28 +92,27 @@
 <th>項目 ID</th>
 <th>項目</th>
 <th>説明</th>
-<th>入出力</th>
 <th>種類</th>
 <th>表示条件</th>
-<th>備考</th>
+<th>表示</th>
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>キーワード検索</td><td>質問・回答を全文検索して一覧を絞り込む</td><td>入力</td><td>テキストボックス</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>カテゴリフィルタ</td><td>プロジェクト内のカテゴリで一覧を絞り込む</td><td>入力</td><td>プルダウン</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>並び順</td><td>一覧の並び順を切り替える(関連度 / 更新日時 / 作成日時)</td><td>入力</td><td>プルダウン</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>FAQ ID</td><td>各 FAQ の ID を一覧先頭列に表示し、押下で編集画面へ遷移する</td><td>出力</td><td>テキストリンク</td><td>—</td><td><code>faqs.id</code>(<code>faq_…</code> 形式)</td></tr>
-<tr><td id="IT-05"><code>IT-05</code></td><td>質問</td><td>FAQ の質問文を先頭 60 文字で表示する(クリック不可)</td><td>出力</td><td>テキスト</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-06"><code>IT-06</code></td><td>カテゴリ</td><td>FAQ のカテゴリを表示する</td><td>出力</td><td>テキスト</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-07"><code>IT-07</code></td><td>状態バッジ</td><td>FAQ の公開状態を色とラベルで表示する</td><td>出力</td><td>バッジ</td><td>—</td><td><code>draft</code> / <code>published</code> / <code>hidden</code>。色のみ依存禁止</td></tr>
-<tr><td id="IT-08"><code>IT-08</code></td><td>更新日時</td><td>FAQ の最終更新日時を相対表記で表示する</td><td>出力</td><td>テキスト</td><td>—</td><td>tooltip に絶対日時</td></tr>
-<tr><td id="IT-09"><code>IT-09</code></td><td>件数表示</td><td>表示中の件数と全件数を表示する</td><td>出力</td><td>テキスト</td><td>—</td><td>「1-50 / 全 124 件」形式</td></tr>
-<tr><td id="IT-10"><code>IT-10</code></td><td>行選択チェックボックス</td><td>一括操作の対象 FAQ を選択する(最大 50 件)</td><td>入力</td><td>チェックボックス</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-11"><code>IT-11</code></td><td>新規作成</td><td>FAQ 編集画面を新規モードで開く</td><td>入力</td><td>ボタン(Primary)</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-12"><code>IT-12</code></td><td>一括操作バー</td><td>選択中の FAQ を一括で公開 / 非公開化 / 削除する</td><td>入力</td><td>BulkActionBar</td><td>1 件以上選択時に下部固定</td><td>操作列ではなくチェックボックス選択への一括処理</td></tr>
-<tr><td id="IT-13"><code>IT-13</code></td><td>CSV をインポート</td><td>CSV インポートモーダル(SCR-006-M1)を開く</td><td>入力</td><td>ボタン</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-14"><code>IT-14</code></td><td>CSV をエクスポート</td><td>フィルタ適用結果を CSV でダウンロードする</td><td>入力</td><td>ボタン</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-15"><code>IT-15</code></td><td>空状態</td><td>FAQ が 0 件のとき作成を促す EmptyState を表示する</td><td>出力</td><td>EmptyState</td><td>FAQ 0 件時のみ表示</td><td>「FAQ がまだありません。最初の FAQ を作成しましょう。」</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>キーワード検索</td><td>質問・回答を全文検索して一覧を絞り込む</td><td>テキストボックス</td><td>—</td><td>プレースホルダ「質問・回答を全文検索」</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>カテゴリフィルタ</td><td>プロジェクト内のカテゴリで一覧を絞り込む</td><td>ドロップダウン</td><td>—</td><td>「すべて」+ 各カテゴリ名</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>並び順</td><td>一覧の並び順を切り替える(関連度 / 更新日時 / 作成日時)</td><td>ドロップダウン</td><td>—</td><td>選択肢「関連度」/「更新日時」/「作成日時」</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>FAQ ID</td><td>各 FAQ の ID を一覧先頭列に表示し、押下で編集画面へ遷移する</td><td>リンク</td><td>—</td><td>FAQ ID(<code>faq_…</code> 形式)のリンク</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>質問</td><td>FAQ の質問文を先頭 60 文字で表示する(クリック不可)</td><td>ラベル</td><td>—</td><td>質問文(先頭 60 文字)</td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>カテゴリ</td><td>FAQ のカテゴリを表示する</td><td>ラベル</td><td>—</td><td>カテゴリ名</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>状態バッジ</td><td>FAQ の公開状態を色とラベルで表示する(色のみ依存禁止)</td><td>バッジ</td><td>—</td><td>「下書き」/「公開中」/「非公開」</td></tr>
+<tr><td id="IT-08"><code>IT-08</code></td><td>更新日時</td><td>FAQ の最終更新日時を相対表記で表示する(ツールチップに絶対日時)</td><td>ラベル</td><td>—</td><td>相対表記(例「3 時間前」「1 日前」)</td></tr>
+<tr><td id="IT-09"><code>IT-09</code></td><td>件数表示</td><td>表示中の件数と全件数を表示する</td><td>ラベル</td><td>—</td><td>「1-50 / 全 124 件」形式</td></tr>
+<tr><td id="IT-10"><code>IT-10</code></td><td>行選択チェックボックス</td><td>一括操作の対象 FAQ を選択する(最大 50 件)</td><td>チェックボックス</td><td>—</td><td>—</td></tr>
+<tr><td id="IT-11"><code>IT-11</code></td><td>新規作成</td><td>FAQ 編集画面を新規モードで開く</td><td>ボタン</td><td>—</td><td>「+ 新規作成」</td></tr>
+<tr><td id="IT-12"><code>IT-12</code></td><td>一括操作バー</td><td>選択中の FAQ を一括で公開 / 非公開化 / 削除する(チェックボックス選択への一括処理)</td><td>ツールバー</td><td>1 件以上選択時に下部固定</td><td>「{n} 件選択中」+「公開する」/「非公開化する」/「削除する」/「選択を解除」</td></tr>
+<tr><td id="IT-13"><code>IT-13</code></td><td>CSV をインポート</td><td>CSV インポートモーダル(SCR-006-M1)を開く</td><td>ボタン</td><td>—</td><td>「CSV をインポート」</td></tr>
+<tr><td id="IT-14"><code>IT-14</code></td><td>CSV をエクスポート</td><td>フィルタ適用結果を CSV でダウンロードする</td><td>ボタン</td><td>—</td><td>「CSV をエクスポート」</td></tr>
+<tr><td id="IT-15"><code>IT-15</code></td><td>空状態</td><td>FAQ が 0 件のとき作成を促す EmptyState を表示する</td><td>空状態表示</td><td>FAQ 0 件時のみ表示</td><td>「FAQ がまだありません。最初の FAQ を作成しましょう。」+「+ 新規作成」</td></tr>
 </tbody>
 </table>
 

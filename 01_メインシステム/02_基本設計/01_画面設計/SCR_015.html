@@ -98,17 +98,16 @@
 <th>項目 ID</th>
 <th>項目</th>
 <th>説明</th>
-<th>入出力</th>
 <th>種類</th>
 <th>表示条件</th>
-<th>備考</th>
+<th>表示</th>
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>主な変更点</td><td>改定された利用規約 / プライバシーポリシーの主な変更点を見出しで区別して表示する</td><td>出力</td><td>パネル(リッチテキスト表示、sanitize 済)</td><td>改定された文書のみ表示(利用規約 / プライバシーポリシーの該当文書)</td><td>各文書の <code>terms_versions.diff_summary</code> 最新版を <code>GET /terms/current</code> / <code>GET /privacy/current</code> から取得</td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>利用規約同意</td><td>利用規約最新版への同意をチェックする(リンクで SCR-010 を参照)</td><td>入力</td><td>チェックボックス</td><td>利用規約が改定対象の場合に表示</td><td>必須。<code>doc_type='terms_of_service'</code> 最新版への同意</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>プライバシーポリシー同意</td><td>プライバシーポリシー最新版への同意をチェックする(リンクで SCR-020 を参照)</td><td>入力</td><td>チェックボックス</td><td>プライバシーポリシーが改定対象の場合に表示</td><td>必須。<code>doc_type='privacy_policy'</code> 最新版への同意</td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>同意して続行する</td><td>同意を確定して元の操作へ戻る</td><td>入力</td><td>ボタン(Primary)</td><td>両チェック充足時のみ活性化</td><td>同意は <code>terms_agreements</code> に <code>doc_type</code> 別で各 1 行記録(改定された文書のみが対象)</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>主な変更点</td><td>改定された利用規約 / プライバシーポリシーの主な変更点を見出しで区別して表示する</td><td>カード</td><td>改定された文書のみ表示(利用規約 / プライバシーポリシーの該当文書)</td><td>各文書の主な変更点(差分サマリー)</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>利用規約同意</td><td>利用規約最新版への同意をチェックする(必須。リンクで SCR-010 を参照)</td><td>チェックボックス</td><td>利用規約が改定対象の場合に表示</td><td>「利用規約の最新版に同意します」</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>プライバシーポリシー同意</td><td>プライバシーポリシー最新版への同意をチェックする(必須。リンクで SCR-020 を参照)</td><td>チェックボックス</td><td>プライバシーポリシーが改定対象の場合に表示</td><td>「プライバシーポリシーの最新版に同意します」</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>同意して続行する</td><td>同意を確定して元の操作へ戻る</td><td>ボタン</td><td>両チェック充足時のみ活性化</td><td>「同意して続行する」</td></tr>
 </tbody>
 </table>
 

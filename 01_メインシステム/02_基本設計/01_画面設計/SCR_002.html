@@ -91,22 +91,21 @@
 <th>項目 ID</th>
 <th>項目</th>
 <th>説明</th>
-<th>入出力</th>
 <th>種類</th>
 <th>表示条件</th>
-<th>備考</th>
+<th>表示</th>
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>メールアドレス</td><td>オーナー本人のメールアドレスを入力する</td><td>入力</td><td>メールアドレスボックス</td><td>—</td><td>必須。形式チェック</td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>パスワード</td><td>アカウントのパスワードを入力する</td><td>入力</td><td>パスワードボックス</td><td>—</td><td>必須。<a href="../../01_要件定義/FR01_アカウント管理.html#FR-006">FR-006</a> 強度要件(12 文字以上・3 種類以上の文字種)</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>パスワード(確認)</td><td>パスワードを再入力して一致を確認する</td><td>入力</td><td>パスワードボックス</td><td>—</td><td>必須。一致確認</td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>業種選択</td><td>利用者の業種を選択する</td><td>入力</td><td>プルダウン</td><td>—</td><td>任意</td></tr>
-<tr><td id="IT-05"><code>IT-05</code></td><td>利用規約同意</td><td>利用規約への同意を表明する</td><td>入力</td><td>チェックボックス</td><td>—</td><td>必須チェック</td></tr>
-<tr><td id="IT-06"><code>IT-06</code></td><td>プライバシーポリシー同意</td><td>プライバシーポリシーへの同意を表明する</td><td>入力</td><td>チェックボックス</td><td>—</td><td>必須チェック</td></tr>
-<tr><td id="IT-07"><code>IT-07</code></td><td>規約・ポリシーリンク</td><td>利用規約・プライバシーポリシーの全文を別ウィンドウで表示する</td><td>出力</td><td>リンク</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-08"><code>IT-08</code></td><td>登録ボタン</td><td>入力内容で登録し確認メール送信フローへ進む</td><td>入力</td><td>ボタン(Primary)</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-09"><code>IT-09</code></td><td>ログイン画面リンク</td><td>既存ユーザー向けにログイン画面へ遷移する導線</td><td>入力</td><td>リンク</td><td>—</td><td>—</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>メールアドレス</td><td>オーナー本人のメールアドレスを入力する(必須・形式チェック)</td><td>テキストボックス(メールアドレス)</td><td>—</td><td>placeholder「admin@example.com」</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>パスワード</td><td>アカウントのパスワードを入力する(必須・強度要件: 12 文字以上・3 種類以上の文字種)</td><td>テキストボックス(パスワード)</td><td>—</td><td>マスク表示</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>パスワード(確認)</td><td>パスワードを再入力して一致を確認する(必須・一致確認)</td><td>テキストボックス(パスワード)</td><td>—</td><td>マスク表示</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>業種選択</td><td>利用者の業種を選択する(任意)</td><td>ドロップダウン</td><td>—</td><td>「選択してください」/ IT / 小売 / 教育 / 金融 …</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>利用規約同意</td><td>利用規約への同意を表明する(必須チェック)</td><td>チェックボックス</td><td>—</td><td>「利用規約に同意する」</td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>プライバシーポリシー同意</td><td>プライバシーポリシーへの同意を表明する(必須チェック)</td><td>チェックボックス</td><td>—</td><td>「プライバシーポリシーに同意する」</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>規約・ポリシーリンク</td><td>利用規約・プライバシーポリシーの全文を別ウィンドウで表示する</td><td>リンク</td><td>—</td><td>「全文を別ウィンドウで表示」</td></tr>
+<tr><td id="IT-08"><code>IT-08</code></td><td>登録ボタン</td><td>入力内容で登録し確認メール送信フローへ進む</td><td>ボタン(Primary)</td><td>—</td><td>「登録して確認メールを送信する」</td></tr>
+<tr><td id="IT-09"><code>IT-09</code></td><td>ログイン画面リンク</td><td>既存ユーザー向けにログイン画面へ遷移する導線</td><td>リンク</td><td>—</td><td>「ログインする」</td></tr>
 </tbody>
 </table>
 

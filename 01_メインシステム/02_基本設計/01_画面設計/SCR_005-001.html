@@ -95,22 +95,21 @@
 <th>項目 ID</th>
 <th>項目</th>
 <th>説明</th>
-<th>入出力</th>
 <th>種類</th>
 <th>表示条件</th>
-<th>備考</th>
+<th>表示</th>
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>パンくず / ページタイトル</td><td>現在位置と対象の質問コード・状況バッジを見出しに表示する</td><td>出力</td><td>Breadcrumb / PageHeader</td><td>—</td><td>「未解決質問 — {inquiry_code}」+ 状況バッジ</td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>質問</td><td>ウィジェット利用者が投稿した質問本文を全文表示する</td><td>出力</td><td>本文ブロック</td><td>—</td><td>全文</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>未解決理由</td><td>自動回答されず未解決となった理由(信頼度不足等)を表示する</td><td>出力</td><td>バッジ + 補足</td><td>—</td><td><code>inquiries.question_log_id</code> 経由</td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>状況バッジ</td><td>当該質問の対応状況を色とラベルで表示する</td><td>出力</td><td>バッジ</td><td>—</td><td><code>open</code> / <code>closed</code></td></tr>
-<tr><td id="IT-05"><code>IT-05</code></td><td>登録先 FAQ</td><td>当該質問から登録された FAQ へのリンクを表示する(状況とは独立)</td><td>出力</td><td>リンク</td><td>登録先 FAQ 作成済み時(未作成時は「未作成」)</td><td>—</td></tr>
-<tr><td id="IT-06"><code>IT-06</code></td><td>候補 FAQ</td><td>当該質問に関連性の高い既存 FAQ を右ペインに一覧表示する</td><td>出力</td><td>リンク一覧</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-07"><code>IT-07</code></td><td>状況(変更)</td><td>対応状況を選択して即時保存する(現在値を選択済み表示)</td><td>入力</td><td>プルダウン</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-08"><code>IT-08</code></td><td>FAQ 登録へ</td><td>当該質問を起点に FAQ 編集画面へ遷移する</td><td>入力</td><td>ボタン(<code>admin</code> 以上(オーナーを含む))</td><td>ロールがプロジェクト管理者以上(オーナーを含む)の場合のみ表示(メンバーは非表示)</td><td>—</td></tr>
-<tr><td id="IT-09"><code>IT-09</code></td><td>権限不足表示</td><td>割当外メンバーの直アクセス時に操作不可をグレーアウトと tooltip で示す</td><td>出力</td><td>PermissionTooltip</td><td>割当外・範囲外メンバーの URL 直アクセス時</td><td>—</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>パンくず / ページタイトル</td><td>現在位置と対象の質問コード・状況バッジを見出しに表示する</td><td>パンくず / 見出し</td><td>—</td><td>「未解決質問 — {inquiry_code}」+ 状況バッジ</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>質問</td><td>ウィジェット利用者が投稿した質問本文を全文表示する</td><td>ラベル</td><td>—</td><td>質問本文(全文)+ 投稿日時</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>未解決理由</td><td>自動回答されず未解決となった理由(信頼度不足等)を表示する</td><td>バッジ + 補足</td><td>—</td><td>未解決理由バッジ(例「信頼度不足」)+ 信頼度・しきい値の補足文</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>状況バッジ</td><td>当該質問の対応状況を色とラベルで表示する</td><td>バッジ</td><td>—</td><td>「対応中」/「対応済み」</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>登録先 FAQ</td><td>当該質問から登録された FAQ へのリンクを表示する(状況とは独立)</td><td>リンク</td><td>登録先 FAQ 作成済み時(未作成時は「未作成」)</td><td>登録先 FAQ 名へのリンク / 未作成時は「未作成」</td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>候補 FAQ</td><td>当該質問に関連性の高い既存 FAQ を右ペインに一覧表示する</td><td>リンク</td><td>—</td><td>候補 FAQ 名 + 関連度のリンク一覧</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>状況(変更)</td><td>対応状況を選択して即時保存する(現在値を選択済み表示)</td><td>ドロップダウン</td><td>—</td><td>選択肢「対応中」/「対応済み」</td></tr>
+<tr><td id="IT-08"><code>IT-08</code></td><td>FAQ 登録へ</td><td>当該質問を起点に FAQ 編集画面へ遷移する</td><td>ボタン</td><td>ロールがプロジェクト管理者以上(オーナーを含む)の場合のみ表示(メンバーは非表示)</td><td>「FAQ 登録へ」</td></tr>
+<tr><td id="IT-09"><code>IT-09</code></td><td>権限不足表示</td><td>割当外メンバーの直アクセス時に操作不可をグレーアウトと tooltip で示す</td><td>ツールチップ</td><td>割当外・範囲外メンバーの URL 直アクセス時</td><td>操作不可の旨を示すツールチップ</td></tr>
 </tbody>
 </table>
 
