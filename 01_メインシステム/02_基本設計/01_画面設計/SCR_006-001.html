@@ -110,7 +110,7 @@
 </table>
 
 <h2 id="5-入出力一覧">5. 入出力一覧</h2>
-<p class="section-lead">本画面が読み書きするテーブルと、呼び出す API の一覧です。テーブルの正本は <a href="../03_テーブル設計.html">03_テーブル設計</a>、API の正本は <a href="../02_API設計/API-FAQ-002.html">02_API設計 §5.4.2</a> です。</p>
+<p class="section-lead">本画面が読み書きするテーブルと、呼び出す API の一覧です。テーブルの正本は <a href="../03_テーブル設計.html">03_テーブル設計</a>、API の正本は <a href="../02_API設計/FAQ管理.html#API-FAQ-002">02_API設計 §5.4.2</a> です。</p>
 <table>
 <thead>
 <tr>
@@ -131,10 +131,10 @@
 <tbody>
 <tr><td>FAQ</td><td>FAQ を取得・新規作成・更新・論理削除する</td><td>テーブル</td><td>入力 / 出力</td><td>◯</td><td>◯</td><td>◯</td><td>◯</td><td><code>faqs</code>(<a href="../03_テーブル設計.html#39-faqs">テーブル設計 3.9</a>)</td></tr>
 <tr><td>未解決質問</td><td>登録元の未解決質問を参照する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>inquiries</code>(<a href="../03_テーブル設計.html#314-inquiries">テーブル設計 3.14</a>)</td></tr>
-<tr><td>FAQ 作成</td><td>新規 FAQ を作成する</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /faqs</code>(<a href="../02_API設計/API-FAQ-002.html">API 設計 5.4.2</a>)</td></tr>
-<tr><td>FAQ 取得</td><td>編集対象 FAQ の現値をロードする</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /faqs/{id}</code>(<a href="../02_API設計/API-FAQ-002.html">API 設計 5.4.2</a>)</td></tr>
-<tr><td>FAQ 更新</td><td>FAQ を更新する(状態保存・自動保存を含む)</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>PATCH /faqs/{id}</code>(<a href="../02_API設計/API-FAQ-002.html">API 設計 5.4.2</a>)</td></tr>
-<tr><td>FAQ 削除</td><td>FAQ を論理削除する</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>DELETE /faqs/{id}</code>(<a href="../02_API設計/API-FAQ-002.html">API 設計 5.4.2</a>)</td></tr>
+<tr><td>FAQ 作成</td><td>新規 FAQ を作成する</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /faqs</code>(<a href="../02_API設計/FAQ管理.html#API-FAQ-002">API 設計 5.4.2</a>)</td></tr>
+<tr><td>FAQ 取得</td><td>編集対象 FAQ の現値をロードする</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /faqs/{id}</code>(<a href="../02_API設計/FAQ管理.html#API-FAQ-002">API 設計 5.4.2</a>)</td></tr>
+<tr><td>FAQ 更新</td><td>FAQ を更新する(状態保存・自動保存を含む)</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>PATCH /faqs/{id}</code>(<a href="../02_API設計/FAQ管理.html#API-FAQ-002">API 設計 5.4.2</a>)</td></tr>
+<tr><td>FAQ 削除</td><td>FAQ を論理削除する</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>DELETE /faqs/{id}</code>(<a href="../02_API設計/FAQ管理.html#API-FAQ-002">API 設計 5.4.2</a>)</td></tr>
 <tr><td>FAQ 改訂履歴取得</td><td>改訂履歴(直近 50 件)を取得し差分表示・ロールバックに用いる</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>正本は <a href="../02_API設計/index.html">API 設計 §5.4</a>(IT-08 / EV-06 対応)</td></tr>
 <tr><td>FAQ 改訂履歴</td><td>FAQ の版を管理する(改訂履歴・ロールバック)</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td>物理名・スキーマの正本は <a href="../03_テーブル設計.html">テーブル設計</a>(IT-08 / EV-06 対応)</td></tr>
 </tbody>

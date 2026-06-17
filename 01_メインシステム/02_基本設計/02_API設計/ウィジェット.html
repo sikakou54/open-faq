@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ウィジェット API | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/02_API設計/ウィジェット.html">
+<article class="content" id="content">
+<h1>ウィジェット API</h1>
+<aside class="page-summary"><p class="ps-lead"><strong>このページは、ウィジェットの起動・質問送信・未解決質問登録の公開 API 契約を定義します。</strong></p>
+<p class="ps-label">このページの API</p>
+<ul>
+<li>API-WGT-001 ウィジェット起動</li>
+<li>API-WGT-002 ウィジェット質問送信</li>
+<li>API-WGT-003 ウィジェット未解決質問登録</li>
+</ul>
+</aside>
+<p class="doc-meta"><span><b>版数</b> v1.6</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<h2 id="API-WGT-001">API-WGT-001 ウィジェット起動</h2>
+<span id="551-post-widgetv1bootstrap"></span>
+
+<h3>基本情報</h3>
+<table>
+<thead><tr><th>項目</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>API ID</td><td>API-WGT-001</td></tr>
+<tr><td>API 名</td><td>ウィジェット起動</td></tr>
+<tr><td>エンドポイント</td><td><code>/widget/v1/bootstrap</code></td></tr>
+<tr><td>HTTP メソッド</td><td>POST</td></tr>
+<tr><td>概要</td><td>公開キーとドメインを検証しウィジェットセッションを発行する</td></tr>
+<tr><td>利用画面</td><td>ウィジェット</td></tr>
+<tr><td>認証</td><td>不要(ドメイン検証)</td></tr>
+<tr><td>権限</td><td>end_user(公開キー)</td></tr>
+</tbody>
+</table>
+<h3>リクエストパラメータ</h3>
+<pre><code>{
+  "publicKey": "pk_live_abc123...",
+  "origin": "https://example.com"
+}</code></pre>
+<h3>レスポンス</h3>
+<p>(200):</p>
+<pre><code>{
+  "sessionToken": "wst_...",
+  "expiresIn": 3600,
+  "projectConfig": {
+    "headerColor": "#06c",
+    "placement": "bottom-right",
+    "headerTitle": "お問い合わせ",
+    "contactEmail": "contact@..."
+  }
+}</code></pre>
+<h3>エラー</h3>
+<table>
+<thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>401</td><td><code>WIDGET_KEY_INVALID</code></td><td>公開キーが不正</td></tr>
+<tr><td>403</td><td><code>DOMAIN_NOT_ALLOWED</code></td><td>許可ドメイン外</td></tr>
+<tr><td>403</td><td><code>CONTRACT_SUSPENDED</code></td><td>契約停止中</td></tr>
+</tbody>
+</table>
+
+<h2 id="API-WGT-002">API-WGT-002 ウィジェット質問送信</h2>
+<span id="552-post-widgetv1ask"></span>
+
+<h3>基本情報</h3>
+<table>
+<thead><tr><th>項目</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>API ID</td><td>API-WGT-002</td></tr>
+<tr><td>API 名</td><td>質問送信(機能 ID: F-049-052)</td></tr>
+<tr><td>エンドポイント</td><td><code>/widget/v1/ask</code></td></tr>
+<tr><td>HTTP メソッド</td><td>POST</td></tr>
+<tr><td>概要</td><td>AI 回答を生成し質問ログを記録する。未回答時は未解決質問を同時生成する</td></tr>
+<tr><td>利用画面</td><td>ウィジェット</td></tr>
+<tr><td>認証</td><td>Bearer session_token</td></tr>
+<tr><td>権限</td><td>end_user(セッション)</td></tr>
+</tbody>
+</table>
+<h3>リクエストパラメータ</h3>
+<pre><code>{ "question": "返品の手続きは?", "projectId": "proj_..." }</code></pre>
+<h3>レスポンス</h3>
+<p>(200)- answered:</p>
+<pre><code>{
+  "type": "answered",
+  "answer": "返品は商品到着後 7 日以内に...",
+  "confidence": 0.78,
+  "referencedFaqs": [
+    { "id": "faq_...", "question": "返品ポリシー", "answer": "..." }
+  ],
+  "questionLogId": "qlog_..."
+}</code></pre>
+<h3>レスポンス</h3>
+<p>(200)- unanswered:</p>
+<pre><code>{
+  "type": "unanswered",
+  "reason": "low_confidence" | "no_faq_match" | "pii_detected",
+  "questionLogId": "qlog_...",
+  "inquiryId": "inq_...",
+  "inquiryCode": "INQ-20260513-XYZ123",
+  "contactEmail": "support@example.com"
+}</code></pre>
+<p><code>unanswered</code> では質問ログと未解決質問を同一トランザクションで作成する。<code>inquiryCode</code> は管理用識別子としてレスポンス互換性のため返却するが、ウィジェットには描画しない。ウィジェットは回答できなかった旨と確認済みプロジェクト連絡先メールを表示し、FAQ 質問入力は継続可能とする。連絡先未設定時は <code>contactEmail=null</code> を返す。冪等性は <code>questionLogId</code> を基準に担保する。</p>
+<h3>エラー</h3>
+<table>
+<thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>429</td><td><code>RATE_LIMITED</code></td><td>レート制限超過(§3)</td></tr>
+<tr><td>403</td><td><code>DOMAIN_NOT_ALLOWED</code></td><td>許可ドメイン外</td></tr>
+</tbody>
+</table>
+
+<h2 id="API-WGT-003">API-WGT-003 ウィジェット未解決質問登録</h2>
+<span id="553-post-widgetv1inquiries"></span>
+
+<h3>基本情報</h3>
+<table>
+<thead><tr><th>項目</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>API ID</td><td>API-WGT-003</td></tr>
+<tr><td>API 名</td><td>未解決質問登録</td></tr>
+<tr><td>エンドポイント</td><td><code>/widget/v1/inquiries</code></td></tr>
+<tr><td>HTTP メソッド</td><td>POST</td></tr>
+<tr><td>概要</td><td>未解決質問を登録する(チャット部屋は作成しない)</td></tr>
+<tr><td>利用画面</td><td>ウィジェット</td></tr>
+<tr><td>認証</td><td>Bearer session_token</td></tr>
+<tr><td>権限</td><td>end_user(セッション)</td></tr>
+</tbody>
+</table>
+<h3>リクエストパラメータ</h3>
+<pre><code>{
+  "questionId": "qlog_...",
+  "idempotencyKey": "&lt;UUIDv4&gt;"
+}</code></pre>
+<h3>レスポンス</h3>
+<p>(201):</p>
+<pre><code>{ "inquiryId": "inq_...", "inquiryCode": "INQ-20260513-XYZ123", "status": "open" }</code></pre>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>未解決質問登録ではチャット部屋を作成しない。</div></div>
+</article>
+</body>
+</html>

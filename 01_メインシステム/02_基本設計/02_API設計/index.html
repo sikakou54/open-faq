@@ -31,293 +31,151 @@
 
 <h2 id="1-api-一覧">1. API 一覧</h2>
 <p class="section-lead">本システムが公開・受信する全 62 API をカテゴリ別に列挙します。各 API の詳細(リクエスト / レスポンス / エラー)は API ID のリンク先ページが正本で、認可は <a href="../04_権限設計.html">04_権限設計.html</a> / <a href="../08_認証・認可設計.html">08_認証・認可設計.html</a>、想定エラーは <a href="../05_エラー設計.html">05_エラー設計.html</a> が正本です。連携 IF #1〜#12 の通信仕様一覧は §5、Webhook 共通仕様は §6 にあります。</p>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">共通仕様</span>全 API に共通する形式・認証ヘッダ・冪等性・論理削除フィルタ・Webhook 共通仕様、レート制限・キャパシティ、連携 IF #1〜#12 通信仕様、外部 Webhook の共通方針は <a href="共通.html">共通.html</a> を参照してください。</div></div>
 <h3>認証 API</h3>
 <table>
 <thead><tr><th>API ID</th><th>API 名</th><th>エンドポイント</th><th>HTTP メソッド</th><th>概要</th><th>認証</th></tr></thead>
 <tbody>
-<tr><td><a href="API-AUTH-001.html">API-AUTH-001</a></td><td>新規登録</td><td><code>/auth/signup</code></td><td>POST</td><td>オーナーアカウントの新規登録</td><td>不要</td></tr>
-<tr><td><a href="API-AUTH-002.html">API-AUTH-002</a></td><td>ログイン</td><td><code>/auth/login</code></td><td>POST</td><td>メール / パスワード認証とセッション発行</td><td>不要</td></tr>
-<tr><td><a href="API-AUTH-003.html">API-AUTH-003</a></td><td>ログアウト</td><td><code>/auth/logout</code></td><td>POST</td><td>セッション失効</td><td>Cookie + CSRF</td></tr>
-<tr><td><a href="API-AUTH-004.html">API-AUTH-004</a></td><td>パスワード再設定要求</td><td><code>/auth/password-reset-request</code></td><td>POST</td><td>再設定メールの送信要求</td><td>不要</td></tr>
-<tr><td><a href="API-AUTH-005.html">API-AUTH-005</a></td><td>再認証</td><td><code>/auth/re-auth</code></td><td>POST</td><td>機微操作前のパスワード再確認</td><td>要(Cookie)</td></tr>
-<tr><td><a href="API-AUTH-006.html">API-AUTH-006</a></td><td>メール確認</td><td><code>/auth/email-verifications/{token}</code></td><td>POST</td><td>登録メールアドレスの確認</td><td>トークン認証</td></tr>
-<tr><td><a href="API-AUTH-007.html">API-AUTH-007</a></td><td>招待トークン検証・プレビュー</td><td><code>/auth/invitations/{token}/preview</code></td><td>POST</td><td>招待情報のプレビュー取得</td><td>トークン認証</td></tr>
-<tr><td><a href="API-AUTH-008.html">API-AUTH-008</a></td><td>メンバーアカウント有効化</td><td><code>/auth/invitations/{token}/activate</code></td><td>POST</td><td>招待されたメンバーの初期登録完了</td><td>トークン認証 + Turnstile</td></tr>
-<tr><td><a href="API-AUTH-009.html">API-AUTH-009</a></td><td>プロジェクト連絡先メール確認</td><td><code>/auth/contact-verifications/{token}</code></td><td>POST</td><td>プロジェクト連絡先メールの確認</td><td>トークン認証</td></tr>
+<tr><td><a href="認証.html#API-AUTH-001">API-AUTH-001</a></td><td>新規登録</td><td><code>/auth/signup</code></td><td>POST</td><td>オーナーアカウントの新規登録</td><td>不要</td></tr>
+<tr><td><a href="認証.html#API-AUTH-002">API-AUTH-002</a></td><td>ログイン</td><td><code>/auth/login</code></td><td>POST</td><td>メール / パスワード認証とセッション発行</td><td>不要</td></tr>
+<tr><td><a href="認証.html#API-AUTH-003">API-AUTH-003</a></td><td>ログアウト</td><td><code>/auth/logout</code></td><td>POST</td><td>セッション失効</td><td>Cookie + CSRF</td></tr>
+<tr><td><a href="認証.html#API-AUTH-004">API-AUTH-004</a></td><td>パスワード再設定要求</td><td><code>/auth/password-reset-request</code></td><td>POST</td><td>再設定メールの送信要求</td><td>不要</td></tr>
+<tr><td><a href="認証.html#API-AUTH-005">API-AUTH-005</a></td><td>再認証</td><td><code>/auth/re-auth</code></td><td>POST</td><td>機微操作前のパスワード再確認</td><td>要(Cookie)</td></tr>
+<tr><td><a href="認証.html#API-AUTH-006">API-AUTH-006</a></td><td>メール確認</td><td><code>/auth/email-verifications/{token}</code></td><td>POST</td><td>登録メールアドレスの確認</td><td>トークン認証</td></tr>
+<tr><td><a href="認証.html#API-AUTH-007">API-AUTH-007</a></td><td>招待トークン検証・プレビュー</td><td><code>/auth/invitations/{token}/preview</code></td><td>POST</td><td>招待情報のプレビュー取得</td><td>トークン認証</td></tr>
+<tr><td><a href="認証.html#API-AUTH-008">API-AUTH-008</a></td><td>メンバーアカウント有効化</td><td><code>/auth/invitations/{token}/activate</code></td><td>POST</td><td>招待されたメンバーの初期登録完了</td><td>トークン認証 + Turnstile</td></tr>
+<tr><td><a href="認証.html#API-AUTH-009">API-AUTH-009</a></td><td>プロジェクト連絡先メール確認</td><td><code>/auth/contact-verifications/{token}</code></td><td>POST</td><td>プロジェクト連絡先メールの確認</td><td>トークン認証</td></tr>
 </tbody>
 </table>
 <h3>利用者(メンバー)API</h3>
 <table>
 <thead><tr><th>API ID</th><th>API 名</th><th>エンドポイント</th><th>HTTP メソッド</th><th>概要</th><th>認証</th></tr></thead>
 <tbody>
-<tr><td><a href="API-MBR-001.html">API-MBR-001</a></td><td>メンバー一覧</td><td><code>/projects/{id}/members</code></td><td>GET</td><td>プロジェクトのメンバー割当一覧</td><td>オーナー / 該当 PJ 管理者</td></tr>
-<tr><td><a href="API-MBR-002.html">API-MBR-002</a></td><td>メンバー招待</td><td><code>/projects/{id}/members</code></td><td>POST</td><td>プロジェクトへの単発招待</td><td>オーナー / 該当 PJ 管理者(再認証)</td></tr>
-<tr><td><a href="API-MBR-003.html">API-MBR-003</a></td><td>メンバーロール変更</td><td><code>/projects/{id}/members/{userId}</code></td><td>PATCH</td><td>プロジェクト単位のロール変更</td><td>オーナー / 該当 PJ 管理者(再認証)</td></tr>
-<tr><td><a href="API-MBR-004.html">API-MBR-004</a></td><td>プロジェクト割当解除</td><td><code>/projects/{id}/members/{userId}</code></td><td>DELETE</td><td>プロジェクトからのメンバー外し</td><td>オーナー / 該当 PJ 管理者(再認証)</td></tr>
-<tr><td><a href="API-MBR-005.html">API-MBR-005</a></td><td>招待メール再送</td><td><code>/members/{id}/resend-invitation</code></td><td>POST</td><td>有効化前メンバーへの招待再送</td><td>オーナー / 該当 PJ 管理者(再認証)</td></tr>
+<tr><td><a href="利用者(メンバー).html#API-MBR-001">API-MBR-001</a></td><td>メンバー一覧</td><td><code>/projects/{id}/members</code></td><td>GET</td><td>プロジェクトのメンバー割当一覧</td><td>オーナー / 該当 PJ 管理者</td></tr>
+<tr><td><a href="利用者(メンバー).html#API-MBR-002">API-MBR-002</a></td><td>メンバー招待</td><td><code>/projects/{id}/members</code></td><td>POST</td><td>プロジェクトへの単発招待</td><td>オーナー / 該当 PJ 管理者(再認証)</td></tr>
+<tr><td><a href="利用者(メンバー).html#API-MBR-003">API-MBR-003</a></td><td>メンバーロール変更</td><td><code>/projects/{id}/members/{userId}</code></td><td>PATCH</td><td>プロジェクト単位のロール変更</td><td>オーナー / 該当 PJ 管理者(再認証)</td></tr>
+<tr><td><a href="利用者(メンバー).html#API-MBR-004">API-MBR-004</a></td><td>プロジェクト割当解除</td><td><code>/projects/{id}/members/{userId}</code></td><td>DELETE</td><td>プロジェクトからのメンバー外し</td><td>オーナー / 該当 PJ 管理者(再認証)</td></tr>
+<tr><td><a href="利用者(メンバー).html#API-MBR-005">API-MBR-005</a></td><td>招待メール再送</td><td><code>/members/{id}/resend-invitation</code></td><td>POST</td><td>有効化前メンバーへの招待再送</td><td>オーナー / 該当 PJ 管理者(再認証)</td></tr>
 </tbody>
 </table>
 <h3>プロジェクト管理 API</h3>
 <table>
 <thead><tr><th>API ID</th><th>API 名</th><th>エンドポイント</th><th>HTTP メソッド</th><th>概要</th><th>認証</th></tr></thead>
 <tbody>
-<tr><td><a href="API-PRJ-001.html">API-PRJ-001</a></td><td>プロジェクト一覧</td><td><code>/projects</code></td><td>GET</td><td>契約配下のプロジェクト一覧</td><td>オーナー専有</td></tr>
-<tr><td><a href="API-PRJ-002.html">API-PRJ-002</a></td><td>プロジェクト新規作成</td><td><code>/projects</code></td><td>POST</td><td>プロジェクト作成 + 公開キー発行</td><td>オーナー専有</td></tr>
-<tr><td><a href="API-PRJ-003.html">API-PRJ-003</a></td><td>プロジェクト更新・削除</td><td><code>/projects/{id}</code></td><td>PATCH / DELETE</td><td>プロジェクトの更新 / 論理削除</td><td>オーナー専有(削除は再認証)</td></tr>
-<tr><td><a href="API-PRJ-004.html">API-PRJ-004</a></td><td>ウィジェット鍵ローテーション</td><td><code>/projects/{id}/widget-key/rotate</code></td><td>POST</td><td>公開キーの再発行</td><td>オーナー専有(再認証)</td></tr>
+<tr><td><a href="プロジェクト管理.html#API-PRJ-001">API-PRJ-001</a></td><td>プロジェクト一覧</td><td><code>/projects</code></td><td>GET</td><td>契約配下のプロジェクト一覧</td><td>オーナー専有</td></tr>
+<tr><td><a href="プロジェクト管理.html#API-PRJ-002">API-PRJ-002</a></td><td>プロジェクト新規作成</td><td><code>/projects</code></td><td>POST</td><td>プロジェクト作成 + 公開キー発行</td><td>オーナー専有</td></tr>
+<tr><td><a href="プロジェクト管理.html#API-PRJ-003">API-PRJ-003</a></td><td>プロジェクト更新・削除</td><td><code>/projects/{id}</code></td><td>PATCH / DELETE</td><td>プロジェクトの更新 / 論理削除</td><td>オーナー専有(削除は再認証)</td></tr>
+<tr><td><a href="プロジェクト管理.html#API-PRJ-004">API-PRJ-004</a></td><td>ウィジェット鍵ローテーション</td><td><code>/projects/{id}/widget-key/rotate</code></td><td>POST</td><td>公開キーの再発行</td><td>オーナー専有(再認証)</td></tr>
 </tbody>
 </table>
 <h3>FAQ 管理 API</h3>
 <table>
 <thead><tr><th>API ID</th><th>API 名</th><th>エンドポイント</th><th>HTTP メソッド</th><th>概要</th><th>認証</th></tr></thead>
 <tbody>
-<tr><td><a href="API-FAQ-001.html">API-FAQ-001</a></td><td>FAQ 一覧</td><td><code>/faqs</code></td><td>GET</td><td>FAQ の検索 / 一覧取得</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
-<tr><td><a href="API-FAQ-002.html">API-FAQ-002</a></td><td>FAQ 作成・更新・削除</td><td><code>/faqs</code>, <code>/faqs/{id}</code></td><td>POST / PATCH / DELETE</td><td>FAQ の CRUD と状態変更</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
-<tr><td><a href="API-FAQ-003.html">API-FAQ-003</a></td><td>FAQ 一括状態変更</td><td><code>/faqs/bulk-status</code></td><td>POST</td><td>複数 FAQ の状態を一括変更</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
-<tr><td><a href="API-FAQ-004.html">API-FAQ-004</a></td><td>FAQ CSV インポート</td><td><code>/faqs/import</code></td><td>POST</td><td>CSV による FAQ 一括取込</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
-<tr><td><a href="API-FAQ-005.html">API-FAQ-005</a></td><td>FAQ インポートテンプレート</td><td><code>/faqs/import/template</code></td><td>GET</td><td>取込用 CSV テンプレートの取得</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
-<tr><td><a href="API-FAQ-006.html">API-FAQ-006</a></td><td>FAQ CSV エクスポート</td><td><code>/faqs/export</code></td><td>GET</td><td>FAQ 一覧の CSV 出力</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
-<tr><td><a href="API-FAQ-007.html">API-FAQ-007</a></td><td>FAQ 全文検索</td><td><code>/projects/{id}/faqs/search</code></td><td>GET</td><td>プロジェクト FAQ の全文検索</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
-<tr><td><a href="API-FAQ-008.html">API-FAQ-008</a></td><td>質問ログ検索</td><td><code>/projects/{id}/question-logs/search</code></td><td>GET</td><td>質問ログの全文 / 期間検索</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
+<tr><td><a href="FAQ管理.html#API-FAQ-001">API-FAQ-001</a></td><td>FAQ 一覧</td><td><code>/faqs</code></td><td>GET</td><td>FAQ の検索 / 一覧取得</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
+<tr><td><a href="FAQ管理.html#API-FAQ-002">API-FAQ-002</a></td><td>FAQ 作成・更新・削除</td><td><code>/faqs</code>, <code>/faqs/{id}</code></td><td>POST / PATCH / DELETE</td><td>FAQ の CRUD と状態変更</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
+<tr><td><a href="FAQ管理.html#API-FAQ-003">API-FAQ-003</a></td><td>FAQ 一括状態変更</td><td><code>/faqs/bulk-status</code></td><td>POST</td><td>複数 FAQ の状態を一括変更</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
+<tr><td><a href="FAQ管理.html#API-FAQ-004">API-FAQ-004</a></td><td>FAQ CSV インポート</td><td><code>/faqs/import</code></td><td>POST</td><td>CSV による FAQ 一括取込</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
+<tr><td><a href="FAQ管理.html#API-FAQ-005">API-FAQ-005</a></td><td>FAQ インポートテンプレート</td><td><code>/faqs/import/template</code></td><td>GET</td><td>取込用 CSV テンプレートの取得</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
+<tr><td><a href="FAQ管理.html#API-FAQ-006">API-FAQ-006</a></td><td>FAQ CSV エクスポート</td><td><code>/faqs/export</code></td><td>GET</td><td>FAQ 一覧の CSV 出力</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
+<tr><td><a href="FAQ管理.html#API-FAQ-007">API-FAQ-007</a></td><td>FAQ 全文検索</td><td><code>/projects/{id}/faqs/search</code></td><td>GET</td><td>プロジェクト FAQ の全文検索</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
+<tr><td><a href="FAQ管理.html#API-FAQ-008">API-FAQ-008</a></td><td>質問ログ検索</td><td><code>/projects/{id}/question-logs/search</code></td><td>GET</td><td>質問ログの全文 / 期間検索</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
 </tbody>
 </table>
 <h3>ウィジェット API</h3>
 <table>
 <thead><tr><th>API ID</th><th>API 名</th><th>エンドポイント</th><th>HTTP メソッド</th><th>概要</th><th>認証</th></tr></thead>
 <tbody>
-<tr><td><a href="API-WGT-001.html">API-WGT-001</a></td><td>ウィジェット起動</td><td><code>/widget/v1/bootstrap</code></td><td>POST</td><td>公開キー検証とセッション発行</td><td>不要(ドメイン検証)</td></tr>
-<tr><td><a href="API-WGT-002.html">API-WGT-002</a></td><td>ウィジェット質問送信</td><td><code>/widget/v1/ask</code></td><td>POST</td><td>AI 回答生成と質問ログ記録</td><td>Bearer(ウィジェットセッション)</td></tr>
-<tr><td><a href="API-WGT-003.html">API-WGT-003</a></td><td>ウィジェット未解決質問登録</td><td><code>/widget/v1/inquiries</code></td><td>POST</td><td>未解決質問の登録</td><td>Bearer(ウィジェットセッション)</td></tr>
+<tr><td><a href="ウィジェット.html#API-WGT-001">API-WGT-001</a></td><td>ウィジェット起動</td><td><code>/widget/v1/bootstrap</code></td><td>POST</td><td>公開キー検証とセッション発行</td><td>不要(ドメイン検証)</td></tr>
+<tr><td><a href="ウィジェット.html#API-WGT-002">API-WGT-002</a></td><td>ウィジェット質問送信</td><td><code>/widget/v1/ask</code></td><td>POST</td><td>AI 回答生成と質問ログ記録</td><td>Bearer(ウィジェットセッション)</td></tr>
+<tr><td><a href="ウィジェット.html#API-WGT-003">API-WGT-003</a></td><td>ウィジェット未解決質問登録</td><td><code>/widget/v1/inquiries</code></td><td>POST</td><td>未解決質問の登録</td><td>Bearer(ウィジェットセッション)</td></tr>
 </tbody>
 </table>
 <h3>未解決質問 API</h3>
 <table>
 <thead><tr><th>API ID</th><th>API 名</th><th>エンドポイント</th><th>HTTP メソッド</th><th>概要</th><th>認証</th></tr></thead>
 <tbody>
-<tr><td><a href="API-INQ-001.html">API-INQ-001</a></td><td>未解決質問一覧</td><td><code>/inquiries</code></td><td>GET</td><td>未解決質問の一覧取得</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
-<tr><td><a href="API-INQ-002.html">API-INQ-002</a></td><td>未解決質問詳細・状況切替</td><td><code>/inquiries/{id}</code></td><td>GET / PATCH</td><td>未解決質問の詳細取得と状況切替</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
+<tr><td><a href="未解決質問.html#API-INQ-001">API-INQ-001</a></td><td>未解決質問一覧</td><td><code>/inquiries</code></td><td>GET</td><td>未解決質問の一覧取得</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
+<tr><td><a href="未解決質問.html#API-INQ-002">API-INQ-002</a></td><td>未解決質問詳細・状況切替</td><td><code>/inquiries/{id}</code></td><td>GET / PATCH</td><td>未解決質問の詳細取得と状況切替</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
 </tbody>
 </table>
 <h3>利用量・課金 API</h3>
 <table>
 <thead><tr><th>API ID</th><th>API 名</th><th>エンドポイント</th><th>HTTP メソッド</th><th>概要</th><th>認証</th></tr></thead>
 <tbody>
-<tr><td><a href="API-BIL-001.html">API-BIL-001</a></td><td>利用量サマリ(プロジェクト)</td><td><code>/usage</code></td><td>GET</td><td>プロジェクト単位の利用量</td><td>オーナー / 該当 PJ の <code>admin</code> / <code>member</code></td></tr>
-<tr><td><a href="API-BIL-002.html">API-BIL-002</a></td><td>利用量サマリ(契約)</td><td><code>/owner/projects/usage</code></td><td>GET</td><td>契約全体 + プロジェクト別利用量</td><td>オーナー専有</td></tr>
-<tr><td><a href="API-BIL-003.html">API-BIL-003</a></td><td>請求サマリ</td><td><code>/billing/summary</code></td><td>GET</td><td>当月請求見込みと支払状態</td><td>オーナー専有</td></tr>
-<tr><td><a href="API-BIL-004.html">API-BIL-004</a></td><td>請求書一覧</td><td><code>/billing/invoices</code></td><td>GET</td><td>過去請求書の一覧取得</td><td>オーナー専有</td></tr>
-<tr><td><a href="API-BIL-005.html">API-BIL-005</a></td><td>支払方法 取得・登録・更新</td><td><code>/billing/payment-method</code></td><td>GET / PUT</td><td>支払方法の取得と登録 / 更新</td><td>オーナー専有(PUT は再認証)</td></tr>
-<tr><td><a href="API-BIL-006.html">API-BIL-006</a></td><td>プロジェクト上限・アラート取得</td><td><code>/projects/{id}/quota-limits</code></td><td>GET</td><td>質問数の利用状況 / 上限 / アラート</td><td>オーナー / 該当 PJ の <code>admin</code> / <code>member</code></td></tr>
-<tr><td><a href="API-BIL-007.html">API-BIL-007</a></td><td>プロジェクト上限・アラート更新</td><td><code>/projects/{id}/quota-limits/questions</code></td><td>PATCH</td><td>月次上限 ON/OFF・件数・閾値の更新</td><td>オーナー / 該当 PJ の <code>admin</code>(再認証)</td></tr>
+<tr><td><a href="利用量・課金.html#API-BIL-001">API-BIL-001</a></td><td>利用量サマリ(プロジェクト)</td><td><code>/usage</code></td><td>GET</td><td>プロジェクト単位の利用量</td><td>オーナー / 該当 PJ の <code>admin</code> / <code>member</code></td></tr>
+<tr><td><a href="利用量・課金.html#API-BIL-002">API-BIL-002</a></td><td>利用量サマリ(契約)</td><td><code>/owner/projects/usage</code></td><td>GET</td><td>契約全体 + プロジェクト別利用量</td><td>オーナー専有</td></tr>
+<tr><td><a href="利用量・課金.html#API-BIL-003">API-BIL-003</a></td><td>請求サマリ</td><td><code>/billing/summary</code></td><td>GET</td><td>当月請求見込みと支払状態</td><td>オーナー専有</td></tr>
+<tr><td><a href="利用量・課金.html#API-BIL-004">API-BIL-004</a></td><td>請求書一覧</td><td><code>/billing/invoices</code></td><td>GET</td><td>過去請求書の一覧取得</td><td>オーナー専有</td></tr>
+<tr><td><a href="利用量・課金.html#API-BIL-005">API-BIL-005</a></td><td>支払方法 取得・登録・更新</td><td><code>/billing/payment-method</code></td><td>GET / PUT</td><td>支払方法の取得と登録 / 更新</td><td>オーナー専有(PUT は再認証)</td></tr>
+<tr><td><a href="利用量・課金.html#API-BIL-006">API-BIL-006</a></td><td>プロジェクト上限・アラート取得</td><td><code>/projects/{id}/quota-limits</code></td><td>GET</td><td>質問数の利用状況 / 上限 / アラート</td><td>オーナー / 該当 PJ の <code>admin</code> / <code>member</code></td></tr>
+<tr><td><a href="利用量・課金.html#API-BIL-007">API-BIL-007</a></td><td>プロジェクト上限・アラート更新</td><td><code>/projects/{id}/quota-limits/questions</code></td><td>PATCH</td><td>月次上限 ON/OFF・件数・閾値の更新</td><td>オーナー / 該当 PJ の <code>admin</code>(再認証)</td></tr>
 </tbody>
 </table>
 <h3>お知らせ受信箱 API</h3>
 <table>
 <thead><tr><th>API ID</th><th>API 名</th><th>エンドポイント</th><th>HTTP メソッド</th><th>概要</th><th>認証</th></tr></thead>
 <tbody>
-<tr><td><a href="API-ANN-001.html">API-ANN-001</a></td><td>お知らせ一覧</td><td><code>/me/announcements</code></td><td>GET</td><td>お知らせ受信箱の一覧</td><td>admin 限定</td></tr>
-<tr><td><a href="API-ANN-002.html">API-ANN-002</a></td><td>お知らせ個別既読</td><td><code>/me/announcements/{id}/read</code></td><td>POST</td><td>お知らせ 1 件の既読化</td><td>admin 限定</td></tr>
-<tr><td><a href="API-ANN-003.html">API-ANN-003</a></td><td>お知らせ一括既読</td><td><code>/me/announcements/read</code></td><td>POST</td><td>複数お知らせの一括既読化</td><td>admin 限定</td></tr>
-<tr><td><a href="API-ANN-004.html">API-ANN-004</a></td><td>お知らせ未読件数</td><td><code>/me/announcements/unread-summary</code></td><td>GET</td><td>未読件数と直近お知らせ</td><td>admin 限定</td></tr>
+<tr><td><a href="お知らせ受信箱.html#API-ANN-001">API-ANN-001</a></td><td>お知らせ一覧</td><td><code>/me/announcements</code></td><td>GET</td><td>お知らせ受信箱の一覧</td><td>admin 限定</td></tr>
+<tr><td><a href="お知らせ受信箱.html#API-ANN-002">API-ANN-002</a></td><td>お知らせ個別既読</td><td><code>/me/announcements/{id}/read</code></td><td>POST</td><td>お知らせ 1 件の既読化</td><td>admin 限定</td></tr>
+<tr><td><a href="お知らせ受信箱.html#API-ANN-003">API-ANN-003</a></td><td>お知らせ一括既読</td><td><code>/me/announcements/read</code></td><td>POST</td><td>複数お知らせの一括既読化</td><td>admin 限定</td></tr>
+<tr><td><a href="お知らせ受信箱.html#API-ANN-004">API-ANN-004</a></td><td>お知らせ未読件数</td><td><code>/me/announcements/unread-summary</code></td><td>GET</td><td>未読件数と直近お知らせ</td><td>admin 限定</td></tr>
 </tbody>
 </table>
 <h3>ダッシュボード API</h3>
 <table>
 <thead><tr><th>API ID</th><th>API 名</th><th>エンドポイント</th><th>HTTP メソッド</th><th>概要</th><th>認証</th></tr></thead>
 <tbody>
-<tr><td><a href="API-DASH-001.html">API-DASH-001</a></td><td>ダッシュボードサマリ</td><td><code>/dashboard/summary</code></td><td>GET</td><td>利用量・要対応・通知失敗の集約</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
+<tr><td><a href="ダッシュボード.html#API-DASH-001">API-DASH-001</a></td><td>ダッシュボードサマリ</td><td><code>/dashboard/summary</code></td><td>GET</td><td>利用量・要対応・通知失敗の集約</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
 </tbody>
 </table>
 <h3>規約・退会 API</h3>
 <table>
 <thead><tr><th>API ID</th><th>API 名</th><th>エンドポイント</th><th>HTTP メソッド</th><th>概要</th><th>認証</th></tr></thead>
 <tbody>
-<tr><td><a href="API-TRM-001.html">API-TRM-001</a></td><td>利用規約 最新版取得</td><td><code>/terms/current</code></td><td>GET</td><td>利用規約最新版の取得</td><td>不要</td></tr>
-<tr><td><a href="API-TRM-002.html">API-TRM-002</a></td><td>プライバシーポリシー 最新版取得</td><td><code>/privacy/current</code></td><td>GET</td><td>プライバシーポリシー最新版の取得</td><td>不要</td></tr>
-<tr><td><a href="API-TRM-003.html">API-TRM-003</a></td><td>利用規約 同意</td><td><code>/terms/agree</code></td><td>POST</td><td>利用規約への同意記録</td><td>admin</td></tr>
-<tr><td><a href="API-TRM-004.html">API-TRM-004</a></td><td>プライバシーポリシー 同意</td><td><code>/privacy/agree</code></td><td>POST</td><td>プライバシーポリシーへの同意記録</td><td>admin</td></tr>
-<tr><td><a href="API-TRM-005.html">API-TRM-005</a></td><td>退会申請</td><td><code>/withdrawal-requests</code></td><td>POST</td><td>オーナーの退会申請</td><td>オーナー専有(再認証)</td></tr>
+<tr><td><a href="規約・退会.html#API-TRM-001">API-TRM-001</a></td><td>利用規約 最新版取得</td><td><code>/terms/current</code></td><td>GET</td><td>利用規約最新版の取得</td><td>不要</td></tr>
+<tr><td><a href="規約・退会.html#API-TRM-002">API-TRM-002</a></td><td>プライバシーポリシー 最新版取得</td><td><code>/privacy/current</code></td><td>GET</td><td>プライバシーポリシー最新版の取得</td><td>不要</td></tr>
+<tr><td><a href="規約・退会.html#API-TRM-003">API-TRM-003</a></td><td>利用規約 同意</td><td><code>/terms/agree</code></td><td>POST</td><td>利用規約への同意記録</td><td>admin</td></tr>
+<tr><td><a href="規約・退会.html#API-TRM-004">API-TRM-004</a></td><td>プライバシーポリシー 同意</td><td><code>/privacy/agree</code></td><td>POST</td><td>プライバシーポリシーへの同意記録</td><td>admin</td></tr>
+<tr><td><a href="規約・退会.html#API-TRM-005">API-TRM-005</a></td><td>退会申請</td><td><code>/withdrawal-requests</code></td><td>POST</td><td>オーナーの退会申請</td><td>オーナー専有(再認証)</td></tr>
 </tbody>
 </table>
 <h3>AI 推論 IF</h3>
 <table>
 <thead><tr><th>API ID</th><th>API 名</th><th>エンドポイント</th><th>HTTP メソッド</th><th>概要</th><th>認証</th></tr></thead>
 <tbody>
-<tr><td><a href="API-AI-001.html">API-AI-001</a></td><td>AI 推論 IF(<code>AnswerProvider</code>)</td><td>(内部抽象 IF)</td><td>-</td><td>AI 回答生成のプロバイダ抽象</td><td>内部(自動認証)</td></tr>
+<tr><td><a href="AI推論IF.html#API-AI-001">API-AI-001</a></td><td>AI 推論 IF(<code>AnswerProvider</code>)</td><td>(内部抽象 IF)</td><td>-</td><td>AI 回答生成のプロバイダ抽象</td><td>内部(自動認証)</td></tr>
 </tbody>
 </table>
 <h3>メール配信 IF</h3>
 <table>
 <thead><tr><th>API ID</th><th>API 名</th><th>エンドポイント</th><th>HTTP メソッド</th><th>概要</th><th>認証</th></tr></thead>
 <tbody>
-<tr><td><a href="API-MAIL-001.html">API-MAIL-001</a></td><td>メール配信 IF(<code>EmailProvider</code>)</td><td>(内部抽象 IF)</td><td>-</td><td>メール送信 / Webhook 検証の抽象</td><td>内部(API キー)</td></tr>
+<tr><td><a href="メール配信IF.html#API-MAIL-001">API-MAIL-001</a></td><td>メール配信 IF(<code>EmailProvider</code>)</td><td>(内部抽象 IF)</td><td>-</td><td>メール送信 / Webhook 検証の抽象</td><td>内部(API キー)</td></tr>
 </tbody>
 </table>
 <h3>連携 IF #1〜#12</h3>
 <table>
 <thead><tr><th>API ID</th><th>API 名</th><th>エンドポイント</th><th>HTTP メソッド</th><th>概要</th><th>認証</th></tr></thead>
 <tbody>
-<tr><td><a href="API-LNK-001.html">API-LNK-001</a></td><td>IF #1 契約停止イベント受信</td><td><code>/internal/admin-integration/v1/owner/suspend</code></td><td>POST</td><td>契約停止イベントの受信</td><td>mTLS + JWT</td></tr>
-<tr><td><a href="API-LNK-002.html">API-LNK-002</a></td><td>IF #2 強制ログアウト受信</td><td><code>/internal/admin-integration/v1/owner/forced-logout</code></td><td>POST</td><td>強制ログアウトの受信</td><td>mTLS + JWT</td></tr>
-<tr><td><a href="API-LNK-003.html">API-LNK-003</a></td><td>IF #4 復元実行受信</td><td><code>/internal/admin-integration/v1/owner/restore</code></td><td>POST</td><td>削除データ復元の受信</td><td>mTLS + JWT + 再認証</td></tr>
-<tr><td><a href="API-LNK-004.html">API-LNK-004</a></td><td>IF #5 レート制限上書き受信</td><td><code>/internal/admin-integration/v1/rate-limit/override</code></td><td>POST</td><td>レート制限上書き(契約単位)の受信</td><td>mTLS + JWT</td></tr>
-<tr><td><a href="API-LNK-005.html">API-LNK-005</a></td><td>IF #5 月次上限件数上書き受信</td><td><code>/internal/admin-integration/v1/usage-limit/override</code></td><td>POST</td><td>月次上限上書き(プロジェクト単位)の受信</td><td>mTLS + JWT(4-eyes)</td></tr>
-<tr><td><a href="API-LNK-006.html">API-LNK-006</a></td><td>IF #6 AI しきい値上書き受信</td><td><code>/internal/admin-integration/v1/threshold/update</code></td><td>POST</td><td>AI しきい値上書きの受信</td><td>mTLS + JWT</td></tr>
-<tr><td><a href="API-LNK-007.html">API-LNK-007</a></td><td>IF #7 お知らせ生成受信</td><td><code>/internal/admin-integration/v1/announcement/inbound</code></td><td>POST</td><td>お知らせ生成イベントの受信</td><td>mTLS + JWT</td></tr>
-<tr><td><a href="API-LNK-008.html">API-LNK-008</a></td><td>IF #8 監視メトリクス取得(送信)</td><td><code>&lt;admin-host&gt;/internal/main-integration/v1/metrics</code></td><td>GET</td><td>監視メトリクスの送信(メ → 顧管)</td><td>mTLS + JWT(<code>aud=admin</code>)</td></tr>
-<tr><td><a href="API-LNK-009.html">API-LNK-009</a></td><td>IF #9 不正利用検知通知(送信)</td><td><code>&lt;admin-host&gt;/internal/main-integration/v1/fraud/detected</code></td><td>POST</td><td>不正利用検知の送信(メ → 顧管)</td><td>mTLS + JWT(<code>aud=admin</code>)</td></tr>
-<tr><td><a href="API-LNK-010.html">API-LNK-010</a></td><td>IF #10 課金 Webhook 受信</td><td><code>/internal/admin-integration/v1/billing-webhook/forward</code></td><td>POST</td><td>課金イベント(Stripe 経由)の受信</td><td>Stripe 署名 + mTLS + JWT</td></tr>
-<tr><td><a href="API-LNK-011.html">API-LNK-011</a></td><td>IF #12 運営者操作通知受信</td><td><code>/internal/admin-integration/v1/admin-operation/notify</code></td><td>POST</td><td>運営者操作通知の受信</td><td>mTLS + JWT</td></tr>
+<tr><td><a href="連携IF.html#API-LNK-001">API-LNK-001</a></td><td>IF #1 契約停止イベント受信</td><td><code>/internal/admin-integration/v1/owner/suspend</code></td><td>POST</td><td>契約停止イベントの受信</td><td>mTLS + JWT</td></tr>
+<tr><td><a href="連携IF.html#API-LNK-002">API-LNK-002</a></td><td>IF #2 強制ログアウト受信</td><td><code>/internal/admin-integration/v1/owner/forced-logout</code></td><td>POST</td><td>強制ログアウトの受信</td><td>mTLS + JWT</td></tr>
+<tr><td><a href="連携IF.html#API-LNK-003">API-LNK-003</a></td><td>IF #4 復元実行受信</td><td><code>/internal/admin-integration/v1/owner/restore</code></td><td>POST</td><td>削除データ復元の受信</td><td>mTLS + JWT + 再認証</td></tr>
+<tr><td><a href="連携IF.html#API-LNK-004">API-LNK-004</a></td><td>IF #5 レート制限上書き受信</td><td><code>/internal/admin-integration/v1/rate-limit/override</code></td><td>POST</td><td>レート制限上書き(契約単位)の受信</td><td>mTLS + JWT</td></tr>
+<tr><td><a href="連携IF.html#API-LNK-005">API-LNK-005</a></td><td>IF #5 月次上限件数上書き受信</td><td><code>/internal/admin-integration/v1/usage-limit/override</code></td><td>POST</td><td>月次上限上書き(プロジェクト単位)の受信</td><td>mTLS + JWT(4-eyes)</td></tr>
+<tr><td><a href="連携IF.html#API-LNK-006">API-LNK-006</a></td><td>IF #6 AI しきい値上書き受信</td><td><code>/internal/admin-integration/v1/threshold/update</code></td><td>POST</td><td>AI しきい値上書きの受信</td><td>mTLS + JWT</td></tr>
+<tr><td><a href="連携IF.html#API-LNK-007">API-LNK-007</a></td><td>IF #7 お知らせ生成受信</td><td><code>/internal/admin-integration/v1/announcement/inbound</code></td><td>POST</td><td>お知らせ生成イベントの受信</td><td>mTLS + JWT</td></tr>
+<tr><td><a href="連携IF.html#API-LNK-008">API-LNK-008</a></td><td>IF #8 監視メトリクス取得(送信)</td><td><code>&lt;admin-host&gt;/internal/main-integration/v1/metrics</code></td><td>GET</td><td>監視メトリクスの送信(メ → 顧管)</td><td>mTLS + JWT(<code>aud=admin</code>)</td></tr>
+<tr><td><a href="連携IF.html#API-LNK-009">API-LNK-009</a></td><td>IF #9 不正利用検知通知(送信)</td><td><code>&lt;admin-host&gt;/internal/main-integration/v1/fraud/detected</code></td><td>POST</td><td>不正利用検知の送信(メ → 顧管)</td><td>mTLS + JWT(<code>aud=admin</code>)</td></tr>
+<tr><td><a href="連携IF.html#API-LNK-010">API-LNK-010</a></td><td>IF #10 課金 Webhook 受信</td><td><code>/internal/admin-integration/v1/billing-webhook/forward</code></td><td>POST</td><td>課金イベント(Stripe 経由)の受信</td><td>Stripe 署名 + mTLS + JWT</td></tr>
+<tr><td><a href="連携IF.html#API-LNK-011">API-LNK-011</a></td><td>IF #12 運営者操作通知受信</td><td><code>/internal/admin-integration/v1/admin-operation/notify</code></td><td>POST</td><td>運営者操作通知の受信</td><td>mTLS + JWT</td></tr>
 </tbody>
 </table>
 <h3>外部 Webhook / Resend</h3>
 <table>
 <thead><tr><th>API ID</th><th>API 名</th><th>エンドポイント</th><th>HTTP メソッド</th><th>概要</th><th>認証</th></tr></thead>
 <tbody>
-<tr><td><a href="API-WHK-001.html">API-WHK-001</a></td><td>外部 Webhook(Resend)</td><td><code>/webhooks/resend</code></td><td>POST</td><td>メール配信状態 Webhook の受信</td><td>Resend 署名検証</td></tr>
-</tbody>
-</table>
-
-<h2 id="2-共通仕様">2. 共通仕様</h2>
-<p class="section-lead">全 API に共通する形式・認証ヘッダ・冪等性・論理削除フィルタ・Webhook 規約をここで一括定義します。各エンドポイントの個別仕様(§4)は本節を前提とし、差分のみを記載します。</p>
-
-<h3 id="31-api-共通仕様82">2.1 API 共通仕様</h3>
-<p class="section-lead">Base URL・データ形式・ID 形式・ページング方式など、全 API が従う基本ルールです。</p>
-<table>
-<thead>
-<tr><th>項目</th><th>値</th></tr>
-</thead>
-<tbody>
-<tr><td>Base URL</td><td><code>/api/v1</code>(管理)/ <code>/widget/v1</code>(ウィジェット)/ <code>/internal/admin-integration/v1</code>(内部連携)</td></tr>
-<tr><td>データ形式</td><td>JSON</td></tr>
-<tr><td>エラー形式</td><td>RFC 7807(<code>application/problem+json</code>)</td></tr>
-<tr><td>日時</td><td>ISO 8601 + 末尾 Z(UTC)</td></tr>
-<tr><td>ID 形式</td><td>ULID(26 文字)、Stripe ID 例外</td></tr>
-<tr><td>ページング</td><td>カーソル方式(<code>cursor</code>, <code>limit</code> 50〜200)</td></tr>
-<tr><td>CSRF</td><td>Double Submit Cookie 検証(状態変更 API)</td></tr>
-<tr><td>Cookie</td><td><code>Secure; HttpOnly; SameSite=Lax; Path=/</code></td></tr>
-</tbody>
-</table>
-
-<h3 id="32-オーナー境界判定">2.2 オーナー境界判定</h3>
-<p class="section-lead">全操作で契約境界を強制し、違反時は存在を秘匿します。</p>
-<p>すべての操作で <code>actor.contract_owner_user_id == target.contract_owner_user_id</code> を必須とする(正本: <a href="08_認証・認可設計.html#52-オーナー境界判定">08_認証・認可設計.html §5.2</a>)。違反時は <strong>404 偽装</strong>で応答する(正本: <a href="05_エラー設計.html#53-認可エラー時の方針">05_エラー設計.html §5.3</a>)。</p>
-
-<h3 id="32a-論理削除フィルタ">2.3 論理削除フィルタ</h3>
-<p class="section-lead"><code>valid</code> カラムを持つテーブルへの GET 系 API は論理削除済みの行を返しません。</p>
-<p><code>valid</code> カラムを持つテーブル(<code>users</code> / <code>contract_owners</code> / <code>project_users</code> / <code>projects</code> / <code>allowed_domains</code> / <code>faqs</code> / <code>question_logs</code> / <code>inquiries</code> / <code>billing_subscriptions</code>)に対する全 GET 系 API(一覧 / 詳細)のクエリは、原則として <code>WHERE &lt;table&gt;.valid=1</code> フィルタを追加する。論理削除済み(<code>valid=0</code>)の行は通常 API 経由では返却しない。</p>
-<p>例外:</p>
-<ul>
-<li>運営者経由の連携 IF #4(物理削除前の復元 / リストア)では <code>valid=0</code> 行への参照を許可</li>
-<li>監査ログ参照系 API は <code>valid</code> 概念外(<code>audit_logs</code> には <code>valid</code> カラムを追加しない)</li>
-<li>認証ミドルウェアは <code>users.valid=0</code> 行へのログインを 401 で拒否する(セッション内 <code>userId</code> の <code>valid</code> を確認、<code>valid=0</code> ならセッションも失効扱い)</li>
-</ul>
-<p><code>WHERE valid=1</code> フィルタの漏れは IDOR 類似の脆弱性として扱う(<a href="../09_セキュリティ設計.html">09_セキュリティ設計.html</a>)。</p>
-
-<h3 id="33-冪等性キー">2.4 冪等性キー</h3>
-<p class="section-lead">書き込み系 API はリトライ安全性のため冪等性キーを受け付けます。</p>
-<p>書き込み系 API は <code>Idempotency-Key</code> ヘッダ(ULID 推奨、24h 保管)を受け付ける。重複時は既存処理結果を 200 で返却(リトライ安全性)。</p>
-
-<h3 id="34-webhook-共通仕様873">2.5 Webhook 共通仕様</h3>
-<p class="section-lead">受信 Webhook の署名検証・冪等性・リトライ・DLQ の共通方針です。</p>
-<table>
-<thead>
-<tr><th>項目</th><th>仕様</th></tr>
-</thead>
-<tbody>
-<tr><td>署名検証</td><td>HMAC-SHA256(送信元との共有 Secret)</td></tr>
-<tr><td>冪等性</td><td>event_id で重複処理防止</td></tr>
-<tr><td>リトライ</td><td>3 回(指数 BO: 1m → 4m → 16m)、超過で DLQ</td></tr>
-<tr><td>DLQ 保持</td><td>4 日(Cloudflare Queues)、その後 R2 退避 30 日</td></tr>
-<tr><td>タイムアウト</td><td>30 秒(超過で 5xx 返却)</td></tr>
-</tbody>
-</table>
-
-<h3 id="35-連携-if-エンドポイント命名規約88">2.6 連携 IF エンドポイント命名規約</h3>
-<p class="section-lead">連携 IF の受信 / 送信エンドポイントの命名規則です。</p>
-<ul>
-<li>受信: <code>/internal/admin-integration/v1/{resource}/{action}</code></li>
-<li>送信: <code>https://&lt;admin-host&gt;/internal/main-integration/v1/...</code></li>
-<li>リソース: snake_case 単数形</li>
-<li>動詞: POST(状態変更)</li>
-</ul>
-
-<h3 id="36-認証ヘッダ">2.7 認証ヘッダ</h3>
-<p class="section-lead">API カテゴリごとに用いる認証ヘッダの一覧です。</p>
-<table>
-<thead>
-<tr><th>ヘッダ</th><th>用途</th><th>例</th></tr>
-</thead>
-<tbody>
-<tr><td><code>Cookie: session=&lt;token&gt;</code></td><td>利用者セッション</td><td>管理 API</td></tr>
-<tr><td><code>Authorization: Bearer &lt;wst_*&gt;</code></td><td>ウィジェットセッション</td><td>ウィジェット API</td></tr>
-<tr><td><code>Authorization: Bearer &lt;JWT&gt;</code></td><td>連携 IF</td><td>内部連携</td></tr>
-<tr><td><code>X-CSRF-Token: &lt;token&gt;</code></td><td>CSRF 対策</td><td>状態変更系</td></tr>
-<tr><td><code>Idempotency-Key: &lt;ULID&gt;</code></td><td>冪等性</td><td>書き込み系</td></tr>
-</tbody>
-</table>
-
-<h2 id="3-レート制限キャパシティ">3. レート制限・キャパシティ</h2>
-<p class="section-lead">API 層で適用する警告 / 拒否レベルと超過時の挙動の正本です。プロジェクト単位の月次上限・無料枠は <a href="../10_課金・請求設計.html">10_課金・請求設計.html</a> が業務正本で、本表は API での enforcement 仕様を示します。</p>
-<table>
-<thead>
-<tr><th>項目</th><th>警告レベル</th><th>拒否レベル</th><th>契約上書き</th><th>超過時の挙動</th><th>正本</th></tr>
-</thead>
-<tbody>
-<tr><td>同時アクティブ契約</td><td>150 でシャーディング着手</td><td>200</td><td>不可</td><td>新規契約受付一時停止 + 運営者通知</td><td>NFR-110</td></tr>
-<tr><td>FAQ 件数(契約共通)</td><td>8,000(80%)</td><td>12,000(120%)</td><td>不可</td><td>拒否レベルで 429</td><td>FR-046</td></tr>
-<tr><td>FAQ 質問文字数</td><td>—</td><td>500 文字</td><td>不可</td><td>超過は 400</td><td>FR-046</td></tr>
-<tr><td>FAQ 回答文字数</td><td>—</td><td>5,000 文字</td><td>不可</td><td>超過は 400</td><td>FR-046</td></tr>
-<tr><td>月間質問数(プロジェクト単位)</td><td>80%(通知)</td><td>100%(設定上限件数到達でウィジェット質問受付停止。無料枠超過分は事後課金、<strong>無料枠超過自体は拒否しない</strong>)</td><td>プロジェクト別上書き可(<code>project_quota_limits</code>、SCR-021 / SCR-093)</td><td>125% で追加制限</td><td>FR-122</td></tr>
-<tr><td>Workers AI 月間コスト</td><td>80%</td><td>100%(停止)</td><td>(社内原価指標、契約単位)</td><td>同上</td><td>FR-122</td></tr>
-<tr><td>公開 API <code>/widget/ask</code></td><td>—</td><td>60 req/min/IP</td><td>可(IF #5)</td><td>429</td><td>FR-128</td></tr>
-<tr><td>公開 API <code>/widget/bootstrap</code></td><td>—</td><td>30 req/min/IP</td><td>可(IF #5)</td><td>429</td><td>FR-128</td></tr>
-<tr><td>ログイン失敗</td><td>—</td><td>5 回/15 分(<code>IP × user_id</code> ロック)</td><td>不可</td><td>アカウントロック</td><td>FR-007</td></tr>
-<tr><td>管理者ユーザー数</td><td>80%</td><td>100%</td><td>可(プラン依存)</td><td>429、通知</td><td>FR-021</td></tr>
-<tr><td>プロジェクト数</td><td>平均×3 超過時通知</td><td>—</td><td>—</td><td>急増検知通知のみ</td><td>FR-035</td></tr>
-<tr><td>同時オンライン管理者</td><td>—</td><td>1,000 名</td><td>—</td><td>503 + Retry-After</td><td>NFR-114</td></tr>
-<tr><td>ウィジェット同時接続(EU)</td><td>—</td><td>10,000 並列</td><td>—</td><td>503 + Retry-After</td><td>NFR-114</td></tr>
-<tr><td>D1 容量</td><td>8GB(80%)</td><td>10GB</td><td>—</td><td>高優先度アラート + シャーディング検討</td><td>NFR-115</td></tr>
-<tr><td>Workers CPU 時間</td><td>50ms 目標 / 100ms 警告</td><td>—</td><td>—</td><td>100ms 超過が 1h で 1% 超で通知</td><td>NFR-116</td></tr>
-</tbody>
-</table>
-<p>詳細は <a href="../10_課金・請求設計.html">10_課金・請求設計.html §8</a> の選択閾値アラート / 100%停止 / 125%運営者通知を参照。</p>
-
-<h2 id="5-連携-if-メイン側エンドポイント">5. 連携 IF(メイン側エンドポイント)</h2>
-<p class="section-lead">顧客管理システムとの連携 IF #1〜#12 のうち、メインが受信・送信するエンドポイント(API-051〜API-061)を定義します。各 IF の主管(受信 / 送信)は §5.13 の通信仕様一覧が正本で、受信側の対応は運営者 <a href="../../../02_運営者システム/02_基本設計/02_API設計/index.html">02_API設計/index.html</a> と両正本です。</p>
-
-<h3 id="513-連携-if-通信仕様一覧">5.13 連携 IF 通信仕様一覧</h3>
-<p class="section-lead">IF #1〜#12 の連携先・方向・認証・冪等性・DLQ 上限・タイムアウト・主管(受信 / 送信)を一覧化します。本表はメイン側の主管責任の正本であり、受信側の対応は運営者 <a href="../../../02_運営者システム/02_基本設計/02_API設計/index.html">02_API設計/index.html</a> と整合します。</p>
-<table>
-<thead>
-<tr><th>IF#</th><th>連携先</th><th>方向</th><th>認証</th><th>Idempotency</th><th>DLQ 上限</th><th>TO</th><th>主管</th></tr>
-</thead>
-<tbody>
-<tr><td>1</td><td>顧管</td><td>→メ</td><td>mTLS + JWT(<code>aud=main</code>)</td><td><code>(operation_id, contract_owner_user_id, target_status)</code></td><td>100/30 分</td><td>5s</td><td>受信</td></tr>
-<tr><td>2</td><td>顧管</td><td>→メ</td><td>mTLS + JWT</td><td><code>(operation_id, contract_owner_user_id)</code></td><td>100/30 分</td><td>3s</td><td>受信</td></tr>
-<tr><td>4</td><td>顧管</td><td>→メ</td><td>mTLS + JWT + 再認証</td><td><code>(restore_op_id)</code></td><td>50/24h</td><td>10s</td><td>受信</td></tr>
-<tr><td>5</td><td>顧管</td><td>→メ</td><td>mTLS + JWT</td><td><code>(owner_id, override_id)</code></td><td>50/30 分</td><td>3s</td><td>受信</td></tr>
-<tr><td>6</td><td>顧管</td><td>→メ</td><td>mTLS + JWT</td><td><code>(owner_id, scope, version)</code></td><td>50/30 分</td><td>3s</td><td>受信</td></tr>
-<tr><td>7</td><td>顧管</td><td>→メ</td><td>mTLS + JWT</td><td><code>(announcement_id, owner_id)</code></td><td>1000/h</td><td>30s</td><td>受信</td></tr>
-<tr><td>8</td><td>顧管</td><td>メ→</td><td>mTLS + JWT(<code>aud=admin</code>)</td><td><code>(metric_window_id)</code></td><td>n/a</td><td>10s</td><td><strong>送信</strong></td></tr>
-<tr><td>9</td><td>顧管</td><td>メ→</td><td>mTLS + JWT(<code>aud=admin</code>)</td><td><code>(detection_id)</code></td><td>200/30 分</td><td>5s</td><td><strong>送信</strong></td></tr>
-<tr><td>10</td><td>Stripe → 顧管 → メ</td><td>→メ</td><td>Stripe 署名 + mTLS</td><td><code>event_id</code></td><td>1000/24h</td><td>10s</td><td>受信</td></tr>
-<tr><td>12</td><td>顧管</td><td>→メ</td><td>mTLS + JWT</td><td><code>(op_id, owner_id)</code></td><td>200/30 分</td><td>5s</td><td>受信</td></tr>
-</tbody>
-</table>
-<p>詳細は運営者側 <a href="../../../02_運営者システム/02_基本設計/02_API設計/index.html">02_API設計/index.html</a> を参照。</p>
-
-<h2 id="6-外部-webhook">6. 外部 Webhook</h2>
-<p class="section-lead">メール配信プロバイダからの配信状態 Webhook を受信し、配信状態の更新と抑制リスト登録を行います。署名検証と冪等性は §2.5 の共通仕様に従います。課金プロバイダ Webhook は運営者が一次受信し、メインは IF #10(API-060)経由で受け取ります。</p>
-<p>受信 Webhook(Resend)の詳細仕様は <a href="API-WHK-001.html">API-WHK-001 外部 Webhook(Resend)</a> を参照。課金プロバイダ Webhook はメインが <a href="API-LNK-010.html">API-LNK-010 IF #10 課金 Webhook 受信</a> 経由で受け取ります。</p>
-
-<h2 id="7-未決事項">7. 未決事項</h2>
-<p class="section-lead">本書の API 契約に関する未決事項を管理します。現時点で未決事項はありません(確定済)。</p>
-<table>
-<thead>
-<tr><th>No</th><th>内容</th><th>確認先</th><th>期限</th><th>ステータス</th></tr>
-</thead>
-<tbody>
+<tr><td><a href="外部Webhook.html#API-WHK-001">API-WHK-001</a></td><td>外部 Webhook(Resend)</td><td><code>/webhooks/resend</code></td><td>POST</td><td>メール配信状態 Webhook の受信</td><td>Resend 署名検証</td></tr>
 </tbody>
 </table>
 

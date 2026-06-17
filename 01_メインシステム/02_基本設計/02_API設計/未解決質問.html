@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>未解決質問 API | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/02_API設計/未解決質問.html">
+<article class="content" id="content">
+<h1>未解決質問 API</h1>
+<aside class="page-summary"><p class="ps-lead"><strong>このページは、未解決質問の一覧取得と詳細取得 / 状況切替の API 契約を定義します。</strong></p>
+<p class="ps-label">このページの API</p>
+<ul>
+<li>API-INQ-001 未解決質問一覧</li>
+<li>API-INQ-002 未解決質問詳細・状況切替</li>
+</ul>
+</aside>
+<p class="doc-meta"><span><b>版数</b> v1.6</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<h2 id="API-INQ-001">API-INQ-001 未解決質問一覧</h2>
+<span id="561-get-inquiriesstatusopenprojectidcursor"></span>
+
+<h3>基本情報</h3>
+<table>
+<thead><tr><th>項目</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>API ID</td><td>API-INQ-001</td></tr>
+<tr><td>API 名</td><td>未解決質問一覧</td></tr>
+<tr><td>エンドポイント</td><td><code>/inquiries</code></td></tr>
+<tr><td>HTTP メソッド</td><td>GET</td></tr>
+<tr><td>概要</td><td>未解決質問を状況・プロジェクトで一覧取得する</td></tr>
+<tr><td>利用画面</td><td>SCR-005</td></tr>
+<tr><td>認証</td><td>Cookie</td></tr>
+<tr><td>権限</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
+</tbody>
+</table>
+<h3>リクエストパラメータ</h3>
+<p>Query Parameters は <code>status</code>(<code>open</code> / <code>closed</code> のいずれか、または未指定で両方)、<code>projectId</code>、<code>cursor</code> / <code>limit</code>(共通仕様)。</p>
+<h3>レスポンス</h3>
+<p>(200): 未解決質問の配列 + <code>nextCursor</code>。</p>
+
+<h2 id="API-INQ-002">API-INQ-002 未解決質問詳細・状況切替</h2>
+<span id="562-get-inquiriesid--patch-inquiriesid"></span>
+
+<h3>基本情報</h3>
+<table>
+<thead><tr><th>項目</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>API ID</td><td>API-INQ-002</td></tr>
+<tr><td>API 名</td><td>未解決質問詳細・状況切替</td></tr>
+<tr><td>エンドポイント</td><td><code>/inquiries/{id}</code></td></tr>
+<tr><td>HTTP メソッド</td><td>GET / PATCH</td></tr>
+<tr><td>概要</td><td>詳細取得と状況の手動切替(担当者概念は持たない)</td></tr>
+<tr><td>利用画面</td><td>SCR-005</td></tr>
+<tr><td>認証</td><td>Cookie + CSRF(PATCH)</td></tr>
+<tr><td>権限</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
+</tbody>
+</table>
+<p>PATCH は状況の手動切替のみを更新可能とし、担当者概念は持たない。</p>
+<h3>リクエストパラメータ</h3>
+<p>Path Parameters: <code>{id}</code>(未解決質問 ID)。Request Body(PATCH):</p>
+<pre><code>{
+  "status": "open" | "closed"
+}</code></pre>
+<p>各フィールドはオプション(指定したものだけ更新)。状況は <code>open</code> ↔ <code>closed</code> の双方向遷移を許容(再オープン制限なし)。FAQ 下書き保存・FAQ 公開は本フィールドを変更しない(連動ロジックなし)。状態変更履歴の永続化は行わない。</p>
+<h3>レスポンス</h3>
+<p>(200): GET は未解決質問の詳細、PATCH は更新後の状況。</p>
+</article>
+</body>
+</html>

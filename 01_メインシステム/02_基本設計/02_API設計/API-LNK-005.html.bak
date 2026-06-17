@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API-LNK-005 IF #5(月次上限件数上書き受信 / プロジェクト単位) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/02_API設計/連携IF.html#API-LNK-005">
+<article class="content" id="content">
+<h1 id="API-LNK-005">API-LNK-005 IF #5(月次上限件数上書き受信 / プロジェクト単位)</h1>
+
+<aside class="page-summary"><p class="ps-lead"><strong>この API は、プロジェクト単位の月次上限件数上書き(4-eyes 承認済み)を受信し、即時反映します。</strong></p></aside>
+<p class="doc-meta"><span><b>版数</b> v1.6</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<span id="5124a-if-5月次上限件数上書き受信--プロジェクト単位"></span>
+
+<p class="section-lead">プロジェクト単位の月次上限件数上書き(4-eyes 承認済み)を受信し、即時反映します。</p>
+<pre><code>POST /internal/admin-integration/v1/usage-limit/override</code></pre>
+<h2>リクエストパラメータ</h2>
+<pre><code>{
+  "contractOwnerUserId": "...",
+  "projectId": "prj_...",
+  "overrideId": "...",
+  "limits": [{ "kind": "question_monthly_limit", "limit": 8000, "freeQuota": 2000, "validUntil": "..." }],
+  "reason": "...",
+  "operatorAccountId": "..."
+}</code></pre>
+<p>動作:</p>
+<ol type="1">
+<li>JWT + Idempotency-Key 検証(4-eyes 承認済みであること)</li>
+<li><code>project_quota_limits</code> テーブル更新(<code>source='operator'</code>、<code>project_id</code> で対象プロジェクトを特定、<code>reason</code> / <code>valid_until</code> / <code>created_by</code> を記録)</li>
+<li>KV キー <code>usage-limit:{contractOwnerUserId}:{projectId}</code> 更新(30s TTL、即時反映)</li>
+</ol>
+<p><code>kind</code> は <code>question_monthly_limit</code> / <code>faq_monthly_limit</code>。質問数は <code>limit</code> と <code>freeQuota</code>、FAQ は運営者が管理する <code>freeQuota</code> だけを受け付ける。FAQ の <code>limit</code> は常に NULL とし、指定時は 422。質問数の優先順位は「プロジェクト設定 &gt; 運営者上書き &gt; デフォルト推奨値」、FAQ 無料枠は「運営者上書き &gt; デフォルト値」。</p>
+</article>
+</body>
+</html>

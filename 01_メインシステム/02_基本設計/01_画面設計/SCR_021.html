@@ -354,7 +354,7 @@
 </table>
 
 <h2 id="5-入出力一覧">5. 入出力一覧</h2>
-<p class="section-lead">本画面が読み書きするテーブルと、呼び出す API の一覧です。テーブルの正本は <a href="../03_テーブル設計.html">03_テーブル設計</a>、API の正本は <a href="../02_API設計/API-BIL-001.html_monthviewmodeprojectprojectidid">02_API設計 §5.7.1</a> / <a href="../02_API設計/API-BIL-006.html">§5.7.5</a> です。</p>
+<p class="section-lead">本画面が読み書きするテーブルと、呼び出す API の一覧です。テーブルの正本は <a href="../03_テーブル設計.html">03_テーブル設計</a>、API の正本は <a href="../02_API設計/利用量・課金.html#API-BIL-001_monthviewmodeprojectprojectidid">02_API設計 §5.7.1</a> / <a href="../02_API設計/利用量・課金.html#API-BIL-006">§5.7.5</a> です。</p>
 <table>
 <thead>
 <tr>
@@ -375,8 +375,8 @@
 <tbody>
 <tr><td>利用量計測</td><td>当月の質問数(当月利用)を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>usage_metering</code>(<a href="../03_テーブル設計.html#322-usage_metering">テーブル設計 3.22</a>)</td></tr>
 <tr><td>プロジェクト上限</td><td>月次上限件数・無料枠を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>project_quota_limits</code>(<a href="../03_テーブル設計.html#324-project_quota_limits">テーブル設計 3.24</a>)</td></tr>
-<tr><td>利用量取得</td><td>当該プロジェクトの当月利用量を取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /usage?period=current_month&amp;viewMode=project&amp;projectId={id}</code>(<a href="../02_API設計/API-BIL-001.html_monthviewmodeprojectprojectidid">API 設計 5.7.1</a>)</td></tr>
-<tr><td>上限取得</td><td>当該プロジェクトの上限設定を取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /projects/{id}/quota-limits</code>(<a href="../02_API設計/API-BIL-006.html">API 設計 5.7.5</a>)</td></tr>
+<tr><td>利用量取得</td><td>当該プロジェクトの当月利用量を取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /usage?period=current_month&amp;viewMode=project&amp;projectId={id}</code>(<a href="../02_API設計/利用量・課金.html#API-BIL-001_monthviewmodeprojectprojectidid">API 設計 5.7.1</a>)</td></tr>
+<tr><td>上限取得</td><td>当該プロジェクトの上限設定を取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /projects/{id}/quota-limits</code>(<a href="../02_API設計/利用量・課金.html#API-BIL-006">API 設計 5.7.5</a>)</td></tr>
 </tbody>
 </table>
 

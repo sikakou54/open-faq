@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ダッシュボード API | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/02_API設計/ダッシュボード.html">
+<article class="content" id="content">
+<h1>ダッシュボード API</h1>
+<aside class="page-summary"><p class="ps-lead"><strong>このページは、ダッシュボードサマリ(利用量・要対応・通知失敗の集約)の API 契約を定義します。</strong></p>
+<p class="ps-label">このページの API</p>
+<ul>
+<li>API-DASH-001 ダッシュボードサマリ</li>
+</ul>
+</aside>
+<p class="doc-meta"><span><b>版数</b> v1.6</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<h2 id="API-DASH-001">API-DASH-001 ダッシュボードサマリ</h2>
+<span id="58a1-get-dashboardsummary"></span>
+
+<h3>基本情報</h3>
+<table>
+<thead><tr><th>項目</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>API ID</td><td>API-DASH-001</td></tr>
+<tr><td>API 名</td><td>ダッシュボードサマリ(機能 ID: F-130)</td></tr>
+<tr><td>エンドポイント</td><td><code>/dashboard/summary</code></td></tr>
+<tr><td>HTTP メソッド</td><td>GET</td></tr>
+<tr><td>概要</td><td>質問数・未解決・要対応状況・通知失敗 / バウンスをまとめて返す</td></tr>
+<tr><td>利用画面</td><td>SCR-008 / SCR-016</td></tr>
+<tr><td>認証</td><td>Cookie</td></tr>
+<tr><td>権限</td><td>オーナー / 該当 PJ の <code>member</code>+(<code>notification</code> ブロックの配信失敗・バウンス件数はオーナー専有)</td></tr>
+</tbody>
+</table>
+<p>質問数・未解決数(FR-130)、要対応状況の対応中 / 対応済み内訳(FR-132)、未解決傾向(FR-133)、期間絞り込み(FR-134)、通知失敗・バウンス件数(FR-135)をまとめて返す。<code>projectId</code> 未指定時はオーナーのみ契約全体を集約する(メンバーは <code>projectId</code> 必須)。期間は <code>period</code>(<code>current_month</code> / <code>last_30d</code>)または <code>from</code> / <code>to</code> で指定する。</p>
+<h3>リクエストパラメータ</h3>
+<p>Query Parameters は <code>period=current_month</code>、<code>projectId={id}</code>(メンバーは必須)、または <code>from</code> / <code>to</code>。</p>
+<h3>レスポンス</h3>
+<p>(200):</p>
+<pre><code>{
+  "period": { "from": "2026-06-01T00:00:00Z", "to": "2026-06-30T23:59:59Z" },
+  "questions": { "total": 2450, "unresolved": 120 },
+  "inquiryStatus": { "open": 35, "closed": 85 },
+  "topQuestions": [ { "question": "返品方法は?", "count": 42 } ],
+  "notification": { "failedCount": 3, "bouncedCount": 1 }
+}</code></pre>
+<p><code>notification.failedCount</code> / <code>bouncedCount</code> は <code>notification_logs</code> の配信失敗・バウンス集計(列定義は <a href="../03_テーブル設計.html">03_テーブル設計.html</a>)。メンバーが <code>projectId</code> 指定で呼んだ場合、本ブロックは <code>null</code> を返す。</p>
+<h3>エラー</h3>
+<table>
+<thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>400</td><td><code>VALIDATION_ERROR</code></td><td>メンバーが <code>projectId</code> 未指定</td></tr>
+<tr><td>403</td><td><code>PROJECT_ACCESS_DENIED</code></td><td>当該プロジェクトへの権限なし</td></tr>
+</tbody>
+</table>
+</article>
+</body>
+</html>

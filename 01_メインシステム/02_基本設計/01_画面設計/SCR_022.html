@@ -155,7 +155,7 @@
 </table>
 
 <h2 id="5-入出力一覧">5. 入出力一覧</h2>
-<p class="section-lead">本画面が読み書きするテーブルと、呼び出す API の一覧です。テーブルの正本は <a href="../03_テーブル設計.html">03_テーブル設計</a>、API の正本は <a href="../02_API設計/API-BIL-003.html_month">02_API設計 §5.7.3</a> です。</p>
+<p class="section-lead">本画面が読み書きするテーブルと、呼び出す API の一覧です。テーブルの正本は <a href="../03_テーブル設計.html">03_テーブル設計</a>、API の正本は <a href="../02_API設計/利用量・課金.html#API-BIL-003_month">02_API設計 §5.7.3</a> です。</p>
 <table>
 <thead>
 <tr>
@@ -177,8 +177,8 @@
 <tr><td>契約サブスクリプション</td><td>請求見込み・請求状態・支払方法を取得し、支払方法を更新する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>billing_subscriptions</code>(<a href="../03_テーブル設計.html#320-billing_subscriptions">テーブル設計 3.20</a>)</td></tr>
 <tr><td>請求書</td><td>請求履歴・請求書 PDF を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>billing_invoices</code>(<a href="../03_テーブル設計.html#321-billing_invoices">テーブル設計 3.21</a>)</td></tr>
 <tr><td>利用量計測</td><td>プロジェクト別の課金内訳を集計する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>usage_metering</code>(<a href="../03_テーブル設計.html#322-usage_metering">テーブル設計 3.22</a>)</td></tr>
-<tr><td>請求サマリ取得</td><td>請求見込み・次回請求日・請求状態・内訳を取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /billing/summary</code>(<code>period</code>)(<a href="../02_API設計/API-BIL-003.html_month">API 設計 5.7.3</a>)</td></tr>
-<tr><td>請求履歴取得</td><td>過去の請求履歴を取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /billing/invoices</code>(<code>limit</code>)(<a href="../02_API設計/API-BIL-004.html">API 設計 5.7.4</a>)</td></tr>
+<tr><td>請求サマリ取得</td><td>請求見込み・次回請求日・請求状態・内訳を取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /billing/summary</code>(<code>period</code>)(<a href="../02_API設計/利用量・課金.html#API-BIL-003_month">API 設計 5.7.3</a>)</td></tr>
+<tr><td>請求履歴取得</td><td>過去の請求履歴を取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /billing/invoices</code>(<code>limit</code>)(<a href="../02_API設計/利用量・課金.html#API-BIL-004">API 設計 5.7.4</a>)</td></tr>
 <tr><td>支払方法取得・更新</td><td>支払方法を取得し、登録・更新する</td><td>API</td><td>入出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET / PUT /billing/payment-method</code>(<a href="../02_API設計/index.html">API 設計 5.7.4a</a>)</td></tr>
 <tr><td>請求書 PDF</td><td>請求行の明細 PDF をダウンロード / 表示する</td><td>ファイル</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
 </tbody>

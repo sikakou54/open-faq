@@ -294,313 +294,78 @@ window.NAV = [
       "kind": "group",
       "children": [
        {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-AUTH-001.html",
-        "title": "API-AUTH-001 新規登録",
+        "url": "01_メインシステム/02_基本設計/02_API設計/共通.html",
+        "title": "API 共通仕様",
         "kind": "md"
        },
        {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-AUTH-002.html",
-        "title": "API-AUTH-002 ログイン",
+        "url": "01_メインシステム/02_基本設計/02_API設計/認証.html",
+        "title": "認証 API",
         "kind": "md"
        },
        {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-AUTH-003.html",
-        "title": "API-AUTH-003 ログアウト",
+        "url": "01_メインシステム/02_基本設計/02_API設計/利用者(メンバー).html",
+        "title": "利用者(メンバー)API",
         "kind": "md"
        },
        {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-AUTH-004.html",
-        "title": "API-AUTH-004 パスワード再設定要求",
+        "url": "01_メインシステム/02_基本設計/02_API設計/プロジェクト管理.html",
+        "title": "プロジェクト管理 API",
         "kind": "md"
        },
        {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-AUTH-005.html",
-        "title": "API-AUTH-005 再認証",
+        "url": "01_メインシステム/02_基本設計/02_API設計/FAQ管理.html",
+        "title": "FAQ 管理 API",
         "kind": "md"
        },
        {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-AUTH-006.html",
-        "title": "API-AUTH-006 メール確認",
+        "url": "01_メインシステム/02_基本設計/02_API設計/ウィジェット.html",
+        "title": "ウィジェット API",
         "kind": "md"
        },
        {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-AUTH-007.html",
-        "title": "API-AUTH-007 招待トークン検証・プレビュー",
+        "url": "01_メインシステム/02_基本設計/02_API設計/未解決質問.html",
+        "title": "未解決質問 API",
         "kind": "md"
        },
        {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-AUTH-008.html",
-        "title": "API-AUTH-008 メンバーアカウント有効化",
+        "url": "01_メインシステム/02_基本設計/02_API設計/利用量・課金.html",
+        "title": "利用量・課金 API",
         "kind": "md"
        },
        {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-AUTH-009.html",
-        "title": "API-AUTH-009 プロジェクト連絡先メール確認",
+        "url": "01_メインシステム/02_基本設計/02_API設計/お知らせ受信箱.html",
+        "title": "お知らせ受信箱 API",
         "kind": "md"
        },
        {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-MBR-001.html",
-        "title": "API-MBR-001 メンバー一覧",
+        "url": "01_メインシステム/02_基本設計/02_API設計/ダッシュボード.html",
+        "title": "ダッシュボード API",
         "kind": "md"
        },
        {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-MBR-002.html",
-        "title": "API-MBR-002 メンバー招待",
+        "url": "01_メインシステム/02_基本設計/02_API設計/規約・退会.html",
+        "title": "規約・退会 API",
         "kind": "md"
        },
        {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-MBR-003.html",
-        "title": "API-MBR-003 メンバーロール変更",
+        "url": "01_メインシステム/02_基本設計/02_API設計/AI推論IF.html",
+        "title": "AI 推論 IF",
         "kind": "md"
        },
        {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-MBR-004.html",
-        "title": "API-MBR-004 プロジェクト割当解除",
+        "url": "01_メインシステム/02_基本設計/02_API設計/メール配信IF.html",
+        "title": "メール配信 IF",
         "kind": "md"
        },
        {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-MBR-005.html",
-        "title": "API-MBR-005 招待メール再送",
+        "url": "01_メインシステム/02_基本設計/02_API設計/連携IF.html",
+        "title": "連携 IF",
         "kind": "md"
        },
        {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-PRJ-001.html",
-        "title": "API-PRJ-001 プロジェクト一覧",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-PRJ-002.html",
-        "title": "API-PRJ-002 プロジェクト新規作成",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-PRJ-003.html",
-        "title": "API-PRJ-003 プロジェクト更新・削除",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-PRJ-004.html",
-        "title": "API-PRJ-004 ウィジェット鍵ローテーション",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-FAQ-001.html",
-        "title": "API-FAQ-001 FAQ 一覧",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-FAQ-002.html",
-        "title": "API-FAQ-002 FAQ 作成・更新・削除",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-FAQ-003.html",
-        "title": "API-FAQ-003 FAQ 一括状態変更",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-FAQ-004.html",
-        "title": "API-FAQ-004 FAQ CSV インポート",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-FAQ-005.html",
-        "title": "API-FAQ-005 FAQ インポートテンプレート",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-FAQ-006.html",
-        "title": "API-FAQ-006 FAQ CSV エクスポート",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-FAQ-007.html",
-        "title": "API-FAQ-007 FAQ 全文検索",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-FAQ-008.html",
-        "title": "API-FAQ-008 質問ログ検索",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-WGT-001.html",
-        "title": "API-WGT-001 ウィジェット起動",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-WGT-002.html",
-        "title": "API-WGT-002 ウィジェット質問送信",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-WGT-003.html",
-        "title": "API-WGT-003 ウィジェット未解決質問登録",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-INQ-001.html",
-        "title": "API-INQ-001 未解決質問一覧",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-INQ-002.html",
-        "title": "API-INQ-002 未解決質問詳細・状況切替",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-BIL-001.html",
-        "title": "API-BIL-001 利用量サマリ(プロジェクト)",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-BIL-002.html",
-        "title": "API-BIL-002 利用量サマリ(契約)",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-BIL-003.html",
-        "title": "API-BIL-003 請求サマリ",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-BIL-004.html",
-        "title": "API-BIL-004 請求書一覧",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-BIL-005.html",
-        "title": "API-BIL-005 支払方法 取得・登録・更新",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-BIL-006.html",
-        "title": "API-BIL-006 プロジェクト上限・アラート取得",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-BIL-007.html",
-        "title": "API-BIL-007 プロジェクト上限・アラート更新",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-ANN-001.html",
-        "title": "API-ANN-001 お知らせ一覧",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-ANN-002.html",
-        "title": "API-ANN-002 お知らせ個別既読",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-ANN-003.html",
-        "title": "API-ANN-003 お知らせ一括既読",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-ANN-004.html",
-        "title": "API-ANN-004 お知らせ未読件数",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-DASH-001.html",
-        "title": "API-DASH-001 ダッシュボードサマリ",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-TRM-001.html",
-        "title": "API-TRM-001 利用規約 最新版取得",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-TRM-002.html",
-        "title": "API-TRM-002 プライバシーポリシー 最新版取得",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-TRM-003.html",
-        "title": "API-TRM-003 利用規約 同意",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-TRM-004.html",
-        "title": "API-TRM-004 プライバシーポリシー 同意",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-TRM-005.html",
-        "title": "API-TRM-005 退会申請",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-AI-001.html",
-        "title": "API-AI-001 AI 推論 IF(AnswerProvider)",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-MAIL-001.html",
-        "title": "API-MAIL-001 メール配信 IF(EmailProvider)",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-LNK-001.html",
-        "title": "API-LNK-001 IF #1 契約停止イベント受信",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-LNK-002.html",
-        "title": "API-LNK-002 IF #2 強制ログアウト受信",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-LNK-003.html",
-        "title": "API-LNK-003 IF #4 復元実行受信",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-LNK-004.html",
-        "title": "API-LNK-004 IF #5 レート制限上書き受信",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-LNK-005.html",
-        "title": "API-LNK-005 IF #5 月次上限件数上書き受信",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-LNK-006.html",
-        "title": "API-LNK-006 IF #6 AI しきい値上書き受信",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-LNK-007.html",
-        "title": "API-LNK-007 IF #7 お知らせ生成受信",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-LNK-008.html",
-        "title": "API-LNK-008 IF #8 監視メトリクス取得(送信)",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-LNK-009.html",
-        "title": "API-LNK-009 IF #9 不正利用検知通知(送信)",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-LNK-010.html",
-        "title": "API-LNK-010 IF #10 課金 Webhook 受信",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-LNK-011.html",
-        "title": "API-LNK-011 IF #12 運営者操作通知受信",
-        "kind": "md"
-       },
-       {
-        "url": "01_メインシステム/02_基本設計/02_API設計/API-WHK-001.html",
-        "title": "API-WHK-001 外部 Webhook(Resend)",
+        "url": "01_メインシステム/02_基本設計/02_API設計/外部Webhook.html",
+        "title": "外部 Webhook",
         "kind": "md"
        }
       ]

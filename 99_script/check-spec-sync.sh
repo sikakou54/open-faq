@@ -235,8 +235,9 @@ t = read(M + "11_メール設計.html")
 mail = [int(x) for x in re.findall(r'<h3[^>]*>4\.([0-9]+) TPL-', t)]
 check_seq("メインメールテンプレート節", mail, list(range(1, 15)))
 # (f) API 一覧(分割後 index)に全カテゴリの API-<PFX>- リンクが存在
+#     リンクはカテゴリ別ファイルへのアンカー形式(例 href="認証.html#API-AUTH-001")
 t = read(M + "02_API設計/index.html")
-napi = len(re.findall(r'href="API-[A-Z]+-[0-9]+\.html"', t))
+napi = len(re.findall(r'href="[^"]+\.html#API-[A-Z]+-[0-9]+"', t))
 if napi < 60: fail("メイン API 一覧リンク数が不足: %d (期待 62 前後)" % napi)
 PY
 
