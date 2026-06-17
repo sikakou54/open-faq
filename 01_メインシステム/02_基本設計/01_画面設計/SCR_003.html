@@ -113,14 +113,14 @@
 <tbody>
 <tr><td id="IT-01"><code>IT-01</code></td><td>ステップタイムライン</td><td>出力</td><td>Timeline</td><td>—</td><td>① メールアドレス入力 → ② 受信メールのリンクをクリック → ③ 新しいパスワードを設定。現在ステップを <code>aria-current="step"</code> で強調</td></tr>
 <tr><td id="IT-02"><code>IT-02</code></td><td>メールアドレス(段階 1)</td><td>入力</td><td>メールアドレスボックス</td><td>段階 1 のみ</td><td>必須。形式チェック</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>再設定リンクを送信</td><td>入力</td><td>ボタン(Primary)</td><td>段階 1 のみ</td><td>リクエスト発行(存在有無は同一応答、列挙攻撃対策)</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>再設定リンクを送信</td><td>入力</td><td>ボタン(Primary)</td><td>段階 1 のみ</td><td>存在有無は同一応答(列挙攻撃対策)</td></tr>
 <tr><td id="IT-04"><code>IT-04</code></td><td>メール送信済み案内</td><td>出力</td><td>中間表示</td><td>段階 1 送信完了後のみ</td><td>「{メールアドレス} にメールを送信しました。1 時間以内にリンクをクリックして再設定を完了してください」</td></tr>
 <tr><td id="IT-05"><code>IT-05</code></td><td>メールを再送信する</td><td>入力</td><td>ボタン(Secondary)</td><td>段階 1 送信完了後のみ</td><td>5 分以内は disabled、残時間カウントダウン併記</td></tr>
 <tr><td id="IT-06"><code>IT-06</code></td><td>新パスワード(段階 2)</td><td>入力</td><td>パスワードボックス + 強度メーター</td><td>段階 2 のみ</td><td>必須。<a href="../../01_要件定義/FR01_アカウント管理.html#FR-006">FR-006</a> 強度要件。入力中に強度 5 段階と不足要件を表示</td></tr>
 <tr><td id="IT-07"><code>IT-07</code></td><td>新パスワード(確認)</td><td>入力</td><td>パスワードボックス</td><td>段階 2 のみ</td><td>必須。一致確認</td></tr>
-<tr><td id="IT-08"><code>IT-08</code></td><td>新しいパスワードを設定する</td><td>入力</td><td>ボタン(Primary)</td><td>段階 2 のみ</td><td>パスワード更新 → 全セッション失効 → 完了画面 → SCR-001 へ</td></tr>
+<tr><td id="IT-08"><code>IT-08</code></td><td>新しいパスワードを設定する</td><td>入力</td><td>ボタン(Primary)</td><td>段階 2 のみ</td><td>—</td></tr>
 <tr><td id="IT-09"><code>IT-09</code></td><td>トークン無効 / 期限切れエラー</td><td>出力</td><td>アラート帯 + 再送 CTA</td><td>段階 2 でリンク不正時のみ</td><td>「再設定リンクが期限切れ、または無効です(有効期限 1 時間)。新しいリンクを再送してください」</td></tr>
-<tr><td id="IT-10"><code>IT-10</code></td><td>完了画面 / ログインする</td><td>出力</td><td>中間表示 + ボタン</td><td>パスワード設定完了後のみ</td><td>「新しいパスワードを設定しました。ログインしてください」+ SCR-001 への CTA</td></tr>
+<tr><td id="IT-10"><code>IT-10</code></td><td>完了画面 / ログインする</td><td>出力</td><td>中間表示 + ボタン</td><td>パスワード設定完了後のみ</td><td>「新しいパスワードを設定しました。ログインしてください」</td></tr>
 </tbody>
 </table>
 

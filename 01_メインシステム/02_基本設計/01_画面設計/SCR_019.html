@@ -113,7 +113,7 @@
 <tr><td id="IT-01"><code>IT-01</code></td><td>確認完了画面</td><td>出力</td><td>SUCCESS ステート</td><td>トークン検証成功時に表示</td><td>「プロジェクト「{projectName}」のお問い合わせ先メールアドレスを確認しました。FAQ ウィジェット上にお問い合わせ先として表示されるようになります」+ チェックマークアイコン</td></tr>
 <tr><td id="IT-02"><code>IT-02</code></td><td>トークン期限切れ画面</td><td>出力</td><td>ERROR ステート</td><td>確認トークンが期限切れの場合に表示</td><td>「確認リンクが期限切れ、または無効です(有効期限 24 時間)。プロジェクトのオーナーまたは管理者に再送をご依頼ください」</td></tr>
 <tr><td id="IT-03"><code>IT-03</code></td><td>既使用画面</td><td>出力</td><td>ERROR ステート</td><td>確認トークンが使用済みの場合に表示</td><td>「このリンクは既に使用済みです。確認は完了しています」</td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>閉じる</td><td>入力</td><td>ボタン</td><td>—</td><td><code>window.close()</code> または静的なランディングメッセージ表示(認証コンソールへの遷移は行わない。未認証ユーザーは戻り先がないため)</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>閉じる</td><td>入力</td><td>ボタン</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 
@@ -156,7 +156,7 @@
 </thead>
 <tbody>
 <tr><td><code>EV-01</code></td><td>確認実行</td><td>確認リンクからの URL 訪問時</td><td><code>POST /auth/contact-verifications/{token}</code> でトークンを検証。200 で完了画面、410(期限切れ / 既使用)で各エラー画面へ分岐</td><td><a href="#IT-01">IT-01</a>, <a href="#IT-02">IT-02</a>, <a href="#IT-03">IT-03</a></td></tr>
-<tr><td><code>EV-02</code></td><td>閉じる</td><td>「閉じる」押下時</td><td><code>window.close()</code> または静的なランディングメッセージを表示</td><td><a href="#IT-04">IT-04</a></td></tr>
+<tr><td><code>EV-02</code></td><td>閉じる</td><td>「閉じる」押下時</td><td><code>window.close()</code> または静的なランディングメッセージを表示(認証コンソールへの遷移は行わない。未認証ユーザーは戻り先がないため)</td><td><a href="#IT-04">IT-04</a></td></tr>
 </tbody>
 </table>
 

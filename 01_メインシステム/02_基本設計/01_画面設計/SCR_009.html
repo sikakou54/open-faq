@@ -105,14 +105,14 @@
 <tr><td id="IT-01"><code>IT-01</code></td><td>検索</td><td>入力</td><td>テキストボックス</td><td>—</td><td>表示名・メールの部分一致</td></tr>
 <tr><td id="IT-02"><code>IT-02</code></td><td>招待状態フィルタ</td><td>入力</td><td>プルダウン</td><td>—</td><td>すべて / 招待中のみ / アクティベーション済み</td></tr>
 <tr><td id="IT-03"><code>IT-03</code></td><td>件数表示</td><td>出力</td><td>テキスト</td><td>—</td><td>「1-50 / 全 N 件」形式</td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>利用者表示名</td><td>出力</td><td>テキストリンク</td><td>オーナー行・自分の行はテキスト表示のみ(リンク化しない)。招待中は名前隣に「招待中」バッジ</td><td>クリックで SCR-009-M1 編集モードを開く。<code>users.name</code></td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>利用者表示名</td><td>出力</td><td>テキストリンク</td><td>オーナー行・自分の行はテキスト表示のみ(リンク化しない)。招待中は名前隣に「招待中」バッジ</td><td><code>users.name</code></td></tr>
 <tr><td id="IT-05"><code>IT-05</code></td><td>メールアドレス</td><td>出力</td><td>テキスト</td><td>—</td><td><code>users.email</code></td></tr>
 <tr><td id="IT-06"><code>IT-06</code></td><td>このプロジェクトでのロール</td><td>出力</td><td>バッジ</td><td>—</td><td><code>オーナー</code>(青、<code>project_users(role='admin')</code> 自動付与・削除対象外)/ <code>管理者</code>(緑、当該 PJ に <code>admin</code>)/ <code>メンバー</code>(灰、当該 PJ に <code>member</code>)。契約横断の「プロジェクト別ロール」列は持たない</td></tr>
 <tr><td id="IT-07"><code>IT-07</code></td><td>ステータス</td><td>出力</td><td>バッジ</td><td>—</td><td><code>利用中</code> / <code>招待中</code> の 2 値。残日数は併記しない。<code>users.status</code>(<code>active</code> / <code>pending_activation</code>)</td></tr>
 <tr><td id="IT-08"><code>IT-08</code></td><td>招待中行強調</td><td>出力</td><td>行背景色</td><td>対象者が招待中(本人未有効化)の行のみ黄色背景</td><td>一覧での視認性を確保</td></tr>
-<tr><td id="IT-09"><code>IT-09</code></td><td>+ メンバーを招待</td><td>入力</td><td>ボタン(Primary)</td><td>—</td><td>SCR-009-M1 を「招待」モード(当該プロジェクトの 1 件の割当のみを扱う)で開く</td></tr>
+<tr><td id="IT-09"><code>IT-09</code></td><td>+ メンバーを招待</td><td>入力</td><td>ボタン(Primary)</td><td>—</td><td>招待操作は当該プロジェクトの 1 件の割当のみを扱う</td></tr>
 <tr><td id="IT-10"><code>IT-10</code></td><td>空状態</td><td>出力</td><td>EmptyState</td><td>割当メンバーが 0 件のとき</td><td>「このプロジェクトにはまだメンバーが割当されていません。」</td></tr>
-<tr><td id="IT-11"><code>IT-11</code></td><td>権限不足ガード</td><td>出力</td><td>PermissionTooltip</td><td>当該プロジェクトのプロジェクト管理者権限を持たないユーザーが URL に直接アクセスした場合</td><td>403 → ダッシュボードへリダイレクト</td></tr>
+<tr><td id="IT-11"><code>IT-11</code></td><td>権限不足ガード</td><td>出力</td><td>PermissionTooltip</td><td>当該プロジェクトのプロジェクト管理者権限を持たないユーザーが URL に直接アクセスした場合</td><td>権限不足表示(403)</td></tr>
 </tbody>
 </table>
 
@@ -158,6 +158,7 @@
 <tr><td><code>EV-02</code></td><td>絞り込み適用</td><td>検索 / 招待状態フィルタ変更時</td><td>条件を付与して一覧を再取得し更新。件数表示も更新</td><td><a href="#IT-01">IT-01</a>, <a href="#IT-02">IT-02</a>, <a href="#IT-03">IT-03</a></td></tr>
 <tr><td><code>EV-03</code></td><td>招待モーダル起動</td><td>「+ メンバーを招待」押下時</td><td>SCR-009-M1 を招待モードで開く</td><td><a href="#IT-09">IT-09</a></td></tr>
 <tr><td><code>EV-04</code></td><td>編集モーダル起動</td><td>利用者表示名リンク押下時</td><td>SCR-009-M1 を編集モードで開く(オーナー行・自分の行は非リンク)</td><td><a href="#IT-04">IT-04</a></td></tr>
+<tr><td><code>EV-05</code></td><td>権限不足リダイレクト</td><td>当該 PJ の admin 権限を持たないユーザーの URL 直アクセス時</td><td>403 とし、ダッシュボードへリダイレクトする</td><td><a href="#IT-11">IT-11</a></td></tr>
 </tbody>
 </table>
 

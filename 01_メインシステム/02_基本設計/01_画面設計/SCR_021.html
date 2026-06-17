@@ -347,9 +347,9 @@
 <tr><td id="IT-02"><code>IT-02</code></td><td>集計対象期間</td><td>出力</td><td>テキスト</td><td>—</td><td>当月固定。最終更新タイムスタンプを併記(準リアルタイム 5 分以内)</td></tr>
 <tr><td id="IT-03"><code>IT-03</code></td><td>質問数サマリー</td><td>出力</td><td>SummaryCard 群</td><td>計算式併記は上限 ON 時のみ</td><td>「当月利用」「今月の利用上限」の 2 項目。上限 ON 時は「{limit}件 - {freeQuota}件(無料枠) = {billableCount}件 (¥{yen} / 月)」を併記、OFF 時は値を「OFF」とし計算式を表示しない</td></tr>
 <tr><td id="IT-04"><code>IT-04</code></td><td>利用量</td><td>出力</td><td>ProgressBar + テキスト</td><td>割合・ProgressBar・状態バッジは上限 ON 時のみ</td><td>上限 ON 時は当月利用 ÷ 今月の利用上限。80% 未満通常 / 80% 以上黄 / 100% 以上赤。「N / M 件」併記。OFF 時は割合・件数比・ProgressBar・状態バッジを出さず OFF 説明文のみ。アラート状態・設定元は表示しない</td></tr>
-<tr><td id="IT-05"><code>IT-05</code></td><td>アラート設定</td><td>入力</td><td>ボタン(Secondary、L3)</td><td><strong>オーナー / 当該プロジェクト管理者の場合のみ表示</strong>。メンバーには表示しない</td><td>SCR-021-M1 を開く</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>アラート設定</td><td>入力</td><td>ボタン(Secondary、L3)</td><td><strong>オーナー / 当該プロジェクト管理者の場合のみ表示</strong>。メンバーには表示しない</td><td>—</td></tr>
 <tr><td id="IT-06"><code>IT-06</code></td><td>空状態</td><td>出力</td><td>EmptyState</td><td>集計前 / 取得失敗時</td><td>集計前は「集計中です」、取得失敗は §1.5.3 のフォールバック表示</td></tr>
-<tr><td id="IT-07"><code>IT-07</code></td><td>権限不足ガード</td><td>出力</td><td>PermissionTooltip</td><td>ロールがメンバーの場合は閲覧のみ(変更ボタン非表示)</td><td>当該 PJ に割当のないユーザーの URL 直アクセスは 403 → ダッシュボードへリダイレクト</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>権限不足ガード</td><td>出力</td><td>PermissionTooltip</td><td>ロールがメンバーの場合は閲覧のみ(変更ボタン非表示)</td><td>当該 PJ に割当のないユーザーは閲覧不可(変更ボタンも非表示)</td></tr>
 </tbody>
 </table>
 
@@ -394,6 +394,7 @@
 <tbody>
 <tr><td><code>EV-01</code></td><td>利用量初期表示</td><td>画面遷移・リロード時</td><td>利用量取得・上限取得 API で当月利用と上限を取得し表示。集計前 / 取得失敗は EmptyState</td><td><a href="#IT-02">IT-02</a>, <a href="#IT-03">IT-03</a>, <a href="#IT-04">IT-04</a>, <a href="#IT-06">IT-06</a></td></tr>
 <tr><td><code>EV-02</code></td><td>上限設定モーダル起動</td><td>「アラート設定」押下時(オーナー / 管理者)</td><td>SCR-021-M1 質問数上限設定モーダルを開く。<code>member</code> はボタン非表示のため発生しない</td><td><a href="#IT-05">IT-05</a></td></tr>
+<tr><td><code>EV-03</code></td><td>権限ガードによるリダイレクト</td><td>当該 PJ に割当のないユーザーの URL 直アクセス時</td><td>403 を返しダッシュボードへリダイレクトする</td><td><a href="#IT-07">IT-07</a></td></tr>
 </tbody>
 </table>
 

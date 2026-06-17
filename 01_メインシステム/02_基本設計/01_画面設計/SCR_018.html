@@ -147,10 +147,10 @@
 <tr><td id="IT-04"><code>IT-04</code></td><td>氏名(表示名)</td><td>入力</td><td>テキストボックス</td><td>—</td><td>必須。1〜100 文字、placeholder「例: 山田 太郎」、文字数カウンタ</td></tr>
 <tr><td id="IT-05"><code>IT-05</code></td><td>初回パスワード</td><td>入力</td><td>パスワードボックス + 強度メーター</td><td>—</td><td>必須。FR-006 強度要件(12 文字以上、英大文字 / 小文字 / 数字 / 記号のうち 3 種類以上)。リアルタイム 5 段階表示</td></tr>
 <tr><td id="IT-06"><code>IT-06</code></td><td>パスワード(確認)</td><td>入力</td><td>パスワードボックス</td><td>—</td><td>必須。本体と一致確認</td></tr>
-<tr><td id="IT-07"><code>IT-07</code></td><td>利用規約同意</td><td>入力</td><td>チェックボックス</td><td>—</td><td>必須チェック。「全文を見る」リンク(SCR-010 を別タブで開く)</td></tr>
-<tr><td id="IT-08"><code>IT-08</code></td><td>プライバシーポリシー同意</td><td>入力</td><td>チェックボックス</td><td>—</td><td>必須チェック。「全文を見る」リンク(SCR-020 を別タブで開く)</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>利用規約同意</td><td>入力</td><td>チェックボックス</td><td>—</td><td>必須チェック。「全文を見る」リンクで SCR-010 を参照</td></tr>
+<tr><td id="IT-08"><code>IT-08</code></td><td>プライバシーポリシー同意</td><td>入力</td><td>チェックボックス</td><td>—</td><td>必須チェック。「全文を見る」リンクで SCR-020 を参照</td></tr>
 <tr><td id="IT-09"><code>IT-09</code></td><td>Turnstile(CAPTCHA)</td><td>入力</td><td>検証ウィジェット</td><td>—</td><td>FR-177。SCR-001 / 002 / 003 と同等の Turnstile を配置</td></tr>
-<tr><td id="IT-10"><code>IT-10</code></td><td>登録を完了する</td><td>入力</td><td>ボタン(Primary)</td><td>—</td><td>入力検証 → <code>POST /auth/invitations/{token}/activate</code> → 成功時に完了画面へ</td></tr>
+<tr><td id="IT-10"><code>IT-10</code></td><td>登録を完了する</td><td>入力</td><td>ボタン(Primary)</td><td>—</td><td>—</td></tr>
 <tr><td id="IT-11"><code>IT-11</code></td><td>トークン無効 / 期限切れエラー画面</td><td>出力</td><td>エラー画面 + 復旧 CTA</td><td>招待トークンが無効または期限切れの場合に表示</td><td>「招待リンクが期限切れ、または無効です(有効期限 7 日)。招待元に再送を依頼してください」+ SCR-001 リンク</td></tr>
 <tr><td id="IT-12"><code>IT-12</code></td><td>既使用エラー画面</td><td>出力</td><td>エラー画面</td><td>招待トークンが使用済みの場合に表示</td><td>「このリンクは既に使用済みです」+ SCR-001 リンク</td></tr>
 <tr><td id="IT-13"><code>IT-13</code></td><td>完了画面</td><td>出力</td><td>中間表示</td><td>アクティベーション成功時に表示</td><td>「アカウントを有効化しました」+「ログインする」CTA(SCR-001 へ)</td></tr>
