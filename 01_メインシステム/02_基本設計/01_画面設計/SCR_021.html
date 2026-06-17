@@ -75,7 +75,7 @@
 
 <h2 id="3-画面レイアウト">3. 画面レイアウト</h2>
 <div class="layout-embed">
-<div class="le-cap">利用量と上限(SCR-021)</div>
+<div class="le-cap">利用量と上限 / 上限OFF・オーナー or 管理者(SCR-021)</div>
 <div class="scr-mock"><div class="screen" id="scr-021" role="region" aria-labelledby="scr-021-title">
   <div class="screen-header">
     <div><span class="scr-id">SCR-021</span><span class="scr-name" id="scr-021-title">利用量と上限(質問数)</span></div>
@@ -121,6 +121,209 @@
         <div class="small" style="margin-top:8px;">上限設定がOFFのため、消化率は表示されません。</div>
         <div style="display:flex; justify-content:flex-end; margin-top:10px;"><button class="btn primary" aria-label="質問数のアラートを設定">アラート設定</button></div>
       </div>
+    </div>
+  </div>
+</div></div>
+</div>
+<div class="layout-embed">
+<div class="le-cap">利用量と上限 / 上限ON・通常(80%未満)(SCR-021)</div>
+<div class="scr-mock"><div class="screen" role="region" aria-label="上限ON・通常">
+  <div class="screen-header">
+    <div><span class="scr-id">SCR-021</span><span class="scr-name">利用量と上限(上限ON・通常)</span></div>
+    <div class="scr-user">利用者: オーナー / プロジェクト管理者 — 消化率 80% 未満(通常色)</div>
+  </div>
+  <div class="app-layout">
+    <div class="app-header" role="banner">
+      <div class="left"><span class="logo">open-faq</span><span class="ws-switcher">サポートサイト <i data-lucide="folder"></i></span></div>
+      <div class="right"><span class="role-badge"><i data-lucide="circle" class="dot dot-green"></i>ADMIN</span><span class="user-menu">▼ admin@example.com</span></div>
+    </div>
+    <div class="app-sidebar" role="navigation">
+      <div class="item" role="link"><i data-lucide="home"></i>概要</div>
+      <div class="item" role="link"><i data-lucide="inbox"></i>要対応の質問</div>
+      <div class="item" role="link"><i data-lucide="book-open"></i>FAQ</div>
+      <div class="item" role="link"><i data-lucide="puzzle"></i>ウィジェット</div>
+      <div class="item" role="link"><i data-lucide="users"></i>メンバー</div>
+      <div class="item active" role="link" aria-current="page"><i data-lucide="gauge"></i>利用量と上限</div>
+    </div>
+    <div class="app-main" role="main">
+      <h3>利用量と上限</h3>
+      <p class="small">このプロジェクトの質問数と今月の利用上限を確認します。最終更新: 2026-06-11 09:12(JST)</p>
+      <div class="grid-2" role="group" aria-label="質問数の利用状況">
+        <div class="summary-card"><div class="label">当月利用</div><div class="value">1,247<span class="unit"> 件</span></div></div>
+        <div class="summary-card"><div class="label">今月の利用上限</div><div class="value">5,000<span class="unit"> 件</span></div><div class="delta">5,000件 - 1,000件(無料枠) = 4,000件 (¥2,000 / 月)</div></div>
+      </div>
+      <div class="panel" style="margin-top:12px;">
+        <div><strong>利用量</strong></div>
+        <div style="margin-top:8px; height:10px; border-radius:6px; background:var(--border); overflow:hidden;"><div style="width:25%; height:100%; background:var(--accent,#2563eb);"></div></div>
+        <div class="small" style="margin-top:6px;">1,247 / 5,000 件(消化率 25%)</div>
+        <div style="display:flex; justify-content:flex-end; margin-top:10px;"><button class="btn primary" aria-label="質問数のアラートを設定">アラート設定</button></div>
+      </div>
+    </div>
+  </div>
+</div></div>
+</div>
+<div class="layout-embed">
+<div class="le-cap">利用量と上限 / 上限ON・警告(80%以上・黄)(SCR-021)</div>
+<div class="scr-mock"><div class="screen" role="region" aria-label="上限ON・80%以上">
+  <div class="screen-header">
+    <div><span class="scr-id">SCR-021</span><span class="scr-name">利用量と上限(上限ON・80%以上)</span></div>
+    <div class="scr-user">利用者: オーナー / プロジェクト管理者 — 消化率 80% 以上 100% 未満(黄)</div>
+  </div>
+  <div class="app-layout">
+    <div class="app-header" role="banner">
+      <div class="left"><span class="logo">open-faq</span><span class="ws-switcher">サポートサイト <i data-lucide="folder"></i></span></div>
+      <div class="right"><span class="role-badge"><i data-lucide="circle" class="dot dot-green"></i>ADMIN</span><span class="user-menu">▼ admin@example.com</span></div>
+    </div>
+    <div class="app-sidebar" role="navigation">
+      <div class="item" role="link"><i data-lucide="home"></i>概要</div>
+      <div class="item" role="link"><i data-lucide="inbox"></i>要対応の質問</div>
+      <div class="item" role="link"><i data-lucide="book-open"></i>FAQ</div>
+      <div class="item" role="link"><i data-lucide="puzzle"></i>ウィジェット</div>
+      <div class="item" role="link"><i data-lucide="users"></i>メンバー</div>
+      <div class="item active" role="link" aria-current="page"><i data-lucide="gauge"></i>利用量と上限</div>
+    </div>
+    <div class="app-main" role="main">
+      <h3>利用量と上限</h3>
+      <p class="small">このプロジェクトの質問数と今月の利用上限を確認します。最終更新: 2026-06-11 09:12(JST)</p>
+      <div class="alert-bar trial-banner warning" role="status"><i data-lucide="alert-triangle"></i>今月の利用上限の 80% を超えました。上限に達すると新規質問の受付を停止します。</div>
+      <div class="grid-2" role="group" aria-label="質問数の利用状況">
+        <div class="summary-card"><div class="label">当月利用</div><div class="value">4,300<span class="unit"> 件</span></div></div>
+        <div class="summary-card"><div class="label">今月の利用上限</div><div class="value">5,000<span class="unit"> 件</span></div><div class="delta">5,000件 - 1,000件(無料枠) = 4,000件 (¥2,000 / 月)</div></div>
+      </div>
+      <div class="panel" style="margin-top:12px;">
+        <div><strong>利用量</strong> <span class="badge-pill" style="background:#fef3c7;color:#92400e;border:1px solid #f59e0b;">注意</span></div>
+        <div style="margin-top:8px; height:10px; border-radius:6px; background:var(--border); overflow:hidden;"><div style="width:86%; height:100%; background:#f59e0b;"></div></div>
+        <div class="small" style="margin-top:6px;">4,300 / 5,000 件(消化率 86%)</div>
+        <div style="display:flex; justify-content:flex-end; margin-top:10px;"><button class="btn primary" aria-label="質問数のアラートを設定">アラート設定</button></div>
+      </div>
+    </div>
+  </div>
+</div></div>
+</div>
+<div class="layout-embed">
+<div class="le-cap">利用量と上限 / 上限ON・到達(100%以上・赤)(SCR-021)</div>
+<div class="scr-mock"><div class="screen" role="region" aria-label="上限ON・100%以上">
+  <div class="screen-header">
+    <div><span class="scr-id">SCR-021</span><span class="scr-name">利用量と上限(上限ON・100%以上到達)</span></div>
+    <div class="scr-user">利用者: オーナー / プロジェクト管理者 — 消化率 100% 以上(赤・受付停止)</div>
+  </div>
+  <div class="app-layout">
+    <div class="app-header" role="banner">
+      <div class="left"><span class="logo">open-faq</span><span class="ws-switcher">サポートサイト <i data-lucide="folder"></i></span></div>
+      <div class="right"><span class="role-badge"><i data-lucide="circle" class="dot dot-green"></i>ADMIN</span><span class="user-menu">▼ admin@example.com</span></div>
+    </div>
+    <div class="app-sidebar" role="navigation">
+      <div class="item" role="link"><i data-lucide="home"></i>概要</div>
+      <div class="item" role="link"><i data-lucide="inbox"></i>要対応の質問</div>
+      <div class="item" role="link"><i data-lucide="book-open"></i>FAQ</div>
+      <div class="item" role="link"><i data-lucide="puzzle"></i>ウィジェット</div>
+      <div class="item" role="link"><i data-lucide="users"></i>メンバー</div>
+      <div class="item active" role="link" aria-current="page"><i data-lucide="gauge"></i>利用量と上限</div>
+    </div>
+    <div class="app-main" role="main">
+      <h3>利用量と上限</h3>
+      <p class="small">このプロジェクトの質問数と今月の利用上限を確認します。最終更新: 2026-06-11 09:12(JST)</p>
+      <div class="alert-bar trial-banner danger" role="alert"><i data-lucide="octagon-alert"></i>今月の利用上限に到達しました。新規質問の受付を停止しています。上限引き上げまたは翌月リセットで復帰します。</div>
+      <div class="grid-2" role="group" aria-label="質問数の利用状況">
+        <div class="summary-card"><div class="label">当月利用</div><div class="value danger">5,000<span class="unit"> 件</span></div></div>
+        <div class="summary-card"><div class="label">今月の利用上限</div><div class="value">5,000<span class="unit"> 件</span></div><div class="delta">5,000件 - 1,000件(無料枠) = 4,000件 (¥2,000 / 月)</div></div>
+      </div>
+      <div class="panel" style="margin-top:12px;">
+        <div><strong>利用量</strong> <span class="badge-pill" style="background:var(--danger-bg,#fde8e8);color:var(--danger);border:1px solid var(--danger-border);">上限到達</span></div>
+        <div style="margin-top:8px; height:10px; border-radius:6px; background:var(--border); overflow:hidden;"><div style="width:100%; height:100%; background:var(--danger);"></div></div>
+        <div class="small danger" style="margin-top:6px;">5,000 / 5,000 件(消化率 100%)</div>
+        <div style="display:flex; justify-content:flex-end; margin-top:10px;"><button class="btn primary" aria-label="質問数のアラートを設定">アラート設定</button></div>
+      </div>
+    </div>
+  </div>
+</div></div>
+</div>
+<div class="layout-embed">
+<div class="le-cap">利用量と上限 / メンバー閲覧(変更ボタン非表示)(SCR-021)</div>
+<div class="scr-mock"><div class="screen" role="region" aria-label="メンバー閲覧">
+  <div class="screen-header">
+    <div><span class="scr-id">SCR-021</span><span class="scr-name">利用量と上限(メンバー閲覧)</span></div>
+    <div class="scr-user">利用者: メンバー(member) — 閲覧のみ。「アラート設定」ボタンは非表示</div>
+  </div>
+  <div class="app-layout">
+    <div class="app-header" role="banner">
+      <div class="left"><span class="logo">open-faq</span><span class="ws-switcher">サポートサイト <i data-lucide="folder"></i></span></div>
+      <div class="right"><span class="role-badge" aria-label="RoleBadge(メンバー)"><i data-lucide="circle" class="dot"></i>MEMBER</span><span class="user-menu">▼ member@example.com</span></div>
+    </div>
+    <div class="app-sidebar" role="navigation">
+      <div class="item" role="link"><i data-lucide="home"></i>概要</div>
+      <div class="item" role="link"><i data-lucide="inbox"></i>要対応の質問</div>
+      <div class="item" role="link"><i data-lucide="book-open"></i>FAQ</div>
+      <div class="item" role="link"><i data-lucide="puzzle"></i>ウィジェット</div>
+      <div class="item active" role="link" aria-current="page"><i data-lucide="gauge"></i>利用量と上限</div>
+    </div>
+    <div class="app-main" role="main">
+      <h3>利用量と上限</h3>
+      <p class="small">このプロジェクトの質問数と今月の利用上限を確認します。最終更新: 2026-06-11 09:12(JST)</p>
+      <div class="grid-2" role="group" aria-label="質問数の利用状況">
+        <div class="summary-card"><div class="label">当月利用</div><div class="value">1,247<span class="unit"> 件</span></div></div>
+        <div class="summary-card"><div class="label">今月の利用上限</div><div class="value">5,000<span class="unit"> 件</span></div><div class="delta">5,000件 - 1,000件(無料枠) = 4,000件 (¥2,000 / 月)</div></div>
+      </div>
+      <div class="panel" style="margin-top:12px;">
+        <div><strong>利用量</strong></div>
+        <div style="margin-top:8px; height:10px; border-radius:6px; background:var(--border); overflow:hidden;"><div style="width:25%; height:100%; background:var(--accent,#2563eb);"></div></div>
+        <div class="small" style="margin-top:6px;">1,247 / 5,000 件(消化率 25%)</div>
+        <div class="small" style="margin-top:10px; color:var(--text-muted);"><i data-lucide="info"></i> 閲覧のみ。上限・アラートの変更はオーナー / プロジェクト管理者が行います。</div>
+      </div>
+    </div>
+  </div>
+</div></div>
+</div>
+<div class="layout-embed">
+<div class="le-cap">利用量と上限 / 空状態(集計中)(SCR-021)</div>
+<div class="scr-mock"><div class="screen" role="region" aria-label="集計中">
+  <div class="screen-header">
+    <div><span class="scr-id">SCR-021</span><span class="scr-name">利用量と上限(集計中)</span></div>
+    <div class="scr-user">利用者: オーナー / プロジェクト管理者 / メンバー — 集計前(EmptyState)</div>
+  </div>
+  <div class="app-layout">
+    <div class="app-header" role="banner">
+      <div class="left"><span class="logo">open-faq</span><span class="ws-switcher">サポートサイト <i data-lucide="folder"></i></span></div>
+      <div class="right"><span class="role-badge"><i data-lucide="circle" class="dot dot-green"></i>ADMIN</span><span class="user-menu">▼ admin@example.com</span></div>
+    </div>
+    <div class="app-sidebar" role="navigation">
+      <div class="item" role="link"><i data-lucide="home"></i>概要</div>
+      <div class="item" role="link"><i data-lucide="inbox"></i>要対応の質問</div>
+      <div class="item" role="link"><i data-lucide="book-open"></i>FAQ</div>
+      <div class="item" role="link"><i data-lucide="puzzle"></i>ウィジェット</div>
+      <div class="item" role="link"><i data-lucide="users"></i>メンバー</div>
+      <div class="item active" role="link" aria-current="page"><i data-lucide="gauge"></i>利用量と上限</div>
+    </div>
+    <div class="app-main" role="main">
+      <h3>利用量と上限</h3>
+      <div class="empty-state" role="status"><i data-lucide="loader"></i><div class="empty-title">集計中です</div><div class="small">当月の利用量を集計しています。しばらくお待ちください。</div></div>
+    </div>
+  </div>
+</div></div>
+</div>
+<div class="layout-embed">
+<div class="le-cap">利用量と上限 / フォールバック(取得失敗)(SCR-021)</div>
+<div class="scr-mock"><div class="screen" role="region" aria-label="取得失敗フォールバック">
+  <div class="screen-header">
+    <div><span class="scr-id">SCR-021</span><span class="scr-name">利用量と上限(取得失敗フォールバック)</span></div>
+    <div class="scr-user">利用者: オーナー / プロジェクト管理者 / メンバー — 取得失敗(§1.5.3 フォールバック)</div>
+  </div>
+  <div class="app-layout">
+    <div class="app-header" role="banner">
+      <div class="left"><span class="logo">open-faq</span><span class="ws-switcher">サポートサイト <i data-lucide="folder"></i></span></div>
+      <div class="right"><span class="role-badge"><i data-lucide="circle" class="dot dot-green"></i>ADMIN</span><span class="user-menu">▼ admin@example.com</span></div>
+    </div>
+    <div class="app-sidebar" role="navigation">
+      <div class="item" role="link"><i data-lucide="home"></i>概要</div>
+      <div class="item" role="link"><i data-lucide="inbox"></i>要対応の質問</div>
+      <div class="item" role="link"><i data-lucide="book-open"></i>FAQ</div>
+      <div class="item" role="link"><i data-lucide="puzzle"></i>ウィジェット</div>
+      <div class="item" role="link"><i data-lucide="users"></i>メンバー</div>
+      <div class="item active" role="link" aria-current="page"><i data-lucide="gauge"></i>利用量と上限</div>
+    </div>
+    <div class="app-main" role="main">
+      <h3>利用量と上限</h3>
+      <div class="empty-state" role="alert"><i data-lucide="cloud-off"></i><div class="empty-title">利用量を取得できませんでした</div><div class="small">時間をおいて再度お試しください(§1.5.3 ダッシュボード / KPI 共通表示ルールのフォールバック表示)。</div><button class="btn" style="margin-top:8px;">再読み込み</button></div>
     </div>
   </div>
 </div></div>

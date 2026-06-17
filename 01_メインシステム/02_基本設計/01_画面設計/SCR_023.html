@@ -75,12 +75,21 @@
 
 <h2 id="3-画面レイアウト">3. 画面レイアウト</h2>
 <div class="layout-embed">
-<div class="le-cap">設定画面(SCR-023)</div>
+<div class="le-cap">通常状態(オーナー)— 連絡先セクション + 退会 DangerSection(SCR-023)</div>
 <div class="scr-mock"><div class="screen" id="scr-023" role="region" aria-labelledby="scr-023-title">
   <div class="screen-header"><div><span class="scr-id">SCR-023</span><span class="scr-name" id="scr-023-title">設定</span></div><div class="scr-user">利用者: オーナー専有</div></div>
   <div class="app-layout"><div class="app-header" role="banner"><div class="left"><span class="logo">open-faq</span><span class="ws-switcher">契約 <i data-lucide="link"></i></span></div><div class="right"><span class="role-badge"><i data-lucide="crown"></i>OWNER</span><span class="user-menu">▼ owner@acme.example</span></div></div><div class="app-sidebar" role="navigation"><div class="item"><i data-lucide="bar-chart-3"></i>利用状況</div><div class="item"><i data-lucide="folder"></i>プロジェクト</div><div class="item"><i data-lucide="credit-card"></i>請求</div><div class="item active" aria-current="page"><i data-lucide="settings"></i>設定</div></div><div class="app-main" role="main"><div class="breadcrumb">契約 / 設定</div><div class="page-header"><div><h1>設定</h1><p class="page-description">契約の連絡先、退会を管理します</p></div></div>
     <div class="panel"><div class="panel-title">契約の連絡先</div><div class="field"><label>請求・重要通知メール</label><div class="input">billing@example.com</div></div><button class="btn primary">変更を保存</button></div>
     <div class="panel" style="border-color:var(--danger-border)"><div class="panel-title" style="color:var(--danger)">退会</div><p>退会すると、すべてのプロジェクトが利用できなくなります。</p><button class="btn danger">退会手続きへ</button></div>
+  </div></div>
+</div></div>
+</div>
+<div class="layout-embed">
+<div class="le-cap">権限不足状態 — プロジェクト管理者 / メンバーの URL 直アクセス(オーナー専有のため拒否)(SCR-023)</div>
+<div class="scr-mock"><div class="screen" id="scr-023-denied" role="region" aria-labelledby="scr-023-denied-title">
+  <div class="screen-header"><div><span class="scr-id">SCR-023</span><span class="scr-name" id="scr-023-denied-title">設定(権限不足)</span></div><div class="scr-user">利用者: プロジェクト管理者 / メンバー(オーナー以外)</div></div>
+  <div class="app-layout"><div class="app-header" role="banner"><div class="left"><span class="logo">open-faq</span><span class="ws-switcher">契約 <i data-lucide="link"></i></span></div><div class="right"><span class="role-badge"><i data-lucide="user"></i>ADMIN</span><span class="user-menu">▼ admin@acme.example</span></div></div><div class="app-sidebar" role="navigation"><div class="item"><i data-lucide="bar-chart-3"></i>利用状況</div><div class="item"><i data-lucide="folder"></i>プロジェクト</div></div><div class="app-main" role="main"><div class="breadcrumb">契約 / 設定</div>
+    <div class="empty-state"><div class="icon"><i data-lucide="lock"></i></div>この画面を表示する権限がありません。<br>契約の連絡先・退会の設定はオーナー専有です。</div>
   </div></div>
 </div></div>
 </div>

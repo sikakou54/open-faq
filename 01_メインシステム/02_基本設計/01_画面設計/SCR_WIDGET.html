@@ -117,6 +117,27 @@
 </div>
 </div>
 </div>
+<!-- ローディング状態(AI回答生成中) -->
+<div style="width: 360px;">
+<div class="small" style="margin-bottom: 6px; font-weight: 600;">ローディング状態(AI回答を生成中 / 送信直後)</div>
+<div class="widget-chat-shell">
+<div class="widget-chat-header">
+<div><span class="title"><i data-lucide="message-circle"></i>サポートサイト ヘルプ</span><span class="status">回答を生成中…</span></div>
+<button class="widget-close-button" aria-label="FAQチャットを閉じる"><i data-lucide="x"></i></button>
+</div>
+<div class="widget-chat-body">
+<div class="msg-list" aria-label="ローディング中のチャット履歴">
+<div class="msg user">料金プランの変更方法について教えてください。<div class="meta">自分 10:20</div></div>
+<div class="msg staff" role="status" aria-live="polite" aria-busy="true"><i data-lucide="loader-2"></i> 回答を準備しています…<div class="meta">AI回答</div></div>
+</div>
+<div class="widget-chat-composer disabled" aria-disabled="true">
+<div class="textarea"><span class="placeholder">回答の生成中はお待ちください…</span></div>
+<button class="btn" disabled><i data-lucide="send"></i>送信</button>
+</div>
+<div class="small" style="margin-top: 7px; color: var(--text-muted);"><code>POST /widget/v1/ask</code> の応答待ち。応答受信で AI 回答または未解決応答へ遷移します</div>
+</div>
+</div>
+</div>
 <!-- AIで解決できず未解決質問を登録 -->
 <div style="width: 360px;">
 <div class="small" style="margin-bottom: 6px; font-weight: 600; color: var(--info);">未解決状態(連絡先を表示)</div>
@@ -156,12 +177,54 @@
 <div class="textarea"><span class="placeholder">現在、新しいメッセージは送信できません</span></div>
 <button class="btn" disabled><i data-lucide="send"></i>送信</button>
 </div>
-<div class="small" style="margin-top: 8px; color: var(--text-muted);">※ 連絡先メール未設定時は、返信の3行目を「時間をおいて再度お試しください。」に差し替えます。翌月のリセット、上限引き上げ、または上限OFFで自動復帰します。</div>
+<div class="small" style="margin-top: 8px; color: var(--text-muted);">翌月のリセット、上限引き上げ、または上限OFFで自動復帰します(契約は <code>active</code> のまま)。</div>
+</div>
+</div>
+</div>
+<!-- 制限中状態(支払方法ゲートによる受付停止) -->
+<div style="width: 360px;">
+<div class="small" style="margin-bottom: 6px; font-weight: 600; color: var(--danger);">制限中(支払方法ゲート / 無料枠超過 + 支払方法未登録 / 429)</div>
+<div class="widget-chat-shell restricted">
+<div class="widget-chat-header">
+<div><span class="title"><i data-lucide="message-circle"></i>サポートサイト ヘルプ</span><span class="status">新しい質問の受付を停止中</span></div>
+<button class="widget-close-button" aria-label="FAQチャットを閉じる"><i data-lucide="x"></i></button>
+</div>
+<div class="widget-chat-body">
+<div class="msg-list" aria-label="支払方法ゲート制限中のチャット履歴">
+<div class="msg user">プランの変更について教えてください。<div class="meta">自分 10:20</div></div>
+<div class="msg staff limit-reply" role="alert" aria-live="assertive">ただいま新しいご質問をお受けできません。<br>お手数ですが、下記のお問い合わせ先までメールでご連絡ください。<br><br>お問い合わせ先：<a class="link" href="mailto:support@example.com">support@example.com</a><div class="meta">サポートサイト 10:20</div></div>
+</div>
+<div class="widget-chat-composer disabled" aria-disabled="true">
+<div class="textarea"><span class="placeholder">現在、新しいメッセージは送信できません</span></div>
+<button class="btn" disabled><i data-lucide="send"></i>送信</button>
+</div>
+<div class="small" style="margin-top: 8px; color: var(--text-muted);">無料枠超過 + 支払方法未登録による受付停止(429 系)。契約は <code>active</code> のままで、オーナーが支払方法を登録すると自動復帰します(<a href="../10_課金・請求設計.html#4-支払方法ゲート">10_課金・請求設計 §4 支払方法ゲート</a>)。</div>
+</div>
+</div>
+</div>
+<!-- 制限中状態(連絡先メール未設定時の差し替え) -->
+<div style="width: 360px;">
+<div class="small" style="margin-bottom: 6px; font-weight: 600; color: var(--danger);">制限中(連絡先メール未設定 — 返信を再試行案内に差し替え)</div>
+<div class="widget-chat-shell restricted">
+<div class="widget-chat-header">
+<div><span class="title"><i data-lucide="message-circle"></i>サポートサイト ヘルプ</span><span class="status">新しい質問の受付を停止中</span></div>
+<button class="widget-close-button" aria-label="FAQチャットを閉じる"><i data-lucide="x"></i></button>
+</div>
+<div class="widget-chat-body">
+<div class="msg-list" aria-label="連絡先未設定の制限中チャット履歴">
+<div class="msg user">料金プランについて教えてください。<div class="meta">自分 10:20</div></div>
+<div class="msg staff limit-reply" role="alert" aria-live="assertive">ただいま新しいご質問をお受けできません。<br><br>時間をおいて再度お試しください。<div class="meta">サポートサイト 10:20</div></div>
+</div>
+<div class="widget-chat-composer disabled" aria-disabled="true">
+<div class="textarea"><span class="placeholder">現在、新しいメッセージは送信できません</span></div>
+<button class="btn" disabled><i data-lucide="send"></i>送信</button>
+</div>
+<div class="small" style="margin-top: 8px; color: var(--text-muted);">確認済みプロジェクト連絡先メールが未設定の場合は、返信の問い合わせ先行を「時間をおいて再度お試しください。」に差し替えます(IT-09)。</div>
 </div>
 </div>
 </div>
 </div>
-<div class="simple-footer">初期表示は右下固定の丸型ランチャーバッジとし、クリックまたはキーボード操作でチャットUIを展開します。ヘッダーの閉じるボタンでバッジ表示へ戻り、再展開時も同一ページ内の会話履歴・入力内容・受付状態を保持します。AIで解決できない場合は管理用の問い合わせ ID を付与して未解決質問を登録しますが、問い合わせ ID はウィジェットに表示しません。確認済みプロジェクト連絡先メールがある場合のみ同じ会話欄へ表示します。質問数が当該プロジェクトの月次上限件数(オーナー / プロジェクト管理者が SCR-021 で設定)100% に到達すると、新規質問に対して受付停止と問い合わせ先をチャット返信として表示します(429 / E-QUOTA-QUESTIONS-LIMIT、契約は active のまま)。サスペンション(423)とは別状態。</div>
+<div class="simple-footer">初期表示は右下固定の丸型ランチャーバッジとし、クリックまたはキーボード操作でチャットUIを展開します。ヘッダーの閉じるボタンでバッジ表示へ戻り、再展開時も同一ページ内の会話履歴・入力内容・受付状態を保持します。AIで解決できない場合は管理用の問い合わせ ID を付与して未解決質問を登録しますが、問い合わせ ID はウィジェットに表示しません。確認済みプロジェクト連絡先メールがある場合のみ同じ会話欄へ表示します。受付停止の契機は 2 種(いずれも 429 系・契約は <code>active</code> のまま): (1) 質問数が当該プロジェクトの月次上限件数(オーナー / プロジェクト管理者が SCR-021 で設定)100% に到達(E-QUOTA-QUESTIONS-LIMIT)、(2) 無料枠超過 + 支払方法未登録の支払方法ゲート。いずれも決済失敗等によるサスペンション(契約 <code>suspended</code> / 423)とは別状態です。</div>
 </div>
 </div></div>
 </div>

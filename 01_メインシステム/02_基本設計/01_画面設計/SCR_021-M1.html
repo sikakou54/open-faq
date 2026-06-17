@@ -74,7 +74,7 @@
 
 <h2 id="3-画面レイアウト">3. 画面レイアウト</h2>
 <div class="layout-embed">
-<div class="le-cap">質問数上限設定モーダル(SCR-021-M1)</div>
+<div class="le-cap">上限 ON 状態 — 件数入力が活性・課金額をリアルタイム併記(SCR-021-M1)</div>
 <div class="scr-mock"><div class="screen" id="scr-021-m1" role="region" aria-labelledby="scr-021-m1-title">
   <div class="screen-header">
     <div><span class="scr-id">SCR-021-M1</span><span class="scr-name" id="scr-021-m1-title">質問数上限設定モーダル</span></div>
@@ -102,6 +102,73 @@
       </div>
       <div class="small" style="margin:6px 0;">複数選択できます。選択した割合に到達すると、オーナーとプロジェクト管理者へメールでお知らせします。</div>
       <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:10px;"><button class="btn">キャンセル</button><button class="btn primary">保存</button></div>
+    </div>
+  </div>
+</div></div>
+</div>
+<div class="layout-embed">
+<div class="le-cap">上限 OFF 状態 — 件数入力・アラート設定を非活性化(IT-01 OFF / EV-02)(SCR-021-M1)</div>
+<div class="scr-mock"><div class="screen" id="scr-021-m1-off" role="region" aria-labelledby="scr-021-m1-off-title">
+  <div class="screen-header">
+    <div><span class="scr-id">SCR-021-M1</span><span class="scr-name" id="scr-021-m1-off-title">質問数上限設定モーダル(上限 OFF)</span></div>
+    <div class="scr-user">利用者: オーナー / プロジェクト管理者</div>
+  </div>
+  <div class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="scr-021-m1-off-modal-title">
+    <div class="modal-card" style="width: 580px;">
+      <h3 id="scr-021-m1-off-modal-title">質問数の上限設定</h3>
+      <p class="small">質問数の今月の利用上限とアラートを設定します。</p>
+      <div class="field"><label>上限設定</label><div style="display:flex; gap:12px;"><label><input type="radio" name="limitEnabledOff"> ON</label><label><input type="radio" name="limitEnabledOff" checked> OFF</label></div></div>
+      <div class="field" aria-disabled="true" style="opacity:.5;">
+        <label>今月の利用上限</label>
+        <div style="display:flex; gap:8px; align-items:center;"><div class="input" style="width:140px;"><span class="placeholder">— 件</span></div><span class="small">上限 OFF のため無制限(<code>limit=null</code>。課金額の併記なし)</span></div>
+      </div>
+      <hr>
+      <div class="field" aria-disabled="true" style="opacity:.5;">
+        <label>アラート設定</label>
+        <div style="display:flex; gap:14px; flex-wrap:wrap;">
+          <label><input type="checkbox" disabled> 25%</label>
+          <label><input type="checkbox" disabled> 50%</label>
+          <label><input type="checkbox" disabled> 80%</label>
+          <label><input type="checkbox" disabled> 90%</label>
+          <label><input type="checkbox" disabled> 100%</label>
+        </div>
+      </div>
+      <div class="small" style="margin:6px 0;">上限 OFF 時はアラート閾値を全未選択・非活性とし、保存時 <code>alertThresholds=[]</code> となります。</div>
+      <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:10px;"><button class="btn">キャンセル</button><button class="btn primary">保存</button></div>
+    </div>
+  </div>
+</div></div>
+</div>
+<div class="layout-embed">
+<div class="le-cap">バリデーションエラー状態 — 件数が最小〜最大の範囲外(MSG-SCR-021-M1-ERR-001 / EV-03)(SCR-021-M1)</div>
+<div class="scr-mock"><div class="screen" id="scr-021-m1-err" role="region" aria-labelledby="scr-021-m1-err-title">
+  <div class="screen-header">
+    <div><span class="scr-id">SCR-021-M1</span><span class="scr-name" id="scr-021-m1-err-title">質問数上限設定モーダル(範囲外エラー)</span></div>
+    <div class="scr-user">利用者: オーナー / プロジェクト管理者</div>
+  </div>
+  <div class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="scr-021-m1-err-modal-title">
+    <div class="modal-card" style="width: 580px;">
+      <h3 id="scr-021-m1-err-modal-title">質問数の上限設定</h3>
+      <p class="small">質問数の今月の利用上限とアラートを設定します。</p>
+      <div class="field"><label>上限設定</label><div style="display:flex; gap:12px;"><label><input type="radio" name="limitEnabledErr" checked> ON</label><label><input type="radio" name="limitEnabledErr"> OFF</label></div></div>
+      <div class="field">
+        <label>今月の利用上限</label>
+        <div style="display:flex; gap:8px; align-items:center;"><div class="input" style="width:140px; border-color:var(--danger-border); color:var(--danger);"><strong>99,999,999</strong> 件</div><span class="small" style="color:var(--danger);">最大件数を超えています</span></div>
+        <div class="alert-bar danger" role="alert" style="margin-top:6px;"><i class="bi bi-exclamation-triangle"></i> 上限件数は許容範囲(最小〜最大件数)内で入力してください。(MSG-SCR-021-M1-ERR-001)</div>
+      </div>
+      <hr>
+      <div class="field">
+        <label>アラート設定</label>
+        <div style="display:flex; gap:14px; flex-wrap:wrap;">
+          <label><input type="checkbox"> 25%</label>
+          <label><input type="checkbox"> 50%</label>
+          <label><input type="checkbox" checked> 80%</label>
+          <label><input type="checkbox"> 90%</label>
+          <label><input type="checkbox" checked> 100%</label>
+        </div>
+      </div>
+      <div class="small" style="margin:6px 0;">範囲外の入力時は保存ボタンを無効化し、エラー解消後に再認証(L3)へ進めます。</div>
+      <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:10px;"><button class="btn">キャンセル</button><button class="btn primary" disabled>保存</button></div>
     </div>
   </div>
 </div></div>

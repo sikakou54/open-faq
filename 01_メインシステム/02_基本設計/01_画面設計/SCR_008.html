@@ -136,7 +136,115 @@
   </div>
 </div></div>
 </div>
-<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>レイアウトには無料利用枠超過(IT-08)・質問数上限到達(IT-09)の超過バナーを見本として示します。契約停止(<code>contract_status=suspended</code>)時のアラート(IT-04)はレイアウト見本を割愛しており、表示例は IT-04 を参照してください。超過(quota 超過 = 無料枠 / 上限の到達)と契約停止(suspended = 契約状態の停止)は別状態であり、表示契機・文言・導線が異なります。</div></div>
+<div class="layout-embed">
+<div class="le-cap">契約停止(suspended)時 / オーナー(SCR-008)</div>
+<div class="scr-mock"><div class="screen" id="scr-008-suspended-owner" role="region" aria-labelledby="scr-008-suspended-owner-title">
+  <div class="screen-header">
+    <div><span class="scr-id">SCR-008</span><span class="scr-name" id="scr-008-suspended-owner-title">概要(契約停止時 / オーナー)</span></div>
+    <div class="scr-user">利用者: オーナー</div>
+  </div>
+  <div class="app-layout">
+    <div class="app-header" role="banner">
+      <div class="left">
+        <span class="logo" role="link" aria-label="open-faq ホーム">open-faq</span>
+        <span class="ws-switcher" role="button" aria-haspopup="menu" aria-label="管理範囲を切り替え(現在地: サポートサイト)">サポートサイト <i data-lucide="folder"></i></span>
+      </div>
+      <div class="right">
+        <span class="bell" role="button" aria-label="お知らせ通知ベル(未読 3 件)"><i data-lucide="bell"></i><span class="badge" aria-hidden="true">3</span></span>
+        <span class="user-menu" role="button" aria-haspopup="menu" aria-label="アカウントメニュー(owner@example.com)">▼ owner@example.com</span>
+      </div>
+    </div>
+    <div class="app-sidebar" role="navigation" aria-label="メインナビゲーション">
+      <div class="item active" role="link" aria-current="page"><i data-lucide="home"></i>概要</div>
+      <div class="group" role="heading" aria-level="2">対応</div>
+      <div class="item" role="link"><i data-lucide="inbox"></i>要対応の質問<span class="badge">87</span></div>
+      <div class="group" role="heading" aria-level="2">通知</div>
+      <div class="item" role="link"><i data-lucide="bell"></i>お知らせ<span class="badge">3</span></div>
+      <div class="group" role="heading" aria-level="2">コンテンツ</div>
+      <div class="item" role="link"><i data-lucide="book-open"></i>FAQ</div>
+      <div class="item" role="link"><i data-lucide="puzzle"></i>ウィジェット</div>
+      <div class="group" role="heading" aria-level="2">プロジェクト</div>
+      <div class="item" role="link"><i data-lucide="users"></i>メンバー</div>
+      <div class="item" role="link"><i data-lucide="gauge"></i>利用量と上限</div>
+      <div class="group" role="heading" aria-level="2">共通</div>
+      <div class="item" role="link"><i data-lucide="scroll-text"></i>利用規約</div>
+      <div class="item" role="link"><i data-lucide="shield"></i>プライバシーポリシー</div>
+    </div>
+    <div class="app-main" role="main" aria-label="メインコンテンツ">
+      <nav class="breadcrumb" aria-label="現在位置"><a>ホーム</a> / <span aria-current="page">概要</span></nav>
+      <header class="page-header">
+        <div><h1>概要</h1><p class="page-description">このプロジェクトの利用状況を確認できます</p></div>
+        <div style="display:flex; gap:6px; align-items:center;"><label class="small">期間:</label><div class="select" style="width:110px;">▼ 当月</div></div>
+      </header>
+      <div class="alert-bar danger" role="alert" aria-live="assertive"><i data-lucide="siren"></i>現在ご利用いただけません ― お支払いが確認できないため契約が停止中です。<a class="link">支払方法を更新する(請求 SCR-022)→</a></div>
+      <div style="display:flex; justify-content:flex-end; margin-bottom:6px;"><span class="small">最終更新: 2026-06-11 09:12(JST)</span></div>
+      <div class="panel">
+        <div class="panel-title">利用状況</div>
+        <div class="summary-card-grid" role="group" aria-label="利用状況">
+          <div class="summary-card"><div class="label">質問数</div><div class="value">1,247<span class="unit">件</span></div></div>
+          <div class="summary-card"><div class="label">未解決数</div><div class="value">139<span class="unit">件</span></div></div>
+          <div class="summary-card"><div class="label">公開 FAQ 件数</div><div class="value">156<span class="unit">件</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div></div>
+</div>
+<div class="layout-embed">
+<div class="le-cap">契約停止(suspended)時 / メンバー・管理者(non-owner)(SCR-008)</div>
+<div class="scr-mock"><div class="screen" id="scr-008-suspended-member" role="region" aria-labelledby="scr-008-suspended-member-title">
+  <div class="screen-header">
+    <div><span class="scr-id">SCR-008</span><span class="scr-name" id="scr-008-suspended-member-title">概要(契約停止時 / non-owner)</span></div>
+    <div class="scr-user">利用者: プロジェクト管理者 / メンバー(オーナー以外)</div>
+  </div>
+  <div class="app-layout">
+    <div class="app-header" role="banner">
+      <div class="left">
+        <span class="logo" role="link" aria-label="open-faq ホーム">open-faq</span>
+        <span class="ws-switcher" role="button" aria-haspopup="menu" aria-label="管理範囲を切り替え(現在地: サポートサイト)">サポートサイト <i data-lucide="folder"></i></span>
+      </div>
+      <div class="right">
+        <span class="bell" role="button" aria-label="お知らせ通知ベル(未読 3 件)"><i data-lucide="bell"></i><span class="badge" aria-hidden="true">3</span></span>
+        <span class="user-menu" role="button" aria-haspopup="menu" aria-label="アカウントメニュー(member@example.com)">▼ member@example.com</span>
+      </div>
+    </div>
+    <div class="app-sidebar" role="navigation" aria-label="メインナビゲーション">
+      <div class="item active" role="link" aria-current="page"><i data-lucide="home"></i>概要</div>
+      <div class="group" role="heading" aria-level="2">対応</div>
+      <div class="item" role="link"><i data-lucide="inbox"></i>要対応の質問<span class="badge">87</span></div>
+      <div class="group" role="heading" aria-level="2">通知</div>
+      <div class="item" role="link"><i data-lucide="bell"></i>お知らせ<span class="badge">3</span></div>
+      <div class="group" role="heading" aria-level="2">コンテンツ</div>
+      <div class="item" role="link"><i data-lucide="book-open"></i>FAQ</div>
+      <div class="item" role="link"><i data-lucide="puzzle"></i>ウィジェット</div>
+      <div class="group" role="heading" aria-level="2">プロジェクト</div>
+      <div class="item" role="link"><i data-lucide="users"></i>メンバー</div>
+      <div class="item" role="link"><i data-lucide="gauge"></i>利用量と上限</div>
+      <div class="group" role="heading" aria-level="2">共通</div>
+      <div class="item" role="link"><i data-lucide="scroll-text"></i>利用規約</div>
+      <div class="item" role="link"><i data-lucide="shield"></i>プライバシーポリシー</div>
+    </div>
+    <div class="app-main" role="main" aria-label="メインコンテンツ">
+      <nav class="breadcrumb" aria-label="現在位置"><a>ホーム</a> / <span aria-current="page">概要</span></nav>
+      <header class="page-header">
+        <div><h1>概要</h1><p class="page-description">このプロジェクトの利用状況を確認できます</p></div>
+        <div style="display:flex; gap:6px; align-items:center;"><label class="small">期間:</label><div class="select" style="width:110px;">▼ 当月</div></div>
+      </header>
+      <div class="alert-bar danger" role="alert" aria-live="assertive"><i data-lucide="siren"></i>現在ご利用いただけません ― 契約が停止中です。再開にはオーナーへの連絡が必要です(お支払い操作はオーナーのみ可能)。</div>
+      <div style="display:flex; justify-content:flex-end; margin-bottom:6px;"><span class="small">最終更新: 2026-06-11 09:12(JST)</span></div>
+      <div class="panel">
+        <div class="panel-title">利用状況</div>
+        <div class="summary-card-grid" role="group" aria-label="利用状況">
+          <div class="summary-card"><div class="label">質問数</div><div class="value">1,247<span class="unit">件</span></div></div>
+          <div class="summary-card"><div class="label">未解決数</div><div class="value">139<span class="unit">件</span></div></div>
+          <div class="summary-card"><div class="label">公開 FAQ 件数</div><div class="value">156<span class="unit">件</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div></div>
+</div>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>レイアウトには無料利用枠超過(IT-08)・質問数上限到達(IT-09)の超過バナーを通常状態の見本に示し、契約停止(<code>contract_status=suspended</code>)時のアラート(IT-04)は別レイアウト見本(owner / non-owner の 2 例)で示します。超過(quota 超過 = 無料枠 / 上限の到達)と契約停止(suspended = 契約状態の停止)は別状態であり、表示契機・文言・導線が異なります。</div></div>
 
 <h2 id="4-画面項目定義">4. 画面項目定義</h2>
 <p class="section-lead">本画面の入出力項目(ヘッダ・期間選択・状態アラート・KPI カード)を定義します。項目の正本は本表です。各カードは項目名と件数のみを表示し、前月比・コメント・ゲージは表示しません。0 件 / 集計中 / 取得失敗時のクリック非活性ルールは <a href="index.html#ダッシュボード-kpi共通表示ルール">画面設計 §1.5</a> に従います。</p>

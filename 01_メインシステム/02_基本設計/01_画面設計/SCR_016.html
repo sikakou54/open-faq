@@ -87,6 +87,32 @@
   </div>
 </div></div>
 </div>
+<div class="layout-embed">
+<div class="le-cap">支払い警告バナー表示(支払方法未登録 / 支払い失敗時のみ・IT-02)(SCR-016)</div>
+<div class="scr-mock"><div class="screen" id="scr-016-payment" role="region" aria-labelledby="scr-016-payment-title">
+  <div class="screen-header"><div><span class="scr-id">SCR-016</span><span class="scr-name" id="scr-016-payment-title">利用状況(支払い警告)</span></div><div class="scr-user">利用者: オーナー専有 / 契約ワークスペース</div></div>
+  <div class="app-layout">
+    <div class="app-header" role="banner"><div class="left"><span class="logo">open-faq</span><span class="ws-switcher">契約 <i data-lucide="link"></i></span></div><div class="right"><span class="role-badge"><i data-lucide="crown"></i>OWNER</span><span class="user-menu">▼ owner@acme.example</span></div></div>
+    <div class="app-sidebar" role="navigation" aria-label="契約ワークスペース ナビゲーション"><div class="item active" aria-current="page"><i data-lucide="bar-chart-3"></i>利用状況</div><div class="item"><i data-lucide="folder"></i>プロジェクト</div><div class="item"><i data-lucide="credit-card"></i>請求</div><div class="item"><i data-lucide="settings"></i>設定</div></div><div class="app-main" role="main"><nav class="breadcrumb">契約 / 利用状況</nav><header class="page-header"><div><h1>利用状況</h1><p class="page-description">各プロジェクトの今月の利用状況を確認できます</p></div></header>
+      <div class="trial-banner warning" role="alert" style="margin-bottom:12px"><i data-lucide="alert-triangle"></i><div>支払方法が未登録、または直近のお支払いに失敗しています。サービス停止を避けるため、お支払い情報をご確認ください。</div><button class="btn">請求を確認</button></div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px"><div class="summary-card"><div class="num">3</div><div class="label">利用中のプロジェクト</div></div><div class="summary-card"><div class="num">2,450</div><div class="label">質問数合計</div></div><div class="summary-card"><div class="num">184</div><div class="label">公開FAQ数合計</div></div></div>
+      <div class="panel" style="margin-top:12px"><div class="panel-title">プロジェクト別利用状況</div><table class="wf"><thead><tr><th>プロジェクト</th><th>質問数</th><th>公開FAQ数</th></tr></thead><tbody><tr><td>サポートサイト</td><td>750 / 1,000件 <span class="badge-pill orange">75%</span></td><td>85件</td></tr><tr><td>ヘルプセンター</td><td>1,200 / 1,500件 <span class="badge-pill orange">80%</span></td><td>72件</td></tr><tr><td>採用サイト</td><td>500件 <span class="badge-pill gray">上限なし</span></td><td>27件</td></tr></tbody></table></div>
+    </div>
+  </div>
+</div></div>
+</div>
+<div class="layout-embed">
+<div class="le-cap">空状態(プロジェクト 0 件・IT-04)(SCR-016)</div>
+<div class="scr-mock"><div class="screen" id="scr-016-empty" role="region" aria-labelledby="scr-016-empty-title">
+  <div class="screen-header"><div><span class="scr-id">SCR-016</span><span class="scr-name" id="scr-016-empty-title">利用状況(空状態)</span></div><div class="scr-user">利用者: オーナー専有 / 契約ワークスペース</div></div>
+  <div class="app-layout">
+    <div class="app-header" role="banner"><div class="left"><span class="logo">open-faq</span><span class="ws-switcher">契約 <i data-lucide="link"></i></span></div><div class="right"><span class="role-badge"><i data-lucide="crown"></i>OWNER</span><span class="user-menu">▼ owner@acme.example</span></div></div>
+    <div class="app-sidebar" role="navigation" aria-label="契約ワークスペース ナビゲーション"><div class="item active" aria-current="page"><i data-lucide="bar-chart-3"></i>利用状況</div><div class="item"><i data-lucide="folder"></i>プロジェクト</div><div class="item"><i data-lucide="credit-card"></i>請求</div><div class="item"><i data-lucide="settings"></i>設定</div></div><div class="app-main" role="main"><nav class="breadcrumb">契約 / 利用状況</nav><header class="page-header"><div><h1>利用状況</h1><p class="page-description">各プロジェクトの今月の利用状況を確認できます</p></div></header>
+      <div class="empty-state" role="status"><i data-lucide="folder-plus"></i><p>プロジェクトがまだありません。</p><button class="btn primary">プロジェクトへ</button></div>
+    </div>
+  </div>
+</div></div>
+</div>
 
 <h2 id="4-画面項目定義">4. 画面項目定義</h2>
 <p class="section-lead">本画面の表示項目(全体サマリー・支払い警告・プロジェクト別利用状況・空状態)を定義します。項目の正本は本表です。各セルはリンクを持たない読み取り専用表示で、プロジェクトを開く・作成・編集する操作は本画面では提供しません。</p>

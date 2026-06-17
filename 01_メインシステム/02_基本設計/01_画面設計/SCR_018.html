@@ -93,6 +93,17 @@
     <div class="field"><div class="small" style="color: var(--text-muted);">[Turnstile CAPTCHA]</div></div>
     <button class="btn primary" style="width: 100%; margin-top: 8px;">登録を完了する</button>
   </div>
+  <!-- (a-2) 有効状態(入力バリデーションエラー / API 400・入力可能のまま) -->
+  <div class="auth-card xwide" style="width: auto; margin-top: 12px;">
+    <h3>アカウントを有効化する(入力エラー)</h3>
+    <p class="page-description" style="margin: 0 0 12px; font-size: var(--fs-sm); color: var(--text-secondary);">未入力・形式不正のフィールドにエラーを表示します(API 400 はフィールド単位エラー表示・入力可能のまま)</p>
+    <div class="field"><label>氏名(表示名)<span class="req">●</span></label><div class="input" style="border-color:var(--danger)"><span class="placeholder"> </span></div><div style="color:var(--danger);font-size:11px;margin-top:4px"><i data-lucide="alert-circle"></i> 氏名を入力してください(1〜100 文字)</div></div>
+    <div class="field"><label>初回パスワード<span class="req">●</span></label><div class="input" style="border-color:var(--danger)"><span class="placeholder">●●●●●●</span></div><div style="color:var(--danger);font-size:11px;margin-top:4px"><i data-lucide="alert-circle"></i> 12 文字以上、英大文字・小文字・数字・記号のうち 3 種類以上にしてください</div></div>
+    <div class="field"><label>パスワード(確認)<span class="req">●</span></label><div class="input" style="border-color:var(--danger)"><span class="placeholder">●●●●●●</span></div><div style="color:var(--danger);font-size:11px;margin-top:4px"><i data-lucide="alert-circle"></i> パスワードが一致しません</div></div>
+    <div class="field"><label class="checkbox"><input type="checkbox" />利用規約に同意します <span class="req">●</span></label><div style="color:var(--danger);font-size:11px;margin-top:4px"><i data-lucide="alert-circle"></i> 利用規約への同意が必要です</div></div>
+    <div class="field"><label class="checkbox"><input type="checkbox" />プライバシーポリシーに同意します <span class="req">●</span></label><div style="color:var(--danger);font-size:11px;margin-top:4px"><i data-lucide="alert-circle"></i> プライバシーポリシーへの同意が必要です</div></div>
+    <button class="btn primary" style="width: 100%; margin-top: 8px;">登録を完了する</button>
+  </div>
   <!-- (b) トークン期限切れ / 無効 -->
   <div class="auth-card xwide" style="width: auto; margin-top: 12px;">
     <h3>招待リンクの有効期限が切れています</h3>
@@ -108,7 +119,7 @@
   <!-- (d) 完了 -->
   <div class="auth-card xwide" style="width: auto; margin-top: 12px;">
     <h3>アカウントを有効化しました</h3>
-    <div class="alert-bar success" role="status">✓ アカウントを有効化しました。ログインしてサービスをご利用ください</div>
+    <div class="alert-bar success" role="status"><i data-lucide="check-circle"></i> アカウントを有効化しました。ログインしてサービスをご利用ください</div>
     <button class="btn primary" style="width: 100%; margin-top: 8px;">ログインする</button>
   </div>
 </div> <div class="simple-footer">FAQ AI ウィジェット SaaS — open-faq</div> </div>
