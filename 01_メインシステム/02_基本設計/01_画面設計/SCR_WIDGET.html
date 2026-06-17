@@ -288,17 +288,17 @@
 <tr>
 <th>イベント ID</th>
 <th>イベント</th>
-<th>発生タイミング</th>
+<th>トリガー</th>
 <th>処理</th>
 <th>関連項目</th>
 </tr>
 </thead>
 <tbody>
-<tr><td><code>EV-01</code></td><td>チャット UI を開く</td><td>ランチャーバッジのクリック / Enter / Space 時</td><td>バッジを非表示にしチャット UI を展開。<code>POST /widget/v1/bootstrap</code> でセッション・設定を取得</td><td><a href="#IT-01">IT-01</a>, <a href="#IT-02">IT-02</a></td></tr>
-<tr><td><code>EV-02</code></td><td>チャット UI を閉じる</td><td>ヘッダー閉じるボタン押下時</td><td>チャット UI を閉じバッジへ戻る。会話履歴・入力内容・受付状態は保持</td><td><a href="#IT-03">IT-03</a>, <a href="#IT-04">IT-04</a></td></tr>
-<tr><td><code>EV-03</code></td><td>質問送信(通常)</td><td>送信ボタン押下時</td><td><code>POST /widget/v1/ask</code> で質問送信。AI 回答を同じ会話欄に追加</td><td><a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a>, <a href="#IT-07">IT-07</a></td></tr>
-<tr><td><code>EV-04</code></td><td>未解決応答</td><td>AI 回答が <code>type=unanswered</code> の時</td><td>回答不可の旨と確認済み連絡先メールをシステム返信で表示。問い合わせ ID は非表示で別質問は継続可能</td><td><a href="#IT-07">IT-07</a>, <a href="#IT-08">IT-08</a></td></tr>
-<tr><td><code>EV-05</code></td><td>受付停止(制限中)</td><td>質問数上限 100% 到達時、または支払方法ゲート(無料枠超過 + 支払方法未登録)による受付停止時(いずれも 429 応答)</td><td>受付停止と問い合わせ先をシステム返信で表示し、入力欄と送信ボタンを無効化する。<strong>いずれの契機も契約は <code>active</code> のままで、ウィジェット新規質問受付のみを停止する 429 系</strong>(質問数上限は <code>E-QUOTA-QUESTIONS-LIMIT</code>)。決済失敗等によるサスペンション(契約 <code>suspended</code> / 423)とは別状態(<a href="../10_課金・請求設計.html#4-支払方法ゲート">10_課金・請求設計 §4 支払方法ゲート</a>)</td><td><a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a>, <a href="#IT-09">IT-09</a></td></tr>
+<tr><td><code>EV-01</code></td><td>チャット UI を開く</td><td>ランチャーバッジのクリック / Enter / Space 時</td><td><ul><li>バッジを非表示にしチャット UI を展開</li><li><code>POST /widget/v1/bootstrap</code> でセッション・設定を取得</li></ul></td><td><a href="#IT-01">IT-01</a>, <a href="#IT-02">IT-02</a></td></tr>
+<tr><td><code>EV-02</code></td><td>チャット UI を閉じる</td><td>ヘッダー閉じるボタン押下時</td><td><ul><li>チャット UI を閉じバッジへ戻る</li><li>会話履歴・入力内容・受付状態は保持</li></ul></td><td><a href="#IT-03">IT-03</a>, <a href="#IT-04">IT-04</a></td></tr>
+<tr><td><code>EV-03</code></td><td>質問送信(通常)</td><td>送信ボタン押下時</td><td><ul><li><code>POST /widget/v1/ask</code> で質問送信</li><li>AI 回答を同じ会話欄に追加</li></ul></td><td><a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a>, <a href="#IT-07">IT-07</a></td></tr>
+<tr><td><code>EV-04</code></td><td>未解決応答</td><td>AI 回答が <code>type=unanswered</code> の時</td><td><ul><li>回答不可の旨と確認済み連絡先メールをシステム返信で表示</li><li>問い合わせ ID は非表示で別質問は継続可能</li></ul></td><td><a href="#IT-07">IT-07</a>, <a href="#IT-08">IT-08</a></td></tr>
+<tr><td><code>EV-05</code></td><td>受付停止(制限中)</td><td>質問数上限 100% 到達時、または支払方法ゲート(無料枠超過 + 支払方法未登録)による受付停止時(いずれも 429 応答)</td><td><ul><li>受付停止と問い合わせ先をシステム返信で表示し、入力欄と送信ボタンを無効化する</li><li><strong>いずれの契機も契約は <code>active</code> のままで、ウィジェット新規質問受付のみを停止する 429 系</strong>(質問数上限は <code>E-QUOTA-QUESTIONS-LIMIT</code>)</li><li>決済失敗等によるサスペンション(契約 <code>suspended</code> / 423)とは別状態(<a href="../10_課金・請求設計.html#4-支払方法ゲート">10_課金・請求設計 §4 支払方法ゲート</a>)</li></ul></td><td><a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a>, <a href="#IT-09">IT-09</a></td></tr>
 </tbody>
 </table>
 

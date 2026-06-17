@@ -232,17 +232,17 @@
 <tr>
 <th>イベント ID</th>
 <th>イベント</th>
-<th>発生タイミング</th>
+<th>トリガー</th>
 <th>処理</th>
 <th>関連項目</th>
 </tr>
 </thead>
 <tbody>
 <tr><td><code>EV-01</code></td><td>現値ロード</td><td>モーダル起動時</td><td><code>GET /projects/{id}/quota-limits</code> で現在の上限 ON/OFF・件数・アラート閾値を取得し初期表示</td><td><a href="#IT-01">IT-01</a>, <a href="#IT-02">IT-02</a>, <a href="#IT-04">IT-04</a></td></tr>
-<tr><td><code>EV-02</code></td><td>上限トグル切替</td><td>「上限設定」トグル操作時</td><td>OFF で件数入力・アラート設定を非活性化、ON で活性化し計算式を再描画</td><td><a href="#IT-01">IT-01</a>, <a href="#IT-02">IT-02</a>, <a href="#IT-04">IT-04</a></td></tr>
-<tr><td><code>EV-03</code></td><td>件数入力・計算式更新</td><td>「今月の利用上限」入力時</td><td>入力に応じて課金対象件数・最大課金額をリアルタイム併記。範囲外はエラー表示</td><td><a href="#IT-02">IT-02</a></td></tr>
-<tr><td><code>EV-04</code></td><td>保存</td><td>「保存」押下時(L3)</td><td>バリデーション通過後に再認証 → <code>PATCH /projects/{id}/quota-limits/questions</code>。成功で TOAST 表示し閉じる</td><td><a href="#IT-02">IT-02</a>, <a href="#IT-04">IT-04</a>, <a href="#IT-07">IT-07</a></td></tr>
-<tr><td><code>EV-05</code></td><td>キャンセル</td><td>「キャンセル」押下時</td><td>変更を破棄して閉じる。未保存変更があれば UnsavedChangesGuard で警告</td><td><a href="#IT-06">IT-06</a></td></tr>
+<tr><td><code>EV-02</code></td><td>上限トグル切替</td><td>「上限設定」トグル操作時</td><td><ul><li>OFF で件数入力・アラート設定を非活性化</li><li>ON で活性化し計算式を再描画</li></ul></td><td><a href="#IT-01">IT-01</a>, <a href="#IT-02">IT-02</a>, <a href="#IT-04">IT-04</a></td></tr>
+<tr><td><code>EV-03</code></td><td>件数入力・計算式更新</td><td>「今月の利用上限」入力時</td><td><ul><li>入力に応じて課金対象件数・最大課金額をリアルタイム併記</li><li>範囲外はエラー表示</li></ul></td><td><a href="#IT-02">IT-02</a></td></tr>
+<tr><td><code>EV-04</code></td><td>保存</td><td>「保存」押下時(L3)</td><td><ul><li>バリデーション通過後に再認証 → <code>PATCH /projects/{id}/quota-limits/questions</code></li><li>成功で TOAST 表示し閉じる</li></ul></td><td><a href="#IT-02">IT-02</a>, <a href="#IT-04">IT-04</a>, <a href="#IT-07">IT-07</a></td></tr>
+<tr><td><code>EV-05</code></td><td>キャンセル</td><td>「キャンセル」押下時</td><td><ul><li>変更を破棄して閉じる</li><li>未保存変更があれば UnsavedChangesGuard で警告</li></ul></td><td><a href="#IT-06">IT-06</a></td></tr>
 </tbody>
 </table>
 

@@ -144,14 +144,14 @@
 <tr>
 <th>イベント ID</th>
 <th>イベント</th>
-<th>発生タイミング</th>
+<th>トリガー</th>
 <th>処理</th>
 <th>関連項目</th>
 </tr>
 </thead>
 <tbody>
 <tr><td><code>EV-01</code></td><td>入力バリデーション</td><td>各入力欄のフォーカスアウト時</td><td>メールアドレス形式・必須を検証しエラーを表示</td><td><a href="#IT-01">IT-01</a>, <a href="#IT-02">IT-02</a></td></tr>
-<tr><td><code>EV-02</code></td><td>ログイン実行</td><td>ログインボタン押下時</td><td><code>POST /auth/login</code> で認証。成功時は規約再同意チェック後に利用状況系画面へ遷移。失敗時は共通エラーを表示</td><td><a href="#IT-03">IT-03</a>, <a href="#IT-06">IT-06</a></td></tr>
+<tr><td><code>EV-02</code></td><td>ログイン実行</td><td>ログインボタン押下時</td><td><ul><li><code>POST /auth/login</code> で認証</li><li>成功時は規約再同意チェック後に利用状況系画面へ遷移</li><li>失敗時は共通エラーを表示</li></ul></td><td><a href="#IT-03">IT-03</a>, <a href="#IT-06">IT-06</a></td></tr>
 <tr><td><code>EV-03</code></td><td>ロックアウト表示</td><td>5 回連続失敗後のログイン試行時</td><td>15 分間のロックアウト警告を表示し試行を抑止(<a href="../../01_要件定義/FR01_アカウント管理.html#FR-007">FR-007</a>)</td><td><a href="#IT-07">IT-07</a></td></tr>
 <tr><td><code>EV-04</code></td><td>パスワード再設定へ遷移</td><td>「パスワードを忘れた場合」押下時</td><td>SCR-003 へ遷移</td><td><a href="#IT-04">IT-04</a></td></tr>
 <tr><td><code>EV-05</code></td><td>アカウント登録へ遷移</td><td>「アカウント登録」押下時</td><td>SCR-002 へ遷移</td><td><a href="#IT-05">IT-05</a></td></tr>

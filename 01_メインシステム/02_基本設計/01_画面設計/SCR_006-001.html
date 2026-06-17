@@ -147,19 +147,19 @@
 <tr>
 <th>イベント ID</th>
 <th>イベント</th>
-<th>発生タイミング</th>
+<th>トリガー</th>
 <th>処理</th>
 <th>関連項目</th>
 </tr>
 </thead>
 <tbody>
-<tr><td><code>EV-01</code></td><td>編集初期表示</td><td>画面遷移・リロード時</td><td>既存編集は <code>GET /faqs/{id}</code> で現値をロードし各欄へ展開。新規は空フォーム</td><td><a href="#IT-01">IT-01</a>, <a href="#IT-03">IT-03</a>, <a href="#IT-04">IT-04</a>, <a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a>, <a href="#IT-07">IT-07</a></td></tr>
+<tr><td><code>EV-01</code></td><td>編集初期表示</td><td>画面遷移・リロード時</td><td><ul><li>既存編集は <code>GET /faqs/{id}</code> で現値をロードし各欄へ展開</li><li>新規は空フォーム</li></ul></td><td><a href="#IT-01">IT-01</a>, <a href="#IT-03">IT-03</a>, <a href="#IT-04">IT-04</a>, <a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a>, <a href="#IT-07">IT-07</a></td></tr>
 <tr><td><code>EV-02</code></td><td>入力バリデーション</td><td>各入力欄のフォーカスアウト時</td><td>質問 1〜500 文字・回答 1〜5,000 文字・カテゴリ 100 文字以内を検証しエラーを表示</td><td><a href="#IT-03">IT-03</a>, <a href="#IT-04">IT-04</a>, <a href="#IT-05">IT-05</a></td></tr>
 <tr><td><code>EV-03</code></td><td>自動保存</td><td>編集中 30 秒ごと</td><td>下書きを自動保存しインジケータを更新</td><td><a href="#IT-02">IT-02</a></td></tr>
-<tr><td><code>EV-04</code></td><td>保存</td><td>「保存」押下時</td><td>「状態」ラジオの値で <code>POST /faqs</code>(新規)/ <code>PATCH /faqs/{id}</code>(更新)。<code>published</code> 選択時は公開確認ダイアログ。<code>faqs.version</code> 不一致時は楽観ロックエラー</td><td><a href="#IT-06">IT-06</a>, <a href="#IT-10">IT-10</a>, <a href="#IT-12">IT-12</a></td></tr>
-<tr><td><code>EV-05</code></td><td>削除</td><td>「削除」押下時</td><td>確認ダイアログ後 <code>DELETE /faqs/{id}</code> で論理削除し一覧へ戻る</td><td><a href="#IT-11">IT-11</a></td></tr>
+<tr><td><code>EV-04</code></td><td>保存</td><td>「保存」押下時</td><td><ul><li>「状態」ラジオの値で <code>POST /faqs</code>(新規)/ <code>PATCH /faqs/{id}</code>(更新)</li><li><code>published</code> 選択時は公開確認ダイアログ</li><li><code>faqs.version</code> 不一致時は楽観ロックエラー</li></ul></td><td><a href="#IT-06">IT-06</a>, <a href="#IT-10">IT-10</a>, <a href="#IT-12">IT-12</a></td></tr>
+<tr><td><code>EV-05</code></td><td>削除</td><td>「削除」押下時</td><td><ul><li>確認ダイアログ後 <code>DELETE /faqs/{id}</code> で論理削除</li><li>一覧へ戻る</li></ul></td><td><a href="#IT-11">IT-11</a></td></tr>
 <tr><td><code>EV-06</code></td><td>改訂履歴表示</td><td>「改訂履歴」押下時</td><td>直近 50 件の差分モーダルを表示。任意版へロールバック</td><td><a href="#IT-08">IT-08</a></td></tr>
-<tr><td><code>EV-07</code></td><td>キャンセル</td><td>「キャンセル」押下時</td><td>編集を破棄して一覧へ戻る。未保存変更時は確認ダイアログ</td><td><a href="#IT-09">IT-09</a></td></tr>
+<tr><td><code>EV-07</code></td><td>キャンセル</td><td>「キャンセル」押下時</td><td><ul><li>編集を破棄して一覧へ戻る</li><li>未保存変更時は確認ダイアログ</li></ul></td><td><a href="#IT-09">IT-09</a></td></tr>
 </tbody>
 </table>
 

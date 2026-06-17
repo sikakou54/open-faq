@@ -170,14 +170,14 @@
 <tr>
 <th>イベント ID</th>
 <th>イベント</th>
-<th>発生タイミング</th>
+<th>トリガー</th>
 <th>処理</th>
 <th>関連項目</th>
 </tr>
 </thead>
 <tbody>
-<tr><td><code>EV-01</code></td><td>利用状況初期表示</td><td>画面遷移・リロード時</td><td>当月の集計値とプロジェクト別利用量を取得し表示。プロジェクト 0 件時は EmptyState</td><td><a href="#IT-01">IT-01</a>, <a href="#IT-03">IT-03</a>, <a href="#IT-04">IT-04</a></td></tr>
-<tr><td><code>EV-02</code></td><td>支払い警告表示</td><td>支払方法未登録 / 支払い失敗時</td><td>PaymentMethodBanner を表示し「請求を確認」で SCR-022 へ遷移</td><td><a href="#IT-02">IT-02</a></td></tr>
+<tr><td><code>EV-01</code></td><td>利用状況初期表示</td><td>画面遷移・リロード時</td><td><ul><li>当月の集計値とプロジェクト別利用量を取得し表示</li><li>プロジェクト 0 件時は EmptyState</li></ul></td><td><a href="#IT-01">IT-01</a>, <a href="#IT-03">IT-03</a>, <a href="#IT-04">IT-04</a></td></tr>
+<tr><td><code>EV-02</code></td><td>支払い警告表示</td><td>支払方法未登録 / 支払い失敗時</td><td><ul><li>PaymentMethodBanner を表示</li><li>「請求を確認」で SCR-022 へ遷移</li></ul></td><td><a href="#IT-02">IT-02</a></td></tr>
 <tr><td><code>EV-03</code></td><td>プロジェクトへ遷移</td><td>0 件時「プロジェクトへ」CTA 押下時</td><td>SCR-004 プロジェクトへ遷移</td><td><a href="#IT-04">IT-04</a></td></tr>
 </tbody>
 </table>

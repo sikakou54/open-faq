@@ -142,7 +142,7 @@
 <tr>
 <th>イベント ID</th>
 <th>イベント</th>
-<th>発生タイミング</th>
+<th>トリガー</th>
 <th>処理</th>
 <th>関連項目</th>
 </tr>
@@ -150,7 +150,7 @@
 <tbody>
 <tr><td><code>EV-01</code></td><td>入力バリデーション</td><td>各入力欄のフォーカスアウト時</td><td>メール形式・パスワード強度・確認一致・必須同意を検証しエラーを表示</td><td><a href="#IT-01">IT-01</a>, <a href="#IT-02">IT-02</a>, <a href="#IT-03">IT-03</a>, <a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a></td></tr>
 <tr><td><code>EV-02</code></td><td>業種選択</td><td>業種プルダウン変更時</td><td>高規制業界選択時に提供範囲外の注意とサポート窓口を表示</td><td><a href="#IT-04">IT-04</a></td></tr>
-<tr><td><code>EV-03</code></td><td>登録実行</td><td>登録ボタン押下時</td><td><code>POST /auth/signup</code> で登録し確認メールを送信。完了後 SCR-013 へ遷移</td><td><a href="#IT-08">IT-08</a></td></tr>
+<tr><td><code>EV-03</code></td><td>登録実行</td><td>登録ボタン押下時</td><td><ul><li><code>POST /auth/signup</code> で登録し確認メールを送信</li><li>完了後 SCR-013 へ遷移</li></ul></td><td><a href="#IT-08">IT-08</a></td></tr>
 <tr><td><code>EV-04</code></td><td>ログイン画面へ遷移</td><td>「ログインする」押下時</td><td>SCR-001 へ遷移</td><td><a href="#IT-09">IT-09</a></td></tr>
 <tr><td><code>EV-05</code></td><td>規約・ポリシー全文表示</td><td>規約・ポリシーリンク押下時</td><td>利用規約 / プライバシーポリシーの全文を別ウィンドウで表示</td><td><a href="#IT-07">IT-07</a></td></tr>
 </tbody>

@@ -150,13 +150,13 @@
 <tr>
 <th>イベント ID</th>
 <th>イベント</th>
-<th>発生タイミング</th>
+<th>トリガー</th>
 <th>処理</th>
 <th>関連項目</th>
 </tr>
 </thead>
 <tbody>
-<tr><td><code>EV-01</code></td><td>確認実行</td><td>確認リンクからの URL 訪問時</td><td><code>POST /auth/contact-verifications/{token}</code> でトークンを検証。200 で完了画面、410(期限切れ / 既使用)で各エラー画面へ分岐</td><td><a href="#IT-01">IT-01</a>, <a href="#IT-02">IT-02</a>, <a href="#IT-03">IT-03</a></td></tr>
+<tr><td><code>EV-01</code></td><td>確認実行</td><td>確認リンクからの URL 訪問時</td><td><ul><li><code>POST /auth/contact-verifications/{token}</code> でトークンを検証</li><li>200 で完了画面を表示</li><li>410(期限切れ / 既使用)で各エラー画面へ分岐</li></ul></td><td><a href="#IT-01">IT-01</a>, <a href="#IT-02">IT-02</a>, <a href="#IT-03">IT-03</a></td></tr>
 <tr><td><code>EV-02</code></td><td>閉じる</td><td>「閉じる」押下時</td><td><code>window.close()</code> または静的なランディングメッセージを表示(認証コンソールへの遷移は行わない。未認証ユーザーは戻り先がないため)</td><td><a href="#IT-04">IT-04</a></td></tr>
 </tbody>
 </table>

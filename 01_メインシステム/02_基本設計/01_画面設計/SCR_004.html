@@ -150,13 +150,13 @@
 <tr>
 <th>イベント ID</th>
 <th>イベント</th>
-<th>発生タイミング</th>
+<th>トリガー</th>
 <th>処理</th>
 <th>関連項目</th>
 </tr>
 </thead>
 <tbody>
-<tr><td><code>EV-01</code></td><td>一覧初期表示</td><td>画面遷移・リロード時</td><td><code>GET /projects</code> で一覧を取得し表示。0 件時は EmptyState、取得中は LoadingSkeleton</td><td><a href="#IT-02">IT-02</a>, <a href="#IT-03">IT-03</a>, <a href="#IT-04">IT-04</a>, <a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a>, <a href="#IT-07">IT-07</a>, <a href="#IT-08">IT-08</a></td></tr>
+<tr><td><code>EV-01</code></td><td>一覧初期表示</td><td>画面遷移・リロード時</td><td><ul><li><code>GET /projects</code> で一覧を取得し表示</li><li>0 件時は EmptyState</li><li>取得中は LoadingSkeleton</li></ul></td><td><a href="#IT-02">IT-02</a>, <a href="#IT-03">IT-03</a>, <a href="#IT-04">IT-04</a>, <a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a>, <a href="#IT-07">IT-07</a>, <a href="#IT-08">IT-08</a></td></tr>
 <tr><td><code>EV-02</code></td><td>新規作成モーダル起動</td><td>「+ 新規プロジェクトを作成」押下時</td><td>SCR-004-M1 を新規作成モードで開く</td><td><a href="#IT-01">IT-01</a></td></tr>
 <tr><td><code>EV-03</code></td><td>編集モーダル起動</td><td>プロジェクト名リンク押下時</td><td>SCR-004-M1 を編集モードで開く(現値ロード)</td><td><a href="#IT-02">IT-02</a></td></tr>
 </tbody>

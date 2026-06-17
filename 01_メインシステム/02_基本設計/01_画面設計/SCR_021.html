@@ -387,14 +387,14 @@
 <tr>
 <th>イベント ID</th>
 <th>イベント</th>
-<th>発生タイミング</th>
+<th>トリガー</th>
 <th>処理</th>
 <th>関連項目</th>
 </tr>
 </thead>
 <tbody>
-<tr><td><code>EV-01</code></td><td>利用量初期表示</td><td>画面遷移・リロード時</td><td>利用量取得・上限取得 API で当月利用と上限を取得し表示。集計前 / 取得失敗は EmptyState</td><td><a href="#IT-02">IT-02</a>, <a href="#IT-03">IT-03</a>, <a href="#IT-04">IT-04</a>, <a href="#IT-06">IT-06</a></td></tr>
-<tr><td><code>EV-02</code></td><td>上限設定モーダル起動</td><td>「アラート設定」押下時(オーナー / 管理者)</td><td>SCR-021-M1 質問数上限設定モーダルを開く。<code>member</code> はボタン非表示のため発生しない</td><td><a href="#IT-05">IT-05</a></td></tr>
+<tr><td><code>EV-01</code></td><td>利用量初期表示</td><td>画面遷移・リロード時</td><td><ul><li>利用量取得・上限取得 API で当月利用と上限を取得し表示</li><li>集計前 / 取得失敗は EmptyState</li></ul></td><td><a href="#IT-02">IT-02</a>, <a href="#IT-03">IT-03</a>, <a href="#IT-04">IT-04</a>, <a href="#IT-06">IT-06</a></td></tr>
+<tr><td><code>EV-02</code></td><td>上限設定モーダル起動</td><td>「アラート設定」押下時(オーナー / 管理者)</td><td><ul><li>SCR-021-M1 質問数上限設定モーダルを開く</li><li><code>member</code> はボタン非表示のため発生しない</li></ul></td><td><a href="#IT-05">IT-05</a></td></tr>
 <tr><td><code>EV-03</code></td><td>権限ガードによるリダイレクト</td><td>当該 PJ に割当のないユーザーの URL 直アクセス時</td><td>403 を返しダッシュボードへリダイレクトする</td><td><a href="#IT-07">IT-07</a></td></tr>
 </tbody>
 </table>

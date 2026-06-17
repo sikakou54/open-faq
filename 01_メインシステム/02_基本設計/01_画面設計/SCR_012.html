@@ -144,14 +144,14 @@
 <tr>
 <th>イベント ID</th>
 <th>イベント</th>
-<th>発生タイミング</th>
+<th>トリガー</th>
 <th>処理</th>
 <th>関連項目</th>
 </tr>
 </thead>
 <tbody>
 <tr><td><code>EV-01</code></td><td>詳細初期表示</td><td>画面遷移・リロード時</td><td>お知らせ本文・メタ情報を取得し表示</td><td><a href="#IT-01">IT-01</a>, <a href="#IT-02">IT-02</a>, <a href="#IT-03">IT-03</a>, <a href="#IT-04">IT-04</a>, <a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a>, <a href="#IT-07">IT-07</a>, <a href="#IT-08">IT-08</a></td></tr>
-<tr><td><code>EV-02</code></td><td>自動既読化</td><td>詳細画面表示時(初回のみ)</td><td><code>POST /me/announcements/{id}/read</code> で自動既読化し完了トーストを表示</td><td><a href="#IT-07">IT-07</a></td></tr>
+<tr><td><code>EV-02</code></td><td>自動既読化</td><td>詳細画面表示時(初回のみ)</td><td><ul><li><code>POST /me/announcements/{id}/read</code> で自動既読化</li><li>完了トーストを表示</li></ul></td><td><a href="#IT-07">IT-07</a></td></tr>
 <tr><td><code>EV-03</code></td><td>一覧へ戻る</td><td>「一覧へ戻る」押下時</td><td>SCR-011 お知らせ一覧へ遷移</td><td><a href="#IT-09">IT-09</a></td></tr>
 <tr><td><code>EV-04</code></td><td>前後遷移</td><td>「前のお知らせ / 次のお知らせ」押下時</td><td>一覧の並び順に基づき前後のお知らせ詳細へ遷移</td><td><a href="#IT-10">IT-10</a></td></tr>
 </tbody>

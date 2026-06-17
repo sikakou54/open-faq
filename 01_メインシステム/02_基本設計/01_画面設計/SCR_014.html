@@ -141,15 +141,15 @@
 <tr>
 <th>イベント ID</th>
 <th>イベント</th>
-<th>発生タイミング</th>
+<th>トリガー</th>
 <th>処理</th>
 <th>関連項目</th>
 </tr>
 </thead>
 <tbody>
 <tr><td><code>EV-01</code></td><td>注意事項表示</td><td>画面遷移・リロード時</td><td>退会時の影響を集約した警告パネルを表示</td><td><a href="#IT-01">IT-01</a></td></tr>
-<tr><td><code>EV-02</code></td><td>退会理由入力</td><td>退会理由テキストエリア入力時</td><td>任意入力(最大 500 文字)。超過時はバリデーションエラーを表示</td><td><a href="#IT-02">IT-02</a></td></tr>
-<tr><td><code>EV-03</code></td><td>退会申請実行</td><td>「退会を申請する」押下時</td><td>確認ダイアログ + 再認証(<code>POST /auth/re-auth</code>)後に <code>POST /withdrawal-requests</code> を実行し <code>contract_status=deleted_pending</code> を設定</td><td><a href="#IT-04">IT-04</a></td></tr>
+<tr><td><code>EV-02</code></td><td>退会理由入力</td><td>退会理由テキストエリア入力時</td><td><ul><li>任意入力(最大 500 文字)</li><li>超過時はバリデーションエラーを表示</li></ul></td><td><a href="#IT-02">IT-02</a></td></tr>
+<tr><td><code>EV-03</code></td><td>退会申請実行</td><td>「退会を申請する」押下時</td><td><ul><li>確認ダイアログ + 再認証(<code>POST /auth/re-auth</code>)</li><li>再認証後に <code>POST /withdrawal-requests</code> を実行し <code>contract_status=deleted_pending</code> を設定</li></ul></td><td><a href="#IT-04">IT-04</a></td></tr>
 <tr><td><code>EV-04</code></td><td>個人設定へ戻る</td><td>「個人設定へ戻る」押下時</td><td>SCR-017 個人設定へ遷移</td><td><a href="#IT-03">IT-03</a></td></tr>
 </tbody>
 </table>

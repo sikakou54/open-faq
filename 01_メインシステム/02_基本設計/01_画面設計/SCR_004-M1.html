@@ -151,7 +151,7 @@
 <tr>
 <th>イベント ID</th>
 <th>イベント</th>
-<th>発生タイミング</th>
+<th>トリガー</th>
 <th>処理</th>
 <th>関連項目</th>
 </tr>
@@ -159,11 +159,11 @@
 <tbody>
 <tr><td><code>EV-01</code></td><td>現値ロード</td><td>編集モードでモーダル起動時</td><td><code>GET /projects/{id}</code> で現値を取得し各入力欄に初期表示</td><td><a href="#IT-02">IT-02</a>, <a href="#IT-03">IT-03</a>, <a href="#IT-04">IT-04</a>, <a href="#IT-06">IT-06</a>, <a href="#IT-07">IT-07</a></td></tr>
 <tr><td><code>EV-02</code></td><td>入力バリデーション</td><td>各入力欄のフォーカスアウト・タグ追加時</td><td>プロジェクト名(必須・文字数)・許可ドメイン(形式)・連絡先メール(形式)を検証しエラーを表示</td><td><a href="#IT-03">IT-03</a>, <a href="#IT-04">IT-04</a>, <a href="#IT-06">IT-06</a></td></tr>
-<tr><td><code>EV-03</code></td><td>新規作成</td><td>「プロジェクトを作成」押下時(新規)</td><td><code>POST /projects</code> で作成。ウィジェット公開キー発行 + オーナーを <code>project_users(role='admin', valid=1)</code> 自動 INSERT</td><td><a href="#IT-09">IT-09</a></td></tr>
-<tr><td><code>EV-04</code></td><td>保存</td><td>「保存」押下時(編集)</td><td><code>PATCH /projects/{id}</code> で更新。連絡先メール変更時は確認メールを再送信</td><td><a href="#IT-10">IT-10</a></td></tr>
+<tr><td><code>EV-03</code></td><td>新規作成</td><td>「プロジェクトを作成」押下時(新規)</td><td><ul><li><code>POST /projects</code> で作成</li><li>ウィジェット公開キー発行 + オーナーを <code>project_users(role='admin', valid=1)</code> 自動 INSERT</li></ul></td><td><a href="#IT-09">IT-09</a></td></tr>
+<tr><td><code>EV-04</code></td><td>保存</td><td>「保存」押下時(編集)</td><td><ul><li><code>PATCH /projects/{id}</code> で更新</li><li>連絡先メール変更時は確認メールを再送信</li></ul></td><td><a href="#IT-10">IT-10</a></td></tr>
 <tr><td><code>EV-05</code></td><td>連絡先メール確認再送</td><td>確認待ち時の再送ボタン押下時(編集)</td><td>確認メールを再送信(レート制限あり)</td><td><a href="#IT-07">IT-07</a></td></tr>
-<tr><td><code>EV-06</code></td><td>削除</td><td>DangerSection 削除ボタン押下時(編集)</td><td>プロジェクト名タイプ確認 + 再認証(L3)を経て <code>DELETE /projects/{id}</code>。論理削除を実行</td><td><a href="#IT-11">IT-11</a></td></tr>
-<tr><td><code>EV-07</code></td><td>キャンセル</td><td>「キャンセル」押下時</td><td>変更を破棄して閉じる。未保存変更があれば UnsavedChangesGuard で警告</td><td><a href="#IT-08">IT-08</a></td></tr>
+<tr><td><code>EV-06</code></td><td>削除</td><td>DangerSection 削除ボタン押下時(編集)</td><td><ul><li>プロジェクト名タイプ確認 + 再認証(L3)を経て <code>DELETE /projects/{id}</code></li><li>論理削除を実行</li></ul></td><td><a href="#IT-11">IT-11</a></td></tr>
+<tr><td><code>EV-07</code></td><td>キャンセル</td><td>「キャンセル」押下時</td><td><ul><li>変更を破棄して閉じる</li><li>未保存変更があれば UnsavedChangesGuard で警告</li></ul></td><td><a href="#IT-08">IT-08</a></td></tr>
 <tr><td><code>EV-08</code></td><td>プロジェクト ID コピー</td><td>コピーボタン押下時(編集)</td><td>プロジェクト ID をクリップボードにコピー(クリック遷移には使わない)</td><td><a href="#IT-02">IT-02</a></td></tr>
 </tbody>
 </table>
