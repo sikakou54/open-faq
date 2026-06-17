@@ -85,6 +85,7 @@
   </div></div>
 </div></div>
 </div>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>課金対象は<strong>質問数・FAQ 件数・AI 利用コストの 3 軸</strong>です。本画面のプロジェクト別内訳は顧客請求額(質問課金・FAQ 課金・小計)を表示します。AI 利用コストは MVP ではサービス側が吸収する社内可視化指標(原価)で顧客請求額には計上しません。計上方法・課金対象の定義は <a href="../10_課金・請求設計.html#11-課金対象と無料枠初期値">10_課金・請求設計 §1.1</a> を正本とします。</div></div>
 
 <h2 id="4-画面項目定義">4. 画面項目定義</h2>
 <p class="section-lead">本画面の入出力項目(請求サマリ・プロジェクト別内訳・支払方法・請求履歴)を定義します。項目の正本は本表です。</p>
@@ -102,9 +103,9 @@
 <tr><td id="IT-01"><code>IT-01</code></td><td>当月の請求見込み</td><td>出力</td><td>SummaryCard</td><td>契約全体の当月請求見込み合計</td></tr>
 <tr><td id="IT-02"><code>IT-02</code></td><td>次回請求日</td><td>出力</td><td>SummaryCard</td><td>次回の請求確定日</td></tr>
 <tr><td id="IT-03"><code>IT-03</code></td><td>請求状態</td><td>出力</td><td>SummaryCard</td><td>正常 / 支払い失敗 / 支払方法未登録 等</td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>プロジェクト別の請求内訳</td><td>出力</td><td>テーブル</td><td>プロジェクト名 / 質問課金 / FAQ 課金 / 小計。最下行に全体合計</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>プロジェクト別の請求内訳</td><td>出力</td><td>テーブル</td><td>プロジェクト名 / 質問課金 / FAQ 課金 / 小計。最下行に全体合計。課金対象は質問数・FAQ 件数・AI 利用コストの 3 軸だが、AI 利用コストは MVP ではサービス側が吸収する社内可視化指標で顧客請求額には計上しない(計上方法は <a href="../10_課金・請求設計.html#11-課金対象と無料枠初期値">10_課金・請求設計 §1.1</a> を正本とする)</td></tr>
 <tr><td id="IT-05"><code>IT-05</code></td><td>支払方法</td><td>出力</td><td>テキスト</td><td>登録済みカードのブランド・末尾 4 桁・有効期限</td></tr>
-<tr><td id="IT-06"><code>IT-06</code></td><td>支払方法を変更</td><td>入力</td><td>ボタン</td><td>支払方法の登録・更新を行う</td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>支払方法を変更</td><td>入力</td><td>ボタン</td><td>支払方法の登録・更新を行う。<strong>課金情報変更につき再認証(現パスワード再入力)を要する</strong>(<a href="../08_認証・認可設計.html#2-再認証">08_認証・認可設計 §2</a>)</td></tr>
 <tr><td id="IT-07"><code>IT-07</code></td><td>請求履歴</td><td>出力</td><td>テーブル</td><td>請求月 / 金額 / 状態 / 請求書 PDF リンク</td></tr>
 <tr><td id="IT-08"><code>IT-08</code></td><td>請求書 PDF</td><td>出力</td><td>テキストリンク</td><td>各請求行の明細 PDF を表示</td></tr>
 <tr><td id="IT-09"><code>IT-09</code></td><td>支払い失敗・未登録バナー</td><td>出力</td><td>アラート</td><td>原因・影響・復旧手順・復旧 CTA を同一バナーに表示</td></tr>
@@ -112,7 +113,7 @@
 </table>
 
 <h2 id="5-入出力一覧">5. 入出力一覧</h2>
-<p class="section-lead">本画面が読み書きするテーブルと、呼び出す API の一覧です。テーブルの正本は <a href="../03_テーブル設計.html">03_テーブル設計</a>、API の正本は <a href="../02_API設計.html#573-get-billingsummaryperiodcurrent_month">02_API設計 §5.7</a> です。</p>
+<p class="section-lead">本画面が読み書きするテーブルと、呼び出す API の一覧です。テーブルの正本は <a href="../03_テーブル設計.html">03_テーブル設計</a>、API の正本は <a href="../02_API設計.html#573-get-billingsummaryperiodcurrent_month">02_API設計 §5.7.3</a> です。</p>
 <table>
 <thead>
 <tr>
@@ -155,7 +156,7 @@
 <tbody>
 <tr><td><code>EV-01</code></td><td>請求初期表示</td><td>画面遷移・リロード時</td><td><code>GET /billing/summary</code> で請求見込み・次回請求日・請求状態・プロジェクト別内訳を取得し表示。支払い失敗・未登録時はバナー表示</td><td><a href="#IT-01">IT-01</a>, <a href="#IT-02">IT-02</a>, <a href="#IT-03">IT-03</a>, <a href="#IT-04">IT-04</a>, <a href="#IT-09">IT-09</a></td></tr>
 <tr><td><code>EV-02</code></td><td>請求履歴表示</td><td>画面遷移・リロード時</td><td><code>GET /billing/invoices</code> で請求月・金額・状態・請求書 PDF を取得し履歴へ表示</td><td><a href="#IT-07">IT-07</a>, <a href="#IT-08">IT-08</a></td></tr>
-<tr><td><code>EV-03</code></td><td>支払方法変更</td><td>「支払方法を変更」押下時</td><td><code>PUT /billing/payment-method</code> で支払方法を登録・更新する</td><td><a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a></td></tr>
+<tr><td><code>EV-03</code></td><td>支払方法変更</td><td>「支払方法を変更」押下時</td><td>課金情報変更につき再認証(現パスワード再入力)を経て <code>PUT /billing/payment-method</code> で支払方法を登録・更新する(<a href="../08_認証・認可設計.html#2-再認証">08_認証・認可設計 §2</a>)</td><td><a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a></td></tr>
 <tr><td><code>EV-04</code></td><td>請求書 PDF 表示</td><td>請求履歴の「PDF」リンク押下時</td><td>該当請求の明細 PDF を表示・ダウンロードする</td><td><a href="#IT-08">IT-08</a></td></tr>
 </tbody>
 </table>

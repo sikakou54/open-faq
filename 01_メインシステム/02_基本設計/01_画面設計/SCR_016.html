@@ -43,7 +43,7 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>FR / BR</td><td><a href="../../01_要件定義/FR10_管理ダッシュボード.html#FR-130">FR-130</a>〜<a href="../../01_要件定義/FR10_管理ダッシュボード.html#FR-135h">FR-135h</a>, <a href="../../01_要件定義/FR11_通知.html#FR-148">FR-148</a>, <a href="../../01_要件定義/FR18_UX細部・データ運用.html#FR-326">FR-326</a>, <a href="../../01_要件定義/FR18_UX細部・データ運用.html#FR-327">FR-327</a> / <a href="../../01_要件定義/index.html">BR-013f</a></td></tr>
+<tr><td>FR / BR</td><td><a href="../../01_要件定義/FR10_管理ダッシュボード.html#FR-130">FR-130</a>〜<a href="../../01_要件定義/FR10_管理ダッシュボード.html#FR-135h">FR-135h</a>, <a href="../../01_要件定義/FR11_通知.html#FR-148">FR-148</a>, <a href="../../01_要件定義/FR18_UX細部・データ運用.html#FR-326">FR-326</a>, <a href="../../01_要件定義/FR18_UX細部・データ運用.html#FR-327">FR-327</a> / <a href="../../01_要件定義/index.html#BR-013f">BR-013f</a></td></tr>
 <tr><td>関連画面</td><td><a href="SCR_004.html"><code>SCR-004</code> プロジェクト</a> / <a href="SCR_022.html"><code>SCR-022</code> 請求</a></td></tr>
 </tbody>
 </table>
@@ -129,9 +129,9 @@
 <tbody>
 <tr><td>プロジェクト</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td>プロジェクト名・件数の取得。<code>projects</code>(<a href="../03_テーブル設計.html#36-projects">テーブル設計 3.6</a>)</td></tr>
 <tr><td>利用量計測</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td>当月の質問数・利用率の取得。<code>usage_metering</code>(<a href="../03_テーブル設計.html#322-usage_metering">テーブル設計 3.22</a>)</td></tr>
-<tr><td>上限管理</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td>プロジェクト別の月次上限・上限 OFF 判定。<code>project_quota_limits</code>(<a href="../03_テーブル設計.html#324-project_quota_limits">テーブル設計 3.24</a>)</td></tr>
+<tr><td>プロジェクト上限</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td>プロジェクト別の月次上限・上限 OFF 判定。<code>project_quota_limits</code>(<a href="../03_テーブル設計.html#324-project_quota_limits">テーブル設計 3.24</a>)</td></tr>
 <tr><td>契約サブスクリプション</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td>支払方法未登録・支払い失敗の判定。<code>billing_subscriptions</code>(<a href="../03_テーブル設計.html#320-billing_subscriptions">テーブル設計 3.20</a>)</td></tr>
-<tr><td>利用状況取得</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /usage?period=current_month&amp;viewMode=project&amp;projectId={id}</code>(<a href="../02_API設計.html#571-get-usageperiodcurrent_monthviewmodeprojectprojectidid">API 設計 5.7.1</a>)</td></tr>
+<tr><td>利用状況取得</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>本画面は契約全体サマリーと各プロジェクト別利用量の双方を表示する。契約横断の集計は <code>viewMode=contract</code>(または同等の集約パラメータ)を用い、プロジェクト別は <code>viewMode=project&amp;projectId={id}</code> で取得する(SCR-021 の単一プロジェクト表示と区別する)。取得方式の正本は <a href="../02_API設計.html#571-get-usageperiodcurrent_monthviewmodeprojectprojectidid">02_API設計 §5.7.1</a> を正とする。物理名 <code>GET /usage?period=current_month&amp;viewMode={contract|project}</code></td></tr>
 </tbody>
 </table>
 

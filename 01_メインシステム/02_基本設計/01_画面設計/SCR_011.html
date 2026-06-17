@@ -43,7 +43,7 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>FR / BR</td><td><a href="../../01_要件定義/FR15_お知らせ.html#FR-180">FR-180</a>〜<a href="../../01_要件定義/FR15_お知らせ.html#FR-183">FR-183</a>, <a href="../../01_要件定義/FR18_UX細部・データ運用.html#FR-323">FR-323</a> / <a href="../../01_要件定義/index.html">BR-134</a></td></tr>
+<tr><td>FR / BR</td><td><a href="../../01_要件定義/FR15_お知らせ.html#FR-180">FR-180</a>〜<a href="../../01_要件定義/FR15_お知らせ.html#FR-183">FR-183</a>, <a href="../../01_要件定義/FR18_UX細部・データ運用.html#FR-323">FR-323</a> / <a href="../../01_要件定義/index.html#BR-134">BR-134</a></td></tr>
 <tr><td>関連画面</td><td><a href="SCR_012.html"><code>SCR-012</code> お知らせ詳細</a></td></tr>
 </tbody>
 </table>
@@ -61,7 +61,7 @@
 <tr><td>メンバー(<code>member</code>)</td><td>—</td></tr>
 </tbody>
 </table>
-<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>お知らせ受信箱はプロジェクト管理者(<code>admin</code>)向けの通知領域です。オーナーは自動 <code>admin</code> 行を保持するため受信できます。<code>member</code> ロールのみのメンバーは対象外です。</div></div>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span><a href="../../01_要件定義/FR15_お知らせ.html#FR-180">FR-180</a> はアカウント利用者全体に閲覧資格を定義しますが、本画面ではそのうちお知らせ閲覧を <code>admin</code> 以上に限定します。オーナーは自動 <code>admin</code> 行を保持するため受信できます(根拠は <a href="../04_権限設計.html">04_権限設計</a>)。<code>member</code> ロールのみのメンバーは対象外です(ステークホルダ表の <code>member</code>=— と整合)。</div></div>
 
 <h2 id="2-画面遷移図">2. 画面遷移図</h2>
 <p class="section-lead">本画面からの画面遷移を、画面 ID・画面名とイベント(操作)で示します。</p>
@@ -94,7 +94,7 @@
 <tr><td id="IT-02"><code>IT-02</code></td><td>クイックフィルタチップ</td><td>入力</td><td>QuickFilterChips</td><td>「未読のみ」(デフォルト選択)/「重要のみ」/「課金」/「お知らせ」/「システム」/「すべて」</td></tr>
 <tr><td id="IT-03"><code>IT-03</code></td><td>適用済フィルタチップ</td><td>出力</td><td>AppliedFilterChips</td><td>適用条件 +「すべてクリア」</td></tr>
 <tr><td id="IT-04"><code>IT-04</code></td><td>詳細フィルタ</td><td>入力</td><td>常設パネル</td><td>期間 / キーワード検索。折り畳まず常時表示</td></tr>
-<tr><td id="IT-05"><code>IT-05</code></td><td>件数表示</td><td>出力</td><td>テキスト</td><td>「1-50 / 全 24 件(未読 3 件)」形式</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>件数表示</td><td>出力</td><td>テキスト</td><td>「1-50 / 全 24 件(未読 5 件)」形式</td></tr>
 <tr><td id="IT-06"><code>IT-06</code></td><td>未読行強調</td><td>出力</td><td>行背景色</td><td>薄い水色背景 + 行頭ドット。未読タイトルは bold</td></tr>
 <tr><td id="IT-07"><code>IT-07</code></td><td>種別バッジ</td><td>出力</td><td>AnnouncementCategoryBadge</td><td><code>billing</code> / <code>announcement</code> / <code>system</code></td></tr>
 <tr><td id="IT-08"><code>IT-08</code></td><td>重要度</td><td>出力</td><td>バッジ</td><td><code>critical</code> +「重要」/ <code>high</code> +「重要」/ <code>normal</code> 無印 / <code>low</code> 淡色</td></tr>

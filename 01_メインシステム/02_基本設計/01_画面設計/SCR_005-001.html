@@ -43,7 +43,7 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>FR / BR</td><td><a href="../../01_要件定義/FR06_未解決質問登録.html#FR-070">FR-070</a>〜<a href="../../01_要件定義/FR06_未解決質問登録.html#FR-077">FR-077</a> / <a href="../../01_要件定義/index.html">BR-019, BR-020</a></td></tr>
+<tr><td>FR / BR</td><td><a href="../../01_要件定義/FR06_未解決質問登録.html#FR-070">FR-070</a>〜<a href="../../01_要件定義/FR06_未解決質問登録.html#FR-077">FR-077</a> / <a href="../../01_要件定義/index.html#BR-019">BR-019</a>, <a href="../../01_要件定義/index.html#BR-020">BR-020</a></td></tr>
 <tr><td>関連画面</td><td><a href="SCR_005.html"><code>SCR-005</code> 要対応の質問一覧</a></td></tr>
 </tbody>
 </table>
@@ -61,14 +61,14 @@
 <tr><td>メンバー(<code>member</code>)</td><td>◯</td></tr>
 </tbody>
 </table>
-<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>各ステークホルダとも当該プロジェクトへの割当が前提です。割当のないプロジェクトの未解決質問は参照不可(URL 直アクセスは権限不足表示)。</div></div>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>各ステークホルダとも当該プロジェクトへの割当が前提です。割当のないプロジェクトの未解決質問は参照不可(URL 直アクセスは権限不足表示)。「FAQ 登録へ」ボタンは <code>admin</code> 以上(オーナーを含む)でのみ表示・操作可能で、<code>member</code> ロールでは非表示(操作不可)とします。</div></div>
 
 <h2 id="2-画面遷移図">2. 画面遷移図</h2>
 <p class="section-lead">本画面への流入と本画面からの遷移を、画面 ID・画面名とイベント(操作)で示します。</p>
 <pre class="mermaid"><code>flowchart LR
   S0["SCR-005 要対応の質問一覧"]
   S1["SCR-005-001 要対応の質問詳細"]
-  S6["SCR-006 FAQ 管理"]
+  S6["SCR-006 FAQ 一覧"]
   S0 -- "問い合わせ ID クリック" --&gt; S1
   S1 -- "FAQ 登録へ" --&gt; S6
 </code></pre>
@@ -98,8 +98,8 @@
 <tr><td id="IT-04"><code>IT-04</code></td><td>状況バッジ</td><td>出力</td><td>バッジ</td><td><code>open</code> / <code>closed</code></td></tr>
 <tr><td id="IT-05"><code>IT-05</code></td><td>登録先 FAQ</td><td>出力</td><td>リンク</td><td>未作成時は「未作成」(状況と独立)</td></tr>
 <tr><td id="IT-06"><code>IT-06</code></td><td>候補 FAQ</td><td>出力</td><td>リンク一覧</td><td>関連性の高い既存 FAQ(右ペイン)</td></tr>
-<tr><td id="IT-07"><code>IT-07</code></td><td>状況(変更)</td><td>入力</td><td>プルダウン</td><td>現在値を選択済み表示。変更時即時 <code>PATCH /inquiries/{id}</code></td></tr>
-<tr><td id="IT-08"><code>IT-08</code></td><td>FAQ 登録へ</td><td>入力</td><td>ボタン(<code>admin</code> のみ)</td><td>SCR-006 へ遷移</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>状況(変更)</td><td>入力</td><td>プルダウン</td><td>現在値を選択済み表示。変更時即時 <code>PATCH /inquiries/{id}</code>。<code>closed</code> への変更時のみ確認ダイアログを表示(EV-02 と整合)</td></tr>
+<tr><td id="IT-08"><code>IT-08</code></td><td>FAQ 登録へ</td><td>入力</td><td>ボタン(<code>admin</code> 以上(オーナーを含む))</td><td>SCR-006 へ遷移</td></tr>
 <tr><td id="IT-09"><code>IT-09</code></td><td>権限不足表示</td><td>出力</td><td>PermissionTooltip</td><td>割当外・範囲外メンバーの URL 直アクセス時はグレーアウト + tooltip</td></tr>
 </tbody>
 </table>
@@ -146,7 +146,7 @@
 <tbody>
 <tr><td><code>EV-01</code></td><td>詳細初期表示</td><td>画面遷移・リロード時</td><td><code>GET /inquiries/{id}</code> で質問・未解決理由・候補 FAQ・状況を取得し表示</td><td><a href="#IT-01">IT-01</a>, <a href="#IT-02">IT-02</a>, <a href="#IT-03">IT-03</a>, <a href="#IT-04">IT-04</a>, <a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a></td></tr>
 <tr><td><code>EV-02</code></td><td>状況変更</td><td>状況プルダウン変更時</td><td><code>PATCH /inquiries/{id}</code> を即時呼び出し保存。<code>open</code>→<code>closed</code> は確認ダイアログ</td><td><a href="#IT-07">IT-07</a></td></tr>
-<tr><td><code>EV-03</code></td><td>FAQ 登録へ遷移</td><td>「FAQ 登録へ」押下時(<code>admin</code> のみ)</td><td>SCR-006 へ遷移</td><td><a href="#IT-08">IT-08</a></td></tr>
+<tr><td><code>EV-03</code></td><td>FAQ 登録へ遷移</td><td>「FAQ 登録へ」押下時(<code>admin</code> 以上(オーナーを含む))</td><td>SCR-006 へ遷移</td><td><a href="#IT-08">IT-08</a></td></tr>
 </tbody>
 </table>
 

@@ -192,7 +192,7 @@
 </table>
 
 <h2 id="5-入出力一覧">5. 入出力一覧</h2>
-<p class="section-lead">本ウィジェットが呼び出す公開 API の一覧です。公開 API のベースは <code>/widget/v1/...</code>、正本は <a href="../02_API設計.html#552-post-widgetv1ask質問送信">02_API設計 §5.5</a> です。ウィジェットはサーバ経由でテーブルへアクセスし、直接の永続更新は行いません。</p>
+<p class="section-lead">本ウィジェットが呼び出す公開 API の一覧です。公開 API のベースは <code>/widget/v1/...</code>、正本は <a href="../02_API設計.html#552-post-widgetv1ask質問送信">02_API設計 §5.5(ウィジェット API 群)</a>です(各 API の節は下表の行リンク先を正とします)。ウィジェットはサーバ経由でテーブルへアクセスし、直接の永続更新は行いません。</p>
 <table>
 <thead>
 <tr>
@@ -233,7 +233,7 @@
 <tr><td><code>EV-02</code></td><td>チャット UI を閉じる</td><td>ヘッダー閉じるボタン押下時</td><td>チャット UI を閉じバッジへ戻る。会話履歴・入力内容・受付状態は保持</td><td><a href="#IT-03">IT-03</a>, <a href="#IT-04">IT-04</a></td></tr>
 <tr><td><code>EV-03</code></td><td>質問送信(通常)</td><td>送信ボタン押下時</td><td><code>POST /widget/v1/ask</code> で質問送信。AI 回答を同じ会話欄に追加</td><td><a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a>, <a href="#IT-07">IT-07</a></td></tr>
 <tr><td><code>EV-04</code></td><td>未解決応答</td><td>AI 回答が <code>type=unanswered</code> の時</td><td>回答不可の旨と確認済み連絡先メールをシステム返信で表示。問い合わせ ID は非表示で別質問は継続可能</td><td><a href="#IT-07">IT-07</a>, <a href="#IT-08">IT-08</a></td></tr>
-<tr><td><code>EV-05</code></td><td>受付停止(制限中)</td><td>質問数上限到達 / 支払方法ゲートで 429 応答時</td><td>受付停止と問い合わせ先をシステム返信で表示。入力欄と送信ボタンを無効化</td><td><a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a>, <a href="#IT-09">IT-09</a></td></tr>
+<tr><td><code>EV-05</code></td><td>受付停止(制限中)</td><td>質問数上限 100% 到達時、または支払方法ゲート(無料枠超過 + 支払方法未登録)による受付停止時(いずれも 429 応答)</td><td>受付停止と問い合わせ先をシステム返信で表示し、入力欄と送信ボタンを無効化する。<strong>いずれの契機も契約は <code>active</code> のままで、ウィジェット新規質問受付のみを停止する 429 系</strong>(質問数上限は <code>E-QUOTA-QUESTIONS-LIMIT</code>)。決済失敗等によるサスペンション(契約 <code>suspended</code> / 423)とは別状態(<a href="../10_課金・請求設計.html#4-支払方法ゲート">10_課金・請求設計 §4 支払方法ゲート</a>)</td><td><a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a>, <a href="#IT-09">IT-09</a></td></tr>
 </tbody>
 </table>
 

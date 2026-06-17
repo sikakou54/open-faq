@@ -44,7 +44,7 @@
 </thead>
 <tbody>
 <tr><td>FR / BR</td><td><a href="../../01_要件定義/FR10_管理ダッシュボード.html#FR-130">FR-130</a>〜<a href="../../01_要件定義/FR10_管理ダッシュボード.html#FR-135h">FR-135h</a>, <a href="../../01_要件定義/FR15_お知らせ.html#FR-191">FR-191</a> / <a href="../../01_要件定義/FR10_管理ダッシュボード.html#BR-096">BR-096</a></td></tr>
-<tr><td>関連画面</td><td><a href="SCR_005.html"><code>SCR-005</code> 要対応の質問一覧</a> / <a href="SCR_006.html"><code>SCR-006</code> FAQ 一覧</a> / <a href="SCR_016.html"><code>SCR-016</code> 利用状況</a> / <a href="SCR_022.html"><code>SCR-022</code> 請求</a></td></tr>
+<tr><td>関連画面</td><td><a href="SCR_005.html"><code>SCR-005</code> 要対応の質問一覧</a> / <a href="SCR_006.html"><code>SCR-006</code> FAQ 一覧</a> / <a href="SCR_016.html"><code>SCR-016</code> 利用状況</a>(本画面からの直接遷移はなくサイドメニュー経由) / <a href="SCR_022.html"><code>SCR-022</code> 請求</a></td></tr>
 </tbody>
 </table>
 
@@ -136,6 +136,7 @@
   </div>
 </div></div>
 </div>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>レイアウトには無料利用枠超過(IT-08)・質問数上限到達(IT-09)の超過バナーを見本として示します。契約停止(<code>contract_status=suspended</code>)時のアラート(IT-04)はレイアウト見本を割愛しており、表示例は IT-04 を参照してください。超過(quota 超過 = 無料枠 / 上限の到達)と契約停止(suspended = 契約状態の停止)は別状態であり、表示契機・文言・導線が異なります。</div></div>
 
 <h2 id="4-画面項目定義">4. 画面項目定義</h2>
 <p class="section-lead">本画面の入出力項目(ヘッダ・期間選択・状態アラート・KPI カード)を定義します。項目の正本は本表です。各カードは項目名と件数のみを表示し、前月比・コメント・ゲージは表示しません。0 件 / 集計中 / 取得失敗時のクリック非活性ルールは <a href="index.html#ダッシュボード-kpi共通表示ルール">画面設計 §1.5</a> に従います。</p>
@@ -157,6 +158,8 @@
 <tr><td id="IT-05"><code>IT-05</code></td><td>質問数</td><td>出力</td><td>SummaryCard</td><td>期間内の質問総数。数値クリック → SCR-005(<code>?project_id={現在}</code>)</td></tr>
 <tr><td id="IT-06"><code>IT-06</code></td><td>未解決数</td><td>出力</td><td>SummaryCard</td><td>期間内の未解決質問数。数値クリック → SCR-005(<code>?status=open&amp;project_id={現在}</code>)</td></tr>
 <tr><td id="IT-07"><code>IT-07</code></td><td>公開 FAQ 件数</td><td>出力</td><td>SummaryCard</td><td>当該プロジェクトの公開 FAQ 件数。数値クリック → SCR-006 FAQ 一覧</td></tr>
+<tr><td id="IT-08"><code>IT-08</code></td><td>無料利用枠超過バナー</td><td>出力</td><td>メッセージ / バナー</td><td>表示契機 = 無料利用枠の超過(quota 超過)。「無料利用枠を超過しました」+ 支払方法未登録時はウィジェット制限中の旨と「支払い方法を登録」導線(オーナー → SCR-022)。文言の正本は <a href="../06_メッセージ一覧.html">06_メッセージ一覧</a>、課金・上限ルールの正本は <a href="../10_課金・請求設計.html">10_課金・請求設計</a></td></tr>
+<tr><td id="IT-09"><code>IT-09</code></td><td>質問数上限到達バナー</td><td>出力</td><td>メッセージ / バナー</td><td>表示契機 = 質問数の月次上限到達(quota 超過)。「質問数が上限に達しました」+ ウィジェット制限中の旨と「利用量と上限へ」導線(SCR-021)。文言の正本は <a href="../06_メッセージ一覧.html">06_メッセージ一覧</a>、上限ルールの正本は <a href="../10_課金・請求設計.html">10_課金・請求設計</a></td></tr>
 </tbody>
 </table>
 
