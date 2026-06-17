@@ -109,10 +109,10 @@
 <tr><td id="IT-05"><code>IT-05</code></td><td>メールアドレス</td><td>出力</td><td>テキスト</td><td>—</td><td><code>users.email</code></td></tr>
 <tr><td id="IT-06"><code>IT-06</code></td><td>このプロジェクトでのロール</td><td>出力</td><td>バッジ</td><td>—</td><td><code>オーナー</code>(青、<code>project_users(role='admin')</code> 自動付与・削除対象外)/ <code>管理者</code>(緑、当該 PJ に <code>admin</code>)/ <code>メンバー</code>(灰、当該 PJ に <code>member</code>)。契約横断の「プロジェクト別ロール」列は持たない</td></tr>
 <tr><td id="IT-07"><code>IT-07</code></td><td>ステータス</td><td>出力</td><td>バッジ</td><td>—</td><td><code>利用中</code> / <code>招待中</code> の 2 値。残日数は併記しない。<code>users.status</code>(<code>active</code> / <code>pending_activation</code>)</td></tr>
-<tr><td id="IT-08"><code>IT-08</code></td><td>招待中行強調</td><td>出力</td><td>行背景色</td><td><code>pending_activation</code> の行のみ黄色背景</td><td>一覧での視認性を確保</td></tr>
+<tr><td id="IT-08"><code>IT-08</code></td><td>招待中行強調</td><td>出力</td><td>行背景色</td><td>対象者が招待中(本人未有効化)の行のみ黄色背景</td><td>一覧での視認性を確保</td></tr>
 <tr><td id="IT-09"><code>IT-09</code></td><td>+ メンバーを招待</td><td>入力</td><td>ボタン(Primary)</td><td>—</td><td>SCR-009-M1 を「招待」モード(当該プロジェクトの 1 件の割当のみを扱う)で開く</td></tr>
 <tr><td id="IT-10"><code>IT-10</code></td><td>空状態</td><td>出力</td><td>EmptyState</td><td>割当メンバーが 0 件のとき</td><td>「このプロジェクトにはまだメンバーが割当されていません。」</td></tr>
-<tr><td id="IT-11"><code>IT-11</code></td><td>権限不足ガード</td><td>出力</td><td>PermissionTooltip</td><td>当該 PJ に対する <code>admin</code> ロールを持たないユーザーの URL 直アクセス時</td><td>403 → ダッシュボードへリダイレクト</td></tr>
+<tr><td id="IT-11"><code>IT-11</code></td><td>権限不足ガード</td><td>出力</td><td>PermissionTooltip</td><td>当該プロジェクトのプロジェクト管理者権限を持たないユーザーが URL に直接アクセスした場合</td><td>403 → ダッシュボードへリダイレクト</td></tr>
 </tbody>
 </table>
 

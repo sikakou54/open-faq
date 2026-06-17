@@ -263,12 +263,12 @@
 <tr><td id="IT-01"><code>IT-01</code></td><td>PageHeader</td><td>出力</td><td>PageHeader</td><td>—</td><td>タイトルは「概要」のみ。プロジェクト名は付加せず WorkspaceSwitcher で確認</td></tr>
 <tr><td id="IT-02"><code>IT-02</code></td><td>期間選択</td><td>入力</td><td>プルダウン + 日付ピッカー</td><td>—</td><td>当月 / 前月 / 任意期間(最大 13 ヶ月)</td></tr>
 <tr><td id="IT-03"><code>IT-03</code></td><td>最終更新タイムスタンプ</td><td>出力</td><td>テキスト</td><td>—</td><td>KPI カード群右上に「最終更新: YYYY-MM-DD HH:MM(JST)」。5 分以上前は「集計遅延」黄表記</td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>サスペンション中の表示</td><td>出力</td><td>アラート</td><td><code>contract_status=suspended</code> 時のみ表示</td><td>「現在ご利用いただけません」+ オーナー連絡導線(non-owner)/ 支払方法更新リンク(owner → SCR-022)</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>サスペンション中の表示</td><td>出力</td><td>アラート</td><td>契約状態が停止中(サスペンション)の場合のみ表示</td><td>「現在ご利用いただけません」+ オーナー連絡導線(non-owner)/ 支払方法更新リンク(owner → SCR-022)</td></tr>
 <tr><td id="IT-05"><code>IT-05</code></td><td>質問数</td><td>出力</td><td>SummaryCard</td><td>—</td><td>期間内の質問総数。数値クリック → SCR-005(<code>?project_id={現在}</code>)</td></tr>
 <tr><td id="IT-06"><code>IT-06</code></td><td>未解決数</td><td>出力</td><td>SummaryCard</td><td>—</td><td>期間内の未解決質問数。数値クリック → SCR-005(<code>?status=open&amp;project_id={現在}</code>)</td></tr>
 <tr><td id="IT-07"><code>IT-07</code></td><td>公開 FAQ 件数</td><td>出力</td><td>SummaryCard</td><td>—</td><td>当該プロジェクトの公開 FAQ 件数。数値クリック → SCR-006 FAQ 一覧</td></tr>
-<tr><td id="IT-08"><code>IT-08</code></td><td>無料利用枠超過バナー</td><td>出力</td><td>メッセージ / バナー</td><td>無料利用枠の超過(quota 超過)時のみ表示</td><td>「無料利用枠を超過しました」+ 支払方法未登録時はウィジェット制限中の旨と「支払い方法を登録」導線(オーナー → SCR-022)。文言の正本は <a href="../06_メッセージ一覧.html">06_メッセージ一覧</a>、課金・上限ルールの正本は <a href="../10_課金・請求設計.html">10_課金・請求設計</a></td></tr>
-<tr><td id="IT-09"><code>IT-09</code></td><td>質問数上限到達バナー</td><td>出力</td><td>メッセージ / バナー</td><td>質問数の月次上限到達(quota 超過)時のみ表示</td><td>「質問数が上限に達しました」+ ウィジェット制限中の旨と「利用量と上限へ」導線(SCR-021)。文言の正本は <a href="../06_メッセージ一覧.html">06_メッセージ一覧</a>、上限ルールの正本は <a href="../10_課金・請求設計.html">10_課金・請求設計</a></td></tr>
+<tr><td id="IT-08"><code>IT-08</code></td><td>無料利用枠超過バナー</td><td>出力</td><td>メッセージ / バナー</td><td>無料利用枠を超過した場合のみ表示</td><td>「無料利用枠を超過しました」+ 支払方法未登録時はウィジェット制限中の旨と「支払い方法を登録」導線(オーナー → SCR-022)。文言の正本は <a href="../06_メッセージ一覧.html">06_メッセージ一覧</a>、課金・上限ルールの正本は <a href="../10_課金・請求設計.html">10_課金・請求設計</a></td></tr>
+<tr><td id="IT-09"><code>IT-09</code></td><td>質問数上限到達バナー</td><td>出力</td><td>メッセージ / バナー</td><td>質問数が月次上限に到達した場合のみ表示</td><td>「質問数が上限に達しました」+ ウィジェット制限中の旨と「利用量と上限へ」導線(SCR-021)。文言の正本は <a href="../06_メッセージ一覧.html">06_メッセージ一覧</a>、上限ルールの正本は <a href="../10_課金・請求設計.html">10_課金・請求設計</a></td></tr>
 </tbody>
 </table>
 

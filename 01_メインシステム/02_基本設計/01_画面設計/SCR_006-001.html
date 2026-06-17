@@ -105,7 +105,7 @@
 <tr><td id="IT-09"><code>IT-09</code></td><td>キャンセル</td><td>入力</td><td>ボタン(Secondary)</td><td>—</td><td>編集を破棄して一覧へ戻る。未保存変更時は確認ダイアログ</td></tr>
 <tr><td id="IT-10"><code>IT-10</code></td><td>保存</td><td>入力</td><td>ボタン(Primary)</td><td>—</td><td>「状態」ラジオで選択した値のまま <code>PATCH /faqs/{id}</code> で保存。<code>published</code> 選択時は公開確認ダイアログ</td></tr>
 <tr><td id="IT-11"><code>IT-11</code></td><td>削除</td><td>入力</td><td>ボタン(Danger / 確認ダイアログ)</td><td>既存 FAQ 編集時のみ表示(新規時非表示)</td><td>論理削除(<code>faqs.valid=0</code>)</td></tr>
-<tr><td id="IT-12"><code>IT-12</code></td><td>楽観ロック衝突</td><td>出力</td><td>エラーアラート</td><td><code>faqs.version</code> 不一致時のみ表示</td><td>—</td></tr>
+<tr><td id="IT-12"><code>IT-12</code></td><td>楽観ロック衝突</td><td>出力</td><td>エラーアラート</td><td>FAQ のバージョンが他者の更新と一致しない場合のみ表示(楽観ロック衝突時)</td><td>—</td></tr>
 </tbody>
 </table>
 
