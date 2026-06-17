@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API-AUTH-004 パスワード再設定要求 | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/02_API設計/API-AUTH-004.html">
+<article class="content" id="content">
+<h1 id="API-AUTH-004">API-AUTH-004 パスワード再設定要求</h1>
+
+<aside class="page-summary"><p class="ps-lead"><strong>この API は、再設定メールの送信を要求する。</strong></p></aside>
+<p class="doc-meta"><span><b>版数</b> v1.6</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<span id="514-post-authpassword-reset-request"></span>
+
+<h2>基本情報</h2>
+<table>
+<thead><tr><th>項目</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>API ID</td><td>API-AUTH-004</td></tr>
+<tr><td>API 名</td><td>パスワード再設定要求(機能 ID: F-004)</td></tr>
+<tr><td>エンドポイント</td><td><code>/auth/password-reset-request</code></td></tr>
+<tr><td>HTTP メソッド</td><td>POST</td></tr>
+<tr><td>概要</td><td>再設定メールの送信を要求する</td></tr>
+<tr><td>利用画面</td><td>SCR-003</td></tr>
+<tr><td>認証</td><td>不要</td></tr>
+<tr><td>権限</td><td>—(公開)</td></tr>
+</tbody>
+</table>
+<h2>リクエストパラメータ</h2>
+<pre><code>{ "email": "admin@example.com", "turnstileToken": "..." }</code></pre>
+<h2>レスポンス</h2>
+<p>(202):</p>
+<pre><code>{ "ok": true }</code></pre>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>列挙攻撃対策として、アカウントの存在有無は応答に含めない。</div></div>
+</article>
+</body>
+</html>

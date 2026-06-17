@@ -116,7 +116,7 @@
 </table>
 
 <h2 id="5-入出力一覧">5. 入出力一覧</h2>
-<p class="section-lead">本モーダルが読み書きするテーブル・ファイルと、呼び出す API の一覧です。テーブルの正本は <a href="../03_テーブル設計.html">03_テーブル設計</a>、API の正本は <a href="../02_API設計.html#543-post-faqsimport">02_API設計 §5.4.3</a> です。</p>
+<p class="section-lead">本モーダルが読み書きするテーブル・ファイルと、呼び出す API の一覧です。テーブルの正本は <a href="../03_テーブル設計.html">03_テーブル設計</a>、API の正本は <a href="../02_API設計/API-FAQ-004.html">02_API設計 §5.4.3</a> です。</p>
 <table>
 <thead>
 <tr>
@@ -136,8 +136,8 @@
 </thead>
 <tbody>
 <tr><td>FAQ</td><td>FAQ ID の存在確認、新規登録(<code>draft</code>)・上書き更新を行う</td><td>テーブル</td><td>入力 / 出力</td><td>◯</td><td>◯</td><td>◯</td><td>—</td><td><code>faqs</code>(<a href="../03_テーブル設計.html#39-faqs">テーブル設計 3.9</a>)</td></tr>
-<tr><td>FAQ CSV インポート</td><td>CSV を一括取り込みする(202 + jobId)</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /faqs/import</code>(<a href="../02_API設計.html#543-post-faqsimport">API 設計 5.4.3</a>)</td></tr>
-<tr><td>FAQ インポートテンプレート取得</td><td>ヘッダ行のみのテンプレート CSV を取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /faqs/import/template</code>(<a href="../02_API設計.html#544-get-faqsimporttemplate">API 設計 5.4.4</a>)</td></tr>
+<tr><td>FAQ CSV インポート</td><td>CSV を一括取り込みする(202 + jobId)</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /faqs/import</code>(<a href="../02_API設計/API-FAQ-004.html">API 設計 5.4.3</a>)</td></tr>
+<tr><td>FAQ インポートテンプレート取得</td><td>ヘッダ行のみのテンプレート CSV を取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /faqs/import/template</code>(<a href="../02_API設計/API-FAQ-005.html">API 設計 5.4.4</a>)</td></tr>
 <tr><td>インポート CSV</td><td>取り込み対象としてアップロードする CSV</td><td>ファイル</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>UTF-8 / BOM 許容、最大 1000 行</td></tr>
 <tr><td>テンプレート CSV</td><td>ダウンロードされるテンプレート CSV</td><td>ファイル</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>ヘッダ行のみ</td></tr>
 </tbody>

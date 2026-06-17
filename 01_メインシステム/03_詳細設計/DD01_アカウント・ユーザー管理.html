@@ -155,7 +155,7 @@
 <p>SCR-001〜003 / SCR-009 / SCR-016 / SCR-017 / SCR-023 の表示・入力・操作・メッセージIDは基本設計を正本とする。</p>
 <h3 id="34-機能詳細設計参照のみ">3.4 機能詳細設計（参照のみ）</h3>
 <p class="section-lead">機能別のロジック・データ・API 連動は基本設計が正本です。本書では実装モジュール構成のみを扱います。</p>
-<p>機能別のロジック・データ・API 連動は <a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html</a> および <a href="../02_基本設計/03_テーブル設計.html">../02_基本設計/03_テーブル設計.html</a> を正本とする。本書では実装モジュール構成のみを扱う。</p>
+<p>機能別のロジック・データ・API 連動は <a href="../02_基本設計/02_API設計/index.html">../02_基本設計/02_API設計/index.html</a> および <a href="../02_基本設計/03_テーブル設計.html">../02_基本設計/03_テーブル設計.html</a> を正本とする。本書では実装モジュール構成のみを扱う。</p>
 <h3 id="35-実装モジュール構成">3.5 実装モジュール構成</h3>
 <p class="section-lead"><code>worker-main-api</code> のソースツリー構成を示します。次のディレクトリ構成は、認証認可・管理者ユーザー・規約同意・招待のルートと、それを支えるリポジトリ・ミドルウェア・ライブラリの配置(実装の実体)です。</p>
 <p><code>app/workers/main-api/src/</code> 配下に以下のルート / ハンドラ / リポジトリを配置する。</p>
@@ -244,7 +244,7 @@
       W--&gt;&gt;I: 有効化完了(/auth/login へ誘導)
     end
   end</code></pre>
-<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">基本設計の正本</span>フローの正本は <a href="../02_基本設計/08_認証・認可設計.html">../02_基本設計/08_認証・認可設計.html §3.4</a> と <a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html §5.1.7 / §5.1.8</a> を参照。本書は各 API の DB 操作の実体(トランザクション内訳)を定めます。</div></div>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">基本設計の正本</span>フローの正本は <a href="../02_基本設計/08_認証・認可設計.html">../02_基本設計/08_認証・認可設計.html §3.4</a> と <a href="../02_基本設計/02_API設計/index.html">../02_基本設計/02_API設計/index.html §5.1.7 / §5.1.8</a> を参照。本書は各 API の DB 操作の実体(トランザクション内訳)を定めます。</div></div>
 <h4 id="37a1-招待時の-db-状態作成post-projectsidmembers">3.7a.1 招待時の DB 状態作成(<code>POST /projects/{id}/members</code>)</h4>
 <p class="section-lead">招待時に作成する DB 状態を定めます。次のコードは、氏名・パスワード未設定の <code>users</code> 行(<code>pending_activation</code>)、予約状態の <code>project_users</code> 行(<code>valid=0</code>)、有効期限 7 日の <code>access_tokens</code>(<code>activation</code>)を同一トランザクションで作成する実体です。</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> db<span class="op">.</span><span class="fu">transaction</span>(<span class="kw">async</span> (tx) <span class="kw">=&gt;</span> {</span>

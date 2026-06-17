@@ -148,7 +148,7 @@
   E-&gt;&gt;D: notification_logs へ記録(status=queued)
   D--&gt;&gt;E:
   E--&gt;&gt;T: 受付完了</code></pre>
-<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">正本委譲</span><code>enqueueEmail()</code> の API スキーマ・Queue バインディング設定は <a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html</a> が正本です。</div></div>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">正本委譲</span><code>enqueueEmail()</code> の API スキーマ・Queue バインディング設定は <a href="../02_基本設計/02_API設計/index.html">../02_基本設計/02_API設計/index.html</a> が正本です。</div></div>
 
 <h3 id="33-consumer-再試行">3.3 Consumer 再試行</h3>
 <p class="section-lead">Queue Consumer がメール送信に失敗したとき、指数バックオフで再試行し、上限超過で DLQ へ送る流れを定義します。次のシーケンス図は、送信成功 / 一時失敗(再試行)/ 上限超過(DLQ)の分岐を示します。</p>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API-FAQ-005 FAQ インポートテンプレート | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/02_API設計/API-FAQ-005.html">
+<article class="content" id="content">
+<h1 id="API-FAQ-005">API-FAQ-005 FAQ インポートテンプレート</h1>
+
+<aside class="page-summary"><p class="ps-lead"><strong>この API は、ヘッダ行のみの CSV テンプレートを返す。</strong></p></aside>
+<p class="doc-meta"><span><b>版数</b> v1.6</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<span id="544-get-faqsimporttemplate"></span>
+
+<h2>基本情報</h2>
+<table>
+<thead><tr><th>項目</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>API ID</td><td>API-FAQ-005</td></tr>
+<tr><td>API 名</td><td>FAQ インポートテンプレート</td></tr>
+<tr><td>エンドポイント</td><td><code>/faqs/import/template</code></td></tr>
+<tr><td>HTTP メソッド</td><td>GET</td></tr>
+<tr><td>概要</td><td>ヘッダ行のみの CSV テンプレートを返す</td></tr>
+<tr><td>利用画面</td><td>SCR-006-002「テンプレートをダウンロード」</td></tr>
+<tr><td>認証</td><td>Cookie</td></tr>
+<tr><td>権限</td><td>オーナー / 該当 PJ の <code>member</code>+(API-022 と同一)</td></tr>
+</tbody>
+</table>
+<h2>リクエストパラメータ</h2>
+<p>なし。</p>
+<h2>レスポンス</h2>
+<p>(200): ヘッダ行のみの CSV テンプレート(<code>FAQ ID,質問,回答,カテゴリ</code>)を <code>text/csv; charset=utf-8</code>(UTF-8 BOM 付与可)で返す。<code>Content-Disposition: attachment; filename="faq_import_template.csv"</code>。</p>
+</article>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API-LNK-001 IF #1 契約停止イベント受信(顧管 → メ) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/02_API設計/API-LNK-001.html">
+<article class="content" id="content">
+<h1 id="API-LNK-001">API-LNK-001 IF #1 契約停止イベント受信(顧管 → メ)</h1>
+
+<aside class="page-summary"><p class="ps-lead"><strong>この API は、顧客管理システムからの契約停止イベントを受信し、契約状態とセッションを反映します。</strong></p></aside>
+<p class="doc-meta"><span><b>版数</b> v1.6</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<span id="5121-if-1-契約停止イベント受信顧管--メ"></span>
+
+<p class="section-lead">顧客管理システムからの契約停止イベントを受信し、契約状態とセッションを反映します。</p>
+<pre><code>POST /internal/admin-integration/v1/owner/suspend</code></pre>
+<p>認証: mTLS + JWT(<code>aud=main</code>、TTL 5min)。</p>
+<h2>リクエストパラメータ</h2>
+<pre><code>{
+  "operationId": "01HZ...",
+  "contractOwnerUserId": "01HZ...",
+  "targetStatus": "suspended",
+  "reason": "payment_failed|terms_violation|manual_admin",
+  "occurredAt": "2026-05-13T10:00:00Z",
+  "operatorAccountId": "..."
+}</code></pre>
+<p>ヘッダ: <code>Idempotency-Key: (operation_id, contract_owner_user_id, target_status)</code>。</p>
+<h2>レスポンス</h2>
+<p>(200):</p>
+<pre><code>{ "ok": true, "newStatus": "suspended", "appliedAt": "..." }</code></pre>
+<p>動作:</p>
+<ol type="1">
+<li>JWT + Idempotency-Key 検証</li>
+<li><code>contract_owners.contract_status</code> 更新</li>
+<li>KV キャッシュ無効化(セッション/KV/レート制限)</li>
+<li>reason に応じてセッション処理(<code>operator_manual</code> / <code>tos_violation</code> は <strong>5 秒以内</strong> に全セッション無効化)</li>
+</ol>
+<h2>エラー</h2>
+<table>
+<thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>401</td><td><code>JWT_INVALID</code></td><td>JWT 検証失敗</td></tr>
+<tr><td>409</td><td><code>CONFLICT</code></td><td>冪等性競合</td></tr>
+</tbody>
+</table>
+</article>
+</body>
+</html>

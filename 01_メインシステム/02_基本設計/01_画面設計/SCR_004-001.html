@@ -116,7 +116,7 @@
 <div class="callout warning"><i class="bi bi-exclamation-triangle"></i><div><span class="c-title">注意</span>バリデーション: プロジェクト名は必須 1〜100 文字、許可ドメインは必須(URL またはワイルドカード形式、IP / プロトコル指定不可)、連絡先メールは任意(メール形式)。削除はプロジェクト名の完全一致タイプ確認 + 再認証(L3)を必須とします。</div></div>
 
 <h2 id="5-入出力一覧">5. 入出力一覧</h2>
-<p class="section-lead">本モーダルが読み書きするテーブルと、呼び出す API の一覧です。テーブルの正本は <a href="../03_テーブル設計.html">03_テーブル設計</a>、API の正本は <a href="../02_API設計.html#532-post-projects新規作成">02_API設計 §5.3.2</a> / <a href="../02_API設計.html#533-patch-projectsid--delete-projectsid">§5.3.3</a> です。</p>
+<p class="section-lead">本モーダルが読み書きするテーブルと、呼び出す API の一覧です。テーブルの正本は <a href="../03_テーブル設計.html">03_テーブル設計</a>、API の正本は <a href="../02_API設計/index.html">02_API設計 §5.3.2</a> / <a href="../02_API設計/API-PRJ-003.html">§5.3.3</a> です。</p>
 <table>
 <thead>
 <tr>
@@ -138,9 +138,9 @@
 <tr><td>プロジェクト</td><td>新規作成・現値ロード・更新・論理削除を行う</td><td>テーブル</td><td>入力 / 出力</td><td>◯</td><td>◯</td><td>◯</td><td>◯</td><td>論理削除は <code>valid=0</code>。<code>projects</code>(<a href="../03_テーブル設計.html#36-projects">テーブル設計 3.6</a>)</td></tr>
 <tr><td>許可ドメイン</td><td>許可ドメインの登録・更新・削除を行う</td><td>テーブル</td><td>入力 / 出力</td><td>◯</td><td>◯</td><td>◯</td><td>◯</td><td><code>allowed_domains</code>(<a href="../03_テーブル設計.html#38-allowed_domains">テーブル設計 3.8</a>)</td></tr>
 <tr><td>プロジェクト割当</td><td>作成時にオーナーを管理者として自動登録し、削除時は論理削除する</td><td>テーブル</td><td>出力</td><td>◯</td><td>—</td><td>◯</td><td>—</td><td>作成時 <code>role='admin', valid=1</code> 自動 INSERT。<code>project_users</code>(<a href="../03_テーブル設計.html#33-project_users">テーブル設計 3.3</a>)</td></tr>
-<tr><td>プロジェクト作成</td><td>新規プロジェクトを作成する API を呼び出す</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /projects</code>(<a href="../02_API設計.html#532-post-projects新規作成">API 設計 5.3.2</a>)</td></tr>
-<tr><td>プロジェクト更新・削除</td><td>編集での現値ロード・更新・削除 API を呼び出す</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>編集 <code>PATCH /projects/{id}</code> / 削除 <code>DELETE /projects/{id}</code> / 現値ロード <code>GET /projects/{id}</code>(<a href="../02_API設計.html#533-patch-projectsid--delete-projectsid">API 設計 5.3.3</a>)</td></tr>
-<tr><td>連絡先メール確認</td><td>連絡先メールの確認トークンを検証する API を呼び出す</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /auth/contact-verifications/{token}</code>(<a href="../02_API設計.html#519-post-authcontact-verificationstokenプロジェクト連絡先メール確認">API 設計 5.1.9</a>)</td></tr>
+<tr><td>プロジェクト作成</td><td>新規プロジェクトを作成する API を呼び出す</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /projects</code>(<a href="../02_API設計/index.html">API 設計 5.3.2</a>)</td></tr>
+<tr><td>プロジェクト更新・削除</td><td>編集での現値ロード・更新・削除 API を呼び出す</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>編集 <code>PATCH /projects/{id}</code> / 削除 <code>DELETE /projects/{id}</code> / 現値ロード <code>GET /projects/{id}</code>(<a href="../02_API設計/API-PRJ-003.html">API 設計 5.3.3</a>)</td></tr>
+<tr><td>連絡先メール確認</td><td>連絡先メールの確認トークンを検証する API を呼び出す</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /auth/contact-verifications/{token}</code>(<a href="../02_API設計/index.html">API 設計 5.1.9</a>)</td></tr>
 </tbody>
 </table>
 

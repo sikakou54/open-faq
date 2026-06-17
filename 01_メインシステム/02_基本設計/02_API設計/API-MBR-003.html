@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API-MBR-003 メンバーロール変更 | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/02_API設計/API-MBR-003.html">
+<article class="content" id="content">
+<h1 id="API-MBR-003">API-MBR-003 メンバーロール変更</h1>
+
+<aside class="page-summary"><p class="ps-lead"><strong>この API は、当該プロジェクトの <code>project_users.role</code> を上書きする(他プロジェクトに影響なし)。</strong></p></aside>
+<p class="doc-meta"><span><b>版数</b> v1.6</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<span id="523-patch-projectsidmembersuserid"></span>
+
+<h2>基本情報</h2>
+<table>
+<thead><tr><th>項目</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>API ID</td><td>API-MBR-003</td></tr>
+<tr><td>API 名</td><td>プロジェクト単位のロール変更(SCR-009-001 編集モード正本)</td></tr>
+<tr><td>エンドポイント</td><td><code>/projects/{id}/members/{userId}</code></td></tr>
+<tr><td>HTTP メソッド</td><td>PATCH</td></tr>
+<tr><td>概要</td><td>当該プロジェクトの <code>project_users.role</code> を上書きする(他プロジェクトに影響なし)</td></tr>
+<tr><td>利用画面</td><td>SCR-009-001(編集モードの「変更を保存」)</td></tr>
+<tr><td>認証</td><td>Cookie + CSRF + 再認証必須</td></tr>
+<tr><td>権限</td><td>オーナー / 該当プロジェクトの <code>admin</code> ロール保持メンバー</td></tr>
+</tbody>
+</table>
+<h2>リクエストパラメータ</h2>
+<p>Path Parameters: <code>{id}</code>(プロジェクト ID)、<code>{userId}</code>(対象ユーザー ID)。Request Body:</p>
+<pre><code>{
+  "role": "admin" | "member"
+}</code></pre>
+<ul>
+<li>同時に表示名(<code>displayName</code>)を更新する場合は別途 <code>PATCH /members/{id}</code> を呼び出す(プロジェクト範囲外の属性のため)</li>
+<li>「該当プロジェクトの最後の <code>admin</code> を <code>member</code> へ降格」する結果になる場合は 403 <code>LAST_ADMIN_PROTECTED</code>(E-AUTHZ-LAST-ADMIN-PROTECTED)で拒否</li>
+<li>自分自身が当該プロジェクトの最後の <code>admin</code> で、自身を <code>member</code> へ降格する場合は 403 <code>SELF_MUTATION_FORBIDDEN</code></li>
+<li>ロール変更後も当該プロジェクトに <code>project_users</code> 行が維持される限り、<code>normal</code> / <code>low</code> 通知の配信対象に含まれる(配信先はトグル ON 時にプロジェクトの全メンバー)</li>
+</ul>
+<h2>レスポンス</h2>
+<p>(200):</p>
+<pre><code>{ "userId": "...", "projectId": "...", "role": "admin|member", "updatedAt": "..." }</code></pre>
+<h2>エラー</h2>
+<table>
+<thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>404</td><td><code>NOT_FOUND</code></td><td>対象が存在しない</td></tr>
+<tr><td>403</td><td><code>PROJECT_ACCESS_DENIED</code></td><td>当該プロジェクトへの権限なし</td></tr>
+<tr><td>403</td><td><code>LAST_ADMIN_PROTECTED</code></td><td>最後の admin を降格しようとした</td></tr>
+<tr><td>403</td><td><code>SELF_MUTATION_FORBIDDEN</code></td><td>自身を不正に降格しようとした</td></tr>
+<tr><td>400</td><td><code>VALIDATION_ERROR</code></td><td>入力値の検証エラー</td></tr>
+</tbody>
+</table>
+</article>
+</body>
+</html>

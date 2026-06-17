@@ -109,7 +109,7 @@
 <p>SCR-004 プロジェクト一覧 / SCR-005 FAQ 一覧 / SCR-006 FAQ 編集の画面詳細は <a href="../02_基本設計/01_画面設計/index.html">../02_基本設計/01_画面設計/index.html</a> を正本とする。メッセージ ID は <a href="../02_基本設計/06_メッセージ一覧.html">../02_基本設計/06_メッセージ一覧.html</a> を参照。</p>
 <h3 id="32-機能詳細設計参照のみ">3.2 機能詳細設計（参照のみ）</h3>
 <p class="section-lead">API スキーマ・入出力仕様は基本設計が正本のため、本ページでは正本へのリンクのみを示します。</p>
-<p>FAQ CRUD / 状態保存 / 一括インポートの全項目は <a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html</a> を正本とする。</p>
+<p>FAQ CRUD / 状態保存 / 一括インポートの全項目は <a href="../02_基本設計/02_API設計/index.html">../02_基本設計/02_API設計/index.html</a> を正本とする。</p>
 <h3 id="33-データベース詳細設計参照のみ">3.3 データベース詳細設計（参照のみ）</h3>
 <p class="section-lead">DDL・制約・インデックスは基本設計が正本のため、本ページでは正本へのリンクのみを示します。</p>
 <p><code>projects</code> / <code>faqs</code> / <code>faq_embeddings</code> / <code>faq_search_fts</code> の DDL、CHECK 制約、インデックス、外部キー、コード値、SaaS データ分離観点（<code>contract_owner_user_id</code>）、保持期間は <a href="../02_基本設計/03_テーブル設計.html">../02_基本設計/03_テーブル設計.html</a> を正本とする。</p>
@@ -336,7 +336,7 @@
 <li>論理削除フィルタ: 全 GET 系クエリで <code>WHERE valid=1</code> を必須付与(漏れは IDOR 類似の脆弱性、09_セキュリティ設計参照)</li>
 </ul>
 <h2 id="4-関連設計">4. 関連設計</h2>
-<p class="section-lead">本 DD に関連する正本ドキュメントを示します。画面・メッセージは <a href="../02_基本設計/01_画面設計/index.html">画面設計</a> / <a href="../02_基本設計/06_メッセージ一覧.html">メッセージ一覧</a>、API は <a href="../02_基本設計/02_API設計.html">API 設計</a>、<code>projects</code> / <code>faqs</code> 等のスキーマは <a href="../02_基本設計/03_テーブル設計.html">テーブル設計</a> を正本とします。関連 DD は <a href="DD03_AI回答パイプライン.html">DD03_AI回答パイプライン.html</a> / <a href="DD07_トークン発行・検証.html">DD07_トークン発行・検証.html</a> / <a href="DD08_認可ヘルパ.html">DD08_認可ヘルパ.html</a> / <a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html</a> を参照します。</p>
+<p class="section-lead">本 DD に関連する正本ドキュメントを示します。画面・メッセージは <a href="../02_基本設計/01_画面設計/index.html">画面設計</a> / <a href="../02_基本設計/06_メッセージ一覧.html">メッセージ一覧</a>、API は <a href="../02_基本設計/02_API設計/index.html">API 設計</a>、<code>projects</code> / <code>faqs</code> 等のスキーマは <a href="../02_基本設計/03_テーブル設計.html">テーブル設計</a> を正本とします。関連 DD は <a href="DD03_AI回答パイプライン.html">DD03_AI回答パイプライン.html</a> / <a href="DD07_トークン発行・検証.html">DD07_トークン発行・検証.html</a> / <a href="DD08_認可ヘルパ.html">DD08_認可ヘルパ.html</a> / <a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html</a> を参照します。</p>
 <h2 id="5-テスト観点">5. テスト観点</h2>
 <p class="section-lead">本ページのロジックに対する代表的なテスト対応です。受入条件(AC)・要件 ID とテスト実装を紐付けます。</p>
 <div class="table-scroll">

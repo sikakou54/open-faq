@@ -582,7 +582,7 @@
 <li><strong>棄却基準</strong>: 同ペアでの旧モデル合格率が <strong>過去 3 か月連続で 100%</strong> → 過剰冗長として棄却候補、<code>testSet_archive</code> に退避</li>
 </ul>
 <h2 id="4-関連設計">4. 関連設計</h2>
-<p class="section-lead">本 DD に関連する正本ドキュメントを示します。AI 回答の要件は <a href="../01_要件定義/FR05_AI回答.html">FR05_AI回答</a>、API は <a href="../02_基本設計/02_API設計.html">API 設計</a>(<code>/widget/v1/ask</code>)、<code>question_logs</code> / <code>faqs</code> 等のスキーマは <a href="../02_基本設計/03_テーブル設計.html">テーブル設計</a>、PII スクラブ・プロンプト注入対策は <a href="../02_基本設計/09_セキュリティ設計.html">セキュリティ設計</a> を正本とします。関連 DD は <a href="DD04_AIしきい値3階層適用.html">DD04_AIしきい値3階層適用.html</a> / <a href="DD12_ウィジェット配信.html">DD12_ウィジェット配信.html</a> を参照します。</p>
+<p class="section-lead">本 DD に関連する正本ドキュメントを示します。AI 回答の要件は <a href="../01_要件定義/FR05_AI回答.html">FR05_AI回答</a>、API は <a href="../02_基本設計/02_API設計/index.html">API 設計</a>(<code>/widget/v1/ask</code>)、<code>question_logs</code> / <code>faqs</code> 等のスキーマは <a href="../02_基本設計/03_テーブル設計.html">テーブル設計</a>、PII スクラブ・プロンプト注入対策は <a href="../02_基本設計/09_セキュリティ設計.html">セキュリティ設計</a> を正本とします。関連 DD は <a href="DD04_AIしきい値3階層適用.html">DD04_AIしきい値3階層適用.html</a> / <a href="DD12_ウィジェット配信.html">DD12_ウィジェット配信.html</a> を参照します。</p>
 <h2 id="5-テスト観点">5. テスト観点</h2>
 <p class="section-lead">本 DD が満たすべき受入条件(AC)と、それを検証するテストの方式・配置を示します。次の表はプロンプト注入(AC-019 / AC-035)・AI 品質回帰(AC-042)の各 AC をテスト ID・実行方式・テストファイルに対応付けたものです。</p>
 <table>

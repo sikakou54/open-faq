@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API-LNK-002 IF #2 強制ログアウト受信 | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/02_API設計/API-LNK-002.html">
+<article class="content" id="content">
+<h1 id="API-LNK-002">API-LNK-002 IF #2 強制ログアウト受信</h1>
+
+<aside class="page-summary"><p class="ps-lead"><strong>この API は、顧客管理システムからの強制ログアウト指示を受信し、セッションを失効します。</strong></p></aside>
+<p class="doc-meta"><span><b>版数</b> v1.6</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<span id="5122-if-2-強制ログアウト受信"></span>
+
+<p class="section-lead">顧客管理システムからの強制ログアウト指示を受信し、セッションを失効します。</p>
+<pre><code>POST /internal/admin-integration/v1/owner/forced-logout</code></pre>
+<h2>リクエストパラメータ</h2>
+<pre><code>{
+  "operationId": "...",
+  "contractOwnerUserId": "...",
+  "scope": "all|single_account",
+  "userId": "...",
+  "reason": "..."
+}</code></pre>
+<p>動作: <code>sessions.revoked_at</code> 設定 + KV キャッシュ強制 invalidate(5 秒以内)。</p>
+</article>
+</body>
+</html>

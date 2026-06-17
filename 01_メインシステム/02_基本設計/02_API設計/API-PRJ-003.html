@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API-PRJ-003 プロジェクト更新・削除 | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/02_API設計/API-PRJ-003.html">
+<article class="content" id="content">
+<h1 id="API-PRJ-003">API-PRJ-003 プロジェクト更新・削除</h1>
+
+<aside class="page-summary"><p class="ps-lead"><strong>この API は、プロジェクトの部分更新 / 論理削除(FR-030b)。</strong></p></aside>
+<p class="doc-meta"><span><b>版数</b> v1.6</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<span id="533-patch-projectsid--delete-projectsid"></span>
+
+<h2>基本情報</h2>
+<table>
+<thead><tr><th>項目</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>API ID</td><td>API-PRJ-003</td></tr>
+<tr><td>API 名</td><td>プロジェクト更新・削除</td></tr>
+<tr><td>エンドポイント</td><td><code>/projects/{id}</code></td></tr>
+<tr><td>HTTP メソッド</td><td>PATCH / DELETE</td></tr>
+<tr><td>概要</td><td>プロジェクトの部分更新 / 論理削除(FR-030b)</td></tr>
+<tr><td>利用画面</td><td>SCR-004-001 プロジェクト作成・編集モーダル(編集モード)</td></tr>
+<tr><td>認証</td><td>Cookie + CSRF(削除は再認証必須、L3 = プロジェクト名タイプ確認 + パスワード再認証)</td></tr>
+<tr><td>権限</td><td><strong>オーナー専有</strong></td></tr>
+</tbody>
+</table>
+<h2>リクエストパラメータ</h2>
+<p>Path Parameters: <code>{id}</code>(プロジェクト ID)。Request Body(PATCH、部分更新):</p>
+<pre><code>{
+  "name": "...",
+  "allowedDomains": ["..."],
+  "contactEmail": "..."
+}</code></pre>
+<p>DELETE 時はボディなし。<code>DELETE /projects/{id}</code> 実行時の挙動(FR-030b、論理削除):</p>
+<ol type="1">
+<li><code>UPDATE project_users SET valid=0, updated_at=now() WHERE project_id=? AND valid=1</code>(オーナー自身の admin 行も含む全行を論理削除)</li>
+<li>UPDATE 後、他プロジェクト割当(<code>valid=1</code> 行)が 0 件かつ <code>contract_owners</code> 行を持たないメンバーの <code>users</code> を <code>UPDATE users SET valid=0, updated_at=now()</code> で論理削除 + 全セッション失効(<code>UPDATE sessions SET revoked_at=now() WHERE user_id IN (...)</code>)+ 未使用招待トークン失効(<code>UPDATE access_tokens SET used_at=now() WHERE user_id IN (...) AND used_at IS NULL</code>)</li>
+<li><code>UPDATE projects SET status='deleted', valid=0, deleted_at=now(), updated_at=now() WHERE id=?</code></li>
+<li>関連テーブル(<code>allowed_domains</code> / <code>faqs</code> / <code>inquiries</code> / <code>question_logs</code>)の対象行を <code>valid=0, updated_at=now()</code> に伝播。匿名化モード(<code>contract_owners.data_deletion_mode='anonymize'</code>)の場合の即時匿名化は本処理では行わず、90 日後の物理削除バッチ時に実施する</li>
+<li>監査ログ <code>project.logical_delete</code> を <code>retention_class='general'</code> で記録(metadata: <code>{projectId, logicallyDeletedUserIds: [...]}</code>)</li>
+</ol>
+<p>上記 1-5 はアプリ層のトランザクション内で実装する。論理削除データは <code>updated_at</code> 基準で 90 日経過後に物理削除バッチ(DD13)で物理削除される。物理削除時は <code>ON DELETE CASCADE</code> で関連行が連鎖物理削除される。</p>
+<h2>レスポンス</h2>
+<p>: PATCH は更新後のプロジェクト、DELETE は <code>{ "ok": true, "status": "deleted" }</code>(200)。</p>
+<h2>エラー</h2>
+<table>
+<thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>404</td><td><code>NOT_FOUND</code></td><td>オーナー境界違反偽装</td></tr>
+<tr><td>403</td><td><code>E-AUTHZ-OWNER-ONLY</code></td><td>オーナー以外は不可</td></tr>
+</tbody>
+</table>
+</article>
+</body>
+</html>

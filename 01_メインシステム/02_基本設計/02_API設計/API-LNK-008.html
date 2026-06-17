@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API-LNK-008 IF #8 監視メトリクス取得(送信側、メ → 顧管) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/02_API設計/API-LNK-008.html">
+<article class="content" id="content">
+<h1 id="API-LNK-008">API-LNK-008 IF #8 監視メトリクス取得(送信側、メ → 顧管)</h1>
+
+<aside class="page-summary"><p class="ps-lead"><strong>この API は、メインから顧客管理システムへ監視メトリクスを送信(取得)します。</strong></p></aside>
+<p class="doc-meta"><span><b>版数</b> v1.6</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<span id="5127-if-8-監視メトリクス取得送信側メ--顧管"></span>
+
+<p class="section-lead">メインから顧客管理システムへ監視メトリクスを送信(取得)します。</p>
+<pre><code>GET https://&lt;admin-host&gt;/internal/main-integration/v1/metrics?window=5m|1h|24h</code></pre>
+<p>認証: mTLS + JWT(<code>aud=admin</code>)。</p>
+<h2>レスポンス</h2>
+<p>(200):</p>
+<pre><code>{
+  "window": "5m",
+  "since": "...",
+  "until": "...",
+  "owners": [
+    {
+      "contractOwnerUserId": "...",
+      "errorRate5xx": 0.002,
+      "aiInferenceP95Ms": 1234,
+      "queueDlqCount": 0,
+      "emailBounceRate": 0.01,
+      "emailComplaintRate": 0.0005,
+      "billingWebhookFailures": 0,
+      "aiAnswerableRate": 0.85
+    }
+  ],
+  "global": { "d1UsageRatio": 0.65 }
+}</code></pre>
+</article>
+</body>
+</html>

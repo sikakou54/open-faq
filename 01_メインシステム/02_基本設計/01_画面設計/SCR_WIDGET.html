@@ -256,7 +256,7 @@
 </table>
 
 <h2 id="5-入出力一覧">5. 入出力一覧</h2>
-<p class="section-lead">本ウィジェットが呼び出す公開 API の一覧です。公開 API のベースは <code>/widget/v1/...</code>、正本は <a href="../02_API設計.html#552-post-widgetv1ask質問送信">02_API設計 §5.5(ウィジェット API 群)</a>です(各 API の節は下表の行リンク先を正とします)。ウィジェットはサーバ経由でテーブルへアクセスし、直接の永続更新は行いません。</p>
+<p class="section-lead">本ウィジェットが呼び出す公開 API の一覧です。公開 API のベースは <code>/widget/v1/...</code>、正本は <a href="../02_API設計/index.html">02_API設計 §5.5(ウィジェット API 群)</a>です(各 API の節は下表の行リンク先を正とします)。ウィジェットはサーバ経由でテーブルへアクセスし、直接の永続更新は行いません。</p>
 <table>
 <thead>
 <tr>
@@ -275,9 +275,9 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>ウィジェット起動</td><td>セッションを確立しウィジェット設定を取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /widget/v1/bootstrap</code>(<a href="../02_API設計.html#551-post-widgetv1bootstrap">API 設計 5.5.1</a>)</td></tr>
-<tr><td>質問送信</td><td>質問を送信し AI 回答を取得する(<code>type=unanswered</code> で未解決遷移)</td><td>API</td><td>入出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /widget/v1/ask</code>(<a href="../02_API設計.html#552-post-widgetv1ask質問送信">API 設計 5.5.2</a>)</td></tr>
-<tr><td>未解決質問登録</td><td>未解決時に質問ログ・未解決質問を登録する(問い合わせ ID は非表示)</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /widget/v1/inquiries</code>(<a href="../02_API設計.html#553-post-widgetv1inquiries未解決質問登録">API 設計 5.5.3</a>)</td></tr>
+<tr><td>ウィジェット起動</td><td>セッションを確立しウィジェット設定を取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /widget/v1/bootstrap</code>(<a href="../02_API設計/API-WGT-001.html">API 設計 5.5.1</a>)</td></tr>
+<tr><td>質問送信</td><td>質問を送信し AI 回答を取得する(<code>type=unanswered</code> で未解決遷移)</td><td>API</td><td>入出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /widget/v1/ask</code>(<a href="../02_API設計/index.html">API 設計 5.5.2</a>)</td></tr>
+<tr><td>未解決質問登録</td><td>未解決時に質問ログ・未解決質問を登録する(問い合わせ ID は非表示)</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /widget/v1/inquiries</code>(<a href="../02_API設計/index.html">API 設計 5.5.3</a>)</td></tr>
 </tbody>
 </table>
 

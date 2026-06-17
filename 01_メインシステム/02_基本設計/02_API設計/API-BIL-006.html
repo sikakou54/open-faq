@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API-BIL-006 プロジェクト上限・アラート取得 | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/02_API設計/API-BIL-006.html">
+<article class="content" id="content">
+<h1 id="API-BIL-006">API-BIL-006 プロジェクト上限・アラート取得</h1>
+
+<aside class="page-summary"><p class="ps-lead"><strong>この API は、当該プロジェクトの質問数について利用状況・月次上限件数・アラート設定を返す。</strong></p></aside>
+<p class="doc-meta"><span><b>版数</b> v1.6</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<span id="575-get-projectsidquota-limits"></span>
+
+<h2>基本情報</h2>
+<table>
+<thead><tr><th>項目</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>API ID</td><td>API-BIL-006</td></tr>
+<tr><td>API 名</td><td>プロジェクト上限・アラート取得(機能 ID: F-LIMIT-001)</td></tr>
+<tr><td>エンドポイント</td><td><code>/projects/{id}/quota-limits</code></td></tr>
+<tr><td>HTTP メソッド</td><td>GET</td></tr>
+<tr><td>概要</td><td>当該プロジェクトの質問数について利用状況・月次上限件数・アラート設定を返す</td></tr>
+<tr><td>利用画面</td><td>SCR-021</td></tr>
+<tr><td>認証</td><td>Cookie</td></tr>
+<tr><td>権限</td><td>オーナー / 該当プロジェクトの <code>admin</code> または <code>member</code>(閲覧)</td></tr>
+</tbody>
+</table>
+<p>SCR-021 の表示には <code>used</code> / <code>limitEnabled</code> / <code>limit</code> / <code>percentage</code> / <code>yenEquivalent</code> だけを使用し、アラート設定・設定元は表示しない。SCR-021-001 は <code>limitEnabled</code> / <code>limit</code> / <code>alertThresholds</code> を使用する。FAQ 件数は扱わないためレスポンスに含めない。質問数の無料利用枠は課金判定用の内部データとして保持するが、本 API のレスポンスには含めない。</p>
+<h2>リクエストパラメータ</h2>
+<p>Path Parameters は <code>{id}</code>(プロジェクト ID)。</p>
+<h2>レスポンス</h2>
+<p>(200):</p>
+<pre><code>{
+  "projectId": "prj_...",
+  "period": "2026-05-01T00:00:00Z",
+  "questions": { "used": 750, "limitEnabled": true, "limit": 5000, "percentage": 15, "alertThresholds": [80, 100], "yenEquivalent": 2000, "source": "owner" }
+}</code></pre>
+<p><code>yenEquivalent</code> は上限件数をすべて利用した場合の最大課金額の参考値で、<code>billableCount = max(0, limit - 適用中の質問数無料利用枠)</code>、<code>yenEquivalent = billableCount × 質問単価</code> により算出する。画面では「5,000件 - 1,000件(無料枠) = 4,000件 (¥2,000 / 月)」の形式で表示する。上限 OFF 時は <code>limitEnabled=false</code>、<code>limit=null</code>、<code>percentage=null</code>、<code>yenEquivalent=null</code> を返す。SCR-021 は「今月の利用上限」を「OFF」と表示し、「利用量」には割合・件数比・ProgressBar・状態バッジを描画しない。</p>
+</article>
+</body>
+</html>

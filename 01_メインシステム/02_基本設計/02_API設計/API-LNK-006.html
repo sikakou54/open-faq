@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API-LNK-006 IF #6 AI しきい値上書き受信 | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/02_API設計/API-LNK-006.html">
+<article class="content" id="content">
+<h1 id="API-LNK-006">API-LNK-006 IF #6 AI しきい値上書き受信</h1>
+
+<aside class="page-summary"><p class="ps-lead"><strong>この API は、AI 回答可否のしきい値上書きを受信し、KV と永続キャッシュへ反映します。</strong></p></aside>
+<p class="doc-meta"><span><b>版数</b> v1.6</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<span id="5125-if-6-ai-しきい値上書き受信"></span>
+
+<p class="section-lead">AI 回答可否のしきい値上書きを受信し、KV と永続キャッシュへ反映します。</p>
+<pre><code>POST /internal/admin-integration/v1/threshold/update</code></pre>
+<h2>リクエストパラメータ</h2>
+<pre><code>{
+  "contractOwnerUserId": "...",
+  "version": "2026-05-13T10:00:00Z",
+  "projectId": null,
+  "confidenceThreshold": 0.65,
+  "relevanceThreshold": 0.55,
+  "scope": "owner|project",
+  "operatorAccountId": "..."
+}</code></pre>
+<p>動作:</p>
+<ol type="1">
+<li>JWT + Idempotency-Key 検証</li>
+<li>KV <code>ai_threshold:{contractOwnerUserId}:{projectId}</code> 更新(60s TTL)</li>
+<li><code>ai_threshold_persistent_cache</code> に永続化</li>
+<li>IF #12 経由で管理者ユーザーに inbox 配信</li>
+</ol>
+</article>
+</body>
+</html>

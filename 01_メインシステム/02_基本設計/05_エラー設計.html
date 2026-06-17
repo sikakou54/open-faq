@@ -724,7 +724,7 @@
 </table>
 </div>
 <h3 id="49-連携-if-エラーe-if-nnn-">4.9 連携 IF エラー(<code>E-IF-NNN-*</code>)</h3>
-<p class="section-lead">顧客管理システムとの連携 IF #1〜#12 のエラーです。冪等性違反はリトライ安全性のため 200 + 既存処理結果を返し、認証失敗は 401 + 監査記録とします。IF 仕様の正本は <a href="02_API設計.html">02_API設計.html</a> の連携 IF 節です。</p>
+<p class="section-lead">顧客管理システムとの連携 IF #1〜#12 のエラーです。冪等性違反はリトライ安全性のため 200 + 既存処理結果を返し、認証失敗は 401 + 監査記録とします。IF 仕様の正本は <a href="02_API設計/index.html">02_API設計/index.html</a> の連携 IF 節です。</p>
 <div class="table-scroll">
 <table>
 <thead>
@@ -889,7 +889,7 @@
 <ul>
 <li>必須項目欠落 / 形式不正は <strong>400 + フィールド単位のエラー配列</strong> を返却</li>
 <li>メッセージは画面側で項目近くにインライン表示</li>
-<li>文字数 / 範囲チェックは入力スキーマで検証(<a href="02_API設計.html">02_API設計.html</a> を正本)</li>
+<li>文字数 / 範囲チェックは入力スキーマで検証(<a href="02_API設計/index.html">02_API設計/index.html</a> を正本)</li>
 </ul>
 <h3 id="52-認証エラー時の方針">5.2 認証エラー時の方針</h3>
 <p class="section-lead">認証失敗・期限切れは 401 に統一し、攻撃者へヒントを与えません。ログイン 5 回失敗で <code>(IP × user_id)</code> を 15 分ロックアウトし、解除は時間経過のみです。</p>
@@ -971,7 +971,7 @@
 <li>閾値超過時は自動 suspension + 管理者 + email 通知</li>
 </ul>
 <h2 id="6-ステータスコード対応表">6. ステータスコード対応表</h2>
-<p class="section-lead">ステータスコードと主なエラー ID の対応を一覧化します。<strong>本ページがステータスの正本</strong>であり、<a href="02_API設計.html">02_API設計.html</a> のエンドポイント定義はこの対応に従います。200 は未解決登録分岐(§3.2、正常)と冪等な Webhook / IF 受信に限ります。</p>
+<p class="section-lead">ステータスコードと主なエラー ID の対応を一覧化します。<strong>本ページがステータスの正本</strong>であり、<a href="02_API設計/index.html">02_API設計/index.html</a> のエンドポイント定義はこの対応に従います。200 は未解決登録分岐(§3.2、正常)と冪等な Webhook / IF 受信に限ります。</p>
 <div class="table-scroll">
 <table>
 <thead>

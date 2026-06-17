@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API-MBR-005 招待メール再送 | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/02_API設計/API-MBR-005.html">
+<article class="content" id="content">
+<h1 id="API-MBR-005">API-MBR-005 招待メール再送</h1>
+
+<aside class="page-summary"><p class="ps-lead"><strong>この API は、<code>status='pending_activation'</code> のメンバーへ招待メールを再送する。</strong></p></aside>
+<p class="doc-meta"><span><b>版数</b> v1.6</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<span id="525-post-membersidresend-invitation"></span>
+
+<h2>基本情報</h2>
+<table>
+<thead><tr><th>項目</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>API ID</td><td>API-MBR-005</td></tr>
+<tr><td>API 名</td><td>招待メール再送</td></tr>
+<tr><td>エンドポイント</td><td><code>/members/{id}/resend-invitation</code></td></tr>
+<tr><td>HTTP メソッド</td><td>POST</td></tr>
+<tr><td>概要</td><td><code>status='pending_activation'</code> のメンバーへ招待メールを再送する</td></tr>
+<tr><td>利用画面</td><td>SCR-009-001(招待再送)</td></tr>
+<tr><td>認証</td><td>Cookie + CSRF + 再認証必須</td></tr>
+<tr><td>権限</td><td>オーナー / 該当プロジェクトの <code>admin</code> 保持メンバー</td></tr>
+</tbody>
+</table>
+<p>旧 <code>access_tokens.purpose='activation'</code> を失効させ新規トークン(7 日有効、<code>meta</code> を同一の <code>invitedProjectId</code> / <code>invitedRole</code> で再発行)を発行。</p>
+<h2>リクエストパラメータ</h2>
+<p>Path Parameters: <code>{id}</code>(メンバーユーザー ID)。Request Body: なし(氏名 <code>displayName</code> を受け付けない。FR-016b / FR-016d)。</p>
+<h2>レスポンス</h2>
+<p>(200): 再発行結果(<code>{ "ok": true, "expiresAt": "..." }</code>)。</p>
+<h2>エラー</h2>
+<table>
+<thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>403</td><td><code>E-AUTHZ-OWNER-PROTECTED</code></td><td>オーナーは対象外</td></tr>
+<tr><td>403</td><td><code>E-AUTHZ-SELF-MUTATION</code></td><td>自分自身は対象外</td></tr>
+<tr><td>404</td><td><code>NOT_FOUND</code></td><td>対象が存在しない</td></tr>
+</tbody>
+</table>
+</article>
+</body>
+</html>

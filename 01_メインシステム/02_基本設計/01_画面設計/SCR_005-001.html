@@ -114,7 +114,7 @@
 </table>
 
 <h2 id="5-入出力一覧">5. 入出力一覧</h2>
-<p class="section-lead">本画面が読み書きするテーブル・ファイルと、呼び出す API の一覧です。テーブルの正本は <a href="../03_テーブル設計.html">03_テーブル設計</a>、API の正本は <a href="../02_API設計.html#562-get-inquiriesid--patch-inquiriesid">02_API設計 §5.6</a> です。</p>
+<p class="section-lead">本画面が読み書きするテーブル・ファイルと、呼び出す API の一覧です。テーブルの正本は <a href="../03_テーブル設計.html">03_テーブル設計</a>、API の正本は <a href="../02_API設計/API-INQ-002.html">02_API設計 §5.6</a> です。</p>
 <table>
 <thead>
 <tr>
@@ -136,8 +136,8 @@
 <tr><td>未解決質問</td><td>詳細を取得し対応状況(<code>status</code>)を更新する</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>inquiries</code>(<a href="../03_テーブル設計.html#314-inquiries">テーブル設計 3.14</a>)</td></tr>
 <tr><td>質問ログ</td><td>未解決理由(<code>result_reason_code</code>)を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>question_logs</code>(<a href="../03_テーブル設計.html">テーブル設計</a>)</td></tr>
 <tr><td>FAQ</td><td>登録先 FAQ・候補 FAQ を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>faqs</code>(<a href="../03_テーブル設計.html">テーブル設計</a>)</td></tr>
-<tr><td>未解決質問詳細取得</td><td>質問・未解決理由・候補 FAQ・状況を取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /inquiries/{id}</code>(<a href="../02_API設計.html#562-get-inquiriesid--patch-inquiriesid">API 設計 5.6.2</a>)</td></tr>
-<tr><td>未解決質問状況更新</td><td>対応状況を <code>open</code> ↔ <code>closed</code> で更新する</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>PATCH /inquiries/{id}</code>(<a href="../02_API設計.html#562-get-inquiriesid--patch-inquiriesid">API 設計 5.6.2</a>)</td></tr>
+<tr><td>未解決質問詳細取得</td><td>質問・未解決理由・候補 FAQ・状況を取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /inquiries/{id}</code>(<a href="../02_API設計/API-INQ-002.html">API 設計 5.6.2</a>)</td></tr>
+<tr><td>未解決質問状況更新</td><td>対応状況を <code>open</code> ↔ <code>closed</code> で更新する</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>PATCH /inquiries/{id}</code>(<a href="../02_API設計/API-INQ-002.html">API 設計 5.6.2</a>)</td></tr>
 </tbody>
 </table>
 

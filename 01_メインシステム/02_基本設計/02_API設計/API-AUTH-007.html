@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API-AUTH-007 招待トークン検証・プレビュー | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/02_API設計/API-AUTH-007.html">
+<article class="content" id="content">
+<h1 id="API-AUTH-007">API-AUTH-007 招待トークン検証・プレビュー</h1>
+
+<aside class="page-summary"><p class="ps-lead"><strong>この API は、招待情報(プロジェクト名 / 付与ロール / 招待元オーナー名 / 招待者メール)をプレビュー取得する。</strong></p></aside>
+<p class="doc-meta"><span><b>版数</b> v1.6</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<span id="517-post-authinvitationstokenpreview"></span>
+
+<h2>基本情報</h2>
+<table>
+<thead><tr><th>項目</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>API ID</td><td>API-AUTH-007</td></tr>
+<tr><td>API 名</td><td>招待トークン検証 + 招待情報プレビュー(機能 ID: F-016)</td></tr>
+<tr><td>エンドポイント</td><td><code>/auth/invitations/{token}/preview</code></td></tr>
+<tr><td>HTTP メソッド</td><td>POST</td></tr>
+<tr><td>概要</td><td>招待情報(プロジェクト名 / 付与ロール / 招待元オーナー名 / 招待者メール)をプレビュー取得する</td></tr>
+<tr><td>利用画面</td><td>SCR-018 メンバーアカウント有効化(初期表示時)</td></tr>
+<tr><td>認証</td><td>未認証可(トークン認証のみ)</td></tr>
+<tr><td>権限</td><td>—</td></tr>
+</tbody>
+</table>
+<p>トークン形式 = <code>activation</code> purpose の <code>access_tokens.token_hash</code> 検証。検証成功時は招待情報を返し、SCR-018 の招待情報パネル表示に使用する。Turnstile 不要(プレビューは情報取得のみで状態変更なし)。</p>
+<h2>リクエストパラメータ</h2>
+<p>Path Parameters: <code>{token}</code>(招待トークン)。Request Body: なし。</p>
+<h2>レスポンス</h2>
+<p>(200):</p>
+<pre><code>{
+  "userId": "01HZ...",
+  "email": "newmember@...",
+  "projectId": "proj_1",
+  "projectName": "顧客サポート",
+  "invitedRole": "admin" | "member",
+  "inviterOwnerName": "山田 一郎",
+  "expiresAt": "2026-05-28T..."
+}</code></pre>
+<h2>エラー</h2>
+<table>
+<thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>410</td><td><code>TOKEN_EXPIRED</code>(E-AUTH-TOKEN-EXPIRED)</td><td>トークン期限切れ</td></tr>
+<tr><td>410</td><td><code>TOKEN_USED</code>(E-AUTH-TOKEN-USED)</td><td>トークン使用済み</td></tr>
+<tr><td>404</td><td><code>TOKEN_NOT_FOUND</code></td><td>トークンが存在しない</td></tr>
+</tbody>
+</table>
+</article>
+</body>
+</html>

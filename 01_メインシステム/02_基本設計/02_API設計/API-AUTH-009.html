@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API-AUTH-009 プロジェクト連絡先メール確認 | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/02_API設計/API-AUTH-009.html">
+<article class="content" id="content">
+<h1 id="API-AUTH-009">API-AUTH-009 プロジェクト連絡先メール確認</h1>
+
+<aside class="page-summary"><p class="ps-lead"><strong>この API は、確認メール内リンクの着地時に <code>projects.contact_email_verified_at</code> をセットする。</strong></p></aside>
+<p class="doc-meta"><span><b>版数</b> v1.6</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<span id="519-post-authcontact-verificationstoken"></span>
+
+<h2>基本情報</h2>
+<table>
+<thead><tr><th>項目</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>API ID</td><td>API-AUTH-009</td></tr>
+<tr><td>API 名</td><td>プロジェクト連絡先メール確認(機能 ID: F-PRJ-001、プロジェクト管理派生)</td></tr>
+<tr><td>エンドポイント</td><td><code>/auth/contact-verifications/{token}</code></td></tr>
+<tr><td>HTTP メソッド</td><td>POST</td></tr>
+<tr><td>概要</td><td>確認メール内リンクの着地時に <code>projects.contact_email_verified_at</code> をセットする</td></tr>
+<tr><td>利用画面</td><td>SCR-019 プロジェクト連絡先メール確認完了</td></tr>
+<tr><td>認証</td><td>未認証可(トークン認証のみ、Turnstile 不要)</td></tr>
+<tr><td>権限</td><td>—</td></tr>
+</tbody>
+</table>
+<p>TPL-PROJECT_CONTACT_VERIFY 確認メール内リンクの着地時に呼び出される。Turnstile は不要(入力フォームを持たない単純な確認専用エンドポイントで、トークン HMAC-SHA256 検証 + IP / トークン単位のレート制限で十分)。同一トランザクションで以下:</p>
+<ol type="1">
+<li><code>verifyToken(rawToken, 'contact_verify', env)</code> → 期限・使用済みチェック</li>
+<li><code>access_tokens.meta.projectId</code> を取得(JSON パース)</li>
+<li><code>UPDATE projects SET contact_email_verified_at=now(), updated_at=now() WHERE id=?</code></li>
+<li><code>consumeToken(rawToken, 'contact_verify', env)</code> → <code>access_tokens.used_at</code> セット</li>
+<li><code>writeAudit('project.contact_email_verified', { project_id, email_hmac })</code></li>
+</ol>
+<h2>リクエストパラメータ</h2>
+<p>Path Parameters: <code>{token}</code>(連絡先確認トークン)。Request Body: なし(URL のトークンのみ)。</p>
+<h2>レスポンス</h2>
+<p>(200):</p>
+<pre><code>{ "projectId": "proj_1", "projectName": "サポートサイト", "verifiedAt": "2026-05-21T..." }</code></pre>
+<h2>エラー</h2>
+<table>
+<thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>410</td><td><code>TOKEN_EXPIRED</code>(E-AUTH-TOKEN-EXPIRED)</td><td>トークン期限切れ</td></tr>
+<tr><td>410</td><td><code>TOKEN_USED</code>(E-AUTH-TOKEN-USED)</td><td>トークン使用済み</td></tr>
+<tr><td>404</td><td><code>TOKEN_NOT_FOUND</code></td><td>トークンが存在しない</td></tr>
+</tbody>
+</table>
+</article>
+</body>
+</html>

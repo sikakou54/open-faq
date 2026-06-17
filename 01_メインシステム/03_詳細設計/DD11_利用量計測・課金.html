@@ -425,7 +425,7 @@
 <li><code>charge.dispute.created</code></li>
 <li><code>customer.tax_id.updated</code></li>
 </ul>
-<p>詳細は <a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html</a> を正本とする。Stripe Webhook 受信は運営者側を正本とし、メイン側は IF #10 で受信する。</p>
+<p>詳細は <a href="../02_基本設計/02_API設計/index.html">../02_基本設計/02_API設計/index.html</a> を正本とする。Stripe Webhook 受信は運営者側を正本とし、メイン側は IF #10 で受信する。</p>
 <h3 id="37-pci-dss-スコープ外宣言">3.7 PCI-DSS スコープ外宣言</h3>
 <p class="section-lead">本サービスがカード情報を保持せず PCI-DSS スコープ外となる根拠を示します。本サービスはクレジットカード情報を一切扱わず、Stripe Elements でクライアントから直接送信します。SAQ A の自己評価で十分です。</p>
 <h3 id="38-選択閾値アラート--100停止--125運営者通知プロジェクトの月次上限件数比">3.8 選択閾値アラート / 100%停止 / 125%運営者通知(プロジェクトの月次上限件数比)</h3>
@@ -484,7 +484,7 @@
 <li>cron: 月次集計・月次確定の詳細は <a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html</a></li>
 </ul>
 <h2 id="4-関連設計">4. 関連設計</h2>
-<p class="section-lead">本 DD に関連する正本ドキュメントを示します。課金・請求の正本は <a href="../02_基本設計/10_課金・請求設計.html">課金・請求設計</a>、API は <a href="../02_基本設計/02_API設計.html">API 設計</a> を参照します。通知は <a href="DD06_通知ロジック.html">DD06_通知ロジック.html</a>、監査ログは <a href="DD09_監査ログ書込・完全性検証.html">DD09_監査ログ書込・完全性検証.html</a>、月次バッチ・物理削除は <a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html</a>、運用面は <a href="../04_運用設計/index.html">運用設計</a> を参照します。</p>
+<p class="section-lead">本 DD に関連する正本ドキュメントを示します。課金・請求の正本は <a href="../02_基本設計/10_課金・請求設計.html">課金・請求設計</a>、API は <a href="../02_基本設計/02_API設計/index.html">API 設計</a> を参照します。通知は <a href="DD06_通知ロジック.html">DD06_通知ロジック.html</a>、監査ログは <a href="DD09_監査ログ書込・完全性検証.html">DD09_監査ログ書込・完全性検証.html</a>、月次バッチ・物理削除は <a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html</a>、運用面は <a href="../04_運用設計/index.html">運用設計</a> を参照します。</p>
 <h2 id="5-テスト観点">5. テスト観点</h2>
 <p class="section-lead">本 DD の受入条件(AC)に対するテスト方式とテストファイルを示します。次の表は、利用量ダッシュボード(AC-020)と Stripe イベント処理(AC-040)の検証手段の対応です。</p>
 <table>

@@ -159,7 +159,7 @@
 <div class="callout warning"><i class="bi bi-exclamation-triangle"></i><div><span class="c-title">注意</span>バリデーション(エラーメッセージ ID は <a href="../06_メッセージ一覧.html">06_メッセージ一覧</a> §4.25 が正本): 氏名は必須・1〜100 文字・前後空白トリム(MSG-SCR-018-ERROR-001 / 002)、パスワードは FR-006 強度(MSG-SCR-018-ERROR-003)、確認は一致(MSG-SCR-018-ERROR-004)、利用規約 / プライバシーポリシーはチェック必須(MSG-SCR-018-ERROR-005 / 006)、Turnstile は検証成功(MSG-COMMON-TURNSTILE)。API 410 はエラー画面、400 はフィールド単位エラー表示(入力可能のまま)。</div></div>
 
 <h2 id="5-入出力一覧">5. 入出力一覧</h2>
-<p class="section-lead">本画面が読み書きするテーブルと、呼び出す API の一覧です。テーブルの正本は <a href="../03_テーブル設計.html">03_テーブル設計</a>、API の正本は <a href="../02_API設計.html#517-post-authinvitationstokenpreview招待トークン検証--招待情報プレビュー">02_API設計 §5.1.7</a> / <a href="../02_API設計.html#518-post-authinvitationstokenactivateメンバーアカウント有効化">§5.1.8</a> です。</p>
+<p class="section-lead">本画面が読み書きするテーブルと、呼び出す API の一覧です。テーブルの正本は <a href="../03_テーブル設計.html">03_テーブル設計</a>、API の正本は <a href="../02_API設計/index.html">02_API設計 §5.1.7</a> / <a href="../02_API設計/index.html">§5.1.8</a> です。</p>
 <table>
 <thead>
 <tr>
@@ -182,8 +182,8 @@
 <tr><td>利用者</td><td>氏名・パスワードハッシュを設定し <code>status='active'</code> 化する</td><td>テーブル</td><td>出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>users</code>(<a href="../03_テーブル設計.html#31-users">テーブル設計 3.1</a>)</td></tr>
 <tr><td>プロジェクト割当</td><td>招待時の予約行を <code>valid=1</code> 化する</td><td>テーブル</td><td>出力</td><td>—</td><td>—</td><td>◯</td><td>—</td><td><code>project_users</code>(<a href="../03_テーブル設計.html#33-project_users">テーブル設計 3.3</a>)</td></tr>
 <tr><td>規約同意記録</td><td>利用規約・プライバシーポリシーの各最新版に対し <code>doc_type</code> 別の 2 行を記録する</td><td>テーブル</td><td>出力</td><td>◯</td><td>—</td><td>—</td><td>—</td><td><code>terms_agreements</code>(<a href="../03_テーブル設計.html#331-terms_agreements">テーブル設計 3.31</a>)</td></tr>
-<tr><td>招待トークン検証</td><td>招待トークンを検証し招待情報をプレビューする</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /auth/invitations/{token}/preview</code>(<a href="../02_API設計.html#517-post-authinvitationstokenpreview招待トークン検証--招待情報プレビュー">API 設計 5.1.7</a>)</td></tr>
-<tr><td>アカウント有効化</td><td>入力内容を送信してアカウントを有効化する(同一トランザクション)</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /auth/invitations/{token}/activate</code>(<a href="../02_API設計.html#518-post-authinvitationstokenactivateメンバーアカウント有効化">API 設計 5.1.8</a>)</td></tr>
+<tr><td>招待トークン検証</td><td>招待トークンを検証し招待情報をプレビューする</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /auth/invitations/{token}/preview</code>(<a href="../02_API設計/index.html">API 設計 5.1.7</a>)</td></tr>
+<tr><td>アカウント有効化</td><td>入力内容を送信してアカウントを有効化する(同一トランザクション)</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /auth/invitations/{token}/activate</code>(<a href="../02_API設計/index.html">API 設計 5.1.8</a>)</td></tr>
 </tbody>
 </table>
 

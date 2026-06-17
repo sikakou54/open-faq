@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API-LNK-009 IF #9 不正利用検知通知(送信側、メ → 顧管) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/02_API設計/API-LNK-009.html">
+<article class="content" id="content">
+<h1 id="API-LNK-009">API-LNK-009 IF #9 不正利用検知通知(送信側、メ → 顧管)</h1>
+
+<aside class="page-summary"><p class="ps-lead"><strong>この API は、メインから顧客管理システムへ不正利用検知を通知します。</strong></p></aside>
+<p class="doc-meta"><span><b>版数</b> v1.6</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<span id="5128-if-9-不正利用検知通知送信側メ--顧管"></span>
+
+<p class="section-lead">メインから顧客管理システムへ不正利用検知を通知します。</p>
+<pre><code>POST https://&lt;admin-host&gt;/internal/main-integration/v1/fraud/detected</code></pre>
+<h2>リクエストパラメータ</h2>
+<pre><code>{ "detectionId": "...", "contractOwnerUserId": "...", "pattern": "...", "details": {...} }</code></pre>
+<p>DLQ 上限: 200/30 分。</p>
+</article>
+</body>
+</html>

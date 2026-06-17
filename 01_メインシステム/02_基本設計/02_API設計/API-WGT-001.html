@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API-WGT-001 ウィジェット起動 | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/02_API設計/API-WGT-001.html">
+<article class="content" id="content">
+<h1 id="API-WGT-001">API-WGT-001 ウィジェット起動</h1>
+
+<aside class="page-summary"><p class="ps-lead"><strong>この API は、公開キーとドメインを検証しウィジェットセッションを発行する。</strong></p></aside>
+<p class="doc-meta"><span><b>版数</b> v1.6</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<span id="551-post-widgetv1bootstrap"></span>
+
+<h2>基本情報</h2>
+<table>
+<thead><tr><th>項目</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>API ID</td><td>API-WGT-001</td></tr>
+<tr><td>API 名</td><td>ウィジェット起動</td></tr>
+<tr><td>エンドポイント</td><td><code>/widget/v1/bootstrap</code></td></tr>
+<tr><td>HTTP メソッド</td><td>POST</td></tr>
+<tr><td>概要</td><td>公開キーとドメインを検証しウィジェットセッションを発行する</td></tr>
+<tr><td>利用画面</td><td>ウィジェット</td></tr>
+<tr><td>認証</td><td>不要(ドメイン検証)</td></tr>
+<tr><td>権限</td><td>end_user(公開キー)</td></tr>
+</tbody>
+</table>
+<h2>リクエストパラメータ</h2>
+<pre><code>{
+  "publicKey": "pk_live_abc123...",
+  "origin": "https://example.com"
+}</code></pre>
+<h2>レスポンス</h2>
+<p>(200):</p>
+<pre><code>{
+  "sessionToken": "wst_...",
+  "expiresIn": 3600,
+  "projectConfig": {
+    "headerColor": "#06c",
+    "placement": "bottom-right",
+    "headerTitle": "お問い合わせ",
+    "contactEmail": "contact@..."
+  }
+}</code></pre>
+<h2>エラー</h2>
+<table>
+<thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>401</td><td><code>WIDGET_KEY_INVALID</code></td><td>公開キーが不正</td></tr>
+<tr><td>403</td><td><code>DOMAIN_NOT_ALLOWED</code></td><td>許可ドメイン外</td></tr>
+<tr><td>403</td><td><code>CONTRACT_SUSPENDED</code></td><td>契約停止中</td></tr>
+</tbody>
+</table>
+</article>
+</body>
+</html>

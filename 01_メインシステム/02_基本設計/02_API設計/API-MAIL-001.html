@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API-MAIL-001 メール配信 IF(EmailProvider) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/02_API設計/API-MAIL-001.html">
+<article class="content" id="content">
+<h1 id="API-MAIL-001">API-MAIL-001 メール配信 IF(<code>EmailProvider</code>)</h1>
+
+<aside class="page-summary"><p class="ps-lead"><strong>この API は、送信(<code>send</code>)と Webhook 検証(<code>verifyWebhook</code>)を持つ内部抽象インターフェースです。MVP は <code>ResendEmailProvider</code> として実装します。</strong></p></aside>
+<p class="doc-meta"><span><b>版数</b> v1.6</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<p class="section-lead">送信(<code>send</code>)と Webhook 検証(<code>verifyWebhook</code>)を持つ内部抽象インターフェースです。MVP は <code>ResendEmailProvider</code> として実装します。</p>
+<pre><code>export interface EmailProvider {
+  send(input: {
+    to: string; from: string; reply_to?: string; subject: string;
+    html: string; text?: string; headers?: Record&lt;string, string&gt;;
+    idempotency_key: string;
+  }): Promise&lt;{ message_id: string }&gt;;
+
+  verifyWebhook(headers: Headers, body: string): Promise&lt;{
+    valid: boolean;
+    event_type: 'sent'|'delivered'|'bounced'|'complained'|'failed'|'opened'|'clicked';
+    message_id: string;
+    timestamp: string;
+  }&gt;;
+}</code></pre>
+<p>MVP は Resend 実装(<code>ResendEmailProvider</code>)。</p>
+</article>
+</body>
+</html>

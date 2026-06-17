@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API-ANN-003 お知らせ一括既読 | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/02_API設計/API-ANN-003.html">
+<article class="content" id="content">
+<h1 id="API-ANN-003">API-ANN-003 お知らせ一括既読</h1>
+
+<aside class="page-summary"><p class="ps-lead"><strong>この API は、選択した複数のお知らせを一括で既読にする(1 リクエスト上限 100 件)。</strong></p></aside>
+<p class="doc-meta"><span><b>版数</b> v1.6</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<span id="582a-post-meannouncementsread"></span>
+
+<h2>基本情報</h2>
+<table>
+<thead><tr><th>項目</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>API ID</td><td>API-ANN-003</td></tr>
+<tr><td>API 名</td><td>お知らせ一括既読</td></tr>
+<tr><td>エンドポイント</td><td><code>/me/announcements/read</code></td></tr>
+<tr><td>HTTP メソッド</td><td>POST</td></tr>
+<tr><td>概要</td><td>選択した複数のお知らせを一括で既読にする(1 リクエスト上限 100 件)</td></tr>
+<tr><td>利用画面</td><td>SCR-011</td></tr>
+<tr><td>認証</td><td>Cookie + CSRF</td></tr>
+<tr><td>権限</td><td>admin 限定</td></tr>
+</tbody>
+</table>
+<p>SCR-011 の一括既読化操作から呼び出し、選択した複数のお知らせを一括で既読にする。1 リクエストの上限は <strong>100 件</strong>。超過時は 400 <code>VALIDATION_ERROR</code>。冪等(既読済みは再記録しない)。一括既読操作は操作者・対象件数・実行日時を監査記録する(FR-152 相当、正本: <a href="../09_セキュリティ設計.html">09_セキュリティ設計.html</a>)。</p>
+<h2>リクエストパラメータ</h2>
+<pre><code>{ "ids": ["ann_...", "ann_..."] }</code></pre>
+<p>(全件既読を指定する場合は <code>{ "all": true }</code>)</p>
+<h2>レスポンス</h2>
+<p>(200):</p>
+<pre><code>{ "readCount": 8, "readAt": "..." }</code></pre>
+<h2>エラー</h2>
+<table>
+<thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>400</td><td><code>VALIDATION_ERROR</code></td><td>100 件超過</td></tr>
+</tbody>
+</table>
+</article>
+</body>
+</html>

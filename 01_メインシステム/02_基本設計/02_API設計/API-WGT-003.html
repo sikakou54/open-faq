@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API-WGT-003 ウィジェット未解決質問登録 | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/02_API設計/API-WGT-003.html">
+<article class="content" id="content">
+<h1 id="API-WGT-003">API-WGT-003 ウィジェット未解決質問登録</h1>
+
+<aside class="page-summary"><p class="ps-lead"><strong>この API は、未解決質問を登録する(チャット部屋は作成しない)。</strong></p></aside>
+<p class="doc-meta"><span><b>版数</b> v1.6</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<span id="553-post-widgetv1inquiries"></span>
+
+<h2>基本情報</h2>
+<table>
+<thead><tr><th>項目</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>API ID</td><td>API-WGT-003</td></tr>
+<tr><td>API 名</td><td>未解決質問登録</td></tr>
+<tr><td>エンドポイント</td><td><code>/widget/v1/inquiries</code></td></tr>
+<tr><td>HTTP メソッド</td><td>POST</td></tr>
+<tr><td>概要</td><td>未解決質問を登録する(チャット部屋は作成しない)</td></tr>
+<tr><td>利用画面</td><td>ウィジェット</td></tr>
+<tr><td>認証</td><td>Bearer session_token</td></tr>
+<tr><td>権限</td><td>end_user(セッション)</td></tr>
+</tbody>
+</table>
+<h2>リクエストパラメータ</h2>
+<pre><code>{
+  "questionId": "qlog_...",
+  "idempotencyKey": "&lt;UUIDv4&gt;"
+}</code></pre>
+<h2>レスポンス</h2>
+<p>(201):</p>
+<pre><code>{ "inquiryId": "inq_...", "inquiryCode": "INQ-20260513-XYZ123", "status": "open" }</code></pre>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>未解決質問登録ではチャット部屋を作成しない。</div></div>
+</article>
+</body>
+</html>
