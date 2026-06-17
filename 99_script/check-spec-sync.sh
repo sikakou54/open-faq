@@ -234,11 +234,10 @@ check_seq("メイン画面メッセージ節", msg, list(range(1, 28)))
 t = read(M + "11_メール設計.html")
 mail = [int(x) for x in re.findall(r'<h3[^>]*>4\.([0-9]+) TPL-', t)]
 check_seq("メインメールテンプレート節", mail, list(range(1, 15)))
-# (f) API 節 5.G.N
+# (f) API 詳細の API-ID 連番(API-001..)
 t = read(M + "02_API設計.html")
-for g, mx in (("2", 5), ("3", 4), ("4", 5)):
-    sec = [int(x) for x in re.findall(r'<h4[^>]*>5\.%s\.([0-9]+) ' % g, t)]
-    check_seq("メイン API 5.%s 節" % g, sec, list(range(1, mx + 1)))
+apis = [int(x) for x in re.findall(r'id="API-([0-9]+)"', t)]
+check_seq("メイン API-ID 連番", apis, list(range(1, len(apis) + 1)))
 PY
 
 # (g) FR-070..077 が未解決質問登録の両システム文書に出現、FR-078/079 は再混入禁止
