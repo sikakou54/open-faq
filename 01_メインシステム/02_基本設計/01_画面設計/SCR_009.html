@@ -156,10 +156,11 @@
 </thead>
 <tbody>
 <tr><td><code>EV-01</code></td><td>一覧初期表示</td><td>画面遷移・リロード時</td><td><ul><li><code>GET /projects/{id}/members</code> で当該プロジェクトのメンバー一覧を取得し表示</li><li>0 件時は EmptyState</li></ul></td><td><a href="#IT-04">IT-04</a>, <a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a>, <a href="#IT-07">IT-07</a>, <a href="#IT-08">IT-08</a>, <a href="#IT-10">IT-10</a></td></tr>
-<tr><td><code>EV-02</code></td><td>絞り込み適用</td><td>検索 / 招待状態フィルタ変更時</td><td><ul><li>条件を付与して一覧を再取得し更新</li><li>件数表示も更新</li></ul></td><td><a href="#IT-01">IT-01</a>, <a href="#IT-02">IT-02</a>, <a href="#IT-03">IT-03</a></td></tr>
-<tr><td><code>EV-03</code></td><td>招待モーダル起動</td><td>「+ メンバーを招待」押下時</td><td>SCR-009-M1 を招待モードで開く</td><td><a href="#IT-09">IT-09</a></td></tr>
-<tr><td><code>EV-04</code></td><td>編集モーダル起動</td><td>利用者表示名リンク押下時</td><td>SCR-009-M1 を編集モードで開く(オーナー行・自分の行は非リンク)</td><td><a href="#IT-04">IT-04</a></td></tr>
-<tr><td><code>EV-05</code></td><td>権限不足リダイレクト</td><td>当該 PJ の admin 権限を持たないユーザーの URL 直アクセス時</td><td>403 とし、ダッシュボードへリダイレクトする</td><td><a href="#IT-11">IT-11</a></td></tr>
+<tr><td><code>EV-02</code></td><td>検索</td><td>検索キーワードの入力時</td><td>キーワードを付与して一覧を再取得し件数表示も更新</td><td><a href="#IT-01">IT-01</a>, <a href="#IT-03">IT-03</a></td></tr>
+<tr><td><code>EV-03</code></td><td>絞り込み</td><td>招待状態フィルタの変更時</td><td>フィルタ条件を付与して一覧を再取得し件数表示も更新</td><td><a href="#IT-02">IT-02</a>, <a href="#IT-03">IT-03</a></td></tr>
+<tr><td><code>EV-04</code></td><td>招待モーダル起動</td><td>「+ メンバーを招待」押下時</td><td>SCR-009-M1 を招待モードで開く</td><td><a href="#IT-09">IT-09</a></td></tr>
+<tr><td><code>EV-05</code></td><td>編集モーダル起動</td><td>利用者表示名リンク押下時</td><td>SCR-009-M1 を編集モードで開く(オーナー行・自分の行は非リンク)</td><td><a href="#IT-04">IT-04</a></td></tr>
+<tr><td><code>EV-06</code></td><td>権限不足リダイレクト</td><td>当該 PJ の admin 権限を持たないユーザーの URL 直アクセス時</td><td>403 とし、ダッシュボードへリダイレクトする</td><td><a href="#IT-11">IT-11</a></td></tr>
 </tbody>
 </table>
 
