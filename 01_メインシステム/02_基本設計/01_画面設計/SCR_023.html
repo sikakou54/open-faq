@@ -101,6 +101,7 @@
 <tr>
 <th>項目 ID</th>
 <th>項目</th>
+<th>説明</th>
 <th>入出力</th>
 <th>種類</th>
 <th>表示条件</th>
@@ -108,10 +109,10 @@
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>請求・重要通知メール</td><td>入力</td><td>テキスト入力</td><td>—</td><td>契約の連絡先メールアドレス</td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>変更を保存</td><td>入力</td><td>ボタン</td><td>—</td><td>連絡先メールの変更保存ボタン</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>退会</td><td>出力</td><td>DangerSection</td><td>—</td><td>画面最下部に配置。退会の影響を説明し通常設定と分離</td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>退会手続きへ</td><td>入力</td><td>ボタン(danger)</td><td>—</td><td>退会画面(SCR-014)への遷移ボタン</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>請求・重要通知メール</td><td>契約の連絡先メールアドレスを入力・表示する</td><td>入力</td><td>テキスト入力</td><td>—</td><td>—</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>変更を保存</td><td>連絡先メールの変更を保存する</td><td>入力</td><td>ボタン</td><td>—</td><td>—</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>退会</td><td>退会の影響を説明し通常設定と分離した DangerSection を表示する</td><td>出力</td><td>DangerSection</td><td>—</td><td>画面最下部に配置</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>退会手続きへ</td><td>退会画面(SCR-014)へ遷移する</td><td>入力</td><td>ボタン(danger)</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 
@@ -121,6 +122,7 @@
 <thead>
 <tr>
 <th rowspan="2">入出力名</th>
+<th rowspan="2">説明</th>
 <th rowspan="2">種別</th>
 <th rowspan="2">I/O</th>
 <th colspan="4">アクセス種別(CRUD)</th>
@@ -134,8 +136,8 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>契約オーナー</td><td>テーブル</td><td>入出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td>契約連絡先メールの取得・更新。<code>contract_owners</code>(<a href="../03_テーブル設計.html#32-contract_owners">テーブル設計 3.2</a>)</td></tr>
-<tr><td>退会申請</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /withdrawal-requests</code>(再認証必須、SCR-014 が正本)(<a href="../02_API設計.html#593-post-withdrawal-requests退会申請">API 設計 5.9.3</a>)</td></tr>
+<tr><td>契約オーナー</td><td>契約連絡先メールを取得・更新する</td><td>テーブル</td><td>入出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>contract_owners</code>(<a href="../03_テーブル設計.html#32-contract_owners">テーブル設計 3.2</a>)</td></tr>
+<tr><td>退会申請</td><td>退会申請を送信する(再認証必須・SCR-014 が正本)</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /withdrawal-requests</code>(<a href="../02_API設計.html#593-post-withdrawal-requests退会申請">API 設計 5.9.3</a>)</td></tr>
 </tbody>
 </table>
 

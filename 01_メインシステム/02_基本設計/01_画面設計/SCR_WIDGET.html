@@ -236,6 +236,7 @@
 <tr>
 <th>項目 ID</th>
 <th>項目</th>
+<th>説明</th>
 <th>入出力</th>
 <th>種類</th>
 <th>表示条件</th>
@@ -243,15 +244,15 @@
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>丸型ランチャーバッジ</td><td>入力</td><td>固定ボタン</td><td>—</td><td>右下固定・直径 56px。<code>aria-label="FAQチャットを開く"</code></td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>ヘッダー</td><td>出力</td><td>固定領域</td><td>—</td><td>ウィジェットタイトル・現在状態・閉じるボタン。利用規約等の導線は表示しない</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>閉じるボタン</td><td>入力</td><td>アイコンボタン</td><td>—</td><td><code>aria-label="FAQチャットを閉じる"</code></td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>会話履歴</td><td>出力</td><td>チャットメッセージリスト</td><td>—</td><td>質問・AI 回答・システム返信を時系列表示</td></tr>
-<tr><td id="IT-05"><code>IT-05</code></td><td>質問入力</td><td>入力</td><td>テキスト入力</td><td>受付制限中(質問数上限到達または支払方法ゲート)の場合は無効化</td><td>通常状態・未解決表示後は入力可</td></tr>
-<tr><td id="IT-06"><code>IT-06</code></td><td>送信</td><td>入力</td><td>ボタン</td><td>受付制限中(質問数上限到達または支払方法ゲート)の場合は無効化</td><td>通常状態・未解決表示後は活性</td></tr>
-<tr><td id="IT-07"><code>IT-07</code></td><td>AI 回答</td><td>出力</td><td>システム返信</td><td>—</td><td>登録 FAQ に基づく回答を同じ会話欄に追加</td></tr>
-<tr><td id="IT-08"><code>IT-08</code></td><td>連絡先メール表示</td><td>出力</td><td>システム返信</td><td>未解決・制限中、かつ連絡先設定済みの場合のみ表示</td><td>確認済みプロジェクト連絡先メールを表示</td></tr>
-<tr><td id="IT-09"><code>IT-09</code></td><td>受付停止メッセージ</td><td>出力</td><td>システム返信(alert)</td><td>受付制限中の場合に表示</td><td>受付停止と問い合わせ先を表示。連絡先未設定時は再試行案内に差し替え</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>丸型ランチャーバッジ</td><td>右下固定のバッジでチャット UI を開く</td><td>入力</td><td>固定ボタン</td><td>—</td><td>右下固定・直径 56px。<code>aria-label="FAQチャットを開く"</code></td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>ヘッダー</td><td>ウィジェットタイトル・現在状態・閉じるボタンを表示する</td><td>出力</td><td>固定領域</td><td>—</td><td>利用規約等の導線は表示しない</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>閉じるボタン</td><td>チャット UI を閉じてバッジ表示へ戻る</td><td>入力</td><td>アイコンボタン</td><td>—</td><td><code>aria-label="FAQチャットを閉じる"</code></td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>会話履歴</td><td>質問・AI 回答・システム返信を時系列で表示する</td><td>出力</td><td>チャットメッセージリスト</td><td>—</td><td>—</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>質問入力</td><td>FAQ 質問のテキストを入力する</td><td>入力</td><td>テキスト入力</td><td>受付制限中(質問数上限到達または支払方法ゲート)の場合は無効化</td><td>通常状態・未解決表示後は入力可</td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>送信</td><td>入力した質問を送信する</td><td>入力</td><td>ボタン</td><td>受付制限中(質問数上限到達または支払方法ゲート)の場合は無効化</td><td>通常状態・未解決表示後は活性</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>AI 回答</td><td>登録 FAQ に基づく回答を同じ会話欄に追加表示する</td><td>出力</td><td>システム返信</td><td>—</td><td>—</td></tr>
+<tr><td id="IT-08"><code>IT-08</code></td><td>連絡先メール表示</td><td>未解決・制限中に確認済みプロジェクト連絡先メールを案内表示する</td><td>出力</td><td>システム返信</td><td>未解決・制限中、かつ連絡先設定済みの場合のみ表示</td><td>—</td></tr>
+<tr><td id="IT-09"><code>IT-09</code></td><td>受付停止メッセージ</td><td>受付停止と問い合わせ先を表示する(連絡先未設定時は再試行案内に差し替え)</td><td>出力</td><td>システム返信(alert)</td><td>受付制限中の場合に表示</td><td>—</td></tr>
 </tbody>
 </table>
 
@@ -261,6 +262,7 @@
 <thead>
 <tr>
 <th rowspan="2">入出力名</th>
+<th rowspan="2">説明</th>
 <th rowspan="2">種別</th>
 <th rowspan="2">I/O</th>
 <th colspan="4">アクセス種別(CRUD)</th>
@@ -274,9 +276,9 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>ウィジェット起動</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>セッション確立・ウィジェット設定取得。<code>POST /widget/v1/bootstrap</code>(<a href="../02_API設計.html#551-post-widgetv1bootstrap">API 設計 5.5.1</a>)</td></tr>
-<tr><td>質問送信</td><td>API</td><td>入出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>質問送信と AI 回答取得。<code>type=unanswered</code> で未解決遷移。<code>POST /widget/v1/ask</code>(<a href="../02_API設計.html#552-post-widgetv1ask質問送信">API 設計 5.5.2</a>)</td></tr>
-<tr><td>未解決質問登録</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>未解決時に質問ログ・未解決質問を登録(問い合わせ ID は非表示)。<code>POST /widget/v1/inquiries</code>(<a href="../02_API設計.html#553-post-widgetv1inquiries未解決質問登録">API 設計 5.5.3</a>)</td></tr>
+<tr><td>ウィジェット起動</td><td>セッションを確立しウィジェット設定を取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /widget/v1/bootstrap</code>(<a href="../02_API設計.html#551-post-widgetv1bootstrap">API 設計 5.5.1</a>)</td></tr>
+<tr><td>質問送信</td><td>質問を送信し AI 回答を取得する(<code>type=unanswered</code> で未解決遷移)</td><td>API</td><td>入出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /widget/v1/ask</code>(<a href="../02_API設計.html#552-post-widgetv1ask質問送信">API 設計 5.5.2</a>)</td></tr>
+<tr><td>未解決質問登録</td><td>未解決時に質問ログ・未解決質問を登録する(問い合わせ ID は非表示)</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /widget/v1/inquiries</code>(<a href="../02_API設計.html#553-post-widgetv1inquiries未解決質問登録">API 設計 5.5.3</a>)</td></tr>
 </tbody>
 </table>
 

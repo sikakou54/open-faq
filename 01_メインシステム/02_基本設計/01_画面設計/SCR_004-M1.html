@@ -93,6 +93,7 @@
 <tr>
 <th>項目 ID</th>
 <th>項目</th>
+<th>説明</th>
 <th>入出力</th>
 <th>種類</th>
 <th>表示条件</th>
@@ -100,17 +101,17 @@
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>見出し</td><td>出力</td><td>見出し</td><td>—</td><td>新規「新規プロジェクトを作成」/ 編集「プロジェクトを編集」</td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>プロジェクト ID</td><td>出力</td><td>読み取り専用テキスト + コピーボタン</td><td>編集モードのみ</td><td>クリック遷移には使いません</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>プロジェクト名</td><td>入力</td><td>テキストボックス</td><td>—</td><td>必須。1〜100 文字、placeholder「例: サポートサイト」、文字数カウンタ</td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>許可ドメイン</td><td>入力</td><td>タグ入力(複数値)</td><td>—</td><td>必須。Enter またはカンマで 1 件追加、即時検証。完全一致 + <code>*.example.com</code> 形式可。IP アドレス・プロトコル指定は不可</td></tr>
-<tr><td id="IT-05"><code>IT-05</code></td><td>許可ドメイン補足ヘルプ</td><td>出力</td><td>helper</td><td>—</td><td>「ウィジェット埋め込みを許可するドメイン。サブドメインを許可するには <code>*.example.com</code> のように記載します」</td></tr>
-<tr><td id="IT-06"><code>IT-06</code></td><td>プロジェクト連絡先メール</td><td>入力</td><td>メールアドレスボックス</td><td>—</td><td>任意。確認完了後はウィジェットの未解決時・制限中「お問い合わせ先」表示にのみ利用</td></tr>
-<tr><td id="IT-07"><code>IT-07</code></td><td>連絡先メール確認状態</td><td>出力</td><td>状態バッジ + 再送ボタン</td><td>編集モードのみ</td><td>「確認済み」/「確認待ち」/「未設定」を表示</td></tr>
-<tr><td id="IT-08"><code>IT-08</code></td><td>キャンセル</td><td>入力</td><td>ボタン(Secondary)</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-09"><code>IT-09</code></td><td>プロジェクトを作成</td><td>入力</td><td>ボタン(Primary)</td><td>新規モードのみ</td><td>—</td></tr>
-<tr><td id="IT-10"><code>IT-10</code></td><td>保存</td><td>入力</td><td>ボタン(Primary)</td><td>編集モードのみ</td><td>—</td></tr>
-<tr><td id="IT-11"><code>IT-11</code></td><td>プロジェクトを削除</td><td>入力</td><td>ボタン(Danger、L3)</td><td>編集モードのみ</td><td>DangerSection。削除導線は本 DangerSection のみに集約(<a href="../../01_要件定義/FR03_プロジェクト管理.html#FR-030b">FR-030b</a>)</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>見出し</td><td>モードに応じてモーダルの見出しを表示する</td><td>出力</td><td>見出し</td><td>—</td><td>新規「新規プロジェクトを作成」/ 編集「プロジェクトを編集」</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>プロジェクト ID</td><td>編集対象プロジェクトの ID を読み取り専用で表示しコピーを提供する</td><td>出力</td><td>読み取り専用テキスト + コピーボタン</td><td>編集モードのみ</td><td>クリック遷移には使いません</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>プロジェクト名</td><td>プロジェクトの名称を入力する</td><td>入力</td><td>テキストボックス</td><td>—</td><td>必須。1〜100 文字、placeholder「例: サポートサイト」、文字数カウンタ</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>許可ドメイン</td><td>ウィジェット埋め込みを許可するドメインを複数入力する</td><td>入力</td><td>タグ入力(複数値)</td><td>—</td><td>必須。Enter またはカンマで 1 件追加、即時検証。完全一致 + <code>*.example.com</code> 形式可。IP アドレス・プロトコル指定は不可</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>許可ドメイン補足ヘルプ</td><td>許可ドメインの入力形式を補足説明する</td><td>出力</td><td>helper</td><td>—</td><td>「ウィジェット埋め込みを許可するドメイン。サブドメインを許可するには <code>*.example.com</code> のように記載します」</td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>プロジェクト連絡先メール</td><td>プロジェクトの連絡先メールアドレスを入力する</td><td>入力</td><td>メールアドレスボックス</td><td>—</td><td>任意。確認完了後はウィジェットの未解決時・制限中「お問い合わせ先」表示にのみ利用</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>連絡先メール確認状態</td><td>連絡先メールの確認状態を表示し再送導線を提供する</td><td>出力</td><td>状態バッジ + 再送ボタン</td><td>編集モードのみ</td><td>「確認済み」/「確認待ち」/「未設定」を表示</td></tr>
+<tr><td id="IT-08"><code>IT-08</code></td><td>キャンセル</td><td>変更を破棄してモーダルを閉じる</td><td>入力</td><td>ボタン(Secondary)</td><td>—</td><td>—</td></tr>
+<tr><td id="IT-09"><code>IT-09</code></td><td>プロジェクトを作成</td><td>入力内容で新規プロジェクトを作成する</td><td>入力</td><td>ボタン(Primary)</td><td>新規モードのみ</td><td>—</td></tr>
+<tr><td id="IT-10"><code>IT-10</code></td><td>保存</td><td>編集内容でプロジェクトを更新する</td><td>入力</td><td>ボタン(Primary)</td><td>編集モードのみ</td><td>—</td></tr>
+<tr><td id="IT-11"><code>IT-11</code></td><td>プロジェクトを削除</td><td>名称タイプ確認と再認証を経てプロジェクトを論理削除する</td><td>入力</td><td>ボタン(Danger、L3)</td><td>編集モードのみ</td><td>DangerSection。削除導線は本 DangerSection のみに集約(<a href="../../01_要件定義/FR03_プロジェクト管理.html#FR-030b">FR-030b</a>)</td></tr>
 </tbody>
 </table>
 <div class="callout warning"><i class="bi bi-exclamation-triangle"></i><div><span class="c-title">注意</span>バリデーション: プロジェクト名は必須 1〜100 文字、許可ドメインは必須(URL またはワイルドカード形式、IP / プロトコル指定不可)、連絡先メールは任意(メール形式)。削除はプロジェクト名の完全一致タイプ確認 + 再認証(L3)を必須とします。</div></div>
@@ -121,6 +122,7 @@
 <thead>
 <tr>
 <th rowspan="2">入出力名</th>
+<th rowspan="2">説明</th>
 <th rowspan="2">種別</th>
 <th rowspan="2">I/O</th>
 <th colspan="4">アクセス種別(CRUD)</th>
@@ -134,12 +136,12 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>プロジェクト</td><td>テーブル</td><td>入力 / 出力</td><td>◯</td><td>◯</td><td>◯</td><td>◯</td><td>新規作成 / 現値ロード / 更新 / 論理削除(<code>valid=0</code>)。<code>projects</code>(<a href="../03_テーブル設計.html#36-projects">テーブル設計 3.6</a>)</td></tr>
-<tr><td>許可ドメイン</td><td>テーブル</td><td>入力 / 出力</td><td>◯</td><td>◯</td><td>◯</td><td>◯</td><td>許可ドメインの登録・更新・削除。<code>allowed_domains</code>(<a href="../03_テーブル設計.html#38-allowed_domains">テーブル設計 3.8</a>)</td></tr>
-<tr><td>プロジェクト割当</td><td>テーブル</td><td>出力</td><td>◯</td><td>—</td><td>◯</td><td>—</td><td>作成時にオーナーを <code>role='admin', valid=1</code> 自動 INSERT。削除時は論理削除。<code>project_users</code>(<a href="../03_テーブル設計.html#33-project_users">テーブル設計 3.3</a>)</td></tr>
-<tr><td>プロジェクト作成</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /projects</code>(<a href="../02_API設計.html#532-post-projects新規作成">API 設計 5.3.2</a>)</td></tr>
-<tr><td>プロジェクト更新・削除</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>編集 <code>PATCH /projects/{id}</code> / 削除 <code>DELETE /projects/{id}</code>(編集モードは <code>GET /projects/{id}</code> で現値ロード)(<a href="../02_API設計.html#533-patch-projectsid--delete-projectsid">API 設計 5.3.3</a>)</td></tr>
-<tr><td>連絡先メール確認</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>確認トークン検証 <code>POST /auth/contact-verifications/{token}</code>(<a href="../02_API設計.html#519-post-authcontact-verificationstokenプロジェクト連絡先メール確認">API 設計 5.1.9</a>)</td></tr>
+<tr><td>プロジェクト</td><td>新規作成・現値ロード・更新・論理削除を行う</td><td>テーブル</td><td>入力 / 出力</td><td>◯</td><td>◯</td><td>◯</td><td>◯</td><td>論理削除は <code>valid=0</code>。<code>projects</code>(<a href="../03_テーブル設計.html#36-projects">テーブル設計 3.6</a>)</td></tr>
+<tr><td>許可ドメイン</td><td>許可ドメインの登録・更新・削除を行う</td><td>テーブル</td><td>入力 / 出力</td><td>◯</td><td>◯</td><td>◯</td><td>◯</td><td><code>allowed_domains</code>(<a href="../03_テーブル設計.html#38-allowed_domains">テーブル設計 3.8</a>)</td></tr>
+<tr><td>プロジェクト割当</td><td>作成時にオーナーを管理者として自動登録し、削除時は論理削除する</td><td>テーブル</td><td>出力</td><td>◯</td><td>—</td><td>◯</td><td>—</td><td>作成時 <code>role='admin', valid=1</code> 自動 INSERT。<code>project_users</code>(<a href="../03_テーブル設計.html#33-project_users">テーブル設計 3.3</a>)</td></tr>
+<tr><td>プロジェクト作成</td><td>新規プロジェクトを作成する API を呼び出す</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /projects</code>(<a href="../02_API設計.html#532-post-projects新規作成">API 設計 5.3.2</a>)</td></tr>
+<tr><td>プロジェクト更新・削除</td><td>編集での現値ロード・更新・削除 API を呼び出す</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>編集 <code>PATCH /projects/{id}</code> / 削除 <code>DELETE /projects/{id}</code> / 現値ロード <code>GET /projects/{id}</code>(<a href="../02_API設計.html#533-patch-projectsid--delete-projectsid">API 設計 5.3.3</a>)</td></tr>
+<tr><td>連絡先メール確認</td><td>連絡先メールの確認トークンを検証する API を呼び出す</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /auth/contact-verifications/{token}</code>(<a href="../02_API設計.html#519-post-authcontact-verificationstokenプロジェクト連絡先メール確認">API 設計 5.1.9</a>)</td></tr>
 </tbody>
 </table>
 

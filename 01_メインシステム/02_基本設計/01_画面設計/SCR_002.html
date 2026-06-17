@@ -90,6 +90,7 @@
 <tr>
 <th>項目 ID</th>
 <th>項目</th>
+<th>説明</th>
 <th>入出力</th>
 <th>種類</th>
 <th>表示条件</th>
@@ -97,15 +98,15 @@
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>メールアドレス</td><td>入力</td><td>メールアドレスボックス</td><td>—</td><td>必須。オーナー本人のメール。形式チェック</td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>パスワード</td><td>入力</td><td>パスワードボックス</td><td>—</td><td>必須。<a href="../../01_要件定義/FR01_アカウント管理.html#FR-006">FR-006</a> 強度要件(12 文字以上・3 種類以上の文字種)</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>パスワード(確認)</td><td>入力</td><td>パスワードボックス</td><td>—</td><td>必須。一致確認</td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>業種選択</td><td>入力</td><td>プルダウン</td><td>—</td><td>任意</td></tr>
-<tr><td id="IT-05"><code>IT-05</code></td><td>利用規約同意</td><td>入力</td><td>チェックボックス</td><td>—</td><td>必須チェック</td></tr>
-<tr><td id="IT-06"><code>IT-06</code></td><td>プライバシーポリシー同意</td><td>入力</td><td>チェックボックス</td><td>—</td><td>必須チェック</td></tr>
-<tr><td id="IT-07"><code>IT-07</code></td><td>規約・ポリシーリンク</td><td>出力</td><td>リンク</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-08"><code>IT-08</code></td><td>登録ボタン</td><td>入力</td><td>ボタン(Primary)</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-09"><code>IT-09</code></td><td>ログイン画面リンク</td><td>入力</td><td>リンク</td><td>—</td><td>既存ユーザー向け</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>メールアドレス</td><td>オーナー本人のメールアドレスを入力する</td><td>入力</td><td>メールアドレスボックス</td><td>—</td><td>必須。形式チェック</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>パスワード</td><td>アカウントのパスワードを入力する</td><td>入力</td><td>パスワードボックス</td><td>—</td><td>必須。<a href="../../01_要件定義/FR01_アカウント管理.html#FR-006">FR-006</a> 強度要件(12 文字以上・3 種類以上の文字種)</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>パスワード(確認)</td><td>パスワードを再入力して一致を確認する</td><td>入力</td><td>パスワードボックス</td><td>—</td><td>必須。一致確認</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>業種選択</td><td>利用者の業種を選択する</td><td>入力</td><td>プルダウン</td><td>—</td><td>任意</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>利用規約同意</td><td>利用規約への同意を表明する</td><td>入力</td><td>チェックボックス</td><td>—</td><td>必須チェック</td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>プライバシーポリシー同意</td><td>プライバシーポリシーへの同意を表明する</td><td>入力</td><td>チェックボックス</td><td>—</td><td>必須チェック</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>規約・ポリシーリンク</td><td>利用規約・プライバシーポリシーの全文を別ウィンドウで表示する</td><td>出力</td><td>リンク</td><td>—</td><td>—</td></tr>
+<tr><td id="IT-08"><code>IT-08</code></td><td>登録ボタン</td><td>入力内容で登録し確認メール送信フローへ進む</td><td>入力</td><td>ボタン(Primary)</td><td>—</td><td>—</td></tr>
+<tr><td id="IT-09"><code>IT-09</code></td><td>ログイン画面リンク</td><td>既存ユーザー向けにログイン画面へ遷移する導線</td><td>入力</td><td>リンク</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 
@@ -115,6 +116,7 @@
 <thead>
 <tr>
 <th rowspan="2">入出力名</th>
+<th rowspan="2">説明</th>
 <th rowspan="2">種別</th>
 <th rowspan="2">I/O</th>
 <th colspan="4">アクセス種別(CRUD)</th>
@@ -128,9 +130,9 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>利用者</td><td>テーブル</td><td>出力</td><td>◯</td><td>◯</td><td>—</td><td>—</td><td>メール重複確認 → 新規オーナーユーザー作成。<code>users</code>(<a href="../03_テーブル設計.html#31-users">テーブル設計 3.1</a>)</td></tr>
-<tr><td>契約オーナー</td><td>テーブル</td><td>出力</td><td>◯</td><td>—</td><td>—</td><td>—</td><td>オーナー専有属性行の作成(1 契約 = 1 オーナー)。<code>contract_owners</code>(<a href="../03_テーブル設計.html#32-contract_owners">テーブル設計 3.2</a>)</td></tr>
-<tr><td>新規登録</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>登録 → 確認メール送信。<code>POST /auth/signup</code>(<a href="../02_API設計.html#511-post-authsignup新規登録">API 設計 5.1.1</a>)</td></tr>
+<tr><td>利用者</td><td>メール重複を確認し新規オーナーユーザーを作成する</td><td>テーブル</td><td>出力</td><td>◯</td><td>◯</td><td>—</td><td>—</td><td><code>users</code>(<a href="../03_テーブル設計.html#31-users">テーブル設計 3.1</a>)</td></tr>
+<tr><td>契約オーナー</td><td>オーナー専有属性行を作成する(1 契約 = 1 オーナー)</td><td>テーブル</td><td>出力</td><td>◯</td><td>—</td><td>—</td><td>—</td><td><code>contract_owners</code>(<a href="../03_テーブル設計.html#32-contract_owners">テーブル設計 3.2</a>)</td></tr>
+<tr><td>新規登録</td><td>登録して確認メールを送信する</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /auth/signup</code>(<a href="../02_API設計.html#511-post-authsignup新規登録">API 設計 5.1.1</a>)</td></tr>
 </tbody>
 </table>
 

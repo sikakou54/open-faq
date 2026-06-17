@@ -97,6 +97,7 @@
 <tr>
 <th>項目 ID</th>
 <th>項目</th>
+<th>説明</th>
 <th>入出力</th>
 <th>種類</th>
 <th>表示条件</th>
@@ -104,10 +105,10 @@
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>主な変更点</td><td>出力</td><td>パネル(リッチテキスト表示、sanitize 済)</td><td>改定された文書のみ表示(利用規約 / プライバシーポリシーの該当文書)</td><td>各文書の <code>terms_versions.diff_summary</code> 最新版を <code>GET /terms/current</code> / <code>GET /privacy/current</code> から取得。「利用規約の主な変更点」「プライバシーポリシーの主な変更点」の見出しで区別</td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>利用規約同意</td><td>入力</td><td>チェックボックス</td><td>利用規約が改定対象の場合に表示</td><td>必須。<code>doc_type='terms_of_service'</code> 最新版への同意。「利用規約(リンク)に同意します」。リンクで SCR-010 を参照</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>プライバシーポリシー同意</td><td>入力</td><td>チェックボックス</td><td>プライバシーポリシーが改定対象の場合に表示</td><td>必須。<code>doc_type='privacy_policy'</code> 最新版への同意。「プライバシーポリシー(リンク)に同意します」。リンクで SCR-020 を参照</td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>同意して続行する</td><td>入力</td><td>ボタン(Primary)</td><td>両チェック充足時のみ活性化</td><td>同意は <code>terms_agreements</code> に <code>doc_type</code> 別で各 1 行記録(改定された文書のみが対象)</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>主な変更点</td><td>改定された利用規約 / プライバシーポリシーの主な変更点を見出しで区別して表示する</td><td>出力</td><td>パネル(リッチテキスト表示、sanitize 済)</td><td>改定された文書のみ表示(利用規約 / プライバシーポリシーの該当文書)</td><td>各文書の <code>terms_versions.diff_summary</code> 最新版を <code>GET /terms/current</code> / <code>GET /privacy/current</code> から取得</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>利用規約同意</td><td>利用規約最新版への同意をチェックする(リンクで SCR-010 を参照)</td><td>入力</td><td>チェックボックス</td><td>利用規約が改定対象の場合に表示</td><td>必須。<code>doc_type='terms_of_service'</code> 最新版への同意</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>プライバシーポリシー同意</td><td>プライバシーポリシー最新版への同意をチェックする(リンクで SCR-020 を参照)</td><td>入力</td><td>チェックボックス</td><td>プライバシーポリシーが改定対象の場合に表示</td><td>必須。<code>doc_type='privacy_policy'</code> 最新版への同意</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>同意して続行する</td><td>同意を確定して元の操作へ戻る</td><td>入力</td><td>ボタン(Primary)</td><td>両チェック充足時のみ活性化</td><td>同意は <code>terms_agreements</code> に <code>doc_type</code> 別で各 1 行記録(改定された文書のみが対象)</td></tr>
 </tbody>
 </table>
 
@@ -117,6 +118,7 @@
 <thead>
 <tr>
 <th rowspan="2">入出力名</th>
+<th rowspan="2">説明</th>
 <th rowspan="2">種別</th>
 <th rowspan="2">I/O</th>
 <th colspan="4">アクセス種別(CRUD)</th>
@@ -130,12 +132,12 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>規約バージョン</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td>差分サマリ・最新版の取得。<code>terms_versions</code>(<a href="../03_テーブル設計.html#330-terms_versions">テーブル設計 3.30</a>)</td></tr>
-<tr><td>規約同意</td><td>テーブル</td><td>出力</td><td>◯</td><td>—</td><td>—</td><td>—</td><td><code>doc_type</code> 別で同意を記録。<code>terms_agreements</code>(<a href="../03_テーブル設計.html#331-terms_agreements">テーブル設計 3.31</a>)</td></tr>
-<tr><td>利用規約 最新版取得</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /terms/current</code>(<a href="../02_API設計.html#591-get-termscurrent利用規約-最新版">API 設計 5.9.1</a>)</td></tr>
-<tr><td>プライバシーポリシー 最新版取得</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /privacy/current</code>(<a href="../02_API設計.html#591a-get-privacycurrentプライバシーポリシー-最新版">API 設計 5.9.1a</a>)</td></tr>
-<tr><td>利用規約 同意</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /terms/agree</code>(<a href="../02_API設計.html#592-post-termsagree利用規約-同意">API 設計 5.9.2</a>)</td></tr>
-<tr><td>プライバシーポリシー 同意</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /privacy/agree</code>(<a href="../02_API設計.html#592a-post-privacyagreeプライバシーポリシー-同意">API 設計 5.9.2a</a>)</td></tr>
+<tr><td>規約バージョン</td><td>差分サマリ・最新版を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>terms_versions</code>(<a href="../03_テーブル設計.html#330-terms_versions">テーブル設計 3.30</a>)</td></tr>
+<tr><td>規約同意</td><td><code>doc_type</code> 別で同意を記録する</td><td>テーブル</td><td>出力</td><td>◯</td><td>—</td><td>—</td><td>—</td><td><code>terms_agreements</code>(<a href="../03_テーブル設計.html#331-terms_agreements">テーブル設計 3.31</a>)</td></tr>
+<tr><td>利用規約 最新版取得</td><td>利用規約の最新版・差分サマリを取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /terms/current</code>(<a href="../02_API設計.html#591-get-termscurrent利用規約-最新版">API 設計 5.9.1</a>)</td></tr>
+<tr><td>プライバシーポリシー 最新版取得</td><td>プライバシーポリシーの最新版・差分サマリを取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /privacy/current</code>(<a href="../02_API設計.html#591a-get-privacycurrentプライバシーポリシー-最新版">API 設計 5.9.1a</a>)</td></tr>
+<tr><td>利用規約 同意</td><td>利用規約最新版への同意を送信する</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /terms/agree</code>(<a href="../02_API設計.html#592-post-termsagree利用規約-同意">API 設計 5.9.2</a>)</td></tr>
+<tr><td>プライバシーポリシー 同意</td><td>プライバシーポリシー最新版への同意を送信する</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /privacy/agree</code>(<a href="../02_API設計.html#592a-post-privacyagreeプライバシーポリシー-同意">API 設計 5.9.2a</a>)</td></tr>
 </tbody>
 </table>
 

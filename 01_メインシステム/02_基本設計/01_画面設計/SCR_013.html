@@ -97,6 +97,7 @@
 <tr>
 <th>項目 ID</th>
 <th>項目</th>
+<th>説明</th>
 <th>入出力</th>
 <th>種類</th>
 <th>表示条件</th>
@@ -104,14 +105,14 @@
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>状態タイムライン</td><td>出力</td><td>Timeline</td><td>送信済み状態</td><td>「① 新規登録 → ② 確認メールのリンクをクリック → ③ ログイン」</td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>送信先メールアドレス</td><td>出力</td><td>テキスト(強調)</td><td>送信済み状態</td><td>確認メール送信先</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>案内文</td><td>出力</td><td>テキスト</td><td>送信済み状態</td><td>「確認リンクの有効期限は 24 時間です」+「メールが届かない場合は迷惑メールフォルダもご確認ください」</td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>メールを再送する</td><td>入力</td><td>ボタン(Secondary)</td><td>送信済み状態(レート制限 5 分以内 1 回・カウントダウン併記)</td><td>—</td></tr>
-<tr><td id="IT-05"><code>IT-05</code></td><td>メールアドレスを変更する</td><td>入力</td><td>リンク(Secondary)</td><td>送信済み状態</td><td>SCR-002 へ戻る</td></tr>
-<tr><td id="IT-06"><code>IT-06</code></td><td>確認成功</td><td>出力</td><td>完了画面</td><td>確認成功状態</td><td>「メールアドレスの確認が完了しました」+「ログインする」CTA</td></tr>
-<tr><td id="IT-07"><code>IT-07</code></td><td>確認失敗</td><td>出力</td><td>エラー画面 + 復旧 CTA</td><td>確認失敗状態(リンク期限切れ・使用済み)</td><td>「確認リンクが期限切れ、または使用済みです」+「新規登録からやり直す」CTA</td></tr>
-<tr><td id="IT-08"><code>IT-08</code></td><td>ログインする</td><td>入力</td><td>ボタン(Primary)</td><td>確認成功状態</td><td>SCR-001 へ</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>状態タイムライン</td><td>登録〜ログインの進捗をステップ表示する</td><td>出力</td><td>Timeline</td><td>送信済み状態</td><td>「① 新規登録 → ② 確認メールのリンクをクリック → ③ ログイン」</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>送信先メールアドレス</td><td>確認メールの送信先アドレスを表示する</td><td>出力</td><td>テキスト(強調)</td><td>送信済み状態</td><td>—</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>案内文</td><td>有効期限と迷惑メール確認の案内を表示する</td><td>出力</td><td>テキスト</td><td>送信済み状態</td><td>「確認リンクの有効期限は 24 時間です」+「メールが届かない場合は迷惑メールフォルダもご確認ください」</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>メールを再送する</td><td>確認メールを再送する</td><td>入力</td><td>ボタン(Secondary)</td><td>送信済み状態(レート制限 5 分以内 1 回・カウントダウン併記)</td><td>—</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>メールアドレスを変更する</td><td>アカウント登録(SCR-002)へ戻り入力をやり直す</td><td>入力</td><td>リンク(Secondary)</td><td>送信済み状態</td><td>SCR-002 へ戻る</td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>確認成功</td><td>本人確認完了を伝えログインへ誘導する</td><td>出力</td><td>完了画面</td><td>確認成功状態</td><td>「メールアドレスの確認が完了しました」+「ログインする」CTA</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>確認失敗</td><td>リンク期限切れ・使用済みを伝え復旧導線を出す</td><td>出力</td><td>エラー画面 + 復旧 CTA</td><td>確認失敗状態(リンク期限切れ・使用済み)</td><td>「確認リンクが期限切れ、または使用済みです」+「新規登録からやり直す」CTA</td></tr>
+<tr><td id="IT-08"><code>IT-08</code></td><td>ログインする</td><td>ログイン画面(SCR-001)へ遷移する</td><td>入力</td><td>ボタン(Primary)</td><td>確認成功状態</td><td>SCR-001 へ</td></tr>
 </tbody>
 </table>
 
@@ -121,6 +122,7 @@
 <thead>
 <tr>
 <th rowspan="2">入出力名</th>
+<th rowspan="2">説明</th>
 <th rowspan="2">種別</th>
 <th rowspan="2">I/O</th>
 <th colspan="4">アクセス種別(CRUD)</th>
@@ -134,9 +136,9 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>利用者</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td>メール確認状態の照合・更新。<code>users</code>(<a href="../03_テーブル設計.html#31-users">テーブル設計 3.1</a>)</td></tr>
-<tr><td>メール確認</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>トークン検証 → 本人確認完了。<code>POST /auth/email-verifications/{token}</code>(<a href="../02_API設計.html#516-post-authemail-verificationstokenメール確認">API 設計 5.1.6</a>)</td></tr>
-<tr><td>確認メール再送</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>確認メールの再送(レート制限あり)。新規登録フロー(<a href="../02_API設計.html#511-post-authsignup新規登録">API 設計 5.1.1</a>)経由</td></tr>
+<tr><td>利用者</td><td>メール確認状態を照合・更新する</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>users</code>(<a href="../03_テーブル設計.html#31-users">テーブル設計 3.1</a>)</td></tr>
+<tr><td>メール確認</td><td>確認トークンを検証し本人確認を完了する</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /auth/email-verifications/{token}</code>(<a href="../02_API設計.html#516-post-authemail-verificationstokenメール確認">API 設計 5.1.6</a>)</td></tr>
+<tr><td>確認メール再送</td><td>確認メールを再送する(レート制限あり)</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>新規登録フロー(<a href="../02_API設計.html#511-post-authsignup新規登録">API 設計 5.1.1</a>)経由</td></tr>
 </tbody>
 </table>
 

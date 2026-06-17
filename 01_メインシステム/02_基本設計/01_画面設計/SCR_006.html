@@ -91,6 +91,7 @@
 <tr>
 <th>項目 ID</th>
 <th>項目</th>
+<th>説明</th>
 <th>入出力</th>
 <th>種類</th>
 <th>表示条件</th>
@@ -98,21 +99,21 @@
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>キーワード検索</td><td>入力</td><td>テキストボックス</td><td>—</td><td>質問・回答の全文検索</td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>カテゴリフィルタ</td><td>入力</td><td>プルダウン</td><td>—</td><td>プロジェクト内のカテゴリ</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>並び順</td><td>入力</td><td>プルダウン</td><td>—</td><td>関連度 / 更新日時 / 作成日時</td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>FAQ ID</td><td>出力</td><td>テキストリンク</td><td>—</td><td>一覧先頭列。<code>faqs.id</code>(<code>faq_…</code> 形式)</td></tr>
-<tr><td id="IT-05"><code>IT-05</code></td><td>質問</td><td>出力</td><td>テキスト</td><td>—</td><td>先頭 60 文字(クリック不可)</td></tr>
-<tr><td id="IT-06"><code>IT-06</code></td><td>カテゴリ</td><td>出力</td><td>テキスト</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-07"><code>IT-07</code></td><td>状態バッジ</td><td>出力</td><td>バッジ</td><td>—</td><td><code>draft</code> / <code>published</code> / <code>hidden</code>。色のみ依存禁止</td></tr>
-<tr><td id="IT-08"><code>IT-08</code></td><td>更新日時</td><td>出力</td><td>テキスト</td><td>—</td><td>相対表記 + tooltip 絶対日時</td></tr>
-<tr><td id="IT-09"><code>IT-09</code></td><td>件数表示</td><td>出力</td><td>テキスト</td><td>—</td><td>「1-50 / 全 124 件」形式</td></tr>
-<tr><td id="IT-10"><code>IT-10</code></td><td>行選択チェックボックス</td><td>入力</td><td>チェックボックス</td><td>—</td><td>一括操作の対象選択。最大 50 件</td></tr>
-<tr><td id="IT-11"><code>IT-11</code></td><td>新規作成</td><td>入力</td><td>ボタン(Primary)</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-12"><code>IT-12</code></td><td>一括操作バー</td><td>入力</td><td>BulkActionBar</td><td>1 件以上選択時に下部固定</td><td>公開 / 非公開化 / 削除(操作列ではなくチェックボックス選択への一括処理)</td></tr>
-<tr><td id="IT-13"><code>IT-13</code></td><td>CSV をインポート</td><td>入力</td><td>ボタン</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-14"><code>IT-14</code></td><td>CSV をエクスポート</td><td>入力</td><td>ボタン</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-15"><code>IT-15</code></td><td>空状態</td><td>出力</td><td>EmptyState</td><td>FAQ 0 件時のみ表示</td><td>「FAQ がまだありません。最初の FAQ を作成しましょう。」</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>キーワード検索</td><td>質問・回答を全文検索して一覧を絞り込む</td><td>入力</td><td>テキストボックス</td><td>—</td><td>—</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>カテゴリフィルタ</td><td>プロジェクト内のカテゴリで一覧を絞り込む</td><td>入力</td><td>プルダウン</td><td>—</td><td>—</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>並び順</td><td>一覧の並び順を切り替える(関連度 / 更新日時 / 作成日時)</td><td>入力</td><td>プルダウン</td><td>—</td><td>—</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>FAQ ID</td><td>各 FAQ の ID を一覧先頭列に表示し、押下で編集画面へ遷移する</td><td>出力</td><td>テキストリンク</td><td>—</td><td><code>faqs.id</code>(<code>faq_…</code> 形式)</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>質問</td><td>FAQ の質問文を先頭 60 文字で表示する(クリック不可)</td><td>出力</td><td>テキスト</td><td>—</td><td>—</td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>カテゴリ</td><td>FAQ のカテゴリを表示する</td><td>出力</td><td>テキスト</td><td>—</td><td>—</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>状態バッジ</td><td>FAQ の公開状態を色とラベルで表示する</td><td>出力</td><td>バッジ</td><td>—</td><td><code>draft</code> / <code>published</code> / <code>hidden</code>。色のみ依存禁止</td></tr>
+<tr><td id="IT-08"><code>IT-08</code></td><td>更新日時</td><td>FAQ の最終更新日時を相対表記で表示する</td><td>出力</td><td>テキスト</td><td>—</td><td>tooltip に絶対日時</td></tr>
+<tr><td id="IT-09"><code>IT-09</code></td><td>件数表示</td><td>表示中の件数と全件数を表示する</td><td>出力</td><td>テキスト</td><td>—</td><td>「1-50 / 全 124 件」形式</td></tr>
+<tr><td id="IT-10"><code>IT-10</code></td><td>行選択チェックボックス</td><td>一括操作の対象 FAQ を選択する(最大 50 件)</td><td>入力</td><td>チェックボックス</td><td>—</td><td>—</td></tr>
+<tr><td id="IT-11"><code>IT-11</code></td><td>新規作成</td><td>FAQ 編集画面を新規モードで開く</td><td>入力</td><td>ボタン(Primary)</td><td>—</td><td>—</td></tr>
+<tr><td id="IT-12"><code>IT-12</code></td><td>一括操作バー</td><td>選択中の FAQ を一括で公開 / 非公開化 / 削除する</td><td>入力</td><td>BulkActionBar</td><td>1 件以上選択時に下部固定</td><td>操作列ではなくチェックボックス選択への一括処理</td></tr>
+<tr><td id="IT-13"><code>IT-13</code></td><td>CSV をインポート</td><td>CSV インポートモーダル(SCR-006-M1)を開く</td><td>入力</td><td>ボタン</td><td>—</td><td>—</td></tr>
+<tr><td id="IT-14"><code>IT-14</code></td><td>CSV をエクスポート</td><td>フィルタ適用結果を CSV でダウンロードする</td><td>入力</td><td>ボタン</td><td>—</td><td>—</td></tr>
+<tr><td id="IT-15"><code>IT-15</code></td><td>空状態</td><td>FAQ が 0 件のとき作成を促す EmptyState を表示する</td><td>出力</td><td>EmptyState</td><td>FAQ 0 件時のみ表示</td><td>「FAQ がまだありません。最初の FAQ を作成しましょう。」</td></tr>
 </tbody>
 </table>
 
@@ -122,6 +123,7 @@
 <thead>
 <tr>
 <th rowspan="2">入出力名</th>
+<th rowspan="2">説明</th>
 <th rowspan="2">種別</th>
 <th rowspan="2">I/O</th>
 <th colspan="4">アクセス種別(CRUD)</th>
@@ -135,11 +137,11 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>FAQ</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>◯</td><td>一覧取得・一括状態変更・一括削除(論理削除)。<code>faqs</code>(<a href="../03_テーブル設計.html#39-faqs">テーブル設計 3.9</a>)</td></tr>
-<tr><td>FAQ 一覧取得</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /faqs</code>(<code>status</code> / <code>projectId</code> / <code>keyword</code> / <code>cursor</code>)(<a href="../02_API設計.html#541-get-faqsstatusdraftprojectidkeywordcursor">API 設計 5.4.1</a>)</td></tr>
-<tr><td>FAQ 一括状態変更</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>一括の公開 / 非公開化。<code>POST /faqs/bulk-status</code>(<a href="../02_API設計.html#542a-post-faqsbulk-status一括状態変更">API 設計 5.4.2a</a>)</td></tr>
-<tr><td>FAQ エクスポート</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /faqs/export</code>(<a href="../02_API設計.html#545-get-faqsexport">API 設計 5.4.5</a>)</td></tr>
-<tr><td>FAQ CSV</td><td>ファイル</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>フィルタ適用結果のエクスポート(CSV UTF-8 / ダウンロード)</td></tr>
+<tr><td>FAQ</td><td>一覧を取得し、一括の状態変更・論理削除を行う</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>◯</td><td><code>faqs</code>(<a href="../03_テーブル設計.html#39-faqs">テーブル設計 3.9</a>)</td></tr>
+<tr><td>FAQ 一覧取得</td><td>条件付きで FAQ 一覧を取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /faqs</code>(<code>status</code> / <code>projectId</code> / <code>keyword</code> / <code>cursor</code>)(<a href="../02_API設計.html#541-get-faqsstatusdraftprojectidkeywordcursor">API 設計 5.4.1</a>)</td></tr>
+<tr><td>FAQ 一括状態変更</td><td>選択中の FAQ を一括で公開 / 非公開化する</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /faqs/bulk-status</code>(<a href="../02_API設計.html#542a-post-faqsbulk-status一括状態変更">API 設計 5.4.2a</a>)</td></tr>
+<tr><td>FAQ エクスポート</td><td>フィルタ適用結果を CSV として取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /faqs/export</code>(<a href="../02_API設計.html#545-get-faqsexport">API 設計 5.4.5</a>)</td></tr>
+<tr><td>FAQ CSV</td><td>エクスポート結果をダウンロードする</td><td>ファイル</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>CSV UTF-8 / ダウンロード</td></tr>
 </tbody>
 </table>
 

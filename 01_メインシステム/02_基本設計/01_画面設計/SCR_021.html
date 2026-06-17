@@ -336,6 +336,7 @@
 <tr>
 <th>項目 ID</th>
 <th>項目</th>
+<th>説明</th>
 <th>入出力</th>
 <th>種類</th>
 <th>表示条件</th>
@@ -343,13 +344,13 @@
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>PageHeader</td><td>出力</td><td>見出し</td><td>—</td><td>「利用量と上限」のみ。プロジェクト名・サイト名は付加しない</td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>集計対象期間</td><td>出力</td><td>テキスト</td><td>—</td><td>当月固定。最終更新タイムスタンプを併記(準リアルタイム 5 分以内)</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>質問数サマリー</td><td>出力</td><td>SummaryCard 群</td><td>計算式併記は上限 ON 時のみ</td><td>「当月利用」「今月の利用上限」の 2 項目。上限 ON 時は「{limit}件 - {freeQuota}件(無料枠) = {billableCount}件 (¥{yen} / 月)」を併記、OFF 時は値を「OFF」とし計算式を表示しない</td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>利用量</td><td>出力</td><td>ProgressBar + テキスト</td><td>割合・ProgressBar・状態バッジは上限 ON 時のみ</td><td>上限 ON 時は当月利用 ÷ 今月の利用上限。80% 未満通常 / 80% 以上黄 / 100% 以上赤。「N / M 件」併記。OFF 時は割合・件数比・ProgressBar・状態バッジを出さず OFF 説明文のみ。アラート状態・設定元は表示しない</td></tr>
-<tr><td id="IT-05"><code>IT-05</code></td><td>アラート設定</td><td>入力</td><td>ボタン(Secondary、L3)</td><td><strong>オーナー / 当該プロジェクト管理者の場合のみ表示</strong>。メンバーには表示しない</td><td>—</td></tr>
-<tr><td id="IT-06"><code>IT-06</code></td><td>空状態</td><td>出力</td><td>EmptyState</td><td>集計前 / 取得失敗時</td><td>集計前は「集計中です」、取得失敗は §1.5.3 のフォールバック表示</td></tr>
-<tr><td id="IT-07"><code>IT-07</code></td><td>権限不足ガード</td><td>出力</td><td>PermissionTooltip</td><td>ロールがメンバーの場合は閲覧のみ(変更ボタン非表示)</td><td>当該 PJ に割当のないユーザーは閲覧不可(変更ボタンも非表示)</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>PageHeader</td><td>画面見出し「利用量と上限」を表示する</td><td>出力</td><td>見出し</td><td>—</td><td>プロジェクト名・サイト名は付加しない</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>集計対象期間</td><td>集計対象期間(当月)と最終更新タイムスタンプを表示する</td><td>出力</td><td>テキスト</td><td>—</td><td>当月固定。準リアルタイム(5 分以内)</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>質問数サマリー</td><td>当月利用・今月の利用上限の 2 値と、上限 ON 時は課金計算式を表示する</td><td>出力</td><td>SummaryCard 群</td><td>計算式併記は上限 ON 時のみ</td><td>上限 ON 時は「{limit}件 - {freeQuota}件(無料枠) = {billableCount}件 (¥{yen} / 月)」を併記、OFF 時は値を「OFF」とし計算式を表示しない</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>利用量</td><td>当月利用 ÷ 今月の利用上限の消化率を ProgressBar と件数比で表示する</td><td>出力</td><td>ProgressBar + テキスト</td><td>割合・ProgressBar・状態バッジは上限 ON 時のみ</td><td>80% 未満通常 / 80% 以上黄 / 100% 以上赤。「N / M 件」併記。OFF 時は割合・件数比・ProgressBar・状態バッジを出さず OFF 説明文のみ。アラート状態・設定元は表示しない</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>アラート設定</td><td>上限・アラート設定モーダル(SCR-021-M1)を開く</td><td>入力</td><td>ボタン(Secondary、L3)</td><td><strong>オーナー / 当該プロジェクト管理者の場合のみ表示</strong>。メンバーには表示しない</td><td>—</td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>空状態</td><td>集計前・取得失敗時の EmptyState を表示する</td><td>出力</td><td>EmptyState</td><td>集計前 / 取得失敗時</td><td>集計前は「集計中です」、取得失敗は §1.5.3 のフォールバック表示</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>権限不足ガード</td><td>閲覧のみのロールに対し変更ボタンを非表示にする</td><td>出力</td><td>PermissionTooltip</td><td>ロールがメンバーの場合は閲覧のみ(変更ボタン非表示)</td><td>当該 PJ に割当のないユーザーは閲覧不可(変更ボタンも非表示)</td></tr>
 </tbody>
 </table>
 
@@ -359,6 +360,7 @@
 <thead>
 <tr>
 <th rowspan="2">入出力名</th>
+<th rowspan="2">説明</th>
 <th rowspan="2">種別</th>
 <th rowspan="2">I/O</th>
 <th colspan="4">アクセス種別(CRUD)</th>
@@ -372,10 +374,10 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>利用量計測</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td>当月の質問数当月利用の取得。<code>usage_metering</code>(<a href="../03_テーブル設計.html#322-usage_metering">テーブル設計 3.22</a>)</td></tr>
-<tr><td>プロジェクト上限</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td>月次上限件数・無料枠の取得。<code>project_quota_limits</code>(<a href="../03_テーブル設計.html#324-project_quota_limits">テーブル設計 3.24</a>)</td></tr>
-<tr><td>利用量取得</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /usage?period=current_month&amp;viewMode=project&amp;projectId={id}</code>(<a href="../02_API設計.html#571-get-usageperiodcurrent_monthviewmodeprojectprojectidid">API 設計 5.7.1</a>)</td></tr>
-<tr><td>上限取得</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /projects/{id}/quota-limits</code>(<a href="../02_API設計.html#575-get-projectsidquota-limits">API 設計 5.7.5</a>)</td></tr>
+<tr><td>利用量計測</td><td>当月の質問数(当月利用)を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>usage_metering</code>(<a href="../03_テーブル設計.html#322-usage_metering">テーブル設計 3.22</a>)</td></tr>
+<tr><td>プロジェクト上限</td><td>月次上限件数・無料枠を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>project_quota_limits</code>(<a href="../03_テーブル設計.html#324-project_quota_limits">テーブル設計 3.24</a>)</td></tr>
+<tr><td>利用量取得</td><td>当該プロジェクトの当月利用量を取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /usage?period=current_month&amp;viewMode=project&amp;projectId={id}</code>(<a href="../02_API設計.html#571-get-usageperiodcurrent_monthviewmodeprojectprojectidid">API 設計 5.7.1</a>)</td></tr>
+<tr><td>上限取得</td><td>当該プロジェクトの上限設定を取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /projects/{id}/quota-limits</code>(<a href="../02_API設計.html#575-get-projectsidquota-limits">API 設計 5.7.5</a>)</td></tr>
 </tbody>
 </table>
 

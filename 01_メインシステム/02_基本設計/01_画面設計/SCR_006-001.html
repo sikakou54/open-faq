@@ -87,6 +87,7 @@
 <tr>
 <th>項目 ID</th>
 <th>項目</th>
+<th>説明</th>
 <th>入出力</th>
 <th>種類</th>
 <th>表示条件</th>
@@ -94,18 +95,18 @@
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>パンくず / FAQ ID</td><td>出力</td><td>Breadcrumb / PageHeader</td><td>—</td><td>「ホーム / FAQ / {FAQ ID} 編集」。新規時は「新規」</td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>自動保存インジケータ</td><td>出力</td><td>AutosaveIndicator</td><td>—</td><td>「30 秒前に保存しました」/「保存中…」/「保存できませんでした」</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>質問</td><td>入力</td><td>テキストエリア</td><td>—</td><td>必須。1〜500 文字</td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>回答</td><td>入力</td><td>リッチテキストエリア</td><td>—</td><td>必須。1〜5,000 文字。簡易ツールバー</td></tr>
-<tr><td id="IT-05"><code>IT-05</code></td><td>カテゴリ</td><td>入力</td><td>テキストボックス + サジェスト</td><td>—</td><td>任意。100 文字以内。既存カテゴリから選択 or 新規入力</td></tr>
-<tr><td id="IT-06"><code>IT-06</code></td><td>状態</td><td>入力</td><td>ラジオボタン</td><td>—</td><td><code>draft</code> / <code>published</code> / <code>hidden</code>。ラベルは「下書き」「公開中」「非公開」。相互に自由遷移(状態遷移ガードなし)</td></tr>
-<tr><td id="IT-07"><code>IT-07</code></td><td>登録元未解決質問</td><td>出力</td><td>テキスト + リンク</td><td>登録元未解決質問が存在する場合のみ表示</td><td>SCR-005-001 へリンク</td></tr>
-<tr><td id="IT-08"><code>IT-08</code></td><td>改訂履歴</td><td>入力</td><td>リンク → モーダル</td><td>—</td><td>直近 50 件、差分表示、任意版へのロールバック</td></tr>
-<tr><td id="IT-09"><code>IT-09</code></td><td>キャンセル</td><td>入力</td><td>ボタン(Secondary)</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-10"><code>IT-10</code></td><td>保存</td><td>入力</td><td>ボタン(Primary)</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-11"><code>IT-11</code></td><td>削除</td><td>入力</td><td>ボタン(Danger / 確認ダイアログ)</td><td>既存 FAQ 編集時のみ表示(新規時非表示)</td><td>論理削除(<code>faqs.valid=0</code>)</td></tr>
-<tr><td id="IT-12"><code>IT-12</code></td><td>楽観ロック衝突</td><td>出力</td><td>エラーアラート</td><td>FAQ のバージョンが他者の更新と一致しない場合のみ表示(楽観ロック衝突時)</td><td>—</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>パンくず / FAQ ID</td><td>現在位置と編集対象の FAQ ID を見出しに表示する</td><td>出力</td><td>Breadcrumb / PageHeader</td><td>—</td><td>「ホーム / FAQ / {FAQ ID} 編集」。新規時は「新規」</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>自動保存インジケータ</td><td>自動保存の状態(保存済み / 保存中 / 失敗)を表示する</td><td>出力</td><td>AutosaveIndicator</td><td>—</td><td>「30 秒前に保存しました」/「保存中…」/「保存できませんでした」</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>質問</td><td>FAQ の質問文を入力する</td><td>入力</td><td>テキストエリア</td><td>—</td><td>必須。1〜500 文字</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>回答</td><td>FAQ の回答文を入力する(簡易ツールバー付き)</td><td>入力</td><td>リッチテキストエリア</td><td>—</td><td>必須。1〜5,000 文字</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>カテゴリ</td><td>FAQ のカテゴリを選択または新規入力する</td><td>入力</td><td>テキストボックス + サジェスト</td><td>—</td><td>任意。100 文字以内。既存カテゴリから選択 or 新規入力</td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>状態</td><td>FAQ の公開状態を選択する(相互に自由遷移)</td><td>入力</td><td>ラジオボタン</td><td>—</td><td><code>draft</code> / <code>published</code> / <code>hidden</code>。ラベルは「下書き」「公開中」「非公開」。状態遷移ガードなし</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>登録元未解決質問</td><td>当該 FAQ の登録元となった未解決質問へのリンクを表示する</td><td>出力</td><td>テキスト + リンク</td><td>登録元未解決質問が存在する場合のみ表示</td><td>SCR-005-001 へリンク</td></tr>
+<tr><td id="IT-08"><code>IT-08</code></td><td>改訂履歴</td><td>改訂履歴モーダルを開き、差分確認とロールバックを行う</td><td>入力</td><td>リンク → モーダル</td><td>—</td><td>直近 50 件、差分表示、任意版へのロールバック</td></tr>
+<tr><td id="IT-09"><code>IT-09</code></td><td>キャンセル</td><td>編集を破棄して一覧へ戻る</td><td>入力</td><td>ボタン(Secondary)</td><td>—</td><td>—</td></tr>
+<tr><td id="IT-10"><code>IT-10</code></td><td>保存</td><td>入力内容を選択中の状態で保存する</td><td>入力</td><td>ボタン(Primary)</td><td>—</td><td>—</td></tr>
+<tr><td id="IT-11"><code>IT-11</code></td><td>削除</td><td>確認ダイアログ後に当該 FAQ を論理削除する</td><td>入力</td><td>ボタン(Danger / 確認ダイアログ)</td><td>既存 FAQ 編集時のみ表示(新規時非表示)</td><td>論理削除(<code>faqs.valid=0</code>)</td></tr>
+<tr><td id="IT-12"><code>IT-12</code></td><td>楽観ロック衝突</td><td>他者の更新と版が一致しない場合に衝突エラーを表示する</td><td>出力</td><td>エラーアラート</td><td>FAQ のバージョンが他者の更新と一致しない場合のみ表示(楽観ロック衝突時)</td><td>—</td></tr>
 </tbody>
 </table>
 
@@ -115,6 +116,7 @@
 <thead>
 <tr>
 <th rowspan="2">入出力名</th>
+<th rowspan="2">説明</th>
 <th rowspan="2">種別</th>
 <th rowspan="2">I/O</th>
 <th colspan="4">アクセス種別(CRUD)</th>
@@ -128,14 +130,14 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>FAQ</td><td>テーブル</td><td>入力 / 出力</td><td>◯</td><td>◯</td><td>◯</td><td>◯</td><td>FAQ の取得・新規作成・更新・論理削除。<code>faqs</code>(<a href="../03_テーブル設計.html#39-faqs">テーブル設計 3.9</a>)</td></tr>
-<tr><td>未解決質問</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td>登録元未解決質問の参照。<code>inquiries</code>(<a href="../03_テーブル設計.html#314-inquiries">テーブル設計 3.14</a>)</td></tr>
-<tr><td>FAQ 作成</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>新規 FAQ 作成。<code>POST /faqs</code>(<a href="../02_API設計.html#542-post-faqs--patch-faqsid--delete-faqsid">API 設計 5.4.2</a>)</td></tr>
-<tr><td>FAQ 取得</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>編集対象 FAQ の現値ロード。<code>GET /faqs/{id}</code>(<a href="../02_API設計.html#542-post-faqs--patch-faqsid--delete-faqsid">API 設計 5.4.2</a>)</td></tr>
-<tr><td>FAQ 更新</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>FAQ の更新(状態保存・自動保存含む)。<code>PATCH /faqs/{id}</code>(<a href="../02_API設計.html#542-post-faqs--patch-faqsid--delete-faqsid">API 設計 5.4.2</a>)</td></tr>
-<tr><td>FAQ 削除</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>論理削除。<code>DELETE /faqs/{id}</code>(<a href="../02_API設計.html#542-post-faqs--patch-faqsid--delete-faqsid">API 設計 5.4.2</a>)</td></tr>
-<tr><td>FAQ 改訂履歴取得</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>改訂履歴(直近 50 件)の取得・差分表示・ロールバック用。正本は <a href="../02_API設計.html#54-faq-管理-api">API 設計 §5.4</a>(IT-08 / EV-06 対応)</td></tr>
-<tr><td>FAQ 改訂履歴</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td>FAQ の版管理(改訂履歴・ロールバック)。物理名・スキーマの正本は <a href="../03_テーブル設計.html">テーブル設計</a>(IT-08 / EV-06 対応)</td></tr>
+<tr><td>FAQ</td><td>FAQ を取得・新規作成・更新・論理削除する</td><td>テーブル</td><td>入力 / 出力</td><td>◯</td><td>◯</td><td>◯</td><td>◯</td><td><code>faqs</code>(<a href="../03_テーブル設計.html#39-faqs">テーブル設計 3.9</a>)</td></tr>
+<tr><td>未解決質問</td><td>登録元の未解決質問を参照する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>inquiries</code>(<a href="../03_テーブル設計.html#314-inquiries">テーブル設計 3.14</a>)</td></tr>
+<tr><td>FAQ 作成</td><td>新規 FAQ を作成する</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /faqs</code>(<a href="../02_API設計.html#542-post-faqs--patch-faqsid--delete-faqsid">API 設計 5.4.2</a>)</td></tr>
+<tr><td>FAQ 取得</td><td>編集対象 FAQ の現値をロードする</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /faqs/{id}</code>(<a href="../02_API設計.html#542-post-faqs--patch-faqsid--delete-faqsid">API 設計 5.4.2</a>)</td></tr>
+<tr><td>FAQ 更新</td><td>FAQ を更新する(状態保存・自動保存を含む)</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>PATCH /faqs/{id}</code>(<a href="../02_API設計.html#542-post-faqs--patch-faqsid--delete-faqsid">API 設計 5.4.2</a>)</td></tr>
+<tr><td>FAQ 削除</td><td>FAQ を論理削除する</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>DELETE /faqs/{id}</code>(<a href="../02_API設計.html#542-post-faqs--patch-faqsid--delete-faqsid">API 設計 5.4.2</a>)</td></tr>
+<tr><td>FAQ 改訂履歴取得</td><td>改訂履歴(直近 50 件)を取得し差分表示・ロールバックに用いる</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>正本は <a href="../02_API設計.html#54-faq-管理-api">API 設計 §5.4</a>(IT-08 / EV-06 対応)</td></tr>
+<tr><td>FAQ 改訂履歴</td><td>FAQ の版を管理する(改訂履歴・ロールバック)</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td>物理名・スキーマの正本は <a href="../03_テーブル設計.html">テーブル設計</a>(IT-08 / EV-06 対応)</td></tr>
 </tbody>
 </table>
 

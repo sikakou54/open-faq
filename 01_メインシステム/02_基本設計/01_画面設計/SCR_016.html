@@ -121,6 +121,7 @@
 <tr>
 <th>項目 ID</th>
 <th>項目</th>
+<th>説明</th>
 <th>入出力</th>
 <th>種類</th>
 <th>表示条件</th>
@@ -128,10 +129,10 @@
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>全体サマリー</td><td>出力</td><td>SummaryCard × 3</td><td>—</td><td>利用中のプロジェクト数 / 質問数合計 / 公開 FAQ 数合計。各カードはクリック不可</td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>支払い警告</td><td>出力</td><td>PaymentMethodBanner</td><td>支払方法未登録または支払い失敗時のみ表示</td><td>「請求を確認」ボタンを伴うバナー</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>プロジェクト別利用状況</td><td>出力</td><td>テーブル</td><td>—</td><td>プロジェクト名 / 質問数(利用 / 上限 + 利用率・状態を同一セルに併記)/ 公開 FAQ 数 の 3 列。利用率の高い順を既定、同率はプロジェクト名昇順。上限 OFF は「上限なし」と表示。各セルはリンクを持たない読み取り専用</td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>空状態(プロジェクト 0 件)</td><td>出力</td><td>EmptyState</td><td>プロジェクトが 0 件のときのみ表示</td><td>「プロジェクトがまだありません」+「プロジェクトへ」CTA</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>全体サマリー</td><td>契約全体の利用中プロジェクト数 / 質問数合計 / 公開 FAQ 数合計を表示する(各カードはクリック不可)</td><td>出力</td><td>SummaryCard × 3</td><td>—</td><td>—</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>支払い警告</td><td>支払い情報の確認を促すバナーを表示する(「請求を確認」ボタンを伴う)</td><td>出力</td><td>PaymentMethodBanner</td><td>支払方法未登録または支払い失敗時のみ表示</td><td>—</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>プロジェクト別利用状況</td><td>プロジェクトごとの利用量を読み取り専用で表示する: プロジェクト名 / 質問数(利用 / 上限 + 利用率・状態を同一セルに併記)/ 公開 FAQ 数 の 3 列。利用率の高い順を既定、同率はプロジェクト名昇順。上限 OFF は「上限なし」と表示</td><td>出力</td><td>テーブル</td><td>—</td><td>各セルはリンクを持たない読み取り専用</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>空状態(プロジェクト 0 件)</td><td>プロジェクトが無い旨と作成導線を表示する(「プロジェクトがまだありません」+「プロジェクトへ」CTA)</td><td>出力</td><td>EmptyState</td><td>プロジェクトが 0 件のときのみ表示</td><td>—</td></tr>
 </tbody>
 </table>
 
@@ -141,6 +142,7 @@
 <thead>
 <tr>
 <th rowspan="2">入出力名</th>
+<th rowspan="2">説明</th>
 <th rowspan="2">種別</th>
 <th rowspan="2">I/O</th>
 <th colspan="4">アクセス種別(CRUD)</th>
@@ -154,11 +156,11 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>プロジェクト</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td>プロジェクト名・件数の取得。<code>projects</code>(<a href="../03_テーブル設計.html#36-projects">テーブル設計 3.6</a>)</td></tr>
-<tr><td>利用量計測</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td>当月の質問数・利用率の取得。<code>usage_metering</code>(<a href="../03_テーブル設計.html#322-usage_metering">テーブル設計 3.22</a>)</td></tr>
-<tr><td>プロジェクト上限</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td>プロジェクト別の月次上限・上限 OFF 判定。<code>project_quota_limits</code>(<a href="../03_テーブル設計.html#324-project_quota_limits">テーブル設計 3.24</a>)</td></tr>
-<tr><td>契約サブスクリプション</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td>支払方法未登録・支払い失敗の判定。<code>billing_subscriptions</code>(<a href="../03_テーブル設計.html#320-billing_subscriptions">テーブル設計 3.20</a>)</td></tr>
-<tr><td>利用状況取得</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>本画面は契約全体サマリーと各プロジェクト別利用量の双方を表示する。契約横断の集計は <code>viewMode=contract</code>(または同等の集約パラメータ)を用い、プロジェクト別は <code>viewMode=project&amp;projectId={id}</code> で取得する(SCR-021 の単一プロジェクト表示と区別する)。取得方式の正本は <a href="../02_API設計.html#571-get-usageperiodcurrent_monthviewmodeprojectprojectidid">02_API設計 §5.7.1</a> を正とする。物理名 <code>GET /usage?period=current_month&amp;viewMode={contract|project}</code></td></tr>
+<tr><td>プロジェクト</td><td>プロジェクト名・件数を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>projects</code>(<a href="../03_テーブル設計.html#36-projects">テーブル設計 3.6</a>)</td></tr>
+<tr><td>利用量計測</td><td>当月の質問数・利用率を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>usage_metering</code>(<a href="../03_テーブル設計.html#322-usage_metering">テーブル設計 3.22</a>)</td></tr>
+<tr><td>プロジェクト上限</td><td>プロジェクト別の月次上限・上限 OFF を判定する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>project_quota_limits</code>(<a href="../03_テーブル設計.html#324-project_quota_limits">テーブル設計 3.24</a>)</td></tr>
+<tr><td>契約サブスクリプション</td><td>支払方法未登録・支払い失敗を判定する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>billing_subscriptions</code>(<a href="../03_テーブル設計.html#320-billing_subscriptions">テーブル設計 3.20</a>)</td></tr>
+<tr><td>利用状況取得</td><td>契約全体サマリーと各プロジェクト別利用量の双方を取得する。契約横断の集計は <code>viewMode=contract</code>(または同等の集約パラメータ)を、プロジェクト別は <code>viewMode=project&amp;projectId={id}</code> を用いる(SCR-021 の単一プロジェクト表示と区別する)</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>取得方式の正本は <a href="../02_API設計.html#571-get-usageperiodcurrent_monthviewmodeprojectprojectidid">02_API設計 §5.7.1</a>。物理名 <code>GET /usage?period=current_month&amp;viewMode={contract|project}</code></td></tr>
 </tbody>
 </table>
 

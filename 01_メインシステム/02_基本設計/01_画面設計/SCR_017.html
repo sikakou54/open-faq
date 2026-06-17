@@ -98,6 +98,7 @@
 <tr>
 <th>項目 ID</th>
 <th>項目</th>
+<th>説明</th>
 <th>入出力</th>
 <th>種類</th>
 <th>表示条件</th>
@@ -105,10 +106,10 @@
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>表示名</td><td>入力</td><td>テキストボックス</td><td>プロフィールタブ</td><td>必須。1〜100 文字</td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>メールアドレス</td><td>入力</td><td>メールアドレスボックス</td><td>プロフィールタブ</td><td>必須</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>パスワードを変更する</td><td>入力</td><td>ボタン</td><td>セキュリティタブ</td><td>旧パスワード + 新パスワード + 確認。再認証(現パスワード再入力)を要する(<a href="../08_認証・認可設計.html#2-再認証">08_認証・認可設計 §2</a>)</td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>参加プロジェクト一覧</td><td>出力</td><td>テーブル</td><td>参加プロジェクトタブ</td><td>プロジェクト名 / 適用ロール。プロジェクト名は該当 SCR-008 へのリンク</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>表示名</td><td>自分の表示名を編集する</td><td>入力</td><td>テキストボックス</td><td>プロフィールタブ</td><td>必須。1〜100 文字</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>メールアドレス</td><td>自分のメールアドレスを編集する(変更時は確認メールを送信)</td><td>入力</td><td>メールアドレスボックス</td><td>プロフィールタブ</td><td>必須</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>パスワードを変更する</td><td>再認証を経てパスワード(旧 + 新 + 確認)を変更する</td><td>入力</td><td>ボタン</td><td>セキュリティタブ</td><td>再認証(現パスワード再入力)を要する(<a href="../08_認証・認可設計.html#2-再認証">08_認証・認可設計 §2</a>)</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>参加プロジェクト一覧</td><td>自分が参加するプロジェクト名と適用ロールを一覧表示する(プロジェクト名は該当 SCR-008 へのリンク)</td><td>出力</td><td>テーブル</td><td>参加プロジェクトタブ</td><td>—</td></tr>
 </tbody>
 </table>
 <div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>アクティブセッション一覧の表示と自己セッション終了は MVP 対象外です(<a href="../../05_future/index.html">05_future</a>、FR-332 改訂)。複数デバイス同時ログインは可能で、運営者による強制ログアウト(連携 IF #2)は MVP で提供します。</div></div>
@@ -119,6 +120,7 @@
 <thead>
 <tr>
 <th rowspan="2">入出力名</th>
+<th rowspan="2">説明</th>
 <th rowspan="2">種別</th>
 <th rowspan="2">I/O</th>
 <th colspan="4">アクセス種別(CRUD)</th>
@@ -132,9 +134,9 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>利用者</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td>表示名・メールアドレス・パスワードの参照・更新。<code>users</code>(<a href="../03_テーブル設計.html#31-users">テーブル設計 3.1</a>)</td></tr>
-<tr><td>プロジェクト割当</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td>参加プロジェクト一覧・適用ロールの取得。<code>project_users</code>(<a href="../03_テーブル設計.html#33-project_users">テーブル設計 3.3</a>)</td></tr>
-<tr><td>メールアドレス変更確認</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>確認トークン検証 <code>POST /auth/email-verifications/{token}</code>(<a href="../02_API設計.html#516-post-authemail-verificationstokenメール確認">API 設計 5.1.6</a>)</td></tr>
+<tr><td>利用者</td><td>表示名・メールアドレス・パスワードを参照・更新する</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>users</code>(<a href="../03_テーブル設計.html#31-users">テーブル設計 3.1</a>)</td></tr>
+<tr><td>プロジェクト割当</td><td>参加プロジェクト一覧・適用ロールを取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>project_users</code>(<a href="../03_テーブル設計.html#33-project_users">テーブル設計 3.3</a>)</td></tr>
+<tr><td>メールアドレス変更確認</td><td>確認トークンを検証してメールアドレス変更を確定する</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /auth/email-verifications/{token}</code>(<a href="../02_API設計.html#516-post-authemail-verificationstokenメール確認">API 設計 5.1.6</a>)</td></tr>
 </tbody>
 </table>
 

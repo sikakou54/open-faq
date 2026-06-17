@@ -92,6 +92,7 @@
 <tr>
 <th>項目 ID</th>
 <th>項目</th>
+<th>説明</th>
 <th>入出力</th>
 <th>種類</th>
 <th>表示条件</th>
@@ -99,15 +100,15 @@
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>状況フィルタ</td><td>入力</td><td>プルダウン</td><td>—</td><td><code>open</code> / <code>closed</code> / 未指定。値とラベルの対応: <code>open</code>=対応中 / <code>closed</code>=対応済み</td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>期間フィルタ</td><td>入力</td><td>日付範囲</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>問い合わせ ID</td><td>出力</td><td>テキストリンク</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>状況</td><td>出力</td><td>バッジ</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-05"><code>IT-05</code></td><td>質問抜粋</td><td>出力</td><td>テキスト</td><td>—</td><td>先頭 60 文字</td></tr>
-<tr><td id="IT-06"><code>IT-06</code></td><td>未解決理由</td><td>出力</td><td>サブテキスト</td><td>—</td><td><code>inquiries.question_log_id</code> 経由で結合</td></tr>
-<tr><td id="IT-07"><code>IT-07</code></td><td>更新日時</td><td>出力</td><td>テキスト</td><td>—</td><td>相対表記 + tooltip 絶対日時</td></tr>
-<tr><td id="IT-08"><code>IT-08</code></td><td>件数表示</td><td>出力</td><td>テキスト</td><td>1 件以上ある時</td><td>「1-50 / 全 248 件」形式</td></tr>
-<tr><td id="IT-09"><code>IT-09</code></td><td>空状態</td><td>出力</td><td>EmptyState</td><td>0 件時(空状態)</td><td>「未解決質問はありません。ウィジェットを設置済みなら正常な状態です。」+「ウィジェット設定を見る」リンク</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>状況フィルタ</td><td>状況で一覧を絞り込む</td><td>入力</td><td>プルダウン</td><td>—</td><td><code>open</code> / <code>closed</code> / 未指定。値とラベルの対応: <code>open</code>=対応中 / <code>closed</code>=対応済み</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>期間フィルタ</td><td>更新日時の期間で一覧を絞り込む</td><td>入力</td><td>日付範囲</td><td>—</td><td>—</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>問い合わせ ID</td><td>未解決質問の ID を表示し、詳細画面への導線を兼ねる</td><td>出力</td><td>テキストリンク</td><td>—</td><td>—</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>状況</td><td>未解決質問の対応状況を表示する</td><td>出力</td><td>バッジ</td><td>—</td><td>—</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>質問抜粋</td><td>質問本文の冒頭を抜粋表示する</td><td>出力</td><td>テキスト</td><td>—</td><td>先頭 60 文字</td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>未解決理由</td><td>AI が回答できなかった理由を表示する</td><td>出力</td><td>サブテキスト</td><td>—</td><td><code>inquiries.question_log_id</code> 経由で結合</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>更新日時</td><td>未解決質問の最終更新日時を表示する</td><td>出力</td><td>テキスト</td><td>—</td><td>相対表記 + tooltip 絶対日時</td></tr>
+<tr><td id="IT-08"><code>IT-08</code></td><td>件数表示</td><td>一覧の表示範囲と総件数を表示する</td><td>出力</td><td>テキスト</td><td>1 件以上ある時</td><td>「1-50 / 全 248 件」形式</td></tr>
+<tr><td id="IT-09"><code>IT-09</code></td><td>空状態</td><td>未解決質問が 0 件の場合に正常状態である旨を案内する</td><td>出力</td><td>EmptyState</td><td>0 件時(空状態)</td><td>「未解決質問はありません。ウィジェットを設置済みなら正常な状態です。」+「ウィジェット設定を見る」リンク</td></tr>
 </tbody>
 </table>
 
@@ -117,6 +118,7 @@
 <thead>
 <tr>
 <th rowspan="2">入出力名</th>
+<th rowspan="2">説明</th>
 <th rowspan="2">種別</th>
 <th rowspan="2">I/O</th>
 <th colspan="4">アクセス種別(CRUD)</th>
@@ -130,10 +132,10 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>未解決質問</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td>一覧取得。<code>inquiries</code>(<a href="../03_テーブル設計.html#314-inquiries">テーブル設計 3.14</a>)</td></tr>
-<tr><td>質問ログ</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td>未解決理由(<code>result_reason_code</code>)の取得。<code>question_logs</code>(<a href="../03_テーブル設計.html">テーブル設計</a>)</td></tr>
-<tr><td>未解決質問一覧取得</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /inquiries</code>(<code>status</code> / <code>projectId</code> / <code>cursor</code>)(<a href="../02_API設計.html#561-get-inquiriesstatusopenprojectidcursor">API 設計 5.6.1</a>)</td></tr>
-<tr><td>未解決質問 CSV</td><td>ファイル</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>フィルタ適用結果のエクスポート(ダウンロード)</td></tr>
+<tr><td>未解決質問</td><td>未解決質問の一覧を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>inquiries</code>(<a href="../03_テーブル設計.html#314-inquiries">テーブル設計 3.14</a>)</td></tr>
+<tr><td>質問ログ</td><td>未解決理由(<code>result_reason_code</code>)を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>question_logs</code>(<a href="../03_テーブル設計.html">テーブル設計</a>)</td></tr>
+<tr><td>未解決質問一覧取得</td><td>条件付きで未解決質問一覧を取得する API を呼び出す</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /inquiries</code>(<code>status</code> / <code>projectId</code> / <code>cursor</code>)(<a href="../02_API設計.html#561-get-inquiriesstatusopenprojectidcursor">API 設計 5.6.1</a>)</td></tr>
+<tr><td>未解決質問 CSV</td><td>フィルタ適用結果を CSV でダウンロードする</td><td>ファイル</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 

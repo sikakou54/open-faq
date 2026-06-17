@@ -97,6 +97,7 @@
 <tr>
 <th>項目 ID</th>
 <th>項目</th>
+<th>説明</th>
 <th>入出力</th>
 <th>種類</th>
 <th>表示条件</th>
@@ -104,14 +105,14 @@
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>テンプレートをダウンロード</td><td>入力</td><td>リンク / ボタン(Secondary)</td><td>—</td><td>ヘッダ行のみの CSV(列 = <code>FAQ ID, 質問, 回答, カテゴリ</code>)</td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>ファイル選択</td><td>入力</td><td>ドロップゾーン + ファイルピッカー</td><td>—</td><td>必須。<code>.csv</code> のみ。D&amp;D 対応。1 ファイル最大 1000 件 / 1 行 = 1 FAQ。ヘッダ行必須</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>CSV 列構成 / FAQ ID 判定</td><td>出力</td><td>説明テキスト</td><td>—</td><td>列 = <code>FAQ ID, 質問, 回答, カテゴリ</code>。FAQ ID 空欄 = 新規(<code>draft</code>)/ 既存 ID 一致 = 上書き(状態維持・改訂履歴に記録)/ 無効 ID = 当該行を失敗</td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>文字コードエラー</td><td>出力</td><td>アラート</td><td>UTF-8(BOM 許容)以外を選択時のみ表示</td><td>アップロードせず即エラー(検出文字コード名を併記)</td></tr>
-<tr><td id="IT-05"><code>IT-05</code></td><td>進捗バー</td><td>出力</td><td>ProgressBar + テキスト</td><td>取込処理中</td><td>「処理中…({done} / {total} 件)」。100 件超は非同期ジョブ化、24h タイムアウト</td></tr>
-<tr><td id="IT-06"><code>IT-06</code></td><td>エラー一覧</td><td>出力</td><td>スクロール領域(表)</td><td>失敗行が 1 件以上ある時のみ表示</td><td>「失敗した行: {n} 件」見出し下に「行番号 / エラー理由」の 2 列で表示。CSV ダウンロードは行わない</td></tr>
-<tr><td id="IT-07"><code>IT-07</code></td><td>キャンセル</td><td>入力</td><td>ボタン(Secondary)</td><td>—</td><td>—</td></tr>
-<tr><td id="IT-08"><code>IT-08</code></td><td>読み込みを開始</td><td>入力</td><td>ボタン(Primary)</td><td>バリデーション通過時のみ活性</td><td>—</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>テンプレートをダウンロード</td><td>ヘッダ行のみのテンプレート CSV をダウンロードする</td><td>入力</td><td>リンク / ボタン(Secondary)</td><td>—</td><td>列 = <code>FAQ ID, 質問, 回答, カテゴリ</code></td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>ファイル選択</td><td>取り込む CSV をドラッグ&amp;ドロップまたは選択する</td><td>入力</td><td>ドロップゾーン + ファイルピッカー</td><td>—</td><td>必須。<code>.csv</code> のみ。D&amp;D 対応。1 ファイル最大 1000 件 / 1 行 = 1 FAQ。ヘッダ行必須</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>CSV 列構成 / FAQ ID 判定</td><td>CSV の列構成と FAQ ID による新規 / 上書き / 失敗の判定規則を案内する</td><td>出力</td><td>説明テキスト</td><td>—</td><td>列 = <code>FAQ ID, 質問, 回答, カテゴリ</code>。FAQ ID 空欄 = 新規(<code>draft</code>)/ 既存 ID 一致 = 上書き(状態維持・改訂履歴に記録)/ 無効 ID = 当該行を失敗</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>文字コードエラー</td><td>UTF-8 以外のファイル選択時にアップロードせず即エラーを表示する</td><td>出力</td><td>アラート</td><td>UTF-8(BOM 許容)以外を選択時のみ表示</td><td>検出文字コード名を併記</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>進捗バー</td><td>取り込みの進捗(処理済み / 全件)を表示する</td><td>出力</td><td>ProgressBar + テキスト</td><td>取込処理中</td><td>「処理中…({done} / {total} 件)」。100 件超は非同期ジョブ化、24h タイムアウト</td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>エラー一覧</td><td>取り込みに失敗した行を行番号とエラー理由で一覧表示する</td><td>出力</td><td>スクロール領域(表)</td><td>失敗行が 1 件以上ある時のみ表示</td><td>「失敗した行: {n} 件」見出し下に「行番号 / エラー理由」の 2 列で表示。CSV ダウンロードは行わない</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>キャンセル</td><td>モーダルを閉じる(処理中は中断確認)</td><td>入力</td><td>ボタン(Secondary)</td><td>—</td><td>—</td></tr>
+<tr><td id="IT-08"><code>IT-08</code></td><td>読み込みを開始</td><td>取り込み処理を開始する</td><td>入力</td><td>ボタン(Primary)</td><td>バリデーション通過時のみ活性</td><td>—</td></tr>
 </tbody>
 </table>
 
@@ -121,6 +122,7 @@
 <thead>
 <tr>
 <th rowspan="2">入出力名</th>
+<th rowspan="2">説明</th>
 <th rowspan="2">種別</th>
 <th rowspan="2">I/O</th>
 <th colspan="4">アクセス種別(CRUD)</th>
@@ -134,11 +136,11 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>FAQ</td><td>テーブル</td><td>入力 / 出力</td><td>◯</td><td>◯</td><td>◯</td><td>—</td><td>FAQ ID 判定(存在確認)・新規登録(<code>draft</code>)・上書き更新。<code>faqs</code>(<a href="../03_テーブル設計.html#39-faqs">テーブル設計 3.9</a>)</td></tr>
-<tr><td>FAQ CSV インポート</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>一括取り込み(202 + jobId)。<code>POST /faqs/import</code>(<a href="../02_API設計.html#543-post-faqsimport">API 設計 5.4.3</a>)</td></tr>
-<tr><td>FAQ インポートテンプレート取得</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>ヘッダ行のみの CSV。<code>GET /faqs/import/template</code>(<a href="../02_API設計.html#544-get-faqsimporttemplate">API 設計 5.4.4</a>)</td></tr>
-<tr><td>インポート CSV</td><td>ファイル</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>アップロードする CSV(UTF-8 / BOM 許容、最大 1000 行)</td></tr>
-<tr><td>テンプレート CSV</td><td>ファイル</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>ヘッダ行のみのダウンロード CSV</td></tr>
+<tr><td>FAQ</td><td>FAQ ID の存在確認、新規登録(<code>draft</code>)・上書き更新を行う</td><td>テーブル</td><td>入力 / 出力</td><td>◯</td><td>◯</td><td>◯</td><td>—</td><td><code>faqs</code>(<a href="../03_テーブル設計.html#39-faqs">テーブル設計 3.9</a>)</td></tr>
+<tr><td>FAQ CSV インポート</td><td>CSV を一括取り込みする(202 + jobId)</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /faqs/import</code>(<a href="../02_API設計.html#543-post-faqsimport">API 設計 5.4.3</a>)</td></tr>
+<tr><td>FAQ インポートテンプレート取得</td><td>ヘッダ行のみのテンプレート CSV を取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /faqs/import/template</code>(<a href="../02_API設計.html#544-get-faqsimporttemplate">API 設計 5.4.4</a>)</td></tr>
+<tr><td>インポート CSV</td><td>取り込み対象としてアップロードする CSV</td><td>ファイル</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>UTF-8 / BOM 許容、最大 1000 行</td></tr>
+<tr><td>テンプレート CSV</td><td>ダウンロードされるテンプレート CSV</td><td>ファイル</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>ヘッダ行のみ</td></tr>
 </tbody>
 </table>
 

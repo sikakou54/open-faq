@@ -95,6 +95,7 @@
 <tr>
 <th>項目 ID</th>
 <th>項目</th>
+<th>説明</th>
 <th>入出力</th>
 <th>種類</th>
 <th>表示条件</th>
@@ -102,15 +103,15 @@
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>スコープ注記</td><td>出力</td><td>注意文</td><td>—</td><td>「この公開キーは本プロジェクト専用です。他プロジェクトのウィジェットとは共有されません」</td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>ウィジェット公開キー</td><td>出力</td><td>テキスト + コピーボタン</td><td>—(コピーはメンバーも可)</td><td>形式 <code>pk_live_&lt;32-char base62&gt;</code>(<a href="../../01_要件定義/FR14_セキュリティ.html#FR-194">FR-194</a>)。参照のみ。無期限のため有効期限 UI なし</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>旧キー使用中バッジ</td><td>出力</td><td>バッジ + 注意文</td><td>ローテーション猶予 24 時間中に旧キー使用検知時のみ表示</td><td>—</td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>公開キーを再発行(ローテーション)</td><td>入力</td><td>ボタン(Danger / DangerSection / L3)</td><td>ロールがプロジェクト管理者以上(オーナーを含む)の場合のみ操作可(メンバーは非活性)</td><td>新キー発行と同時に旧キーは 24 時間猶予で失効予告。確認文に「既存の埋め込みコードは旧キー失効後に動作しなくなります」を必須表示(<a href="../../01_要件定義/FR03_プロジェクト管理.html#FR-031">FR-031</a>)</td></tr>
-<tr><td id="IT-05"><code>IT-05</code></td><td>主色(プライマリカラー)</td><td>入力</td><td>カラーピッカー(HEX 指定)</td><td>ロールがプロジェクト管理者以上(オーナーを含む)の場合のみ編集可(メンバーは非活性)</td><td><a href="../../01_要件定義/FR12_ウィジェット.html#FR-152">FR-152</a></td></tr>
-<tr><td id="IT-06"><code>IT-06</code></td><td>プレビュー</td><td>出力</td><td>プレビューウィンドウ</td><td>—</td><td>起動前の丸型ランチャーバッジと展開後のチャット UI を切り替えて確認</td></tr>
-<tr><td id="IT-07"><code>IT-07</code></td><td>「Powered by」表示</td><td>出力</td><td>注釈</td><td>—</td><td>本サービス運営者ロゴを必須表示</td></tr>
-<tr><td id="IT-08"><code>IT-08</code></td><td>埋め込みコード</td><td>出力</td><td>コードブロック + コピーアイコン</td><td>—(コピーはメンバーも可)</td><td>コピーアイコンをコード右上にオーバーレイ</td></tr>
-<tr><td id="IT-09"><code>IT-09</code></td><td>設定の保存</td><td>入力</td><td>ボタン(Primary)</td><td>ロールがプロジェクト管理者以上(オーナーを含む)の場合のみ操作可(メンバーは非活性)</td><td>—</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>スコープ注記</td><td>公開キーが本プロジェクト専用である旨を案内する</td><td>出力</td><td>注意文</td><td>—</td><td>「この公開キーは本プロジェクト専用です。他プロジェクトのウィジェットとは共有されません」</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>ウィジェット公開キー</td><td>現在の公開キーを参照表示し、コピーできる</td><td>出力</td><td>テキスト + コピーボタン</td><td>—(コピーはメンバーも可)</td><td>形式 <code>pk_live_&lt;32-char base62&gt;</code>(<a href="../../01_要件定義/FR14_セキュリティ.html#FR-194">FR-194</a>)。参照のみ。無期限のため有効期限 UI なし</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>旧キー使用中バッジ</td><td>ローテーション猶予中に旧キーの使用を検知した旨を警告する</td><td>出力</td><td>バッジ + 注意文</td><td>ローテーション猶予 24 時間中に旧キー使用検知時のみ表示</td><td>—</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>公開キーを再発行(ローテーション)</td><td>公開キーを再発行し、旧キーを 24 時間猶予で失効させる</td><td>入力</td><td>ボタン(Danger / DangerSection / L3)</td><td>ロールがプロジェクト管理者以上(オーナーを含む)の場合のみ操作可(メンバーは非活性)</td><td>確認文に「既存の埋め込みコードは旧キー失効後に動作しなくなります」を必須表示(<a href="../../01_要件定義/FR03_プロジェクト管理.html#FR-031">FR-031</a>)</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>主色(プライマリカラー)</td><td>ウィジェットの主色を HEX で指定する</td><td>入力</td><td>カラーピッカー(HEX 指定)</td><td>ロールがプロジェクト管理者以上(オーナーを含む)の場合のみ編集可(メンバーは非活性)</td><td><a href="../../01_要件定義/FR12_ウィジェット.html#FR-152">FR-152</a></td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>プレビュー</td><td>設定を反映したウィジェットの見た目を確認する</td><td>出力</td><td>プレビューウィンドウ</td><td>—</td><td>起動前の丸型ランチャーバッジと展開後のチャット UI を切り替えて確認</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>「Powered by」表示</td><td>ウィジェットに運営者ロゴを必須表示する</td><td>出力</td><td>注釈</td><td>—</td><td>本サービス運営者ロゴを必須表示</td></tr>
+<tr><td id="IT-08"><code>IT-08</code></td><td>埋め込みコード</td><td>サイトへ貼り付ける埋め込みコードを表示し、コピーできる</td><td>出力</td><td>コードブロック + コピーアイコン</td><td>—(コピーはメンバーも可)</td><td>コピーアイコンをコード右上にオーバーレイ</td></tr>
+<tr><td id="IT-09"><code>IT-09</code></td><td>設定の保存</td><td>見た目等のウィジェット設定を保存する</td><td>入力</td><td>ボタン(Primary)</td><td>ロールがプロジェクト管理者以上(オーナーを含む)の場合のみ操作可(メンバーは非活性)</td><td>—</td></tr>
 </tbody>
 </table>
 
@@ -120,6 +121,7 @@
 <thead>
 <tr>
 <th rowspan="2">入出力名</th>
+<th rowspan="2">説明</th>
 <th rowspan="2">種別</th>
 <th rowspan="2">I/O</th>
 <th colspan="4">アクセス種別(CRUD)</th>
@@ -133,10 +135,10 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>プロジェクト</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td>公開キー・ウィジェット設定 JSON の取得・更新。<code>projects</code>(<code>widget_public_key</code> / ウィジェット設定 JSON)(<a href="../03_テーブル設計.html#36-projects">テーブル設計 3.6</a>)</td></tr>
-<tr><td>レガシー公開キー</td><td>テーブル</td><td>出力</td><td>◯</td><td>—</td><td>—</td><td>—</td><td>ローテーション時に旧キーを 24 時間保持。<code>project_legacy_keys</code>(<a href="../03_テーブル設計.html#37-project_legacy_keys">テーブル設計 3.7</a>)</td></tr>
-<tr><td>プロジェクト更新</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>ウィジェット設定(主色等)の取得・保存。<code>PATCH /projects/{id}</code>(<a href="../02_API設計.html#533-patch-projectsid--delete-projectsid">API 設計 5.3.3</a>)</td></tr>
-<tr><td>ウィジェット鍵ローテーション</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>公開キー再発行(旧キー 24h 猶予)。<code>POST /projects/{id}/widget-key/rotate</code>(<a href="../02_API設計.html#534-post-projectsidwidget-keyrotateウィジェット鍵ローテーション">API 設計 5.3.4</a>)</td></tr>
+<tr><td>プロジェクト</td><td>公開キー・ウィジェット設定 JSON を取得・更新する</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>projects</code>(<code>widget_public_key</code> / ウィジェット設定 JSON)(<a href="../03_テーブル設計.html#36-projects">テーブル設計 3.6</a>)</td></tr>
+<tr><td>レガシー公開キー</td><td>ローテーション時に旧キーを 24 時間保持する</td><td>テーブル</td><td>出力</td><td>◯</td><td>—</td><td>—</td><td>—</td><td><code>project_legacy_keys</code>(<a href="../03_テーブル設計.html#37-project_legacy_keys">テーブル設計 3.7</a>)</td></tr>
+<tr><td>プロジェクト更新</td><td>ウィジェット設定(主色等)を取得・保存する</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>PATCH /projects/{id}</code>(<a href="../02_API設計.html#533-patch-projectsid--delete-projectsid">API 設計 5.3.3</a>)</td></tr>
+<tr><td>ウィジェット鍵ローテーション</td><td>公開キーを再発行する(旧キー 24h 猶予)</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /projects/{id}/widget-key/rotate</code>(<a href="../02_API設計.html#534-post-projectsidwidget-keyrotateウィジェット鍵ローテーション">API 設計 5.3.4</a>)</td></tr>
 </tbody>
 </table>
 
