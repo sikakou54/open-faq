@@ -144,8 +144,8 @@
 <p>FAQ 公開時に <code>@cf/baai/bge-base-en-v1.5</code> で埋め込みベクトルを計算し、<code>faq_embeddings</code> テーブル（または KV <code>embedding:{faqId}</code>）に保存。AI 推論時のリランキング用。</p>
 <h3 id="38-一括インポートfaqbulk_import">3.8 一括インポート（<code>faq.bulk_import</code>）</h3>
 <p class="section-lead">CSV を R2 へステージングし Queue 経由で consumer が分割取込する一括インポートの判定ロジックと、失敗行の扱いを定めます。文字コード事前検証・列定義・テンプレート生成・行単位の INSERT/UPDATE 判定が要点です。</p>
-<p>CSV ファイル（UTF-8、BOM 許容）→ R2 ステージング → Queue 投入 → consumer が分割 INSERT。1 リクエスト最大 1000 件。<strong>JSON 形式は受理しない</strong>（不正形式は E-INPUT-CSV-INVALID）。UI は SCR-006-M1 FAQ CSV インポートモーダル（<code>POST /faqs/import</code>）。詳細は <a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html</a> を参照。</p>
-<p><strong>文字コード事前検証</strong>（クライアント側）: SCR-006-M1 のドラッグ&amp;ドロップ / ファイル選択の時点で、ファイル先頭バイト（BOM）および本文のバイト列から文字コードを判定し、<strong>UTF-8（BOM 許容）以外はアップロードせず即エラー</strong>（E-INPUT-CSV-INVALID / MSG-SCR-006-M1-ERR-005、検出した文字コード名を併記）。これによりサーバ側の文字化け INSERT を未然に防ぐ。</p>
+<p>CSV ファイル（UTF-8、BOM 許容）→ R2 ステージング → Queue 投入 → consumer が分割 INSERT。1 リクエスト最大 1000 件。<strong>JSON 形式は受理しない</strong>（不正形式は E-INPUT-CSV-INVALID）。UI は SCR-006-002 FAQ CSV インポートモーダル（<code>POST /faqs/import</code>）。詳細は <a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html</a> を参照。</p>
+<p><strong>文字コード事前検証</strong>（クライアント側）: SCR-006-002 のドラッグ&amp;ドロップ / ファイル選択の時点で、ファイル先頭バイト（BOM）および本文のバイト列から文字コードを判定し、<strong>UTF-8（BOM 許容）以外はアップロードせず即エラー</strong>（E-INPUT-CSV-INVALID / MSG-SCR-006-002-ERR-005、検出した文字コード名を併記）。これによりサーバ側の文字化け INSERT を未然に防ぐ。</p>
 <p><strong>CSV 列定義</strong>（ヘッダ行必須）: <code>FAQ ID, 質問, 回答, カテゴリ</code>。<code>status</code>（状態）列は受理しない。</p>
 <p><strong>テンプレート生成</strong>（<code>GET /faqs/import/template</code>）: ヘッダ行のみ（<code>FAQ ID,質問,回答,カテゴリ</code>）を <code>text/csv; charset=utf-8</code>（BOM 付与）でストリーム返却。動的データなし（静的文字列）、Queue 不経由の同期レスポンス。</p>
 <p><strong>FAQ ID 行判定ロジック</strong>（consumer 側、行単位）。consumer は CSV 各行について <code>FAQ ID</code> の有無と当該契約境界（<code>contract_owner_user_id</code>）での突合結果に応じて INSERT / UPDATE / 失敗を分岐する。質問・回答の欠落 / 文字数超過はいずれの分岐でも当該行を失敗させる（カテゴリは任意）。</p>
@@ -170,7 +170,7 @@
     end
   end</code></pre>
 <div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">部分成功</span>失敗行があっても他行の取込は継続する（部分成功）。<code>UPDATE</code> 分岐では <code>status</code> を維持し、<code>faq_revisions</code> に改訂行を追記して <code>version</code> をインクリメントする。</div></div>
-<p>失敗行は「行番号 + エラー理由」の構造化リストとしてジョブ結果（<code>GET /faqs/import/jobs/{jobId}</code> 等のポーリング応答）に含め、SCR-006-M1 進捗パネル内のスクロール領域に画面表示する（エラー CSV のダウンロードは行わない）。</p>
+<p>失敗行は「行番号 + エラー理由」の構造化リストとしてジョブ結果（<code>GET /faqs/import/jobs/{jobId}</code> 等のポーリング応答）に含め、SCR-006-002 進捗パネル内のスクロール領域に画面表示する（エラー CSV のダウンロードは行わない）。</p>
 <h3 id="39-リミット">3.9 リミット</h3>
 <p class="section-lead">FAQ 件数・プロジェクト数の契約単位上限と、警告しきい値・拒否しきい値を定めます。</p>
 <table>

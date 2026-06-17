@@ -44,7 +44,7 @@
 </thead>
 <tbody>
 <tr><td>FR / BR</td><td><a href="../../01_要件定義/FR04_FAQ管理.html#FR-040">FR-040</a>〜<a href="../../01_要件定義/FR04_FAQ管理.html#FR-048">FR-048</a>, <a href="../../01_要件定義/FR07_未解決質問からFAQ登録.html#FR-100">FR-100</a>〜<a href="../../01_要件定義/FR07_未解決質問からFAQ登録.html#FR-103">FR-103</a>, <a href="../../01_要件定義/FR07_未解決質問からFAQ登録.html#FR-105">FR-105</a>, <a href="../../01_要件定義/FR07_未解決質問からFAQ登録.html#FR-106">FR-106</a>, <a href="../../01_要件定義/FR18_UX細部・データ運用.html#FR-320">FR-320</a>〜<a href="../../01_要件定義/FR18_UX細部・データ運用.html#FR-323">FR-323</a> / <a href="../../01_要件定義/FR04_FAQ管理.html#BR-055">BR-055</a></td></tr>
-<tr><td>関連画面</td><td><a href="SCR_006-001.html"><code>SCR-006-001</code> FAQ 編集</a> / <a href="SCR_006-M1.html"><code>SCR-006-M1</code> FAQ CSV インポートモーダル</a> / <a href="SCR_005-001.html"><code>SCR-005-001</code> 要対応の質問詳細</a></td></tr>
+<tr><td>関連画面</td><td><a href="SCR_006-001.html"><code>SCR-006-001</code> FAQ 編集</a> / <a href="SCR_006-002.html"><code>SCR-006-002</code> FAQ CSV インポートモーダル</a> / <a href="SCR_005-001.html"><code>SCR-005-001</code> 要対応の質問詳細</a></td></tr>
 </tbody>
 </table>
 
@@ -68,7 +68,7 @@
 <pre class="mermaid"><code>flowchart LR
   S1["SCR-006 FAQ 一覧"]
   S2["SCR-006-001 FAQ 編集"]
-  S3["SCR-006-M1 FAQ CSV インポートモーダル"]
+  S3["SCR-006-002 FAQ CSV インポートモーダル"]
   S1 -- "FAQ ID クリック" --&gt; S2
   S1 -- "新規作成" --&gt; S2
   S1 -- "CSV をインポート" --&gt; S3
@@ -110,7 +110,7 @@
 <tr><td id="IT-10"><code>IT-10</code></td><td>行選択チェックボックス</td><td>一括操作の対象 FAQ を選択する(最大 50 件)</td><td>チェックボックス</td><td>—</td><td>—</td></tr>
 <tr><td id="IT-11"><code>IT-11</code></td><td>新規作成</td><td>FAQ 編集画面を新規モードで開く</td><td>ボタン</td><td>—</td><td>「+ 新規作成」</td></tr>
 <tr><td id="IT-12"><code>IT-12</code></td><td>一括操作バー</td><td>選択中の FAQ を一括で公開 / 非公開化 / 削除する(チェックボックス選択への一括処理)</td><td>ツールバー</td><td>1 件以上選択時に下部固定</td><td>「{件数} 件選択中」+「公開する」/「非公開化する」/「削除する」/「選択を解除」</td></tr>
-<tr><td id="IT-13"><code>IT-13</code></td><td>CSV をインポート</td><td>CSV インポートモーダル(SCR-006-M1)を開く</td><td>ボタン</td><td>—</td><td>「CSV をインポート」</td></tr>
+<tr><td id="IT-13"><code>IT-13</code></td><td>CSV をインポート</td><td>CSV インポートモーダル(SCR-006-002)を開く</td><td>ボタン</td><td>—</td><td>「CSV をインポート」</td></tr>
 <tr><td id="IT-14"><code>IT-14</code></td><td>CSV をエクスポート</td><td>フィルタ適用結果を CSV でダウンロードする</td><td>ボタン</td><td>—</td><td>「CSV をエクスポート」</td></tr>
 <tr><td id="IT-15"><code>IT-15</code></td><td>空状態</td><td>FAQ が 0 件のとき作成を促す EmptyState を表示する</td><td>空状態表示</td><td>FAQ 0 件時のみ表示</td><td>「FAQ がまだありません。最初の FAQ を作成しましょう。」+「+ 新規作成」</td></tr>
 </tbody>
@@ -164,7 +164,7 @@
 <tr><td><code>EV-05</code></td><td>新規作成へ遷移</td><td>「+ 新規作成」押下時</td><td>編集画面(SCR-006-001)を新規モードで開く</td><td><a href="#IT-11">IT-11</a></td></tr>
 <tr><td><code>EV-06</code></td><td>編集へ遷移</td><td>FAQ ID リンク押下時</td><td>編集画面(SCR-006-001)へ遷移</td><td><a href="#IT-04">IT-04</a></td></tr>
 <tr><td><code>EV-07</code></td><td>一括操作</td><td>1 件以上選択 → 一括操作バーのボタン押下時</td><td><ul><li>選択中 FAQ を <code>POST /faqs/bulk-status</code> で一括公開 / 非公開化</li><li>または一括削除(確認ダイアログ)</li></ul></td><td><a href="#IT-10">IT-10</a>, <a href="#IT-12">IT-12</a></td></tr>
-<tr><td><code>EV-08</code></td><td>CSV インポート起動</td><td>「CSV をインポート」押下時</td><td>SCR-006-M1 モーダルを開く</td><td><a href="#IT-13">IT-13</a></td></tr>
+<tr><td><code>EV-08</code></td><td>CSV インポート起動</td><td>「CSV をインポート」押下時</td><td>SCR-006-002 モーダルを開く</td><td><a href="#IT-13">IT-13</a></td></tr>
 <tr><td><code>EV-09</code></td><td>CSV エクスポート</td><td>「CSV をエクスポート」押下時</td><td>フィルタ適用結果を <code>GET /faqs/export</code> で CSV ダウンロード</td><td><a href="#IT-14">IT-14</a></td></tr>
 </tbody>
 </table>

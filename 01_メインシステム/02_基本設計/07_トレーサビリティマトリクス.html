@@ -314,12 +314,12 @@
 <td>FR-310</td>
 <td>FAQ CSV インポート(FAQ ID 判定で新規/上書き / 部分失敗確認 / 改訂履歴)</td>
 <td>F-FAQ-001</td>
-<td>SCR-006 / SCR-006-M1</td>
+<td>SCR-006 / SCR-006-002</td>
 <td><code>POST /faqs/import</code>(CSV のみ), <code>GET /faqs/import/template</code></td>
 <td><code>faqs</code>, <code>faq_revisions</code></td>
 <td>オーナー / 該当 PJ の <code>member</code>+</td>
 <td>E-INPUT-CSV-INVALID, E-INPUT-CSV-FAQID-NOTFOUND</td>
-<td>MSG-SCR-006-M1-*</td>
+<td>MSG-SCR-006-002-*</td>
 <td>1 ファイル最大 1000 件</td>
 </tr>
 <tr>
@@ -911,7 +911,7 @@
 <tr>
 <td>F-FAQ-001</td>
 <td>FAQ 管理</td>
-<td>SCR-006, SCR-006-M1</td>
+<td>SCR-006, SCR-006-002</td>
 <td><code>GET/POST/PATCH/DELETE /faqs</code>, <code>POST /faqs/bulk-status</code>(一括状態変更 最大 50 件), <code>GET /projects/{id}/faqs/search</code>, <code>POST /faqs/import</code>(CSV のみ), <code>GET /faqs/import/template</code>, <code>GET /faqs/export</code></td>
 <td><code>faqs</code>, <code>faq_revisions</code>, <code>faq_search_fts</code></td>
 </tr>
@@ -1115,9 +1115,9 @@
 <td>15 メッセージ</td>
 </tr>
 <tr>
-<td>SCR-006-M1</td>
+<td>SCR-006-002</td>
 <td>FAQ CSV インポートモーダル</td>
-<td>MSG-SCR-006-M1-*</td>
+<td>MSG-SCR-006-002-*</td>
 <td>15 メッセージ(D&amp;D + テンプレート DL + FAQ ID 判定 + 進捗 + エラー一覧画面表示)</td>
 </tr>
 <tr>
@@ -1474,7 +1474,7 @@
 <tr>
 <td>MEMBER(メンバー)</td>
 <td>該当プロジェクト(プロジェクト WS のみ。契約 WS は非可視)</td>
-<td>プロジェクト WS = SCR-008, SCR-005, SCR-006, SCR-006-M1, SCR-007(閲覧 + コピーのみ), SCR-021(閲覧のみ)+ 共通 = SCR-010, SCR-020, SCR-011, SCR-012, SCR-017</td>
+<td>プロジェクト WS = SCR-008, SCR-005, SCR-006, SCR-006-002, SCR-007(閲覧 + コピーのみ), SCR-021(閲覧のみ)+ 共通 = SCR-010, SCR-020, SCR-011, SCR-012, SCR-017</td>
 <td><code>POST/PATCH/DELETE /faqs</code>, <code>POST/PATCH /inquiries/*</code>, <code>GET /projects/{id}/quota-limits</code>(閲覧)</td>
 <td>FAQ 管理 / 要対応質問の状況管理 / ログ参照 + 質問数の当月利用・上限・消化率の閲覧のみ。無料利用枠はSCR-021に表示しない。質問数設定変更(SCR-021-M1)は不可。ウィジェット公開キー再発行・見た目編集は不可。アカウント削除はオーナー専有</td>
 </tr>

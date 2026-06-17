@@ -62,7 +62,7 @@
 <td>FAQ 管理</td>
 <td><code>/projects/{id}/faqs</code>, <code>/projects/{id}/faqs/{faqId}</code>, <code>/projects/{id}/faqs/import</code>, <code>/projects/{id}/faqs/import/template</code>, <code>/projects/{id}/faqs/export</code></td>
 <td>オーナー / 該当 PJ の <code>member</code>+</td>
-<td>SCR-006 / SCR-006-M1</td>
+<td>SCR-006 / SCR-006-002</td>
 </tr>
 <tr>
 <td>ウィジェット</td>
@@ -741,10 +741,10 @@
 <p>処理は行単位で評価し、対象外(他契約 / 論理削除済み)の ID は当該行のみ失敗として集計する(オーナー境界違反は §3.2 に従い結果から除外し成功扱いにしない)。<code>published</code> へ変更した行は <code>publishedAt</code> をサーバ側で記録する。</p>
 <p>レスポンス(200): <code>{ "succeeded": 48, "failed": [ { "id": "faq_...", "code": "NOT_FOUND" } ] }</code> エラー: 400 <code>VALIDATION_ERROR</code>(50 件超過 / 不正な <code>status</code>)、403 <code>PROJECT_ACCESS_DENIED</code></p>
 <h4 id="543-post-faqsimport">5.4.3 <code>POST /faqs/import</code></h4>
-<p>関連画面: SCR-006-M1 FAQ CSV インポートモーダル。</p>
+<p>関連画面: SCR-006-002 FAQ CSV インポートモーダル。</p>
 <p>リクエスト: <code>multipart/form-data { file: &lt;CSV&gt; }</code> 受理形式は <strong>CSV のみ</strong>(UTF-8、BOM 許容、ヘッダ行必須、1 ファイル最大 1000 件)。<strong>JSON 形式は受理しない</strong>(不正形式は 415 / 400、E-INPUT-CSV-INVALID)。 CSV 列構成は <code>FAQ ID, 質問, 回答, カテゴリ</code>。各行の <code>FAQ ID</code> で <strong>空欄 = 新規(<code>status=draft</code>)/ 既存 ID 一致 = 上書き(状態維持・<code>faq_revisions</code> に改訂追記)/ 当該契約に存在しない ID = 当該行を失敗</strong>(行単位エラー、E-INPUT-CSV-FAQID-NOTFOUND)と判定する。<code>status</code> 列は受理しない。 レスポンス(202): <code>{ "jobId": "job_...", "status": "processing" }</code></p>
 <h4 id="544-get-faqsimporttemplate">5.4.4 <code>GET /faqs/import/template</code></h4>
-<p>関連画面: SCR-006-M1「テンプレートをダウンロード」。 ヘッダ行のみの CSV テンプレート(<code>FAQ ID,質問,回答,カテゴリ</code>)を <code>text/csv; charset=utf-8</code>(UTF-8 BOM 付与可)で返す(200)。<code>Content-Disposition: attachment; filename="faq_import_template.csv"</code>。認可は <code>POST /faqs/import</code> と同一(オーナー / 該当 PJ の <code>member</code>+)。</p>
+<p>関連画面: SCR-006-002「テンプレートをダウンロード」。 ヘッダ行のみの CSV テンプレート(<code>FAQ ID,質問,回答,カテゴリ</code>)を <code>text/csv; charset=utf-8</code>(UTF-8 BOM 付与可)で返す(200)。<code>Content-Disposition: attachment; filename="faq_import_template.csv"</code>。認可は <code>POST /faqs/import</code> と同一(オーナー / 該当 PJ の <code>member</code>+)。</p>
 <h4 id="545-get-faqsexport">5.4.5 <code>GET /faqs/export</code></h4>
 <p>関連画面: SCR-006 FAQ 管理一覧「CSV をエクスポート」。一覧フィルタ適用結果を <strong>CSV(UTF-8、<code>text/csv</code>)</strong> で返す(JSON 形式は提供しない)。</p>
 <h4 id="546-get-faqssearchfaq-全文検索">5.4.5a <code>GET /projects/{id}/faqs/search</code>(FAQ 全文検索 / FR-300)</h4>
