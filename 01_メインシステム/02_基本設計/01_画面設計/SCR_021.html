@@ -22,7 +22,7 @@
 <p class="doc-meta"><span><b>版数</b> v1.0</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
 
 <h2 id="1-画面概要">1. 画面概要</h2>
-<p class="section-lead">当該プロジェクトの質問数について、当月利用・今月の利用上限・消化率を簡潔に確認し、上限・アラート設定モーダル(SCR-021-M1)へ着地する画面です。無料利用枠・アラート状態・設定元・FAQ 件数は表示しません。</p>
+<p class="section-lead">当該プロジェクトの質問数について、当月利用・今月の利用上限・消化率を簡潔に確認し、上限・アラート設定モーダル(SCR-021-001)へ着地する画面です。無料利用枠・アラート状態・設定元・FAQ 件数は表示しません。</p>
 <table>
 <thead>
 <tr>
@@ -44,7 +44,7 @@
 </thead>
 <tbody>
 <tr><td>FR / BR</td><td><a href="../../01_要件定義/FR09_利用量・課金.html#FR-121">FR-121</a>, <a href="../../01_要件定義/FR09_利用量・課金.html#FR-122">FR-122</a>, <a href="../../01_要件定義/FR09_利用量・課金.html#FR-125">FR-125</a>, <a href="../../01_要件定義/FR09_利用量・課金.html#FR-126">FR-126</a>, <a href="../../01_要件定義/FR09_利用量・課金.html#FR-127">FR-127</a> / <a href="../../01_要件定義/FR09_利用量・課金.html#BR-088">BR-088</a>, <a href="../../01_要件定義/FR09_利用量・課金.html#BR-089">BR-089</a></td></tr>
-<tr><td>関連画面</td><td><a href="SCR_021-M1.html"><code>SCR-021-M1</code> 質問数上限設定モーダル</a> / <a href="SCR_008.html"><code>SCR-008</code> 概要(プロジェクト)</a></td></tr>
+<tr><td>関連画面</td><td><a href="SCR_021-001.html"><code>SCR-021-001</code> 質問数上限設定モーダル</a> / <a href="SCR_008.html"><code>SCR-008</code> 概要(プロジェクト)</a></td></tr>
 </tbody>
 </table>
 
@@ -67,7 +67,7 @@
 <p class="section-lead">本画面からの画面遷移を、画面 ID・画面名とイベント(操作)で示します。</p>
 <pre class="mermaid"><code>flowchart LR
   S1["SCR-021 利用量と上限(プロジェクト単位)"]
-  S2["SCR-021-M1 質問数上限設定モーダル"]
+  S2["SCR-021-001 質問数上限設定モーダル"]
   S0["SCR-008 概要(プロジェクト)"]
   S0 -- "サイドメニュー「利用量と上限」" --&gt; S1
   S1 -- "アラート設定(オーナー / 管理者)" --&gt; S2
@@ -347,7 +347,7 @@
 <tr><td id="IT-02"><code>IT-02</code></td><td>集計対象期間</td><td>集計対象期間(当月固定)と最終更新タイムスタンプを表示する。準リアルタイム(5 分以内)</td><td>ラベル</td><td>—</td><td>当月の集計対象期間、最終更新日時</td></tr>
 <tr><td id="IT-03"><code>IT-03</code></td><td>質問数サマリー</td><td>当月利用・今月の利用上限の 2 値と、上限 ON 時は課金計算式を表示する</td><td>カード</td><td>計算式併記は上限 ON 時のみ</td><td>当月利用 / 今月の利用上限。上限 ON 時は「{上限件数}件 - {無料枠件数}件(無料枠) = {課金対象件数}件 (¥{金額} / 月)」を併記、OFF 時は値を「OFF」とし計算式を表示しない</td></tr>
 <tr><td id="IT-04"><code>IT-04</code></td><td>利用量</td><td>当月利用 ÷ 今月の利用上限の消化率を表示する。アラート状態・設定元は表示しない</td><td>プログレスバー</td><td>割合・ProgressBar・状態バッジは上限 ON 時のみ</td><td>消化率(80% 未満通常 / 80% 以上黄 / 100% 以上赤)、「N / M 件」。OFF 時は OFF 説明文のみ</td></tr>
-<tr><td id="IT-05"><code>IT-05</code></td><td>アラート設定</td><td>上限・アラート設定モーダル(SCR-021-M1)を開く</td><td>ボタン</td><td><strong>オーナー / 当該プロジェクト管理者の場合のみ表示</strong>。メンバーには表示しない</td><td>アラート設定</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>アラート設定</td><td>上限・アラート設定モーダル(SCR-021-001)を開く</td><td>ボタン</td><td><strong>オーナー / 当該プロジェクト管理者の場合のみ表示</strong>。メンバーには表示しない</td><td>アラート設定</td></tr>
 <tr><td id="IT-06"><code>IT-06</code></td><td>空状態</td><td>集計前・取得失敗時の空状態を表示する</td><td>空状態表示</td><td>集計前 / 取得失敗時</td><td>集計前は「集計中です」、取得失敗は §1.5.3 のフォールバック表示</td></tr>
 <tr><td id="IT-07"><code>IT-07</code></td><td>権限不足ガード</td><td>閲覧のみのロールに対し変更ボタンを非表示にする。当該 PJ に割当のないユーザーは閲覧不可</td><td>ツールチップ</td><td>ロールがメンバーの場合は閲覧のみ(変更ボタン非表示)</td><td>—</td></tr>
 </tbody>
@@ -394,7 +394,7 @@
 </thead>
 <tbody>
 <tr><td><code>EV-01</code></td><td>利用量初期表示</td><td>画面遷移・リロード時</td><td><ul><li>利用量取得・上限取得 API で当月利用と上限を取得し表示</li><li>集計前 / 取得失敗は EmptyState</li></ul></td><td><a href="#IT-02">IT-02</a>, <a href="#IT-03">IT-03</a>, <a href="#IT-04">IT-04</a>, <a href="#IT-06">IT-06</a></td></tr>
-<tr><td><code>EV-02</code></td><td>上限設定モーダル起動</td><td>「アラート設定」押下時(オーナー / 管理者)</td><td><ul><li>SCR-021-M1 質問数上限設定モーダルを開く</li><li><code>member</code> はボタン非表示のため発生しない</li></ul></td><td><a href="#IT-05">IT-05</a></td></tr>
+<tr><td><code>EV-02</code></td><td>上限設定モーダル起動</td><td>「アラート設定」押下時(オーナー / 管理者)</td><td><ul><li>SCR-021-001 質問数上限設定モーダルを開く</li><li><code>member</code> はボタン非表示のため発生しない</li></ul></td><td><a href="#IT-05">IT-05</a></td></tr>
 <tr><td><code>EV-03</code></td><td>権限ガードによるリダイレクト</td><td>当該 PJ に割当のないユーザーの URL 直アクセス時</td><td>403 を返しダッシュボードへリダイレクトする</td><td><a href="#IT-07">IT-07</a></td></tr>
 </tbody>
 </table>

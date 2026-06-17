@@ -75,12 +75,12 @@
 <tr><th>専有操作</th><th>主な画面(正本は 01)</th><th>根拠 FR</th></tr>
 </thead>
 <tbody>
-<tr><td>プロジェクトの作成・編集・削除</td><td>SCR-004 / SCR-004-M1</td><td><a href="../01_要件定義/FR03_プロジェクト管理.html#FR-030">FR-030</a> / <a href="../01_要件定義/FR02_ユーザー管理.html#FR-015c">FR-015c</a></td></tr>
+<tr><td>プロジェクトの作成・編集・削除</td><td>SCR-004 / SCR-004-001</td><td><a href="../01_要件定義/FR03_プロジェクト管理.html#FR-030">FR-030</a> / <a href="../01_要件定義/FR02_ユーザー管理.html#FR-015c">FR-015c</a></td></tr>
 <tr><td>課金情報・支払方法・請求履歴の閲覧・変更</td><td>SCR-022 / SCR-023</td><td><a href="../01_要件定義/FR02_ユーザー管理.html#FR-015c">FR-015c</a></td></tr>
 <tr><td>退会申請・解約</td><td>SCR-014</td><td><a href="../01_要件定義/FR02_ユーザー管理.html#FR-015c">FR-015c</a></td></tr>
 <tr><td>規約再同意の同意 / 不同意</td><td>SCR-015</td><td><a href="../01_要件定義/FR02_ユーザー管理.html#FR-015c">FR-015c</a></td></tr>
 <tr><td>契約設定</td><td>SCR-023</td><td><a href="../01_要件定義/FR02_ユーザー管理.html#FR-015c">FR-015c</a></td></tr>
-<tr><td>メンバーユーザー削除(最後の割当解除に伴う論理削除)</td><td>SCR-009 / SCR-009-M1</td><td><a href="../01_要件定義/FR02_ユーザー管理.html#FR-019">FR-019</a></td></tr>
+<tr><td>メンバーユーザー削除(最後の割当解除に伴う論理削除)</td><td>SCR-009 / SCR-009-001</td><td><a href="../01_要件定義/FR02_ユーザー管理.html#FR-019">FR-019</a></td></tr>
 </tbody>
 </table>
 </div>
@@ -113,14 +113,14 @@
 <tr><td>SCR-003 パスワード再設定</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td>トークン経由。ロール不問</td></tr>
 <tr><td>ダッシュボード(通知・お知らせ受信箱)</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td>ロール不問で全員可(<a href="../01_要件定義/FR19_アクセス制御細部.html#FR-337">FR-337</a>)</td></tr>
 <tr><td>SCR-004 プロジェクト(一覧)</td><td style="text-align:center;">○</td><td style="text-align:center;">閲覧</td><td style="text-align:center;">×</td><td style="text-align:center;">×</td><td>作成・編集・削除はオーナー専有(§2)</td></tr>
-<tr><td>SCR-004-M1 プロジェクト作成・編集モーダル</td><td style="text-align:center;">○</td><td style="text-align:center;">×</td><td style="text-align:center;">×</td><td style="text-align:center;">×</td><td>オーナー専有。削除は再認証必須(再認証の正本は 08 §2)</td></tr>
+<tr><td>SCR-004-001 プロジェクト作成・編集モーダル</td><td style="text-align:center;">○</td><td style="text-align:center;">×</td><td style="text-align:center;">×</td><td style="text-align:center;">×</td><td>オーナー専有。削除は再認証必須(再認証の正本は 08 §2)</td></tr>
 <tr><td>SCR-005 要対応の質問 一覧 / 詳細</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">×</td><td>状況 <code>open</code> / <code>closed</code> 手動切替を含む(連動ロジックの正本は 06)</td></tr>
 <tr><td>SCR-006 FAQ 管理</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">×</td><td>登録・編集・公開。状態切替は画面側(01 正本)</td></tr>
 <tr><td>SCR-006-002 FAQ CSV インポートモーダル</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">×</td><td>FAQ 管理権限と同等</td></tr>
 <tr><td>SCR-007 ウィジェット設定</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">閲覧</td><td style="text-align:center;">×</td><td>メンバーは閲覧 + 埋め込みコードのコピーのみ。公開キー再発行は管理者以上 + 再認証(<a href="../01_要件定義/FR03_プロジェクト管理.html#FR-031">FR-031</a>)</td></tr>
 <tr><td>SCR-008 概要(プロジェクト)</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">×</td><td>当該プロジェクトの概要・KPI</td></tr>
 <tr><td>SCR-009 メンバー(プロジェクト)</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">閲覧</td><td style="text-align:center;">×</td><td>メンバーは当該 PJ のメンバー一覧の参照のみ(<a href="../01_要件定義/FR02_ユーザー管理.html#FR-017">FR-017</a>)</td></tr>
-<tr><td>SCR-009-M1 メンバー招待 / 編集モーダル</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">×</td><td style="text-align:center;">×</td><td>当該 PJ 範囲の招待・役割変更・離脱。自己降格・自己割当解除は不可(§5)</td></tr>
+<tr><td>SCR-009-001 メンバー招待 / 編集モーダル</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">×</td><td style="text-align:center;">×</td><td>当該 PJ 範囲の招待・役割変更・離脱。自己降格・自己割当解除は不可(§5)</td></tr>
 <tr><td>SCR-010 利用規約閲覧</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td>閲覧は認証不要。同意操作はオーナー専有(SCR-015)</td></tr>
 <tr><td>SCR-011 お知らせ一覧</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td>自契約のお知らせ閲覧・既読化</td></tr>
 <tr><td>SCR-012 お知らせ詳細</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td>既読化を伴う</td></tr>
@@ -132,8 +132,8 @@
 <tr><td>SCR-018 メンバーアカウント有効化</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td><td>未認証トークン専用画面(§3.1)</td></tr>
 <tr><td>SCR-019 プロジェクト連絡先メール確認完了</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td><td>未認証トークン専用画面(§3.1)</td></tr>
 <tr><td>SCR-020 プライバシーポリシー閲覧</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td>閲覧は認証不要。同意操作はオーナー専有(SCR-015)</td></tr>
-<tr><td>SCR-021 利用量と上限(プロジェクト単位)</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">閲覧</td><td style="text-align:center;">×</td><td>メンバーは閲覧のみ。変更は SCR-021-M1</td></tr>
-<tr><td>SCR-021-M1 質問数上限設定モーダル</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">×</td><td style="text-align:center;">×</td><td>オーナー or 当該 PJ 管理者。変更は再認証必須(<a href="../01_要件定義/FR02_ユーザー管理.html#FR-015c">FR-015c</a>)</td></tr>
+<tr><td>SCR-021 利用量と上限(プロジェクト単位)</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">閲覧</td><td style="text-align:center;">×</td><td>メンバーは閲覧のみ。変更は SCR-021-001</td></tr>
+<tr><td>SCR-021-001 質問数上限設定モーダル</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">×</td><td style="text-align:center;">×</td><td>オーナー or 当該 PJ 管理者。変更は再認証必須(<a href="../01_要件定義/FR02_ユーザー管理.html#FR-015c">FR-015c</a>)</td></tr>
 <tr><td>SCR-022 請求</td><td style="text-align:center;">○</td><td style="text-align:center;">×</td><td style="text-align:center;">×</td><td style="text-align:center;">×</td><td>オーナー専有(§2)</td></tr>
 <tr><td>SCR-023 設定</td><td style="text-align:center;">○</td><td style="text-align:center;">×</td><td style="text-align:center;">×</td><td style="text-align:center;">×</td><td>契約設定。オーナー専有(§2)</td></tr>
 </tbody>
@@ -174,7 +174,7 @@
 <td>月次質問数上限・無料枠・アラート閾値</td>
 <td>プロジェクト単位</td>
 <td>オーナー / 当該プロジェクト管理者(変更は再認証必須。メンバーは閲覧のみ)</td>
-<td>SCR-021 / SCR-021-M1</td>
+<td>SCR-021 / SCR-021-001</td>
 </tr>
 <tr>
 <td>レート制限(質問・未解決質問・メール・管理 API の各レート)</td>

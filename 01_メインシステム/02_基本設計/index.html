@@ -212,13 +212,13 @@
 <tr>
 <td><a href="../01_要件定義/FR02_ユーザー管理.html">../01_要件定義/FR02_ユーザー管理.html</a></td>
 <td>プロジェクト単位のメンバー管理</td>
-<td>SCR-009 / SCR-009-M1</td>
+<td>SCR-009 / SCR-009-001</td>
 <td>プロジェクト割当API</td>
 </tr>
 <tr>
 <td><a href="../01_要件定義/FR03_プロジェクト管理.html">../01_要件定義/FR03_プロジェクト管理.html</a></td>
 <td>プロジェクト作成 / 編集 / 削除</td>
-<td>SCR-004 / SCR-004-M1</td>
+<td>SCR-004 / SCR-004-001</td>
 <td><code>GET/POST/PATCH/DELETE /v1/projects</code></td>
 </tr>
 <tr>
@@ -529,14 +529,14 @@
 <td>-</td>
 </tr>
 <tr>
-<td>SCR-004-M1</td>
+<td>SCR-004-001</td>
 <td>プロジェクト作成・編集モーダル</td>
-<td>§5.SCR-004-M1</td>
+<td>§5.SCR-004-001</td>
 <td><code>POST /v1/projects</code> / <code>PATCH /v1/projects/{id}</code> / <code>DELETE /v1/projects/{id}</code></td>
 <td><code>projects</code>(作成時にオーナー grants 自動 INSERT、削除は論理削除)</td>
 <td>オーナー専有</td>
 <td>E-INPUT-*</td>
-<td>MSG-SCR-004-M1-*</td>
+<td>MSG-SCR-004-001-*</td>
 <td>§6 認可判定</td>
 <td>-</td>
 <td>-</td>
@@ -620,14 +620,14 @@
 <td>-</td>
 </tr>
 <tr>
-<td>SCR-009-M1</td>
+<td>SCR-009-001</td>
 <td>メンバー招待 / 編集モーダル(プロジェクト単位)</td>
-<td>§5.SCR-009-M1</td>
+<td>§5.SCR-009-001</td>
 <td><code>POST /v1/projects/:id/members</code>(招待), <code>PATCH /v1/projects/:id/members/:userId</code>(ロール変更), <code>DELETE /v1/projects/:id/members/:userId</code>(離脱・最後の割当時はアカウント停止)</td>
 <td><code>users</code>, <code>project_users</code>, <code>sessions</code>, <code>access_tokens</code></td>
 <td>オーナー / <code>admin</code>(該当 PJ)</td>
 <td>E-INPUT-* / E-AUTHZ-*</td>
-<td>MSG-SCR-009-M1-*</td>
+<td>MSG-SCR-009-001-*</td>
 <td>§3 招待トークン</td>
 <td>-</td>
 <td>-</td>
@@ -672,14 +672,14 @@
 <td>§3a</td>
 </tr>
 <tr>
-<td>SCR-021-M1</td>
+<td>SCR-021-001</td>
 <td>質問数上限設定モーダル</td>
-<td>§5.SCR-021-M1</td>
+<td>§5.SCR-021-001</td>
 <td><code>PATCH /v1/projects/{id}/quota-limits/questions</code></td>
 <td><code>project_quota_limits</code></td>
 <td>オーナー / 該当 PJ の <code>admin</code></td>
 <td>E-AUTHZ-FORBIDDEN / E-INPUT-*</td>
-<td>MSG-SCR-021-M1-*</td>
+<td>MSG-SCR-021-001-*</td>
 <td>§6 認可判定</td>
 <td>§7 再認証</td>
 <td>§3a</td>

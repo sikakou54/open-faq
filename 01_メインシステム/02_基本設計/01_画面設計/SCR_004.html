@@ -22,7 +22,7 @@
 <p class="doc-meta"><span><b>版数</b> v1.0</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
 
 <h2 id="1-画面概要">1. 画面概要</h2>
-<p class="section-lead">オーナーが契約内のプロジェクトを一覧で確認し、新規作成・編集・削除を行う画面です(オーナー専有)。作成・編集・削除動線は SCR-004-M1 モーダルに集約します。</p>
+<p class="section-lead">オーナーが契約内のプロジェクトを一覧で確認し、新規作成・編集・削除を行う画面です(オーナー専有)。作成・編集・削除動線は SCR-004-001 モーダルに集約します。</p>
 <table>
 <thead>
 <tr>
@@ -44,7 +44,7 @@
 </thead>
 <tbody>
 <tr><td>FR / BR</td><td><a href="../../01_要件定義/FR03_プロジェクト管理.html#FR-030">FR-030</a>〜<a href="../../01_要件定義/FR03_プロジェクト管理.html#FR-035">FR-035</a>, <a href="../../01_要件定義/FR03_プロジェクト管理.html#FR-030a">FR-030a</a>, <a href="../../01_要件定義/FR03_プロジェクト管理.html#FR-030b">FR-030b</a> / <a href="../../01_要件定義/FR03_プロジェクト管理.html#BR-045">BR-045</a>, <a href="../../01_要件定義/FR03_プロジェクト管理.html#BR-046">BR-046</a>, <a href="../../01_要件定義/FR03_プロジェクト管理.html#BR-047">BR-047</a></td></tr>
-<tr><td>関連画面</td><td><a href="SCR_004-M1.html"><code>SCR-004-M1</code> プロジェクト作成・編集モーダル</a> / <a href="SCR_008.html"><code>SCR-008</code> 概要(プロジェクト)</a></td></tr>
+<tr><td>関連画面</td><td><a href="SCR_004-001.html"><code>SCR-004-001</code> プロジェクト作成・編集モーダル</a> / <a href="SCR_008.html"><code>SCR-008</code> 概要(プロジェクト)</a></td></tr>
 </tbody>
 </table>
 
@@ -67,7 +67,7 @@
 <p class="section-lead">本画面からの画面遷移を、画面 ID・画面名とイベント(操作)で示します。</p>
 <pre class="mermaid"><code>flowchart LR
   S1["SCR-004 プロジェクト"]
-  S2["SCR-004-M1 プロジェクト作成・編集モーダル"]
+  S2["SCR-004-001 プロジェクト作成・編集モーダル"]
   S3["SCR-008 概要(プロジェクト)"]
   S1 -- "+ 新規プロジェクトを作成" --&gt; S2
   S1 -- "プロジェクト名クリック(編集)" --&gt; S2
@@ -93,7 +93,7 @@
 </div>
 
 <h2 id="4-画面項目定義">4. 画面項目定義</h2>
-<p class="section-lead">本画面の入出力項目(一覧の列・件数表示・空状態を含む)を定義します。項目の正本は本表です。一覧表に「操作」列・プロジェクト ID 列・更新日時列は設けず、編集遷移はプロジェクト名(主リンク)に集約します(クリックで SCR-004-M1 を編集モードで開く)。</p>
+<p class="section-lead">本画面の入出力項目(一覧の列・件数表示・空状態を含む)を定義します。項目の正本は本表です。一覧表に「操作」列・プロジェクト ID 列・更新日時列は設けず、編集遷移はプロジェクト名(主リンク)に集約します(クリックで SCR-004-001 を編集モードで開く)。</p>
 <table>
 <thead>
 <tr>
@@ -157,8 +157,8 @@
 </thead>
 <tbody>
 <tr><td><code>EV-01</code></td><td>一覧初期表示</td><td>画面遷移・リロード時</td><td><ul><li><code>GET /projects</code> で一覧を取得し表示</li><li>0 件時は EmptyState</li><li>取得中は LoadingSkeleton</li></ul></td><td><a href="#IT-02">IT-02</a>, <a href="#IT-03">IT-03</a>, <a href="#IT-04">IT-04</a>, <a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a>, <a href="#IT-07">IT-07</a>, <a href="#IT-08">IT-08</a></td></tr>
-<tr><td><code>EV-02</code></td><td>新規作成モーダル起動</td><td>「+ 新規プロジェクトを作成」押下時</td><td>SCR-004-M1 を新規作成モードで開く</td><td><a href="#IT-01">IT-01</a></td></tr>
-<tr><td><code>EV-03</code></td><td>編集モーダル起動</td><td>プロジェクト名リンク押下時</td><td>SCR-004-M1 を編集モードで開く(現値ロード)</td><td><a href="#IT-02">IT-02</a></td></tr>
+<tr><td><code>EV-02</code></td><td>新規作成モーダル起動</td><td>「+ 新規プロジェクトを作成」押下時</td><td>SCR-004-001 を新規作成モードで開く</td><td><a href="#IT-01">IT-01</a></td></tr>
+<tr><td><code>EV-03</code></td><td>編集モーダル起動</td><td>プロジェクト名リンク押下時</td><td>SCR-004-001 を編集モードで開く(現値ロード)</td><td><a href="#IT-02">IT-02</a></td></tr>
 </tbody>
 </table>
 

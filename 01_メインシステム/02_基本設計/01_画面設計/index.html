@@ -32,7 +32,7 @@
 <tr><td><code>SCR-002</code></td><td>アカウント登録</td><td><a href="SCR_002.html">SCR_002.html</a></td></tr>
 <tr><td><code>SCR-003</code></td><td>パスワード再設定</td><td><a href="SCR_003.html">SCR_003.html</a></td></tr>
 <tr><td><code>SCR-004</code></td><td>プロジェクト</td><td><a href="SCR_004.html">SCR_004.html</a></td></tr>
-<tr><td><code>SCR-004-M1</code></td><td>プロジェクト作成・編集モーダル</td><td><a href="SCR_004-M1.html">SCR_004-M1.html</a></td></tr>
+<tr><td><code>SCR-004-001</code></td><td>プロジェクト作成・編集モーダル</td><td><a href="SCR_004-001.html">SCR_004-001.html</a></td></tr>
 <tr><td><code>SCR-005</code></td><td>要対応の質問一覧</td><td><a href="SCR_005.html">SCR_005.html</a></td></tr>
 <tr><td><code>SCR-005-001</code></td><td>要対応の質問詳細</td><td><a href="SCR_005-001.html">SCR_005-001.html</a></td></tr>
 <tr><td><code>SCR-006</code></td><td>FAQ 一覧</td><td><a href="SCR_006.html">SCR_006.html</a></td></tr>
@@ -41,7 +41,7 @@
 <tr><td><code>SCR-007</code></td><td>ウィジェット設定</td><td><a href="SCR_007.html">SCR_007.html</a></td></tr>
 <tr><td><code>SCR-008</code></td><td>概要(プロジェクト)</td><td><a href="SCR_008.html">SCR_008.html</a></td></tr>
 <tr><td><code>SCR-009</code></td><td>メンバー(プロジェクト)</td><td><a href="SCR_009.html">SCR_009.html</a></td></tr>
-<tr><td><code>SCR-009-M1</code></td><td>メンバー招待 / 編集モーダル</td><td><a href="SCR_009-M1.html">SCR_009-M1.html</a></td></tr>
+<tr><td><code>SCR-009-001</code></td><td>メンバー招待 / 編集モーダル</td><td><a href="SCR_009-001.html">SCR_009-001.html</a></td></tr>
 <tr><td><code>SCR-010</code></td><td>利用規約閲覧</td><td><a href="SCR_010.html">SCR_010.html</a></td></tr>
 <tr><td><code>SCR-011</code></td><td>お知らせ一覧</td><td><a href="SCR_011.html">SCR_011.html</a></td></tr>
 <tr><td><code>SCR-012</code></td><td>お知らせ詳細</td><td><a href="SCR_012.html">SCR_012.html</a></td></tr>
@@ -54,7 +54,7 @@
 <tr><td><code>SCR-019</code></td><td>プロジェクト連絡先メール確認完了</td><td><a href="SCR_019.html">SCR_019.html</a></td></tr>
 <tr><td><code>SCR-020</code></td><td>プライバシーポリシー閲覧</td><td><a href="SCR_020.html">SCR_020.html</a></td></tr>
 <tr><td><code>SCR-021</code></td><td>利用量と上限</td><td><a href="SCR_021.html">SCR_021.html</a></td></tr>
-<tr><td><code>SCR-021-M1</code></td><td>質問数上限設定モーダル</td><td><a href="SCR_021-M1.html">SCR_021-M1.html</a></td></tr>
+<tr><td><code>SCR-021-001</code></td><td>質問数上限設定モーダル</td><td><a href="SCR_021-001.html">SCR_021-001.html</a></td></tr>
 <tr><td><code>SCR-022</code></td><td>請求</td><td><a href="SCR_022.html">SCR_022.html</a></td></tr>
 <tr><td><code>SCR-023</code></td><td>設定</td><td><a href="SCR_023.html">SCR_023.html</a></td></tr>
 <tr><td><code>WIDGET</code></td><td>エンドユーザー向け FAQ ウィジェット</td><td><a href="SCR_WIDGET.html">SCR_WIDGET.html</a></td></tr>
@@ -310,7 +310,7 @@
 <td>契約 WS</td>
 </tr>
 <tr>
-<td>SCR-004-M1</td>
+<td>SCR-004-001</td>
 <td><code>/owner/projects/new</code>(新規)/ <code>/owner/projects/:projectId/edit</code>(編集)(全画面モーダル)</td>
 <td>契約 WS</td>
 </tr>
@@ -365,7 +365,7 @@
 <td>プロジェクト WS</td>
 </tr>
 <tr>
-<td>SCR-009-M1</td>
+<td>SCR-009-001</td>
 <td><code>/projects/:projectId/members/new</code> / <code>/projects/:projectId/members/:userId/edit</code>(全画面モーダル)</td>
 <td>プロジェクト WS</td>
 </tr>
@@ -375,7 +375,7 @@
 <td>プロジェクト WS</td>
 </tr>
 <tr>
-<td>SCR-021-M1</td>
+<td>SCR-021-001</td>
 <td><code>/projects/:projectId/usage/limits/questions/edit</code>(全画面モーダル)</td>
 <td>プロジェクト WS</td>
 </tr>
@@ -647,14 +647,14 @@
 <tr>
 <td>契約ワークスペース</td>
 <td>オーナー専有(<code>contract_owners</code> 行存在)</td>
-<td>SCR-016 / SCR-004 / SCR-004-M1 / SCR-022 / SCR-023 / SCR-014 / SCR-015</td>
+<td>SCR-016 / SCR-004 / SCR-004-001 / SCR-022 / SCR-023 / SCR-014 / SCR-015</td>
 <td>契約全体の利用状況、プロジェクト、請求、設定、退会を扱う</td>
 </tr>
 <tr>
 <td>プロジェクトワークスペース</td>
 <td>オーナー + プロジェクト管理者 + メンバー</td>
 <td>SCR-008 / SCR-005 / SCR-006 / SCR-007 / SCR-009 / SCR-021</td>
-<td>プロジェクト固有の運用、ウィジェット、メンバー割当、利用量・上限を扱う(プロジェクト名・ドメイン・連絡先の編集と削除は契約 WS の SCR-004-M1 に集約)</td>
+<td>プロジェクト固有の運用、ウィジェット、メンバー割当、利用量・上限を扱う(プロジェクト名・ドメイン・連絡先の編集と削除は契約 WS の SCR-004-001 に集約)</td>
 </tr>
 <tr>
 <td>共通領域</td>
@@ -820,7 +820,7 @@
 <td>ログイン時 / 操作時に自動表示</td>
 </tr>
 <tr>
-<td>SCR-004-M1 プロジェクト作成・編集モーダル</td>
+<td>SCR-004-001 プロジェクト作成・編集モーダル</td>
 <td>SCR-004 から開く全画面モーダル</td>
 <td>SCR-004「+ 新規プロジェクトを作成」(新規)/ プロジェクト名クリック(編集)</td>
 </tr>
@@ -830,12 +830,12 @@
 <td>SCR-006「CSV をインポート」ボタン</td>
 </tr>
 <tr>
-<td>SCR-009-M1 メンバー招待/編集モーダル</td>
+<td>SCR-009-001 メンバー招待/編集モーダル</td>
 <td>SCR-009 から開く全画面モーダル</td>
 <td>SCR-009 行アクション</td>
 </tr>
 <tr>
-<td>SCR-021-M1 質問数上限設定モーダル</td>
+<td>SCR-021-001 質問数上限設定モーダル</td>
 <td>SCR-021 から開く全画面モーダル</td>
 <td>SCR-021 の「アラート設定」ボタン</td>
 </tr>
@@ -1139,25 +1139,25 @@
 <tr>
 <td>プロジェクトから外す</td>
 <td>L1</td>
-<td>SCR-009-M1</td>
+<td>SCR-009-001</td>
 <td><code>DELETE /projects/{id}/members/{userId}</code>。当該割当だけを解除</td>
 </tr>
 <tr>
 <td>招待メール再送</td>
 <td>L1 + 再認証(L3 相当)</td>
-<td>SCR-009-M1</td>
+<td>SCR-009-001</td>
 <td>FR-016b</td>
 </tr>
 <tr>
 <td>プロジェクト管理者 → メンバー降格(他者)</td>
 <td>L2 + 最後の管理者保護</td>
-<td>SCR-009-M1</td>
+<td>SCR-009-001</td>
 <td>FR-018a / <code>E-AUTHZ-LAST-ADMIN-PROTECTED</code></td>
 </tr>
 <tr>
 <td>プロジェクト削除(論理削除、<code>projects.valid=0</code>)</td>
 <td>L3(プロジェクト名タイプ + 再認証)</td>
-<td>SCR-004-M1 プロジェクト編集モーダルの DangerSection</td>
+<td>SCR-004-001 プロジェクト編集モーダルの DangerSection</td>
 <td>FR-030 / <code>E-AUTHZ-OWNER-ONLY</code></td>
 </tr>
 <tr>
@@ -1169,7 +1169,7 @@
 <tr>
 <td>プロジェクトの質問数上限・アラート変更</td>
 <td>L3</td>
-<td>SCR-021-M1(SCR-021 から起動。オーナー / 当該 PJ 管理者)</td>
+<td>SCR-021-001(SCR-021 から起動。オーナー / 当該 PJ 管理者)</td>
 <td><code>PATCH /projects/{id}/quota-limits/questions</code></td>
 </tr>
 <tr>
@@ -1240,7 +1240,7 @@
 <td>×</td>
 </tr>
 <tr>
-<td>SCR-004-M1 プロジェクト作成・編集モーダル</td>
+<td>SCR-004-001 プロジェクト作成・編集モーダル</td>
 <td>◎(オーナーのみ)</td>
 <td>×</td>
 <td>×</td>

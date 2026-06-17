@@ -68,7 +68,7 @@
 </tr>
 <tr>
 <td>画面</td>
-<td>SCR-009-M1</td>
+<td>SCR-009-001</td>
 <td>メンバー招待 / 編集モーダル(招待モードは氏名フィールドなし、編集モードは氏名 read-only)</td>
 </tr>
 <tr>
@@ -146,7 +146,7 @@
 <h3 id="31-利用者権限詳細設計参照のみ">3.1 利用者・権限詳細設計（参照のみ）</h3>
 <p class="section-lead">ユーザー種別とロールの設計は基本設計が正本です。本節はその所在を示し、本書側で扱う割当解除の論理削除挙動だけを補足します。</p>
 <p>ユーザー種別、3 ロール(オーナー / プロジェクト管理者 / メンバー)、画面別権限マトリクス、認証フロー、Principal 構築は <a href="../02_基本設計/04_権限設計.html">../02_基本設計/04_権限設計.html</a> および <a href="../02_基本設計/08_認証・認可設計.html">../02_基本設計/08_認証・認可設計.html</a> を正本とする。</p>
-<p>利用者側アカウントはオーナーとメンバーに分かれ、メンバーはプロジェクトごとに <code>admin</code> / <code>member</code> を持つ。SCR-009-M1の「プロジェクトから外す」は対象 <code>project_users</code> 行を論理削除し、最後の有効割当だった場合は <code>users.valid=0</code> と全セッション・未使用招待を同一トランザクションで失効する。</p>
+<p>利用者側アカウントはオーナーとメンバーに分かれ、メンバーはプロジェクトごとに <code>admin</code> / <code>member</code> を持つ。SCR-009-001の「プロジェクトから外す」は対象 <code>project_users</code> 行を論理削除し、最後の有効割当だった場合は <code>users.valid=0</code> と全セッション・未使用招待を同一トランザクションで失効する。</p>
 <h3 id="32-状態詳細設計参照のみ">3.2 状態詳細設計（参照のみ）</h3>
 <p class="section-lead">契約状態の状態遷移はテーブル設計が正本です。本節はその所在のみを示します。</p>
 <p>契約状態（<code>contract_owners.contract_status</code>: <code>active</code> / <code>suspended</code> / <code>deleted_pending</code> / <code>deleted</code>）の全状態遷移は <a href="../02_基本設計/03_テーブル設計.html">../02_基本設計/03_テーブル設計.html</a> §4.5.5 を正本とする。</p>
@@ -473,7 +473,7 @@
 <td>AC-009</td>
 <td><code>e2e-admin-user-activation-001</code></td>
 <td>E2E</td>
-<td><code>apps/main/e2e/admin-users.spec.ts</code>(SCR-009-M1 招待 → 招待メール → SCR-018 で氏名 + 初回パスワード + 規約同意 → 有効化完了 → SCR-001 ログイン の一連シナリオ。氏名は SCR-009-M1 では入力せず SCR-018 でのみ本人入力、users.name が NULL → 設定済、users.status が pending_activation → active、project_users.valid が 0 → 1、access_tokens.used_at セットを検証)</td>
+<td><code>apps/main/e2e/admin-users.spec.ts</code>(SCR-009-001 招待 → 招待メール → SCR-018 で氏名 + 初回パスワード + 規約同意 → 有効化完了 → SCR-001 ログイン の一連シナリオ。氏名は SCR-009-001 では入力せず SCR-018 でのみ本人入力、users.name が NULL → 設定済、users.status が pending_activation → active、project_users.valid が 0 → 1、access_tokens.used_at セットを検証)</td>
 </tr>
 <tr>
 <td>AC-016</td>

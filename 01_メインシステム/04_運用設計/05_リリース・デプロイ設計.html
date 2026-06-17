@@ -410,7 +410,7 @@
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># → 1 年後 MASTER_KEY_PREV 削除</span></span></code></pre></div>
 <h2 id="5a-オーナー固定化--論理削除統一-マイグレーション順序v110-履歴">5a. オーナー固定化 + 論理削除統一 マイグレーション順序(v1.10 履歴)</h2>
 <blockquote>
-<p><strong>注記</strong>: 本セクション(M1〜M10、§5a / §5b)は <strong>v1.10 リファクタ時点の手順記録</strong>(履歴)である。<strong>MVP 未リリースのため、その後の v1.11 でユーザー情報管理を 3 表分割(<code>users</code> / <code>contract_owners</code> / <code>project_users</code>)へ再リファクタリングしたため、本セクション内の <code>accounts</code> / <code>account_project_grants</code> を直接参照する SQL や手順は新スキーマでは適用できない</strong>。新規環境への適用手順は §5c「v1.11 ユーザーマスタ 3 表分割マイグレーション」を参照する。本セクションは設計判断の文脈保持(なぜ valid カラムを全テーブルに付けたか、なぜ削除動線が SCR-016 集約になったか等)のため残置する。現行仕様では、<strong>プロジェクト削除動線は SCR-004-M1 プロジェクト作成・編集モーダル(編集モード)のオーナー専有 DangerSection に集約</strong>する(FR-030 / 基本設計 §5.5 が正本。旧 SCR-024 プロジェクト設定は廃止)。本履歴中の「SCR-016 にプロジェクト削除動線を追加」および「SCR-008 に移設」は過去時点の記録であり、現行仕様ではない。</p>
+<p><strong>注記</strong>: 本セクション(M1〜M10、§5a / §5b)は <strong>v1.10 リファクタ時点の手順記録</strong>(履歴)である。<strong>MVP 未リリースのため、その後の v1.11 でユーザー情報管理を 3 表分割(<code>users</code> / <code>contract_owners</code> / <code>project_users</code>)へ再リファクタリングしたため、本セクション内の <code>accounts</code> / <code>account_project_grants</code> を直接参照する SQL や手順は新スキーマでは適用できない</strong>。新規環境への適用手順は §5c「v1.11 ユーザーマスタ 3 表分割マイグレーション」を参照する。本セクションは設計判断の文脈保持(なぜ valid カラムを全テーブルに付けたか、なぜ削除動線が SCR-016 集約になったか等)のため残置する。現行仕様では、<strong>プロジェクト削除動線は SCR-004-001 プロジェクト作成・編集モーダル(編集モード)のオーナー専有 DangerSection に集約</strong>する(FR-030 / 基本設計 §5.5 が正本。旧 SCR-024 プロジェクト設定は廃止)。本履歴中の「SCR-016 にプロジェクト削除動線を追加」および「SCR-008 に移設」は過去時点の記録であり、現行仕様ではない。</p>
 </blockquote>
 <p>本変更を本番反映する際の手順(ゼロダウンタイム前提):</p>
 <ol type="1">
@@ -441,10 +441,10 @@
 </ul></li>
 <li><strong>UI 切替</strong>:
 <ul>
-<li>SCR-004 / SCR-004-M1 から削除ボタン撤去</li>
-<li>SCR-004-M1 から「このプロジェクトの管理者を指定」セクション撤去</li>
+<li>SCR-004 / SCR-004-001 から削除ボタン撤去</li>
+<li>SCR-004-001 から「このプロジェクトの管理者を指定」セクション撤去</li>
 <li>SCR-016 にプロジェクト削除動線を追加(L3 = TypeToConfirmInput + ReauthConfirmModal)</li>
-<li>SCR-009-M1 確認文言を物理 → 論理削除セマンティクスに変更</li>
+<li>SCR-009-001 確認文言を物理 → 論理削除セマンティクスに変更</li>
 </ul></li>
 <li><strong>90 日後物理削除バッチ有効化</strong>:
 <ul>
@@ -745,7 +745,7 @@
 </tr>
 <tr>
 <td>M12-8</td>
-<td><code>bash 99_script/check-spec-sync.sh</code> で SC-001〜SC-012 グリーン確認(SC-004 に SCR-021 / SCR-021-M1 が含まれること)</td>
+<td><code>bash 99_script/check-spec-sync.sh</code> で SC-001〜SC-012 グリーン確認(SC-004 に SCR-021 / SCR-021-001 が含まれること)</td>
 <td>スクリプト</td>
 <td>—</td>
 </tr>

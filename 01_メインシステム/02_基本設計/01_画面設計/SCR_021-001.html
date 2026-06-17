@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SCR-021-M1 質問数上限設定モーダル | FAQ 設計ポータル</title>
+<title>SCR-021-001 質問数上限設定モーダル | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../../../assets/css/style.css">
 <link rel="stylesheet" href="../../../assets/css/screen-mock.css">
 <script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
@@ -12,12 +12,12 @@
 <script src="../../../assets/js/search-index.js" defer></script>
 <script src="../../../assets/js/portal.js" defer></script>
 </head>
-<body data-page-id="01_メインシステム/02_基本設計/01_画面設計/SCR_021-M1.html">
+<body data-page-id="01_メインシステム/02_基本設計/01_画面設計/SCR_021-001.html">
 <article class="content" id="content">
-<h1 id="scr-021-m1-質問数上限設定モーダル">SCR-021-M1 質問数上限設定モーダル</h1>
+<h1 id="scr-021-001-質問数上限設定モーダル">SCR-021-001 質問数上限設定モーダル</h1>
 
 <aside class="page-summary">
-<p class="ps-lead"><strong>このページは、SCR-021 から開く当該プロジェクトの質問数上限とアラート閾値を設定するモーダル SCR-021-M1 を定義します。</strong> 画面概要 / 画面遷移図 / 画面レイアウト / 画面項目定義 / 入出力一覧 / 画面イベント一覧 の 6 セクションで記述します。</p>
+<p class="ps-lead"><strong>このページは、SCR-021 から開く当該プロジェクトの質問数上限とアラート閾値を設定するモーダル SCR-021-001 を定義します。</strong> 画面概要 / 画面遷移図 / 画面レイアウト / 画面項目定義 / 入出力一覧 / 画面イベント一覧 の 6 セクションで記述します。</p>
 </aside>
 <p class="doc-meta"><span><b>版数</b> v1.0</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
 
@@ -32,7 +32,7 @@
 </tr>
 </thead>
 <tbody>
-<tr><td id="SCR-021-M1"><code>SCR-021-M1</code></td><td>質問数上限設定モーダル</td><td>当該プロジェクトの質問数の月次上限件数・アラート閾値を全画面割込みモーダルで設定する</td></tr>
+<tr><td id="SCR-021-001"><code>SCR-021-001</code></td><td>質問数上限設定モーダル</td><td>当該プロジェクトの質問数の月次上限件数・アラート閾値を全画面割込みモーダルで設定する</td></tr>
 </tbody>
 </table>
 <table>
@@ -67,7 +67,7 @@
 <p class="section-lead">本モーダルの呼出元・遷移先を、画面 ID・画面名とイベント(操作)で示します。</p>
 <pre class="mermaid"><code>flowchart LR
   S1["SCR-021 利用量と上限(プロジェクト単位)"]
-  S2["SCR-021-M1 質問数上限設定モーダル"]
+  S2["SCR-021-001 質問数上限設定モーダル"]
   S1 -- "アラート設定" --&gt; S2
   S2 -- "キャンセル / 保存完了(再認証)" --&gt; S1
 </code></pre>
@@ -75,14 +75,14 @@
 <h2 id="3-画面レイアウト">3. 画面レイアウト</h2>
 <div class="layout-embed">
 <div class="le-cap">上限 ON 状態 — 件数入力が活性・課金額をリアルタイム併記</div>
-<div class="scr-mock"><div class="screen" id="scr-021-m1" role="region" aria-labelledby="scr-021-m1-title">
+<div class="scr-mock"><div class="screen" id="scr-021-001" role="region" aria-labelledby="scr-021-001-title">
   <div class="screen-header">
-    <div><span class="scr-name" id="scr-021-m1-title">質問数上限設定モーダル</span></div>
+    <div><span class="scr-name" id="scr-021-001-title">質問数上限設定モーダル</span></div>
     <div class="scr-user">利用者: オーナー / プロジェクト管理者(利用量と上限の「アラート設定」から起動)</div>
   </div>
-  <div class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="scr-021-m1-modal-title">
+  <div class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="scr-021-001-modal-title">
     <div class="modal-card" style="width: 580px;">
-      <h3 id="scr-021-m1-modal-title">質問数の上限設定</h3>
+      <h3 id="scr-021-001-modal-title">質問数の上限設定</h3>
       <p class="small">質問数の今月の利用上限とアラートを設定します。</p>
       <div class="field"><label>上限設定</label><div style="display:flex; gap:12px;"><label><input type="radio" name="limitEnabled" checked> ON</label><label><input type="radio" name="limitEnabled"> OFF</label></div></div>
       <div class="field">
@@ -108,14 +108,14 @@
 </div>
 <div class="layout-embed">
 <div class="le-cap">上限 OFF 状態 — 件数入力・アラート設定を非活性化(IT-01 OFF / EV-02)</div>
-<div class="scr-mock"><div class="screen" id="scr-021-m1-off" role="region" aria-labelledby="scr-021-m1-off-title">
+<div class="scr-mock"><div class="screen" id="scr-021-001-off" role="region" aria-labelledby="scr-021-001-off-title">
   <div class="screen-header">
-    <div><span class="scr-name" id="scr-021-m1-off-title">質問数上限設定モーダル(上限 OFF)</span></div>
+    <div><span class="scr-name" id="scr-021-001-off-title">質問数上限設定モーダル(上限 OFF)</span></div>
     <div class="scr-user">利用者: オーナー / プロジェクト管理者</div>
   </div>
-  <div class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="scr-021-m1-off-modal-title">
+  <div class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="scr-021-001-off-modal-title">
     <div class="modal-card" style="width: 580px;">
-      <h3 id="scr-021-m1-off-modal-title">質問数の上限設定</h3>
+      <h3 id="scr-021-001-off-modal-title">質問数の上限設定</h3>
       <p class="small">質問数の今月の利用上限とアラートを設定します。</p>
       <div class="field"><label>上限設定</label><div style="display:flex; gap:12px;"><label><input type="radio" name="limitEnabledOff"> ON</label><label><input type="radio" name="limitEnabledOff" checked> OFF</label></div></div>
       <div class="field" aria-disabled="true" style="opacity:.5;">
@@ -141,14 +141,14 @@
 </div>
 <div class="layout-embed">
 <div class="le-cap">バリデーションエラー状態 — 件数が最小〜最大の範囲外(範囲外エラー / EV-03)</div>
-<div class="scr-mock"><div class="screen" id="scr-021-m1-err" role="region" aria-labelledby="scr-021-m1-err-title">
+<div class="scr-mock"><div class="screen" id="scr-021-001-err" role="region" aria-labelledby="scr-021-001-err-title">
   <div class="screen-header">
-    <div><span class="scr-name" id="scr-021-m1-err-title">質問数上限設定モーダル(範囲外エラー)</span></div>
+    <div><span class="scr-name" id="scr-021-001-err-title">質問数上限設定モーダル(範囲外エラー)</span></div>
     <div class="scr-user">利用者: オーナー / プロジェクト管理者</div>
   </div>
-  <div class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="scr-021-m1-err-modal-title">
+  <div class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="scr-021-001-err-modal-title">
     <div class="modal-card" style="width: 580px;">
-      <h3 id="scr-021-m1-err-modal-title">質問数の上限設定</h3>
+      <h3 id="scr-021-001-err-modal-title">質問数の上限設定</h3>
       <p class="small">質問数の今月の利用上限とアラートを設定します。</p>
       <div class="field"><label>上限設定</label><div style="display:flex; gap:12px;"><label><input type="radio" name="limitEnabledErr" checked> ON</label><label><input type="radio" name="limitEnabledErr"> OFF</label></div></div>
       <div class="field">
@@ -197,7 +197,7 @@
 <tr><td id="IT-07"><code>IT-07</code></td><td>保存</td><td>再認証(パスワード再入力)後に上限・アラート設定を保存する</td><td>ボタン</td><td>—</td><td>保存</td></tr>
 </tbody>
 </table>
-<div class="callout warning"><i class="bi bi-exclamation-triangle"></i><div><span class="c-title">注意</span>バリデーション: 上限件数は上限 ON 時のみ必須・1 件刻み・最小〜最大件数の範囲内(範囲外は <code>E-INPUT-*</code>、MSG-SCR-021-M1-ERR-001)、OFF 時は <code>limit=null</code>。アラート閾値は <code>25</code> / <code>50</code> / <code>80</code> / <code>90</code> / <code>100</code> の配列として保存し、重複値・許可値以外は受け付けない(上限 OFF 時は <code>alertThresholds=[]</code>)。課金対象件数 = <code>max(0, 今月の利用上限 - 無料利用枠)</code>、最大課金額 = <code>課金対象件数 × 質問単価</code> をサーバ側で算出します。保存は再認証成功が前提(失敗時は <code>E-AUTH-REAUTH-FAILED</code> で保存中断)。</div></div>
+<div class="callout warning"><i class="bi bi-exclamation-triangle"></i><div><span class="c-title">注意</span>バリデーション: 上限件数は上限 ON 時のみ必須・1 件刻み・最小〜最大件数の範囲内(範囲外は <code>E-INPUT-*</code>、MSG-SCR-021-001-ERR-001)、OFF 時は <code>limit=null</code>。アラート閾値は <code>25</code> / <code>50</code> / <code>80</code> / <code>90</code> / <code>100</code> の配列として保存し、重複値・許可値以外は受け付けない(上限 OFF 時は <code>alertThresholds=[]</code>)。課金対象件数 = <code>max(0, 今月の利用上限 - 無料利用枠)</code>、最大課金額 = <code>課金対象件数 × 質問単価</code> をサーバ側で算出します。保存は再認証成功が前提(失敗時は <code>E-AUTH-REAUTH-FAILED</code> で保存中断)。</div></div>
 
 <h2 id="5-入出力一覧">5. 入出力一覧</h2>
 <p class="section-lead">本モーダルが読み書きするテーブルと、呼び出す API の一覧です。テーブルの正本は <a href="../03_テーブル設計.html">03_テーブル設計</a>、API の正本は <a href="../02_API設計.html#576-patch-projectsidquota-limitsquestions">02_API設計 §5.7.6</a> です。</p>

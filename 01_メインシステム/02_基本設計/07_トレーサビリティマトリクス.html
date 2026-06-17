@@ -230,7 +230,7 @@
 <td>FR-015a〜e</td>
 <td>メンバー権限管理(プロジェクト単位)</td>
 <td>F-USER-001</td>
-<td>SCR-009, SCR-009-M1</td>
+<td>SCR-009, SCR-009-001</td>
 <td><code>POST /projects/{id}/members</code>, <code>PATCH /projects/{id}/members/{userId}</code>, <code>DELETE /projects/{id}/members/{userId}</code></td>
 <td><code>users</code>, <code>project_users</code></td>
 <td>オーナー / <code>admin</code>(該当PJ)</td>
@@ -266,36 +266,36 @@
 <td>FR-016b</td>
 <td>招待リンク再送(<code>displayName</code> なし)</td>
 <td>F-USER-001</td>
-<td>SCR-009-M1</td>
+<td>SCR-009-001</td>
 <td><code>POST /members/{id}/resend-invitation</code></td>
 <td><code>access_tokens</code>(<code>purpose='activation'</code>, <code>meta</code> 再発行)</td>
 <td>オーナー / <code>admin</code>(該当 PJ)</td>
 <td>E-AUTHZ-*</td>
-<td>MSG-SCR-009-M1-TOAST-002</td>
+<td>MSG-SCR-009-001-TOAST-002</td>
 <td>—</td>
 </tr>
 <tr>
 <td>FR-019 / FR-019a / FR-019b</td>
 <td>プロジェクト割当解除と孤立アカウント停止</td>
 <td>F-USER-001</td>
-<td>SCR-009-M1「プロジェクトから外す」</td>
+<td>SCR-009-001「プロジェクトから外す」</td>
 <td><code>DELETE /projects/{id}/members/{userId}</code></td>
 <td>対象<code>project_users.valid=0</code>、最後の割当時は<code>users.valid=0</code>, <code>sessions.revoked_at</code>, <code>access_tokens.used_at</code></td>
 <td>オーナー / 該当PJ管理者</td>
 <td>E-AUTHZ-OWNER-PROTECTED / E-AUTHZ-SELF-MUTATION</td>
-<td>MSG-SCR-009-M1-*</td>
+<td>MSG-SCR-009-001-*</td>
 <td>他PJ割当があればusersは維持</td>
 </tr>
 <tr>
 <td>FR-030〜036, FR-030a, FR-030b</td>
-<td>プロジェクト管理(一覧 SCR-004 + 作成・編集・削除モーダル SCR-004-M1)</td>
+<td>プロジェクト管理(一覧 SCR-004 + 作成・編集・削除モーダル SCR-004-001)</td>
 <td>F-PRJ-001</td>
-<td>SCR-004 / SCR-004-M1(作成・編集・削除)</td>
+<td>SCR-004 / SCR-004-001(作成・編集・削除)</td>
 <td><code>POST /projects</code>, <code>PATCH /projects/{id}</code>, <code>DELETE /projects/{id}</code></td>
 <td><code>projects</code>, <code>allowed_domains</code>, 関連論理削除</td>
 <td>オーナー専有(参照はPJ管理者可)</td>
 <td>E-AUTHZ-OWNER-ONLY / E-BIZ-PROJECT-INACTIVE</td>
-<td>MSG-SCR-004-* / MSG-SCR-004-M1-*</td>
+<td>MSG-SCR-004-* / MSG-SCR-004-001-*</td>
 <td>—</td>
 </tr>
 <tr>
@@ -422,12 +422,12 @@
 <td>FR-121, FR-125, FR-127</td>
 <td>プロジェクトの質問数上限・アラート</td>
 <td>F-LIMIT-001</td>
-<td>SCR-021 / SCR-021-M1</td>
+<td>SCR-021 / SCR-021-001</td>
 <td><code>GET /projects/{id}/quota-limits</code>, <code>PATCH /projects/{id}/quota-limits/questions</code></td>
 <td><code>project_quota_limits</code>, <code>usage_metering</code></td>
 <td>閲覧: オーナー / 該当 PJ の <code>member</code>+、変更: オーナー / 該当 PJ の <code>admin</code>(再認証)</td>
 <td>E-AUTHZ-FORBIDDEN / E-INPUT-*</td>
-<td>MSG-SCR-021-* / MSG-SCR-021-M1-*</td>
+<td>MSG-SCR-021-* / MSG-SCR-021-001-*</td>
 <td>上限と選択閾値だけ更新</td>
 </tr>
 <tr>
@@ -710,7 +710,7 @@
 <td><strong>FR-333</strong></td>
 <td>オーナー保護</td>
 <td>F-USER-001</td>
-<td>SCR-009-M1</td>
+<td>SCR-009-001</td>
 <td><code>POST /members/*</code></td>
 <td><code>contract_owners</code>(行存在 = オーナー判定)</td>
 <td>—</td>
@@ -722,7 +722,7 @@
 <td>FR-334</td>
 <td>自己操作不可</td>
 <td>F-USER-001</td>
-<td>SCR-009-M1</td>
+<td>SCR-009-001</td>
 <td>同上</td>
 <td>—</td>
 <td>—</td>
@@ -897,7 +897,7 @@
 <tr>
 <td>F-PRJ-001</td>
 <td>プロジェクト管理</td>
-<td>SCR-004, SCR-004-M1, <strong>SCR-019</strong>(連絡先メール確認完了)</td>
+<td>SCR-004, SCR-004-001, <strong>SCR-019</strong>(連絡先メール確認完了)</td>
 <td><code>GET/POST/PATCH/DELETE /projects</code>, <code>POST /auth/contact-verifications/{token}</code></td>
 <td><code>projects</code>, <code>allowed_domains</code>, <code>access_tokens</code>(<code>purpose='contact_verify'</code>)</td>
 </tr>
@@ -939,7 +939,7 @@
 <tr>
 <td>F-LIMIT-001</td>
 <td>プロジェクトの質問数上限・アラート</td>
-<td>SCR-021 / SCR-021-M1</td>
+<td>SCR-021 / SCR-021-001</td>
 <td><code>GET /projects/{id}/quota-limits</code>, <code>PATCH /projects/{id}/quota-limits/questions</code></td>
 <td><code>project_quota_limits</code>, <code>usage_metering</code></td>
 </tr>
@@ -960,7 +960,7 @@
 <tr>
 <td>F-USER-001</td>
 <td>メンバー管理(プロジェクト単位)</td>
-<td>SCR-009, SCR-009-M1</td>
+<td>SCR-009, SCR-009-001</td>
 <td>招待、ロール変更、当該PJ割当解除、招待再送</td>
 <td><code>users</code>, <code>project_users</code></td>
 </tr>
@@ -1056,7 +1056,7 @@
 <tr><td>NOTIF-BILLING_PAYMENT_FAILED</td><td>支払い失敗(FR-124)</td><td>high</td><td>◯</td><td>admin</td></tr>
 <tr><td>NOTIF-SERVICE_ANNOUNCEMENT</td><td>運営からのお知らせ(FR-149、IF #7)</td><td>normal / high / critical</td><td>配信時運営者選択</td><td>admin(範囲指定可)</td></tr>
 <tr><td>NOTIF-SYSTEM_NOTICE</td><td>運用イベント自動生成。契機 = FR-149a ∪ FR-189(質問数上限 80 / 90 / 100% 接近・到達、通知配信失敗の急増 等)。AI 利用上限到達は MVP では契機にせずメール送信もしない</td><td>normal / high</td><td>×</td><td>admin</td></tr>
-<tr><td>NOTIF-ROLE_ASSIGNMENT_CHANGED</td><td>メンバーのプロジェクト別ロール割当の追加・変更・剥奪(SCR-009-M1、FR-145a)</td><td>normal</td><td>×</td><td>対象メンバー本人(inbox / email)</td></tr>
+<tr><td>NOTIF-ROLE_ASSIGNMENT_CHANGED</td><td>メンバーのプロジェクト別ロール割当の追加・変更・剥奪(SCR-009-001、FR-145a)</td><td>normal</td><td>×</td><td>対象メンバー本人(inbox / email)</td></tr>
 </tbody>
 </table>
 </div>
@@ -1097,9 +1097,9 @@
 <td>オーナー専用のプロジェクト設定表示文言 + ステータス列(連絡先メール確認状態バッジ)</td>
 </tr>
 <tr>
-<td>SCR-004-M1</td>
+<td>SCR-004-001</td>
 <td>プロジェクト作成・編集モーダル</td>
-<td>MSG-SCR-004-M1-*</td>
+<td>MSG-SCR-004-001-*</td>
 <td>作成・編集・削除(DangerSection)文言を含む。管理者ロール固定の文言を含む</td>
 </tr>
 <tr>
@@ -1139,9 +1139,9 @@
 <td>招待・ロール変更・割当解除</td>
 </tr>
 <tr>
-<td>SCR-009-M1</td>
+<td>SCR-009-001</td>
 <td>メンバー招待 / 編集</td>
-<td>MSG-SCR-009-M1-*</td>
+<td>MSG-SCR-009-001-*</td>
 <td>招待モード/編集モード両用 + 氏名 read-only 表記(招待モードは氏名フィールドなし、編集モードは read-only 表示で本人未入力時は「未設定」)</td>
 </tr>
 <tr>
@@ -1181,9 +1181,9 @@
 <td>契約連絡先・退会</td>
 </tr>
 <tr>
-<td>SCR-021-M1</td>
+<td>SCR-021-001</td>
 <td>質問数上限設定モーダル</td>
-<td>MSG-SCR-021-M1-*</td>
+<td>MSG-SCR-021-001-*</td>
 <td>質問数の上限・25/50/80/90/100%アラート + L3 再認証</td>
 </tr>
 <tr>
@@ -1460,7 +1460,7 @@
 <tr>
 <td>OWNER(オーナー)</td>
 <td>契約全体 + 全プロジェクト</td>
-<td>契約 = SCR-004, SCR-004-M1, SCR-016, SCR-022, SCR-023 / PJ = SCR-005, SCR-006, SCR-007, SCR-008, SCR-009, SCR-021 / 共通 = SCR-010, SCR-011, SCR-012, SCR-017, SCR-020</td>
+<td>契約 = SCR-004, SCR-004-001, SCR-016, SCR-022, SCR-023 / PJ = SCR-005, SCR-006, SCR-007, SCR-008, SCR-009, SCR-021 / 共通 = SCR-010, SCR-011, SCR-012, SCR-017, SCR-020</td>
 <td>利用状況、プロジェクト作成・編集・削除、請求、設定、退会</td>
 <td>オーナー専有機能 + 全PJの自動admin</td>
 </tr>
@@ -1476,7 +1476,7 @@
 <td>該当プロジェクト(プロジェクト WS のみ。契約 WS は非可視)</td>
 <td>プロジェクト WS = SCR-008, SCR-005, SCR-006, SCR-006-002, SCR-007(閲覧 + コピーのみ), SCR-021(閲覧のみ)+ 共通 = SCR-010, SCR-020, SCR-011, SCR-012, SCR-017</td>
 <td><code>POST/PATCH/DELETE /faqs</code>, <code>POST/PATCH /inquiries/*</code>, <code>GET /projects/{id}/quota-limits</code>(閲覧)</td>
-<td>FAQ 管理 / 要対応質問の状況管理 / ログ参照 + 質問数の当月利用・上限・消化率の閲覧のみ。無料利用枠はSCR-021に表示しない。質問数設定変更(SCR-021-M1)は不可。ウィジェット公開キー再発行・見た目編集は不可。アカウント削除はオーナー専有</td>
+<td>FAQ 管理 / 要対応質問の状況管理 / ログ参照 + 質問数の当月利用・上限・消化率の閲覧のみ。無料利用枠はSCR-021に表示しない。質問数設定変更(SCR-021-001)は不可。ウィジェット公開キー再発行・見た目編集は不可。アカウント削除はオーナー専有</td>
 </tr>
 <tr>
 <td>END_USER</td>

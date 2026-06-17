@@ -393,7 +393,7 @@ open-faq &lt;noreply@&lt;service-domain&gt;&gt;</code></pre>
 <hr />
 <h3 id="43-tpl-admin_user_registerメンバー招待再送-共通">4.3 TPL-ADMIN_USER_REGISTER(メンバー招待・再送 共通)</h3>
 <p class="section-lead">メンバー招待および招待再送で共通利用する <code>critical</code> メールです。アクティベーション URL(7d 有効)と招待内容(プロジェクト・ロール・招待元)を提示し、着地ページで氏名・初回パスワード・規約同意を入力させます。</p>
-<p><strong>発火条件</strong>: SCR-009-M1 メンバー招待モーダルの「招待メールを送信する」/「招待メールを再送する」ボタン押下時、<code>access_tokens.purpose='activation'</code> 発行時。</p>
+<p><strong>発火条件</strong>: SCR-009-001 メンバー招待モーダルの「招待メールを送信する」/「招待メールを再送する」ボタン押下時、<code>access_tokens.purpose='activation'</code> 発行時。</p>
 <p><strong>テンプレート変数</strong>:</p>
 <table>
 <thead>
@@ -462,11 +462,11 @@ open-faq &lt;noreply@&lt;service-domain&gt;&gt;</code></pre>
 open-faq &lt;noreply@&lt;service-domain&gt;&gt;</code></pre>
 <p><strong>本文(HTML 版)</strong>: 招待内容を背景色 <code>#eef6ff</code> のパネルで表示 + プライマリボタン「アカウント登録を完了する」+ 失効日時を強調表示。本文の必須項目に「氏名(表示名)入力 + 初回パスワード設定 + 利用規約・プライバシーポリシー同意」を含める。</p>
 <p><strong>着地ページ</strong>: SCR-018 メンバーアカウント有効化(01_画面設計/index.html §5.25)。</p>
-<p><strong>備考</strong>: 再送時は <strong>旧 <code>access_tokens</code> を失効させ新トークンを発行</strong> したうえで本テンプレートで再送信(<code>MSG-SCR-009-M1-TOAST-002</code> と整合)。本文は新規招待時と同一で、差出人による文脈は本文中の「招待操作者」フィールドで補足する。氏名は招待時点で未登録のため、宛先表示は <code>{recipient_email}</code> を用いる。</p>
+<p><strong>備考</strong>: 再送時は <strong>旧 <code>access_tokens</code> を失効させ新トークンを発行</strong> したうえで本テンプレートで再送信(<code>MSG-SCR-009-001-TOAST-002</code> と整合)。本文は新規招待時と同一で、差出人による文脈は本文中の「招待操作者」フィールドで補足する。氏名は招待時点で未登録のため、宛先表示は <code>{recipient_email}</code> を用いる。</p>
 <hr />
 <h3 id="44-tpl-project_admin_inviteプロジェクト管理者招待">4.4 TPL-PROJECT_ADMIN_INVITE(プロジェクト管理者招待)</h3>
 <p class="section-lead">プロジェクト管理者(<code>role='admin'</code>)として招待する <code>critical</code> メールです。付与権限とアクティベーション URL を提示し、既存アカウントがある場合はログイン後に管理者割当を追加する経路に分岐します。</p>
-<p><strong>発火条件</strong>: SCR-009-M1 メンバー招待モーダルで <code>role='admin'</code> を指定して招待を実行した時、招待対象メールアドレスへ送信(FR-015 / FR-015e / FR-030a)。</p>
+<p><strong>発火条件</strong>: SCR-009-001 メンバー招待モーダルで <code>role='admin'</code> を指定して招待を実行した時、招待対象メールアドレスへ送信(FR-015 / FR-015e / FR-030a)。</p>
 <p><strong>テンプレート変数</strong>:</p>
 <table>
 <thead>
@@ -531,7 +531,7 @@ open-faq &lt;noreply@&lt;service-domain&gt;&gt;</code></pre>
 <hr />
 <h3 id="45-tpl-project_contact_verifyプロジェクト連絡先メール確認">4.5 TPL-PROJECT_CONTACT_VERIFY(プロジェクト連絡先メール確認)</h3>
 <p class="section-lead">プロジェクトのお問い合わせ先メールアドレスをウィジェット表示前に確認する <code>critical</code> メールです。確認 URL(24h 有効)を提示し、受信者はアカウントを持たない第三者でも構いません。</p>
-<p><strong>発火条件</strong>: SCR-004-M1 プロジェクト作成・編集モーダルで連絡先メールアドレスが新規入力 / 変更された時、ウィジェット上での表示前確認用に送信。</p>
+<p><strong>発火条件</strong>: SCR-004-001 プロジェクト作成・編集モーダルで連絡先メールアドレスが新規入力 / 変更された時、ウィジェット上での表示前確認用に送信。</p>
 <p><strong>テンプレート変数</strong>:</p>
 <table>
 <thead>

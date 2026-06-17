@@ -50,13 +50,13 @@
 <td>メンバー管理</td>
 <td><code>/projects/{id}/members</code>(一覧・招待), <code>/projects/{id}/members/{userId}</code>(ロール変更・割当解除), <code>/members/{id}/resend-invitation</code></td>
 <td>オーナー / 該当PJ管理者</td>
-<td>SCR-009, SCR-009-M1</td>
+<td>SCR-009, SCR-009-001</td>
 </tr>
 <tr>
 <td>プロジェクト管理</td>
 <td><code>/projects</code>, <code>/projects/{id}</code></td>
 <td>オーナー専有(参照は該当PJ管理者にも許可)</td>
-<td>SCR-004, SCR-004-M1</td>
+<td>SCR-004, SCR-004-001</td>
 </tr>
 <tr>
 <td>FAQ 管理</td>
@@ -116,7 +116,7 @@
 <td>プロジェクトの質問数上限・アラート</td>
 <td><code>/projects/{id}/quota-limits</code>(GET), <code>/projects/{id}/quota-limits/questions</code>(PATCH)</td>
 <td>閲覧: オーナー / 該当 PJ の <code>member</code>+、変更: オーナー / 該当 PJ の <code>admin</code>(再認証必須)</td>
-<td>SCR-021 / SCR-021-M1</td>
+<td>SCR-021 / SCR-021-001</td>
 </tr>
 <tr>
 <td>データ管理</td>
@@ -631,8 +631,8 @@
 <span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;nextCursor&quot;</span><span class="fu">:</span> <span class="st">&quot;01HZ...&quot;</span> <span class="er">|</span> <span class="kw">null</span></span>
 <span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
 <p><code>items[]</code> はURLで指定したプロジェクトの割当だけを返す。最終ログイン日時と他プロジェクトの割当は返さない。</p>
-<h4 id="522-post-projectsidmembersプロジェクト単発招待--scr-009-m1-招待モード正本">5.2.2 <code>POST /projects/{id}/members</code>(プロジェクト単発招待 / SCR-009-M1 招待モード正本)</h4>
-<p>| 認証 | Cookie + CSRF + 再認証必須 | | 必要権限 | オーナー / 該当プロジェクトの <code>admin</code> ロール保持メンバー | | 関連画面 | SCR-009-M1(プロジェクト管理者の招待操作)|</p>
+<h4 id="522-post-projectsidmembersプロジェクト単発招待--scr-009-001-招待モード正本">5.2.2 <code>POST /projects/{id}/members</code>(プロジェクト単発招待 / SCR-009-001 招待モード正本)</h4>
+<p>| 認証 | Cookie + CSRF + 再認証必須 | | 必要権限 | オーナー / 該当プロジェクトの <code>admin</code> ロール保持メンバー | | 関連画面 | SCR-009-001(プロジェクト管理者の招待操作)|</p>
 <p>該当プロジェクト 1 件に対する単発招待。既存メンバーアカウントの場合は <code>project_users</code> 行のみ追加(指定ロール)。新規メールアドレスの場合は <code>users</code> を <strong><code>name=NULL</code> / <code>status='pending_activation'</code></strong> で作成 + <code>project_users</code> を <code>valid=0</code> で同時 INSERT + 招待メール送信(7 日有効、<code>access_tokens.purpose='activation'</code>、<code>meta={"invitedProjectId": "...", "invitedRole": "..."}</code> を JSON 保持)。<strong>氏名(<code>displayName</code>)は受け付けない</strong>(招待された本人が SCR-018 メンバーアカウント有効化ページで入力する。FR-016d / FR-016e)。</p>
 <p>リクエスト:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
@@ -640,8 +640,8 @@
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;role&quot;</span><span class="fu">:</span> <span class="st">&quot;admin&quot;</span></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
 <p>レスポンス(201): <code>{ "userId": "01HZ...", "status": "active|pending_activation", "expiresAt": "..." | null }</code> エラー: 409 <code>ALREADY_EXISTS_IN_PROJECT</code>(既に該当プロジェクトに割当あり)、400 <code>VALIDATION_ERROR</code>、403 <code>PROJECT_ACCESS_DENIED</code></p>
-<h4 id="523-patch-projectsidmembersuseridプロジェクト単位のロール変更--scr-009-m1-編集モード正本">5.2.3 <code>PATCH /projects/{id}/members/{userId}</code>(プロジェクト単位のロール変更 / SCR-009-M1 編集モード正本)</h4>
-<p>| 認証 | Cookie + CSRF + 再認証必須 | | 必要権限 | オーナー / 該当プロジェクトの <code>admin</code> ロール保持メンバー | | 関連画面 | SCR-009-M1(編集モードの「変更を保存」)|</p>
+<h4 id="523-patch-projectsidmembersuseridプロジェクト単位のロール変更--scr-009-001-編集モード正本">5.2.3 <code>PATCH /projects/{id}/members/{userId}</code>(プロジェクト単位のロール変更 / SCR-009-001 編集モード正本)</h4>
+<p>| 認証 | Cookie + CSRF + 再認証必須 | | 必要権限 | オーナー / 該当プロジェクトの <code>admin</code> ロール保持メンバー | | 関連画面 | SCR-009-001(編集モードの「変更を保存」)|</p>
 <p>当該プロジェクトの <code>project_users.role</code> を <code>admin</code> / <code>member</code> で上書きする。他プロジェクトの割当には影響しない。</p>
 <p>リクエスト:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
@@ -655,7 +655,7 @@
 </ul>
 <p>レスポンス(200): <code>{ "userId": "...", "projectId": "...", "role": "admin|member", "updatedAt": "..." }</code> エラー: 404 <code>NOT_FOUND</code>、403 <code>PROJECT_ACCESS_DENIED</code>、403 <code>LAST_ADMIN_PROTECTED</code>、403 <code>SELF_MUTATION_FORBIDDEN</code>、400 <code>VALIDATION_ERROR</code></p>
 <h4 id="524-delete-projectsidmembersuseridプロジェクト割当解除">5.2.4 <code>DELETE /projects/{id}/members/{userId}</code>(プロジェクト割当解除)</h4>
-<p>| 認証 | Cookie + CSRF + 再認証必須 | | 必要権限 | オーナー / 該当プロジェクトの <code>admin</code> ロール保持メンバー | | 関連画面 | SCR-009-M1「プロジェクトから外す」(L1) |</p>
+<p>| 認証 | Cookie + CSRF + 再認証必須 | | 必要権限 | オーナー / 該当プロジェクトの <code>admin</code> ロール保持メンバー | | 関連画面 | SCR-009-001「プロジェクトから外す」(L1) |</p>
 <p>対象プロジェクトの <code>project_users.valid=0</code> を更新する。対象が自分自身またはオーナーの場合は拒否する。</p>
 <ul>
 <li>対象ユーザーに他プロジェクトの有効割当が残る場合: <code>users</code>、他プロジェクトの割当、セッション、招待トークンは維持する。</li>
@@ -663,7 +663,7 @@
 </ul>
 <p>レスポンス(200): <code>{ "userId": "...", "projectId": "...", "accountDeactivated": true|false }</code> エラー: 403 <code>E-AUTHZ-OWNER-PROTECTED</code>、403 <code>E-AUTHZ-SELF-MUTATION</code>、403 <code>PROJECT_ACCESS_DENIED</code>、404 <code>NOT_FOUND</code></p>
 <h4 id="525-post-membersidresend-invitation招待メール再送">5.2.5 <code>POST /members/{id}/resend-invitation</code>(招待メール再送)</h4>
-<p>| 認証 | Cookie + CSRF + 再認証必須 | | 必要権限 | オーナー / 該当プロジェクトの <code>admin</code> 保持メンバー | | 関連画面 | SCR-009-M1(招待再送)|</p>
+<p>| 認証 | Cookie + CSRF + 再認証必須 | | 必要権限 | オーナー / 該当プロジェクトの <code>admin</code> 保持メンバー | | 関連画面 | SCR-009-001(招待再送)|</p>
 <p><code>status='pending_activation'</code> のメンバーのみ対象。旧 <code>access_tokens.purpose='activation'</code> を失効させ新規トークン(7 日有効、<code>meta</code> を同一の <code>invitedProjectId</code> / <code>invitedRole</code> で再発行)を発行。リクエストボディは空(氏名 <code>displayName</code> を受け付けない。FR-016b / FR-016d)。</p>
 <p>エラー: 403 <code>E-AUTHZ-OWNER-PROTECTED</code>、403 <code>E-AUTHZ-SELF-MUTATION</code>、404 <code>NOT_FOUND</code></p>
 <h3 id="53-プロジェクト管理-api">5.3 プロジェクト管理 API</h3>
@@ -688,7 +688,7 @@
 <span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;nextCursor&quot;</span><span class="fu">:</span> <span class="kw">null</span></span>
 <span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
 <h4 id="532-post-projects新規作成">5.3.2 <code>POST /projects</code>(新規作成)</h4>
-<p>| 認証 | Cookie + CSRF | | 必要権限 | <strong>オーナー専有</strong>(プロジェクト設定全般を含めオーナーのみ実行可)| | 関連画面 | SCR-004-M1(新規作成モード)|</p>
+<p>| 認証 | Cookie + CSRF | | 必要権限 | <strong>オーナー専有</strong>(プロジェクト設定全般を含めオーナーのみ実行可)| | 関連画面 | SCR-004-001(新規作成モード)|</p>
 <p>リクエスト:</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;新規プロジェクト&quot;</span><span class="fu">,</span></span>
@@ -699,7 +699,7 @@
 <ul>
 <li>リクエストに <code>initialAdmins</code> フィールド(<code>selfAsAdmin</code> フラグや <code>adminEmails[]</code>)は持たない。オーナーは作成時に自動で当該プロジェクトの管理者となるため、UI / API での個別指定は不要。</li>
 <li>サーバー側処理: プロジェクト作成成功と同一トランザクション内で <code>INSERT INTO project_users(user_id=actor.userId, project_id=newPid, contract_owner_user_id=actor.contractOwnerUserId, role='admin', valid=1, granted_at=now(), granted_by=actor.userId)</code> を 1 行発行する(オーナー自動 admin 行付与)。認可上は <code>isOwner=true</code> bypass を維持しつつ、本 admin 行は critical 通知の宛先解決(<code>SELECT DISTINCT user_id FROM project_users WHERE role='admin' AND valid=1 …</code>)と画面表示の事実情報として参照される。</li>
-<li>他者をプロジェクト管理者として招待する操作は、プロジェクト作成後に当該プロジェクトの SCR-009 / SCR-009-M1(プロジェクト WS)から <code>POST /projects/{id}/members</code> 経由で行う。</li>
+<li>他者をプロジェクト管理者として招待する操作は、プロジェクト作成後に当該プロジェクトの SCR-009 / SCR-009-001(プロジェクト WS)から <code>POST /projects/{id}/members</code> 経由で行う。</li>
 </ul>
 <p>レスポンス(201):</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
@@ -708,7 +708,7 @@
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
 <p>エラー: 400 <code>VALIDATION_ERROR</code>(<code>name</code> / <code>allowedDomains</code> 必須違反)、409 <code>DUPLICATE_NAME</code>、403 <code>E-AUTHZ-OWNER-ONLY</code></p>
 <h4 id="533-patch-projectsid--delete-projectsid">5.3.3 <code>PATCH /projects/{id}</code> / <code>DELETE /projects/{id}</code></h4>
-<p>| 認証 | Cookie + CSRF(削除は再認証必須、L3 = プロジェクト名タイプ確認 + パスワード再認証)| | 必要権限 | <strong>オーナー専有</strong> | | 関連画面 | <code>PATCH</code> / <code>DELETE</code>: SCR-004-M1 プロジェクト作成・編集モーダル(編集モード)| | エラー | 404 <code>NOT_FOUND</code>(オーナー境界違反偽装)、403 <code>E-AUTHZ-OWNER-ONLY</code> |</p>
+<p>| 認証 | Cookie + CSRF(削除は再認証必須、L3 = プロジェクト名タイプ確認 + パスワード再認証)| | 必要権限 | <strong>オーナー専有</strong> | | 関連画面 | <code>PATCH</code> / <code>DELETE</code>: SCR-004-001 プロジェクト作成・編集モーダル(編集モード)| | エラー | 404 <code>NOT_FOUND</code>(オーナー境界違反偽装)、403 <code>E-AUTHZ-OWNER-ONLY</code> |</p>
 <p>リクエスト(PATCH、部分更新):</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;...&quot;</span><span class="fu">,</span></span>
@@ -891,7 +891,7 @@
 <p>PUT リクエスト: <code>{ "paymentToken": "tok_..." }</code>(課金プロバイダ発行トークン) PUT レスポンス(200): <code>{ "registered": true, "brand": "visa", "last4": "4242" }</code> エラー: 400 <code>VALIDATION_ERROR</code>、402 <code>PAYMENT_METHOD_DECLINED</code>(E-BILL-PAYMENT-FAILED)、403 <code>E-AUTHZ-OWNER-ONLY</code></p>
 <h4 id="575-get-projectsidquota-limits">5.7.5 <code>GET /projects/{id}/quota-limits</code></h4>
 <p>| 機能ID | F-LIMIT-001 | | 関連画面 | SCR-021 | | 必要権限 | オーナー / 該当プロジェクトの <code>admin</code> または <code>member</code>(閲覧)|</p>
-<p>当該プロジェクトの質問数について、利用状況・月次上限件数・アラート設定を返す。SCR-021 の表示には <code>used</code> / <code>limitEnabled</code> / <code>limit</code> / <code>percentage</code> / <code>yenEquivalent</code> だけを使用し、アラート設定・設定元は表示しない。SCR-021-M1 は <code>limitEnabled</code> / <code>limit</code> / <code>alertThresholds</code> を使用する。FAQ 件数は扱わないためレスポンスに含めない。質問数の無料利用枠は課金判定用の内部データとして保持するが、本APIのレスポンスには含めない。</p>
+<p>当該プロジェクトの質問数について、利用状況・月次上限件数・アラート設定を返す。SCR-021 の表示には <code>used</code> / <code>limitEnabled</code> / <code>limit</code> / <code>percentage</code> / <code>yenEquivalent</code> だけを使用し、アラート設定・設定元は表示しない。SCR-021-001 は <code>limitEnabled</code> / <code>limit</code> / <code>alertThresholds</code> を使用する。FAQ 件数は扱わないためレスポンスに含めない。質問数の無料利用枠は課金判定用の内部データとして保持するが、本APIのレスポンスには含めない。</p>
 <p>レスポンス(200):</p>
 <div class="sourceCode" id="cb24"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;projectId&quot;</span><span class="fu">:</span> <span class="st">&quot;prj_...&quot;</span><span class="fu">,</span></span>
@@ -901,8 +901,8 @@
 <p><code>yenEquivalent</code> は上限件数をすべて利用した場合の最大課金額の参考値で、<code>billableCount = max(0, limit - 適用中の質問数無料利用枠)</code>、<code>yenEquivalent = billableCount × 質問単価</code> により算出する。画面では「5,000件 - 1,000件(無料枠) = 4,000件 (¥2,000 / 月)」の形式で表示する。</p>
 <p>上限OFF時は <code>limitEnabled=false</code>、<code>limit=null</code>、<code>percentage=null</code>、<code>yenEquivalent=null</code> を返す。SCR-021 は「今月の利用上限」を「OFF」と表示し、「利用量」には割合・件数比・ProgressBar・状態バッジを描画しない。</p>
 <h4 id="576-patch-projectsidquota-limitsquestions">5.7.6 <code>PATCH /projects/{id}/quota-limits/questions</code></h4>
-<p>| 認証 | 再認証必須 | | 機能ID | F-LIMIT-002 / FR-121 / FR-125 / FR-127 | | 関連画面 | SCR-021-M1 | | 必要権限 | オーナー / 該当プロジェクトの <code>admin</code>(member は <code>E-AUTHZ-FORBIDDEN</code>)|</p>
-<p>当該プロジェクトの質問数について、月次上限のON / OFF・月次上限件数・アラート閾値を更新する(SCR-021-M1)。<code>project_quota_limits.resource_kind='question_monthly_limit'</code> かつ <code>source='owner'</code> の 1 行だけを upsert する。質問数の <code>free_quota</code> と FAQ 件数の行は更新しない。</p>
+<p>| 認証 | 再認証必須 | | 機能ID | F-LIMIT-002 / FR-121 / FR-125 / FR-127 | | 関連画面 | SCR-021-001 | | 必要権限 | オーナー / 該当プロジェクトの <code>admin</code>(member は <code>E-AUTHZ-FORBIDDEN</code>)|</p>
+<p>当該プロジェクトの質問数について、月次上限のON / OFF・月次上限件数・アラート閾値を更新する(SCR-021-001)。<code>project_quota_limits.resource_kind='question_monthly_limit'</code> かつ <code>source='owner'</code> の 1 行だけを upsert する。質問数の <code>free_quota</code> と FAQ 件数の行は更新しない。</p>
 <p>リクエスト例(ON): <code>{ "limitEnabled": true, "limit": 5000, "alertThresholds": [25, 50, 80, 90, 100] }</code> リクエスト例(OFF): <code>{ "limitEnabled": false, "limit": null, "alertThresholds": [] }</code> レスポンス(200): <code>{ "projectId": "prj_...", "limitEnabled": true, "limit": 5000, "alertThresholds": [25, 50, 80, 90, 100], "yenEquivalent": 2000, "source": "owner", "updatedAt": "..." }</code></p>
 <p>バリデーション: <code>limitEnabled=true</code> の場合、<code>limit</code> は必須かつ 1 件刻みで最小件数・最大件数の範囲内。<code>alertThresholds</code> は <code>25</code> / <code>50</code> / <code>80</code> / <code>90</code> / <code>100</code> の重複しない配列とし、サーバ側で昇順へ正規化する。空配列はアラート通知なし。<code>limitEnabled=false</code> の場合は <code>limit=null</code>、<code>alertThresholds=[]</code> とする。<code>freeQuota</code> / <code>alertEnabled</code> / <code>alertFrequency</code> を指定した場合は未サポート項目として 422。当該プロジェクトに割当のないユーザーは 403。</p>
 <h3 id="58-お知らせ受信箱-api">5.8 お知らせ受信箱 API</h3>

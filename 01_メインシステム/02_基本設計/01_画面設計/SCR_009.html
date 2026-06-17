@@ -22,7 +22,7 @@
 <p class="doc-meta"><span><b>版数</b> v1.0</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
 
 <h2 id="1-画面概要">1. 画面概要</h2>
-<p class="section-lead">当該プロジェクトに割当のあるメンバーを一覧表示し、招待・ロール変更・割当解除モーダル(SCR-009-M1)への導線を提供する画面です。表示範囲は常に当該プロジェクト 1 件で、契約横断のメンバー管理は持ちません。</p>
+<p class="section-lead">当該プロジェクトに割当のあるメンバーを一覧表示し、招待・ロール変更・割当解除モーダル(SCR-009-001)への導線を提供する画面です。表示範囲は常に当該プロジェクト 1 件で、契約横断のメンバー管理は持ちません。</p>
 <table>
 <thead>
 <tr>
@@ -44,7 +44,7 @@
 </thead>
 <tbody>
 <tr><td>FR / BR</td><td><a href="../../01_要件定義/FR02_ユーザー管理.html#FR-017">FR-017</a>, <a href="../../01_要件定義/FR02_ユーザー管理.html#FR-018a">FR-018a</a>〜<a href="../../01_要件定義/FR02_ユーザー管理.html#FR-018c">FR-018c</a>, <a href="../../01_要件定義/FR02_ユーザー管理.html#FR-019a">FR-019a</a>, <a href="../../01_要件定義/FR02_ユーザー管理.html#FR-021a">FR-021a</a>〜<a href="../../01_要件定義/FR02_ユーザー管理.html#FR-021c">FR-021c</a>, <a href="../../01_要件定義/FR19_アクセス制御細部.html#FR-333">FR-333</a> / <a href="../../01_要件定義/FR02_ユーザー管理.html#BR-038">BR-038</a>, <a href="../../01_要件定義/FR02_ユーザー管理.html#BR-039">BR-039</a></td></tr>
-<tr><td>関連画面</td><td><a href="SCR_009-M1.html"><code>SCR-009-M1</code> メンバー招待 / 編集モーダル</a> / <a href="SCR_008.html"><code>SCR-008</code> 概要(プロジェクト)</a></td></tr>
+<tr><td>関連画面</td><td><a href="SCR_009-001.html"><code>SCR-009-001</code> メンバー招待 / 編集モーダル</a> / <a href="SCR_008.html"><code>SCR-008</code> 概要(プロジェクト)</a></td></tr>
 </tbody>
 </table>
 
@@ -67,7 +67,7 @@
 <p class="section-lead">本画面からの画面遷移を、画面 ID・画面名とイベント(操作)で示します。</p>
 <pre class="mermaid"><code>flowchart LR
   S1["SCR-009 メンバー(プロジェクト)"]
-  S2["SCR-009-M1 メンバー招待 / 編集モーダル"]
+  S2["SCR-009-001 メンバー招待 / 編集モーダル"]
   S0["SCR-008 概要(プロジェクト)"]
   S0 -- "サイドメニュー「メンバー」" --&gt; S1
   S1 -- "+ メンバーを招待" --&gt; S2
@@ -110,7 +110,7 @@
 <tr><td id="IT-06"><code>IT-06</code></td><td>このプロジェクトでのロール</td><td>当該プロジェクトでのロールをバッジで表示する</td><td>バッジ</td><td>—</td><td>「オーナー」(青)/「管理者」(緑)/「メンバー」(灰)</td></tr>
 <tr><td id="IT-07"><code>IT-07</code></td><td>ステータス</td><td>アカウントの有効化状態をバッジで表示する(残日数は併記しない)</td><td>バッジ</td><td>—</td><td>「利用中」/「招待中」</td></tr>
 <tr><td id="IT-08"><code>IT-08</code></td><td>招待中行強調</td><td>招待中(本人未有効化)の行を背景色で強調し視認性を確保する</td><td>行ハイライト</td><td>対象者が招待中(本人未有効化)の行のみ黄色背景</td><td>—</td></tr>
-<tr><td id="IT-09"><code>IT-09</code></td><td>+ メンバーを招待</td><td>招待モーダル(SCR-009-M1)を招待モードで開く</td><td>ボタン</td><td>—</td><td>「+ メンバーを招待」</td></tr>
+<tr><td id="IT-09"><code>IT-09</code></td><td>+ メンバーを招待</td><td>招待モーダル(SCR-009-001)を招待モードで開く</td><td>ボタン</td><td>—</td><td>「+ メンバーを招待」</td></tr>
 <tr><td id="IT-10"><code>IT-10</code></td><td>空状態</td><td>割当メンバーが 0 件のときに案内文と招待導線を表示する</td><td>空状態表示</td><td>割当メンバーが 0 件のとき</td><td>「このプロジェクトにはまだメンバーが割当されていません。」+「+ メンバーを招待」</td></tr>
 <tr><td id="IT-11"><code>IT-11</code></td><td>権限不足ガード</td><td>権限を持たないユーザーの直アクセス時に権限不足を表示する</td><td>空状態表示</td><td>当該プロジェクトのプロジェクト管理者権限を持たないユーザーが URL に直接アクセスした場合</td><td>「このページを表示する権限がありません。」(403)+「ダッシュボードへ戻る」</td></tr>
 </tbody>
@@ -158,8 +158,8 @@
 <tr><td><code>EV-01</code></td><td>一覧初期表示</td><td>画面遷移・リロード時</td><td><ul><li><code>GET /projects/{id}/members</code> で当該プロジェクトのメンバー一覧を取得し表示</li><li>0 件時は EmptyState</li></ul></td><td><a href="#IT-04">IT-04</a>, <a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a>, <a href="#IT-07">IT-07</a>, <a href="#IT-08">IT-08</a>, <a href="#IT-10">IT-10</a></td></tr>
 <tr><td><code>EV-02</code></td><td>検索</td><td>検索キーワードの入力時</td><td>キーワードを付与して一覧を再取得し件数表示も更新</td><td><a href="#IT-01">IT-01</a>, <a href="#IT-03">IT-03</a></td></tr>
 <tr><td><code>EV-03</code></td><td>絞り込み</td><td>招待状態フィルタの変更時</td><td>フィルタ条件を付与して一覧を再取得し件数表示も更新</td><td><a href="#IT-02">IT-02</a>, <a href="#IT-03">IT-03</a></td></tr>
-<tr><td><code>EV-04</code></td><td>招待モーダル起動</td><td>「+ メンバーを招待」押下時</td><td>SCR-009-M1 を招待モードで開く</td><td><a href="#IT-09">IT-09</a></td></tr>
-<tr><td><code>EV-05</code></td><td>編集モーダル起動</td><td>利用者表示名リンク押下時</td><td>SCR-009-M1 を編集モードで開く(オーナー行・自分の行は非リンク)</td><td><a href="#IT-04">IT-04</a></td></tr>
+<tr><td><code>EV-04</code></td><td>招待モーダル起動</td><td>「+ メンバーを招待」押下時</td><td>SCR-009-001 を招待モードで開く</td><td><a href="#IT-09">IT-09</a></td></tr>
+<tr><td><code>EV-05</code></td><td>編集モーダル起動</td><td>利用者表示名リンク押下時</td><td>SCR-009-001 を編集モードで開く(オーナー行・自分の行は非リンク)</td><td><a href="#IT-04">IT-04</a></td></tr>
 <tr><td><code>EV-06</code></td><td>権限不足リダイレクト</td><td>当該 PJ の admin 権限を持たないユーザーの URL 直アクセス時</td><td>403 とし、ダッシュボードへリダイレクトする</td><td><a href="#IT-11">IT-11</a></td></tr>
 </tbody>
 </table>

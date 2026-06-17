@@ -7820,7 +7820,7 @@
 </tr>
 <tr>
 <td>設計判断</td>
-<td>質問数上限と課金対象別無料枠を同じ行モデルで扱う。SCR-021 / SCR-021-M1 は質問数行の上限とアラートだけを参照・更新し、<code>free_quota</code> は変更しない。FAQは運営者設定専用で、上限・上限アラートを持たず、利用量による新規作成停止を行わない。未設定時は無料枠デフォルトへフォールバックし、質問数だけ上限デフォルトも解決する</td>
+<td>質問数上限と課金対象別無料枠を同じ行モデルで扱う。SCR-021 / SCR-021-001 は質問数行の上限とアラートだけを参照・更新し、<code>free_quota</code> は変更しない。FAQは運営者設定専用で、上限・上限アラートを持たず、利用量による新規作成停止を行わない。未設定時は無料枠デフォルトへフォールバックし、質問数だけ上限デフォルトも解決する</td>
 </tr>
 </tbody>
 </table>
@@ -10347,7 +10347,7 @@
 <p>メンバーの論理削除は <code>users.valid=0</code> で表現する(<code>contract_owners</code> 行を持たないため)。</p>
 <h3 id="46-データ削除モード">4.6 データ削除モード</h3>
 <p><strong>設定</strong>: <code>contract_owners.data_deletion_mode</code>(<code>physical</code> / <code>anonymize</code>、初期値 <code>physical</code>)で保持する独立カラム。</p>
-<p><strong>論理削除</strong> は <code>UPDATE … SET valid=0</code> で行い、90 日経過後の物理削除バッチ(DD13)で物理削除モード(<code>physical</code> / <code>anonymize</code>)に従って実体を消去する。SCR-009-M1 の「プロジェクトから外す」は対象 <code>project_users</code> 行だけを論理削除する。オーナーによるメンバーの契約からの削除は <code>users</code> と当該ユーザーの全 <code>project_users</code> を論理削除する。SCR-004-M1(編集モード)のプロジェクト削除は <code>projects</code> と関連 <code>project_users</code> 行を論理削除する。</p>
+<p><strong>論理削除</strong> は <code>UPDATE … SET valid=0</code> で行い、90 日経過後の物理削除バッチ(DD13)で物理削除モード(<code>physical</code> / <code>anonymize</code>)に従って実体を消去する。SCR-009-001 の「プロジェクトから外す」は対象 <code>project_users</code> 行だけを論理削除する。オーナーによるメンバーの契約からの削除は <code>users</code> と当該ユーザーの全 <code>project_users</code> を論理削除する。SCR-004-001(編集モード)のプロジェクト削除は <code>projects</code> と関連 <code>project_users</code> 行を論理削除する。</p>
 <h4 id="461-削除モード対応表">4.6.1 削除モード対応表</h4>
 <table>
 <thead>

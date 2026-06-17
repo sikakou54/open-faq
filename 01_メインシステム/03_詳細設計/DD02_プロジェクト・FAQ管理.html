@@ -196,7 +196,7 @@
 </table>
 <h3 id="310-プロジェクト作成時のオーナー自動-admin-付与fr-015e--fr-030a">3.10 プロジェクト作成時のオーナー自動 admin 付与(FR-015e / FR-030a)</h3>
 <p class="section-lead">プロジェクト作成時に、オーナーを当該プロジェクトの管理者として自動的に登録する処理を定めます。1 トランザクション内で <code>projects</code> INSERT・オーナー admin 行 INSERT・監査ログ記録を行う流れを示します。</p>
-<p><code>POST /projects</code> 実行時は SCR-004-M1(新規作成モード)から <code>name</code> / <code>allowedDomains</code> 等の基本情報のみを受け取る(<code>initialAdmins</code> フィールドは受け取らない)。オーナーは作成時に自動で当該プロジェクトの管理者となる(<code>project_users(role='admin', valid=1)</code> 自動 INSERT)。他者をプロジェクト管理者として招待する操作は、プロジェクト作成後に SCR-009-M1 経由(<code>POST /projects/{id}/members</code> + <code>role='admin'</code>)で行う。</p>
+<p><code>POST /projects</code> 実行時は SCR-004-001(新規作成モード)から <code>name</code> / <code>allowedDomains</code> 等の基本情報のみを受け取る(<code>initialAdmins</code> フィールドは受け取らない)。オーナーは作成時に自動で当該プロジェクトの管理者となる(<code>project_users(role='admin', valid=1)</code> 自動 INSERT)。他者をプロジェクト管理者として招待する操作は、プロジェクト作成後に SCR-009-001 経由(<code>POST /projects/{id}/members</code> + <code>role='admin'</code>)で行う。</p>
 <pre class="mermaid"><code>sequenceDiagram
   participant U as オーナー
   participant W as worker-main-api
@@ -246,7 +246,7 @@
 <span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
 <span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h3 id="311-プロジェクト削除時の論理削除カスケード--孤立メンバー-cleanupfr-030b">3.11 プロジェクト削除時の論理削除カスケード + 孤立メンバー cleanup(FR-030b)</h3>
-<p class="section-lead">プロジェクト削除時に、関連行を論理削除へ伝播させ、他に割当の無くなった孤立メンバーを併せて無効化する 1 トランザクションの流れを定めます。<code>DELETE /projects/{id}</code> は <strong>SCR-004-M1 プロジェクト作成・編集モーダル(編集モード)のオーナー専有 DangerSection のみ</strong> から起動可能です。</p>
+<p class="section-lead">プロジェクト削除時に、関連行を論理削除へ伝播させ、他に割当の無くなった孤立メンバーを併せて無効化する 1 トランザクションの流れを定めます。<code>DELETE /projects/{id}</code> は <strong>SCR-004-001 プロジェクト作成・編集モーダル(編集モード)のオーナー専有 DangerSection のみ</strong> から起動可能です。</p>
 <pre class="mermaid"><code>sequenceDiagram
   participant U as オーナー
   participant W as worker-main-api
@@ -272,7 +272,7 @@
 <p>オーナーの <code>users</code> 行は本処理の論理削除対象外(<code>contract_owners</code> 行を持つユーザーは常に <code>valid=1</code> 維持)。当該プロジェクトに対するオーナー自身の <code>project_users</code> admin 行は他のメンバー行と同様に <code>valid=0</code> に論理削除される。論理削除データは <code>updated_at &lt; now() - 90d AND valid=0</code> の物理削除バッチ(<a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html §3.12</a>)で 90 日後に物理削除される。</p>
 <h3 id="311a-プロジェクト連絡先メール確認フローfr-033a--scr-019">3.11a プロジェクト連絡先メール確認フロー(FR-033a / SCR-019)</h3>
 <p class="section-lead">プロジェクト連絡先メールを変更したときに、確認メールのトークンで到達確認を行い <code>contact_email_verified_at</code> をセットするまでの流れを定めます。</p>
-<p>SCR-004-M1(新規モードで初期入力、または編集モードで <code>projects.contact_email</code> を変更)した時に、TPL-PROJECT_CONTACT_VERIFY確認メールを送信する。受信者はSCR-019へ着地し、<code>POST /auth/contact-verifications/{token}</code> で確認完了する。</p>
+<p>SCR-004-001(新規モードで初期入力、または編集モードで <code>projects.contact_email</code> を変更)した時に、TPL-PROJECT_CONTACT_VERIFY確認メールを送信する。受信者はSCR-019へ着地し、<code>POST /auth/contact-verifications/{token}</code> で確認完了する。</p>
 <pre class="mermaid"><code>sequenceDiagram
   participant U as オーナー / 管理者
   participant W as worker-main-api

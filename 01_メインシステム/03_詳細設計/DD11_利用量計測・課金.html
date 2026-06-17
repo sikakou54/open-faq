@@ -48,7 +48,7 @@
 </tr>
 <tr>
 <td>画面</td>
-<td>SCR-021-M1</td>
+<td>SCR-021-001</td>
 <td>質問数上限設定</td>
 </tr>
 <tr>
@@ -307,7 +307,7 @@
 <li>表示列はプロジェクト名 / 質問数 / 公開FAQ数 の3列。<code>usageRate</code> は独立列を設けず、質問数セル内に <code>questionUsedCount / questionLimitCount</code> と並べて併記する。</li>
 <li>既定順は <code>usageRate</code> 降順、同率は <code>projectName</code> 昇順。</li>
 <li><code>questionLimitEnabled=false</code> の場合、<code>questionLimitCount</code> / <code>usageRate</code> は <code>null</code> とし、画面では質問数セル内に「上限なし」と表示する。</li>
-<li>SCR-016 は当月固定・読み取り専用のため、各セルにリンク(SCR-021 / SCR-008 等)を設けない。プロジェクトを開く・編集はサイドメニュー「プロジェクト」(SCR-004 / SCR-004-M1)で行う。</li>
+<li>SCR-016 は当月固定・読み取り専用のため、各セルにリンク(SCR-021 / SCR-008 等)を設けない。プロジェクトを開く・編集はサイドメニュー「プロジェクト」(SCR-004 / SCR-004-001)で行う。</li>
 <li>全体サマリーは <code>projectCount</code> / <code>questionCount</code> / <code>publishedFaqCount</code> の3項目だけを表示する。</li>
 <li>プロジェクト0件では一覧・サマリーを隠し、サイドメニュー「プロジェクト」(SCR-004)へ誘導する EmptyState へ切り替える。</li>
 </ul>
@@ -326,7 +326,7 @@
 <li><code>limitEnabled=true</code> の場合、<code>usageRate</code> は <code>usedCount / monthlyLimitCount * 100</code>。80% 以上は黄、100% 以上は赤とする。</li>
 <li><code>limitEnabled=false</code> の場合は <code>monthlyLimitCount</code> / <code>monthlyLimitYen</code> / <code>usageRate</code> を <code>null</code> とし、「今月の利用上限」は「OFF」と表示する。「利用量」には割合・件数比・ProgressBar・状態バッジを描画せず、上限設定がOFFである旨の説明文だけを表示する。</li>
 </ul>
-<h3 id="344-質問数の利用設定更新scr-021-m1">3.4.4 質問数の利用設定更新（SCR-021-M1）</h3>
+<h3 id="344-質問数の利用設定更新scr-021-001">3.4.4 質問数の利用設定更新（SCR-021-001）</h3>
 <p class="section-lead">質問数上限の ON/OFF・上限値・アラート閾値を更新する API の入力検証・保存・KV 反映の方針を定義します。<code>PATCH /projects/{id}/quota-limits/questions</code> は <code>limitEnabled</code> / <code>limit</code> / <code>alertThresholds</code> を受け付けます。</p>
 <ul>
 <li><code>project_quota_limits.resource_kind='question_monthly_limit'</code> かつ <code>source='owner'</code> の行だけを upsert する。</li>
@@ -470,7 +470,7 @@
 <li><code>widget/v1/ask</code> のリクエスト到達時、公開キーから解決した <code>project_id</code> の質問数上限がONで、当月質問数 ≥ <code>project_quota_limits.question_monthly_limit</code>(当該プロジェクト)を満たす場合は <strong>AI 推論を実行せず 429</strong> を返す(<code>E-QUOTA-QUESTIONS-LIMIT</code>、<code>Retry-After</code> = 当月末 23:59:59 JST までの秒数)。レスポンスボディに <code>reason=question_monthly_limit_reached</code> と、プロジェクト連絡先メール(確認済み = <code>projects.contact_email_verified_at IS NOT NULL</code> のもの)を含め、ウィジェットは <code>MSG-WIDGET-QUESTION-LIMIT</code>(未設定時 <code>MSG-WIDGET-QUESTION-LIMIT-NOEMAIL</code>)を表示する。本停止は <strong>当該プロジェクトのみ</strong>(他プロジェクトのウィジェットは継続)であり、契約サスペンション(423)とは別で <code>contract_status</code> は <code>active</code> のまま、FAQ閲覧は継続する。</li>
 <li>停止はカウントしない(429 で返した質問は <code>question_logs</code> に計上せず、<code>metering_billable=false</code>)。</li>
 <li>管理者向けメールは上記の選択閾値アラートに従う。100%未選択時は停止のみ実行し、管理者向け上限メールは送信しない。</li>
-<li><strong>復帰</strong>: (a) 翌月 1 日 00:00 JST の月次リセットで自動復帰、(b) オーナー / 当該プロジェクト管理者が SCR-021-M1 で <code>question_monthly_limit</code> を当月利用件数超に引き上げた時点、または上限をOFFにした時点で KV 反映(最大 30s)後に即時復帰。</li>
+<li><strong>復帰</strong>: (a) 翌月 1 日 00:00 JST の月次リセットで自動復帰、(b) オーナー / 当該プロジェクト管理者が SCR-021-001 で <code>question_monthly_limit</code> を当月利用件数超に引き上げた時点、または上限をOFFにした時点で KV 反映(最大 30s)後に即時復帰。</li>
 <li>質問数の 125% 到達は既に 100% で停止済みのため追加のレート制限は発生しないが、運営者へエスカレーション通知する。</li>
 </ul>
 <blockquote>
@@ -543,7 +543,7 @@
 </tr>
 <tr>
 <td>質問数更新</td>
-<td>SCR-021-M1 は質問数上限のON / OFF・上限値・アラート閾値だけを更新し、無料枠は変更しない。<code>PATCH /projects/{id}/quota-limits/questions</code> の応答でサマリー全体を再描画する</td>
+<td>SCR-021-001 は質問数上限のON / OFF・上限値・アラート閾値だけを更新し、無料枠は変更しない。<code>PATCH /projects/{id}/quota-limits/questions</code> の応答でサマリー全体を再描画する</td>
 </tr>
 <tr>
 <td>上限撤廃</td>
