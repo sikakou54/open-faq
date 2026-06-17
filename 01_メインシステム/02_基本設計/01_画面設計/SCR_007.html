@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCR-007 ウィジェット設定 | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<link rel="stylesheet" href="../../../assets/css/screen-mock.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@1.17.0/dist/umd/lucide.min.js"></script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/01_画面設計/SCR_007.html">
+<article class="content" id="content">
+<h1 id="scr-007-ウィジェット設定">SCR-007 ウィジェット設定</h1>
+
+<aside class="page-summary">
+<p class="ps-lead"><strong>このページは、プロジェクト単位のウィジェット公開キー・埋め込みコード・見た目(主色)を設定し、プレビューで確認する画面 SCR-007 を定義します。</strong> 画面概要 / 画面遷移図 / 画面レイアウト / 画面項目定義 / 入出力一覧 / 画面イベント一覧 の 6 セクションで記述します。</p>
+</aside>
+<p class="doc-meta"><span><b>版数</b> v1.0</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<h2 id="1-画面概要">1. 画面概要</h2>
+<p class="section-lead">プロジェクト単位のウィジェット公開キー・埋め込みコード・見た目(主色)を 1 画面で設定し、左に設定パネル・右にプレビューを固定配置する画面です。</p>
+<table>
+<thead>
+<tr>
+<th>画面 ID</th>
+<th>画面名</th>
+<th>機能概要</th>
+</tr>
+</thead>
+<tbody>
+<tr><td id="SCR-007"><code>SCR-007</code></td><td>ウィジェット設定</td><td>公開キー管理・埋め込みコード・見た目(主色)設定とプレビューを行う</td></tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>関連</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>FR / BR</td><td><a href="../../01_要件定義/FR03_プロジェクト管理.html#FR-031">FR-031</a>, <a href="../../01_要件定義/FR12_ウィジェット.html#FR-150">FR-150</a>〜<a href="../../01_要件定義/FR12_ウィジェット.html#FR-156">FR-156</a>, <a href="../../01_要件定義/FR14_セキュリティ.html#FR-193">FR-193</a>, <a href="../../01_要件定義/FR14_セキュリティ.html#FR-194">FR-194</a> / <a href="../../01_要件定義/FR12_ウィジェット.html#BR-114">BR-114</a></td></tr>
+<tr><td>関連画面</td><td><a href="SCR_008.html"><code>SCR-008</code> 概要(プロジェクト)</a></td></tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr>
+<th>ステークホルダ</th>
+<th>対象</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>オーナー</td><td>◯</td></tr>
+<tr><td>プロジェクト管理者(<code>admin</code>)</td><td>◯</td></tr>
+<tr><td>メンバー(<code>member</code>)</td><td>◯</td></tr>
+</tbody>
+</table>
+<div class="callout warning"><i class="bi bi-exclamation-triangle"></i><div><span class="c-title">権限の制約</span>メンバー(<code>member</code>)は<strong>閲覧 + 埋め込みコードのコピーのみ</strong>可能です。公開キー再発行・見た目の編集・設定保存は当該プロジェクトの <code>admin</code> 以上に限られます。公開キーはプロジェクトごとに 1 セット(契約共通ではない)です。公開キー再発行は L3(対象プロジェクト名タイプ + 再認証)で保護します。</div></div>
+
+<h2 id="2-画面遷移図">2. 画面遷移図</h2>
+<p class="section-lead">本画面からの画面遷移を、画面 ID・画面名とイベント(操作)で示します。</p>
+<pre class="mermaid"><code>flowchart LR
+  S7["SCR-007 ウィジェット設定"]
+  S8["SCR-008 概要(プロジェクト)"]
+  S8 -- "ウィジェット" --&gt; S7
+  S7 -- "概要" --&gt; S8
+</code></pre>
+
+<h2 id="3-画面レイアウト">3. 画面レイアウト</h2>
+<div class="layout-embed">
+<div class="le-cap">ウィジェット設定画面(SCR-007)</div>
+<div class="scr-mock"><div class="screen" id="scr-007" role="region" aria-labelledby="scr-007-title"> <div class="screen-header"> <div><span class="scr-id">SCR-007</span><span class="scr-name" id="scr-007-title">ウィジェット(プロジェクト WS / 公開キー + 見た目 + プレビュー)</span></div> <div class="scr-user">利用者: プロジェクト管理者 admin 主、メンバー member は閲覧 + 埋め込みコードのコピーのみ(再発行は L3)</div> </div> <div class="app-layout"> <div class="app-header" role="banner"> <div class="left"> <span class="logo" role="link" aria-label="open-faq ホーム">open-faq</span> <span class="ws-switcher" role="button" aria-haspopup="menu" aria-label="管理範囲を切り替え(現在地: サポートサイト)">サポートサイト <i data-lucide="folder"></i></span> </div> <div class="right"> <span class="bell" role="button" aria-label="お知らせ通知ベル(未読 3 件)"><i data-lucide="bell"></i><span class="badge" aria-hidden="true">3</span></span> <span class="user-menu" role="button" aria-haspopup="menu" aria-label="アカウントメニュー(admin@example.com)">▼ admin@example.com</span> </div> </div> <div class="app-sidebar" role="navigation" aria-label="メインナビゲーション"> <div class="item" role="link"><i data-lucide="home"></i>概要</div> <div class="group" role="heading" aria-level="2">対応</div> <div class="item" role="link"><i data-lucide="inbox"></i>要対応の質問<span class="badge">87</span></div>  <div class="group" role="heading" aria-level="2">通知</div> <div class="item" role="link"><i data-lucide="bell"></i>お知らせ<span class="badge">3</span></div> <div class="group" role="heading" aria-level="2">コンテンツ</div> <div class="item" role="link"><i data-lucide="book-open"></i>FAQ</div>  <div class="item active" role="link" aria-current="page"><i data-lucide="puzzle"></i>ウィジェット</div> <div class="group" role="heading" aria-level="2">プロジェクト</div> <div class="item" role="link"><i data-lucide="users"></i>メンバー</div> <div class="item" role="link"><i data-lucide="gauge"></i>利用量と上限</div>  <div class="group" role="heading" aria-level="2">共通</div> <div class="item" role="link"><i data-lucide="scroll-text"></i>利用規約</div> <div class="item" role="link"><i data-lucide="shield"></i>プライバシーポリシー</div> </div> <div class="app-main" role="main" aria-label="メインコンテンツ"> <nav class="breadcrumb" aria-label="現在位置"><a>ホーム</a> / <span aria-current="page">ウィジェット</span></nav> <header class="page-header"><div><h1>ウィジェット</h1><p class="page-description">サイトに埋め込むウィジェットの公開キー・見た目(主色)を設定します</p></div><div><button class="btn primary">設定を保存</button></div></header> <div class="grid-2"> <div> <div class="panel"> <div class="panel-title"><i data-lucide="key"></i>公開キー管理</div> <div class="field"><label>現在のキー</label> <div style="display: flex; gap: 6px; align-items: center;"><div class="input" style="flex: 1;"><code>pk_live_8K3mN9pQ2rT5wX7yZ1aB4cD6eF8gH0jK</code></div><button class="btn small">コピーしました</button></div> </div> <div class="alert-bar warn" role="status" style="display: none; font-size: 9px;"><i data-lucide="alert-triangle"></i>旧公開キーがまだ使われています。3 件のアクセスを検知(最終 3 時間前)</div> <button class="btn danger">公開キーを再発行する</button> <div class="helper">再発行すると旧キーは24時間のみ有効です。早めに差し替えてください。</div> </div> <div class="panel"> <div class="panel-title"><i data-lucide="clipboard"></i>埋め込みコード</div> <div class="codeblock" style="position: relative;"><button class="btn small" aria-label="埋め込みコードをコピー" title="コピー" style="position: absolute; top: 6px; right: 6px; padding: 4px 6px;"><i data-lucide="copy"></i></button>&lt;script async src="https://cdn.open-faq.com/widget.js" data-public-key="pk_live_8K3mN9pQ2rT5wX7yZ1aB4cD6eF8gH0jK" data-project-id="prj_01HMK..."&gt;
+&lt;/script&gt;</div> </div> <div class="panel"> <div class="panel-title"><i data-lucide="palette"></i>見た目の設定</div> <div class="field"><label>主色(プライマリカラー)</label> <div style="display: flex; gap: 6px; align-items: center;"><div class="input" style="width: 100px;"><code>#3366CC</code></div><div style="width: 24px; height: 24px; border-radius: var(--r-sm); background: var(--accent-500); border: 1px solid var(--border-strong);"></div><button class="btn small"><i data-lucide="palette"></i>ピッカー</button></div></div> </div> </div> <div> <div class="panel"> <div class="panel-title"><i data-lucide="eye"></i>プレビュー</div> <div class="widget-frame"> <div class="widget-header">FAQ <span>—</span></div> <div class="widget-body"> <div style="background: var(--gray-50); padding: 8px; border-radius: var(--r-sm);">何かお困りですか?</div> <div style="margin-top: 6px;"><span class="placeholder">例: 料金プランの変更</span></div> <button class="btn small primary" style="margin-top: 6px;">送信する</button> <div style="text-align: right; font-size: var(--fs-xs); color: var(--text-muted); margin-top: 8px;">Powered by open-faq</div> </div> </div> <div class="helper" style="margin-top: 6px;">設定変更時にリアルタイム反映されます。サイト側に反映されるまで最大 60 秒かかります</div> </div> </div> </div> </div> </div> </div></div>
+</div>
+
+<h2 id="4-画面項目定義">4. 画面項目定義</h2>
+<p class="section-lead">本画面の入出力項目(公開キー管理・見た目・プレビュー・埋め込みコードの各セクション)を定義します。項目の正本は本表です。</p>
+<table>
+<thead>
+<tr>
+<th>項目 ID</th>
+<th>項目</th>
+<th>入出力</th>
+<th>種類</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr><td id="IT-01"><code>IT-01</code></td><td>スコープ注記</td><td>出力</td><td>注意文</td><td>「この公開キーは本プロジェクト専用です。他プロジェクトのウィジェットとは共有されません」</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>ウィジェット公開キー</td><td>出力</td><td>テキスト + コピーボタン</td><td>形式 <code>pk_live_&lt;32-char base62&gt;</code>(<a href="../../01_要件定義/FR14_セキュリティ.html#FR-194">FR-194</a>)。参照のみ。無期限のため有効期限 UI なし。メンバーもコピー可</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>旧キー使用中バッジ</td><td>出力</td><td>バッジ + 注意文</td><td>ローテーション猶予 24 時間中に旧キー使用検知時に表示</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>公開キーを再発行(ローテーション)</td><td>入力</td><td>ボタン(Danger / DangerSection / L3)</td><td><code>admin</code> 以上のみ。新キー発行と同時に旧キーは 24 時間猶予で失効予告。確認文に「既存の埋め込みコードは旧キー失効後に動作しなくなります」を必須表示(<a href="../../01_要件定義/FR03_プロジェクト管理.html#FR-031">FR-031</a>)</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>主色(プライマリカラー)</td><td>入力</td><td>カラーピッカー(HEX 指定)</td><td><code>admin</code> 以上のみ。プレビューにリアルタイム反映(<a href="../../01_要件定義/FR12_ウィジェット.html#FR-152">FR-152</a>)</td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>プレビュー</td><td>出力</td><td>プレビューウィンドウ</td><td>起動前の丸型ランチャーバッジと展開後のチャット UI を切り替えて確認。設定変更時にリアルタイム反映</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>「Powered by」表示</td><td>出力</td><td>注釈</td><td>本サービス運営者ロゴを必須表示</td></tr>
+<tr><td id="IT-08"><code>IT-08</code></td><td>埋め込みコード</td><td>出力</td><td>コードブロック + コピーアイコン</td><td>コピーアイコンをコード右上にオーバーレイ。クリックで全文コピー。メンバーもコピー可</td></tr>
+<tr><td id="IT-09"><code>IT-09</code></td><td>設定の保存</td><td>入力</td><td>ボタン(Primary)</td><td><code>admin</code> 以上のみ。設定更新 + KV キャッシュ無効化</td></tr>
+</tbody>
+</table>
+
+<h2 id="5-入出力一覧">5. 入出力一覧</h2>
+<p class="section-lead">本画面が読み書きするテーブルと、呼び出す API の一覧です。テーブルの正本は <a href="../03_テーブル設計.html">03_テーブル設計</a>、API の正本は <a href="../02_API設計.html#533-patch-projectsid--delete-projectsid">02_API設計 §5.3</a> です。ウィジェット公開キー・見た目設定は <code>projects</code> テーブルに保持します。</p>
+<table>
+<thead>
+<tr>
+<th rowspan="2">入出力名</th>
+<th rowspan="2">種別</th>
+<th rowspan="2">I/O</th>
+<th colspan="4">アクセス種別(CRUD)</th>
+<th rowspan="2">備考</th>
+</tr>
+<tr>
+<th>C</th>
+<th>R</th>
+<th>U</th>
+<th>D</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>プロジェクト</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td>公開キー・ウィジェット設定 JSON の取得・更新。<code>projects</code>(<code>widget_public_key</code> / ウィジェット設定 JSON)(<a href="../03_テーブル設計.html#36-projects">テーブル設計 3.6</a>)</td></tr>
+<tr><td>レガシー公開キー</td><td>テーブル</td><td>出力</td><td>◯</td><td>—</td><td>—</td><td>—</td><td>ローテーション時に旧キーを 24 時間保持。<code>project_legacy_keys</code>(<a href="../03_テーブル設計.html#37-project_legacy_keys">テーブル設計 3.7</a>)</td></tr>
+<tr><td>プロジェクト更新</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>ウィジェット設定(主色等)の取得・保存。<code>PATCH /projects/{id}</code>(<a href="../02_API設計.html#533-patch-projectsid--delete-projectsid">API 設計 5.3.3</a>)</td></tr>
+<tr><td>ウィジェット鍵ローテーション</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>公開キー再発行(旧キー 24h 猶予)。<code>POST /projects/{id}/widget-key/rotate</code>(<a href="../02_API設計.html#534-post-projectsidwidget-keyrotateウィジェット鍵ローテーション">API 設計 5.3.4</a>)</td></tr>
+</tbody>
+</table>
+
+<h2 id="6-画面イベント一覧">6. 画面イベント一覧</h2>
+<p class="section-lead">本画面で発生するイベントと発生タイミング・概要の一覧です。</p>
+<table>
+<thead>
+<tr>
+<th>イベント ID</th>
+<th>イベント</th>
+<th>発生タイミング</th>
+<th>概要</th>
+<th>関連項目</th>
+</tr>
+</thead>
+<tbody>
+<tr><td><code>EV-01</code></td><td>初期表示</td><td>画面遷移・リロード時</td><td>公開キー・ウィジェット設定・埋め込みコードを取得し各セクションへ表示。旧キー使用検知時はバッジ表示</td><td><a href="#IT-02">IT-02</a>, <a href="#IT-03">IT-03</a>, <a href="#IT-08">IT-08</a></td></tr>
+<tr><td><code>EV-02</code></td><td>公開キーコピー</td><td>公開キーのコピーボタン押下時</td><td>公開キーをクリップボードへコピー。成功時に緑チェック + トースト</td><td><a href="#IT-02">IT-02</a></td></tr>
+<tr><td><code>EV-03</code></td><td>埋め込みコードコピー</td><td>埋め込みコードのコピーアイコン押下時</td><td>コード全文をコピー(成功時 MSG-SCR-007-TOAST-002)。メンバーも実行可</td><td><a href="#IT-08">IT-08</a></td></tr>
+<tr><td><code>EV-04</code></td><td>主色変更</td><td>カラーピッカー変更時(<code>admin</code> 以上)</td><td>プレビューにリアルタイム反映</td><td><a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a></td></tr>
+<tr><td><code>EV-05</code></td><td>公開キー再発行</td><td>「公開キーを再発行する」押下時(<code>admin</code> 以上)</td><td>L3 確認(プロジェクト名タイプ + 再認証)後 <code>POST /projects/{id}/widget-key/rotate</code>。旧キーは 24 時間猶予で失効予告</td><td><a href="#IT-04">IT-04</a></td></tr>
+<tr><td><code>EV-06</code></td><td>設定の保存</td><td>「設定を保存」押下時(<code>admin</code> 以上)</td><td><code>PATCH /projects/{id}</code> で設定更新 + KV キャッシュ無効化</td><td><a href="#IT-09">IT-09</a></td></tr>
+</tbody>
+</table>
+
+</article>
+<script>(function(){function r(){try{window.lucide&&lucide.createIcons({attrs:{'aria-hidden':'true',focusable:'false'}});}catch(e){}}if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',r);}else{r();}window.addEventListener('load',r);})();</script>
+</body>
+</html>

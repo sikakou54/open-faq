@@ -12,532 +12,54 @@
 </head>
 <body data-page-id="01_メインシステム/02_基本設計/10_課金・請求設計.html">
 <article class="content" id="content">
-<h1 id="課金請求設計書メイン">課金・請求設計書(メイン)</h1>
-<h2 id="1-文書概要">1. 文書概要</h2>
-<h3 id="11-目的">1.1 目的</h3>
-<p>メインシステムの課金・契約・請求・決済を一元化する。<strong>MVP の課金モデル</strong>(完全従量課金 + 月次無料枠、無料トライアル期間なし)、契約状態、質問数の月次上限、課金対象別無料枠、決済フローを定義する。<strong>質問数だけ月次上限を持ち、FAQ 件数は上限なしで計測・課金を継続する</strong>。</p>
-<h3 id="12-対象範囲">1.2 対象範囲</h3>
-<ul>
-<li>対象: 利用者向け課金 UI(SCR-016 利用状況 / SCR-022 請求 / SCR-023 設定 / SCR-014)、契約状態管理、月次利用量計測、Stripe 連携、請求書管理</li>
-<li>対象外: Stripe Webhook の一次受信・DLQ・リプレイ(<a href="../../02_運営者システム/個別設計書群/11_課金請求設計書.html">02_運営者システム/個別設計書群/11_課金請求設計書.html §13</a> 正本)</li>
-</ul>
-<h3 id="13-版数">1.3 版数</h3>
+<h1 id="課金請求設計メイン">課金・請求設計(メイン)</h1>
+<aside class="page-summary">
+<p class="ps-lead"><strong>このページは、メインシステムの課金ロジック・契約状態遷移・利用量集計方針・課金プロバイダ Webhook 受信方針を定義します。</strong></p>
+</aside>
+<p class="doc-meta"><span><b>版数</b> v2.1</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<h2 id="1-課金モデルと判定単位">1. 課金モデルと判定単位</h2>
+<p class="section-lead">メインシステムは完全従量課金 + 月次無料枠の単一モデルを全契約に適用する。無料枠・月次上限は<strong>プロジェクト単位</strong>、レート制限は<strong>契約単位</strong>で判定し、計測はプロジェクト単位・請求集計は契約単位とする。階層プランは MVP では持たない。</p>
 <table>
 <thead>
 <tr>
-<th>項目</th>
-<th>値</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>版数</td>
-<td>1.1</td>
-</tr>
-<tr>
-<td>更新日</td>
-<td>2026-06-12</td>
-</tr>
-</tbody>
-</table>
-<h3 id="14-関連ドキュメント">1.4 関連ドキュメント</h3>
-<table>
-<thead>
-<tr>
-<th>ドキュメント名</th>
-<th>役割</th>
-<th>参照先</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>索引</td>
-<td>11 ドキュメント体系の俯瞰</td>
-<td><a href="00_索引.html">00_索引.html</a></td>
-</tr>
-<tr>
-<td>共有概念対応表</td>
-<td><code>contract_status</code> / 契約上書きテーブル</td>
-<td><a href="../../共有/共有概念.html">../../共有/共有概念.html</a></td>
-</tr>
-<tr>
-<td>権限設計書</td>
-<td>契約別利用制限</td>
-<td><a href="05_権限設計書.html">05_権限設計書.html</a></td>
-</tr>
-<tr>
-<td>API 設計書</td>
-<td>連携 IF #1 / #10</td>
-<td><a href="03_API設計書.html">03_API設計書.html</a></td>
-</tr>
-<tr>
-<td>エラー設計書</td>
-<td>課金エラー(<code>E-BILL-*</code>、<code>E-QUOTA-*</code>)</td>
-<td><a href="06_エラー設計書.html">06_エラー設計書.html</a></td>
-</tr>
-<tr>
-<td>メッセージ一覧</td>
-<td>課金・契約メッセージ / <code>critical</code> 通知</td>
-<td><a href="07_メッセージ一覧.html">07_メッセージ一覧.html</a></td>
-</tr>
-<tr>
-<td>認証・認可設計書</td>
-<td>サスペンション中の操作制限</td>
-<td><a href="09_認証認可設計書.html">09_認証認可設計書.html</a></td>
-</tr>
-<tr>
-<td>運営者側 課金・請求設計書</td>
-<td>Stripe Webhook / DLQ / 月次請求確定 cron(正本)</td>
-<td><a href="../../02_運営者システム/個別設計書群/11_課金請求設計書.html">../../02_運営者システム/個別設計書群/11_課金請求設計書.html</a></td>
-</tr>
-<tr>
-<td>要件 §8.11</td>
-<td>課金単位 / 機能要件の正本</td>
-<td><a href="../01_要件定義書.html">../01_要件定義書.html</a></td>
-</tr>
-</tbody>
-</table>
-<h2 id="2-契約モデルmvp-は単一プラン共有概念正本">2. 契約モデル(MVP は単一プラン、共有概念正本)</h2>
-<h3 id="21-単一プラン定義">2.1 単一プラン定義</h3>
-<p>MVP は <strong>Free / Basic / Pro / Enterprise の階層プランを採用しない</strong>。以下の単一モデルを全契約に適用する。</p>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>MVP 仕様</th>
-<th>正本</th>
+<th>観点</th>
+<th>方針</th>
+<th>判定 / 集計単位</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>課金モデル</td>
-<td><strong>完全従量課金制 + 月次無料枠</strong></td>
-<td>要件 §8.11.1 / 基本設計書 §6.6</td>
-</tr>
-<tr>
-<td>契約開始</td>
-<td>新規登録完了時点で <code>active</code>(<strong>無料トライアル期間なし</strong>)。支払方法登録は任意、無料枠超過時にウィジェット質問受付を停止して必須化(支払方法ゲート、FR-136。契約は <code>active</code> 維持)</td>
-<td>§5.1</td>
-</tr>
-<tr>
-<td>再課金リトライ</td>
-<td><strong>Stripe Smart Retries 委譲、独自リトライ禁止</strong></td>
-<td>§11.4</td>
-</tr>
-<tr>
-<td>利用設定のカスタマイズ</td>
-<td>レート制限 = <code>owner_quota_overrides</code> / 質問数上限・課金対象別無料枠 = <code>project_quota_limits</code>。管理者ユーザーが変更できるのは質問数設定のみ</td>
-<td>§3 / §3a</td>
+<td>完全従量課金 + 月次無料枠(無料トライアルなし)</td>
+<td>—</td>
 </tr>
 <tr>
 <td>月次境界</td>
-<td>JST 暦月、無料枠は毎月リセット</td>
-<td>§8.2</td>
-</tr>
-<tr>
-<td>訂正請求</td>
-<td>Stripe Credit Note API、運営者の手動操作のみ(自動禁止)</td>
-<td>§11.5</td>
-</tr>
-</tbody>
-</table>
-<h3 id="22-階層プランへの拡張余地">2.2 階層プランへの拡張余地</h3>
-<h2 id="3-レート制限上書き契約単位">3. レート制限上書き(契約単位)</h2>
-<p>運営者が契約単位で <code>owner_quota_overrides</code> テーブルを操作する(SCR-093、4-eyes 承認)。DDoS / Bot / 暴走対策のセキュリティ施策であり、レート種別(<code>*_per_*</code>)のみを <code>resource_kind</code> で扱う(月次上限件数は §3a の <code>project_quota_limits</code> へ分離)。</p>
-<table>
-<thead>
-<tr>
-<th><code>resource_kind</code></th>
-<th>用途</th>
-<th>主管 SCR(運営者)</th>
-<th>KV ミラー</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>widget_ask_per_min</code></td>
-<td>ウィジェット質問レート</td>
-<td>SCR-093</td>
-<td>あり(60s TTL)</td>
-</tr>
-<tr>
-<td><code>widget_inquiry_per_min</code></td>
-<td>ウィジェット未解決質問送信レート</td>
-<td>SCR-093</td>
-<td>あり</td>
-</tr>
-<tr>
-<td><code>email_per_hour</code></td>
-<td>メール送信レート</td>
-<td>SCR-093</td>
-<td>あり</td>
-</tr>
-<tr>
-<td><code>admin_api_per_min</code></td>
-<td>管理 API レート</td>
-<td>SCR-093</td>
-<td>あり</td>
-</tr>
-</tbody>
-</table>
-<p>詳細は <a href="03_テーブル設計.html">03_テーブル設計.html §3.23</a> 参照。</p>
-<h2 id="3a-質問数上限課金対象別無料枠プロジェクト単位">3a. 質問数上限・課金対象別無料枠(プロジェクト単位)</h2>
-<p>質問数の月次上限件数・上限アラートと、MVP課金対象の無料枠を <strong>プロジェクト単位</strong> で <code>project_quota_limits</code> に保持する。質問数は <code>threshold</code> に値がある場合を上限ON、NULLを上限OFFとして扱う。管理者ユーザー向け SCR-021 / SCR-021-M1 が表示・変更するのは質問数の上限とアラートだけとし、無料利用枠は表示・変更しない。無料枠は運営者向け SCR-093 で管理し、FAQ 件数の <code>threshold</code> は NULL 固定で月次上限なしとする。</p>
-<table>
-<thead>
-<tr>
-<th><code>resource_kind</code></th>
-<th>用途</th>
-<th>主管 SCR</th>
-<th>KV ミラー</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>question_monthly_limit</code></td>
-<td>質問数の月次上限件数・無料枠</td>
-<td>SCR-021(オーナー / PJ admin)/ SCR-093(運営者プロジェクト上書き)</td>
-<td>あり(30s TTL)</td>
-</tr>
-<tr>
-<td><code>faq_monthly_limit</code></td>
-<td>FAQ 件数の無料枠(上限なし)</td>
-<td>SCR-093</td>
-<td>あり</td>
-</tr>
-</tbody>
-</table>
-<p>質問数の優先順位は「プロジェクト設定(<code>source='owner'</code>)&gt; 運営者上書き(<code>source='operator'</code>)&gt; デフォルト推奨値」。FAQ無料枠の優先順位は「運営者上書き(<code>source='operator'</code>)&gt; デフォルト値」とし、<code>source='owner'</code> 行は作成しない。デフォルト値は KV <code>usage-limit:default:{kind}</code> / <code>usage-limit:free-default:{kind}</code> で解決する。詳細は <a href="03_テーブル設計.html">03_テーブル設計.html §3.24</a> 参照。</p>
-<h2 id="4-契約状態contract_ownerscontract_status-4-値--共有概念正本">4. 契約状態(<code>contract_owners.contract_status</code> 4 値 = 共有概念正本)</h2>
-<p>(基本設計書 §4.9 から移管)</p>
-<table>
-<thead>
-<tr>
-<th>状態</th>
-<th>説明</th>
-<th>利用可否</th>
-<th>システム動作</th>
-<th>関連メッセージID</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>active</code></td>
-<td>有効</td>
-<td>全機能</td>
-<td>通常</td>
-<td>-</td>
-</tr>
-<tr>
-<td><code>suspended</code></td>
-<td>サスペンション中(支払い失敗 / 運営者手動停止)</td>
-<td>オーナーのみ、課金画面 / 退会画面</td>
-<td>ウィジェット応答は機能停止旨を返す(<strong>423</strong>、FR-138)</td>
-<td>MSG-BILL-CONTRACT-SUSPENDED</td>
-</tr>
-<tr>
-<td><code>deleted_pending</code></td>
-<td>退会申請中(30 日猶予)</td>
-<td>オーナーのみ、退会キャンセル</td>
-<td>データ参照可、新規操作不可</td>
-<td>MSG-BILL-DELETE-PENDING</td>
-</tr>
-<tr>
-<td><code>deleted</code></td>
-<td>削除済み</td>
-<td>×</td>
-<td>アカウントスラグのみ <code>accounts_retired</code> に永久保持(運営者側)。<code>contract_status='deleted'</code> 設定時は必ず <code>contract_owners.valid=0</code> も同時セット(両者は同時遷移)</td>
-<td>MSG-BILL-DELETED</td>
-</tr>
-</tbody>
-</table>
-<h4 id="contract_status--valid-の整合03_テーブル設計md-31-と同期"><code>contract_status</code> × <code>valid</code> の整合(03_テーブル設計.html §3.1 と同期)</h4>
-<table>
-<thead>
-<tr>
-<th>ユーザー種別</th>
-<th><code>contract_owners.contract_status</code></th>
-<th><code>valid</code>(行種別)</th>
-<th>状態</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>オーナー(<code>contract_owners</code> 行存在)</td>
-<td><code>active</code> / <code>suspended</code></td>
-<td><code>contract_owners.valid=1</code> + <code>users.valid=1</code></td>
-<td>オーナー稼働中 / サスペンション中</td>
-</tr>
-<tr>
-<td>オーナー(<code>contract_owners</code> 行存在)</td>
-<td><code>deleted_pending</code></td>
-<td><code>contract_owners.valid=1</code> + <code>users.valid=1</code></td>
-<td>オーナー退会申請中(30 日猶予)</td>
-</tr>
-<tr>
-<td>オーナー(<code>contract_owners</code> 行存在)</td>
-<td><code>deleted</code></td>
-<td><code>contract_owners.valid=0</code> + <code>users.valid=0</code></td>
-<td>オーナー退会完了(<code>valid=0</code> と必ず同時セット)</td>
-</tr>
-<tr>
-<td>メンバー(<code>contract_owners</code> 行なし)</td>
-<td>(該当なし、<code>contract_owners</code> 行を持たない)</td>
-<td><code>users.valid=1</code></td>
-<td>メンバー有効</td>
-</tr>
-<tr>
-<td>メンバー(<code>contract_owners</code> 行なし)</td>
-<td>(該当なし、<code>contract_owners</code> 行を持たない)</td>
-<td><code>users.valid=0</code></td>
-<td>メンバー論理削除済み(<code>users.valid=0</code> のみ)</td>
-</tr>
-</tbody>
-</table>
-<p>オーナー退会完了時の <code>valid=0</code> は退会バッチ(<a href="../03_詳細設計/DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html</a>)で <code>contract_status='deleted'</code> 更新と同一トランザクション内で <code>contract_owners.valid=0</code> + <code>users.valid=0</code> を同時セットする。メンバー論理削除時は <code>contract_owners</code> 行を持たないため <code>contract_status</code> は無関係で、<code>users.valid=0</code> のみ更新する。</p>
-<h3 id="41-状態遷移詳細付録-b5-から移管">4.1 状態遷移詳細(付録 B.5 から移管)</h3>
-<table>
-<thead>
-<tr>
-<th>From</th>
-<th>To</th>
-<th>トリガー</th>
-<th>reason</th>
-<th>セッション処理</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>-</td>
-<td><code>active</code></td>
-<td>契約作成</td>
-<td>-</td>
-<td>-</td>
-</tr>
-<tr>
-<td><code>active</code></td>
-<td><code>suspended</code></td>
-<td>IF #1(支払い失敗 7 日猶予経過)</td>
-<td><code>payment_failure_grace_expired</code></td>
-<td>継続(課金 / 退会のみ)</td>
-</tr>
-<tr>
-<td><code>active</code></td>
-<td><code>suspended</code></td>
-<td>IF #1(運営者手動)</td>
-<td><code>operator_manual</code> / <code>tos_violation</code></td>
-<td><strong>5 秒以内全削除</strong>(FR-022)</td>
-</tr>
-<tr>
-<td><code>suspended</code></td>
-<td><code>active</code></td>
-<td>IF #1(支払再開 / 解除)</td>
-<td>-</td>
-<td>再ログイン要求</td>
-</tr>
-<tr>
-<td><code>active</code></td>
-<td><code>deleted_pending</code></td>
-<td>admin 退会申請(SCR-014)</td>
-<td>-</td>
-<td>継続(参照中心)</td>
-</tr>
-<tr>
-<td><code>deleted_pending</code></td>
-<td><code>active</code> / <code>suspended</code>(元の状態)</td>
-<td>admin 撤回(30 日以内)</td>
-<td>-</td>
-<td>継続</td>
-</tr>
-<tr>
-<td><code>deleted_pending</code></td>
-<td><code>deleted</code></td>
-<td>30 日経過 + 物理削除 Batch</td>
-<td>-</td>
-<td>全セッション無効化</td>
-</tr>
-<tr>
-<td><code>suspended</code></td>
-<td><code>deleted_pending</code></td>
-<td>運営者退会・削除移行</td>
-<td>-</td>
-<td>-</td>
-</tr>
-</tbody>
-</table>
-<h2 id="5-契約ライフサイクル">5. 契約ライフサイクル</h2>
-<h3 id="51-契約開始フロー無料トライアル期間なし">5.1 契約開始フロー(無料トライアル期間なし)</h3>
-<table>
-<thead>
-<tr>
-<th>イベント</th>
-<th>変更前状態</th>
-<th>変更後状態</th>
-<th>トリガー</th>
-<th>関連API</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>契約開始</td>
-<td>(新規)</td>
-<td><code>active</code></td>
-<td>SCR-002 新規登録完了</td>
-<td><code>POST /accounts</code></td>
-</tr>
-<tr>
-<td>支払方法登録(任意)</td>
-<td><code>active</code></td>
-<td><code>active</code>(支払方法登録済)</td>
-<td>支払方法登録 + Setup Intent 成功</td>
-<td><code>POST /billing/payment-method</code></td>
-</tr>
-</tbody>
-</table>
-<ul>
-<li><strong>無料トライアル期間は設けない</strong>。新規登録完了時点で契約は即 <code>active</code> となり、月次無料枠の範囲を無料で利用できる。</li>
-<li><strong>支払方法の登録は任意</strong>。未登録でも無料枠内の利用およびダッシュボード閲覧は可能。</li>
-<li><strong>支払方法ゲート(FR-136)</strong>: 無料利用枠80%到達時に支払方法登録が必要になる旨を SCR-016 / SCR-022 のバナー + 受信箱 / メールで事前告知する。</li>
-<li><strong>支払方法未登録で質問数無料枠を超過した場合、契約状態は <code>active</code> のまま、ウィジェットの新規質問受付のみを停止</strong>する。FAQ 件数は無料枠超過や月次件数を理由に新規作成を拒否しない。</li>
-<li><strong>支払方法登録済の契約</strong>は、全課金対象の無料枠超過分を事後課金とする。</li>
-<li>ウィジェット質問受付停止は支払方法登録(Setup Intent 成功)で即時再開する。以降の無料枠超過分は事後課金となる。</li>
-</ul>
-<h3 id="52-サスペンションフロー627-から移管">5.2 サスペンションフロー(§6.2.7 から移管)</h3>
-<p>起点イベント:</p>
-<ul>
-<li>支払い失敗 連携 IF #1 受信 → <code>reason=payment_failure_grace_expired</code>(<strong>7 日猶予タイマー開始</strong>)</li>
-<li>運営者手動停止 → <code>reason=operator_manual</code> / <code>tos_violation</code>(即時 suspended)</li>
-</ul>
-<blockquote>
-<p><strong>支払方法ゲート(FR-136)は契約サスペンションではない</strong>。支払方法未登録の契約が無料枠を超過した場合は契約 <code>active</code> のままウィジェット質問受付のみを停止する(§8.2 / DD12 §3.7a)。本フローの対象外。</p>
-</blockquote>
-<p>認可ゲート(<code>contract_owners.contract_status=suspended</code> 中):</p>
-<ul>
-<li><strong>許可</strong>: 課金画面 / 退会画面のみアクセス可</li>
-<li><strong>その他</strong>: 403</li>
-<li><strong>ウィジェット応答</strong>: 423(FR-138)</li>
-</ul>
-<p>解除条件:</p>
-<ul>
-<li><code>payment_failure_grace_expired</code> / <code>operator_manual</code> / <code>tos_violation</code>: 顧客管理側の連携 IF #1 受信(支払い成功 / 運営者解除)で <code>contract_owners.contract_status='active'</code> へ</li>
-</ul>
-<h3 id="53-退会解約フロー628-から移管">5.3 退会・解約フロー(§6.2.8 から移管)</h3>
-<pre><code>admin が SCR-014 で退会申請
-  → 再認証 FR-005
-  → contract_owners.contract_status=&#39;deleted_pending&#39;
-  → ウィジェット応答停止、新規 FAQ 登録不可
-  → 当月末まで利用可
-  → 月末締めで利用停止(月割りなし)
-  → 30 日削除猶予開始(物理削除まで)
-  → 物理削除バッチ実行: contract_owners.contract_status=&#39;deleted&#39; + contract_owners.valid=0 + users.valid=0(同時セット)
-  → 全データ削除 + announcement_recipients 削除</code></pre>
-<table>
-<thead>
-<tr>
-<th>観点</th>
-<th>仕様</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>解約予告期間</td>
-<td>当月末まで利用可、<strong>月末締めで停止</strong>(予告期間なし)</td>
-</tr>
-<tr>
-<td>データエクスポート猶予</td>
-<td>退会確定から <strong>30 日</strong>、SCR-014 退会申請画面 / SCR-023 設定から CSV エクスポート可</td>
-</tr>
-<tr>
-<td>物理削除</td>
-<td>30 日経過後にバッチで物理削除(NFR-704)</td>
-</tr>
-<tr>
-<td>クーリングオフ</td>
-<td>B2B サービスのため特商法適用外。利用規約に明示</td>
-</tr>
-<tr>
-<td>月途中の日割り</td>
-<td>しない(FR-125)</td>
-</tr>
-<tr>
-<td>未請求残高返金</td>
-<td>返金しない旨を利用規約に明記</td>
-</tr>
-<tr>
-<td>解約 vs 退会</td>
-<td>解約申請(サブスクリプション終了)と退会(契約削除)は別フロー</td>
-</tr>
-</tbody>
-</table>
-<h2 id="6-契約とオーナーの関係">6. 契約とオーナーの関係</h2>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>内容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>契約単位</td>
-<td><code>contract_owners</code> 行 = 1 契約(<code>user_id</code> PRIMARY KEY で 1 契約 = 1 オーナー固定)</td>
-</tr>
-<tr>
-<td>オーナー / 組織との関係</td>
-<td>契約 = 1 オーナーアカウント。組織概念は MVP 範囲外</td>
-</tr>
-<tr>
-<td>複数契約可否</td>
-<td>同一メールで複数契約は不可(<code>users.email_hmac</code> UNIQUE)</td>
-</tr>
-<tr>
-<td>契約管理者</td>
-<td>オーナーアカウント(MVP では譲渡不可、FR-333)</td>
-</tr>
-<tr>
-<td>契約停止時の利用制限</td>
-<td>課金画面 / 退会画面のみ</td>
-</tr>
-</tbody>
-</table>
-<h2 id="7-プラン変更時の仕様mvp-は上限上書きのみ">7. プラン変更時の仕様(MVP は上限上書きのみ)</h2>
-<p>MVP は単一プランのため、プラン階層変更は存在しない。<strong>レート上書き(契約単位)/ 月次上限件数・無料枠(プロジェクト単位)の追加・変更・削除</strong> のみが行われる。</p>
-<table>
-<thead>
-<tr>
-<th>変更種別</th>
-<th>反映タイミング</th>
-<th>課金処理</th>
-<th>利用制限の扱い</th>
-<th>備考</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>レート上書き追加・削除(運営者操作)</td>
-<td>即時(KV TTL 60s 経過後)</td>
-<td>-</td>
-<td>即時適用 / 削除で標準値復帰</td>
-<td>SCR-093 / 4-eyes 承認ログ(契約単位)</td>
-</tr>
-<tr>
-<td>プロジェクトの質問数上限・アラート変更(オーナー / PJ admin)</td>
-<td>即時(KV TTL 30s 経過後)</td>
+<td>JST 暦月。無料枠は毎月 1 日 00:00 JST にリセット(BR-086)</td>
 <td>—</td>
-<td>即時適用</td>
-<td>SCR-021-M1(プロジェクト単位)</td>
 </tr>
 <tr>
-<td>プロジェクト上限の運営者上書き追加・削除</td>
-<td>即時(KV TTL 30s)</td>
-<td>翌月から</td>
-<td>即時適用 / 削除でオーナー設定 or デフォルトへ復帰</td>
-<td>SCR-093 / 4-eyes 承認ログ(プロジェクト単位)</td>
+<td>無料枠 / 月次上限件数</td>
+<td><code>project_quota_limits</code> で保持(<a href="03_テーブル設計.html#324-project_quota_limits">03_テーブル設計.html §3.24</a> 正本)</td>
+<td>プロジェクト</td>
+</tr>
+<tr>
+<td>レート制限(DDoS / Bot / 暴走対策)</td>
+<td><code>owner_quota_overrides</code> で保持(<a href="03_テーブル設計.html#323-owner_quota_overrides">03_テーブル設計.html §3.23</a> 正本)。上限件数・無料枠とは別軸</td>
+<td>契約</td>
+</tr>
+<tr>
+<td>利用量計測 / 請求集計</td>
+<td><code>usage_metering</code> をプロジェクト単位で計測し、契約単位で集計して請求(<a href="03_テーブル設計.html#322-usage_metering">03_テーブル設計.html §3.22</a> 正本)</td>
+<td>計測=プロジェクト / 請求=契約</td>
 </tr>
 </tbody>
 </table>
-<h2 id="8-課金方式--課金単位">8. 課金方式 / 課金単位</h2>
-<h3 id="81-課金単位要件-8111--基本設計書-661-正本">8.1 課金単位(要件 §8.11.1 / 基本設計書 §6.6.1 正本)</h3>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">テーブル定義は 03 が正本</span><code>billing_subscriptions</code> / <code>billing_invoices</code> / <code>usage_metering</code> / <code>owner_quota_overrides</code> / <code>project_quota_limits</code> のカラム・制約・コード値は <a href="03_テーブル設計.html#3-テーブル詳細">03_テーブル設計.html §3</a> を正本とする。本ページは判定ロジックと状態遷移のみを扱う。</div></div>
+
+<h3 id="11-課金対象と無料枠初期値">1.1 課金対象と無料枠初期値</h3>
+<p class="section-lead">課金対象は質問数・FAQ 件数・AI 利用コストの 3 種。質問数のみが月次上限件数による停止対象で、FAQ 件数は上限なしで従量課金を継続する。AI 利用コストは MVP ではサービス側が吸収する社内可視化指標とする。無料枠・単価の初期値は要件(BR-086)を正本とし、運営者が料金設定として管理する。</p>
 <table>
 <thead>
 <tr>
@@ -545,436 +67,384 @@
 <th>計測単位</th>
 <th>計測タイミング</th>
 <th>失敗時の扱い</th>
-<th>MVP 無料枠初期値</th>
-<th>MVP 超過課金単価初期値</th>
+<th>上限件数判定</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>質問数</td>
-<td>1 質問 = エンドユーザーが「送信」操作した 1 リクエスト</td>
+<td>ウィジェット利用者が「送信」した 1 リクエスト</td>
 <td>リクエスト到達時(同期)</td>
-<td>AI 推論失敗時もカウントするが <code>metering_billable=false</code></td>
-<td>1,000 件 / 月(プロジェクト単位デフォルト)</td>
-<td>0.5 円 / 件</td>
+<td>AI 推論失敗時もカウントするが計測フラグで課金対象外として区別</td>
+<td>対象(月次上限件数・100% 停止)</td>
 </tr>
 <tr>
 <td>FAQ 件数</td>
 <td>公開状態の FAQ 件数(下書き・非公開・削除除外)</td>
 <td>月末 23:59:59 JST スナップショット</td>
-<td>n/a</td>
-<td>100 件(プロジェクト単位デフォルト)</td>
-<td>5 円 / 件 / 月</td>
+<td>—</td>
+<td>対象外(上限なし・従量課金のみ継続)</td>
 </tr>
 <tr>
 <td>AI 利用コスト(原価)</td>
-<td>推論呼び出しトークン換算(社内可視化用)</td>
+<td>推論呼び出しのトークン換算(社内可視化用)</td>
 <td>呼び出し成功時のみ</td>
 <td>失敗は計測のみ・課金対象外。再試行は最初の 1 回のみ計測</td>
-<td>サービス側吸収(MVP、契約単位指標)</td>
-<td>n/a(質問数単価に内包)</td>
+<td>対象外(契約単位の社内指標)</td>
 </tr>
 </tbody>
 </table>
-<blockquote>
-<p>無料枠初期値は<strong>プロジェクトごとのデフォルト値</strong>とする。全課金対象の無料枠は運営者が SCR-093 で管理し、SCR-021-M1 では表示・更新しない。上限判定は質問数のみ、無料枠判定はMVP課金対象でプロジェクト単位とする。</p>
-</blockquote>
-<h3 id="82-選択閾値アラート--100停止--125運営者通知fr-122-fr-127">8.2 選択閾値アラート / 100%停止 / 125%運営者通知(FR-122, FR-127)</h3>
-<p><strong>判定基準はプロジェクトごとの質問数月次上限件数</strong>。選択可能なアラート閾値25/50/80/90/100%、100%停止、125%運営者通知は質問数だけに適用し、FAQ 件数は対象外とする。</p>
-<blockquote>
-<p><strong>無料枠と上限件数の区別</strong>: 無料枠はMVP課金対象の課金境界。月次上限件数は質問数だけの利用停止境界。FAQは無料枠を超えても利用を継続し、超過分を従量課金する。</p>
-</blockquote>
-<p>下表は質問数のアクション。質問数100%停止はアラート選択と支払方法の有無に関わらず適用される。</p>
+<div class="callout important"><i class="bi bi-pin-angle"></i><div><span class="c-title">無料枠と上限件数は別の境界</span>無料枠は課金が始まる<strong>課金境界</strong>、月次上限件数は質問数の<strong>受付停止境界</strong>である。FAQ 件数は無料枠を超えても受付を止めず、超過分を従量課金する。無料枠・単価の初期値(質問数・FAQ 件数・AI コスト)は <a href="../../01_メインシステム/01_要件定義/FR09_利用量・課金.html#BR-086">FR09 BR-086</a> を正本とし、本ページでは再掲しない。</div></div>
+
+<h3 id="12-上限無料枠設定の優先順位">1.2 上限・無料枠設定の優先順位</h3>
+<p class="section-lead">プロジェクトの質問数上限・アラートはオーナー / 当該プロジェクト管理者が設定し、運営者がプロジェクト単位で上書きできる。優先順位はプロジェクト設定 &gt; 運営者上書き &gt; デフォルト推奨値とする。管理者ユーザー(SCR-021 / SCR-021-M1)が触れるのは質問数の上限とアラートだけで、無料枠は運営者(SCR-093)が管理する。</p>
 <table>
 <thead>
 <tr>
-<th>データ種別</th>
-<th>選択閾値到達(25/50/80/90/100%)</th>
-<th>100% 到達(上限件数比)</th>
-<th>125% 到達(上限件数比)</th>
+<th>設定対象</th>
+<th>設定主体</th>
+<th>優先順位</th>
+<th>主管画面</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>質問数</td>
-<td>選択した各閾値への当月初回到達時に、オーナー + 当該 PJ 管理者へメール送信。複数閾値選択可、同一メールアドレスは重複排除</td>
-<td><strong>当該プロジェクトのウィジェット新規質問受付を停止</strong>(429 + <code>Retry-After</code>=当月末。エンドユーザーへ連絡先メール誘導、MSG-WIDGET-QUESTION-LIMIT)。100%アラート選択時だけ管理者へ閾値メールを送信。契約は <code>active</code> のまま。復帰=翌月リセット or SCR-021-M1 で上限引き上げ</td>
-<td>同左(既に停止中)+ 運営者へエスカレーション</td>
+<td>質問数の月次上限件数・アラート閾値</td>
+<td>オーナー / 当該プロジェクト管理者</td>
+<td>プロジェクト設定 &gt; 運営者上書き &gt; デフォルト推奨値</td>
+<td><a href="01_画面設計/SCR_021-M1.html">SCR-021 / SCR-021-M1</a> / 運営者 SCR-093</td>
+</tr>
+<tr>
+<td>課金対象別の無料枠</td>
+<td>運営者(料金設定)</td>
+<td>運営者上書き &gt; デフォルト値(プロジェクト設定行は作らない)</td>
+<td>運営者 SCR-093</td>
 </tr>
 </tbody>
 </table>
-<h3 id="83-月次境界">8.3 月次境界</h3>
-<p>JST 暦月。無料枠は毎月 1 日 00:00 JST にリセット。</p>
-<h3 id="84-通貨--税計算">8.4 通貨 / 税計算</h3>
+<p>質問数は月次上限件数を設定した場合を上限オン、設定しない場合を上限オフとして扱う。FAQ 件数は上限・アラートの対象とせず、管理者ユーザー向けの設定も提供しない。上限オフ時は利用率の算出・アラート・上限到達停止を行わない。
+
+<h2 id="2-質問数上限とウィジェット受付停止">2. 質問数上限とウィジェット受付停止</h2>
+<p class="section-lead">プロジェクトの質問数上限がオンのとき、利用が上限件数の 100% に達した時点で、支払方法の有無に関わらず当該プロジェクトのウィジェット新規質問受付を停止する。契約は <code>active</code> のまま、ウィジェット利用者には安全な定型文を表示し送信を無効化する。125% は集計遅延・誤差対策の最終ガードとして運営者へ追加通知する。</p>
+<table>
+<thead>
+<tr>
+<th>到達点(上限件数比)</th>
+<th>システム動作</th>
+<th>支払方法の有無</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>選択アラート閾値(25 / 50 / 80 / 90 / 100%)</td>
+<td>当月初回到達時に管理者向けアラートメールを送信(§3)</td>
+<td>無関係</td>
+</tr>
+<tr>
+<td><strong>100%</strong></td>
+<td>当該プロジェクトのウィジェット新規質問受付を停止。ウィジェット利用者へプロジェクト連絡先メール誘導の定型文をチャット内システム返信として表示し、入力・送信を無効化。契約は <code>active</code> を維持</td>
+<td>有無を問わず停止</td>
+</tr>
+<tr>
+<td><strong>125%</strong></td>
+<td>既に停止中。集計遅延・誤差の最終ガードとして運営者へエスカレーション通知</td>
+<td>無関係</td>
+</tr>
+</tbody>
+</table>
+<p>復帰は次のいずれかで即時とする。</p>
+<ol class="alpha">
+<li>翌月 1 日の月次リセット</li>
+<li>質問数上限の引き上げ(SCR-021-M1)</li>
+<li>質問数上限のオフ</li>
+</ol>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">支払方法ゲートとは別経路</span>支払方法未登録の契約でプロジェクトが無料枠を超過した場合も同様にウィジェット受付を停止するが、これは上限件数 100% 停止ではなく支払方法ゲート(§4)による。両者ともウィジェット受付のみを止め、契約はサスペンションしない。ウィジェット応答 HTTP ステータス・エラー ID(<code>E-QUOTA-*</code> / <code>E-BILL-*</code>)は <a href="05_エラー設計.html#45-利用上限エラーe-quota-プロジェクト上限件数--全体キャパシティ">05_エラー設計.html §4.5 / §4.6</a> を正本とする。</div></div>
+
+<h2 id="3-上限アラート通知方針">3. 上限アラート通知方針</h2>
+<p class="section-lead">プロジェクトごとに選択した質問数上限アラート閾値へ当月初回到達した時点で、宛先へメールを送信する。宛先はオーナー + 当該プロジェクトの有効な管理者(<code>project_users.role='admin' AND valid=1</code>)とし、同一メールアドレスは重複排除する。全閾値未選択時はアラート通知を行わない。</p>
 <table>
 <thead>
 <tr>
 <th>項目</th>
-<th>内容</th>
+<th>方針</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>通貨</td>
-<td>JPY</td>
+<td>選択可能な閾値</td>
+<td>25% / 50% / 80% / 90% / 100%(複数選択可)</td>
 </tr>
 <tr>
-<td>税計算</td>
-<td>日本国内 10% 固定か顧客管理 IF #10 経由か(未決事項 No.1)</td>
+<td>送信契機</td>
+<td>選択した各閾値へ<strong>当月初回到達した時のみ</strong>(同一月の同一閾値で再送しない)</td>
+</tr>
+<tr>
+<td>宛先</td>
+<td>オーナー + 当該プロジェクトの有効な管理者。同一メールアドレスは重複排除</td>
+</tr>
+<tr>
+<td>全閾値未選択時</td>
+<td>アラート通知なし。ただし 100% 到達によるウィジェット受付停止処理自体は行う</td>
+</tr>
+<tr>
+<td>FAQ 件数</td>
+<td>アラート対象外</td>
 </tr>
 </tbody>
 </table>
-<h2 id="9-請求対象">9. 請求対象</h2>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">通知契機・件名本文は別正本</span>通知契機表(配信先・重要度)は <a href="06_メッセージ一覧.html#6-通知契機テンプレート91--94-を吸収本書の中核">06_メッセージ一覧.html §6</a>、メール件名・本文テンプレート全文は <a href="11_メール設計.html#411-tpl-payment_method_required無料枠超過支払方法登録要請通知">11_メール設計.html §4.8〜§4.11</a> を正本とする。本ページは送信条件と宛先解決ルールのみを扱う。</div></div>
+
+<h2 id="4-支払方法ゲート">4. 支払方法ゲート</h2>
+<p class="section-lead">新規契約は支払方法未登録でも無料枠内を利用できる。いずれかのプロジェクトが無料枠 80% に到達したら事前告知し、支払方法未登録のまま無料枠を超過したら当該プロジェクトのウィジェット受付のみを停止する。契約はサスペンションせず管理画面は継続利用でき、支払方法登録で即時再開する。</p>
 <table>
 <thead>
 <tr>
-<th>対象</th>
-<th>課金条件</th>
-<th>金額算出方法</th>
-<th>備考</th>
+<th>段階</th>
+<th>契機</th>
+<th>システム動作</th>
+<th>契約状態</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>月次無料枠超過分(質問数)</td>
-<td>100% 超過 + <strong>支払方法登録済</strong></td>
-<td>(超過件数 × 単価)</td>
-<td><strong>拒否しない</strong>、事後課金</td>
+<td>事前告知</td>
+<td>いずれかのプロジェクトが無料枠 80% 到達</td>
+<td>利用状況(SCR-016)・お知らせ・メールで支払方法登録が必要になる旨を告知</td>
+<td><code>active</code></td>
 </tr>
 <tr>
-<td>月次無料枠超過分(FAQ 件数)</td>
-<td>100% 超過</td>
-<td>(超過件数 × 単価)</td>
-<td><strong>拒否しない</strong>。上限なしで継続利用</td>
+<td>受付停止</td>
+<td>支払方法未登録のまま無料枠を超過</td>
+<td>当該プロジェクトのウィジェット新規質問受付のみを停止し、支払方法登録へ誘導。管理画面は全機能継続。オーナー + 当該プロジェクト管理者へ通知</td>
+<td><code>active</code>(サスペンションしない)</td>
 </tr>
 <tr>
-<td>月次無料枠内</td>
-<td>課金しない</td>
-<td>0 円</td>
-<td>支払方法未登録でも利用可</td>
+<td>再開</td>
+<td>支払方法登録(Setup Intent 成功)</td>
+<td>当該プロジェクトのウィジェット受付を即時再開。以降の無料枠超過分は事後課金</td>
+<td><code>active</code></td>
+</tr>
+</tbody>
+</table>
+<div class="callout warning"><i class="bi bi-exclamation-triangle"></i><div><span class="c-title">支払方法ゲート ≠ サスペンション</span>支払方法ゲートはウィジェット受付のみを止める措置で、契約 <code>contract_status</code> は <code>active</code> のままである。決済失敗起因のサスペンション(§5)とは別経路であり、混同しないこと。支払方法登録済の契約は全課金対象の無料枠超過分を事後課金とし、受付は止めない(質問数上限件数 100% 停止は別途適用)。</div></div>
+
+<h2 id="5-契約状態ライフサイクル">5. 契約状態ライフサイクル</h2>
+<p class="section-lead"><code>contract_owners.contract_status</code> は <code>active</code> / <code>suspended</code> / <code>deleted_pending</code> / <code>deleted</code> の 4 値。状態定義そのものは共有概念(メイン正本)に従い、本ページは課金起因のサスペンション遷移と退会起因の削除遷移を記述する。決済失敗の猶予は <strong>7 日</strong>、退会の猶予は <strong>90 日</strong>で、両者は別の期間である。</p>
+<table>
+<thead>
+<tr>
+<th>状態</th>
+<th>意味</th>
+<th>アカウント利用者の可否</th>
+<th>ウィジェット応答</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>active</code></td>
+<td>有効</td>
+<td>全機能</td>
+<td>通常応答</td>
 </tr>
 <tr>
-<td>無料枠超過 + <strong>支払方法未登録</strong></td>
-<td>課金しない</td>
-<td>0 円</td>
-<td>契約 <code>active</code> 維持、ウィジェット質問受付停止(429、支払方法ゲート FR-136)。支払方法登録で再開</td>
+<td><code>suspended</code></td>
+<td>サスペンション中(決済失敗猶予経過 / 運営者手動停止)</td>
+<td>課金・退会のみ</td>
+<td>機能停止の旨を示す応答(FR-138)</td>
+</tr>
+<tr>
+<td><code>deleted_pending</code></td>
+<td>退会申請中(90 日猶予)</td>
+<td>退会撤回・データ参照中心</td>
+<td>停止</td>
+</tr>
+<tr>
+<td><code>deleted</code></td>
+<td>削除済み</td>
+<td>×</td>
+<td>停止。<code>contract_status='deleted'</code> 設定時は <code>contract_owners.valid=0</code> を同時セット</td>
+</tr>
+</tbody>
+</table>
+<div class="callout important"><i class="bi bi-pin-angle"></i><div><span class="c-title">contract_status は共有概念正本に従う</span>4 値の定義・<code>valid</code> との整合・テーブル CHECK 制約は <a href="../../共有/共有概念.html#3-共有概念の正本ルール">共有概念.html #1</a> および <a href="03_テーブル設計.html#455-契約状態遷移contract_ownerscontract_status共有概念正本">03_テーブル設計.html §4.5.5</a> を正本とする。本ページは課金 / 退会起因の遷移条件のみを扱う。</div></div>
+
+<h3 id="51-決済失敗からサスペンションへ">5.1 決済失敗からサスペンションへ(7 日猶予)</h3>
+<p class="section-lead">課金プロバイダから決済失敗確定の通知を受信した時刻を起点に 7 日間の猶予を計測する。次のシーケンス図は、猶予開始から猶予経過による <code>suspended</code> 移行までの流れと、猶予中 / サスペンション中いずれでも再決済成功・運営者解除の通知受信で即時 <code>active</code> へ復帰する分岐を示す。猶予中も管理画面ログインと支払方法更新は可能である。</p>
+<pre class="mermaid"><code>sequenceDiagram
+  participant P as 課金プロバイダ
+  participant W as worker-main-api
+  participant D as D1 (contract_owners)
+  participant O as オーナー
+
+  P-&gt;&gt;W: 決済失敗確定の通知
+  W-&gt;&gt;D: 受信時刻を起点に 7 日タイマー開始(active 維持)
+  D--&gt;&gt;W:
+  W-&gt;&gt;O: 重要度 critical 通知
+  Note over W: 猶予中は管理画面ログイン・支払方法更新を許可
+  alt 7 日以内に再決済成功の通知受信
+    P-&gt;&gt;W: 再決済成功の通知
+    W-&gt;&gt;D: 猶予解除(active 維持)
+    D--&gt;&gt;W:
+  else 7 日経過
+    W-&gt;&gt;D: contract_status を suspended へ移行
+    D--&gt;&gt;W:
+    Note over W: ウィジェット応答を機能停止へ切替・管理画面を課金/退会のみに限定
+    P-&gt;&gt;W: 再決済成功 / 運営者解除の通知
+    W-&gt;&gt;D: contract_status を active へ復帰
+    D--&gt;&gt;W:
+  end</code></pre>
+<div class="callout warning"><i class="bi bi-exclamation-triangle"></i><div><span class="c-title">7 日は 7 日のまま</span>決済失敗の猶予は 7 日で固定し、退会猶予 90 日とは混同しない。サスペンション中は課金・退会のみ可で、それ以外の管理画面操作とウィジェット応答は停止する。サスペンション中の操作制限は <a href="08_認証・認可設計.html">08_認証・認可設計.html</a>、対応エラー ID は <a href="05_エラー設計.html#46-課金エラーe-bill-">05_エラー設計.html §4.6</a> を正本とする。</div></div>
+
+<h3 id="52-退会から削除へ">5.2 退会から削除へ(90 日猶予)</h3>
+<p class="section-lead">オーナーが退会申請すると <code>deleted_pending</code> へ移行し、90 日の猶予の後に物理削除バッチが <code>deleted</code> へ確定させる。猶予中は退会撤回が可能で、撤回時は元の状態へ戻す。退会・解約はオーナー専有操作とする。</p>
+<table>
+<thead>
+<tr>
+<th>遷移</th>
+<th>契機</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>active</code> / <code>suspended</code> → <code>deleted_pending</code></td>
+<td>オーナーが退会申請(再認証を伴う)</td>
+<td>ウィジェット応答を停止。当月末まで参照中心で利用可、月末締めで停止(日割りなし)。90 日の削除猶予を開始</td>
+</tr>
+<tr>
+<td><code>deleted_pending</code> → 元の状態</td>
+<td>90 日以内の退会撤回</td>
+<td>申請前の <code>active</code> / <code>suspended</code> へ戻す</td>
+</tr>
+<tr>
+<td><code>deleted_pending</code> → <code>deleted</code></td>
+<td>90 日経過後の物理削除バッチ</td>
+<td><code>contract_status='deleted'</code> と <code>contract_owners.valid=0</code> + <code>users.valid=0</code> を同一トランザクションで同時セットし、全データを物理削除</td>
+</tr>
+</tbody>
+</table>
+<div class="callout important"><i class="bi bi-pin-angle"></i><div><span class="c-title">退会猶予は 90 日</span>退会申請(<code>deleted_pending</code>)から物理削除(<code>deleted</code>)までの猶予は <strong>90 日</strong>とする。論理削除データは <code>updated_at</code> 基準で 90 日経過後に物理削除バッチが処理する。退会バッチの実装詳細は <a href="../03_詳細設計/DD13_バッチ・非同期処理.html">DD13 バッチ・非同期処理</a> を参照。</div></div>
+
+<h2 id="6-利用量集計方針">6. 利用量集計方針</h2>
+<p class="section-lead">利用量は発生時にリアルタイム集計し、管理画面向けサマリは 5 分以内の遅延で反映する。月次集計はプロジェクト単位で行い、契約単位へ集約して請求する。課金対象外(推論失敗時)の計測は区別して保持する。</p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>方針</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>リアルタイム集計</td>
+<td>質問発生時に <code>usage_metering</code> へ計測。選択アラート閾値到達・100% 停止・125% 通知の判定に用いる</td>
+</tr>
+<tr>
+<td>サマリ反映遅延</td>
+<td>管理画面向け利用量サマリは 5 分以内に反映(FR-126)</td>
+</tr>
+<tr>
+<td>課金対象の区別</td>
+<td>推論失敗の質問はカウントするが計測フラグで課金対象外として区別。AI 利用コストは成功時のみ計測</td>
+</tr>
+<tr>
+<td>月次集計 → 請求</td>
+<td>プロジェクト単位で月次集計し、契約単位で全プロジェクトの超過分を集約して請求書を作成(契約単位)。同一月の二重集計は冪等にスキップ</td>
 </tr>
 <tr>
 <td>サスペンション中</td>
-<td>課金しない(月次集計対象外)</td>
-<td>0 円</td>
-<td>-</td>
+<td>月次集計対象外(課金しない)</td>
 </tr>
 </tbody>
 </table>
-<h2 id="10-請求状態">10. 請求状態</h2>
-<table>
-<thead>
-<tr>
-<th>請求状態</th>
-<th>説明</th>
-<th>システム動作</th>
-<th>関連エラーID</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>未請求</td>
-<td>月次集計前</td>
-<td>-</td>
-<td>-</td>
-</tr>
-<tr>
-<td>請求済み</td>
-<td>請求書発行済、Stripe 決済中</td>
-<td>-</td>
-<td>-</td>
-</tr>
-<tr>
-<td>支払い成功</td>
-<td>Stripe 決済成功</td>
-<td>-</td>
-<td>-</td>
-</tr>
-<tr>
-<td>支払い失敗(Smart Retries 中)</td>
-<td>Stripe Smart Retries 中</td>
-<td>-</td>
-<td>-</td>
-</tr>
-<tr>
-<td><strong>支払い失敗確定</strong>(3 回失敗後)</td>
-<td>Smart Retries 終了</td>
-<td>顧管 IF #1「決済失敗確定」イベント</td>
-<td>E-BILL-PAYMENT-FAILED</td>
-</tr>
-<tr>
-<td>返金済み</td>
-<td>Stripe Credit Note API</td>
-<td>-</td>
-<td>-</td>
-</tr>
-<tr>
-<td>取消済み</td>
-<td>運営者手動</td>
-<td>-</td>
-<td>-</td>
-</tr>
-</tbody>
-</table>
-<h2 id="11-決済フロー">11. 決済フロー</h2>
-<table>
-<thead>
-<tr>
-<th>フローID</th>
-<th>フロー名</th>
-<th>概要</th>
-<th>関連API</th>
-<th>外部サービス</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>BILL-FLOW-001</td>
-<td>支払い方法登録</td>
-<td>Stripe Setup Intent → 支払方法保存</td>
-<td><code>POST /billing/payment-method</code></td>
-<td>Stripe</td>
-</tr>
-<tr>
-<td>BILL-FLOW-002</td>
-<td>初回決済</td>
-<td>無料枠超過分の月次請求確定時(支払方法登録済の契約)</td>
-<td>(Stripe 経由)</td>
-<td>Stripe</td>
-</tr>
-<tr>
-<td>BILL-FLOW-003</td>
-<td>継続課金(月次)</td>
-<td>月初 1 日 02:00 JST cron(運営者側 §11 正本)</td>
-<td>(cron + IF #10)</td>
-<td>Stripe</td>
-</tr>
-<tr>
-<td>BILL-FLOW-004</td>
-<td>支払い失敗</td>
-<td>Stripe Smart Retries → 3 回失敗 → IF #1</td>
-<td>(IF #1 受信)</td>
-<td>Stripe</td>
-</tr>
-<tr>
-<td>BILL-FLOW-005</td>
-<td>返金</td>
-<td>Stripe Credit Note API(運営者手動)</td>
-<td>(運営者側 API)</td>
-<td>Stripe</td>
-</tr>
-<tr>
-<td>BILL-FLOW-006</td>
-<td>訂正請求</td>
-<td>Stripe Credit Note API(運営者手動、自動禁止)</td>
-<td>(運営者側 API)</td>
-<td>Stripe</td>
-</tr>
-</tbody>
-</table>
-<h3 id="114-stripe-smart-retries-委譲基本設計書-664">11.4 Stripe Smart Retries 委譲(基本設計書 §6.6.4)</h3>
-<table>
-<thead>
-<tr>
-<th>観点</th>
-<th>仕様</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>再課金リトライ</td>
-<td>Stripe Smart Retries に委譲、<strong>独自リトライ実装は行わない</strong></td>
-</tr>
-<tr>
-<td>失敗確定</td>
-<td>最大 3 回失敗後にメイン側へ「決済失敗確定」イベント送信(連携 IF #1)</td>
-</tr>
-<tr>
-<td>猶予期間</td>
-<td>7 日間(顧客管理側からのイベント受信時刻起点)</td>
-</tr>
-<tr>
-<td>猶予中の操作</td>
-<td>管理者ユーザーは管理画面の課金画面・退会画面のみアクセス可、それ以外は 403</td>
-</tr>
-<tr>
-<td>解除条件</td>
-<td>管理者ユーザーが課金画面から手動で支払方法更新 → 即時再決済 → 成功なら顧客管理側が解除イベント発火 → 連携 IF #1 で <code>contract_owners.contract_status='active'</code></td>
-</tr>
-<tr>
-<td>訂正請求</td>
-<td>Stripe Credit Note API 経由、<strong>運営者の手動操作のみ</strong>(自動禁止)</td>
-</tr>
-</tbody>
-</table>
-<h2 id="12-外部決済サービス連携stripe">12. 外部決済サービス連携(Stripe)</h2>
-<table>
-<thead>
-<tr>
-<th>連携先</th>
-<th>連携内容</th>
-<th>連携方式</th>
-<th>Webhook 有無</th>
-<th>備考</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Stripe</td>
-<td>サブスクリプション / 支払方法 / Smart Retries / Credit Note</td>
-<td>REST API + Webhook</td>
-<td>あり(IF #10 経由、運営者側 §13 正本)</td>
-<td>-</td>
-</tr>
-</tbody>
-</table>
-<h2 id="13-webhook-処理運営者側-13-が正本本書は参照">13. Webhook 処理(運営者側 §13 が正本、本書は参照)</h2>
-<p>メイン側で扱う Webhook 関連処理:</p>
-<ul>
-<li><strong>IF #1(契約停止イベント)受信</strong>: <code>contract_owners.contract_status</code> 更新 + キャッシュ無効化 + セッション処理</li>
-<li><strong>IF #10 経由で渡される Stripe 関連の通知</strong></li>
-</ul>
-<p>詳細仕様は <a href="../../02_運営者システム/個別設計書群/11_課金請求設計書.html">02_運営者システム/個別設計書群/11_課金請求設計書.html §13</a> を正本とする。</p>
-<h2 id="14-請求書領収書">14. 請求書・領収書</h2>
-<table>
-<thead>
-<tr>
-<th>帳票</th>
-<th>発行タイミング</th>
-<th>記載項目</th>
-<th>ダウンロード可否</th>
-<th>保持期間</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>請求書</td>
-<td>月次集計確定時</td>
-<td>利用量 / 請求金額 / 税 / 期間</td>
-<td>SCR-022 から PDF ダウンロード(R2 署名 URL 有効期限 5 分)</td>
-<td><strong>7 年</strong>(電子帳簿保存法、運営者側正本)</td>
-</tr>
-<tr>
-<td>領収書</td>
-<td>支払い成功時</td>
-<td>支払金額 / 支払日</td>
-<td>SCR-022 から PDF ダウンロード</td>
-<td>7 年</td>
-</tr>
-</tbody>
-</table>
-<p>帳票仕様(PDF 出力有無 / 税計算ルール / インボイス制度対応)は未決 ── 未決事項 No.1 参照。</p>
-<h2 id="15-課金契約エラー時の動作">15. 課金・契約エラー時の動作</h2>
-<table>
-<thead>
-<tr>
-<th>ケース</th>
-<th>システム動作</th>
-<th>ユーザー表示</th>
-<th>メッセージID</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>月次上限件数 100% 到達(質問数、プロジェクト単位)</td>
-<td><strong>当該プロジェクトのウィジェット新規質問受付を停止</strong>(429 + <code>Retry-After</code>=月末)。契約は <code>active</code>。エンドユーザーへ連絡先メール誘導</td>
-<td>管理者:「{プロジェクト名}の質問数が上限に達しました。ウィジェットは現在制限中です」/ EU: 連絡先メール誘導</td>
-<td>MSG-SCR-008-LIMIT-REACHED / MSG-WIDGET-QUESTION-LIMIT</td>
-</tr>
-<tr>
-<td>月次無料枠 100% 超過(質問数、支払方法登録済、プロジェクト単位)</td>
-<td>課金のみ(超過分は事後課金、ウィジェットは上限件数まで継続)</td>
-<td>「{プロジェクト名}の無料枠を超過しました(超過分は次月請求)」</td>
-<td>MSG-QUOTA-QUESTIONS-OVERAGE</td>
-</tr>
-<tr>
-<td>契約停止中(<code>contract_status='suspended'</code>)</td>
-<td>課金 / 退会以外 403</td>
-<td>サスペンション理由 + 再決済誘導</td>
-<td>MSG-BILL-CONTRACT-SUSPENDED</td>
-</tr>
-<tr>
-<td>支払い失敗</td>
-<td>7 日猶予期間カウント開始 + メール通知(<strong><code>critical</code></strong>)</td>
-<td>「お支払いが確認できませんでした」+ SCR-022誘導</td>
-<td>MSG-BILL-PAYMENT-FAILED</td>
-</tr>
-<tr>
-<td>支払い方法未登録のままプロジェクト無料枠超過(支払方法ゲート)</td>
-<td>契約 <code>active</code> 維持、当該プロジェクトのウィジェット質問受付停止(429 + メール誘導)+ オーナー + 当該 PJ 管理者へ通知(<strong><code>critical</code></strong>)。管理画面は全機能利用可。支払方法登録で即時再開</td>
-<td>管理者:「{プロジェクト名}が無料枠を超過しました。継続利用にはお支払い方法を登録してください」/ EU: 連絡先メール誘導</td>
-<td>MSG-BILL-PAYMENT-METHOD-REQUIRED / MSG-WIDGET-QUESTION-LIMIT</td>
-</tr>
-<tr>
-<td>退会済み契約</td>
-<td>403、ログイン拒否</td>
-<td>「アカウントが削除されています」</td>
-<td>MSG-BILL-DELETED</td>
-</tr>
-</tbody>
-</table>
-<h2 id="16-月次集計フロー6210-から移管">16. 月次集計フロー(§6.2.10 から移管)</h2>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">月次請求確定 cron は運営者側が正本</span>月初の月次請求確定バッチ・課金プロバイダ請求作成・請求書発行は運営者側 <a href="../../02_運営者システム/02_基本設計/10_課金・請求設計.html">02_運営者システム 10_課金・請求設計.html</a> を正本とする。メイン側は計測と上限判定、請求見込みの表示を担う。</div></div>
+
+<h2 id="7-課金プロバイダwebhook受信方針">7. 課金プロバイダ Webhook 受信方針</h2>
+<p class="section-lead">課金プロバイダからの通知(イベント)を受信する際は、送信元の正当性を検証し、重複処理を冪等に防止する。次のシーケンス図は、署名検証・冪等チェック・契約状態更新までの受信フローと、署名不正 / 重複イベント / 処理失敗の分岐を示す。続く表は、図に表れない受信履歴の保持期間やメイン側で扱う受信種別などのパラメータを補う。</p>
+<pre class="mermaid"><code>sequenceDiagram
+  participant P as 課金プロバイダ
+  participant W as worker-main-api
+  participant D as D1
+  participant O as 運営者
+
+  P-&gt;&gt;W: イベント通知(署名付き)
+  W-&gt;&gt;W: 署名検証
+  alt 署名不正
+    W--&gt;&gt;P: 拒否(処理しない)
+  else 署名正当
+    W-&gt;&gt;D: イベント識別子で重複受信を照会
+    D--&gt;&gt;W: 受信判定(初回 / 重複)
+    alt 重複(処理済み)
+      W--&gt;&gt;P: 冪等にスキップ
+    else 初回
+      W-&gt;&gt;D: contract_status 更新 + キャッシュ無効化 + セッション処理
+      D--&gt;&gt;W: 更新結果(成功 / 失敗)
+      alt 失敗
+        W-&gt;&gt;O: 処理失敗を通知(再処理を受付)
+      else 成功
+        W--&gt;&gt;P: 受領
+      end
+    end
+  end</code></pre>
 <table>
 <thead>
 <tr>
 <th>項目</th>
-<th>仕様</th>
+<th>内容</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>実行頻度</td>
-<td>月初 1 日 02:00 JST(運営者側 §11 正本)</td>
+<td>受信履歴</td>
+<td>直近 <strong>30 日</strong>の受信履歴を保持する(BR-095)</td>
 </tr>
 <tr>
-<td>対象期間</td>
-<td>前月の利用量</td>
+<td>再処理</td>
+<td>処理失敗時は運営者の指示による再処理を受け付ける</td>
 </tr>
 <tr>
-<td>処理内容</td>
-<td>1. <code>usage_metering</code> から <strong>(owner, project) 単位</strong> で月次集計、2. プロジェクト上限・無料枠適用(<code>project_quota_limits</code>)、3. <strong>契約単位(owner)で全プロジェクトの超過分を SUM 集計</strong>、4. <code>billing_invoices</code> 作成(契約単位)、5. Stripe 請求作成(IF #10 経由)、6. 通知メール(<code>high</code>)</td>
-</tr>
-<tr>
-<td>冪等性</td>
-<td>同一月の二重実行はスキップ(<code>billing_invoices.unique(owner, period)</code>。請求書は契約単位)</td>
-</tr>
-<tr>
-<td>エラー処理</td>
-<td>個別契約失敗時は他契約継続、DLQ 投入</td>
-</tr>
-<tr>
-<td>監査</td>
-<td><code>audit_logs.action='billing.monthly_close'</code>(retention_class=<code>billing</code>)</td>
+<td>メイン側で扱う受信</td>
+<td>契約停止 / 解除イベント受信による <code>contract_status</code> 更新 + キャッシュ無効化 + セッション処理</td>
 </tr>
 </tbody>
 </table>
-<h2 id="17-未決事項">17. 未決事項</h2>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">Webhook 一次受信・DLQ・リプレイは運営者が正本</span>Webhook 一次受信・冪等基盤・DLQ・リプレイ・ペイロード差分検出(<code>webhook_events</code>)は <a href="../../共有/共有概念.html#3-共有概念の正本ルール">共有概念.html #12</a> のとおり運営者 <a href="../../02_運営者システム/02_基本設計/10_課金・請求設計.html">10_課金・請求設計.html §13</a> を正本とする。連携 IF #1〜#12 の通信仕様・主管責任は <a href="02_API設計.html#6-連携-if-通信仕様一覧">02_API設計.html §6 連携 IF 通信仕様一覧</a> と運営者 02 API 設計を両方正本とする。</div></div>
+
+<h2 id="8-請求画面で確認できる内容">8. 請求画面(SCR-022)で確認できる内容</h2>
+<p class="section-lead">オーナーは請求画面で、支払方法・請求状態・請求履歴・契約全体の請求見込み・プロジェクト別の課金内訳・上限詳細を確認できる。画面項目・レイアウトは画面設計が正本で、本ページは確認できる情報の範囲を定義する。</p>
+<ul>
+<li>支払方法(登録有無・更新導線)</li>
+<li>請求状態(未請求 / 請求済 / 支払成功 / 支払失敗確定 等)と請求履歴</li>
+<li>契約全体の当月請求見込み(全プロジェクトの超過分を契約単位で集約)</li>
+<li>プロジェクト別の課金内訳(課金対象別の利用量・超過分)</li>
+<li>プロジェクト単位の上限詳細(当月利用・上限件数・利用率)</li>
+</ul>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">画面項目は 01 が正本</span>SCR-022 請求・SCR-021 利用量と上限・SCR-021-M1 質問数上限設定モーダルの項目定義・バリデーションは <a href="01_画面設計/SCR_022.html">01_画面設計/index.html §5.27 / §5.12 / §5.13</a> を正本とする。課金・契約メッセージ文言は <a href="06_メッセージ一覧.html#7-契約課金関連メッセージ">06_メッセージ一覧.html §7</a> を正本とする。</div></div>
+
+<h2 id="更新履歴">更新履歴</h2>
+<div class="table-scroll">
 <table>
 <thead>
 <tr>
-<th>No</th>
-<th>内容</th>
-<th>確認先</th>
-<th>期限</th>
-<th>ステータス</th>
+<th>版数</th>
+<th>日付</th>
+<th>変更内容</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>1</td>
-<td>請求書帳票仕様(PDF 出力有無 / 税計算ルール / インボイス制度対応の項目)</td>
-<td>既存ドキュメントに帳票フォーマットなし</td>
-<td>-</td>
-<td>要確認</td>
+<td>v2.1</td>
+<td>2026-06-17</td>
+<td>設計書シンプルテンプレ v2 へ整合。処理・状態の流れを説明する節(§5.1 決済失敗→サスペンション、§7 課金プロバイダ Webhook 受信)を Mermaid シーケンス図化(リクエストに応答線を対で描き、再決済成功 / 運営者解除・署名不正 / 重複 / 処理失敗を <code>alt</code> で分岐)。図に表れないパラメータ(受信履歴 30 日・再処理・メイン側受信種別)のみ表で補完。退会→削除の状態遷移(§5.2)・契約状態ライフサイクル(§5)は状態表のまま維持。</td>
+</tr>
+<tr>
+<td>v2.0</td>
+<td>2026-06-17</td>
+<td>要件 v2(FR09 / BR-086〜095)を根拠に全面再構成。記載スタイル標準(page-summary / doc-meta / section-lead / callout)へ移行。課金ロジック・状態遷移・集計方針・Webhook 方針に範囲を限定し、テーブル定義(03)・エラー ID(05)・通知契機(06)・メール本文(11)・画面項目(01)を各正本への相対パス #ID リンクへ置換。退会猶予を 90 日に統一(決済失敗猶予 7 日と分離)。実在しない参照先(<code>個別設計書群/11_課金請求設計書.html</code> / <code>01_要件定義書.html</code>)・MVP 対象外の階層プラン拡張余地・Stripe 等プロバイダ固有名・未決事項表を除去。</td>
 </tr>
 </tbody>
 </table>
+</div>
 
 </article>
 </body>

@@ -13,46 +13,15 @@
 <body data-page-id="01_メインシステム/03_詳細設計/DD11_利用量計測・課金.html">
 <article class="content" id="content">
 <h1 id="dd11-利用量計測課金">DD11: 利用量計測・課金</h1>
-<h2 id="0-文書情報">0. 文書情報</h2>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>内容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>文書名</td>
-<td>DD11: 利用量計測・課金</td>
-</tr>
-<tr>
-<td>詳細設計ID</td>
-<td>DD11</td>
-</tr>
-<tr>
-<td>対象システム</td>
-<td>FAQ AI ウィジェット SaaS / メインシステム</td>
-</tr>
-<tr>
-<td>関連機能ID</td>
-<td>FR-120〜127（利用量・課金ダッシュボード）/ FR-139（Stripe Webhook 経由）/ AC-020 / AC-040</td>
-</tr>
-<tr>
-<td>作成日</td>
-<td>2026-05-17</td>
-</tr>
-<tr>
-<td>版数</td>
-<td>v1.4</td>
-</tr>
-<tr>
-<td>ステータス</td>
-<td>承認済</td>
-</tr>
-</tbody>
-</table>
+
+<aside class="page-summary">
+<p class="ps-lead"><strong>このページは、メインシステムの利用量計測(プロジェクト単位)と課金集計(契約単位)の実装方針を定義します。</strong> 月次集計から請求確定・Stripe Webhook 受信までの課金フローと、質問数月次上限による選択閾値アラート・100% 受付停止・125% 運営者通知のリミット判定ロジックを扱います(FR-120〜127 / FR-139 / AC-020 / AC-040)。</p>
+</aside>
+
+<p class="doc-meta"><span><b>版数</b> v1.4</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
 <h2 id="1-対象範囲">1. 対象範囲</h2>
+<p class="section-lead">本 DD が実装方針を定める機能・画面・API・テーブル・cron を示します。次の表は、利用量ダッシュボード(FR-120〜127)・Stripe ハンドラ(FR-139)から利用量・課金基盤テーブルまでを一望できるよう整理したものです。</p>
 <table>
 <thead>
 <tr>
@@ -115,6 +84,7 @@
 </tbody>
 </table>
 <h2 id="2-収録ロジック対応章">2. 収録ロジック・対応章</h2>
+<p class="section-lead">本 DD が詳細化するロジックの出所(基本設計の元章)と概要を示します。次の表は、データ保持(§13.7)・リミット設計(§13.8)・月次集計(§14.1.1)・月次確定(§14.1.2)・画面詳細(§6)・課金機能詳細(§7)が基本設計のどの章から派生したかをまとめたものです。</p>
 <table>
 <thead>
 <tr>
@@ -157,7 +127,9 @@
 </tbody>
 </table>
 <h2 id="3-詳細設計本文">3. 詳細設計本文</h2>
+<p class="section-lead">リミット設計・データ保持・月次集計・月次確定・Stripe Webhook・上限判定の各ロジックを順に定義します。以降の各小節は、判定基準と擬似コード・SQL、計測から請求確定・受付停止に至る課金フローを扱います。</p>
 <h3 id="31-リミット設計警告--拒否-2-段階閾値">3.1 リミット設計（警告 / 拒否 2 段階閾値）</h3>
+<p class="section-lead">FAQ 件数・プロジェクト数・月次質問数・質問レートの各リソースに対する警告閾値・拒否閾値と拒否時の応答を定義します。次の表は、超過時に返すステータスコードとエラー ID を一覧化したものです。</p>
 <table>
 <thead>
 <tr>
@@ -201,12 +173,14 @@
 </tbody>
 </table>
 <h3 id="32-グレースフルデグレード">3.2 グレースフルデグレード</h3>
+<p class="section-lead">AI 推論が一時的に利用できないとき、ウィジェットは 503 + <code>Retry-After</code> を返し、管理者ユーザー誘導モードで応答を継続します(NFR-114 / 117)。次の擬似コードは 503 応答の実装です。</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 503 + Retry-After</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>c<span class="op">.</span><span class="fu">status</span>(<span class="dv">503</span>)<span class="op">;</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>c<span class="op">.</span><span class="fu">header</span>(<span class="st">&#39;Retry-After&#39;</span><span class="op">,</span> <span class="st">&#39;60&#39;</span>)<span class="op">;</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="cf">return</span> c<span class="op">.</span><span class="fu">json</span>({ code<span class="op">:</span> <span class="st">&#39;SERVICE_UNAVAILABLE&#39;</span><span class="op">,</span> detail<span class="op">:</span> <span class="st">&#39;一時的に利用できません。1 分後に再度お試しください&#39;</span> })<span class="op">;</span></span></code></pre></div>
 <p>NFR-114 / 117 に基づき、AI 推論不可時もウィジェットは「管理者ユーザー誘導」モードで応答継続。</p>
 <h3 id="33-データ保持期間">3.3 データ保持期間</h3>
+<p class="section-lead">利用量・課金関連データの保持期間・起点・削除方式を定義します。次の表は、<code>question_logs</code>(1 年)・billing 監査ログ(7 年)・<code>billing_invoices</code>(電子帳簿保存法 7 年)の保持方針をまとめたものです。</p>
 <table>
 <thead>
 <tr>
@@ -238,7 +212,22 @@
 </tbody>
 </table>
 <h3 id="34-月次集計utc-1500月末日のみ実行プロジェクト単位で計測--契約で-sum-集計">3.4 月次集計（UTC 15:00、月末日のみ実行。プロジェクト単位で計測 → 契約で SUM 集計）</h3>
-<p>利用量計測は <strong>プロジェクト単位</strong>(<code>usage_metering</code> の <code>(contract_owner_user_id, project_id, billing_year_month)</code>)で行い、上限件数・無料枠判定はプロジェクト単位値を用いる。<strong>Stripe 請求は契約単位</strong>で全プロジェクトの超過分を SUM 集計して確定する（§3.5）。</p>
+<p class="section-lead">月末日に実行する月次集計ジョブで、プロジェクト単位に <code>question_logs</code> を集計して <code>usage_metering</code> へ書き込み、請求は契約単位で SUM 集計します。計測は <strong>プロジェクト単位</strong>(<code>usage_metering</code> の <code>(contract_owner_user_id, project_id, billing_year_month)</code>)で行い、上限件数・無料枠判定はプロジェクト単位値を用い、<strong>Stripe 請求は契約単位</strong>で全プロジェクトの超過分を SUM 集計して確定します(§3.5)。次のシーケンス図で、対象プロジェクト抽出から <code>usage_metering</code> 書込みまでの流れを示し、続けて擬似コードを保持します。</p>
+<pre class="mermaid"><code>sequenceDiagram
+  participant C as cronバッチ
+  participant D as D1
+  participant UM as usage_metering
+
+  C-&gt;&gt;D: 有効オーナー配下の対象プロジェクト抽出
+  D--&gt;&gt;C: 対象プロジェクト一覧
+  loop 対象プロジェクトごと
+    C-&gt;&gt;D: question_logs を集計(課金対象件数 / トークン)
+    D--&gt;&gt;C: 集計結果(質問数 / token_input / token_output)
+    C-&gt;&gt;D: faqs 公開件数スナップショット取得
+    D--&gt;&gt;C: 公開FAQ件数
+    C-&gt;&gt;UM: INSERT OR REPLACE(プロジェクト単位の利用量)
+  end
+  Note over C,UM: 請求確定(§3.5)は contract_owner_user_id で usage_metering を SUM 集計</code></pre>
 <div class="sourceCode" id="cb2"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// app/workers/cron/src/jobs/monthly-aggregate.ts</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">// 実行条件: UTC 15:00 かつ DATE_ADD(date, &#39;+1 day&#39;) 月が変わる場合</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fu">monthlyAggregate</span>(env<span class="op">:</span> Env) {</span>
@@ -285,7 +274,7 @@
 <span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 契約単位の billing_invoices を作成する(請求は契約集計のまま)。</span></span>
 <span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h3 id="341-ダッシュボード最終更新タイムスタンプ取得元fr-135d--fr-135g">3.4.1 ダッシュボード最終更新タイムスタンプ取得元（FR-135d / FR-135g）</h3>
-<p>SCR-008 / SCR-016 / SCR-021 / SCR-022 の集計領域に「最終更新: YYYY-MM-DD HH:MM(JST)」を表示する。</p>
+<p class="section-lead">ダッシュボード集計領域に表示する「最終更新時刻」の取得元と優先順位、集計遅延判定の方針を定義します。SCR-008 / SCR-016 / SCR-021 / SCR-022 の集計領域に「最終更新: YYYY-MM-DD HH:MM(JST)」を表示します。</p>
 <ul>
 <li><strong>取得元の優先順位</strong>:
 <ol type="1">
@@ -297,14 +286,14 @@
 <li><strong>API レスポンスメタ</strong>: <code>GET /usage</code> のレスポンスに <code>meta.last_aggregated_at</code>(ISO 8601、JST)を含める。</li>
 </ul>
 <h3 id="342-取得失敗時のフォールバック表示fr-135g">3.4.2 取得失敗時のフォールバック表示（FR-135g）</h3>
-<p>KPI / 一覧の取得に失敗した場合(API 5xx / タイムアウト / ネットワーク断)、画面は「取得に失敗しました(再読込)」+ 赤縁(MSG-SCR-008-MSG-FETCH-001 / MSG-SCR-016-MSG-FETCH-001)を表示し、Tooltip に該当 <code>E-*</code> コードを示す。再読込ボタンのみ活性化し、それ以外のクリック導線は非活性化する。</p>
+<p class="section-lead">利用量取得が失敗した場合の画面挙動(エラー表示・再試行・導線非活性化)を定義します。KPI / 一覧の取得に失敗した場合(API 5xx / タイムアウト / ネットワーク断)、画面は「取得に失敗しました(再読込)」+ 赤縁(MSG-SCR-008-MSG-FETCH-001 / MSG-SCR-016-MSG-FETCH-001)を表示し、Tooltip に該当 <code>E-*</code> コードを示す。再読込ボタンのみ活性化し、それ以外のクリック導線は非活性化する。</p>
 <ul>
 <li><strong>再試行ロジック</strong>: クライアント側で指数バックオフ(初回 1s → 最大 30s、最大 3 回)を行ったうえで失敗確定。</li>
 <li><strong>取得失敗中のリンク</strong>: 該当 KPI / 一覧行の他要素(KPI クリック、ドリルダウン)はすべて <code>aria-disabled="true"</code> + カーソル <code>not-allowed</code>。</li>
 <li><strong>エラーコード対応</strong>: API 側は <code>E-*</code> を返す(<code>E-SYS-UNAVAILABLE</code> 系)。具体のコードは <a href="../02_基本設計/05_エラー設計.html">05_エラー設計.html</a> を参照。</li>
 </ul>
 <h3 id="343-利用量表示モデルscr-016--scr-021">3.4.3 利用量表示モデル（SCR-016 / SCR-021）</h3>
-<p>SCR-016 のプロジェクト別利用状況は、次の行モデルへ正規化してテーブル描画する。</p>
+<p class="section-lead">SCR-016 のプロジェクト別利用状況と SCR-021 の質問数利用状況を描画するための表示モデルと整形ルールを定義します。SCR-016 のプロジェクト別利用状況は、次の行モデルへ正規化してテーブル描画します。</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> OwnerProjectUsageRow <span class="op">=</span> {</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  projectId<span class="op">:</span> <span class="dt">string</span><span class="op">;</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  projectName<span class="op">:</span> <span class="dt">string</span><span class="op">;</span></span>
@@ -338,7 +327,7 @@
 <li><code>limitEnabled=false</code> の場合は <code>monthlyLimitCount</code> / <code>monthlyLimitYen</code> / <code>usageRate</code> を <code>null</code> とし、「今月の利用上限」は「OFF」と表示する。「利用量」には割合・件数比・ProgressBar・状態バッジを描画せず、上限設定がOFFである旨の説明文だけを表示する。</li>
 </ul>
 <h3 id="344-質問数の利用設定更新scr-021-m1">3.4.4 質問数の利用設定更新（SCR-021-M1）</h3>
-<p><code>PATCH /projects/{id}/quota-limits/questions</code> は <code>limitEnabled</code> / <code>limit</code> / <code>alertThresholds</code> を受け付ける。</p>
+<p class="section-lead">質問数上限の ON/OFF・上限値・アラート閾値を更新する API の入力検証・保存・KV 反映の方針を定義します。<code>PATCH /projects/{id}/quota-limits/questions</code> は <code>limitEnabled</code> / <code>limit</code> / <code>alertThresholds</code> を受け付けます。</p>
 <ul>
 <li><code>project_quota_limits.resource_kind='question_monthly_limit'</code> かつ <code>source='owner'</code> の行だけを upsert する。</li>
 <li>KV <code>usage-limit:&lt;owner&gt;:&lt;projectId&gt;</code> は質問数設定だけをマージ更新し、課金計算用のFAQ無料枠を保持する。</li>
@@ -349,8 +338,34 @@
 <li>FAQの無料枠を更新する利用者向けルート・モーダル・リクエストスキーマは提供しない。</li>
 </ul>
 <h3 id="345-請求表示モデルscr-022">3.4.5 請求表示モデル（SCR-022）</h3>
-<p><code>GET /billing/summary</code> の <code>estimatedTotal</code>、<code>nextBillingDate</code>、<code>billingStatus</code>、<code>paymentMethod</code>、<code>projects[]</code> をそのまま請求画面の表示モデルへ変換する。<code>projects[]</code> は <code>projectName</code> / <code>questionCharge</code> / <code>faqCharge</code> / <code>subtotal</code> を表示し、末尾に <code>estimatedTotal</code> と一致する全体合計を置く。請求履歴は <code>GET /billing/invoices</code> を別取得し、利用量表示モデルとは混在させない。</p>
+<p class="section-lead">請求画面(SCR-022)の表示モデルへの変換ルールと、請求履歴を利用量表示モデルと混在させない方針を定義します。<code>GET /billing/summary</code> の <code>estimatedTotal</code>、<code>nextBillingDate</code>、<code>billingStatus</code>、<code>paymentMethod</code>、<code>projects[]</code> をそのまま請求画面の表示モデルへ変換する。<code>projects[]</code> は <code>projectName</code> / <code>questionCharge</code> / <code>faqCharge</code> / <code>subtotal</code> を表示し、末尾に <code>estimatedTotal</code> と一致する全体合計を置く。請求履歴は <code>GET /billing/invoices</code> を別取得し、利用量表示モデルとは混在させない。</p>
 <h3 id="35-月次確定jst-0200月初-1-日">3.5 月次確定（JST 02:00、月初 1 日）</h3>
+<p class="section-lead">月初 1 日に前月分の請求を契約単位で確定するジョブで、冪等キーで重複生成を抑止しつつ <code>billing_invoices</code> を発行し、IF #10 経由で Stripe へ請求書発行を依頼します。次のシーケンス図で、課金対象オーナー抽出から請求書発行・通知・監査記録までの流れと冪等分岐(生成済 / 未生成)を示し、続けて擬似コードを保持します。</p>
+<pre class="mermaid"><code>sequenceDiagram
+  participant C as cronバッチ
+  participant D as D1
+  participant KV as KV_DEDUP
+  participant AD as 顧客管理(IF #10)
+  participant N as 通知Queue
+  participant AL as audit_logs
+
+  C-&gt;&gt;D: 課金対象オーナー抽出(active かつ 非free)
+  D--&gt;&gt;C: 対象オーナー一覧
+  loop 対象オーナーごと
+    C-&gt;&gt;D: 前月分 usage_metering を SUM 取得
+    D--&gt;&gt;C: 契約単位利用量
+    C-&gt;&gt;KV: 冪等キー照会(invoice_finalize:…)
+    KV--&gt;&gt;C: 生成状態(生成済 / 未生成)
+    alt 未生成
+      C-&gt;&gt;D: billing_invoices INSERT + usage_metering 確定
+      C-&gt;&gt;AD: 請求書発行依頼(invoice-issued)
+      C-&gt;&gt;N: BILLING_INVOICE_ISSUED 通知投入
+      C-&gt;&gt;KV: 冪等キー記録(TTL 90日)
+      C-&gt;&gt;AL: billing.invoice.issue 監査記録(retention_class=billing)
+    else 生成済
+      Note over C: スキップ(二重生成抑止)
+    end
+  end</code></pre>
 <div class="sourceCode" id="cb5"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">// app/workers/cron/src/jobs/monthly-finalize.ts</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fu">monthlyFinalize</span>(env<span class="op">:</span> Env) {</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> prevYm <span class="op">=</span> <span class="fu">previousBillingYearMonth</span>()<span class="op">;</span></span>
@@ -399,7 +414,7 @@
 <span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h3 id="36-stripe-webhookif-10-経由">3.6 Stripe Webhook（IF #10 経由）</h3>
-<p><code>worker-webhook</code> で受信し、<code>handlers/stripe/</code> 配下の 8 ハンドラに分岐する。</p>
+<p class="section-lead">IF #10 経由で受信する Stripe イベントと、<code>handlers/stripe/</code> 配下のハンドラ分岐先を定義します。Stripe Webhook 受信の正本は運営者側であり、メイン側は IF #10 で受信します。<code>worker-webhook</code> で受信し、<code>handlers/stripe/</code> 配下の 8 ハンドラに分岐します。</p>
 <ul>
 <li><code>invoice.paid</code></li>
 <li><code>invoice.payment_failed</code></li>
@@ -412,9 +427,37 @@
 </ul>
 <p>詳細は <a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html</a> を正本とする。Stripe Webhook 受信は運営者側を正本とし、メイン側は IF #10 で受信する。</p>
 <h3 id="37-pci-dss-スコープ外宣言">3.7 PCI-DSS スコープ外宣言</h3>
-<p>本サービスはクレジットカード情報を一切扱わず、Stripe Elements でクライアント直接送信。SAQ A の自己評価で十分。</p>
+<p class="section-lead">本サービスがカード情報を保持せず PCI-DSS スコープ外となる根拠を示します。本サービスはクレジットカード情報を一切扱わず、Stripe Elements でクライアントから直接送信します。SAQ A の自己評価で十分です。</p>
 <h3 id="38-選択閾値アラート--100停止--125運営者通知プロジェクトの月次上限件数比">3.8 選択閾値アラート / 100%停止 / 125%運営者通知(プロジェクトの月次上限件数比)</h3>
-<p>判定基準は <strong>プロジェクトごとの質問数月次上限件数</strong>(<code>question_monthly_limit</code>)。<code>threshold</code> がNULLの上限OFF時は判定をスキップする。上限ON時は、<code>alert_thresholds</code> で選択された 25% / 50% / 80% / 90% / 100% への当月初回到達時にメール通知し、100%で停止、125%で運営者へ追加通知する。FAQ 件数は月次上限判定を行わず、件数にかかわらず新規作成を継続する。</p>
+<p class="section-lead">ウィジェット質問受付時の月次上限判定と、選択閾値アラート(FR-127)・100% 受付停止(FR-122)・125% 運営者通知の発火条件を定義します。判定基準は <strong>プロジェクトごとの質問数月次上限件数</strong>(<code>question_monthly_limit</code>)で、<code>threshold</code> が NULL の上限 OFF 時は判定をスキップします。上限 ON 時は、<code>alert_thresholds</code> で選択された 25% / 50% / 80% / 90% / 100% への当月初回到達時にメール通知し、100% で受付停止、125% で運営者へ追加通知します。FAQ 件数は月次上限判定を行わず、件数にかかわらず新規作成を継続します。次のシーケンス図で、ウィジェット質問到達時の上限判定(上限内 / 超過)と閾値到達時の通知分岐を示し、続けて FR-127 / FR-122 の詳細を保持します。</p>
+<pre class="mermaid"><code>sequenceDiagram
+  participant W as ウィジェット利用者
+  participant Wk as Worker(ask)
+  participant KV as KV(上限設定)
+  participant D as D1
+  participant N as 通知Queue
+  participant OP as 運営者inbox
+
+  W-&gt;&gt;Wk: 質問送信(公開キー)
+  Wk-&gt;&gt;KV: プロジェクトの上限設定を取得
+  KV--&gt;&gt;Wk: 上限設定(ON / OFF, 上限件数)
+  Wk-&gt;&gt;D: 当月質問数と上限を照合
+  D--&gt;&gt;Wk: 判定結果(上限内 / 超過)
+  alt 上限内
+    Wk-&gt;&gt;D: AI 推論を実行し question_logs 計上
+    Wk--&gt;&gt;W: 回答
+    opt 選択閾値へ当月初回到達
+      Wk-&gt;&gt;N: 閾値アラート投入(オーナー + admin、冪等キー付)
+    end
+  else 超過(100%以上)
+    Wk--&gt;&gt;W: 429 E-QUOTA-QUESTIONS-LIMIT(Retry-After=月末)
+    opt 100%閾値を選択済
+      Wk-&gt;&gt;N: 100%停止アラート投入(1通)
+    end
+    opt 125%到達
+      Wk-&gt;&gt;OP: 運営者へエスカレーション通知
+    end
+  end</code></pre>
 <p><strong>選択閾値アラート(FR-127)</strong>:</p>
 <ul>
 <li>質問数更新後の利用率が、保存済み <code>alert_thresholds</code> の未通知閾値を初めて満たした時点で通知ジョブを投入する。一度の更新で複数閾値を跨いだ場合は、該当する各閾値を1件ずつ通知対象とする。</li>
@@ -434,47 +477,16 @@
 <p><strong>無料枠との区別</strong>: 無料枠はMVP課金対象の課金境界、上限は質問数だけの停止境界。FAQの無料枠超過は従量課金として扱い、月次件数による作成停止は行わない。</p>
 </blockquote>
 <h3 id="39-関連する横断設計">3.9 関連する横断設計</h3>
+<p class="section-lead">本ロジックが依存する通知・監査・cron の正本ドキュメントを示します。通知配信・監査保持・月次バッチの詳細は各 DD を参照します。</p>
 <ul>
 <li>通知: <code>BILLING_INVOICE_ISSUED</code> / <code>usage.question_limit.threshold</code> 等の通知配信は <a href="DD06_通知ロジック.html">DD06_通知ロジック.html</a></li>
 <li>監査: <code>billing.*</code> / <code>usage.*</code> は <code>retention_class=billing</code> で 7 年保持（<a href="DD09_監査ログ書込・完全性検証.html">DD09_監査ログ書込・完全性検証.html</a>）</li>
 <li>cron: 月次集計・月次確定の詳細は <a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html</a></li>
 </ul>
 <h2 id="4-関連設計">4. 関連設計</h2>
-<table>
-<thead>
-<tr>
-<th>種別</th>
-<th>参照先</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>要件</td>
-<td><a href="../01_要件定義/index.html">../01_要件定義/index.html</a></td>
-</tr>
-<tr>
-<td>基本設計</td>
-<td><a href="../02_基本設計/index.html">../02_基本設計/index.html</a></td>
-</tr>
-<tr>
-<td>課金・請求設計</td>
-<td><a href="../02_基本設計/10_課金・請求設計.html">../02_基本設計/10_課金・請求設計.html</a></td>
-</tr>
-<tr>
-<td>API 設計</td>
-<td><a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html</a></td>
-</tr>
-<tr>
-<td>運用設計</td>
-<td><a href="../04_運用設計/index.html">../04_運用設計/index.html</a></td>
-</tr>
-<tr>
-<td>関連 DD</td>
-<td><a href="DD06_通知ロジック.html">DD06_通知ロジック.html</a> / <a href="DD09_監査ログ書込・完全性検証.html">DD09_監査ログ書込・完全性検証.html</a> / <a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html</a></td>
-</tr>
-</tbody>
-</table>
+<p class="section-lead">本 DD に関連する正本ドキュメントを示します。課金・請求の正本は <a href="../02_基本設計/10_課金・請求設計.html">課金・請求設計</a>、API は <a href="../02_基本設計/02_API設計.html">API 設計</a> を参照します。通知は <a href="DD06_通知ロジック.html">DD06_通知ロジック.html</a>、監査ログは <a href="DD09_監査ログ書込・完全性検証.html">DD09_監査ログ書込・完全性検証.html</a>、月次バッチ・物理削除は <a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html</a>、運用面は <a href="../04_運用設計/index.html">運用設計</a> を参照します。</p>
 <h2 id="5-テスト観点">5. テスト観点</h2>
+<p class="section-lead">本 DD の受入条件(AC)に対するテスト方式とテストファイルを示します。次の表は、利用量ダッシュボード(AC-020)と Stripe イベント処理(AC-040)の検証手段の対応です。</p>
 <table>
 <thead>
 <tr>
@@ -500,6 +512,7 @@
 </tbody>
 </table>
 <h3 id="51-その他観点">5.1 その他観点</h3>
+<p class="section-lead">単体・結合・異常系・境界値・表示・性能・保持期間の各観点で確認すべき内容を示します。次の表は、請求額計算や閾値境界・上限撤廃挙動など、本 DD 固有のテスト観点を整理したものです。</p>
 <table>
 <thead>
 <tr>
@@ -547,21 +560,27 @@
 </tbody>
 </table>
 <h2 id="6-未確定事項確認事項">6. 未確定事項・確認事項</h2>
+<div class="callout tip"><i class="bi bi-lightbulb"></i><div><span class="c-title">確定済</span>v1.0 リリース時点で全項目確定済み。未確定事項はありません。</div></div>
+
+<h2 id="更新履歴">更新履歴</h2>
 <table>
 <thead>
 <tr>
-<th>確認事項ID</th>
-<th>確認内容</th>
-<th>優先度</th>
-<th>ステータス</th>
+<th>版数</th>
+<th>更新日</th>
+<th>内容</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>-</td>
-<td>v1.0 リリース時点で全項目確定済み</td>
-<td>低</td>
-<td>確認済</td>
+<td>v1.4</td>
+<td>2026-06-17</td>
+<td>設計書シンプルテンプレ v2 へ移行(文書情報表を要約ブロック + doc-meta へ統合、各節に section-lead を追加、月次集計・月次確定・上限判定の各フローをシーケンス図化、関連設計を簡潔化)。識別子・値の変更なし。</td>
+</tr>
+<tr>
+<td>v1.4</td>
+<td>2026-05-17</td>
+<td>初版作成。</td>
 </tr>
 </tbody>
 </table>

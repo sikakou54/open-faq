@@ -13,46 +13,15 @@
 <body data-page-id="01_メインシステム/03_詳細設計/DD04_AIしきい値3階層適用.html">
 <article class="content" id="content">
 <h1 id="dd04-ai-しきい値-3-階層適用">DD04: AI しきい値 3 階層適用</h1>
-<h2 id="0-文書情報">0. 文書情報</h2>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>内容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>文書名</td>
-<td>DD04: AI しきい値 3 階層適用</td>
-</tr>
-<tr>
-<td>詳細設計ID</td>
-<td>DD04</td>
-</tr>
-<tr>
-<td>対象システム</td>
-<td>FAQ AI ウィジェット SaaS / メインシステム</td>
-</tr>
-<tr>
-<td>関連機能ID</td>
-<td>FR-340 / FR-341（AI しきい値プロジェクト / オーナー / グローバル の 3 階層適用）/ AC-038</td>
-</tr>
-<tr>
-<td>作成日</td>
-<td>2026-05-17</td>
-</tr>
-<tr>
-<td>版数</td>
-<td>v1.0</td>
-</tr>
-<tr>
-<td>ステータス</td>
-<td>承認済</td>
-</tr>
-</tbody>
-</table>
+
+<aside class="page-summary">
+<p class="ps-lead"><strong>このページは、ウィジェット回答時に使う AI しきい値(信頼度・関連度)を、プロジェクト → オーナー → グローバル既定の 3 階層で解決し、KV と D1 永続キャッシュで高速に取得する実装を定義します。</strong></p>
+</aside>
+
+<p class="doc-meta"><span><b>版数</b> v1.0</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
 <h2 id="1-対象範囲">1. 対象範囲</h2>
+<p class="section-lead">本 DD が扱う機能・受入条件・API・データストアを 1 表で示します。次の表は、しきい値取得を内包する <code>/widget/v1/ask</code> から、IF #6 受信・明示的キャッシュ無効化、永続キャッシュテーブル・KV キーまでを並べたもので、実装が触れる構成要素を一望できます(<a href="../01_要件定義/index.html">FR-347 / FR-348</a> / AC-038)。</p>
 <table>
 <thead>
 <tr>
@@ -64,7 +33,7 @@
 <tbody>
 <tr>
 <td>機能</td>
-<td>FR-340 / FR-341</td>
+<td>FR-347 / FR-348</td>
 <td>AI しきい値 3 階層適用</td>
 </tr>
 <tr>
@@ -100,6 +69,7 @@
 </tbody>
 </table>
 <h2 id="2-収録ロジック対応章">2. 収録ロジック・対応章</h2>
+<p class="section-lead">本 DD が基本設計のどの章を実装に落としたかの対応を示します。次の表は、取得フロー・キャッシュ更新・フォールバックアラート・明示的無効化の 4 ロジックと、それぞれの元章・概要を並べたものです。</p>
 <table>
 <thead>
 <tr>
@@ -132,7 +102,46 @@
 </tbody>
 </table>
 <h2 id="3-詳細設計本文">3. 詳細設計本文</h2>
+<p class="section-lead">しきい値の取得・更新・フォールバック監視・無効化を順に定義します。取得は 3 階層を上位優先で解決し、KV ヒットを最速経路、D1 永続キャッシュを次段、グローバル既定値を最終フォールバックとします。</p>
+
 <h3 id="31-取得フロー">3.1 取得フロー</h3>
+<p class="section-lead">1 リクエストごとのしきい値解決を、上位優先(プロジェクト &gt; オーナー &gt; グローバル)で行います。まず階層の優先順位を表で示し、続くシーケンス図で KV → D1 永続 → グローバル既定の段階的フォールバックと、KV ヒット / ミス・永続あり / なしの分岐を示します。最後に実装の <code>getThreshold</code> を擬似コード正本として保持します。</p>
+<table>
+<thead>
+<tr><th>#</th><th>階層(scope)</th><th>解決キー</th><th>意味</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td><code>project</code></td><td><code>project_id</code></td><td>最優先。当該プロジェクトに設定されたしきい値</td></tr>
+<tr><td>2</td><td><code>owner</code></td><td><code>contract_owner_user_id</code></td><td>プロジェクト未設定時に適用する契約(オーナー)既定</td></tr>
+<tr><td>3</td><td><code>global</code></td><td>—</td><td>最終フォールバック。信頼度 <strong>0.60</strong> / 関連度 <strong>0.50</strong></td></tr>
+</tbody>
+</table>
+<pre class="mermaid"><code>sequenceDiagram
+  participant A as /widget/v1/ask
+  participant T as getThreshold
+  participant K as KV (ai_threshold)
+  participant D as D1 (ai_threshold_persistent_cache)
+  participant AL as サービスアラート
+
+  A-&gt;&gt;T: しきい値取得(owner / project)
+  T-&gt;&gt;K: KV キャッシュ照会(TTL 60s)
+  K--&gt;&gt;T: 照会結果(ヒット / ミス)
+  alt KV ヒット
+    T--&gt;&gt;A: しきい値(source=kv)
+  else KV ミス
+    T-&gt;&gt;D: 永続キャッシュ照会(scope 優先順位で 1 件)
+    D--&gt;&gt;T: 解決結果(該当あり / なし)
+    alt 該当あり(project / owner / global)
+      T-&gt;&gt;K: KV へ書き戻し(expirationTtl=60)
+      K--&gt;&gt;T:
+      T--&gt;&gt;A: しきい値(source=persistent)
+    else 該当なし
+      T-&gt;&gt;AL: フォールバック発動を通知(level=normal)
+      AL--&gt;&gt;T:
+      T--&gt;&gt;A: グローバル既定値(0.60 / 0.50, source=global_default)
+    end
+  end</code></pre>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">scope 優先順位の実体</span>D1 照会は <code>ORDER BY CASE scope WHEN 'project' THEN 0 WHEN 'owner' THEN 1 ELSE 2 END LIMIT 1</code> で最優先 scope の 1 件を選びます。KV へ書き戻すことで次回以降 60 秒間は KV ヒット経路になります。</div></div>
 <div class="sourceCode" id="cb1"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// app/workers/widget-api/src/domain/ai-threshold.ts</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fu">getThreshold</span>(env<span class="op">:</span> Env<span class="op">,</span> contractOwnerUserId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span> projectId<span class="op">:</span> <span class="dt">string</span>)<span class="op">:</span> <span class="bu">Promise</span><span class="op">&lt;</span>{</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  confidenceThreshold<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
@@ -166,43 +175,44 @@
 <span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> { confidenceThreshold<span class="op">:</span> <span class="fl">0.60</span><span class="op">,</span> relevanceThreshold<span class="op">:</span> <span class="fl">0.50</span><span class="op">,</span> source<span class="op">:</span> <span class="st">&#39;global_default&#39;</span> }<span class="op">;</span></span>
 <span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h3 id="32-kv-ttl-60s--永続キャッシュ更新">3.2 KV TTL 60s + 永続キャッシュ更新</h3>
-<p>IF #6 受信時に KV (<code>expirationTtl: 60</code>) と D1 (<code>ai_threshold_persistent_cache</code>) の両方を更新。KV ミス時は D1 から再ロード。</p>
-<h3 id="33-フォールバック発動アラート">3.3 フォールバック発動アラート</h3>
-<p>グローバル既定値にフォールバックした場合、毎時集計で件数を KPI として監視。</p>
-<h3 id="34-明示的キャッシュ無効化">3.4 明示的キャッシュ無効化</h3>
-<p><code>POST /internal/admin-integration/v1/cache/ai-threshold/invalidate</code> で KV キーを削除し、次回アクセス時に D1 から再ロード。</p>
-<h2 id="4-関連設計">4. 関連設計</h2>
+<p class="section-lead">運営者からのしきい値変更(IF #6)を受信したときのキャッシュ更新方針を定めます。KV の鮮度(TTL 60 秒)と D1 の永続性を両立させ、KV ミス時は D1 から再ロードして書き戻します。</p>
 <table>
 <thead>
-<tr>
-<th>種別</th>
-<th>参照先</th>
-</tr>
+<tr><th>契機</th><th>更新対象</th><th>内容</th></tr>
 </thead>
 <tbody>
-<tr>
-<td>要件</td>
-<td><a href="../01_要件定義/index.html">../01_要件定義/index.html</a></td>
-</tr>
-<tr>
-<td>基本設計</td>
-<td><a href="../02_基本設計/index.html">../02_基本設計/index.html</a></td>
-</tr>
-<tr>
-<td>API 設計</td>
-<td><a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html</a></td>
-</tr>
-<tr>
-<td>運用設計</td>
-<td><a href="../04_運用設計/index.html">../04_運用設計/index.html</a></td>
-</tr>
-<tr>
-<td>関連 DD</td>
-<td><a href="DD03_AI回答パイプライン.html">DD03_AI回答パイプライン.html</a> / <a href="DD12_ウィジェット配信.html">DD12_ウィジェット配信.html</a></td>
-</tr>
+<tr><td>IF #6 受信</td><td>KV + D1 両方</td><td>D1 (<code>ai_threshold_persistent_cache</code>) を更新し、KV (<code>expirationTtl: 60</code>) も同時に更新する</td></tr>
+<tr><td>KV ミス</td><td>KV(書き戻し)</td><td>D1 から再ロードし、KV へ TTL 60 秒で書き戻す(§3.1 取得フロー)</td></tr>
 </tbody>
 </table>
+
+<h3 id="33-フォールバック発動アラート">3.3 フォールバック発動アラート</h3>
+<p class="section-lead">グローバル既定値へのフォールバックは設定漏れ・連携不達の兆候のため、発生を監視します。次の表は発動契機・通知レベル・KPI 集計方針を示したものです。</p>
+<table>
+<thead>
+<tr><th>観点</th><th>内容</th></tr>
+</thead>
+<tbody>
+<tr><td>発動契機</td><td>KV / D1 いずれにも該当 scope が無く、グローバル既定値(0.60 / 0.50)を返した場合</td></tr>
+<tr><td>通知</td><td><code>enqueueServiceAlert</code> で <code>level=normal</code> のサービスアラートを送出する</td></tr>
+<tr><td>KPI 監視</td><td>毎時集計でフォールバック発動件数を KPI として監視する</td></tr>
+</tbody>
+</table>
+
+<h3 id="34-明示的キャッシュ無効化">3.4 明示的キャッシュ無効化</h3>
+<p class="section-lead">TTL 満了を待たずにしきい値変更を即時反映させるための無効化 API を定めます。次の表は無効化エンドポイントとその効果を示したものです。</p>
+<table>
+<thead>
+<tr><th>API</th><th>効果</th></tr>
+</thead>
+<tbody>
+<tr><td><code>POST /internal/admin-integration/v1/cache/ai-threshold/invalidate</code></td><td>該当 KV キー(<code>ai_threshold:{owner}:{project}</code>)を削除し、次回アクセス時に D1 から再ロードさせる</td></tr>
+</tbody>
+</table>
+<h2 id="4-関連設計">4. 関連設計</h2>
+<p class="section-lead">本 DD に関連する正本ドキュメントを示します。AI しきい値の要件は <a href="../01_要件定義/index.html">要件定義</a>(FR-347 / FR-348)、IF #6 受信・しきい値取得 API は <a href="../02_基本設計/02_API設計.html">API 設計</a>、<code>ai_threshold_persistent_cache</code> のスキーマは <a href="../02_基本設計/03_テーブル設計.html">テーブル設計</a>、フォールバック監視は <a href="../04_運用設計/index.html">運用設計</a> を参照します。関連 DD は <a href="DD03_AI回答パイプライン.html">DD03_AI回答パイプライン.html</a> / <a href="DD12_ウィジェット配信.html">DD12_ウィジェット配信.html</a> を参照します。</p>
 <h2 id="5-テスト観点">5. テスト観点</h2>
+<p class="section-lead">AC-038 を担保するテストの方式とファイル、および補完する単体・異常系・境界・性能観点を定めます。次の表は受入条件と結合テストの対応を示し、続く §5.1 でその他観点を補います。実装連携は <a href="DD03_AI回答パイプライン.html">DD03_AI回答パイプライン.html</a> / <a href="DD12_ウィジェット配信.html">DD12_ウィジェット配信.html</a> を参照します。</p>
 <table>
 <thead>
 <tr>
@@ -222,6 +232,7 @@
 </tbody>
 </table>
 <h3 id="51-その他観点">5.1 その他観点</h3>
+<p class="section-lead">受入テスト以外に押さえるべき観点を整理します。次の表は単体・結合・異常系・境界値・性能の各観点と確認内容を示したものです。</p>
 <table>
 <thead>
 <tr>
@@ -253,21 +264,23 @@
 </tbody>
 </table>
 <h2 id="6-未確定事項確認事項">6. 未確定事項・確認事項</h2>
+<div class="callout tip"><i class="bi bi-lightbulb"></i><div><span class="c-title">確定済</span>v1.0 リリース時点で本ページの全項目は確定済みです。未確定事項はありません。</div></div>
+
+<h2 id="更新履歴">更新履歴</h2>
 <table>
 <thead>
-<tr>
-<th>確認事項ID</th>
-<th>確認内容</th>
-<th>優先度</th>
-<th>ステータス</th>
-</tr>
+<tr><th>版数</th><th>日付</th><th>変更内容</th></tr>
 </thead>
 <tbody>
 <tr>
-<td>-</td>
-<td>v1.0 リリース時点で全項目確定済み</td>
-<td>低</td>
-<td>確認済</td>
+<td>v1.0</td>
+<td>2026-06-17</td>
+<td>設計書シンプルテンプレ v2 へ移行。「0. 文書情報」表を撤去し要約ブロック(ps-lead)+ doc-meta へ集約。各 <code>&lt;h2&gt;</code> / <code>&lt;h3&gt;</code> に section-lead を追加。3 階層解決フロー(§3.1)を Mermaid シーケンス図化し、階層の優先順位を表で明示。「4. 関連設計」のリンク表を削除しインラインリンクへ。未確定事項を callout 化し更新履歴を新設。しきい値初期値・FR / AC・テーブル名・KV キー・擬似コードは不変。</td>
+</tr>
+<tr>
+<td>v1.0</td>
+<td>2026-05-17</td>
+<td>(旧構成)初版作成。AI しきい値 3 階層適用(KV → D1 永続 → グローバル既定)の詳細設計を整理。</td>
 </tr>
 </tbody>
 </table>

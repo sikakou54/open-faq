@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCR-004 プロジェクト | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<link rel="stylesheet" href="../../../assets/css/screen-mock.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@1.17.0/dist/umd/lucide.min.js"></script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/01_画面設計/SCR_004.html">
+<article class="content" id="content">
+<h1 id="scr-004-プロジェクト">SCR-004 プロジェクト</h1>
+
+<aside class="page-summary">
+<p class="ps-lead"><strong>このページは、オーナーが契約内のプロジェクトを一覧表示し、新規作成・編集・削除モーダルへの導線を提供する画面 SCR-004 を定義します。</strong> 画面概要 / 画面遷移図 / 画面レイアウト / 画面項目定義 / 入出力一覧 / 画面イベント一覧 の 6 セクションで記述します。</p>
+</aside>
+<p class="doc-meta"><span><b>版数</b> v1.0</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<h2 id="1-画面概要">1. 画面概要</h2>
+<p class="section-lead">オーナーが契約内のプロジェクトを一覧で確認し、新規作成・編集・削除を行う画面です(オーナー専有)。作成・編集・削除動線は SCR-004-M1 モーダルに集約します。</p>
+<table>
+<thead>
+<tr>
+<th>画面 ID</th>
+<th>画面名</th>
+<th>機能概要</th>
+</tr>
+</thead>
+<tbody>
+<tr><td id="SCR-004"><code>SCR-004</code></td><td>プロジェクト</td><td>契約内のプロジェクトを一覧表示し、作成・編集・削除モーダルへ導線を提供する</td></tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>関連</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>FR / BR</td><td><a href="../../01_要件定義/FR03_プロジェクト管理.html#FR-030">FR-030</a>〜<a href="../../01_要件定義/FR03_プロジェクト管理.html#FR-035">FR-035</a>, <a href="../../01_要件定義/FR03_プロジェクト管理.html#FR-030a">FR-030a</a>, <a href="../../01_要件定義/FR03_プロジェクト管理.html#FR-030b">FR-030b</a> / <a href="../../01_要件定義/FR03_プロジェクト管理.html#BR-045">BR-045</a>, <a href="../../01_要件定義/FR03_プロジェクト管理.html#BR-046">BR-046</a>, <a href="../../01_要件定義/FR03_プロジェクト管理.html#BR-047">BR-047</a></td></tr>
+<tr><td>関連画面</td><td><a href="SCR_004-M1.html"><code>SCR-004-M1</code> プロジェクト作成・編集モーダル</a> / <a href="SCR_008.html"><code>SCR-008</code> 概要(プロジェクト)</a></td></tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr>
+<th>ステークホルダ</th>
+<th>対象</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>オーナー</td><td>◯</td></tr>
+<tr><td>プロジェクト管理者(<code>admin</code>)</td><td>—</td></tr>
+<tr><td>メンバー(<code>member</code>)</td><td>—</td></tr>
+</tbody>
+</table>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>本画面はオーナー専有です。プロジェクト管理者・メンバーは利用できません(URL 直アクセスは権限不足表示)。各プロジェクトの SCR-008 概要へは管理範囲スイッチャーから遷移します。</div></div>
+
+<h2 id="2-画面遷移図">2. 画面遷移図</h2>
+<p class="section-lead">本画面からの画面遷移を、画面 ID・画面名とイベント(操作)で示します。</p>
+<pre class="mermaid"><code>flowchart LR
+  S1["SCR-004 プロジェクト"]
+  S2["SCR-004-M1 プロジェクト作成・編集モーダル"]
+  S3["SCR-008 概要(プロジェクト)"]
+  S1 -- "+ 新規プロジェクトを作成" --&gt; S2
+  S1 -- "プロジェクト名クリック(編集)" --&gt; S2
+  S1 -- "管理範囲スイッチャー" --&gt; S3
+</code></pre>
+
+<h2 id="3-画面レイアウト">3. 画面レイアウト</h2>
+<div class="layout-embed">
+<div class="le-cap">プロジェクト一覧(SCR-004)</div>
+<div class="scr-mock"><div class="screen" id="scr-004" role="region" aria-labelledby="scr-004-title"> <div class="screen-header"> <div><span class="scr-id">SCR-004</span><span class="scr-name" id="scr-004-title">プロジェクト(契約 WS / サイドメニュー)</span></div> <div class="scr-user">利用者: オーナー専有 / 作成・編集・削除は SCR-004-M1 モーダルに集約</div> </div> <div class="app-layout"> <div class="app-header" role="banner"> <div class="left"> <span class="logo" role="link" aria-label="open-faq ホーム">open-faq</span> <span class="ws-switcher" role="button" aria-haspopup="menu" aria-label="管理範囲を切り替え(現在地: 契約ダッシュボード)">契約 <i data-lucide="link"></i></span> </div> <div class="right" style="position: relative;"> <span class="bell" role="button" aria-label="お知らせ通知ベル(未読 3 件)"><i data-lucide="bell"></i><span class="badge" aria-hidden="true">3</span></span> <span class="role-badge" aria-label="RoleBadge(オーナー)"><i data-lucide="crown"></i>OWNER</span> <span class="user-menu" role="button" aria-haspopup="menu" aria-expanded="true" aria-label="アカウントメニュー(owner@example.com)">▼ owner@example.com</span> <div style="position: absolute; right: 0; top: 24px; width: 180px; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); box-shadow: var(--shadow-md); z-index: 2; overflow: hidden;" role="menu" aria-label="アカウントメニュー"> <div style="padding: 5px 8px;" role="menuitem">個人設定</div> <div style="padding: 5px 8px; border-top: 1px solid var(--border);" role="menuitem">ログアウト</div> </div> </div> </div> <div class="app-sidebar" role="navigation" aria-label="契約ワークスペース ナビゲーション"><div class="item"><i data-lucide="bar-chart-3"></i>利用状況</div><div class="item active" aria-current="page"><i data-lucide="folder"></i>プロジェクト</div><div class="item"><i data-lucide="credit-card"></i>請求</div><div class="item"><i data-lucide="settings"></i>設定</div></div><div class="app-main" role="main" aria-label="メインコンテンツ"> <nav class="breadcrumb" aria-label="現在位置"><a>契約</a> / <span aria-current="page">プロジェクト</span></nav> <header class="page-header"><div><h1>プロジェクト</h1><p class="page-description">プロジェクトを管理します</p></div><div><button class="btn primary">+ 新規プロジェクトを作成</button></div></header> <div class="small" style="margin-bottom: 6px;">表示中: 1-3 / 全 3 件</div> <table class="wf"> <thead> <tr> <th>プロジェクト名</th> <th>許可ドメイン</th> <th>ステータス</th> <th>連絡先メール</th> </tr> </thead> <tbody> <tr> <td><a class="link" role="button" aria-label="サポートサイト を編集（SCR-004-M1）">サポートサイト</a></td> <td><span class="badge-pill gray">support.example.com</span> <span class="badge-pill gray">*.help.example.com</span></td> <td><span class="badge-pill green">確認済み</span></td> <td>support@example.com</td> </tr> <tr> <td><a class="link" role="button" aria-label="製品 A を編集（SCR-004-M1）">製品 A</a></td> <td><span class="badge-pill gray">a.example.com</span></td> <td><span class="badge-pill orange" title="確認待ち — このプロジェクトは確認完了まで連絡先メールを表示しません">確認待ち</span></td> <td>—</td> </tr> <tr> <td><a class="link" role="button" aria-label="採用サイト を編集（SCR-004-M1）">採用サイト</a></td> <td><span class="badge-pill gray">careers.example.com</span></td> <td><span class="badge-pill gray">未設定</span></td> <td>—</td> </tr> </tbody> </table> </div> </div> </div></div>
+</div>
+
+<h2 id="4-画面項目定義">4. 画面項目定義</h2>
+<p class="section-lead">本画面の入出力項目(一覧の列・件数表示・空状態を含む)を定義します。項目の正本は本表です。一覧表に「操作」列・プロジェクト ID 列・更新日時列は設けず、編集遷移はプロジェクト名(主リンク)に集約します(クリックで SCR-004-M1 を編集モードで開く)。</p>
+<table>
+<thead>
+<tr>
+<th>項目 ID</th>
+<th>項目</th>
+<th>入出力</th>
+<th>種類</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr><td id="IT-01"><code>IT-01</code></td><td>+ 新規プロジェクトを作成</td><td>入力</td><td>ボタン(Primary)</td><td>ページヘッダー右上に 1 件のみ配置。SCR-004-M1 を新規作成モードで開く</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>プロジェクト名</td><td>出力</td><td>テキストリンク(主)</td><td>一覧先頭列。クリックで SCR-004-M1 を編集モードで開く(編集遷移リンクを兼ねる)</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>許可ドメイン</td><td>出力</td><td>タグバッジ群</td><td>最大 3 件表示、超過分は <code>+N 件</code> で折り畳み。<code>*.example.com</code> 形式も表示。<code>allowed_domains</code></td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>ステータス</td><td>出力</td><td>状態バッジ</td><td>連絡先メール確認状態。<code>確認済み</code>(緑)/ <code>確認待ち</code>(黄)/ <code>未設定</code>(灰)。<code>projects.contact_email</code> / <code>projects.contact_email_verified_at</code> から UI 自動判定。色のみ依存禁止(テキストラベル併記)</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>連絡先メール</td><td>出力</td><td>テキスト</td><td>メールアドレス本文のみ。未設定行は <code>—</code></td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>件数表示</td><td>出力</td><td>テキスト</td><td>「1-50 / 全 N 件」形式</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>空状態</td><td>出力</td><td>EmptyState</td><td>「プロジェクトがまだありません。最初のプロジェクトを作成しましょう」+「+ 新規プロジェクトを作成」CTA</td></tr>
+<tr><td id="IT-08"><code>IT-08</code></td><td>ローディング状態</td><td>出力</td><td>LoadingSkeleton</td><td>テーブル / カード行スケルトン 3 行</td></tr>
+</tbody>
+</table>
+
+<h2 id="5-入出力一覧">5. 入出力一覧</h2>
+<p class="section-lead">本画面が読み書きするテーブルと、呼び出す API の一覧です。テーブルの正本は <a href="../03_テーブル設計.html">03_テーブル設計</a>、API の正本は <a href="../02_API設計.html#531-get-projects">02_API設計 §5.3.1</a> です。</p>
+<table>
+<thead>
+<tr>
+<th rowspan="2">入出力名</th>
+<th rowspan="2">種別</th>
+<th rowspan="2">I/O</th>
+<th colspan="4">アクセス種別(CRUD)</th>
+<th rowspan="2">備考</th>
+</tr>
+<tr>
+<th>C</th>
+<th>R</th>
+<th>U</th>
+<th>D</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>プロジェクト</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td>一覧取得。<code>projects</code>(<a href="../03_テーブル設計.html#36-projects">テーブル設計 3.6</a>)</td></tr>
+<tr><td>許可ドメイン</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td>許可ドメイン列の取得。<code>allowed_domains</code>(<a href="../03_テーブル設計.html#38-allowed_domains">テーブル設計 3.8</a>)</td></tr>
+<tr><td>プロジェクト一覧取得</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /projects</code>(<a href="../02_API設計.html#531-get-projects">API 設計 5.3.1</a>)</td></tr>
+</tbody>
+</table>
+
+<h2 id="6-画面イベント一覧">6. 画面イベント一覧</h2>
+<p class="section-lead">本画面で発生するイベントと発生タイミング・概要の一覧です。</p>
+<table>
+<thead>
+<tr>
+<th>イベント ID</th>
+<th>イベント</th>
+<th>発生タイミング</th>
+<th>概要</th>
+<th>関連項目</th>
+</tr>
+</thead>
+<tbody>
+<tr><td><code>EV-01</code></td><td>一覧初期表示</td><td>画面遷移・リロード時</td><td><code>GET /projects</code> で一覧を取得し表示。0 件時は EmptyState、取得中は LoadingSkeleton</td><td><a href="#IT-02">IT-02</a>, <a href="#IT-03">IT-03</a>, <a href="#IT-04">IT-04</a>, <a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a>, <a href="#IT-07">IT-07</a>, <a href="#IT-08">IT-08</a></td></tr>
+<tr><td><code>EV-02</code></td><td>新規作成モーダル起動</td><td>「+ 新規プロジェクトを作成」押下時</td><td>SCR-004-M1 を新規作成モードで開く</td><td><a href="#IT-01">IT-01</a></td></tr>
+<tr><td><code>EV-03</code></td><td>編集モーダル起動</td><td>プロジェクト名リンク押下時</td><td>SCR-004-M1 を編集モードで開く(現値ロード)</td><td><a href="#IT-02">IT-02</a></td></tr>
+</tbody>
+</table>
+
+</article>
+<script>(function(){function r(){try{window.lucide&&lucide.createIcons({attrs:{'aria-hidden':'true',focusable:'false'}});}catch(e){}}if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',r);}else{r();}window.addEventListener('load',r);})();</script>
+</body>
+</html>

@@ -13,83 +13,22 @@
 <body data-page-id="01_メインシステム/02_基本設計/06_メッセージ一覧.html">
 <article class="content" id="content">
 <h1 id="メッセージ一覧メイン">メッセージ一覧(メイン)</h1>
-<h2 id="1-文書概要">1. 文書概要</h2>
-<h3 id="11-目的">1.1 目的</h3>
-<p>メインシステムでユーザーに表示するすべての文言(画面ラベル / プレースホルダー / ボタン / 説明文 / エラー / 成功 / 警告 / 確認 / 空状態 / トースト / 通知メール)を一元管理する。</p>
-<h3 id="12-対象範囲">1.2 対象範囲</h3>
-<ul>
-<li>対象: SCR-001〜024 の全画面文言、エラー文言(エラー設計書 06 と対応)、通知メールテンプレート(基本設計書 §9.1 / §9.4)、課金・契約関連メッセージ、サイドメニュー文言</li>
-<li>対象外: 運営者側メッセージ(02_運営者システム/個別設計書群/07_メッセージ一覧.html)、コード内デバッグログ</li>
-</ul>
-<h3 id="13-版数">1.3 版数</h3>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>値</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>版数</td>
-<td>1.9</td>
-</tr>
-<tr>
-<td>更新日</td>
-<td>2026-06-14</td>
-</tr>
-</tbody>
-</table>
-<h3 id="14-関連ドキュメント">1.4 関連ドキュメント</h3>
-<table>
-<thead>
-<tr>
-<th>ドキュメント名</th>
-<th>役割</th>
-<th>参照先</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>索引</td>
-<td>11 ドキュメント体系の俯瞰</td>
-<td><a href="00_索引.html">00_索引.html</a></td>
-</tr>
-<tr>
-<td>画面設計書</td>
-<td>画面別メッセージ参照</td>
-<td><a href="02_画面設計書.html">02_画面設計書.html</a></td>
-</tr>
-<tr>
-<td>エラー設計書</td>
-<td>エラーID とメッセージID の対応</td>
-<td><a href="06_エラー設計書.html">06_エラー設計書.html</a></td>
-</tr>
-<tr>
-<td>課金・請求設計書</td>
-<td>課金・契約メッセージ</td>
-<td><a href="11_課金請求設計書.html">11_課金請求設計書.html</a></td>
-</tr>
-<tr>
-<td>認証・認可設計書</td>
-<td><code>critical</code> 通知の宛先解決(オーナー + 全プロジェクト管理者)</td>
-<td><a href="09_認証認可設計書.html">09_認証認可設計書.html</a></td>
-</tr>
-<tr>
-<td>共有概念対応表</td>
-<td>通知重要度の正本</td>
-<td><a href="../../共有/共有概念.html">../../共有/共有概念.html</a></td>
-</tr>
-</tbody>
-</table>
+<aside class="page-summary">
+<p class="ps-lead"><strong>このページは、メインシステムでアカウント利用者・ウィジェット利用者に表示するすべての文言と、各通知イベントの契機・配信先を定義します。</strong> 画面メッセージ ID(<code>MSG-SCR-*</code>)の文言全文と、通知の「いつ・誰に・どのチャネルで」を本書の正本とします。メール件名・本文の全文、エラー ID 定義、画面項目、配信信頼性の実装方式は他ドキュメントが正本のため、本書からはリンクで参照します。</p>
+</aside>
+<p class="doc-meta"><span><b>版数</b> v2.0</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">対象範囲</span>SCR-001〜023 + モーダルの全画面文言、エラー文言(<a href="05_エラー設計.html">05_エラー設計.html</a> と対応)、通知契機・配信先(§6、メール本文は <a href="11_メール設計.html">11_メール設計.html</a> 正本)、課金・契約関連メッセージ、サイドメニュー文言。対象外: 運営者側メッセージ(<a href="../../02_運営者システム/02_基本設計/06_メッセージ一覧.html">運営者 06_メッセージ一覧.html</a>)、コード内デバッグログ。</div></div>
 <h2 id="2-共通基準">2. 共通基準</h2>
+<p class="section-lead">全文言は本節の共通基準(トーン・ボタン文言・確認ダイアログ・通知重要度・エラー文言・禁則語)に従う。各画面の具体文言は §4 以降で定義する。</p>
 <h3 id="21-文言トーン">2.1 文言トーン</h3>
+<p class="section-lead">全文言で守る語調・表記の基本ルールを定める。次の箇条書きは敬体・二人称・数値表記の方針を示す。</p>
 <ul>
 <li>丁寧体(です・ます調)、ユーザーを「あなた」と呼ばない(二人称省略)</li>
 <li>専門用語は説明を併記(初出時)</li>
 <li>数値は半角、単位は和(円 / 件 / 日)</li>
 </ul>
 <h3 id="22-ボタン文言ルール">2.2 ボタン文言ルール</h3>
+<p class="section-lead">ボタン文言の種別ごとの組み立て方を定める。次の表は主操作・取消・危険操作のテンプレートと例を示す。</p>
 <table>
 <thead>
 <tr>
@@ -117,6 +56,7 @@
 </tbody>
 </table>
 <h3 id="23-確認ダイアログルール">2.3 確認ダイアログルール</h3>
+<p class="section-lead">確認ダイアログのタイトル・本文の書き方を定める。次の表は要素ごとのテンプレートと例を示す。</p>
 <table>
 <thead>
 <tr>
@@ -139,6 +79,7 @@
 </tbody>
 </table>
 <h3 id="24-通知重要度ルール共有概念正本">2.4 通知重要度ルール(共有概念正本)</h3>
+<p class="section-lead">通知重要度 4 値ごとの配信先とチャネルを定める。次の表のとおり <code>critical</code> はメール強制送信(オプトアウト不可)とする。本表は共有概念の正本である。</p>
 <table>
 <thead>
 <tr>
@@ -170,23 +111,27 @@
 </tr>
 </tbody>
 </table>
-<p><code>critical</code> の送信先解決ルール: 同一オーナースコープで <code>project_users.role='admin' AND valid=1</code> を 1 件でも保持する全ユーザー(オーナーは作成時に自動で admin 行を保持するため本クエリ単独でオーナー + 全プロジェクト管理者を網羅)。詳細クエリは <a href="09_認証認可設計書.html">09_認証認可設計書.html §6.3</a> の正本を参照。</p>
+<p><code>critical</code> の送信先解決ルール: 同一オーナースコープで <code>project_users.role='admin' AND valid=1</code> を 1 件でも保持する全ユーザー(オーナーは作成時に自動で admin 行を保持するため本クエリ単独でオーナー + 全プロジェクト管理者を網羅)。詳細クエリは <a href="08_認証・認可設計.html">08_認証・認可設計.html</a> の通知宛先解決を正本とし、テンプレート別の配信先は <a href="11_メール設計.html">11_メール設計.html §5.1</a> を参照。</p>
 <h3 id="25-エラーメッセージルール">2.5 エラーメッセージルール</h3>
+<p class="section-lead">エラー文言の作成時に守る原則を定める。次の箇条書きはエラー ID との対応付け・内部情報の秘匿・攻撃者へのヒント抑止の方針を示す。</p>
 <ul>
-<li>エラー設計書(06)の各エラーID に必ず 1 つのメッセージID を割り当てる</li>
+<li><a href="05_エラー設計.html">05_エラー設計.html</a> の各エラー ID に必ず 1 つのメッセージ ID を割り当てる</li>
 <li>内部詳細(スタックトレース / DB エラー)はユーザーに見せない</li>
 <li>認可エラーは具体的な権限名を含めない(列挙攻撃対策)</li>
 <li>認証失敗時はメールアドレス / パスワードのどちらが誤りかを示さない(攻撃者にヒント与えない)</li>
 <li>可能な場合は、原因と次に取れる行動を 1 文または 2 文で示す</li>
 </ul>
 <h3 id="26-禁則語単独使用禁止">2.6 禁則語(単独使用禁止)</h3>
+<p class="section-lead">文言として単独使用してはならない曖昧語を列挙する。次の語は文脈を補わずに用いない。</p>
 <p>「OK」「実行」「処理する」「確定」「送信」「こちら」「エラーが発生しました」「不正な値です」「失敗しました」</p>
 <h3 id="27-i18n-キー化必須基本設計書-118-から移管">2.7 i18n キー化必須(基本設計書 §11.8 から移管)</h3>
+<p class="section-lead">将来の多言語化に備えた文言の持ち方を定める。次の箇条書きのとおり MVP は日本語のみだが全文言を i18n キー化する。</p>
 <ul>
 <li>MVP は日本語のみだが、全メッセージは i18n キー化必須</li>
 <li>メッセージID = i18n キーとして直接利用可能な形式</li>
 </ul>
 <h2 id="3-メッセージid-体系">3. メッセージID 体系</h2>
+<p class="section-lead">全メッセージ ID の命名規約を定める。ID は <code>MSG-&lt;対象ID&gt;-&lt;種別&gt;-&lt;連番&gt;</code> 形式で、次の表が種別コードと用途を示す。</p>
 <p><code>MSG-&lt;対象ID&gt;-&lt;種別&gt;-&lt;連番&gt;</code> 形式</p>
 <table>
 <thead>
@@ -335,8 +280,9 @@
 </tbody>
 </table>
 <h2 id="4-画面別メッセージ全件">4. 画面別メッセージ全件</h2>
-<p>(基本設計書 §5.4.1〜5.4.18 から移管)</p>
+<p class="section-lead">SCR ごとに表示文言を ID・種別・表示条件で定義する。SCR ID と画面項目の正本は <a href="01_画面設計/index.html">01_画面設計/index.html</a>、関連エラー ID の定義は <a href="05_エラー設計.html">05_エラー設計.html</a> にある。KPI / 一覧の状態文言(0 件 / 未集計 / 集計中 / 取得失敗 / 期間外)で「§1.5.x」と注記したものは <a href="01_画面設計/index.html#ダッシュボード-kpi共通表示ルール">01_画面設計/index.html §1.5</a> を正本とする。</p>
 <h3 id="41-scr-001-ログイン">4.1 SCR-001 ログイン</h3>
+<p class="section-lead">ログイン画面で表示する文言を定める。次の表は各メッセージ ID の種別・文言・表示条件を示す。</p>
 <table>
 <thead>
 <tr>
@@ -414,6 +360,7 @@
 </tbody>
 </table>
 <h3 id="42-scr-002-新規登録">4.2 SCR-002 新規登録</h3>
+<p class="section-lead">新規登録画面で表示する文言を定める。次の表は各メッセージ ID の種別・文言・表示条件を示す。</p>
 <table>
 <thead>
 <tr>
@@ -491,6 +438,7 @@
 </tbody>
 </table>
 <h3 id="43-scr-003-パスワード再設定">4.3 SCR-003 パスワード再設定</h3>
+<p class="section-lead">パスワード再設定画面で表示する文言を定める。次の表は各メッセージ ID の種別・文言・表示条件を示す。</p>
 <table>
 <thead>
 <tr>
@@ -610,6 +558,7 @@
 </tbody>
 </table>
 <h3 id="44-scr-004-プロジェクト一覧">4.4 SCR-004 プロジェクト一覧</h3>
+<p class="section-lead">プロジェクト一覧画面で表示する文言を定める。次の表は各メッセージ ID の種別・文言・表示条件を示す。</p>
 <table>
 <thead>
 <tr>
@@ -687,6 +636,7 @@
 </tbody>
 </table>
 <h3 id="45-scr-004-m1-プロジェクト作成編集モーダル">4.5 SCR-004-M1 プロジェクト作成・編集モーダル</h3>
+<p class="section-lead">プロジェクト作成・編集モーダルで表示する文言を定める。次の表は各メッセージ ID の種別・文言・表示条件を示す。</p>
 <table>
 <thead>
 <tr>
@@ -844,6 +794,7 @@
 </tbody>
 </table>
 <h3 id="46-scr-005-要対応の質問-一覧--詳細">4.6 SCR-005 要対応の質問 一覧 / 詳細</h3>
+<p class="section-lead">要対応の質問の一覧・詳細画面で表示する文言を定める。次の表は各メッセージ ID の種別・文言・表示条件を示す。</p>
 <table>
 <thead>
 <tr>
@@ -869,14 +820,14 @@
 <tr>
 <td>MSG-SCR-005-BADGE-OPEN-001</td>
 <td>BADGE</td>
-<td>open</td>
-<td>状況バッジ(open)</td>
+<td>対応中</td>
+<td>状況バッジ(<code>inquiries.status='open'</code>)</td>
 </tr>
 <tr>
 <td>MSG-SCR-005-BADGE-CLOSED-001</td>
 <td>BADGE</td>
-<td>closed</td>
-<td>状況バッジ(closed)</td>
+<td>対応済み</td>
+<td>状況バッジ(<code>inquiries.status='closed'</code>)</td>
 </tr>
 <tr>
 <td>MSG-SCR-005-LBL-STATUS-001</td>
@@ -887,14 +838,14 @@
 <tr>
 <td>MSG-SCR-005-OPT-OPEN-001</td>
 <td>OPT</td>
-<td>open</td>
-<td>状況プルダウン選択肢</td>
+<td>対応中</td>
+<td>状況プルダウン選択肢(<code>open</code>)</td>
 </tr>
 <tr>
 <td>MSG-SCR-005-OPT-CLOSED-001</td>
 <td>OPT</td>
-<td>closed</td>
-<td>状況プルダウン選択肢</td>
+<td>対応済み</td>
+<td>状況プルダウン選択肢(<code>closed</code>)</td>
 </tr>
 <tr>
 <td>MSG-SCR-005-CONFIRM-CLOSE-001</td>
@@ -929,6 +880,7 @@
 </tbody>
 </table>
 <h3 id="47-scr-006-faq-管理">4.7 SCR-006 FAQ 管理</h3>
+<p class="section-lead">FAQ 管理画面で表示する文言を定める。次の表は各メッセージ ID の種別・文言・表示条件を示す。</p>
 <table>
 <thead>
 <tr>
@@ -1056,6 +1008,7 @@
 </tbody>
 </table>
 <h3 id="48-scr-006-m1-faq-csv-インポートモーダル">4.8 SCR-006-M1 FAQ CSV インポートモーダル</h3>
+<p class="section-lead">FAQ CSV インポートモーダルで表示する文言を定める。次の表は各メッセージ ID の種別・文言・表示条件を示す。</p>
 <table>
 <thead>
 <tr>
@@ -1159,6 +1112,7 @@
 </tbody>
 </table>
 <h3 id="49-エンドユーザー向け-faq-ウィジェット">4.9 エンドユーザー向け FAQ ウィジェット</h3>
+<p class="section-lead">ウィジェット利用者向け FAQ ウィジェットで表示する定型文を定める。次の表は各メッセージ ID の種別・文言・表示条件を示す。</p>
 <table>
 <thead>
 <tr>
@@ -1202,6 +1156,7 @@
 </tbody>
 </table>
 <h3 id="410-scr-007-ウィジェット">4.10 SCR-007 ウィジェット</h3>
+<p class="section-lead">ウィジェット設定画面(SCR-007)で表示する文言を定める。次の表は各メッセージ ID の種別・文言・表示条件を示す。</p>
 <table>
 <thead>
 <tr>
@@ -1269,6 +1224,7 @@
 </tbody>
 </table>
 <h3 id="411-scr-008-概要プロジェクト">4.11 SCR-008 概要(プロジェクト)</h3>
+<p class="section-lead">プロジェクト概要画面で表示する文言を定める。次の表は各メッセージ ID の種別・文言・表示条件を示す。</p>
 <table>
 <thead>
 <tr>
@@ -1354,6 +1310,7 @@
 </tbody>
 </table>
 <h3 id="412-scr-021-利用量と上限プロジェクト単位">4.12 SCR-021 利用量と上限(プロジェクト単位)</h3>
+<p class="section-lead">利用量と上限画面(プロジェクト単位)で表示する文言を定める。次の表は各メッセージ ID の種別・文言・表示条件を示す。</p>
 <table>
 <thead>
 <tr>
@@ -1427,6 +1384,7 @@
 </tbody>
 </table>
 <h3 id="413-scr-021-m1-質問数上限設定モーダル">4.13 SCR-021-M1 質問数上限設定モーダル</h3>
+<p class="section-lead">質問数上限設定モーダルで表示する文言を定める。次の表は各メッセージ ID の種別・文言・表示条件を示す。</p>
 <table>
 <thead>
 <tr>
@@ -1494,6 +1452,7 @@
 </tbody>
 </table>
 <h3 id="414-scr-009-メンバープロジェクト">4.14 SCR-009 メンバー(プロジェクト)</h3>
+<p class="section-lead">プロジェクトメンバー管理画面で表示する文言を定める。次の表は各メッセージ ID の種別・文言・表示条件を示す。</p>
 <table>
 <thead>
 <tr>
@@ -1585,6 +1544,7 @@
 </tbody>
 </table>
 <h3 id="415-scr-009-m1-メンバー招待--編集モーダルプロジェクト単位">4.15 SCR-009-M1 メンバー招待 / 編集モーダル(プロジェクト単位)</h3>
+<p class="section-lead">メンバー招待 / 編集モーダル(プロジェクト単位)で表示する文言を定める。次の表は各メッセージ ID の種別・文言・表示条件を示す。</p>
 <table>
 <thead>
 <tr>
@@ -1718,6 +1678,7 @@
 </tbody>
 </table>
 <h3 id="416-scr-010-利用規約閲覧">4.16 SCR-010 利用規約閲覧</h3>
+<p class="section-lead">利用規約閲覧画面で表示する文言を定める。次の表は各メッセージ ID の種別・文言・表示条件を示す。</p>
 <table>
 <thead>
 <tr>
@@ -1761,6 +1722,7 @@
 </tbody>
 </table>
 <h3 id="417-scr-020-プライバシーポリシー閲覧">4.17 SCR-020 プライバシーポリシー閲覧</h3>
+<p class="section-lead">プライバシーポリシー閲覧画面で表示する文言を定める。次の表は各メッセージ ID の種別・文言・表示条件を示す。</p>
 <table>
 <thead>
 <tr>
@@ -1804,6 +1766,7 @@
 </tbody>
 </table>
 <h3 id="418-scr-011-お知らせ一覧">4.18 SCR-011 お知らせ一覧</h3>
+<p class="section-lead">お知らせ一覧画面で表示する文言を定める。次の表は各メッセージ ID の種別・文言・表示条件を示す。</p>
 <table>
 <thead>
 <tr>
@@ -1877,6 +1840,7 @@
 </tbody>
 </table>
 <h3 id="419-scr-012-お知らせ詳細">4.19 SCR-012 お知らせ詳細</h3>
+<p class="section-lead">お知らせ詳細画面で表示する文言を定める。次の表は各メッセージ ID の種別・文言・表示条件を示す。</p>
 <table>
 <thead>
 <tr>
@@ -1908,6 +1872,7 @@
 </tbody>
 </table>
 <h3 id="420-scr-013-メール確認">4.20 SCR-013 メール確認</h3>
+<p class="section-lead">メール確認画面で表示する文言を定める。次の表は各メッセージ ID の種別・文言・表示条件を示す。</p>
 <table>
 <thead>
 <tr>
@@ -1999,6 +1964,7 @@
 </tbody>
 </table>
 <h3 id="421-scr-014-退会申請">4.21 SCR-014 退会申請</h3>
+<p class="section-lead">退会申請画面で表示する文言を定める。次の表は各メッセージ ID の種別・文言・表示条件を示す。</p>
 <table>
 <thead>
 <tr>
@@ -2054,6 +2020,7 @@
 </tbody>
 </table>
 <h3 id="422-scr-015-規約再同意割込み">4.22 SCR-015 規約再同意割込み</h3>
+<p class="section-lead">規約再同意割込み画面で表示する文言を定める。次の表は各メッセージ ID の種別・文言・表示条件を示す。</p>
 <table>
 <thead>
 <tr>
@@ -2109,6 +2076,7 @@
 </tbody>
 </table>
 <h3 id="423-scr-016-利用状況">4.23 SCR-016 利用状況</h3>
+<p class="section-lead">利用状況画面で表示する文言を定める。次の表は各メッセージ ID の種別・文言・表示条件を示す。</p>
 <table>
 <thead>
 <tr>
@@ -2197,6 +2165,7 @@
 <p>SCR-016 のプロジェクト別一覧はリンクを持たない読み取り専用表示とする(当月固定)。プロジェクトを開く・作成・編集・削除はサイドメニュー「プロジェクト」(SCR-004 / SCR-004-M1)に集約する。</p>
 </blockquote>
 <h3 id="424-scr-017-個人設定">4.24 SCR-017 個人設定</h3>
+<p class="section-lead">個人設定画面で表示する文言を定める。次の表は各メッセージ ID の種別・文言・表示条件を示す。</p>
 <table>
 <thead>
 <tr>
@@ -2246,6 +2215,7 @@
 </tbody>
 </table>
 <h3 id="425-scr-018-メンバーアカウント有効化">4.25 SCR-018 メンバーアカウント有効化</h3>
+<p class="section-lead">メンバーアカウント有効化画面で表示する文言を定める。次の表は各メッセージ ID の種別・文言・表示条件を示す。</p>
 <table>
 <thead>
 <tr>
@@ -2421,6 +2391,7 @@
 </tbody>
 </table>
 <h3 id="426-scr-019-プロジェクト連絡先メール確認完了">4.26 SCR-019 プロジェクト連絡先メール確認完了</h3>
+<p class="section-lead">プロジェクト連絡先メール確認完了画面で表示する文言を定める。次の表は各メッセージ ID の種別・文言・表示条件を示す。</p>
 <table>
 <thead>
 <tr>
@@ -2464,6 +2435,7 @@
 </tbody>
 </table>
 <h3 id="427-scr-022--scr-023-契約管理">4.27 SCR-022 / SCR-023 契約管理</h3>
+<p class="section-lead">契約管理画面(SCR-022 / SCR-023)で表示する文言を定める。次の表は各メッセージ ID の種別・文言・表示条件を示す。</p>
 <table>
 <thead>
 <tr>
@@ -2525,7 +2497,9 @@
 </tbody>
 </table>
 <h2 id="5-サイドメニュー--グローバルナビ共通-ui">5. サイドメニュー / グローバルナビ(共通 UI)</h2>
+<p class="section-lead">画面横断で常時表示するナビゲーション部品の文言を定める。契約ワークスペース版・プロジェクトワークスペース版のサイドメニューとグローバルヘッダ部品を以降の小節で示す。</p>
 <h3 id="51-契約ワークスペース版サイドメニューオーナー専有">5.1 契約ワークスペース版サイドメニュー(オーナー専有)</h3>
+<p class="section-lead">オーナー専有の契約ワークスペースで表示するサイドメニュー項目を定める。次の表は各メッセージ ID の文言と遷移先を示す。</p>
 <table>
 <thead>
 <tr>
@@ -2563,6 +2537,7 @@
 </tbody>
 </table>
 <h3 id="52-プロジェクトワークスペース版サイドメニュー">5.2 プロジェクトワークスペース版サイドメニュー</h3>
+<p class="section-lead">プロジェクトワークスペースで表示するサイドメニュー項目を定める。次の表は各メッセージ ID の文言と遷移先を示す。</p>
 <table>
 <thead>
 <tr>
@@ -2612,6 +2587,7 @@
 </tbody>
 </table>
 <h3 id="53-グローバルヘッダ部品">5.3 グローバルヘッダ部品</h3>
+<p class="section-lead">全画面共通のグローバルヘッダに置く部品の文言を定める。次の表は各メッセージ ID の文言と表示先を示す。</p>
 <table>
 <thead>
 <tr>
@@ -2720,8 +2696,10 @@
 </tr>
 </tbody>
 </table>
-<h2 id="6-通知契機テンプレート91--94-を吸収本書の中核">6. 通知契機・テンプレート(§9.1 / §9.4 を吸収、本書の中核)</h2>
-<h3 id="61-通知契機-13-種fr-140149b基本設計書-91-全件">6.1 通知契機 13 種(FR-140〜149b、基本設計書 §9.1 全件)</h3>
+<h2 id="6-通知契機テンプレート91--94-を吸収本書の中核">6. 通知契機・配信先(本書の中核)</h2>
+<p class="section-lead">本節は各通知イベントの<strong>契機・配信先・チャネル・重要度・強制送信可否</strong>の正本である。メール件名・本文の全文、テンプレート変数、テンプレート別の配信先解決ロジックは <a href="11_メール設計.html">11_メール設計.html</a>(§4 / §5.1)が正本のため、本節はテンプレート ID へのリンクで対応付ける。配信信頼性(再送・冪等・サプレス)の方式は <a href="09_セキュリティ設計.html#11-メール配信信頼性レピュテーション保護">09_セキュリティ設計.html §11(NFR-502〜507)</a> を正本とする。通知重要度 4 値と <code>critical</code> 強制送信は §2.4 を参照。</p>
+<h3 id="61-通知契機-13-種fr-140149b基本設計書-91-全件">6.1 通知契機(FR-140〜149b / FR-145a)</h3>
+<p class="section-lead">アカウント利用者向けの通知イベントを契機・配信先・チャネル・重要度で定義する。<code>critical</code> はメール強制送信(オプトアウト不可)。各行のテンプレート ID は <a href="11_メール設計.html">11_メール設計.html §3</a> の同名テンプレートに対応する。</p>
 <table>
 <thead>
 <tr>
@@ -2768,10 +2746,10 @@
 </tr>
 <tr>
 <td>NOTIF-PROJECT_ADMIN_INVITE</td>
-<td>プロジェクト作成時のプロジェクト管理者指定(SCR-004-M1)</td>
-<td>admin</td>
+<td>メンバー招待モーダルで <code>role='admin'</code> を指定して招待実行(SCR-009-M1、FR-015 / FR-030a)</td>
+<td>招待対象</td>
 <td>◯</td>
-<td>admin</td>
+<td>招待対象メールアドレス</td>
 <td><strong><code>critical</code></strong></td>
 <td>email</td>
 <td>TPL-PROJECT_ADMIN_INVITE</td>
@@ -2848,13 +2826,23 @@
 </tr>
 <tr>
 <td>NOTIF-SYSTEM_NOTICE</td>
-<td>上限接近・超過等(FR-149a)</td>
+<td>運用イベントの自動生成。契機は FR-149a と FR-189 の和集合(質問数上限の 80% / 90% / 100% 接近・到達、通知配信失敗の急増 等)。同一契約・同一イベント種別で 60 分以内の連続発火は 1 件に集約(BR-139)</td>
 <td>admin</td>
 <td>×</td>
 <td>admin</td>
 <td><code>normal</code>/<code>high</code></td>
 <td>inbox/email</td>
 <td>TPL-SYSTEM_NOTICE</td>
+</tr>
+<tr>
+<td>NOTIF-ROLE_ASSIGNMENT_CHANGED</td>
+<td>メンバーのプロジェクト別ロール割当が追加・変更・剥奪(SCR-009-M1、FR-145a)</td>
+<td>対象メンバー</td>
+<td>×</td>
+<td>対象メンバー本人</td>
+<td><code>normal</code></td>
+<td>inbox/email</td>
+<td>—(MVP メール本文は運営お知らせ種別で生成。新規 TPL なし)</td>
 </tr>
 <tr>
 <td>NOTIF-LOCKOUT_NOTIFY</td>
@@ -2868,87 +2856,36 @@
 </tr>
 </tbody>
 </table>
-<h3 id="62-通知テンプレート94-全件">6.2 通知テンプレート(§9.4 全件)</h3>
-<blockquote>
-<p><strong>v2.1 で件名・本文テンプレートの正本責任を <a href="11_メール設計.html">11_メール設計.html</a> へ移管しました。</strong> 本表は通知契機 → テンプレート ID の対応関係を維持するためのインデックスとして残します。具体的な件名・本文・テンプレート変数・配信先解決ロジックは 11_メール設計.html §4 を正本とします。</p>
-</blockquote>
+<div class="callout important"><i class="bi bi-pin-angle"></i><div><span class="c-title">AI 利用上限到達はシステム通知の契機にしない(MVP)</span>AI 利用上限到達は MVP ではシステム通知(NOTIF-SYSTEM_NOTICE)の契機とせず、メールも送信しない(将来対応)。NOTIF-SYSTEM_NOTICE の質問数上限関連(80% / 90% / 100% 到達)はメール対象、125% 超過は運営者のみへの追加通知とする(FR-122 / FR-127)。本ルールは <a href="11_メール設計.html">11_メール設計.html §4.14</a> の「メール対象外」記述と一致させる。</div></div>
+<h3 id="62-通知テンプレート94-全件">6.2 通知 ID → テンプレート ID 対応(インデックス)</h3>
+<p class="section-lead">通知 ID とテンプレート ID の対応関係のみを示す。<strong>件名・本文・テンプレート変数・リンク有効期限・テンプレート別の配信先解決は <a href="11_メール設計.html">11_メール設計.html</a>(§3 索引 / §4 詳細 / §5.1 配信先解決)が正本</strong>であり、本書では再掲しない。</p>
 <table>
 <thead>
 <tr>
 <th>テンプレートID</th>
-<th>件名</th>
-<th>本文必須項目</th>
-<th>リンク</th>
-<th>備考</th>
+<th>対応する通知ID</th>
+<th>正本(件名・本文)</th>
 </tr>
 </thead>
 <tbody>
-<tr>
-<td>TPL-EMAIL_VERIFY</td>
-<td>メール確認をお願いします</td>
-<td>確認リンク、有効期限 24h、不審リクエスト連絡先</td>
-<td>確認 URL(24h)</td>
-<td>-</td>
-</tr>
-<tr>
-<td>TPL-PASSWORD_RESET</td>
-<td>パスワード再設定のご案内</td>
-<td>再設定リンク、有効期限 1h、覚えがない場合の案内</td>
-<td>再設定 URL(1h)</td>
-<td>-</td>
-</tr>
-<tr>
-<td>TPL-PROJECT_CONTACT_VERIFY</td>
-<td>{プロジェクト名} のお問い合わせ先メールアドレスを確認してください</td>
-<td>プロジェクト名、確認リンク、有効期限 24h、ウィジェット表示用に確認必須の旨</td>
-<td>確認 URL(24h、SCR-019 プロジェクト連絡先メール確認完了ページに着地)</td>
-<td>着地: SCR-019(共通領域、未認証可)。トークン <code>access_tokens.purpose='contact_verify'</code>、<code>meta.projectId</code> を JSON 保持(FR-033a)</td>
-</tr>
-<tr>
-<td>TPL-ADMIN_USER_REGISTER</td>
-<td>open-faq の管理者ユーザー登録を完了してください</td>
-<td>招待者メールアドレス(招待時 <code>users.name=NULL</code> のため宛先は email)、登録元オーナー、登録操作者、<strong>失効日時(JST、<code>YYYY-MM-DD HH:mm</code> 形式)</strong> + 補助表記「(発行から 7 日後)」、<strong>「氏名(表示名)入力 + 初回パスワード設定 + 利用規約・プライバシーポリシー同意」の旨を明示</strong></td>
-<td>登録完了 URL(7d、SCR-018 メンバーアカウント有効化ページに着地)</td>
-<td>SCR-009-M1 メンバー招待 / 再送時に送信。SCR-009-M1 画面側にはカウントダウン表示を置かず、失効日時はメール本文のみで提示。氏名は招待時点で未登録のため宛先表示は email を用いる(FR-016d / FR-016e)</td>
-</tr>
-<tr>
-<td>TPL-PROJECT_ADMIN_INVITE</td>
-<td>{プロジェクト名} のプロジェクト管理者に招待されました</td>
-<td>招待者メールアドレス、登録元オーナー、プロジェクト名、付与ロール(<code>admin</code>)、<strong>失効日時(JST、<code>YYYY-MM-DD HH:mm</code> 形式)</strong> + 補助表記「(発行から 7 日後、未アクティベーション時)」、<strong>「氏名(表示名)入力 + 初回パスワード設定 + 利用規約・プライバシーポリシー同意」の旨を明示</strong></td>
-<td>アクティベーション URL(7d、SCR-018 メンバーアカウント有効化ページに着地)またはログイン URL(既存アカウント時)</td>
-<td>SCR-004-M1 のプロジェクト作成成功時に送信。画面側にはカウントダウン表示を置かず、失効日時はメール本文のみで提示</td>
-</tr>
-<tr>
-<td>TPL-BILLING_INVOICE_ISSUED</td>
-<td>{年月} の請求書が発行されました(¥{amount})</td>
-<td>対象期間、請求金額、内訳(質問数・FAQ 件数・無料枠超過分)、明細 PDF リンク</td>
-<td>請求画面 URL</td>
-<td>必須: PDF 明細を添付</td>
-</tr>
-<tr>
-<td>TPL-TERMS_REVISION</td>
-<td>【重要】利用規約改定のお知らせ(発効日: {effective_date})</td>
-<td>改定要約、新規約 URL、同意期限(発効日 + 14 日)、機能制限ガード案内</td>
-<td>SCR-015 deeplink</td>
-<td><code>critical</code> 重要度</td>
-</tr>
-<tr>
-<td>TPL-SERVICE_ANNOUNCEMENT</td>
-<td>(運営者入力)</td>
-<td>運営者入力本文(HTML sanitize 済)、配信元署名</td>
-<td>-</td>
-<td>-</td>
-</tr>
-<tr>
-<td>TPL-SYSTEM_NOTICE</td>
-<td>(サブ契機ごとの定型文)</td>
-<td>発火条件、対応方法、関連画面リンク</td>
-<td>SCR-008 / SCR-017 等</td>
-<td>-</td>
-</tr>
+<tr><td>TPL-EMAIL_VERIFY</td><td>NOTIF-EMAIL_VERIFY</td><td><a href="11_メール設計.html#41-tpl-email_verifyアカウント登録-メール確認">11 §4.1</a></td></tr>
+<tr><td>TPL-PASSWORD_RESET</td><td>NOTIF-PASSWORD_RESET</td><td><a href="11_メール設計.html#42-tpl-password_resetパスワード再設定">11 §4.2</a></td></tr>
+<tr><td>TPL-ADMIN_USER_REGISTER</td><td>NOTIF-ADMIN_USER_REGISTER</td><td><a href="11_メール設計.html#43-tpl-admin_user_registerメンバー招待再送-共通">11 §4.3</a></td></tr>
+<tr><td>TPL-PROJECT_ADMIN_INVITE</td><td>NOTIF-PROJECT_ADMIN_INVITE</td><td><a href="11_メール設計.html#44-tpl-project_admin_inviteプロジェクト管理者招待">11 §4.4</a></td></tr>
+<tr><td>TPL-PROJECT_CONTACT_VERIFY</td><td>(オーナー操作派生)</td><td><a href="11_メール設計.html#45-tpl-project_contact_verifyプロジェクト連絡先メール確認">11 §4.5</a></td></tr>
+<tr><td>TPL-LOCKOUT_NOTIFY</td><td>NOTIF-LOCKOUT_NOTIFY</td><td><a href="11_メール設計.html#46-tpl-lockout_notifyログインロックアウト発動">11 §4.6</a></td></tr>
+<tr><td>TPL-DELETION_REMINDER</td><td>NOTIF-DELETION_REMINDER</td><td><a href="11_メール設計.html#47-tpl-deletion_reminder退会猶予期間案内">11 §4.7</a></td></tr>
+<tr><td>TPL-BILLING_INVOICE_ISSUED</td><td>NOTIF-BILLING_INVOICE_ISSUED</td><td><a href="11_メール設計.html#48-tpl-billing_invoice_issued月次請求確定通知">11 §4.8</a></td></tr>
+<tr><td>TPL-BILLING_PAYMENT_FAILED</td><td>NOTIF-BILLING_PAYMENT_FAILED</td><td><a href="11_メール設計.html#49-tpl-billing_payment_failed支払い失敗通知">11 §4.9</a></td></tr>
+<tr><td>TPL-BILLING_SUSPENSION</td><td>NOTIF-BILLING_SUSPENSION</td><td><a href="11_メール設計.html#410-tpl-billing_suspensionサスペンション開始解除">11 §4.10</a></td></tr>
+<tr><td>TPL-PAYMENT_METHOD_REQUIRED</td><td>NOTIF-PAYMENT_METHOD_REQUIRED</td><td><a href="11_メール設計.html#411-tpl-payment_method_required無料枠超過支払方法登録要請通知">11 §4.11</a></td></tr>
+<tr><td>TPL-TERMS_REVISION</td><td>NOTIF-TERMS_REVISION</td><td><a href="11_メール設計.html#412-tpl-terms_revision利用規約改定告知">11 §4.12</a></td></tr>
+<tr><td>TPL-SERVICE_ANNOUNCEMENT</td><td>NOTIF-SERVICE_ANNOUNCEMENT</td><td><a href="11_メール設計.html#413-tpl-service_announcement運営からのお知らせ">11 §4.13</a></td></tr>
+<tr><td>TPL-SYSTEM_NOTICE</td><td>NOTIF-SYSTEM_NOTICE</td><td><a href="11_メール設計.html#414-tpl-system_noticeサブ契機ごとの定型文--メタテンプレート">11 §4.14</a></td></tr>
 </tbody>
 </table>
 <h3 id="63-通知メール共通要件">6.3 通知メール共通要件</h3>
+<p class="section-lead">全通知メールに共通する送信元・末尾案内・サニタイズ等の方針。詳細な配信信頼性・サプレス・レピュテーション保護は <a href="09_セキュリティ設計.html#11-メール配信信頼性レピュテーション保護">09_セキュリティ設計.html §11</a> が正本。</p>
 <ul>
 <li>送信元 From: <code>noreply@&lt;service-domain&gt;</code> 固定、Reply-To なし</li>
 <li>メール末尾に「このメールに直接返信せず、お手数ですが問い合わせ画面または各プロジェクトのお問い合わせ先からご返信ください」案内を含める</li>
@@ -2958,6 +2895,7 @@
 <li>全テンプレートは i18n キー化、本文時刻表示は JST 固定(NFR-1103)</li>
 </ul>
 <h2 id="7-契約課金関連メッセージ">7. 契約・課金関連メッセージ</h2>
+<p class="section-lead">契約状態・課金処理に伴って表示する文言を定める。次の表は各メッセージ ID の利用箇所・文言・表示条件・関連エラー ID・重要度を示し、契約状態の正本は <a href="10_課金・請求設計.html">10_課金・請求設計.html</a> にある。</p>
 <table>
 <thead>
 <tr>
@@ -3053,7 +2991,7 @@
 </tbody>
 </table>
 <h2 id="8-エラー別メッセージ対応表">8. エラー別メッセージ対応表</h2>
-<p>(エラー設計書 06 の全エラー ID に対するメッセージ ID の対応)</p>
+<p class="section-lead">エラー ID に表示メッセージ ID を対応付ける。エラー ID の定義・分類・HTTP ステータスは <a href="05_エラー設計.html">05_エラー設計.html</a> が正本で、本表はエラー ID → 表示文言の対応のみを示す。</p>
 <table>
 <thead>
 <tr>
@@ -3145,6 +3083,7 @@
 </tbody>
 </table>
 <h2 id="9-未決事項">9. 未決事項</h2>
+<p class="section-lead">本書で未確定または初版で限定収載とした項目を示す。次の表は内容・確認先・現在のステータスを示す。</p>
 <table>
 <thead>
 <tr>
@@ -3159,9 +3098,23 @@
 <tr>
 <td>2</td>
 <td>エラー別メッセージ対応表(§8)の全件埋め込み</td>
-<td>エラー設計書 06</td>
+<td><a href="05_エラー設計.html">05_エラー設計.html</a></td>
 <td>-</td>
 <td>主要項目のみ初版収載</td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="更新履歴">更新履歴</h2>
+<table>
+<thead>
+<tr><th>版数</th><th>日付</th><th>変更内容</th></tr>
+</thead>
+<tbody>
+<tr>
+<td>v2.0</td>
+<td>2026-06-17</td>
+<td>設計書シンプルテンプレ v2 へ移行。冒頭の要約ブロックを <code>ps-lead</code>(目的 1 文)+ <code>doc-meta</code> に最小化し、2 列グリッド(このページでわかること / 正本・関連リンク集)を撤去。各 <code>&lt;h2&gt;</code> / <code>&lt;h3&gt;</code> 直後に <code>section-lead</code> を配置(表をいきなり置かない方針へ統一)。メッセージ ID(<code>MSG-SCR-*</code>)・文言全文・通知契機・配信先・通知重要度 4 値・強制送信ルールは改変せず保持。</td>
 </tr>
 </tbody>
 </table>

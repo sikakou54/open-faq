@@ -98,6 +98,15 @@ details.nav-cat>summary::before{content:"›";display:inline-block;width:1em;col
 details.nav-cat[open]>summary::before{content:"⌄"}
 details.nav-cat>summary:hover{background:var(--surface-2)}
 .nav-cat ul{list-style:none;margin:0;padding:0 0 4px 4px}
+details.nav-subcat{margin:1px 0}
+details.nav-subcat>summary{font-size:12.5px;font-weight:600;color:var(--text-soft);
+  list-style:none;cursor:pointer;padding:5px 10px 5px 22px;border-radius:6px;display:block}
+details.nav-subcat>summary::-webkit-details-marker{display:none}
+details.nav-subcat>summary::before{content:"›";display:inline-block;width:1em;color:var(--text-mute)}
+details.nav-subcat[open]>summary::before{content:"⌄"}
+details.nav-subcat>summary:hover{background:var(--surface-2);color:var(--text)}
+.nav-subcat ul{list-style:none;margin:0;padding:0}
+.nav-subcat .nav-link{padding-left:34px}
 .nav-link{display:block;padding:5px 10px 5px 22px;font-size:12.5px;color:var(--text-soft);
   text-decoration:none;border-radius:6px;border-left:2px solid transparent;line-height:1.5}
 .nav-link:hover{background:var(--surface-2);color:var(--text)}
@@ -140,6 +149,12 @@ details.nav-cat>summary:hover{background:var(--surface-2)}
 .content pre.mermaid[data-processed]{background:transparent;color:inherit;border:none;padding:0;
   margin:1.2em 0;text-align:center;white-space:normal;line-height:normal}
 .content pre.mermaid[data-processed] svg{max-width:100%;height:auto}
+/* Mermaid シーケンス図 alt/opt/loop 分岐を見やすく: 枠線=アクセント、キーワードタブ=塗り、条件文=太字強調・左寄せ */
+.content .mermaid .loopLine{stroke:var(--accent)!important;stroke-width:1.4px!important}
+.content .mermaid polygon.labelBox{fill:var(--accent)!important;stroke:var(--accent)!important}
+.content .mermaid .labelText,.content .mermaid .labelText tspan{fill:#fff!important;font-weight:700!important}
+.content .mermaid .loopText,.content .mermaid .loopText tspan,
+.content .mermaid .sectionTitle,.content .mermaid .sectionTitle tspan{fill:var(--accent-strong)!important;font-weight:700!important}
 .content table{border-collapse:collapse;width:100%;font-size:13.5px;margin:1.1em 0}
 .table-scroll{overflow-x:auto;border:1px solid var(--table-border);border-radius:8px;margin:1.1em 0}
 .table-scroll table{margin:0;border:none}
@@ -199,6 +214,133 @@ details.nav-cat>summary:hover{background:var(--surface-2)}
 .reading-order li{margin:.5em 0}
 .callout{background:var(--accent-soft);border:1px solid var(--border);border-left:4px solid var(--accent);
   border-radius:0 8px 8px 0;padding:4px 20px;margin:1em 0}
+
+/* ===== 設計書 共通パーツ(記載スタイル標準 v1) ===== */
+
+/* ページ要約ブロック: H1 直後に置く。内部ラベルは見出しタグを使わず目次を汚さない */
+.page-summary{background:var(--surface-2);border:1px solid var(--border);
+  border-radius:10px;padding:16px 20px 6px;margin:0 0 1.6em}
+.page-summary .ps-lead{margin:.1em 0 .7em;font-size:15px;line-height:1.85;color:var(--text)}
+.page-summary .ps-lead strong{color:var(--text)}
+.page-summary .ps-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 28px}
+@media(max-width:720px){ .page-summary .ps-grid{grid-template-columns:1fr} }
+.page-summary .ps-label{font-size:11.5px;font-weight:700;letter-spacing:.04em;
+  text-transform:uppercase;color:var(--text-mute);margin:.5em 0 .2em}
+.page-summary ul{margin:.1em 0 .7em;padding-left:1.3em}
+.page-summary li{margin:.2em 0;font-size:13.5px;color:var(--text-soft)}
+.page-summary .ps-block > p{margin:.1em 0 .7em;font-size:13.5px;color:var(--text-soft)}
+
+/* 文書メタ 1 行ストリップ(従来の「0. 文書情報」表の置き換え) */
+.doc-meta{display:flex;flex-wrap:wrap;gap:6px 0;align-items:center;font-size:12.5px;
+  color:var(--text-mute);margin:-.2em 0 1.4em}
+.doc-meta span{display:inline-flex;align-items:center}
+.doc-meta span + span::before{content:"";width:1px;height:11px;background:var(--border);
+  margin:0 12px;display:inline-block}
+.doc-meta b{color:var(--text-soft);font-weight:600;margin-right:5px}
+.doc-meta .dm-status{color:var(--accent-strong);font-weight:700}
+
+/* 節リード文: 各 h2/h3 の直後に置く 1〜2 文の結論文 */
+.content .section-lead{color:var(--text-soft);margin:.2em 0 1em;max-width:64em}
+
+/* callout 種別(note / important / warning / tip)アイコンは Bootstrap Icons */
+.callout{display:flex;gap:12px;align-items:flex-start}
+.callout > .bi{font-size:17px;line-height:1.7;flex:0 0 auto;color:var(--accent)}
+.callout > div{min-width:0}
+.callout .c-title{font-weight:700;display:block;margin:.35em 0 .1em}
+.callout.note{background:var(--accent-soft);border-left-color:var(--accent)}
+.callout.note > .bi{color:var(--accent)}
+.callout.important{background:var(--accent-soft);border-left-color:var(--accent-strong)}
+.callout.important > .bi{color:var(--accent-strong)}
+.callout.warning{background:#fdf0e6;border-left-color:#d97706}
+.callout.warning > .bi{color:#b45309}
+.callout.tip{background:#eaf7ef;border-left-color:#16a34a}
+.callout.tip > .bi{color:#15803d}
+html[data-theme="dark"] .callout.warning{background:#2a2014}
+html[data-theme="dark"] .callout.warning > .bi{color:#f0a85a}
+html[data-theme="dark"] .callout.tip{background:#13241a}
+html[data-theme="dark"] .callout.tip > .bi{color:#5fc784}
+
+/* 用語の初出ミニ定義 */
+.term-def{border-bottom:1px dotted var(--text-mute);cursor:help}
+
+/* ===== 記載スタイル標準 v2(刷新テンプレート)追加コンポーネント ===== */
+
+/* 要約ブロックを「概要カード」として強調(左アクセント帯 + 見出しアイコン) */
+.page-summary{position:relative;border-left:4px solid var(--accent);padding-left:22px}
+.page-summary .ps-lead{position:relative;padding-left:26px}
+.page-summary .ps-lead::before{content:"\F431";font-family:"bootstrap-icons";
+  position:absolute;left:0;top:.12em;color:var(--accent);font-size:17px;line-height:inherit}
+.page-summary .ps-block{position:relative}
+.page-summary .ps-note{margin:.3em 0 0;font-size:12.5px;color:var(--text-mute)}
+
+/* 定義リスト: 「項目 / 内容」擬似表(0.文書情報・1.機能概要・版数 等)の置き換え */
+.kv{display:grid;grid-template-columns:max-content 1fr;margin:1em 0;border:1px solid var(--border);
+  border-radius:10px;overflow:hidden;font-size:13.5px}
+.kv > dt{background:var(--surface-2);color:var(--text-soft);font-weight:600;padding:9px 14px;
+  border-bottom:1px solid var(--border)}
+.kv > dd{margin:0;padding:9px 16px;border-bottom:1px solid var(--border);color:var(--text)}
+.kv > dt:nth-last-of-type(1),.kv > dd:last-child{border-bottom:none}
+@media(max-width:620px){
+  .kv{grid-template-columns:1fr}
+  .kv > dt{border-bottom:none;padding-bottom:0;background:none}
+}
+
+/* 優先度・状態バッジ(中央寄せ生テキストの置き換え) */
+.badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.02em;padding:2px 9px;
+  border-radius:20px;line-height:1.5;white-space:nowrap;border:1px solid transparent}
+.badge-p0,.badge-must{background:#fde8e8;color:#b42318;border-color:#f3c9c9}
+.badge-p1,.badge-should{background:#fef1de;color:#b45309;border-color:#f3d6a6}
+.badge-p2,.badge-could{background:#e9f0fe;color:#1d4ed8;border-color:#cedbfb}
+html[data-theme="dark"] .badge-p0,html[data-theme="dark"] .badge-must{background:#3a1d1d;color:#f3a5a5;border-color:#5a2b2b}
+html[data-theme="dark"] .badge-p1,html[data-theme="dark"] .badge-should{background:#352711;color:#f0bd72;border-color:#574016}
+html[data-theme="dark"] .badge-p2,html[data-theme="dark"] .badge-could{background:#16233d;color:#8fb6ff;border-color:#26395f}
+
+/* 要件テーブル: ID 列を等幅、優先度列を中央寄せ・最小幅 */
+table.req-table td:first-child{font-family:var(--mono);font-size:12.5px;white-space:nowrap;
+  color:var(--text-soft);font-weight:600;vertical-align:middle}
+/* 要件 ID 参照リンクのアンカー着地余白(定義行 td[id] / tr[id]) */
+.content tr[id],.content td[id]{scroll-margin-top:72px}
+/* (a)(b)(c) を marker にする箇条書き */
+.content ol.alpha{list-style:none;padding-left:1.9em;margin:.5em 0;counter-reset:alpha}
+.content ol.alpha > li{counter-increment:alpha;position:relative;margin:.25em 0}
+.content ol.alpha > li::before{content:"(" counter(alpha,lower-alpha) ")";
+  position:absolute;left:-1.9em;width:1.7em;text-align:left;color:var(--text-soft);font-weight:600}
+/* ステークホルダ別に内容が異なる業務要件: 「役割：内容」のキー付きリスト */
+.content ul.role-req{list-style:none;padding-left:0;margin:.2em 0}
+.content ul.role-req > li{margin:.25em 0}
+.content ul.role-req > li > strong{color:var(--text-soft)}
+/* 入れ子: 親の (a) + 子の連番 = (a-1)(a-2)… 親の alpha カウンタは継承(リセットしない) */
+.content ol.alpha-sub{list-style:none;padding-left:3.4em;margin:.3em 0;counter-reset:alphasub}
+.content ol.alpha-sub > li{counter-increment:alphasub;position:relative;margin:.2em 0}
+.content ol.alpha-sub > li::before{content:"(" counter(alpha,lower-alpha) "-" counter(alphasub) ")";
+  position:absolute;left:-3.4em;width:3.1em;text-align:left;white-space:nowrap;
+  color:var(--text-soft);font-weight:600}
+table.req-table th:last-child,table.req-table td:last-child{text-align:center;width:1%;white-space:nowrap}
+
+/* 業務要件テーブル: ID 列を折り返さない・等幅 */
+table.br-table td:first-child{font-family:var(--mono);font-size:12.5px;white-space:nowrap;
+  color:var(--text-soft);font-weight:600;vertical-align:top}
+
+/* 関連設計リンク集: URL 直書き 2 列表の置き換え */
+.ref-list{list-style:none;padding:0;margin:1.1em 0;display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+.ref-list li{margin:0}
+.ref-list a{display:flex;align-items:center;gap:10px;padding:10px 13px;border:1px solid var(--border);
+  border-radius:9px;background:var(--surface);text-decoration:none;color:var(--text);font-size:13px;height:100%}
+.ref-list a:hover{border-color:var(--accent);background:var(--accent-soft);text-decoration:none}
+.ref-list a > .bi{color:var(--accent);font-size:16px;flex:0 0 auto}
+.ref-list .rf-text{display:flex;flex-direction:column;line-height:1.35;min-width:0}
+.ref-list .rf-kind{color:var(--text-mute);font-size:11px}
+
+/* 画面レイアウト 埋め込み(画面設計 §2 / 画面遷移図の該当画面を iframe 表示) */
+.layout-embed{border:1px solid var(--border);border-radius:10px;overflow:hidden;
+  background:var(--surface);margin:1em 0;box-shadow:var(--shadow)}
+.layout-embed .le-cap{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--text-mute);
+  padding:6px 12px;background:var(--surface-2);border-bottom:1px solid var(--border)}
+.layout-embed .le-cap .le-open{margin-left:auto;color:var(--accent);text-decoration:none;
+  display:inline-flex;align-items:center;gap:4px}
+.layout-embed .le-cap .le-open:hover{text-decoration:underline}
+.layout-embed .le-frame{display:block;width:100%;height:600px;border:0;background:#fff}
 
 .backdrop{display:none}
 @media(max-width:1100px){ .toc{display:none} }

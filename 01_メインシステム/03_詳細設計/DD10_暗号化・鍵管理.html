@@ -13,46 +13,15 @@
 <body data-page-id="01_メインシステム/03_詳細設計/DD10_暗号化・鍵管理.html">
 <article class="content" id="content">
 <h1 id="dd10-暗号化鍵管理">DD10: 暗号化・鍵管理</h1>
-<h2 id="0-文書情報">0. 文書情報</h2>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>内容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>文書名</td>
-<td>DD10: 暗号化・鍵管理</td>
-</tr>
-<tr>
-<td>詳細設計ID</td>
-<td>DD10</td>
-</tr>
-<tr>
-<td>対象システム</td>
-<td>FAQ AI ウィジェット SaaS / メインシステム</td>
-</tr>
-<tr>
-<td>関連機能ID</td>
-<td>NFR-301（オーナー境界）/ NFR-401（プライバシー保護）/ AC-028</td>
-</tr>
-<tr>
-<td>作成日</td>
-<td>2026-05-17</td>
-</tr>
-<tr>
-<td>版数</td>
-<td>v1.0</td>
-</tr>
-<tr>
-<td>ステータス</td>
-<td>承認済</td>
-</tr>
-</tbody>
-</table>
+
+<aside class="page-summary">
+<p class="ps-lead"><strong>このページは、PII 列の AES-256-GCM 列単位暗号化と、Master Key を起点とした HKDF-SHA256 派生鍵・各シークレットの鍵ローテーション(年次 + dual-decrypt 期間)の実装方針を定義します。</strong></p>
+</aside>
+
+<p class="doc-meta"><span><b>版数</b> v1.0</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
 <h2 id="1-対象範囲">1. 対象範囲</h2>
+<p class="section-lead">本 DD が実装方針を定めるライブラリ・シークレット・カラムを示します。次の表は、暗号化ライブラリ(<code>encrypt.ts</code>)・鍵管理シークレット・PII 列単位暗号化・検索用 HMAC 列が範囲であることを一望できます。関連する非機能要件は NFR-301(オーナー境界)/ NFR-401(プライバシー保護)/ AC-028 です。</p>
 <table>
 <thead>
 <tr>
@@ -85,6 +54,7 @@
 </tbody>
 </table>
 <h2 id="2-収録ロジック対応章">2. 収録ロジック・対応章</h2>
+<p class="section-lead">本 DD が詳細化する各ロジックの出所(基本設計の元章)と概要を示します。次の表は、Master Key の年次ローテーション・HKDF 派生鍵生成・AES-256-GCM 列単位暗号化・鍵ローテーション運用(dual-decrypt 期間)の対応関係をまとめたものです。</p>
 <table>
 <thead>
 <tr>
@@ -117,16 +87,29 @@
 </tbody>
 </table>
 <h2 id="3-詳細設計本文">3. 詳細設計本文</h2>
+<p class="section-lead">Master Key の年次ローテーション・HKDF 派生鍵生成・AES-256-GCM 列単位暗号化・各シークレットの dual-decrypt 運用を順に定義します。以降の各小節は、鍵の階層・暗号化/復号フロー・鍵更新フローを扱います。</p>
+
 <h3 id="31-master-key">3.1 Master Key</h3>
-<p><code>MASTER_KEY</code> は Cloudflare Secrets Store に格納（32 bytes、base64）。年次ローテーション運用：</p>
-<ol type="1">
-<li>新 <code>MASTER_KEY_NEXT</code> をシークレット追加</li>
-<li>双方読み取り対応のコード版をデプロイ（新規書込は新キー、復号は両方試す）</li>
-<li>バックフィルジョブで既存暗号化列を新キーで再暗号化</li>
-<li>完了後 <code>MASTER_KEY_PREV</code> として旧キー保管、<code>MASTER_KEY</code> を新キーに置換</li>
-<li>1 年後 <code>MASTER_KEY_PREV</code> 削除</li>
-</ol>
+<p class="section-lead"><code>MASTER_KEY</code>(32 bytes、base64)は Cloudflare Secrets Store に格納し、年次でローテーションします。次のシーケンス図は、新鍵投入から dual-read 版デプロイ・バックフィル再暗号化・旧鍵保管・1 年後削除までの運用フローを示します。</p>
+<pre class="mermaid"><code>sequenceDiagram
+  participant Op as 運用者
+  participant SS as Secrets Store
+  participant W as Worker
+  participant D as D1 (暗号化列)
+
+  Op-&gt;&gt;SS: MASTER_KEY_NEXT を追加
+  Op-&gt;&gt;W: dual-read 版をデプロイ
+  Note over W: 書込=新鍵 / 復号=新旧両方を試行
+  Op-&gt;&gt;W: バックフィルジョブ起動
+  loop 既存暗号化列
+    W-&gt;&gt;D: 旧鍵で復号 → 新鍵で再暗号化 → UPDATE
+    D--&gt;&gt;W:
+  end
+  Op-&gt;&gt;SS: MASTER_KEY を新鍵へ置換 / 旧鍵を MASTER_KEY_PREV へ
+  Note over SS: 1 年後 MASTER_KEY_PREV を削除</code></pre>
+
 <h3 id="32-hkdf-sha256-派生鍵">3.2 HKDF-SHA256 派生鍵</h3>
+<p class="section-lead">オーナー単位の派生鍵を <code>MASTER_KEY</code> から HKDF-SHA256 で生成します。次の擬似コードは <code>deriveOwnerKey</code> の実装で、HKDF の <code>info</code> 文字列 <code>owner:&lt;id&gt;</code> に <code>contract_owners.user_id</code> を埋め込み、オーナーごとに異なる AES-GCM 鍵を導出します。</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// app/shared/src/lib/encrypt.ts</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">// contractOwnerUserId は `contract_owners.user_id`(旧オーナー `accounts.id` と物理値同じ ULID)。</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">// HKDF info 文字列 `owner:&lt;id&gt;` のリテラルは v1.11 リファクタ後も不変(物理値継承により既存暗号化データの復号互換を維持)。</span></span>
@@ -277,44 +260,7 @@
 <h3 id="36-pii-列の暗号化対象参照のみ">3.6 PII 列の暗号化対象（参照のみ）</h3>
 <p>PII 暗号化対象列の全リスト（email / phone / 氏名 / チャット本文 等）は <a href="../02_基本設計/03_テーブル設計.html">../02_基本設計/03_テーブル設計.html</a> を正本とする。各列は AES-256-GCM 暗号化値（base64）で保存し、検索用に HMAC-SHA256 列（<code>email_hmac</code> 等）を併設する。</p>
 <h2 id="4-関連設計">4. 関連設計</h2>
-<table>
-<thead>
-<tr>
-<th>種別</th>
-<th>参照先</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>要件</td>
-<td><a href="../01_要件定義/index.html">../01_要件定義/index.html</a></td>
-</tr>
-<tr>
-<td>基本設計</td>
-<td><a href="../02_基本設計/index.html">../02_基本設計/index.html</a></td>
-</tr>
-<tr>
-<td>セキュリティ設計</td>
-<td><a href="../02_基本設計/09_セキュリティ設計.html">../02_基本設計/09_セキュリティ設計.html</a></td>
-</tr>
-<tr>
-<td>テーブル設計</td>
-<td><a href="../02_基本設計/03_テーブル設計.html">../02_基本設計/03_テーブル設計.html</a></td>
-</tr>
-<tr>
-<td>共有概念</td>
-<td><a href="../../共有/共有概念.html">../../共有/共有概念.html</a></td>
-</tr>
-<tr>
-<td>運用設計</td>
-<td><a href="../04_運用設計/index.html">../04_運用設計/index.html</a></td>
-</tr>
-<tr>
-<td>関連 DD</td>
-<td><a href="DD07_トークン発行・検証.html">DD07_トークン発行・検証.html</a> / <a href="DD09_監査ログ書込・完全性検証.html">DD09_監査ログ書込・完全性検証.html</a> / <a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html</a></td>
-</tr>
-</tbody>
-</table>
+<p class="section-lead">本 DD に関連する正本ドキュメントを示します。PII 暗号化・暗号鍵管理のセキュリティ要件は <a href="../02_基本設計/09_セキュリティ設計.html">セキュリティ設計</a>、暗号化対象列のスキーマは <a href="../02_基本設計/03_テーブル設計.html">テーブル設計</a> を正本とし、PII 暗号化・鍵管理の共有ルールは <a href="../../共有/共有概念.html">共有概念</a> を参照します。要件は <a href="../01_要件定義/index.html">要件定義</a>、全体方針は <a href="../02_基本設計/index.html">基本設計</a> を参照します。関連 DD は <a href="DD07_トークン発行・検証.html">DD07_トークン発行・検証.html</a> / <a href="DD09_監査ログ書込・完全性検証.html">DD09_監査ログ書込・完全性検証.html</a> / <a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html</a>、運用面は <a href="../04_運用設計/index.html">運用設計</a> を参照します。</p>
 <h2 id="5-テスト観点">5. テスト観点</h2>
 <table>
 <thead>

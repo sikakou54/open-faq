@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCR-021-M1 質問数上限設定モーダル | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<link rel="stylesheet" href="../../../assets/css/screen-mock.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@1.17.0/dist/umd/lucide.min.js"></script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/01_画面設計/SCR_021-M1.html">
+<article class="content" id="content">
+<h1 id="scr-021-m1-質問数上限設定モーダル">SCR-021-M1 質問数上限設定モーダル</h1>
+
+<aside class="page-summary">
+<p class="ps-lead"><strong>このページは、SCR-021 から開く当該プロジェクトの質問数上限とアラート閾値を設定するモーダル SCR-021-M1 を定義します。</strong> 画面概要 / 画面遷移図 / 画面レイアウト / 画面項目定義 / 入出力一覧 / 画面イベント一覧 の 6 セクションで記述します。</p>
+</aside>
+<p class="doc-meta"><span><b>版数</b> v1.0</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<h2 id="1-画面概要">1. 画面概要</h2>
+<p class="section-lead">SCR-021 の「アラート設定」から開く、当該プロジェクトの質問数の月次上限件数とアラート閾値を全画面割込みモーダルで設定する画面です。保存時に L3(再認証)を要求します。</p>
+<table>
+<thead>
+<tr>
+<th>画面 ID</th>
+<th>画面名</th>
+<th>機能概要</th>
+</tr>
+</thead>
+<tbody>
+<tr><td id="SCR-021-M1"><code>SCR-021-M1</code></td><td>質問数上限設定モーダル</td><td>当該プロジェクトの質問数の月次上限件数・アラート閾値を全画面割込みモーダルで設定する</td></tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>関連</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>FR / BR</td><td><a href="../../01_要件定義/FR09_利用量・課金.html#FR-121">FR-121</a>, <a href="../../01_要件定義/FR09_利用量・課金.html#FR-122">FR-122</a>, <a href="../../01_要件定義/FR09_利用量・課金.html#FR-125">FR-125</a>, <a href="../../01_要件定義/FR09_利用量・課金.html#FR-127">FR-127</a>, <a href="../../01_要件定義/FR01_アカウント管理.html#FR-005">FR-005</a>(再認証) / <a href="../../01_要件定義/FR09_利用量・課金.html#BR-088">BR-088</a>, <a href="../../01_要件定義/FR09_利用量・課金.html#BR-089">BR-089</a></td></tr>
+<tr><td>関連画面</td><td><a href="SCR_021.html"><code>SCR-021</code> 利用量と上限(プロジェクト単位)</a>(呼出元)</td></tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr>
+<th>ステークホルダ</th>
+<th>対象</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>オーナー</td><td>◯</td></tr>
+<tr><td>プロジェクト管理者(<code>admin</code>)</td><td>◯</td></tr>
+<tr><td>メンバー(<code>member</code>)</td><td>—</td></tr>
+</tbody>
+</table>
+<div class="callout important"><i class="bi bi-pin-angle"></i><div><span class="c-title">重要</span>必要権限はオーナー / 当該プロジェクト管理者(<code>admin</code>。オーナーは暗黙 <code>admin</code>)です。<code>member</code> は呼出元 SCR-021 でボタンが非表示のため到達しません。保存は <strong>L3 = 再認証(パスワード再入力。FR-005)</strong> を要求します(プロジェクト削除のような対象名タイプ確認は課しません)。質問数の無料利用枠は本モーダルに独立項目として表示せず、計算式内のみで表示します。</div></div>
+
+<h2 id="2-画面遷移図">2. 画面遷移図</h2>
+<p class="section-lead">本モーダルの呼出元・遷移先を、画面 ID・画面名とイベント(操作)で示します。</p>
+<pre class="mermaid"><code>flowchart LR
+  S1["SCR-021 利用量と上限(プロジェクト単位)"]
+  S2["SCR-021-M1 質問数上限設定モーダル"]
+  S1 -- "アラート設定" --&gt; S2
+  S2 -- "キャンセル / 保存完了(再認証)" --&gt; S1
+</code></pre>
+
+<h2 id="3-画面レイアウト">3. 画面レイアウト</h2>
+<div class="layout-embed">
+<div class="le-cap">質問数上限設定モーダル(SCR-021-M1)</div>
+<div class="scr-mock"><div class="screen" id="scr-021-m1" role="region" aria-labelledby="scr-021-m1-title">
+  <div class="screen-header">
+    <div><span class="scr-id">SCR-021-M1</span><span class="scr-name" id="scr-021-m1-title">質問数上限設定モーダル</span></div>
+    <div class="scr-user">利用者: オーナー / プロジェクト管理者(SCR-021 の「アラート設定」から起動)</div>
+  </div>
+  <div class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="scr-021-m1-modal-title">
+    <div class="modal-card" style="width: 580px;">
+      <h3 id="scr-021-m1-modal-title">質問数の上限設定</h3>
+      <p class="small">質問数の今月の利用上限とアラートを設定します。</p>
+      <div class="field"><label>上限設定</label><div style="display:flex; gap:12px;"><label><input type="radio" name="limit036" checked> ON</label><label><input type="radio" name="limit036"> OFF</label></div></div>
+      <div class="field">
+        <label>今月の利用上限</label>
+        <div style="display:flex; gap:8px; align-items:center;"><div class="input" style="width:140px;"><strong>5,000</strong> 件</div><span class="small">5,000件 - 1,000件(無料枠) = 4,000件 (¥2,000 / 月)</span></div>
+      </div>
+      <hr>
+      <div class="field">
+        <label>アラート設定</label>
+        <div style="display:flex; gap:14px; flex-wrap:wrap;">
+          <label><input type="checkbox"> 25%</label>
+          <label><input type="checkbox"> 50%</label>
+          <label><input type="checkbox" checked> 80%</label>
+          <label><input type="checkbox"> 90%</label>
+          <label><input type="checkbox" checked> 100%</label>
+        </div>
+      </div>
+      <div class="small" style="margin:6px 0;">複数選択できます。選択した割合に到達すると、オーナーとプロジェクト管理者へメールでお知らせします。</div>
+      <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:10px;"><button class="btn">キャンセル</button><button class="btn primary">保存</button></div>
+    </div>
+  </div>
+</div></div>
+</div>
+
+<h2 id="4-画面項目定義">4. 画面項目定義</h2>
+<p class="section-lead">本モーダルの上限設定・アラート設定・操作項目と各バリデーションを定義します。項目の正本は本表です。上限 OFF 時に無効化される項目は備考に明記します。</p>
+<table>
+<thead>
+<tr>
+<th>項目 ID</th>
+<th>項目</th>
+<th>入出力</th>
+<th>種類</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr><td id="IT-01"><code>IT-01</code></td><td>上限設定</td><td>入力</td><td>トグル</td><td>ON / OFF。OFF 時は「今月の利用上限」入力と上限アラート設定を無効化し、保存時 <code>limitEnabled=false</code></td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>今月の利用上限</td><td>入力</td><td>数値入力(件、ON 時必須)</td><td>上限 ON 時のみ表示・活性。1 件刻み、最小〜最大件数の入力ガード(KV <code>usage-limit:min</code> / <code>usage-limit:max</code>)。「{limit}件 - {freeQuota}件(無料枠) = {billableCount}件 (¥{yen} / 月)」をリアルタイム併記</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>設定適用の説明</td><td>出力</td><td>helper</td><td>未設定時はデフォルト推奨値が適用される旨を表示。無料利用枠は本モーダルに表示せず更新対象にも含めない</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>アラート設定</td><td>入力</td><td>チェックボックス群</td><td>25% / 50% / 80% / 90% / 100% を表示、複数選択可。当月初回到達時にメール送信。全未選択は通知なし。上限 OFF 時は全未選択・非活性</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>アラートメール送信(動作)</td><td>出力</td><td>システム動作</td><td>選択閾値ごとにオーナーと当該 PJ の有効な管理者へ送信。同一アドレスは重複排除。送信先の表示・編集項目は設けない</td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>キャンセル</td><td>入力</td><td>ボタン(Secondary)</td><td>変更を破棄して閉じる。未保存変更があれば UnsavedChangesGuard で警告</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>保存</td><td>入力</td><td>ボタン(Primary、L3)</td><td>バリデーション通過後、<strong>再認証(パスワード再入力)</strong>を経て <code>PATCH /projects/{id}/quota-limits/questions</code>。成功で TOAST 表示し閉じる</td></tr>
+</tbody>
+</table>
+<div class="callout warning"><i class="bi bi-exclamation-triangle"></i><div><span class="c-title">注意</span>バリデーション: 上限件数は上限 ON 時のみ必須・1 件刻み・最小〜最大件数の範囲内(範囲外は <code>E-INPUT-*</code>、MSG-SCR-021-M1-ERR-001)、OFF 時は <code>limit=null</code>。アラート閾値は <code>25</code> / <code>50</code> / <code>80</code> / <code>90</code> / <code>100</code> の配列として保存し、重複値・許可値以外は受け付けない(上限 OFF 時は <code>alertThresholds=[]</code>)。課金対象件数 = <code>max(0, 今月の利用上限 - 無料利用枠)</code>、最大課金額 = <code>課金対象件数 × 質問単価</code> をサーバ側で算出します。保存は再認証成功が前提(失敗時は <code>E-AUTH-REAUTH-FAILED</code> で保存中断)。</div></div>
+
+<h2 id="5-入出力一覧">5. 入出力一覧</h2>
+<p class="section-lead">本モーダルが読み書きするテーブルと、呼び出す API の一覧です。テーブルの正本は <a href="../03_テーブル設計.html">03_テーブル設計</a>、API の正本は <a href="../02_API設計.html#576-patch-projectsidquota-limitsquestions">02_API設計 §5.7.6</a> です。</p>
+<table>
+<thead>
+<tr>
+<th rowspan="2">入出力名</th>
+<th rowspan="2">種別</th>
+<th rowspan="2">I/O</th>
+<th colspan="4">アクセス種別(CRUD)</th>
+<th rowspan="2">備考</th>
+</tr>
+<tr>
+<th>C</th>
+<th>R</th>
+<th>U</th>
+<th>D</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>プロジェクト上限</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td>現値ロード・月次上限件数 / アラート閾値の更新。<code>project_quota_limits</code>(<a href="../03_テーブル設計.html#324-project_quota_limits">テーブル設計 3.24</a>)</td></tr>
+<tr><td>上限取得</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>現値ロード <code>GET /projects/{id}/quota-limits</code>(<a href="../02_API設計.html#575-get-projectsidquota-limits">API 設計 5.7.5</a>)</td></tr>
+<tr><td>上限更新</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>PATCH /projects/{id}/quota-limits/questions</code>(<a href="../02_API設計.html#576-patch-projectsidquota-limitsquestions">API 設計 5.7.6</a>)</td></tr>
+</tbody>
+</table>
+
+<h2 id="6-画面イベント一覧">6. 画面イベント一覧</h2>
+<p class="section-lead">本モーダルで発生するイベントと発生タイミング・概要の一覧です。</p>
+<table>
+<thead>
+<tr>
+<th>イベント ID</th>
+<th>イベント</th>
+<th>発生タイミング</th>
+<th>概要</th>
+<th>関連項目</th>
+</tr>
+</thead>
+<tbody>
+<tr><td><code>EV-01</code></td><td>現値ロード</td><td>モーダル起動時</td><td><code>GET /projects/{id}/quota-limits</code> で現在の上限 ON/OFF・件数・アラート閾値を取得し初期表示</td><td><a href="#IT-01">IT-01</a>, <a href="#IT-02">IT-02</a>, <a href="#IT-04">IT-04</a></td></tr>
+<tr><td><code>EV-02</code></td><td>上限トグル切替</td><td>「上限設定」トグル操作時</td><td>OFF で件数入力・アラート設定を非活性化、ON で活性化し計算式を再描画</td><td><a href="#IT-01">IT-01</a>, <a href="#IT-02">IT-02</a>, <a href="#IT-04">IT-04</a></td></tr>
+<tr><td><code>EV-03</code></td><td>件数入力・計算式更新</td><td>「今月の利用上限」入力時</td><td>入力に応じて課金対象件数・最大課金額をリアルタイム併記。範囲外はエラー表示</td><td><a href="#IT-02">IT-02</a></td></tr>
+<tr><td><code>EV-04</code></td><td>保存</td><td>「保存」押下時(L3)</td><td>バリデーション通過後に再認証 → <code>PATCH /projects/{id}/quota-limits/questions</code>。成功で TOAST 表示し閉じる</td><td><a href="#IT-02">IT-02</a>, <a href="#IT-04">IT-04</a>, <a href="#IT-07">IT-07</a></td></tr>
+<tr><td><code>EV-05</code></td><td>キャンセル</td><td>「キャンセル」押下時</td><td>変更を破棄して閉じる。未保存変更があれば UnsavedChangesGuard で警告</td><td><a href="#IT-06">IT-06</a></td></tr>
+</tbody>
+</table>
+
+</article>
+<script>(function(){function r(){try{window.lucide&&lucide.createIcons({attrs:{'aria-hidden':'true',focusable:'false'}});}catch(e){}}if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',r);}else{r();}window.addEventListener('load',r);})();</script>
+</body>
+</html>

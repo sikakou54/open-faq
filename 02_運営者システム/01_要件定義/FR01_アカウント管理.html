@@ -80,7 +80,7 @@
 <td>ログイン、ログアウト、パスワード再設定ができること</td>
 <td style="text-align: center;">P0</td>
 </tr>
-<tr>
+<tr id="FR-005">
 <td>FR-005</td>
 <td>重要操作(パスワード変更、退会、課金情報変更、管理者ユーザー登録・停止・削除、月次上限件数変更)前に本人確認(再認証)を求めること。再認証方式は <strong>MVP ではパスワード再入力</strong>。<strong>運営者は FR-222 のとおり MVP から MFA 必須</strong>。再認証の有効期間は <strong>当該操作 1 回のみかつ 15 分以内</strong>とし、実装方式は基本設計を正本とする(メインシステム FR-005 と整合)</td>
 <td style="text-align: center;">P0</td>
@@ -90,12 +90,12 @@
 <td>パスワードに最低長・複雑性要件を適用できること(最低 12 文字、英大文字・小文字・数字・記号のうち 3 種類以上)。パスワードリセットリンクの有効期限は <strong>1 時間</strong>(メインシステム FR-006 と整合)</td>
 <td style="text-align: center;">P0</td>
 </tr>
-<tr>
+<tr id="FR-007">
 <td>FR-007</td>
 <td>ログイン試行の失敗回数制限ができること。<strong>5 回連続失敗</strong> で <strong>15 分間ロック</strong>し、時間経過または管理者解除で復旧できること。ロック単位、通知経路、監査記録の方式は基本設計を正本とする(メインシステム FR-007 と整合)</td>
 <td style="text-align: center;">P0</td>
 </tr>
-<tr>
+<tr id="FR-008">
 <td>FR-008</td>
 <td>セッションタイムアウトを以下のとおり実装すること: (a) <strong>無操作タイムアウト 30 分</strong>、(b) <strong>絶対タイムアウト 12 時間</strong>(メインシステム FR-008 と整合)</td>
 <td style="text-align: center;">P0</td>

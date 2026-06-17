@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCR-009 メンバー(プロジェクト) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<link rel="stylesheet" href="../../../assets/css/screen-mock.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@1.17.0/dist/umd/lucide.min.js"></script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/01_画面設計/SCR_009.html">
+<article class="content" id="content">
+<h1 id="scr-009-メンバープロジェクト">SCR-009 メンバー(プロジェクト)</h1>
+
+<aside class="page-summary">
+<p class="ps-lead"><strong>このページは、当該プロジェクトに割り当てたメンバーを一覧表示し、招待・ロール変更・割当解除モーダルへの導線を提供する画面 SCR-009 を定義します。</strong> 画面概要 / 画面遷移図 / 画面レイアウト / 画面項目定義 / 入出力一覧 / 画面イベント一覧 の 6 セクションで記述します。</p>
+</aside>
+<p class="doc-meta"><span><b>版数</b> v1.0</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<h2 id="1-画面概要">1. 画面概要</h2>
+<p class="section-lead">当該プロジェクトに割当のあるメンバーを一覧表示し、招待・ロール変更・割当解除モーダル(SCR-009-M1)への導線を提供する画面です。表示範囲は常に当該プロジェクト 1 件で、契約横断のメンバー管理は持ちません。</p>
+<table>
+<thead>
+<tr>
+<th>画面 ID</th>
+<th>画面名</th>
+<th>機能概要</th>
+</tr>
+</thead>
+<tbody>
+<tr><td id="SCR-009"><code>SCR-009</code></td><td>メンバー(プロジェクト)</td><td>当該プロジェクトのメンバー一覧表示・絞り込みと、招待 / 編集モーダルへの導線を提供する</td></tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>関連</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>FR / BR</td><td><a href="../../01_要件定義/FR02_ユーザー管理.html#FR-017">FR-017</a>, <a href="../../01_要件定義/FR02_ユーザー管理.html#FR-018a">FR-018a</a>〜<a href="../../01_要件定義/FR02_ユーザー管理.html#FR-018c">FR-018c</a>, <a href="../../01_要件定義/FR02_ユーザー管理.html#FR-019a">FR-019a</a>, <a href="../../01_要件定義/FR02_ユーザー管理.html#FR-021a">FR-021a</a>〜<a href="../../01_要件定義/FR02_ユーザー管理.html#FR-021c">FR-021c</a>, <a href="../../01_要件定義/FR19_アクセス制御細部.html#FR-333">FR-333</a> / <a href="../../01_要件定義/FR02_ユーザー管理.html#BR-038">BR-038</a>, <a href="../../01_要件定義/FR02_ユーザー管理.html#BR-039">BR-039</a></td></tr>
+<tr><td>関連画面</td><td><a href="SCR_009-M1.html"><code>SCR-009-M1</code> メンバー招待 / 編集モーダル</a> / <a href="SCR_008.html"><code>SCR-008</code> 概要(プロジェクト)</a></td></tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr>
+<th>ステークホルダ</th>
+<th>対象</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>オーナー</td><td>◯</td></tr>
+<tr><td>プロジェクト管理者(<code>admin</code>)</td><td>◯</td></tr>
+<tr><td>メンバー(<code>member</code>)</td><td>—</td></tr>
+</tbody>
+</table>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>オーナーは暗黙の <code>admin</code>(<code>project_users(role='admin', valid=1)</code> を自動保持)として全プロジェクトを対象にできます。プロジェクト管理者の対象範囲は当該プロジェクトのみです。当該プロジェクトに <code>admin</code> ロールを持たないユーザー(<code>member</code> 含む)の URL 直アクセスは 403 → ダッシュボードへリダイレクトします。</div></div>
+
+<h2 id="2-画面遷移図">2. 画面遷移図</h2>
+<p class="section-lead">本画面からの画面遷移を、画面 ID・画面名とイベント(操作)で示します。</p>
+<pre class="mermaid"><code>flowchart LR
+  S1["SCR-009 メンバー(プロジェクト)"]
+  S2["SCR-009-M1 メンバー招待 / 編集モーダル"]
+  S0["SCR-008 概要(プロジェクト)"]
+  S0 -- "サイドメニュー「メンバー」" --&gt; S1
+  S1 -- "+ メンバーを招待" --&gt; S2
+  S1 -- "利用者表示名クリック(編集)" --&gt; S2
+</code></pre>
+
+<h2 id="3-画面レイアウト">3. 画面レイアウト</h2>
+<div class="layout-embed">
+<div class="le-cap">メンバー一覧(SCR-009)</div>
+<div class="scr-mock"><div class="screen" id="scr-009" role="region" aria-labelledby="scr-009-title"> <div class="screen-header"> <div><span class="scr-id">SCR-009</span><span class="scr-name" id="scr-009-title">メンバー</span></div> <div class="scr-user">利用者: オーナー / プロジェクト管理者(担当プロジェクト範囲)</div> </div> <div class="app-layout"> <div class="app-header" role="banner"> <div class="left"> <span class="logo" role="link" aria-label="open-faq ホーム">open-faq</span> <span class="ws-switcher" role="button" aria-haspopup="menu" aria-label="管理範囲を切り替え(現在地: サポートサイト)">サポートサイト <i data-lucide="folder"></i></span> </div> <div class="right"> <span class="bell" role="button" aria-label="お知らせ通知ベル(未読 3 件)"><i data-lucide="bell"></i><span class="badge" aria-hidden="true">3</span></span> <span class="role-badge" aria-label="RoleBadge(プロジェクト管理者)"><i data-lucide="circle" class="dot dot-green"></i>ADMIN</span> <span class="user-menu" role="button" aria-haspopup="menu" aria-label="アカウントメニュー(admin@example.com)">▼ admin@example.com</span> </div> </div> <div class="app-sidebar" role="navigation" aria-label="プロジェクトワークスペース ナビゲーション"> <div class="item" role="link"><i data-lucide="home"></i>概要</div> <div class="group" role="heading" aria-level="2">対応</div> <div class="item" role="link"><i data-lucide="inbox"></i>要対応の質問<span class="badge">87</span></div>  <div class="group" role="heading" aria-level="2">コンテンツ</div> <div class="item" role="link"><i data-lucide="book-open"></i>FAQ</div>  <div class="item" role="link"><i data-lucide="puzzle"></i>ウィジェット</div> <div class="group" role="heading" aria-level="2">プロジェクト</div> <div class="item active" role="link" aria-current="page"><i data-lucide="users"></i>メンバー<span class="badge">1</span></div> <div class="item" role="link"><i data-lucide="gauge"></i>利用量と上限</div> <div class="group" role="heading" aria-level="2">通知</div> <div class="item" role="link"><i data-lucide="bell"></i>お知らせ<span class="badge">3</span></div> <div class="group" role="heading" aria-level="2">共通</div> <div class="item" role="link"><i data-lucide="scroll-text"></i>利用規約</div> <div class="item" role="link"><i data-lucide="shield"></i>プライバシーポリシー</div> </div> <div class="app-main" role="main" aria-label="メインコンテンツ"> <nav class="breadcrumb" aria-label="現在位置"><a>ホーム</a> / <span aria-current="page">メンバー</span></nav> <header class="page-header"><div><h1>メンバー</h1><p class="page-description">プロジェクトごとのメンバーと権限を管理します</p></div><div><button class="btn primary">+ メンバーを招待</button></div></header> <div class="filter-bar" role="search"><div class="filter-item"><i data-lucide="search"></i><div class="input" style="width: 180px;"><span class="placeholder">表示名・メール部分一致</span></div></div><div class="filter-item">招待状態: <div class="select" style="width: 140px;">▼ すべて</div></div></div> <div class="small" style="margin-bottom: 6px;">表示中: 1-7 / 全 7 件</div> <table class="wf"> <thead> <tr> <th>名前</th> <th>メールアドレス</th> <th>ロール <span title="ロールの種類:&#10;・オーナー: 契約全体を管理&#10;・管理者: 担当プロジェクトを管理&#10;・メンバー: 担当プロジェクトを利用" aria-label="ロールの説明" tabindex="0" style="cursor: help; color: var(--link);"><i data-lucide="info"></i></span></th> <th>ステータス</th> </tr> </thead> <tbody> <tr> <td>佐藤 太郎(自分)</td> <td>sato@example.com</td> <td><span class="badge-pill blue">オーナー</span></td> <td><span class="badge-pill green">認証済</span></td> </tr> <tr style="background: var(--warning-bg);"> <td><a class="link" role="button" aria-label="田中 一郎 を編集(SCR-009-M1)">田中 一郎</a></td> <td>tanaka@example.com</td> <td><span class="badge-pill green">管理者</span></td> <td><span class="badge-pill orange">招待中</span></td> </tr> <tr> <td><a class="link" role="button" aria-label="鈴木 良子 を編集(SCR-009-M1)">鈴木 良子</a></td> <td>suzuki@example.com</td> <td><span class="badge-pill gray">メンバー</span></td> <td><span class="badge-pill green">認証済</span></td> </tr> <tr> <td><a class="link" role="button" aria-label="山田 花子 を編集(SCR-009-M1)">山田 花子</a></td> <td>yamada@example.com</td> <td><span class="badge-pill gray">メンバー</span></td> <td><span class="badge-pill green">認証済</span></td> </tr> </tbody> </table> <div class="pager">表示中: 1-7 / 全 7 件 <span class="pg">‹</span><span class="pg">1</span><span class="pg">›</span></div> </div> </div> </div></div>
+</div>
+
+<h2 id="4-画面項目定義">4. 画面項目定義</h2>
+<p class="section-lead">本画面の入出力項目(絞り込み・一覧の列・件数表示・空状態を含む)を定義します。項目の正本は本表です。一覧表に「操作」列は設けず、編集遷移は利用者表示名のリンクに集約します(遷移リンクは名称列に付与する全画面共通方針)。一覧のバッジ表記のみ短縮形「管理者」を用い、編集モーダル・FR の正式呼称「プロジェクト管理者」とは表記レベルで分離します。</p>
+<table>
+<thead>
+<tr>
+<th>項目 ID</th>
+<th>項目</th>
+<th>入出力</th>
+<th>種類</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr><td id="IT-01"><code>IT-01</code></td><td>検索</td><td>入力</td><td>テキストボックス</td><td>表示名・メールの部分一致</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>招待状態フィルタ</td><td>入力</td><td>プルダウン</td><td>すべて / 招待中のみ / アクティベーション済み</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>件数表示</td><td>出力</td><td>テキスト</td><td>「1-50 / 全 N 件」形式</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>利用者表示名</td><td>出力</td><td>テキストリンク</td><td>クリックで SCR-009-M1 編集モードを開く。オーナー行・自分の行はテキスト表示のみ。招待中は名前隣に「招待中」バッジ。<code>users.name</code></td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>メールアドレス</td><td>出力</td><td>テキスト</td><td><code>users.email</code></td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>このプロジェクトでのロール</td><td>出力</td><td>バッジ</td><td><code>オーナー</code>(青、<code>project_users(role='admin')</code> 自動付与・削除対象外)/ <code>管理者</code>(緑、当該 PJ に <code>admin</code>)/ <code>メンバー</code>(灰、当該 PJ に <code>member</code>)。契約横断の「プロジェクト別ロール」列は持たない</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>ステータス</td><td>出力</td><td>バッジ</td><td><code>利用中</code> / <code>招待中</code> の 2 値。残日数は併記しない。<code>users.status</code>(<code>active</code> / <code>pending_activation</code>)</td></tr>
+<tr><td id="IT-08"><code>IT-08</code></td><td>招待中行強調</td><td>出力</td><td>行背景色</td><td><code>pending_activation</code> は黄色背景(一覧での視認性を確保)</td></tr>
+<tr><td id="IT-09"><code>IT-09</code></td><td>+ メンバーを招待</td><td>入力</td><td>ボタン(Primary)</td><td>SCR-009-M1 を「招待」モード(当該プロジェクトの 1 件の割当のみを扱う)で開く</td></tr>
+<tr><td id="IT-10"><code>IT-10</code></td><td>空状態</td><td>出力</td><td>EmptyState</td><td>「このプロジェクトにはまだメンバーが割当されていません。」</td></tr>
+<tr><td id="IT-11"><code>IT-11</code></td><td>権限不足ガード</td><td>出力</td><td>PermissionTooltip</td><td>当該 PJ に対する <code>admin</code> ロールを持たないユーザーの URL 直アクセス時は 403 → ダッシュボードへリダイレクト</td></tr>
+</tbody>
+</table>
+
+<h2 id="5-入出力一覧">5. 入出力一覧</h2>
+<p class="section-lead">本画面が読み書きするテーブルと、呼び出す API の一覧です。テーブルの正本は <a href="../03_テーブル設計.html">03_テーブル設計</a>、API の正本は <a href="../02_API設計.html#521-get-projectsidmembers">02_API設計 §5.2.1</a> です。</p>
+<table>
+<thead>
+<tr>
+<th rowspan="2">入出力名</th>
+<th rowspan="2">種別</th>
+<th rowspan="2">I/O</th>
+<th colspan="4">アクセス種別(CRUD)</th>
+<th rowspan="2">備考</th>
+</tr>
+<tr>
+<th>C</th>
+<th>R</th>
+<th>U</th>
+<th>D</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>プロジェクト割当</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td>当該プロジェクトの割当一覧取得。<code>project_users</code>(<a href="../03_テーブル設計.html#33-project_users">テーブル設計 3.3</a>)</td></tr>
+<tr><td>利用者</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td>表示名・メール・有効化状態の取得。<code>users</code>(<a href="../03_テーブル設計.html#31-users">テーブル設計 3.1</a>)</td></tr>
+<tr><td>メンバー一覧取得</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /projects/{id}/members</code>(<a href="../02_API設計.html#521-get-projectsidmembers">API 設計 5.2.1</a>)</td></tr>
+</tbody>
+</table>
+
+<h2 id="6-画面イベント一覧">6. 画面イベント一覧</h2>
+<p class="section-lead">本画面で発生するイベントと発生タイミング・概要の一覧です。</p>
+<table>
+<thead>
+<tr>
+<th>イベント ID</th>
+<th>イベント</th>
+<th>発生タイミング</th>
+<th>概要</th>
+<th>関連項目</th>
+</tr>
+</thead>
+<tbody>
+<tr><td><code>EV-01</code></td><td>一覧初期表示</td><td>画面遷移・リロード時</td><td><code>GET /projects/{id}/members</code> で当該プロジェクトのメンバー一覧を取得し表示。0 件時は EmptyState</td><td><a href="#IT-04">IT-04</a>, <a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a>, <a href="#IT-07">IT-07</a>, <a href="#IT-08">IT-08</a>, <a href="#IT-10">IT-10</a></td></tr>
+<tr><td><code>EV-02</code></td><td>絞り込み適用</td><td>検索 / 招待状態フィルタ変更時</td><td>条件を付与して一覧を再取得し更新。件数表示も更新</td><td><a href="#IT-01">IT-01</a>, <a href="#IT-02">IT-02</a>, <a href="#IT-03">IT-03</a></td></tr>
+<tr><td><code>EV-03</code></td><td>招待モーダル起動</td><td>「+ メンバーを招待」押下時</td><td>SCR-009-M1 を招待モードで開く</td><td><a href="#IT-09">IT-09</a></td></tr>
+<tr><td><code>EV-04</code></td><td>編集モーダル起動</td><td>利用者表示名リンク押下時</td><td>SCR-009-M1 を編集モードで開く(オーナー行・自分の行は非リンク)</td><td><a href="#IT-04">IT-04</a></td></tr>
+</tbody>
+</table>
+
+</article>
+<script>(function(){function r(){try{window.lucide&&lucide.createIcons({attrs:{'aria-hidden':'true',focusable:'false'}});}catch(e){}}if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',r);}else{r();}window.addEventListener('load',r);})();</script>
+</body>
+</html>

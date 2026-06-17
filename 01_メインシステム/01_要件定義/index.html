@@ -326,6 +326,736 @@
 <td>月次請求の確定および運営お知らせの配信が発生したタイミングで、対象管理者のお知らせ受信箱に該当お知らせが生成されること(既存のメール通知に加えて)</td>
 <td style="text-align: center;">P0</td>
 </tr>
+<tr>
+<td>BR-028</td>
+<td>アカウント利用者は初回ログイン時にメールアドレスとパスワードで認証でき、システムはパスワードをハッシュ化して安全に保存すること(FR01)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-029</td>
+<td>アカウント利用者は重要操作(パスワード変更 / 退会 / 課金情報変更 / 管理者ユーザー登録・停止・削除 / 月次上限件数変更)の実行前に本人による再認証を行うこと(有効範囲 = 当該操作 1 回かつ 15 分以内)(FR01)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-030</td>
+<td>ログインが 5 回連続で失敗した時に当該アカウントを 15 分間ロックし、時間経過または管理者の解除で復旧できること(FR01)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-031</td>
+<td>無操作が 30 分続いた時にセッションを失効させること(FR01)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-032</td>
+<td>ログインから 12 時間でセッションを失効させ、1 営業日内に再認証を求めること(FR01)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-033</td>
+<td>アカウント利用者は複数のデバイスから同時にログインできること(FR01)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-034</td>
+<td>契約が停止された時に配下の管理者ユーザーの全セッションを速やかに無効化すること(FR01)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-035</td>
+<td>サスペンション直後はアカウント利用者は課金・退会のみ操作でき、既存セッションは継続し、新規ログインは停止時のアクセス制限ルールに従うこと(FR01)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-036</td>
+<td>管理画面の状態変更操作においてセッションの不正利用と改ざんを検知・防止すること(FR01)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-037</td>
+<td>1 契約のオーナーは 1 名で全権とオーナー専有機能を恒久保持し、メンバーの権限はプロジェクトごとの役割(プロジェクト管理者 / メンバー)で表すこと。メンバーは割当プロジェクトのデータのみ操作できること(FR02)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-038</td>
+<td>オーナー / プロジェクト管理者はプロジェクト単位でメールアドレスと役割を指定してメンバーを招待でき、氏名は招待時に入力しないこと(FR02)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-039</td>
+<td>招待された本人が招待リンク(有効期限 7 日)から氏名・初回パスワード・利用規約同意・プライバシーポリシー同意を入力してアカウントを有効化でき、完了時に役割割当が有効になること(FR02)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-040</td>
+<td>オーナー / プロジェクト管理者は当該プロジェクトのメンバーの役割変更・離脱・メールアドレス更新を行え、変更を監査記録し本人へ通知すること(自分自身の降格・解除は不可、氏名は本人のみ変更)(FR02)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-041</td>
+<td>最後の有効なプロジェクト割当が解除された時にアカウントを利用停止し、セッション・未使用招待を無効化、90 日経過後にデータを消去すること(FR02)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-042</td>
+<td>メンバー数に固定上限を設けず、上限接近・急増を検知した時にオーナーおよび全プロジェクト管理者へアラート通知すること(FR02)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-043</td>
+<td>同一オーナー配下で既存の有効・招待中アカウントと同一メールアドレスのメンバーを重複招待できないこと(FR02)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-044</td>
+<td>課金・支払・請求履歴・退会・規約再同意・契約設定・プロジェクト作成編集削除はオーナー専有とし、プロジェクト単位の利用上限・無料枠はオーナーまたは当該プロジェクト管理者が変更できること(FR02)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-045</td>
+<td>オーナーが FAQ・ウィジェット・ログを分ける単位「プロジェクト」を作成・編集・削除でき、削除は名称確認と再認証を要する重要操作とすること(FR03)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-046</td>
+<td>プロジェクト作成時に作成者であるオーナーを当該プロジェクトの管理者として自動割当し、管理者の別途指定 UI は設けないこと(FR03)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-047</td>
+<td>プロジェクト削除時に当該メンバー割当を解除し、他に有効割当を持たないメンバー(オーナー除く)を利用停止、解除データは 90 日後に完全消去すること(FR03)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-048</td>
+<td>ウィジェット公開キーをプロジェクト単位で発行・ローテーションし、再発行は管理者以上に限定して再認証と既存コード無効化の確認を求めること(FR03)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-049</td>
+<td>FAQ・質問ログ・未解決質問をプロジェクトごとに分離して管理すること(FR03)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-050</td>
+<td>ウィジェット設置を許可する Web サイトのドメインをプロジェクトごとに複数設定できること(FR03)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-051</td>
+<td>プロジェクトごとの連絡先メールを 1 件設定し、確認メール(24 時間)による本人確認を経て有効化すること(FR03)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-052</td>
+<td>公開ウィジェットの未解決時・質問受付制限時に確認済みプロジェクト連絡先メールを表示し、未設定・未確認時は表示しないこと(FR03)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-053</td>
+<td>プロジェクト削除時に関連データ(FAQ・質問ログ・未解決質問)の取扱いをアカウント利用者が確認・選択すること(FR03)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-054</td>
+<td>プロジェクト数に固定上限を設けず、利用状況を監視し急増を検知した時にオーナーへ通知すること(FR03)</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>BR-055</td>
+<td>アカウント利用者が担当プロジェクトの FAQ を質問と回答を伴って登録・編集・削除できること(FR04)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-056</td>
+<td>FAQ・プロジェクト・メンバーユーザー・お知らせ・契約の削除は管理画面から復元できないこと(FR04)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-057</td>
+<td>FAQ を下書き・公開中・非公開で管理し、公開前に内容を確認できること(FR04)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-058</td>
+<td>FAQ をカテゴリで整理し、検索・並び替え・絞り込みができること(FR04)</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>BR-059</td>
+<td>FAQ 件数および 1 件あたり文字数に契約共通の上限を設け、超過時に警告・登録拒否できること(FR04)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-060</td>
+<td>FAQ の同時編集による更新内容の喪失を防ぐため競合を検出できること(FR04)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-061</td>
+<td>FAQ の登録元(未解決質問からの登録か手動登録か)を保持できること(FR04)</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>BR-062</td>
+<td>ウィジェット利用者が質問した時に、公開中の登録済み FAQ のみを根拠として回答し、根拠のない情報を独自生成しないこと(FR05)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-063</td>
+<td>回答生成時に FAQ の要約・言い換え・整理にとどめ、参照 FAQ にない情報を追加しないこと(FR05)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-064</td>
+<td>回答に利用した FAQ を記録し、ウィジェット利用者が参照 FAQ を確認できること(FR05)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-065</td>
+<td>関連度・信頼度のしきい値で回答可否を判定し、FAQ 矛盾時は未解決として扱うこと(MVP 関連度 0.50 / 信頼度 0.60)(FR05)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-066</td>
+<td>運営者が関連度・信頼度のしきい値を 3 階層(グローバル / 契約 / プロジェクト)で調整でき、より具体的な設定を優先すること(FR05)</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>BR-067</td>
+<td>FAQ で回答できなかった時に問い合わせ ID を付与して未解決登録しウィジェットに案内し、処理エラー時はエラー表示すること(FR05)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-068</td>
+<td>ウィジェット利用者の入力で FAQ 限定回答方針が変更されず、モデル更新・プロンプト変更時に回帰テストを実行すること(FR05)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-069</td>
+<td>出力前検査で参照 FAQ 外の固有名詞・数値・手順は未解決に倒し、個人情報はマスキングして検出種別を記録すること(FR05)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-070</td>
+<td>AI モデル / 基盤の変更時に運営者が動作確認・切替・品質回帰確認・ロールバックを行え、テストセットは 50 組以上とすること(FR05)</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>BR-071</td>
+<td>登録済み FAQ で回答できなかった質問を未解決質問として登録し、ウィジェット利用者が「解決しなかった」を選択した質問も登録すること(FR06)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-072</td>
+<td>未解決質問の登録時に質問・未解決理由・発生日時・関連プロジェクト・関連質問ログを記録し、問い合わせ ID を付与すること(FR06)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-073</td>
+<td>未解決質問の対応状況を「対応中 / 対応済み」の 2 区分で保持し、登録時は対応中、アカウント利用者が詳細画面の手動操作で双方向に切り替えること(FR06)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-074</td>
+<td>FAQ 下書き保存・FAQ 公開が起きても未解決質問の対応状況を変更せず、変更は詳細画面の手動操作のみとすること(FR06)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-075</td>
+<td>アカウント利用者が未解決質問の現在の対応状況を一覧画面と詳細画面で確認できること(FR06)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-076</td>
+<td>ウィジェット利用者が解決できなかった未解決質問を起点に FAQ 登録を開始し、質問文を新しい FAQ の質問欄へ初期反映すること(FR07)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-077</td>
+<td>FAQ 回答はアカウント利用者が確認のうえ自分で入力・編集し、質問文以外を回答欄へ自動取得しないこと(FR07)</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>BR-078</td>
+<td>FAQ 登録(下書き保存・公開)前に質問・回答・公開状態を確認・編集できること(FR07)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-079</td>
+<td>FAQ の下書き初回保存・公開を行っても未解決質問の状況を自動変更せず、状況切替は手動操作のみとすること(FR07)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-080</td>
+<td>未解決質問から、それを起点に登録した FAQ をたどって参照できること(FR07)</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>BR-081</td>
+<td>処理エラーを検知して状況に応じた応答を返し、ウィジェット利用者へ内容の分かるエラー表示を行うこと(FR08)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-082</td>
+<td>処理エラーを未解決登録分岐と区別し、未解決質問として自動登録しないこと(FR08)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-083</td>
+<td>自動再試行で回復しない時や再試行が妥当な時に再試行を案内し、連打を防止すること(FR08)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-084</td>
+<td>サーバー内部起因のエラーを運用確認できるよう記録し、エラー識別子を提示してサポート問い合わせと紐付けること(FR08)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-085</td>
+<td>エラー記録に個人情報・認証トークン・パスワードハッシュ・カード情報を含めず、入力を全文保存しないこと(FR08)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-086</td>
+<td>完全従量課金制 + 月次無料枠を採用し、JST 暦月で無料枠を毎月リセットすること(FR09)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-087</td>
+<td>質問数・AI 回答数・未解決質問数・AI 利用コスト・FAQ 件数を集計し、サマリを 5 分以内の遅延で反映すること(FR09)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-088</td>
+<td>オーナー / プロジェクト管理者がプロジェクトごとに質問数の月次上限とアラート閾値を設定できること(優先順位: プロジェクト設定 &gt; 運営者上書き &gt; デフォルト)(FR09)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-089</td>
+<td>質問数 100% 到達時に当該プロジェクトのウィジェット新規質問受付を停止し、125% で運営者へ追加通知すること(FR09)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-090</td>
+<td>選択された上限アラート閾値の当月初回到達時にオーナー + 当該プロジェクト管理者へメール送信すること(FR09)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-091</td>
+<td>支払方法未登録のプロジェクトが無料枠を超過した時に当該プロジェクトの質問受付のみ停止し、登録で即時再開すること(FR09)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-092</td>
+<td>決済失敗確定通知を起点に 7 日間の猶予を計測し、経過後に契約をサスペンション中へ移行すること(FR09)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-093</td>
+<td>オーナーが請求画面で支払方法・請求状態・履歴・契約全体請求見込み・プロジェクト別課金内訳を確認できること(FR09)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-094</td>
+<td>契約・種別別レート制限を適用し、運営者が契約単位でしきい値を調整できること(FR09)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-095</td>
+<td>課金プロバイダ通知を受信し、送信元検証・重複防止・履歴・再処理・失敗通知を備えること(FR09)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-096</td>
+<td>主要指標(質問数・未解決数・公開 FAQ 件数等)を一目で確認し、対応案件を俯瞰できること(FR10)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-097</td>
+<td>要対応の質問の対応状況を「対応中 / 対応済み」で確認できること(FR10)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-098</td>
+<td>よく聞かれる質問や未解決の傾向を確認し、FAQ 改善のターゲット候補を見つけられること(FR10)</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>BR-099</td>
+<td>集計対象期間を指定して利用状況を絞り込めること(FR10)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-100</td>
+<td>通知の失敗件数・バウンス件数を確認し、宛先到達性の異常に気づけること(FR10)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-101</td>
+<td>管理範囲(契約全体 / 各プロジェクト)を役割に応じて切り替え、表示範囲を制御すること(FR10)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-102</td>
+<td>各画面の目的・集計時点・比較値・データ状態を統一表示し、値の誤認を防ぐこと(FR10)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-103</td>
+<td>請求確定・運営お知らせ等の契機で、対象のアカウント利用者へメール / 受信箱で通知を届けること(FR11)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-104</td>
+<td>月次請求確定時にオーナーへ内訳付きメールを送り、お知らせ受信箱にも生成し、重複請求しないこと(FR11)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-105</td>
+<td>運営者が宛先範囲・件名・本文・送信日時を指定して運営お知らせを配信し、種別別オプトアウト可否を制御すること(FR11)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-106</td>
+<td>メンバーのプロジェクト役割割当の追加・変更・剥奪時に、当該メンバーへ受信箱とメールで通知すること(FR11)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-107</td>
+<td>運用イベント発生時に「システム通知」のお知らせを自動生成すること(FR11)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-108</td>
+<td>通知送信失敗時に上限を設けて再送すること(FR11)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-109</td>
+<td>バウンス・無効アドレス・苦情検知時に当該宛先送信を停止し、全契約横断の停止リストで共有すること(FR11)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-110</td>
+<td>契約 / プロジェクト単位で送信レート・バウンス率・苦情率を監視し、超過時に抑制し運営者へ通知すること(FR11)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-111</td>
+<td>通知の配信状態を確認できること(FR11)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-112</td>
+<td>アカウント認証関連通知はオプトアウトできないこと(FR11)</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>BR-113</td>
+<td>ウィジェット利用者入力文字列を、メール件名・送信元など外部露出箇所へそのまま使わないこと(FR11)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-114</td>
+<td>アカウント利用者が埋め込みコードを取得し自社サイトに設置してウィジェットを提供できること(FR12)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-115</td>
+<td>許可ドメイン上でのみウィジェットを動作させ、他契約データの参照を防ぐこと(FR12)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-116</td>
+<td>ウィジェット利用者がチャット UI で AI 回答を会話形式で受け取り、会話履歴と受付状態を保持できること(FR12)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-117</td>
+<td>AI 未解決時・受付制限中に、その旨と確認済み連絡先メールをシステム返信で案内すること(FR12)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-118</td>
+<td>主色をプロジェクトごとに設定でき、運営者ロゴを必須表示し固定仕様は変更させないこと(FR12)</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>BR-119</td>
+<td>モバイル端末・対応ブラウザで、アクセシビリティに配慮した状態でウィジェットを使えること(FR12)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-120</td>
+<td>CDN・キャッシュでウィジェット配信を高速化し、初期表示の応答性を保つこと(FR12)</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>BR-121</td>
+<td>ウィジェットで質問を入力する時に、入力内容の利用目的と保存期間をウィジェット利用者へ案内すること(FR13)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-122</td>
+<td>オーナーが退会を申請した時に、契約データを定められた猶予期間の経過後に削除すること(FR13)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-123</td>
+<td>退会猶予期間中も管理画面で参照を許可しつつ、新規書込みを禁止すること(FR13)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-124</td>
+<td>利用規約・プライバシーポリシーを改定した時に、改定文書のみを対象に文書ごとの再同意を取得すること(FR13)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-125</td>
+<td>契約データの保存リージョンを選択またはサービス側で明示すること(FR13)</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>BR-126</td>
+<td>ウィジェット表示時に Cookie 同意取得バナーを表示し、必須以外はオプトイン・第三者系は同意後に有効化すること(FR13)</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>BR-127</td>
+<td>通信を暗号化し、機密データを暗号化または安全なハッシュで保存すること(FR14)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-128</td>
+<td>最小権限の原則に従いオーナー境界でデータを分離し、ユーザー種別ごとに認可すること(FR14)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-129</td>
+<td>API・ウィジェットにレート制限を適用し、必要に応じ Bot 対策を行い不審リクエストを検知・記録すること(FR14)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-130</td>
+<td>ウィジェットの埋め込み元ドメインを検証し、許可ドメイン以外からの読み込みを拒否すること(FR14)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-131</td>
+<td>ユーザー管理操作を操作者・対象・変更前後差分・実行時刻とともに改ざん検知可能な監査ログで保持すること(FR14)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-132</td>
+<td>公開キーをローテーションでき、再発行時に旧キーを 24 時間の猶予で失効させること(FR14)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-133</td>
+<td>大量送信・Bot 疑い・規約違反を検知した時に自動ブロックし、管理者へ即時通知して申し立て窓口を案内すること(FR14)</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>BR-134</td>
+<td>アカウント利用者が自契約宛のお知らせを一覧と詳細(本文・種別・重要度・配信日時)で確認できること(FR15)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-135</td>
+<td>お知らせを 4 段階の重要度で区分し、最重要を 3 場面に限定して付与すること(FR15)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-136</td>
+<td>お知らせを個別 / 一括で既読化し、種別・既読・期間で絞り込めること(FR15)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-137</td>
+<td>通知ベルで未読件数と直近のお知らせを把握できること(FR15)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-138</td>
+<td>請求確定・運営お知らせ・運用イベント時に受信箱へお知らせを生成すること(FR15)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-139</td>
+<td>同一契約・同一イベントの 60 分以内の連続発火を 1 件に集約すること(FR15)</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>BR-140</td>
+<td>受信箱を利用者本人限定とし、ウィジェット利用者へ非公開とすること(FR15)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-141</td>
+<td>無効化・退会確定時に受信箱を削除すること(FR15)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-142</td>
+<td>一括既読操作を操作者・件数・日時とともに監査記録すること(FR15)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-143</td>
+<td>アカウント利用者が FAQ をキーワードで全文検索して目的の FAQ を素早く見つけられること(FR16)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-144</td>
+<td>アカウント利用者が過去の質問ログをキーワードや期間で検索し、記録を抽出できること(FR16)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-145</td>
+<td>検索結果を並び替えとページングで目的の項目までたどれること(FR16)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-146</td>
+<td>現在開いているプロジェクトに属するデータのみを検索結果に含め、他プロジェクト・他契約のデータを返さないこと(FR16)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-147</td>
+<td>アカウント利用者が大量の FAQ を CSV でまとめて取り込め、取り込み用テンプレートを事前にダウンロードできること(FR17)</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>BR-148</td>
+<td>取り込み時に各行が新規登録か既存上書きかを、行内の FAQ 識別子の有無で判定すること(FR17)</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>BR-149</td>
+<td>既存 FAQ を上書きする時に、上書き前の内容を改訂履歴として残すこと(FR17)</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>BR-150</td>
+<td>一部行が失敗した時に成功分を反映し失敗理由を記録し、アカウント利用者が失敗行と理由を確認できること(FR17)</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>BR-151</td>
+<td>アカウント利用者が登録済みの FAQ を CSV で書き出せること(FR17)</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>BR-152</td>
+<td>複数のアカウント利用者が同じ FAQ を同時編集した時に、後勝ち上書きを防ぐため衝突を検出し再読み込みを促すこと(FR18)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-153</td>
+<td>FAQ 下書きの編集中は内容を自動保存し、未保存変更がある離脱時に警告すること(FR18)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-154</td>
+<td>FAQ の本文・状態変更を直近 50 件まで改訂履歴として保持し、差分確認と任意版ロールバックを可能にすること(FR18)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-155</td>
+<td>一括既読はお知らせ最大 100 件、FAQ の一括状態変更は最大 50 件を 1 操作の上限とすること(FR18)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-156</td>
+<td>不可逆・影響大の操作に確認レベル(確認ダイアログ / 対象名タイプ確認 / 再認証)を割り当て、誤操作を防ぐこと(FR18)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-157</td>
+<td>管理スコープ(契約範囲 / プロジェクト範囲)と設定対象の影響範囲を画面から判別できるようにすること(FR18)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-158</td>
+<td>名称を主リンクとし、内部の英語値を日本語の業務語彙へ変換して表示すること(FR18)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-159</td>
+<td>プロジェクト 0 件時は説明文と作成導線だけの空状態を表示し、段階型チェックリストは表示しないこと(FR18)</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>BR-160</td>
+<td>契約スコープ共通項目に影響範囲「利用中のプロジェクト: N」(N=0 は未使用)を併記すること(FR18)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-161</td>
+<td>運営者画面への海外 IP からのアクセスを既定で遮断すること(利用者側 API・ウィジェットは対象外)(FR19)</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>BR-162</td>
+<td>同一アカウントで複数デバイスから同時ログインでき、運営者は全セッションを強制ログアウトできること(FR19)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-163</td>
+<td>オーナーに対する退会・停止・削除・降格・譲渡を一切受け付けないこと(FR19)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-164</td>
+<td>自分自身の利用停止・削除・役割降格はできず、別の管理者またはオーナー経由での実行を促すこと(FR19)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-165</td>
+<td>メンバーを 1 オーナー配下に固定し、別オーナー配下では別アカウントとして扱うこと(FR19)</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>BR-166</td>
+<td>メンバーの役割をプロジェクトごとに「割当しない / メンバー / 管理者」から選んで付与すること(FR19)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-167</td>
+<td>オーナー・メンバーともダッシュボードを閲覧でき、他画面はロールとプロジェクト境界を要求すること(FR19)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-168</td>
+<td>役割・割当の変更は既存セッションを即時失効させず、次回の認可チェック時点で反映すること(FR19)</td>
+<td style="text-align: center;">P1</td>
+</tr>
+<tr>
+<td>BR-169</td>
+<td>最後の有効なプロジェクト割当の解除時にアカウントを自動無効化し、全セッション・未使用招待を失効すること(FR19)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-170</td>
+<td>管理範囲と適用役割を確認でき、権限外の操作・画面は表示せず直アクセスを拒否すること(FR19)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-171</td>
+<td>ウィジェット利用者が質問を送信した時に AI 推論を 8 秒以内で完了させ、超過時は処理エラーとして打ち切ること(FR20)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-172</td>
+<td>運営者のしきい値変更を短時間で反映し、設定取得の長期障害時は直近設定またはグローバル既定値(信頼度 0.60 / 関連度 0.50)で推論を継続し運営者へアラート通知すること(FR20)</td>
+<td style="text-align: center;">P0</td>
+</tr>
+<tr>
+<td>BR-173</td>
+<td>運営者のみが行うプロンプトテンプレート編集時に AI 品質回帰テストを連動実行し、合格しない限り本番へ反映させないこと(FR20)</td>
+<td style="text-align: center;">P0</td>
+</tr>
 </tbody>
 </table>
 <hr />
@@ -544,7 +1274,7 @@
 <td>セキュリティ</td>
 <td>最小権限の原則を満たすこと</td>
 </tr>
-<tr>
+<tr id="NFR-304">
 <td>NFR-304</td>
 <td>セキュリティ</td>
 <td>パスワードは安全なハッシュ方式で保存すること(運営者は強パラメータ。詳細設計を正本)</td>
@@ -579,7 +1309,7 @@
 <td>セキュリティ</td>
 <td>外部サービスからの受信通知(コールバック)の送信元正当性検証を必須とすること</td>
 </tr>
-<tr>
+<tr id="NFR-311">
 <td>NFR-311</td>
 <td>セキュリティ</td>
 <td>管理画面の状態変更操作はなりすまし・CSRF を防止すること</td>
@@ -614,7 +1344,7 @@
 <td>セキュリティ</td>
 <td>不正利用検知(FR-195)発火時は運営者通知と管理者メール通知の両方</td>
 </tr>
-<tr>
+<tr id="NFR-318">
 <td>NFR-318</td>
 <td>セキュリティ</td>
 <td>Cookie はセキュア属性必須、サブドメイン間共有なし</td>
@@ -805,7 +1535,7 @@
 <tr>
 <td>NFR-704</td>
 <td>データ削除</td>
-<td>物理削除と匿名化を選択可。論理削除→物理削除 = 30 日</td>
+<td>物理削除と匿名化を選択可。論理削除→物理削除 = 90 日</td>
 </tr>
 <tr>
 <td>NFR-705</td>

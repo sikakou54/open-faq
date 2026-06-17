@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-  <title>FAQ AI ウィジェット SaaS - メインシステム ER 図(30 テーブル)</title>
+  <title>FAQ AI ウィジェット SaaS - メインシステム ER 図(31 テーブル)</title>
 <style>
   @page { size: A3 landscape; margin: 8mm; }
   * { box-sizing: border-box; }
@@ -38,7 +38,7 @@
 <body>
 
 <header>
-        <h1>FAQ AI ウィジェット SaaS - メインシステム ER 図(30 テーブル)</h1>
+        <h1>FAQ AI ウィジェット SaaS - メインシステム ER 図(31 テーブル)</h1>
   <div class="meta">
     <span>正本: <a href="03_テーブル設計.html" style="color:#93c5fd;">03_テーブル設計.html §3</a></span>
     &nbsp;|&nbsp;
@@ -49,7 +49,7 @@
 <div class="toolbar">
   <button type="button" id="btn-zoom-in">+ 拡大</button>
   <button type="button" id="btn-zoom-out">- 縮小</button>
-  <button type="button" id="btn-reset">⤾ リセット</button>
+  <button type="button" id="btn-reset"><i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i> リセット</button>
   <button type="button" id="btn-fit"><i class="bi bi-arrows-fullscreen" aria-hidden="true"></i> 全体表示</button>
   <span class="legend">
     操作: ドラッグでパン / マウスホイールでズーム / 凡例: <code>PK</code> 主キー <code>FK</code> 外部キー <code>PK,FK</code> 複合(主キー兼外部キー)
@@ -67,7 +67,7 @@
   <ul>
     <li><b>掲載カラム</b>: MVPの主要キー(PK / FK)+ 業務キー(<code>inquiry_code</code> / <code>widget_public_key</code> 等)+ 状態カラム(<code>inquiries.status</code> / <code>contract_status</code> 等)+ 特徴的なカラム(<code>actor_user_id</code> 等)。</li>
     <li><b>省略カラム</b>: <code>created_at</code> / <code>updated_at</code> / <code>valid</code> / <code>*_encrypted</code> / <code>*_key_version</code> / <code>metadata</code> 等の共通技術カラム。完全なカラム定義は <a href="03_テーブル設計.html">03_テーブル設計.html §3</a> を参照。</li>
-    <li><b>関係性</b>: 実線 = FK 制約あり / 注記 <code>FK制約なし</code> = 論理参照のみ(<code>error_logs</code> / <code>announcement_recipients</code> の一部カラム)。</li>
+    <li><b>関係性</b>: 実線 = FK 制約あり / 注記 <code>FK制約なし</code> = 論理参照のみ(<code>error_logs</code> / <code>announcement_recipients</code> の一部カラム)。本図は FK 制約に基づく関係のみを線で描く。<code>announcement_recipients</code> → <code>inbox_messages</code> の受信箱 fan-out と <code>billing_subscriptions</code> → <code>billing_invoices</code> の請求書生成は <strong>FK 制約を持たないアプリ層の論理 fan-out</strong> のため線を引かない(<code>inbox_messages</code> / <code>billing_invoices</code> はいずれも <code>contract_owners</code> に FK で帰属)。</li>
     <li><b>MVP主体モデル</b>: <code>users</code>(管理者:オーナー / プロジェクト管理者 / メンバー)+ <code>contract_owners</code>(オーナー専有属性、行存在 = オーナー判定)+ <code>project_users</code>(プロジェクト割当 + 別ロール)。ウィジェット利用者は永続アカウントを持たない。</li>
     <li><b>SaaS 境界キー</b>: <code>contract_owner_user_id</code>(全契約スコープのテーブルに冗長保持、認可境界クエリ高速化)。</li>
   </ul>
@@ -123,15 +123,18 @@ erDiagram
   }
   faqs {
     TEXT id PK
-    TEXT contract_owner_user_id FK
+    TEXT contract_owner_user_id FK "contract_owners(user_id)"
     TEXT project_id FK "projects(id)"
     TEXT source_unresolved_question_id FK "inquiries(id) opt"
+    TEXT created_by FK "users(id)"
+    TEXT updated_by FK "users(id)"
     TEXT status "draft/published/hidden/deleted"
     INTEGER version
   }
   faq_revisions {
     TEXT id PK
     TEXT faq_id FK "faqs(id)"
+    TEXT created_by FK "users(id)"
     INTEGER version
     TEXT status_snapshot
     TEXT source "manual/import"
@@ -144,7 +147,7 @@ erDiagram
   }
   question_logs {
     TEXT id PK
-    TEXT contract_owner_user_id FK
+    TEXT contract_owner_user_id FK "contract_owners(user_id)"
     TEXT project_id FK "projects(id)"
     INTEGER metering_billable "課金確定スナップショット"
     TEXT result_type "answered/unanswered/error"
@@ -157,7 +160,7 @@ erDiagram
   }
   inquiries {
     TEXT id PK
-    TEXT contract_owner_user_id FK
+    TEXT contract_owner_user_id FK "contract_owners(user_id)"
     TEXT project_id FK "projects(id)"
     TEXT question_log_id FK "question_logs(id) opt"
     TEXT inquiry_code "UNIQUE"
@@ -165,15 +168,15 @@ erDiagram
   }
   notification_logs {
     TEXT id PK
-    TEXT contract_owner_user_id FK
-    TEXT inquiry_id FK "opt"
+    TEXT contract_owner_user_id FK "contract_owners(user_id)"
+    TEXT inquiry_id FK "inquiries(id) opt"
     TEXT notification_type "TPL-*"
     TEXT delivery_state "queued/sending/sent/delivered/failed/bounced/complained/suppressed"
   }
   ai_threshold_persistent_cache {
     TEXT id PK
-    TEXT contract_owner_user_id FK "opt"
-    TEXT project_id FK "opt"
+    TEXT contract_owner_user_id FK "contract_owners(user_id) opt"
+    TEXT project_id FK "projects(id) opt"
     TEXT scope "global/owner/project"
     INTEGER version
   }
@@ -185,8 +188,8 @@ erDiagram
   }
   audit_logs {
     TEXT id PK
-    TEXT contract_owner_user_id FK "opt"
-    TEXT actor_user_id FK "users(id) / admin時"
+    TEXT contract_owner_user_id FK "contract_owners(user_id) opt"
+    TEXT actor_user_id FK "users(id) opt"
     TEXT actor_role "admin/system/service_operator"
     TEXT action
     TEXT retention_class "general/billing/operator_high_priv"
@@ -199,34 +202,44 @@ erDiagram
   }
   billing_subscriptions {
     TEXT id PK
-    TEXT contract_owner_user_id FK
+    TEXT contract_owner_user_id FK "contract_owners(user_id)"
     TEXT stripe_subscription_id "UNIQUE"
     TEXT status "active/past_due/canceled/unpaid/incomplete"
     TEXT plan_id
   }
   billing_invoices {
     TEXT id PK
-    TEXT contract_owner_user_id FK
+    TEXT contract_owner_user_id FK "contract_owners(user_id)"
     TEXT billing_year_month "(owner,YYYY-MM) UNIQUE"
     TEXT status "draft/issued/paid/past_due/refunded/void"
     TEXT stripe_invoice_id "UNIQUE"
   }
   usage_metering {
     TEXT id PK
-    TEXT contract_owner_user_id FK
-    TEXT billing_year_month "(owner,YYYY-MM) UNIQUE"
+    TEXT contract_owner_user_id FK "contract_owners(user_id)"
+    TEXT project_id FK "projects(id)"
+    TEXT billing_year_month "(owner,project,YYYY-MM) UNIQUE"
     INTEGER question_count
     INTEGER ai_cost_yen
   }
   owner_quota_overrides {
     TEXT id PK
-    TEXT contract_owner_user_id FK
+    TEXT contract_owner_user_id FK "contract_owners(user_id)"
     TEXT resource_kind "widget_*/email_per_hour/admin_api_per_min"
     INTEGER threshold
     TEXT valid_until
   }
+  project_quota_limits {
+    TEXT id PK
+    TEXT project_id FK "projects(id)"
+    TEXT contract_owner_user_id FK "contract_owners(user_id)"
+    TEXT resource_kind "(project_id,resource_kind) UNIQUE"
+    INTEGER threshold "月次上限件数(NULL=上限OFF)"
+    INTEGER free_quota "月次無料枠(運営者設定)"
+  }
   service_announcements {
     TEXT id PK
+    TEXT created_by FK "users(id)"
     TEXT importance "low/normal/high/critical"
     TEXT published_at
     TEXT retracted_at
@@ -244,7 +257,7 @@ erDiagram
   }
   inbox_messages {
     TEXT id PK
-    TEXT contract_owner_user_id FK
+    TEXT contract_owner_user_id FK "contract_owners(user_id)"
     TEXT recipient_user_id FK "users(id)"
     TEXT category "billing/announcement/system"
     TEXT priority "low/normal/high/critical"
@@ -252,7 +265,7 @@ erDiagram
   }
   withdrawal_requests {
     TEXT id PK
-    TEXT contract_owner_user_id FK
+    TEXT contract_owner_user_id FK "contract_owners(user_id)"
     TEXT applied_by FK "users(id)"
     TEXT scheduled_deletion_at
   }
@@ -269,39 +282,54 @@ erDiagram
   }
 
   users ||--o| contract_owners : "owner profile (0..1)"
-  contract_owners ||--o{ projects : owns
-  contract_owners ||--o| billing_subscriptions : has
-  contract_owners ||--o{ inbox_messages : "1-N(契約配下)"
-  contract_owners ||--o{ audit_logs : "1-N"
   users ||--o{ project_users : "0..N(全管理者ロール)"
   users ||--o{ sessions : has
   users ||--o{ access_tokens : has
   users ||--o{ terms_agreements : has
-  projects ||--o{ project_users : "1-N(プロジェクト割当)"
-  projects ||--o{ faqs : contains
-  projects ||--o{ question_logs : records
-  projects ||--o{ inquiries : holds
-  projects ||--o{ allowed_domains : authorizes
-  projects ||--o{ project_legacy_keys : rotates
-  faqs ||--o{ faq_revisions : versioned
-  faqs ||--o{ faq_search_fts : "FTS5同期(content=faqs)"
-  faqs }o--o| inquiries : "source_unresolved_question_id(opt)"
-  faqs ||--o{ question_log_faq_refs : "参照される"
-  question_logs ||--o{ question_log_faq_refs : "M:N参照FAQ"
-  question_logs ||--o| inquiries : "未解決質問起点(opt)"
+  users ||--o{ faqs : "created_by/updated_by"
+  users ||--o{ faq_revisions : "created_by"
   users ||--o{ audit_logs : "操作(actor_user_id)"
-  contract_owners ||--o{ ai_threshold_persistent_cache : "owner/project スコープ"
-  projects ||--o{ ai_threshold_persistent_cache : "project スコープ"
-  service_announcements ||--o{ announcement_recipients : "fan-out"
-  service_announcements ||--o{ announcement_audiences : "limited-targets"
-  announcement_recipients ||--o| inbox_messages : "copied to"
-  contract_owners ||--o{ announcement_audiences : "限定配信先"
-  billing_subscriptions ||--o{ billing_invoices : generates
+  users ||--o{ inbox_messages : "recipient_user_id"
+  users ||--o{ withdrawal_requests : "applied_by(申請者)"
+  users ||--o{ service_announcements : "created_by"
+
+  contract_owners ||--o{ projects : owns
+  contract_owners ||--o| billing_subscriptions : has
   contract_owners ||--o{ billing_invoices : "請求書"
   contract_owners ||--o{ usage_metering : metered
   contract_owners ||--o{ owner_quota_overrides : overridden
+  contract_owners ||--o{ project_quota_limits : "プロジェクト上限"
+  contract_owners ||--o{ faqs : scopes
+  contract_owners ||--o{ question_logs : scopes
+  contract_owners ||--o{ inquiries : scopes
+  contract_owners ||--o{ notification_logs : scopes
+  contract_owners ||--o{ ai_threshold_persistent_cache : "owner スコープ(opt)"
+  contract_owners ||--o{ audit_logs : "1-N(opt)"
+  contract_owners ||--o{ inbox_messages : "1-N(契約配下)"
+  contract_owners ||--o{ announcement_audiences : "限定配信先"
   contract_owners ||--o{ withdrawal_requests : "退会申請"
-  users ||--o{ withdrawal_requests : "申請者"
+
+  projects ||--o{ project_users : "1-N(プロジェクト割当)"
+  projects ||--o{ project_legacy_keys : rotates
+  projects ||--o{ allowed_domains : authorizes
+  projects ||--o{ faqs : contains
+  projects ||--o{ question_logs : records
+  projects ||--o{ inquiries : holds
+  projects ||--o{ usage_metering : metered
+  projects ||--o{ project_quota_limits : limited
+  projects ||--o{ ai_threshold_persistent_cache : "project スコープ(opt)"
+
+  faqs ||--o{ faq_revisions : versioned
+  faqs ||--o{ faq_search_fts : "FTS5同期(content=faqs)"
+  inquiries ||--o{ faqs : "source_unresolved_question_id(opt)"
+  faqs ||--o{ question_log_faq_refs : "参照される"
+  question_logs ||--o{ question_log_faq_refs : "M:N参照FAQ"
+  question_logs ||--o{ inquiries : "未解決質問起点(opt)"
+  inquiries ||--o{ notification_logs : "通知契機(opt)"
+
+  service_announcements ||--o{ announcement_recipients : "fan-out"
+  service_announcements ||--o{ announcement_audiences : "limited-targets"
+
   terms_versions ||--o{ terms_agreements : agreed
 </pre>
 

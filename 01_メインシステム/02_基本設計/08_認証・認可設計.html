@@ -12,854 +12,506 @@
 </head>
 <body data-page-id="01_メインシステム/02_基本設計/08_認証・認可設計.html">
 <article class="content" id="content">
-<h1 id="認証認可設計書メイン">認証・認可設計書(メイン)</h1>
-<h2 id="1-文書概要">1. 文書概要</h2>
-<h3 id="11-目的">1.1 目的</h3>
-<p>メインシステムの認証(ログイン / ログアウト / パスワード再設定 / 招待受諾 / 規約再同意 / メール確認)、セッション・トークン、認可モデル(オーナー境界判定 / Principal 構築)、認可判定ルール、アカウント状態、認証・認可エラーを一元化する。</p>
-<h3 id="12-対象範囲">1.2 対象範囲</h3>
-<ul>
-<li>対象: 利用者(オーナー / プロジェクト管理者 / メンバー)の認証・認可全般、公開ウィジェットのセッション検証</li>
-<li>対象外: 運営者の認証・認可(MFA / IP allowlist / 4-eyes は <a href="../../02_運営者システム/個別設計書群/09_認証認可設計書.html">02_運営者システム/個別設計書群/09_認証認可設計書.html</a> 正本)、エンドユーザーのウィジェット内認証詳細は API 設計書(03)に委譲</li>
-</ul>
-<h3 id="13-版数">1.3 版数</h3>
+<h1 id="認証認可設計書メイン">認証・認可設計(メイン)</h1>
+
+<aside class="page-summary">
+<p class="ps-lead"><strong>このページは、利用者側(オーナー / プロジェクト管理者 / メンバー)の認証(本人確認)と認可(操作可否)の方針・判定フローを定義します。</strong></p>
+</aside>
+
+<p class="doc-meta"><span><b>版数</b> v2.0</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<h2 id="1-認証方式">1. 認証方式</h2>
+<p class="section-lead">本システムが採用する本人確認の手段を一覧で示します。次の表は、各方式の採否と用途、有効期限などの制約・正本リンクを並べたもので、利用者の登録から日常ログイン、パスワード再設定、メンバー有効化までを 1 つの方式表で見渡せます。</p>
 <table>
 <thead>
-<tr>
-<th>項目</th>
-<th>値</th>
-</tr>
+<tr><th>認証方式</th><th>採否</th><th>説明</th><th>制約・参照</th></tr>
 </thead>
 <tbody>
 <tr>
-<td>版数</td>
-<td>1.1</td>
+<td>メールアドレス + パスワード</td>
+<td>採用</td>
+<td>主たる認証方式。ログイン時にパスワードを検証する</td>
+<td>パスワード要件は §2、ハッシュ方式は <a href="09_セキュリティ設計.html">09_セキュリティ設計.html</a> が正本</td>
 </tr>
 <tr>
-<td>更新日</td>
-<td>2026-06-12</td>
+<td>パスワード再設定リンク</td>
+<td>採用</td>
+<td>メールに送る短期トークンで本人到達を確認し再設定させる</td>
+<td>有効期限 <strong>1 時間</strong> / 1 回限り(<a href="../01_要件定義/FR01_アカウント管理.html#FR-006">FR-006</a>)。トークン定義は <a href="03_テーブル設計.html#35-access_tokens">access_tokens</a></td>
+</tr>
+<tr>
+<td>招待トークン(メンバー有効化)</td>
+<td>採用</td>
+<td>招待リンクから本人が初回パスワード・氏名・規約同意を入力して有効化する</td>
+<td>有効期限 <strong>7 日</strong>(<a href="../01_要件定義/FR02_ユーザー管理.html#FR-016">FR-016</a> / <a href="../01_要件定義/FR02_ユーザー管理.html#FR-020">FR-020</a>)。フローは §3</td>
+</tr>
+<tr>
+<td>メール確認トークン</td>
+<td>採用</td>
+<td>新規登録後の本人確認(<a href="../01_要件定義/FR01_アカウント管理.html#FR-003">FR-003</a>)</td>
+<td>画面は <a href="01_画面設計/index.html">01_画面設計/index.html</a>(SCR-013)</td>
+</tr>
+<tr>
+<td>規約再同意の割込み</td>
+<td>採用</td>
+<td>利用規約・プライバシーポリシー改定時にログイン後フローへ割込む(<a href="../01_要件定義/FR01_アカウント管理.html#FR-011">FR-011</a>)</td>
+<td>認可割込みルールは §6</td>
+</tr>
+<tr>
+<td>Bot 対策(CAPTCHA 等)</td>
+<td>採用</td>
+<td>必要に応じてログイン等で発動する(<a href="../01_要件定義/FR14_セキュリティ.html#FR-177">FR-177</a>)</td>
+<td>判定方針は <a href="09_セキュリティ設計.html">09_セキュリティ設計.html</a> が正本</td>
 </tr>
 </tbody>
 </table>
-<h3 id="14-関連ドキュメント">1.4 関連ドキュメント</h3>
+
+<h3 id="11-パスワード要件">1.1 パスワード要件</h3>
+<p class="section-lead">利用者が設定できるパスワードの強度ルールをまとめます。次の表は最低長・文字種・再設定リンクの有効期限を定めたもので、ハッシュ化など保存方式は <a href="09_セキュリティ設計.html">09_セキュリティ設計.html</a> が正本です(<a href="../01_要件定義/FR14_セキュリティ.html#FR-171">FR-171</a>)。</p>
 <table>
 <thead>
-<tr>
-<th>ドキュメント名</th>
-<th>役割</th>
-<th>参照先</th>
-</tr>
+<tr><th>項目</th><th>値・制約</th></tr>
 </thead>
 <tbody>
-<tr>
-<td>索引</td>
-<td>11 ドキュメント体系の俯瞰</td>
-<td><a href="00_索引.html">00_索引.html</a></td>
-</tr>
-<tr>
-<td>権限設計書</td>
-<td>3 ロール定義 / 画面別権限</td>
-<td><a href="05_権限設計書.html">05_権限設計書.html</a></td>
-</tr>
-<tr>
-<td>セキュリティ設計書</td>
-<td>Argon2id / HMAC / 監査 / Cookie 属性</td>
-<td><a href="10_セキュリティ設計書.html">10_セキュリティ設計書.html</a></td>
-</tr>
-<tr>
-<td>API 設計書</td>
-<td>認証 API 仕様</td>
-<td><a href="03_API設計書.html">03_API設計書.html</a></td>
-</tr>
-<tr>
-<td>エラー設計書</td>
-<td>認証・認可エラー</td>
-<td><a href="06_エラー設計書.html">06_エラー設計書.html</a></td>
-</tr>
-<tr>
-<td>メッセージ一覧</td>
-<td>通知重要度 / <code>critical</code> メール強制送信</td>
-<td><a href="07_メッセージ一覧.html">07_メッセージ一覧.html</a></td>
-</tr>
-<tr>
-<td>テーブル定義書</td>
-<td><code>accounts</code> / <code>sessions</code> / <code>terms_agreements</code></td>
-<td><a href="04_テーブル定義書.html">04_テーブル定義書.html</a></td>
-</tr>
-<tr>
-<td>課金・請求設計書</td>
-<td>サスペンション時のアクセス制限</td>
-<td><a href="11_課金請求設計書.html">11_課金請求設計書.html</a></td>
-</tr>
-<tr>
-<td>運営者側 認証・認可設計書</td>
-<td>運営者ログイン向け IP allowlist(<code>operator_ip_allowlist</code>、独立スキーマ)</td>
-<td><a href="../../02_運営者システム/個別設計書群/09_認証認可設計書.html">../../02_運営者システム/個別設計書群/09_認証認可設計書.html</a></td>
-</tr>
+<tr><td>最低長</td><td><strong>12 文字</strong></td></tr>
+<tr><td>文字種</td><td>英大文字・英小文字・数字・記号のうち <strong>3 種類以上</strong></td></tr>
+<tr><td>パスワード再設定リンクの有効期限</td><td><strong>1 時間</strong>(超過時は再送導線を提示)</td></tr>
 </tbody>
 </table>
-<h2 id="2-認証方式">2. 認証方式</h2>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">ハッシュ方式の正本</span>保存時のハッシュアルゴリズムとパラメータ(ストレッチング等)は <a href="09_セキュリティ設計.html">09_セキュリティ設計.html</a> を正本とし、本書では「ハッシュ化して保存する(<a href="../01_要件定義/FR14_セキュリティ.html#FR-171">FR-171</a>)」方針のみを示します。</div></div>
+
+<h2 id="2-再認証">2. 重要操作の再認証</h2>
+<p class="section-lead">不可逆・高リスクな操作の直前に、ログイン済みでも改めて本人確認を求めます。最初の表で再認証の有効範囲(1 回かつ 15 分以内)を定め、続く表で対象となる重要操作を列挙します。対象は <a href="../01_要件定義/FR01_アカウント管理.html#FR-005">FR-005</a> で 5 種に固定されています。</p>
 <table>
 <thead>
-<tr>
-<th>認証方式</th>
-<th>利用有無</th>
-<th>概要</th>
-<th>備考</th>
-</tr>
+<tr><th>項目</th><th>内容</th></tr>
 </thead>
 <tbody>
-<tr>
-<td>メールアドレス / パスワード</td>
-<td>◯</td>
-<td>メイン認証方式(Argon2id <code>m=64MB, t=3, p=4, salt=16B</code>)</td>
-<td>パスワード要件は §4</td>
-</tr>
-<tr>
-<td>招待トークン</td>
-<td>◯</td>
-<td>メンバー招待時に短期トークンで初回パスワード設定</td>
-<td>§3.4</td>
-</tr>
-<tr>
-<td>パスワード再設定トークン</td>
-<td>◯</td>
-<td>メール経由の短期トークン(有効期限 1 時間)</td>
-<td>§3.3</td>
-</tr>
-<tr>
-<td>規約再同意</td>
-<td>◯</td>
-<td>規約改定時に割込みフロー(SCR-015)</td>
-<td>§3.5</td>
-</tr>
-<tr>
-<td>メール確認</td>
-<td>◯</td>
-<td>新規登録後の本人確認(SCR-013)</td>
-<td>§3.6</td>
-</tr>
-<tr>
-<td>Turnstile(reCAPTCHA 相当)</td>
-<td>◯</td>
-<td>アカウント単位 3 回失敗 または 同一 IP 1 分 10 回失敗で発動(FR-177)</td>
-<td>§10.1</td>
-</tr>
+<tr><td>有効範囲</td><td><strong>「当該操作 1 回かつ 15 分以内」</strong>。1 回の操作で消費し、15 分を超えた場合は無効となり再度求める</td></tr>
+<tr><td>ダイアログ画面</td><td><a href="01_画面設計/index.html">01_画面設計/index.html</a> が正本</td></tr>
 </tbody>
 </table>
+<table>
+<thead>
+<tr><th>対象の重要操作</th><th>説明</th><th>根拠</th></tr>
+</thead>
+<tbody>
+<tr><td>パスワード変更</td><td>本人のパスワード変更</td><td><a href="../01_要件定義/FR01_アカウント管理.html#FR-005">FR-005</a></td></tr>
+<tr><td>退会</td><td>オーナーによる退会申請(SCR-014)</td><td><a href="../01_要件定義/FR01_アカウント管理.html#FR-005">FR-005</a></td></tr>
+<tr><td>課金情報変更</td><td>支払方法等の変更</td><td><a href="../01_要件定義/FR01_アカウント管理.html#FR-005">FR-005</a></td></tr>
+<tr><td>管理者ユーザーの登録・停止・削除</td><td>メンバーの招待 / 役割変更 / プロジェクト割当解除 / 削除など管理者操作</td><td><a href="../01_要件定義/FR01_アカウント管理.html#FR-005">FR-005</a></td></tr>
+<tr><td>月次上限件数の変更</td><td>プロジェクト単位の月次上限件数・無料枠の変更</td><td><a href="../01_要件定義/FR01_アカウント管理.html#FR-005">FR-005</a></td></tr>
+</tbody>
+</table>
+<div class="callout important"><i class="bi bi-pin-angle"></i><div><span class="c-title">対象範囲は要件で固定</span>再認証の対象は上記 5 種に固定します(<a href="../01_要件定義/FR01_アカウント管理.html#FR-005">FR-005</a> / <a href="../01_要件定義/FR01_アカウント管理.html#BR-029">BR-029</a>)。再認証が未保持または期限切れのまま対象操作の API に到達した場合は認可で拒否し、再認証を要求するエラー分類(<code>E-AUTH-REAUTH-REQUIRED</code>)に落とします。エラー定義は <a href="05_エラー設計.html#42-認証エラーe-auth-">05_エラー設計.html §4.2</a> が正本です。</div></div>
+
 <h2 id="3-認証フロー">3. 認証フロー</h2>
-<table>
-<thead>
-<tr>
-<th>フローID</th>
-<th>フロー名</th>
-<th>概要</th>
-<th>関連画面ID</th>
-<th>関連API ID</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>AUTH-FLOW-001</td>
-<td>ログイン</td>
-<td>メール + パスワード</td>
-<td>SCR-001</td>
-<td><code>POST /auth/login</code></td>
-</tr>
-<tr>
-<td>AUTH-FLOW-002</td>
-<td>ログアウト</td>
-<td>セッション削除</td>
-<td>(グローバル)</td>
-<td><code>POST /auth/logout</code></td>
-</tr>
-<tr>
-<td>AUTH-FLOW-003</td>
-<td>パスワード再設定</td>
-<td>メール経由トークン</td>
-<td>SCR-003</td>
-<td><code>POST /auth/password-reset-request</code>, <code>POST /auth/password/reset</code></td>
-</tr>
-<tr>
-<td>AUTH-FLOW-004</td>
-<td>招待受諾</td>
-<td>招待トークン + 氏名 + 初回パスワード + 規約同意</td>
-<td>SCR-009-M1 → SCR-018 → SCR-001</td>
-<td><code>POST /auth/invitations/{token}/preview</code> / <code>POST /auth/invitations/{token}/activate</code></td>
-</tr>
-<tr>
-<td>AUTH-FLOW-005</td>
-<td>規約再同意</td>
-<td>規約改定時の割込み</td>
-<td>SCR-015</td>
-<td><code>POST /terms/agree</code></td>
-</tr>
-<tr>
-<td>AUTH-FLOW-006</td>
-<td>メール確認</td>
-<td>新規登録後のメール確認</td>
-<td>SCR-013</td>
-<td><code>POST /auth/email-verifications/{token}</code></td>
-</tr>
-<tr>
-<td>AUTH-FLOW-008</td>
-<td>強制ログアウト(連携 IF #2)</td>
-<td>運営者起動</td>
-<td>(グローバル)</td>
-<td>(IF #2 受信)</td>
-</tr>
-</tbody>
-</table>
-<h3 id="31-ログインauth-flow-001">3.1 ログイン(AUTH-FLOW-001)</h3>
-<ol type="1">
-<li>メール + パスワード入力 → Turnstile 検証(FR-177 発動時)</li>
-<li>Argon2id 検証 → <code>sessions</code> レコード作成 + Cookie 発行</li>
-<li>規約再同意状態確認 → 未同意なら SCR-015 へリダイレクト</li>
-<li>契約状態確認(<code>contract_owners.contract_status</code>)→ <code>suspended</code> で許可機能外なら 403、<code>deleted</code> なら 403</li>
-<li>既定の管理範囲に応じて SCR-016 利用状況または SCR-008 概要へ</li>
-</ol>
-<p>エラー: 401 <code>INVALID_CREDENTIALS</code>(E-AUTH-CREDENTIAL)、423 <code>LOCKED_OUT</code>(E-AUTH-LOCKED)、403 <code>CONTRACT_SUSPENDED</code></p>
+<p class="section-lead">ログインからログアウト、パスワード再設定、メンバー有効化、メール確認、運営者起動の強制ログアウトまで、認証にかかわる各フローの処理手順をまとめます。以降の各小節は、それぞれのフローを順序付きの手順表で示します。</p>
+
+<h3 id="31-ログイン">3.1 ログイン</h3>
+<p class="section-lead">通常ログイン時の処理を入口から初期画面遷移まで順に追います。次のシーケンス図は、資格情報の検証・セッション確立に加え、規約再同意ゲート(§6)と契約状態ゲート(§5.7)をログイン直後に通す順序と、不一致・停止状態などの分岐を示します。</p>
+<pre class="mermaid"><code>sequenceDiagram
+  participant U as ブラウザ(利用者)
+  participant W as worker-main-api
+  participant D as D1
+  participant K as KV (session)
+
+  U-&gt;&gt;W: メール + パスワード送信
+  W-&gt;&gt;D: 資格情報を照会
+  D--&gt;&gt;W: 照合結果(一致 / 不一致)
+  alt 不一致
+    W--&gt;&gt;U: 認証失敗(失敗カウント加算・ヒントなし)
+  else 一致
+    W-&gt;&gt;K: セッション確立(sessions 行作成)
+    K--&gt;&gt;W:
+    W--&gt;&gt;U: セッション Cookie 発行
+    W-&gt;&gt;D: 規約再同意の要否を確認
+    D--&gt;&gt;W: 未同意文書(あり / なし)
+    opt 未同意あり
+      W--&gt;&gt;U: 規約再同意へ割込み(SCR-015)
+    end
+    W-&gt;&gt;D: 契約状態を確認
+    D--&gt;&gt;W: 契約状態(active / suspended / deleted_pending / deleted)
+    alt active
+      W--&gt;&gt;U: 管理範囲に応じた初期画面へ遷移
+    else suspended / deleted_pending / deleted
+      W--&gt;&gt;U: 停止時アクセス制限(§5)を適用
+    end
+  end</code></pre>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>不一致時は失敗カウントを加算し、ヒントを与えない応答を返します(必要に応じ Bot 対策チャレンジを挟む、<a href="../01_要件定義/FR14_セキュリティ.html#FR-177">FR-177</a>)。契約状態が <code>suspended</code> / <code>deleted_pending</code> / <code>deleted</code> の場合は §5 のアクセス制限に従います。</div></div>
+
 <h3 id="32-ログアウト">3.2 ログアウト</h3>
-<p>セッション失効 + Cookie 削除。SCR-001 へ。</p>
-<h3 id="33-パスワード再設定auth-flow-003">3.3 パスワード再設定(AUTH-FLOW-003)</h3>
-<ol type="1">
-<li>SCR-003 段階 1: メール入力 → <code>POST /auth/password-reset-request</code>(<strong>列挙攻撃対策で存在有無を返さない</strong>)</li>
-<li>メール送信(<code>access_tokens.purpose='password_reset'</code>、HMAC-SHA256、有効期限 1 時間、1 回限り、FR-006)</li>
-<li>SCR-003 段階 2: トークン検証 + 新パスワード入力 → <code>POST /auth/password/reset</code></li>
-<li>全セッション失効 → SCR-001 へ</li>
-</ol>
-<h3 id="34-招待受諾auth-flow-004">3.4 招待受諾(AUTH-FLOW-004)</h3>
-<ol type="1">
-<li>プロジェクト WS の SCR-009-M1 から <code>POST /projects/{id}/members</code>(リクエスト: <code>{ email, role }</code>、氏名 <code>displayName</code> は受け付けない)→ 招待メール送信(<code>access_tokens.purpose='activation'</code>、有効期限 7 日、<code>meta={"invitedProjectId": "...", "invitedRole": "..."}</code> を JSON 保持、FR-016 / FR-016d / FR-016e)。同時に <code>users</code> 行は <code>name=NULL</code> / <code>status='pending_activation'</code> で作成、<code>project_users</code> 行は <code>valid=0</code> で予約作成</li>
-<li>メール内リンク → <strong>SCR-018 メンバーアカウント有効化ページ</strong> → <code>POST /auth/invitations/{token}/preview</code>(招待情報パネル表示用、トークン検証 + プレビュー情報取得)</li>
-<li>SCR-018 で氏名(表示名) + 初回パスワード + 利用規約同意 + プライバシーポリシー同意 + Turnstile を入力 → <code>POST /auth/invitations/{token}/activate</code></li>
-<li>同一トランザクションで以下を実行: <code>UPDATE users SET name=?, password_hash=?, status='active'</code> + <code>INSERT INTO terms_agreements (...)</code>(利用規約・プライバシーポリシーの各最新版に対し <code>doc_type</code> 別の 2 行)+ <code>UPDATE project_users SET valid=1 WHERE user_id=? AND project_id=?</code> + <code>consumeToken('activation')</code> + <code>writeAudit('user.activation_completed', ...)</code></li>
-<li>SCR-001 ログイン画面へ遷移</li>
-</ol>
-<p>他プロジェクトに参加させる場合は、対象プロジェクトの WS で個別に招待操作を行い、FR-021c 名前解決により既存ユーザー(<code>users.name</code> 設定済 / <code>status='active'</code>)に当該プロジェクト分の <code>project_users</code> 行(<code>valid=1</code>)が直接追加される(SCR-018 はバイパス)。氏名は本人のみが入力可能(FR-016d、個人情報原則)。</p>
-<h3 id="35-規約再同意auth-flow-005">3.5 規約再同意(AUTH-FLOW-005)</h3>
-<ol type="1">
-<li>ログイン直後に利用規約 / プライバシーポリシーのいずれかに未同意(最新版)があれば SCR-015 強制割込み(改定された文書のみを対象に判定)</li>
-<li>利用規約同意 → <code>POST /terms/agree</code>、プライバシーポリシー同意 → <code>POST /privacy/agree</code>(双方の最新版同意が必須。改定された文書のみ再同意)</li>
-<li><code>terms_agreements</code> レコード作成(<code>doc_type</code> 別に各 1 行)</li>
-<li>同意期限超過後の機能制限ガード: 課金画面操作 + 新規プロジェクト作成は不可、FAQ 編集とウィジェット稼働は継続</li>
-</ol>
-<h3 id="36-メール確認auth-flow-006">3.6 メール確認(AUTH-FLOW-006)</h3>
-<ol type="1">
-<li>SCR-002 新規登録 → 確認メール送信(<code>access_tokens.purpose='email_verify'</code>、有効期限 24 時間)</li>
-<li>メール内リンク → <code>POST /auth/email-verifications/{token}</code></li>
-<li><code>users.email_verified_at</code> 設定 → SCR-001 へ</li>
-</ol>
-<h3 id="38-強制ログアウトauth-flow-008">3.8 強制ログアウト(AUTH-FLOW-008)</h3>
-<p>連携 IF #2 受信時、<code>operator_manual</code> / <code>tos_violation</code> の場合は <strong>5 秒以内</strong> に全セッション無効化(FR-022)。<code>payment_failure_grace_expired</code> 等は既存セッション継続。</p>
-<h2 id="4-セッショントークン設計">4. セッション・トークン設計</h2>
+<p class="section-lead">利用者が明示的にログアウトしたときの扱いを定めます。次の表のとおり、操作したセッションのみを失効させ、他デバイスのセッションは維持します(<a href="../01_要件定義/FR19_アクセス制御細部.html#FR-332">FR-332</a>)。</p>
 <table>
 <thead>
-<tr>
-<th>項目</th>
-<th>内容</th>
-</tr>
+<tr><th>項目</th><th>内容</th><th>参照</th></tr>
 </thead>
 <tbody>
-<tr>
-<td>セッション方式</td>
-<td>Cookie + DB セッション(<code>sessions</code> テーブル)</td>
-</tr>
-<tr>
-<td>無操作タイムアウト</td>
-<td><strong>30 分</strong>(FR-008(a))</td>
-</tr>
-<tr>
-<td>絶対タイムアウト</td>
-<td><strong>12 時間</strong>(FR-008(b))</td>
-</tr>
-<tr>
-<td><strong>再認証(FR-005)</strong></td>
-<td>重要操作前に要求(パスワード変更 / 退会 / 課金情報変更 / 管理者ユーザー登録・停止・削除 / プロジェクト上限・無料枠変更)。<strong>有効期間 = 当該操作 1 回のみかつ 15 分以内</strong></td>
-</tr>
-<tr>
-<td>Cookie 属性</td>
-<td><code>Secure; HttpOnly; SameSite=Lax; Path=/</code>、<code>Domain</code> 明示せず</td>
-</tr>
-<tr>
-<td>CSRF</td>
-<td>Double Submit Cookie + <code>X-CSRF-Token</code> ヘッダ突合</td>
-</tr>
-<tr>
-<td>パスワードハッシュ</td>
-<td>Argon2id(admin/end_user: <code>m=64MB, t=3, p=4, salt=16B</code>)</td>
-</tr>
-<tr>
-<td>HMAC</td>
-<td>HMAC-SHA256(各種トークン署名)</td>
-</tr>
-<tr>
-<td>ログイン失敗ロックアウト</td>
-<td>5 回失敗 → <code>(IP × user_id)</code> を 15 分ロック(FR-007 / FR-177)</td>
-</tr>
-<tr>
-<td>強制ログアウト</td>
-<td>連携 IF #2 受信時、アクセストークン全失効(5 秒以内)</td>
-</tr>
-<tr>
-<td>アクティブセッション一覧</td>
-<td>利用者自身による一覧表示・自己セッション終了は MVP 対象外・将来対応(FR-332 改訂)。運営者による強制ログアウト(連携 IF #2)は提供する</td>
-</tr>
-<tr>
-<td>複数デバイス同時ログイン</td>
-<td>可能(FR-332)</td>
-</tr>
+<tr><td>当該セッション</td><td>失効させ、セッション Cookie を破棄してログイン画面へ戻す</td><td>—</td></tr>
+<tr><td>他セッション</td><td>複数デバイスでログイン中の他セッションは維持する</td><td><a href="../01_要件定義/FR19_アクセス制御細部.html#FR-332">FR-332</a></td></tr>
 </tbody>
 </table>
-<h3 id="41-トークン用途別仕様1013-から移管">4.1 トークン用途別仕様(§10.1.3 から移管)</h3>
+
+<h3 id="33-パスワード再設定">3.3 パスワード再設定</h3>
+<p class="section-lead">パスワードを忘れた利用者がメール経由のトークンで再設定する手順を示します。次のシーケンス図は、列挙攻撃を避ける一律応答、トークンの有効期限(1 時間・1 回限り)、トークンの有効 / 期限切れ分岐、再設定後の全セッション失効までを示します。</p>
+<pre class="mermaid"><code>sequenceDiagram
+  participant U as ブラウザ(本人)
+  participant W as worker-main-api
+  participant D as D1 (access_tokens)
+  participant M as メール送信
+
+  U-&gt;&gt;W: メールアドレスを入力
+  W-&gt;&gt;D: リセットトークンを発行(有効期限 1 時間・1 回限り)
+  D--&gt;&gt;W:
+  W-&gt;&gt;M: リセットリンクを送付
+  M--&gt;&gt;W:
+  W--&gt;&gt;U: 存在有無を判別できない応答(列挙攻撃対策)
+  U-&gt;&gt;W: トークン + 新パスワードを送信
+  W-&gt;&gt;D: トークンを検証
+  D--&gt;&gt;W: 検証結果(有効 / 期限切れ・使用済み)
+  alt 期限切れ・使用済み
+    W--&gt;&gt;U: 無効を通知(再送導線を提示)
+  else 有効
+    W-&gt;&gt;D: パスワード更新 + 全セッションを失効
+    D--&gt;&gt;W:
+    W--&gt;&gt;U: ログイン画面へ誘導
+  end</code></pre>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>トークン定義(有効期限 1 時間・1 回限り)は <a href="03_テーブル設計.html#35-access_tokens">access_tokens</a> が正本。新パスワードは §1.1 の要件を満たすこと。</div></div>
+
+<h3 id="34-招待受諾メンバー有効化">3.4 招待受諾(メンバー有効化)</h3>
+<p class="section-lead">招待されたメンバーが、招待リンクから氏名・初回パスワード・規約同意を入力してアカウントを有効化するまでを示します。標準フローは次のシーケンス図、複数プロジェクト参加や既存アカウント一致といった例外の扱いは続く表で示します(<a href="../01_要件定義/FR02_ユーザー管理.html#FR-015">FR-015</a> / <a href="../01_要件定義/FR02_ユーザー管理.html#FR-016d">FR-016d</a>)。</p>
+<pre class="mermaid"><code>sequenceDiagram
+  participant O as 招待元(オーナー / PJ管理者)
+  participant W as worker-main-api
+  participant M as メール送信
+  participant I as 招待された本人
+  participant D as D1
+
+  O-&gt;&gt;W: メールアドレスと役割を指定して招待(氏名なし)
+  W-&gt;&gt;D: 招待トークン発行 + 役割を予約状態で保持(有効期限 7 日)
+  D--&gt;&gt;W:
+  W-&gt;&gt;M: 招待リンクを送付
+  M--&gt;&gt;W:
+  W--&gt;&gt;O:
+  M--&gt;&gt;I: 招待リンク受領(有効化前はログイン不可)
+  I-&gt;&gt;W: 氏名・初回パスワード・規約同意を入力
+  W-&gt;&gt;D: 氏名・初回パスワード・規約同意・割当をまとめて確定
+  D--&gt;&gt;W:
+  W--&gt;&gt;I: 有効化完了</code></pre>
 <table>
 <thead>
-<tr>
-<th>用途</th>
-<th>鍵</th>
-<th>トークン形式</th>
-<th>有効期限</th>
-</tr>
+<tr><th>状況</th><th>扱い</th><th>参照</th></tr>
 </thead>
 <tbody>
-<tr>
-<td>登録完了トークン</td>
-<td>オーナー派生鍵</td>
-<td>不透明文字列 + HMAC</td>
-<td><strong>7 日</strong></td>
-</tr>
-<tr>
-<td>削除確認トークン</td>
-<td>オーナー派生鍵</td>
-<td>不透明文字列 + HMAC</td>
-<td><strong>24 時間</strong></td>
-</tr>
-<tr>
-<td>パスワードリセットトークン</td>
-<td>グローバル派生鍵</td>
-<td>不透明文字列 + HMAC</td>
-<td><strong>1 時間</strong></td>
-</tr>
-<tr>
-<td>API キー(ウィジェット公開キー)</td>
-<td>グローバル派生鍵</td>
-<td><code>pk_live_&lt;32-char base62&gt;</code></td>
-<td><strong>無期限(失効は再発行でのみ。FR-194)</strong></td>
-</tr>
+<tr><td>同一の人を複数プロジェクトへ参加させる</td><td>各プロジェクトで個別に招待する</td><td><a href="../01_要件定義/FR02_ユーザー管理.html#FR-015">FR-015</a></td></tr>
+<tr><td>同一オーナー配下で既存の有効・招待中アカウントとメールアドレスが一致</td><td>同一の利用者として扱い、新たに参加するプロジェクト分の割当のみを追加する(氏名入力を伴う有効化ページはバイパスされる)</td><td><a href="../01_要件定義/FR02_ユーザー管理.html#FR-021c">FR-021c</a></td></tr>
 </tbody>
 </table>
-<h3 id="42-cookie-属性1014">4.2 Cookie 属性(§10.1.4)</h3>
+<div class="callout warning"><i class="bi bi-exclamation-triangle"></i><div><span class="c-title">有効化前 Principal の限定</span>有効化ページは未認証の本人が招待トークン経由で到達するため、通常のセッションを持ちません。有効な招待トークン(期限内・未使用)の保持を唯一の認可条件とし、当該ページの有効化処理に限ってトークン由来の Principal を用います。本ページ以外でこの Principal は使用しません。</div></div>
+
+<h3 id="35-メール確認">3.5 メール確認</h3>
+<p class="section-lead">新規登録後の本人到達をメール確認トークンで検証します。次の表は本人確認の方法と、確認完了までアカウントを未確認状態として利用を制限する扱いを示します(<a href="../01_要件定義/FR01_アカウント管理.html#FR-003">FR-003</a>)。</p>
 <table>
 <thead>
-<tr>
-<th>Cookie 種別</th>
-<th>属性</th>
-</tr>
+<tr><th>項目</th><th>内容</th><th>参照</th></tr>
 </thead>
 <tbody>
-<tr>
-<td>メインシステム セッション Cookie</td>
-<td><code>Secure; HttpOnly; SameSite=Lax; Path=/</code>、<code>Domain</code> 明示せず</td>
-</tr>
-<tr>
-<td>CSRF Cookie</td>
-<td><code>Secure; SameSite=Lax; Path=/</code>(HttpOnly <strong>なし</strong>、JS から読取可)</td>
-</tr>
+<tr><td>本人確認</td><td>新規登録後にメール確認トークンを送り、リンク到達で本人確認を完了する</td><td><a href="../01_要件定義/FR01_アカウント管理.html#FR-003">FR-003</a></td></tr>
+<tr><td>確認前の扱い</td><td>確認完了までアカウントは未確認状態とし、利用を制限する</td><td>§5 アカウント状態</td></tr>
 </tbody>
 </table>
-<h2 id="5-認可モデル">5. 認可モデル</h2>
-<h3 id="51-認可方式">5.1 認可方式</h3>
-<p>操作者種別(管理者 = <code>users</code> 行存在 / 公開ウィジェット = セッショントークン / 運営者 = 別 D1)+ プロジェクト別ロール <code>project_users.role</code> = <code>admin</code> / <code>member</code> + オーナー判定 = <code>contract_owners</code> 行存在</p>
-<p><strong>SCR-018 メンバーアカウント有効化ページの例外</strong>: 未認証ユーザーが招待トークン経由でアクセスする画面のため、Cookie セッションを持たない。<code>access_tokens.purpose='activation'</code> の有効トークン(期限内 + 未使用)を保持していることが唯一の認可条件で、トークン認証 Principal(<code>user_id</code> を主体とし、<code>access_tokens.meta.invitedProjectId</code> / <code>invitedRole</code> を併せて取得)を構築する。本画面以外でこの Principal は使用しない(有効化完了 → SCR-001 ログイン → 通常 Principal 構築の流れ)。</p>
-<p><strong>SCR-019 プロジェクト連絡先メール確認完了ページの例外</strong>: 同様に未認証ユーザーがプロジェクト連絡先確認トークン経由でアクセスする画面で、<code>access_tokens.purpose='contact_verify'</code> の有効トークン保持が唯一の認可条件。トークン認証 Principal(<code>access_tokens.meta.projectId</code> のみを取得、<code>user_id</code> は持たない ── 連絡先メール所有者がアカウントを持つとは限らない)を構築し、当該プロジェクトの <code>projects.contact_email_verified_at</code> を更新する単純な書き込みのみを行う。完了後は静的ランディングに留まり、認証コンソールへの遷移は行わない。</p>
-<h3 id="52-オーナー境界判定式共有概念正本">5.2 オーナー境界判定式(共有概念正本)</h3>
-<p>すべての操作で以下の判定式を必須:</p>
-<pre><code>principal.contractOwnerUserId === target.contract_owner_user_id</code></pre>
-<ul>
-<li><code>principal</code> = 操作するユーザー(セッションから取得した Principal)</li>
-<li><code>target</code> = 操作対象リソース(テーブルの <code>contract_owner_user_id</code> カラム)</li>
-<li>一致しない場合は <strong>404 偽装</strong>(403 を返すと相手契約の存在が漏れる、エラー設計書 06 §5.3)</li>
-</ul>
-<h3 id="53-ユーザー種別の-db-値31-から移管">5.3 ユーザー種別の DB 値(§3.1 から移管)</h3>
+
+<h3 id="36-強制ログアウト運営者操作">3.6 強制ログアウト(運営者操作)</h3>
+<p class="section-lead">運営者システム側の操作を契機に、配下利用者のセッションをどう失効させるかを定めます。次のシーケンス図は、手動停止・規約違反停止での全セッション無効化、長時間処理中の扱い、停止後の次回操作での再認証・停止時アクセス制限(§5)を示します(<a href="../01_要件定義/FR01_アカウント管理.html#FR-022">FR-022</a> / <a href="../01_要件定義/FR01_アカウント管理.html#BR-034">BR-034</a>)。</p>
+<pre class="mermaid"><code>sequenceDiagram
+  participant OP as 運営者システム
+  participant W as worker-main-api
+  participant K as KV (session)
+  participant U as 配下利用者
+
+  OP-&gt;&gt;W: 停止 / 規約違反停止を契機として連携
+  W-&gt;&gt;K: 配下管理者ユーザーの全セッションを速やかに無効化
+  K--&gt;&gt;W:
+  W--&gt;&gt;OP:
+  Note over W: 進行中の長時間処理は完了まで継続(中断しない)
+  U-&gt;&gt;W: 次回操作
+  W--&gt;&gt;U: 再認証を要求 / 停止時アクセス制限(§5)を適用</code></pre>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">運営者起動の主体</span>強制ログアウトは運営者システム側の操作を契機とします。連携の方式・宛先解決は <a href="02_API設計.html">02_API設計.html</a> を正本とし、本書は「契機を受けてセッションをどう失効させるか」の方針に限定します。</div></div>
+
+<h2 id="4-セッション設計">4. セッション設計</h2>
+<p class="section-lead">ログイン状態をどれだけ保持し、いつ・どの契機で失効させるかをまとめます。次の表は無操作タイムアウト(30 分)・絶対タイムアウト(12 時間)・複数デバイス同時ログインなどの方針を並べたもので、ログインの寿命と失効ルールを一望できます(<a href="../01_要件定義/FR01_アカウント管理.html#FR-008">FR-008</a> / <a href="../01_要件定義/FR19_アクセス制御細部.html#FR-332">FR-332</a>)。</p>
 <table>
 <thead>
-<tr>
-<th>ユーザー種別</th>
-<th>DB 値</th>
-<th>概要</th>
-</tr>
+<tr><th>項目</th><th>方針</th><th>根拠</th></tr>
+</thead>
+<tbody>
+<tr><td>無操作タイムアウト</td><td><strong>30 分</strong>。最終操作から無操作が続くとセッションを失効させる</td><td><a href="../01_要件定義/FR01_アカウント管理.html#FR-008">FR-008</a> / <a href="../01_要件定義/FR01_アカウント管理.html#BR-031">BR-031</a></td></tr>
+<tr><td>絶対タイムアウト</td><td><strong>12 時間</strong>。ログインからの経過で失効させ、1 営業日内に再認証を求める</td><td><a href="../01_要件定義/FR01_アカウント管理.html#FR-008">FR-008</a> / <a href="../01_要件定義/FR01_アカウント管理.html#BR-032">BR-032</a></td></tr>
+<tr><td>複数デバイス同時ログイン</td><td>同一アカウントで複数デバイスから同時にログイン可</td><td><a href="../01_要件定義/FR19_アクセス制御細部.html#FR-332">FR-332</a> / <a href="../01_要件定義/FR01_アカウント管理.html#BR-033">BR-033</a></td></tr>
+<tr><td>契約停止時の全失効</td><td>契約停止時、配下管理者ユーザーの全セッションを速やかに無効化(§3.6)</td><td><a href="../01_要件定義/FR01_アカウント管理.html#FR-022">FR-022</a></td></tr>
+<tr><td>運営者強制ログアウト</td><td>運営者操作で当該アカウントの全セッションを強制失効(最優先)</td><td><a href="../01_要件定義/FR19_アクセス制御細部.html#FR-332">FR-332</a></td></tr>
+<tr><td>操作と同時失効時の挙動</td><td>操作中にセッションが失効した場合は明示メッセージを表示し再ログインへ誘導する</td><td><a href="../01_要件定義/FR01_アカウント管理.html#FR-008">FR-008</a></td></tr>
+<tr><td>セッション内不正利用・改ざん対策</td><td>状態変更操作でセッションの不正利用・改ざんを検知・防止する(具体方式は <a href="09_セキュリティ設計.html">09_セキュリティ設計.html</a> 正本)</td><td><a href="../01_要件定義/FR01_アカウント管理.html#BR-036">BR-036</a></td></tr>
+</tbody>
+</table>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">アクティブセッションの自己管理</span>利用者自身によるアクティブセッション一覧表示・自己セッション終了は MVP 対象外です(<a href="../01_要件定義/FR19_アクセス制御細部.html#FR-332">FR-332</a>)。運営者による強制ログアウトは提供します。</div></div>
+
+<h3 id="41-ログイン失敗ロックアウト">4.1 ログイン失敗ロックアウト</h3>
+<p class="section-lead">連続したログイン失敗から総当たり攻撃を防ぐためのロックアウト条件を定めます。次の表は発動条件(5 回連続失敗)・効果(15 分ロック)・復旧手段・通知をまとめたもので、ロック中の到達は <code>E-AUTH-LOCKED</code> に落とします。</p>
+<table>
+<thead>
+<tr><th>項目</th><th>内容(値・制約)</th><th>参照</th></tr>
+</thead>
+<tbody>
+<tr><td>条件</td><td>ログインが <strong>5 回連続</strong> 失敗</td><td>—</td></tr>
+<tr><td>効果</td><td>当該アカウントを <strong>15 分間</strong> ロックする</td><td>—</td></tr>
+<tr><td>復旧</td><td><strong>時間経過</strong> または <strong>管理者による解除</strong></td><td>—</td></tr>
+<tr><td>通知・救済</td><td>ロック発動時は該当本人および必要な管理者へ通知し、正規利用者の救済導線を提供する</td><td>宛先・文面は <a href="06_メッセージ一覧.html">06_メッセージ一覧.html</a> 正本</td></tr>
+<tr><td>ロック中のログイン到達</td><td>ロック分類のエラー(<code>E-AUTH-LOCKED</code>)に落とす</td><td>エラー定義は <a href="05_エラー設計.html#42-認証エラーe-auth-">05_エラー設計.html §4.2</a> が正本</td></tr>
+</tbody>
+</table>
+
+<h3 id="42-失効の優先順位">4.2 失効の優先順位</h3>
+<p class="section-lead">複数の失効要因が同時に当てはまるとき、どれを優先して判定するかを定めます。次の表は運営者の強制ログアウトを最優先とし、絶対タイムアウト・無操作タイムアウト・通常セッションの順で評価する優先順位です。重要操作の再認証(§2)はこの寿命判定とは別軸で働きます。</p>
+<table>
+<thead>
+<tr><th>#</th><th>判定</th><th>補足・参照</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td><strong>運営者の強制ログアウト</strong></td><td>最優先。全セッションを失効(<a href="../01_要件定義/FR01_アカウント管理.html#FR-022">FR-022</a>)</td></tr>
+<tr><td>2</td><td><strong>絶対タイムアウト</strong></td><td>12 時間(<a href="../01_要件定義/FR01_アカウント管理.html#FR-008">FR-008</a>)</td></tr>
+<tr><td>3</td><td><strong>無操作タイムアウト</strong></td><td>30 分</td></tr>
+<tr><td>4</td><td><strong>通常セッション</strong></td><td>有効期間内</td></tr>
+</tbody>
+</table>
+<p>重要操作の再認証(§2、<a href="../01_要件定義/FR01_アカウント管理.html#FR-005">FR-005</a>)は上記の寿命判定とは別軸で、通常セッションが有効でも対象操作の直前に追加の認証を要求する。</p>
+
+<h2 id="5-認可モデルと判定フロー">5. 認可モデルと判定フロー</h2>
+<p class="section-lead">誰が何を操作できるかを判定する認可モデルを定めます。ユーザー種別とオーナー判定、契約・プロジェクトの境界、判定段の順序、専有・保護制約、通知宛先解決、アカウント状態・契約状態によるアクセス制限を以降の小節で順に示します。</p>
+
+<h3 id="51-ユーザー種別とオーナー判定">5.1 ユーザー種別とオーナー判定</h3>
+<p class="section-lead">認可の起点となるユーザー種別と、その見分け方を定めます。次の表は <code>contract_owners</code> 行の有無でオーナーかどうかを判定し、非オーナーは <code>project_users.role</code> で操作範囲が決まることを示します(<a href="../01_要件定義/FR02_ユーザー管理.html#FR-015a">FR-015a</a> / <a href="../01_要件定義/FR02_ユーザー管理.html#FR-015b">FR-015b</a>)。</p>
+<table>
+<thead>
+<tr><th>ユーザー種別</th><th>判定</th><th>権限の表し方</th></tr>
 </thead>
 <tbody>
 <tr>
 <td>オーナー</td>
-<td><code>users</code> 行存在 AND <code>contract_owners.user_id = users.id</code> 行が存在</td>
-<td>契約あたり 1 オーナー固定(<code>contract_owners.user_id PRIMARY KEY</code> で DB レベル担保)。全権 + オーナー専有機能</td>
+<td><code>contract_owners</code> 行が存在する(<code>contract_owners.user_id PRIMARY KEY</code> で 1 契約 1 オーナーを DB レベル担保)</td>
+<td>全プロジェクトへの全権 + オーナー専有機能。役割変更・降格・譲渡なし(<a href="../01_要件定義/FR02_ユーザー管理.html#FR-015a">FR-015a</a>)</td>
 </tr>
 <tr>
 <td>プロジェクト管理者 / メンバー</td>
-<td><code>users</code> 行存在 AND <code>contract_owners</code> 行を持たない AND <code>project_users</code> 行を保持</td>
-<td>プロジェクト別ロール(<code>project_users.role</code> = <code>admin</code>/<code>member</code>)で操作範囲が決まる</td>
+<td><code>contract_owners</code> 行を持たず、<code>project_users</code> 行を保持する</td>
+<td>プロジェクトごとの役割(<code>project_users.role</code> = <code>admin</code> / <code>member</code>)で操作範囲が決まる(<a href="../01_要件定義/FR02_ユーザー管理.html#FR-015b">FR-015b</a> / <a href="../01_要件定義/FR19_アクセス制御細部.html#FR-336">FR-336</a>)</td>
 </tr>
 <tr>
 <td>ウィジェット利用者</td>
-<td>DB主体行なし</td>
-<td>公開キーとウィジェットセッションでFAQ質問送信のみ。管理画面Principalは構築しない</td>
-</tr>
-<tr>
-<td>サービス運営者</td>
-<td>別 D1(運営者システム <code>service_operators</code> テーブル)</td>
-<td>本 SaaS 提供者(運営者側、メイン側 D1 には格納しない)</td>
+<td>管理画面の主体行を持たない</td>
+<td>公開キーとウィジェットセッションで質問送信のみ。管理画面の Principal は構築しない</td>
 </tr>
 </tbody>
 </table>
-<p>管理者は <code>users</code> 行を主体とする。MVPのウィジェット利用者は管理画面Principalや永続的な利用者アカウントを持たず、公開キーと短期ウィジェットセッションでAPIを制限する。 オーナー判定: <code>contract_owners.user_id = users.id</code> 行存在(<code>is_owner</code> カラムや <code>owner_account_id</code> 自己参照は持たない) <code>contract_owners.contract_status</code> 値域: <code>active</code> / <code>suspended</code> / <code>deleted_pending</code> / <code>deleted</code> の 4 値固定</p>
-<h3 id="54-オーナー専有機能">5.4 オーナー専有機能</h3>
-<p>プロジェクト別ロール(<code>admin</code> / <code>member</code>)では付与不可な機能:</p>
-<ul>
-<li>プロジェクトの作成・編集・削除(プロジェクト設定全般: 名称・許可ドメイン・ウィジェット鍵ローテーション 等)</li>
-<li>請求(SCR-022)と設定(SCR-023)── 質問数上限・アラート変更はプロジェクト単位(SCR-021-M1)で該当PJ管理者にも付与する</li>
-<li>退会(SCR-014)</li>
-<li>規約再同意(SCR-015 の同意 / 不同意)</li>
-<li>メンバーアカウント論理削除(<code>DELETE /projects/{id}/members/{userId}</code>)── オーナー操作時は全メンバー削除可、プロジェクト管理者(オーナー以外)操作時は当該プロジェクトの member のみ削除可(他 admin は member 在籍中削除不可)</li>
-</ul>
-<p>UI 上は非表示 + API は 403(<code>E-AUTHZ-OWNER-ONLY</code>)。</p>
-<h3 id="55-プラン制限との関係">5.5 プラン制限との関係</h3>
-<p>MVP は単一プラン。利用上限は認可判定の <strong>次段</strong> で適用される(まず認可 → 通過したら上限チェック → 通過したら処理実行)。上限は 2 系統 ── レート制限(契約単位、<code>owner_quota_overrides</code>)と月次上限件数・無料枠(プロジェクト単位、<code>project_quota_limits</code>、対象 <code>project_id</code> で解決)。なお <strong>上限の編集操作</strong> は本判定(上限チェック)とは別で、プロジェクト上限の編集は <code>requireProjectRole(admin)</code>(オーナーは isOwner bypass)で認可する(オーナー専有ではない)。詳細は <a href="10_課金・請求設計.html">10_課金・請求設計.html §3 / §3a</a> 参照。</p>
-<h2 id="6-認可判定ルール">6. 認可判定ルール</h2>
-<h3 id="61-principal-構築フロー331-から移管">6.1 Principal 構築フロー(§3.3.1 から移管)</h3>
-<h4 id="principal-オブジェクト構造">Principal オブジェクト構造</h4>
-<pre class="text"><code>Principal {
-  userId:                 string
-  contractOwnerUserId:    string                          // 本人がオーナーなら自分の userId、メンバーなら所属契約の owner user_id
-  actorRole:              &#39;admin&#39; | &#39;service_operator&#39;
-  isOwner:                boolean                         // contract_owners 行が存在するかの boolean
-  projectRoles:           Map&lt;string /*projectId*/, &#39;admin&#39; | &#39;member&#39;&gt;   // オーナーも project_users を持つが認可は isOwner=true bypass を優先
-}</code></pre>
-<h4 id="principal-構築クエリ参考">Principal 構築クエリ(参考)</h4>
-<div class="sourceCode" id="cb3"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- 管理者(users)向け Principal 構築</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> u.<span class="kw">id</span>, u.status, u.valid,</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>       (co.user_id <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw">NULL</span>)                          <span class="kw">AS</span> is_owner,</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>       <span class="fu">COALESCE</span>(co.user_id, pu.contract_owner_user_id)   <span class="kw">AS</span> contract_owner_user_id</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> users u</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="kw">LEFT</span> <span class="kw">JOIN</span> contract_owners co <span class="kw">ON</span> co.user_id <span class="op">=</span> u.<span class="kw">id</span> <span class="kw">AND</span> co.valid <span class="op">=</span> <span class="dv">1</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="kw">LEFT</span> <span class="kw">JOIN</span> project_users   pu <span class="kw">ON</span> pu.user_id <span class="op">=</span> u.<span class="kw">id</span> <span class="kw">AND</span> pu.valid <span class="op">=</span> <span class="dv">1</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> u.<span class="kw">id</span> <span class="op">=</span> ?<span class="dv">1</span> <span class="kw">AND</span> u.valid <span class="op">=</span> <span class="dv">1</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="kw">LIMIT</span> <span class="dv">1</span>;</span></code></pre></div>
-<p><code>projectRoles</code> は別途 <code>SELECT project_id, role FROM project_users WHERE user_id=? AND valid=1</code> で取得する。</p>
-<p>ウィジェット利用者は管理コンソール用Principalを構築しない。公開キー・許可ドメイン・ウィジェットセッションで質問受付範囲を検証する。</p>
-<h4 id="認可ミドルウェア実装">認可ミドルウェア実装</h4>
-<ul>
-<li>オーナーはプロジェクト作成時に自動で <code>project_users(role='admin', valid=1)</code> 行を保持するため、<code>users</code> と <code>contract_owners</code> / <code>project_users</code> を結合する処理はオーナー / メンバー共通。ただし認可上は <code>isOwner=true</code> 判定(= <code>contract_owners</code> 行存在)が成立した時点で <code>projectRoles</code> の中身を参照せず bypass で全プロジェクト許可する(認可優先順位)</li>
-<li><code>projectRoles</code> は通知宛先解決と画面表示の事実情報として参照される(空 Map ではなく、オーナー自身の admin 行も含む)</li>
-<li>取得クエリには <code>WHERE project_users.valid=1</code> フィルタを必須付与(論理削除済み行は除外)</li>
-<li>認可判定ヘルパ:
-<ul>
-<li><code>requireOwner()</code>: <code>principal.isOwner</code> でない場合 403(<code>E-AUTHZ-OWNER-ONLY</code>)</li>
-<li><code>requireProjectRole(projectId, minRole: 'admin' | 'member')</code>: <code>principal.isOwner</code> ならば常時許可。それ以外は <code>principal.projectRoles.get(projectId)</code> が未定義なら 404 偽装(<code>E-AUTHZ-PROJECT-DENIED</code>)、<code>minRole='admin'</code> のときロールが <code>admin</code> でなければ 403(<code>E-AUTHZ-FORBIDDEN</code>)</li>
-</ul></li>
-<li>Principal: KV キャッシュ(<strong>TTL 60 秒</strong>)経由で読み取り</li>
-<li>ロール変更時の即時反映よりも認可レイテンシ最適化を優先(FR-338)</li>
-</ul>
-<h3 id="62-認可判定の順序">6.2 認可判定の順序</h3>
-<ol type="1">
-<li><strong>セッション検証</strong>(<code>sessions</code> テーブル参照、無操作 30 分 / 絶対 12 時間)── 失敗 → 401</li>
-<li><strong>ユーザー論理削除確認</strong>(<code>users.valid=1</code>)── <code>valid=0</code> なら 401(セッション失効扱い、ログイン画面へリダイレクト)</li>
-<li><strong>規約再同意状態確認</strong>(<code>terms_agreements</code> を <code>doc_type</code> 別に最新版照合。利用規約・プライバシーポリシーのいずれかが未同意)── 未同意 → SCR-015 へリダイレクト</li>
-<li><strong>契約状態確認</strong>(<code>contract_owners.contract_status</code>、所属契約)── <code>suspended</code> で許可機能外なら 403、<code>deleted_pending</code> / <code>deleted</code> なら 403</li>
-<li><strong>アカウント状態確認</strong>(<code>users.status='active'</code>)── <code>pending_activation</code> / <code>pending_verification</code> なら 403</li>
-<li><strong>オーナー境界判定</strong>(<code>principal.contractOwnerUserId === target.contract_owner_user_id</code>)── 違反 → <strong>404 偽装</strong></li>
-<li><strong>プロジェクトロール判定</strong>(<code>requireProjectRole</code>):
-<ul>
-<li><code>principal.isOwner=true</code> のとき自契約配下の全プロジェクトに無条件アクセス可(bypass)</li>
-<li>メンバーは対象 <code>project_id</code> が <code>principal.projectRoles</code> に含まれ、必要ロール以上を満たすこと</li>
-<li>違反 → 404 偽装(<code>E-AUTHZ-PROJECT-DENIED</code>)/ ロール不足 → 403(<code>E-AUTHZ-FORBIDDEN</code>)</li>
-</ul></li>
-<li><strong>オーナー専有機能判定</strong>(<code>requireOwner</code>、<code>contract_owners</code> 行を持たないユーザーがプロジェクト作成 / 課金 / 退会 / 規約再同意 等にアクセス)── 違反 → 403(<code>E-AUTHZ-OWNER-ONLY</code>)</li>
-<li><strong>最後の管理者保護</strong>(ロール変更 / 離脱対象が、当該プロジェクトの最後の <code>admin</code> 行になる場合)── 違反 → 403(<code>E-AUTHZ-LAST-ADMIN-PROTECTED</code>)。判定はオーナー由来 admin 行を <code>contract_owners</code> JOIN または NOT IN サブクエリで除外し、メンバー由来の <code>admin</code> 行のみで件数判定する</li>
-<li><strong>再認証判定</strong>(重要操作の場合、FR-005)── 5 分以内 + 1 回限り、未保持なら 403</li>
-<li><strong>利用上限判定</strong> ── レート制限 = <code>owner_quota_overrides</code>(契約単位)/ 月次上限件数 = <code>project_quota_limits</code>(プロジェクト単位、対象 <code>project_id</code> で解決、KV <code>usage-limit:&lt;owner&gt;:&lt;projectId&gt;</code>)── 上限到達 → 429 + <code>Retry-After</code></li>
-</ol>
-<h3 id="63-critical-通知の宛先解決共有概念正本">6.3 <code>critical</code> 通知の宛先解決(共有概念正本)</h3>
-<p><code>critical</code> 重要度の通知 = メール強制送信。送信先は <strong>「<code>project_users.role='admin' AND valid=1</code> を 1 件でも保持するユーザー」</strong>(オーナー自身もプロジェクト作成時に admin 行を自動取得するため、本クエリ単独でオーナー + プロジェクト管理者を網羅できる)。</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="kw">DISTINCT</span> u.<span class="kw">id</span>, u.email_encrypted, u.email_hmac, u.email_key_version</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> users u</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">JOIN</span> project_users pu <span class="kw">ON</span> pu.user_id <span class="op">=</span> u.<span class="kw">id</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> pu.contract_owner_user_id <span class="op">=</span> <span class="ch">:contractOwnerUserId</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">AND</span> pu.<span class="kw">role</span> <span class="op">=</span> <span class="st">&#39;admin&#39;</span> <span class="kw">AND</span> pu.valid <span class="op">=</span> <span class="dv">1</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">AND</span> u.status <span class="op">=</span> <span class="st">&#39;active&#39;</span> <span class="kw">AND</span> u.valid <span class="op">=</span> <span class="dv">1</span>;</span></code></pre></div>
-<blockquote>
-<p><strong>クエリ設計</strong>: オーナー自身が admin 行を持つため、admin 行の JOIN 条件単独でオーナー + プロジェクト管理者を網羅できる。<code>DISTINCT</code> でメンバーが複数プロジェクトで admin を持つ場合の二重カウントを防ぐ。オーナー側も <code>project_users</code> 行が 1 件以上あるため <code>DISTINCT</code> 対象に含まれる(二重カウント無し)。</p>
-</blockquote>
-<p>部分インデックス <code>idx_project_users_role_admin</code>(<code>WHERE role = 'admin' AND valid = 1</code>)で高速化。詳細は <a href="06_メッセージ一覧.html">06_メッセージ一覧.html §2.4</a> も参照。</p>
-<blockquote>
-<p><strong>プロジェクト単位アラートの宛先解決</strong>: 質問数上限の選択アラート閾値(25/50/80/90/100%、FR-127)は <strong>当該プロジェクトの管理者</strong>(オーナー + 当該 PJ の <code>admin</code>)のみにメール配信する。上記の契約横断クエリに <code>AND pu.project_id = :targetProjectId</code> を加えた <strong>プロジェクト限定版</strong>を用い、ユーザーIDと正規化メールアドレスで重複排除する。100%到達時の停止処理はアラート選択と独立して実行する。</p>
-</blockquote>
-<div class="sourceCode" id="cb5"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="kw">DISTINCT</span> u.<span class="kw">id</span>, u.email_encrypted, u.email_hmac, u.email_key_version</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> users u</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">JOIN</span> project_users pu <span class="kw">ON</span> pu.user_id <span class="op">=</span> u.<span class="kw">id</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> pu.contract_owner_user_id <span class="op">=</span> <span class="ch">:contractOwnerUserId</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">AND</span> pu.project_id <span class="op">=</span> <span class="ch">:targetProjectId</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">AND</span> pu.<span class="kw">role</span> <span class="op">=</span> <span class="st">&#39;admin&#39;</span> <span class="kw">AND</span> pu.valid <span class="op">=</span> <span class="dv">1</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">AND</span> u.status <span class="op">=</span> <span class="st">&#39;active&#39;</span> <span class="kw">AND</span> u.valid <span class="op">=</span> <span class="dv">1</span>;</span></code></pre></div>
-<h3 id="64-重要操作の再認証fr-005">6.4 重要操作の再認証(FR-005)</h3>
+<div class="callout important"><i class="bi bi-pin-angle"></i><div><span class="c-title">オーナー判定 = isOwner bypass を先頭に</span>プロジェクト作成時にオーナーは当該プロジェクトの <code>project_users(role='admin', valid=1)</code> 行を自動取得しますが(<a href="../01_要件定義/FR02_ユーザー管理.html#FR-015e">FR-015e</a>)、<strong>認可は <code>contract_owners</code> 行存在による <code>isOwner=true</code> bypass を最優先</strong>とし、オーナーは自契約配下の全プロジェクトに無条件でアクセスできます(<a href="../01_要件定義/FR02_ユーザー管理.html#FR-015d">FR-015d</a> / <a href="../01_要件定義/FR02_ユーザー管理.html#FR-021b">FR-021b</a>)。自動付与された admin 行は認可の根拠には使わず、通知宛先解決と画面表示の事実情報として参照します(§5.5)。</div></div>
+
+<h3 id="52-オーナー境界判定">5.2 オーナー境界判定</h3>
+<p class="section-lead">他契約のデータへ越境させないための境界チェックを定めます。次の表は操作者の契約境界キーと対象リソースの <code>contract_owner_user_id</code> の一致を要求し、不一致は相手契約の存在を漏らさないため 404 偽装で拒否することを示します(<a href="../01_要件定義/FR19_アクセス制御細部.html#FR-335">FR-335</a>)。</p>
 <table>
 <thead>
-<tr>
-<th>重要操作</th>
-<th>関連画面</th>
-<th>API</th>
-</tr>
+<tr><th>観点</th><th>内容</th><th>参照</th></tr>
+</thead>
+<tbody>
+<tr><td>判定</td><td>操作者の契約境界キーと、操作対象リソースの <code>contract_owner_user_id</code> が一致すること</td><td>—</td></tr>
+<tr><td>不一致時</td><td>相手契約の存在を漏らさないため <strong>404 偽装</strong> で拒否する(<code>E-AUTHZ-OWNER-BOUNDARY</code>)</td><td>エラー方針は <a href="05_エラー設計.html#53-認可エラー時の方針">05_エラー設計.html §5.3</a> 正本</td></tr>
+<tr><td>メンバーの 1 オーナー固定</td><td>同一メールアドレスでも別オーナー配下は別アカウントとして扱う</td><td><a href="../01_要件定義/FR19_アクセス制御細部.html#FR-335">FR-335</a></td></tr>
+</tbody>
+</table>
+
+<h3 id="53-認可判定の順序">5.3 認可判定の順序</h3>
+<p class="section-lead">1 リクエストを許可するまでに通す認可判定の段を、上から評価する順序で定めます。次の表はセッション検証から始まり、契約状態ゲート・オーナー判定・プロジェクト境界・専有機能・再認証・利用上限までを 11 段に分け、各段の拒否時エラー分類を併記したものです。</p>
+<table>
+<thead>
+<tr><th>#</th><th>判定段</th><th>内容</th><th>拒否時のエラー・参照</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td><strong>セッション検証</strong></td><td>無操作 30 分 / 絶対 12 時間を満たす有効セッションか</td><td>失敗は <code>E-AUTH-SESSION-EXPIRED</code></td></tr>
+<tr><td>2</td><td><strong>アカウント有効性</strong></td><td>アカウントが利用可能状態か(無効化済みなら再ログインへ誘導、§5.6)</td><td>—</td></tr>
+<tr><td>3</td><td><strong>規約再同意ゲート</strong></td><td>改定済みで未同意の文書があれば SCR-015 割込みへ(§6)</td><td><code>E-AUTHZ-TERMS</code></td></tr>
+<tr><td>4</td><td><strong>契約状態ゲート</strong></td><td><code>suspended</code> / <code>deleted_pending</code> / <code>deleted</code> 時は §5.7 のアクセス制限を適用</td><td><code>E-BIZ-CONTRACT-SUSPENDED</code> 等</td></tr>
+<tr><td>5</td><td><strong>オーナー判定(isOwner bypass)</strong></td><td><code>contract_owners</code> 行が存在すれば自契約配下を無条件許可(§5.1)</td><td>—</td></tr>
+<tr><td>6</td><td><strong>オーナー境界判定</strong></td><td>非オーナーは契約境界キー一致を要求。不一致は <strong>404 偽装</strong>(§5.2)</td><td><code>E-AUTHZ-OWNER-BOUNDARY</code></td></tr>
+<tr><td>7</td><td><strong>プロジェクト境界・ロール判定</strong></td><td>対象プロジェクトへの割当があり、必要ロール以上を満たすこと。割当なしは <strong>404 偽装</strong>、ロール不足は 403</td><td><code>E-AUTHZ-PROJECT-DENIED</code> / <code>E-AUTHZ-FORBIDDEN</code>(<a href="../01_要件定義/FR19_アクセス制御細部.html#FR-339">FR-339</a>)</td></tr>
+<tr><td>8</td><td><strong>オーナー専有機能判定</strong></td><td>専有機能(§5.4)を非オーナーが要求した場合は 403</td><td><code>E-AUTHZ-OWNER-ONLY</code></td></tr>
+<tr><td>9</td><td><strong>オーナー保護・自己操作・最後の管理者保護</strong></td><td>§5.4 の不可制約に該当すれば拒否</td><td><code>E-AUTHZ-OWNER-PROTECTED</code> / <code>E-AUTHZ-SELF-MUTATION</code> / <code>E-AUTHZ-LAST-ADMIN-PROTECTED</code></td></tr>
+<tr><td>10</td><td><strong>再認証判定</strong></td><td>重要操作(§2)で再認証が「当該操作 1 回 + 15 分以内」を満たすか</td><td>未充足は <code>E-AUTH-REAUTH-REQUIRED</code></td></tr>
+<tr><td>11</td><td><strong>利用上限判定</strong></td><td>認可通過後に上限を確認する(レート = 契約単位、月次上限件数・無料枠 = プロジェクト単位)</td><td><a href="10_課金・請求設計.html">10_課金・請求設計.html</a> が正本</td></tr>
+</tbody>
+</table>
+<div class="callout warning"><i class="bi bi-exclamation-triangle"></i><div><span class="c-title">権限外は原則非表示・直アクセス拒否</span>権限外の主ナビゲーションと操作は<strong>原則として表示しない</strong>。共同作業上、存在を知らせる価値がある項目のみ読み取り専用で表示し、必要権限と依頼先を説明する。権限のない画面への直アクセスは、同等の説明と戻り先を添えて拒否する(<a href="../01_要件定義/FR19_アクセス制御細部.html#FR-341">FR-341</a>)。表示制御の画面仕様は <a href="01_画面設計/index.html">01_画面設計/index.html</a> が正本。</div></div>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">役割・割当変更の反映タイミング(D-03)</span>役割やプロジェクト割当の追加・剥奪では<strong>既存セッションを即時失効させず、次回の認可チェック時点で反映</strong>します(<a href="../01_要件定義/FR19_アクセス制御細部.html#FR-338">FR-338</a>)。認可判定で参照する役割・割当情報のキャッシュ反映上限(TTL)は <strong>60 秒以内</strong> とし、これを本書で正本化します(<a href="../01_要件定義/FR19_アクセス制御細部.html#FR-338">FR-338</a> が反映上限時間とキャッシュ方式を本書へ委任)。変更から最大 60 秒で次回認可チェックに反映されます。</div></div>
+
+<h3 id="54-オーナー保護自己操作最後の管理者保護">5.4 オーナー専有機能・保護制約</h3>
+<p class="section-lead">特定のロールに付与してはならない専有機能と、運用が止まらないための保護制約を定めます。次の表はオーナー専有機能・オーナー保護・自己操作の禁止・最後の管理者保護をまとめたもので、各制約に該当する操作は §5.3 の対応する判定段で拒否されます(<a href="../01_要件定義/FR19_アクセス制御細部.html#FR-333">FR-333</a> / <a href="../01_要件定義/FR19_アクセス制御細部.html#FR-334">FR-334</a>)。</p>
+<table>
+<thead>
+<tr><th>制約</th><th>内容</th><th>根拠</th></tr>
 </thead>
 <tbody>
 <tr>
-<td>パスワード変更</td>
-<td>(グローバル)</td>
-<td><code>POST /auth/password/change</code></td>
+<td>オーナー専有機能</td>
+<td>課金情報・支払方法・請求履歴・退会・規約再同意・契約設定、プロジェクトの作成・編集・削除はオーナー専有。いずれの役割にも付与しない。<strong>プロジェクト単位の利用上限・無料枠は、オーナーまたは当該プロジェクト管理者が変更できる</strong></td>
+<td><a href="../01_要件定義/FR02_ユーザー管理.html#FR-015c">FR-015c</a> / <a href="../01_要件定義/FR02_ユーザー管理.html#BR-044">BR-044</a></td>
 </tr>
 <tr>
-<td>退会申請</td>
-<td>SCR-014</td>
-<td><code>POST /withdrawal-requests</code></td>
+<td>オーナー保護</td>
+<td>オーナーに対する退会・停止・削除・降格・譲渡を一切受け付けない。1 契約 = 1 オーナーのため孤立状態は構造的に発生しない</td>
+<td><a href="../01_要件定義/FR19_アクセス制御細部.html#FR-333">FR-333</a></td>
 </tr>
 <tr>
-<td>課金情報変更</td>
-<td>SCR-022</td>
-<td><code>PATCH /billing/payment-method</code></td>
+<td>自己操作の禁止</td>
+<td>自分自身の利用状態変更・削除はできない。当該プロジェクトの管理者が自分 1 人のとき、自身を管理者からメンバーへ降格できない。自身のアカウント削除は常に不可で、他人を経由して自身を削除する経路も設けない</td>
+<td><a href="../01_要件定義/FR19_アクセス制御細部.html#FR-334">FR-334</a></td>
 </tr>
 <tr>
-<td>メンバー招待 / ロール変更 / プロジェクト割当解除 / 招待再送</td>
-<td>SCR-009-M1</td>
-<td><code>POST /projects/{id}/members</code>, <code>PATCH /projects/{id}/members/{userId}</code>, <code>DELETE /projects/{id}/members/{userId}</code>, <code>POST /members/{id}/resend-invitation</code></td>
-</tr>
-<tr>
-<td>プロジェクトの質問数上限・アラート変更</td>
-<td>SCR-021-M1(オーナー / 当該 PJ 管理者)</td>
-<td><code>PATCH /projects/{id}/quota-limits/questions</code></td>
-</tr>
-<tr>
-<td>プロジェクト削除(論理削除)</td>
-<td>SCR-004-M1 プロジェクト作成・編集モーダル(編集モード DangerSection)</td>
-<td><code>DELETE /projects/{id}</code></td>
-</tr>
-<tr>
-<td>ウィジェット鍵ローテーション</td>
-<td>SCR-007</td>
-<td><code>POST /projects/{id}/widget-key/rotate</code></td>
-</tr>
-<tr>
-<td>FAQ 削除</td>
-<td>SCR-006</td>
-<td><code>DELETE /faqs/{id}</code></td>
+<td>最後の管理者保護</td>
+<td>役割変更・離脱の対象が当該プロジェクトの最後の管理者になる場合は拒否する。オーナー由来の自動 admin 行は件数判定から除外し、メンバー由来の <code>admin</code> 行のみで判定する</td>
+<td><a href="../01_要件定義/FR02_ユーザー管理.html#FR-018a">FR-018a</a> / <a href="../01_要件定義/FR19_アクセス制御細部.html#FR-334">FR-334</a></td>
 </tr>
 </tbody>
 </table>
-<p>有効期間: <strong>当該操作 1 回のみかつ 15 分以内</strong></p>
-<h3 id="65-オーナー保護fr-333-自己操作不可fr-334-単一オーナー所属fr-335">6.5 オーナー保護(FR-333)/ 自己操作不可(FR-334)/ 単一オーナー所属(FR-335)</h3>
+
+<h3 id="55-通知宛先解決">5.5 critical 通知の宛先解決(共有概念正本)</h3>
+<p class="section-lead">critical 通知を「誰に送るか」を決める宛先解決ロジックを本書で正本化します。次の表は、オーナーも admin 行を持つことを利用した網羅的な宛先抽出、重複排除、プロジェクト限定通知の絞り込みをまとめたものです。配信契機・文面は <a href="06_メッセージ一覧.html">06_メッセージ一覧.html</a> / <a href="11_メール設計.html">11_メール設計.html</a> が正本です。</p>
 <table>
 <thead>
-<tr>
-<th>ルール</th>
-<th>内容</th>
-</tr>
+<tr><th>観点</th><th>内容</th><th>参照</th></tr>
 </thead>
 <tbody>
-<tr>
-<td><strong>オーナー保護</strong></td>
-<td>オーナー(<code>contract_owners</code> 行を持つユーザー)に対する停止・削除・降格・オーナー解除操作はすべて 403。1 契約 = 1 オーナー(<code>contract_owners.user_id PRIMARY KEY</code> で DB レベル担保)</td>
-</tr>
-<tr>
-<td><strong>自己操作不可</strong></td>
-<td>自分自身の利用状態変更・削除・ロール降格・プロジェクト割当変更は API 403。特に自分が <code>admin</code> を持つ最後のプロジェクトで自身を <code>member</code> 化 / 割当解除する操作は不可(<code>E-AUTHZ-SELF-MUTATION</code>)</td>
-</tr>
-<tr>
-<td><strong>単一オーナー所属</strong></td>
-<td>同一メールでも別オーナー配下は別アカウントとして扱う</td>
-</tr>
+<tr><td>網羅性</td><td>オーナー自身が admin 行を持つため、admin 行を起点に解決すればオーナー + プロジェクト管理者を漏れなく解決できる</td><td>—</td></tr>
+<tr><td>重複排除</td><td>同一ユーザーが複数プロジェクトで admin を持つ場合の二重配信を避けるため、ユーザー ID と正規化メールアドレスで重複排除する</td><td>—</td></tr>
+<tr><td>プロジェクト限定通知</td><td>質問数上限の選択アラート等は対象プロジェクトに限定し、当該プロジェクトの管理者(オーナー + 当該 PJ admin)のみに配信する</td><td><a href="../01_要件定義/FR02_ユーザー管理.html#FR-021a">FR-021a</a></td></tr>
 </tbody>
 </table>
-<h2 id="7-アカウント状態">7. アカウント状態</h2>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">配信契機・文面の正本</span>通知契機・配信先一覧は <a href="06_メッセージ一覧.html">06_メッセージ一覧.html</a>、本文テンプレートは <a href="11_メール設計.html">11_メール設計.html</a> が正本です。本書は「誰が宛先か」を決める解決ロジックのみを定めます。</div></div>
+
+<h3 id="56-アカウント状態">5.6 アカウント状態と利用可否</h3>
+<p class="section-lead">アカウントの各状態でログインと利用をどこまで許すかを定めます。次の表は有効・招待中・メール未確認・ロック中・無効化の状態ごとに、ログイン可否と許される利用範囲を示したものです(<a href="../01_要件定義/FR19_アクセス制御細部.html#FR-339">FR-339</a>)。</p>
 <table>
 <thead>
-<tr>
-<th>状態</th>
-<th>説明</th>
-<th>ログイン可否</th>
-<th>操作制限</th>
-</tr>
+<tr><th>状態</th><th>ログイン可否</th><th>利用範囲</th></tr>
 </thead>
 <tbody>
-<tr>
-<td>有効</td>
-<td><code>contract_owners.contract_status='active'</code>(所属契約)+ ユーザー自体が <code>users.status='active'</code></td>
-<td>◯</td>
-<td>なし</td>
-</tr>
-<tr>
-<td>招待中</td>
-<td><code>users.status='pending_activation'</code>(招待トークン送信済、未受諾)</td>
-<td>×</td>
-<td>招待トークンで初回パスワード設定のみ</td>
-</tr>
-<tr>
-<td>メール未確認</td>
-<td><code>users.status='pending_verification'</code></td>
-<td>△(SCR-013 のみ)</td>
-<td>メール確認のみ</td>
-</tr>
-<tr>
-<td>停止中(契約)</td>
-<td><code>contract_owners.contract_status='suspended'</code></td>
-<td>◯(オーナーのみ)</td>
-<td>課金画面 / 退会画面のみ</td>
-</tr>
-<tr>
-<td>ロック中</td>
-<td>ログイン失敗 5 回</td>
-<td>×(15 分間)</td>
-<td>-</td>
-</tr>
-<tr>
-<td>退会申請中(契約)</td>
-<td><code>contract_owners.contract_status='deleted_pending'</code></td>
-<td>△(オーナーのみ)</td>
-<td>退会キャンセル</td>
-</tr>
-<tr>
-<td>退会済み(契約)</td>
-<td><code>contract_owners.contract_status='deleted'</code></td>
-<td>×</td>
-<td>-</td>
-</tr>
+<tr><td>有効</td><td>可</td><td>役割・割当に応じた操作</td></tr>
+<tr><td>招待中(有効化前)</td><td>不可</td><td>招待リンクからの有効化のみ。役割は予約状態(<a href="../01_要件定義/FR02_ユーザー管理.html#FR-016c">FR-016c</a>)</td></tr>
+<tr><td>メール未確認</td><td>制限</td><td>メール確認の完了のみ(<a href="../01_要件定義/FR01_アカウント管理.html#FR-003">FR-003</a>)</td></tr>
+<tr><td>ロック中</td><td>不可(15 分)</td><td>時間経過または管理者解除で復旧(§4.1)</td></tr>
+<tr><td>無効化(最後の割当解除)</td><td>不可</td><td>全セッション・未使用招待を失効。割当のないプロジェクトへの直アクセスは拒否(<a href="../01_要件定義/FR19_アクセス制御細部.html#FR-339">FR-339</a>)</td></tr>
 </tbody>
 </table>
-<h3 id="71-サスペンション中の認可ゲート627-から移管">7.1 サスペンション中の認可ゲート(§6.2.7 から移管)</h3>
-<p><code>contract_owners.contract_status='suspended'</code> 中:</p>
+<div class="callout important"><i class="bi bi-pin-angle"></i><div><span class="c-title">最後の割当解除による自動無効化</span>メンバーの最後の有効なプロジェクト割当が解除されたとき、対象アカウントを<strong>自動で無効化</strong>し、全ログインセッションと未使用招待を失効させます(<a href="../01_要件定義/FR02_ユーザー管理.html#FR-019b">FR-019b</a> / <a href="../01_要件定義/FR19_アクセス制御細部.html#FR-339">FR-339</a>)。利用停止後に同じメールアドレスで再招待された場合は、過去の削除済みデータとは別の新しい利用者として扱います。一定期間(90 日)経過後にデータが消去される旨は割当解除の確認時に明示します。契約横断のメンバー管理画面は提供しません。</div></div>
+
+<h3 id="57-契約状態によるアクセス制限">5.7 契約状態によるアクセス制限</h3>
+<p class="section-lead">契約そのものの状態が利用に与える制限を定めます。次の表は停止中・退会申請中・退会済みの各 <code>contract_status</code> について、管理画面で許す操作とセッションの扱いを示したものです。支払方法ゲートはこの契約停止とは別である点に注意します(表後の補足)。</p>
 <table>
 <thead>
-<tr>
-<th>操作</th>
-<th>認可</th>
-</tr>
+<tr><th>契約状態</th><th>管理画面の許可操作</th><th>セッション</th></tr>
 </thead>
 <tbody>
-<tr>
-<td>請求(SCR-022)</td>
-<td><strong>許可</strong></td>
-</tr>
-<tr>
-<td>退会画面(SCR-014)</td>
-<td><strong>許可</strong></td>
-</tr>
-<tr>
-<td>その他</td>
-<td>403</td>
-</tr>
-<tr>
-<td>ウィジェット応答</td>
-<td><strong>423</strong>(FR-138)</td>
-</tr>
+<tr><td>停止中(<code>suspended</code>)</td><td>課金・退会のみ許可。その他は 403</td><td>運営者手動 / 規約違反停止は全失効(§3.6)。支払猶予切れは既存セッション継続</td></tr>
+<tr><td>退会申請中(<code>deleted_pending</code>)</td><td>参照は可、新規書込は禁止。退会キャンセル動線を提供</td><td>オーナーのみログイン可</td></tr>
+<tr><td>退会済み(<code>deleted</code>)</td><td>不可</td><td>ログイン不可</td></tr>
 </tbody>
 </table>
-<p>reason 別のセッション扱い:</p>
-<ul>
-<li><code>operator_manual</code> / <code>tos_violation</code>: <strong>5 秒以内に全セッション無効化</strong>(FR-022)</li>
-<li><code>payment_failure_grace_expired</code>: 既存セッション継続(課金 / 退会のみ)</li>
-</ul>
-<p>解除条件:</p>
-<ul>
-<li><code>payment_failure_grace_expired</code> / <code>operator_manual</code> / <code>tos_violation</code>: 顧客管理側の連携 IF #1 受信(支払い成功 / 運営者解除)で <code>contract_owners.contract_status='active'</code> へ。</li>
-</ul>
-<blockquote>
-<p>支払方法ゲート(FR-136、支払方法未登録 + 無料枠超過)は <strong>契約サスペンションではない</strong>(<code>contract_status</code> は <code>active</code> のまま、ウィジェット質問受付のみ停止)。本表(サスペンション中の認可ゲート)の対象外であり、管理画面の認可制限・セッション無効化は発生しない。支払方法登録でウィジェット質問受付を即時再開する。</p>
-</blockquote>
-<h3 id="72-退会解約フロー628-から移管">7.2 退会・解約フロー(§6.2.8 から移管)</h3>
-<pre><code>オーナーが SCR-014 で退会申請
-  → 再認証 FR-005
-  → contract_owners.contract_status=&#39;deleted_pending&#39;
-  → ウィジェット応答停止、新規 FAQ 登録不可
-  → 当月末まで利用可
-  → 月末締めで利用停止(月割りなし)
-  → 30 日削除猶予開始(物理削除まで)
-  → 物理削除バッチ実行: contract_owners.contract_status=&#39;deleted&#39; + valid=0(CHECK で同時セット強制)
-  → 全データ削除 + announcement_recipients 削除</code></pre>
-<p>詳細は <a href="11_課金請求設計書.html">11_課金請求設計書.html §5</a> 参照。</p>
-<h3 id="73-規約改定フロー629-から移管">7.3 規約改定フロー(§6.2.9 から移管)</h3>
-<pre><code>運営者が新規約を準備
-  → 発効 30 日前: inbox(announcement/critical)+ メール + ステータスページ
-  → 契約単位で段階的に発効(全契約同日強制ではない)
-  → 新規約発効
-  → ログイン時に同意状況チェック
-    ├─ Yes(同意済み): 通常画面へ
-    └─ No: SCR-015 規約再同意割込み
-        ├─ 同意期限 14 日以内
-        │  ├─ Yes(同意): 通常画面へ
-        │  └─ No(不同意): 退会フロー(SCR-014)へ誘導
-        └─ 同意期限超過時: 機能制限ガード(課金画面操作と新規プロジェクト作成は不可、FAQ 編集とウィジェット稼働は継続)</code></pre>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">支払方法ゲートは契約停止ではない</span>支払方法未登録 + 無料枠超過によるウィジェット質問受付の停止は契約サスペンションではありません(<code>contract_status</code> は <code>active</code> のまま)。本表のアクセス制限・セッション無効化の対象外で、管理画面は通常どおり利用できます。詳細は <a href="10_課金・請求設計.html">10_課金・請求設計.html</a> 正本。</div></div>
+
+<h2 id="6-規約再同意の認可割込み">6. 規約再同意の認可割込み</h2>
+<p class="section-lead">規約改定時に、ログイン後の認可フローへ再同意画面を割り込ませる発火条件と段階適用を定めます。次の表は判定対象(改定文書のみ)・割込み箇所(§5.3 #3)・予告と同意期限・契約単位の段階適用をまとめたもので、制限内容の正本は <a href="04_権限設計.html">04_権限設計.html</a> です(<a href="../01_要件定義/FR01_アカウント管理.html#FR-011">FR-011</a>)。</p>
 <table>
 <thead>
-<tr>
-<th>観点</th>
-<th>仕様</th>
-</tr>
+<tr><th>観点</th><th>内容</th><th>参照</th></tr>
 </thead>
 <tbody>
-<tr>
-<td>通知タイミング</td>
-<td>改定発効日の <strong>30 日前</strong></td>
-</tr>
-<tr>
-<td>通知経路</td>
-<td>inbox(announcement/critical) + メール(<strong>強制送信</strong>)+ ステータスページ</td>
-</tr>
-<tr>
-<td>同意期限</td>
-<td>発効日 + <strong>14 日</strong>(計 44 日の余裕)</td>
-</tr>
-<tr>
-<td>同意期限超過時</td>
-<td>SCR-015 強制割込み。ログイン自体は可能、機能制限</td>
-</tr>
-<tr>
-<td>段階的実施</td>
-<td>契約単位で発効日を分散</td>
-</tr>
-<tr>
-<td>非同意時</td>
-<td>退会フロー(SCR-014)へ誘導</td>
-</tr>
+<tr><td>判定対象</td><td>利用規約・プライバシーポリシーのうち<strong>改定された文書のみ</strong>。文書は <code>doc_type</code> 別に版管理し、最新版未同意のものだけ再同意を求める</td><td>—</td></tr>
+<tr><td>割込み</td><td>ログイン後の認可フロー(§5.3 #3)で未同意を検知したら SCR-015 へ割込む。割込み中は他画面の操作を許さない</td><td>—</td></tr>
+<tr><td>予告と期限</td><td>発効 30 日前に予告し、同意期限は発効日 + 14 日</td><td><a href="../01_要件定義/FR01_アカウント管理.html#FR-011">FR-011</a></td></tr>
+<tr><td>段階適用</td><td>全契約同日強制ではなく<strong>契約単位で段階的に</strong>発効させる</td><td>—</td></tr>
+<tr><td>非同意</td><td>退会の案内へ誘導する</td><td>—</td></tr>
+<tr><td>同意期限超過後の機能制限</td><td>ログイン自体は可能とし、機能を制限する。本書は割込みの発火条件と段階適用を定める</td><td>制限内容の正本は <a href="04_権限設計.html">04_権限設計.html</a></td></tr>
 </tbody>
 </table>
-<h2 id="8-認証認可エラー">8. 認証・認可エラー</h2>
-<p>詳細は <a href="06_エラー設計書.html">06_エラー設計書.html §4.2-4.3</a> を正本とする。本書では主要エラーのみ。</p>
+<div class="callout important"><i class="bi bi-pin-angle"></i><div><span class="c-title">同意・割込みはオーナー専有</span>規約再同意の同意 / 不同意操作はオーナー専有機能です(<a href="../01_要件定義/FR02_ユーザー管理.html#FR-015c">FR-015c</a>)。再同意未完了の契約に属するメンバーは、契約側の同意完了までゲートの影響を受けます。</div></div>
+
+<h2 id="7-認証認可エラーの対応">7. 認証・認可エラーの対応(参照)</h2>
+<p class="section-lead">本書の各判定段が拒否したときに落とすエラー分類の対応表です。次の表は判定段とエラー ID を突き合わせた索引で、エラーの定義そのもの(メッセージ・ステータスコード等)は <a href="05_エラー設計.html#42-認証エラーe-auth-">05_エラー設計.html</a> が正本です。</p>
 <table>
 <thead>
-<tr>
-<th>エラーID</th>
-<th>発生条件</th>
-<th>メッセージID</th>
-<th>ステータスコード</th>
-<th>システム動作</th>
-</tr>
+<tr><th>判定段(本書)</th><th>拒否時のエラー分類</th><th>定義の正本</th></tr>
 </thead>
 <tbody>
-<tr>
-<td>E-AUTH-CREDENTIAL</td>
-<td>パスワード不一致</td>
-<td>MSG-SCR-001-ERROR-001</td>
-<td>401</td>
-<td>失敗カウント +1。攻撃者にヒントを与えない</td>
-</tr>
-<tr>
-<td>E-AUTH-LOCKED</td>
-<td>5 回失敗</td>
-<td>MSG-SCR-001-ERROR-003</td>
-<td>423</td>
-<td>15 分ロック。本人 + オーナー + 全プロジェクト管理者へ通知</td>
-</tr>
-<tr>
-<td>E-AUTH-TOKEN-EXPIRED</td>
-<td>トークン期限切れ</td>
-<td>MSG-SCR-003-ERROR-001</td>
-<td>410</td>
-<td>再送 CTA を返却</td>
-</tr>
-<tr>
-<td>E-AUTHZ-FORBIDDEN</td>
-<td>プロジェクトロール不足</td>
-<td>MSG-COMMON-AUTHZ-403</td>
-<td>403</td>
-<td>統一文言</td>
-</tr>
-<tr>
-<td>E-AUTHZ-OWNER-BOUNDARY</td>
-<td>オーナー境界違反</td>
-<td>MSG-COMMON-NOT-FOUND</td>
-<td><strong>404 偽装</strong></td>
-<td>リソース存在を漏らさない</td>
-</tr>
-<tr>
-<td>E-AUTHZ-PROJECT-DENIED</td>
-<td>プロジェクト割当不足</td>
-<td>MSG-COMMON-NOT-FOUND</td>
-<td>404 偽装</td>
-<td>同上</td>
-</tr>
-<tr>
-<td>E-BIZ-CONTRACT-SUSPENDED</td>
-<td>契約停止中</td>
-<td>MSG-BILL-CONTRACT-SUSPENDED</td>
-<td>403</td>
-<td>課金 / 退会のみ許可</td>
-</tr>
-<tr>
-<td>E-AUTHZ-OWNER-ONLY</td>
-<td>オーナー専有機能をメンバーが操作</td>
-<td>MSG-COMMON-AUTHZ-403</td>
-<td>403</td>
-<td>UI 非表示</td>
-</tr>
-<tr>
-<td>E-AUTHZ-REAUTH-REQUIRED</td>
-<td>再認証期限切れ</td>
-<td>MSG-COMMON-REAUTH</td>
-<td>403</td>
-<td>再認証モーダル表示</td>
-</tr>
-<tr>
-<td>E-AUTHZ-OWNER-PROTECTED</td>
-<td>オーナー停止 / 削除 / 降格</td>
-<td>MSG-COMMON-OWNER-PROTECTED</td>
-<td>403</td>
-<td>(FR-333)</td>
-</tr>
-<tr>
-<td>E-AUTHZ-SELF-MUTATION</td>
-<td>自分自身の操作禁止</td>
-<td>MSG-COMMON-SELF-MUTATION</td>
-<td>403</td>
-<td>(FR-334)</td>
-</tr>
-<tr>
-<td>E-AUTHZ-TERMS</td>
-<td>規約未同意</td>
-<td>MSG-SCR-015-*</td>
-<td>403 → SCR-015 へリダイレクト</td>
-<td>規約再同意フロー</td>
-</tr>
+<tr><td>ログイン認証失敗</td><td><code>E-AUTH-CREDENTIAL</code></td><td rowspan="4"><a href="05_エラー設計.html#42-認証エラーe-auth-">05_エラー設計.html §4.2(認証エラー)</a></td></tr>
+<tr><td>ログインロック中</td><td><code>E-AUTH-LOCKED</code></td></tr>
+<tr><td>セッション失効</td><td><code>E-AUTH-SESSION-EXPIRED</code></td></tr>
+<tr><td>再認証未充足</td><td><code>E-AUTH-REAUTH-REQUIRED</code></td></tr>
+<tr><td>プロジェクトロール不足</td><td><code>E-AUTHZ-FORBIDDEN</code></td><td rowspan="6"><a href="05_エラー設計.html#43-認可エラーe-authz-">05_エラー設計.html §4.3(認可エラー)</a></td></tr>
+<tr><td>オーナー境界違反</td><td><code>E-AUTHZ-OWNER-BOUNDARY</code>(404 偽装)</td></tr>
+<tr><td>プロジェクト割当なし</td><td><code>E-AUTHZ-PROJECT-DENIED</code>(404 偽装)</td></tr>
+<tr><td>オーナー専有機能違反</td><td><code>E-AUTHZ-OWNER-ONLY</code></td></tr>
+<tr><td>オーナー保護・自己操作・最後の管理者</td><td><code>E-AUTHZ-OWNER-PROTECTED</code> / <code>E-AUTHZ-SELF-MUTATION</code> / <code>E-AUTHZ-LAST-ADMIN-PROTECTED</code></td></tr>
+<tr><td>規約未同意</td><td><code>E-AUTHZ-TERMS</code></td></tr>
+<tr><td>契約停止・退会済</td><td><code>E-BIZ-CONTRACT-SUSPENDED</code> / <code>E-BIZ-CONTRACT-DELETED</code></td><td><a href="05_エラー設計.html#44-業務エラーe-biz-">05_エラー設計.html §4.4(業務エラー)</a></td></tr>
 </tbody>
 </table>
-<h2 id="9-リスク受容">9. リスク受容</h2>
+
+<h2 id="8-リスク受容">8. リスク受容</h2>
+<p class="section-lead">MVP 段階で残る認証・認可上のリスクと、それに対する補完策・残留レベルを明示します。次の表は認証情報漏洩や不可逆操作の不正実行などの想定リスクごとに、本書で定めた対策(ロック・再認証・通知・保護制約)と受容後の残留レベルを示したものです。</p>
 <table>
 <thead>
-<tr>
-<th>リスク</th>
-<th>MVP の補完策</th>
-<th>残留リスクレベル</th>
-</tr>
+<tr><th>リスク</th><th>MVP の補完策</th><th>残留レベル</th></tr>
 </thead>
 <tbody>
 <tr>
-<td>admin 認証情報漏洩(フィッシング / クレデンシャルスタッフィング)</td>
-<td>(a) FR-007 ロックアウト(5 回失敗 × 15 分)、(b) FR-177 Turnstile 発動、(c) NFR-505 ログイン通知メール、(d) FR-005 重要操作前再認証</td>
+<td>認証情報漏洩(フィッシング / クレデンシャルスタッフィング)</td>
+<td>ログイン失敗ロック(§4.1)、Bot 対策の発動(<a href="../01_要件定義/FR14_セキュリティ.html#FR-177">FR-177</a>)、重要操作の再認証(§2)、ログイン・操作通知メール</td>
 <td>中</td>
 </tr>
 <tr>
 <td>退会等の不可逆操作の不正実行</td>
-<td>(a) FR-005 再認証必須、(b) NFR-505 操作通知メール、(c) 監査ログ(<code>audit_logs</code>、NFR-602a)による事後追跡</td>
+<td>再認証必須(§2)、操作通知メール、監査ログによる事後追跡(<a href="../01_要件定義/FR14_セキュリティ.html#FR-175">FR-175</a> / <a href="../01_要件定義/FR14_セキュリティ.html#FR-178a">FR-178a</a>)</td>
 <td>中</td>
 </tr>
 <tr>
 <td>課金情報変更の不正実行</td>
-<td>(a) FR-005 再認証必須、(b) Stripe Elements による PCI スコープ縮小、(c) NFR-505 課金操作通知メール、(d) サスペンション解除には支払成功 Webhook 必須(§6.2.7)</td>
+<td>再認証必須(§2)、課金操作通知メール、停止解除には支払成功の連携受信が必須(§5.7)</td>
 <td>中</td>
 </tr>
 <tr>
-<td>orphan admin による単一障害点</td>
-<td>FR-333 オーナー保護、FR-334 自己操作不可</td>
+<td>単一管理者の喪失による運用停止</td>
+<td>オーナー保護・最後の管理者保護・自己操作禁止(§5.4、<a href="../01_要件定義/FR19_アクセス制御細部.html#FR-333">FR-333</a> / <a href="../01_要件定義/FR19_アクセス制御細部.html#FR-334">FR-334</a>)</td>
 <td>低</td>
 </tr>
 </tbody>
 </table>
-<p>運用方針: 利用者側 admin はパスワード認証で運用。リスク受容は本節および NFR-330 系セキュリティ管理で文書化。</p>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">運営者の認証・認可は対象外</span>運営者ログイン向けの MFA・海外 IP 遮断(<code>operator_ip_allowlist</code>)・4-eyes 承認は運営者システムを正本とします(<a href="../../共有/共有概念.html">共有概念</a> §8 / §11)。海外 IP 遮断は運営者画面のみが対象で、利用者側 API・ウィジェットは対象外です(<a href="../01_要件定義/FR19_アクセス制御細部.html#FR-331">FR-331</a>)。正本 → <a href="../../02_運営者システム/02_基本設計/08_認証・認可設計.html">運営者 08_認証・認可設計.html</a>。</div></div>
+
+<h2 id="更新履歴">更新履歴</h2>
+<table>
+<thead>
+<tr><th>版数</th><th>日付</th><th>変更内容</th></tr>
+</thead>
+<tbody>
+<tr>
+<td>v2.0</td>
+<td>2026-06-17</td>
+<td>要件定義 v2(FR01 / FR02 / FR19 / FR14)を起点に全面再構築。記載スタイル標準(要約ブロック / doc-meta / section-lead / callout)へ移行。テーブル定義・エラー ID・画面・操作×ロール網羅表の再掲を排し正本リンクへ送付。役割・割当変更の反映上限(認可キャッシュ TTL 60 秒以内、D-03)を正本化。停止 stale だった隣接ファイル参照(<code>04_テーブル定義書.html</code> / <code>05_権限設計書.html</code> / <code>06_エラー設計書.html</code> / <code>03_API設計書.html</code> / 運営者 <code>個別設計書群/09_認証認可設計書.html</code> 等)を現行正本ファイル名へ修正。要件根拠の薄い実装寄り記述(SQL クエリ全文・Principal オブジェクト構造・Cookie/CSRF/HMAC 実装値・トークン用途別鍵表)を削除し、本書を認証・認可の方針とフローに限定。</td>
+</tr>
+<tr>
+<td>v1.1</td>
+<td>2026-06-12</td>
+<td>(旧構成)MVP の認証・アクセス制御要件を整理。Principal 構築・宛先解決クエリ・トークン仕様を本書へ集約。</td>
+</tr>
+</tbody>
+</table>
 
 </article>
 </body>

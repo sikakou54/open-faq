@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WIDGET エンドユーザー向け FAQ ウィジェット | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<link rel="stylesheet" href="../../../assets/css/screen-mock.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@1.17.0/dist/umd/lucide.min.js"></script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/01_画面設計/SCR_WIDGET.html">
+<article class="content" id="content">
+<h1 id="widget-エンドユーザー向け-faq-ウィジェット">WIDGET エンドユーザー向け FAQ ウィジェット</h1>
+
+<aside class="page-summary">
+<p class="ps-lead"><strong>このページは、ウィジェット利用者(エンドユーザー)が顧客サイト上で FAQ 検索・AI 回答・問い合わせを行う埋め込み UI を定義します(固有の SCR ID を持たない状態定義)。</strong> 画面概要 / 画面遷移図 / 画面レイアウト / 画面項目定義 / 入出力一覧 / 画面イベント一覧 の 6 セクションで記述します。</p>
+</aside>
+<p class="doc-meta"><span><b>版数</b> v1.0</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<h2 id="1-画面概要">1. 画面概要</h2>
+<p class="section-lead">ウィジェット利用者(エンドユーザー)が顧客サイトに埋め込まれたウィジェットから FAQ 検索・AI 回答の確認・未解決時の連絡先確認を、同じ会話欄で行う UI です。初期表示は右下固定の丸型ランチャーバッジで、操作でチャット UI を展開します。</p>
+<table>
+<thead>
+<tr>
+<th>画面 ID</th>
+<th>画面名</th>
+<th>機能概要</th>
+</tr>
+</thead>
+<tbody>
+<tr><td id="WIDGET"><code>WIDGET</code></td><td>エンドユーザー向け FAQ ウィジェット</td><td>エンドユーザーが FAQ 検索・AI 回答・問い合わせを行うウィジェット</td></tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>関連</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>FR / BR</td><td><a href="../../01_要件定義/FR05_AI回答.html#FR-050">FR-050</a>〜<a href="../../01_要件定義/FR05_AI回答.html#FR-057">FR-057</a>, <a href="../../01_要件定義/FR06_未解決質問登録.html#FR-070">FR-070</a>〜<a href="../../01_要件定義/FR06_未解決質問登録.html#FR-077">FR-077</a>, <a href="../../01_要件定義/FR09_利用量・課金.html#FR-122">FR-122</a>, <a href="../../01_要件定義/FR09_利用量・課金.html#FR-136">FR-136</a>, <a href="../../01_要件定義/FR12_ウィジェット.html#FR-150">FR-150</a>〜<a href="../../01_要件定義/FR12_ウィジェット.html#FR-156">FR-156</a> / <a href="../../01_要件定義/FR12_ウィジェット.html">BR(ウィジェット)</a></td></tr>
+<tr><td>関連画面</td><td><a href="SCR_007.html"><code>SCR-007</code> ウィジェット設定</a>(管理コンソール側でタイトル・連絡先メール等を設定)</td></tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr>
+<th>ステークホルダ</th>
+<th>対象</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>ウィジェット利用者(エンドユーザー)</td><td>◯</td></tr>
+</tbody>
+</table>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>本 UI は管理コンソールではなく顧客サイトへ埋め込まれるウィジェットです。固有の SCR ID は持たず、開閉状態と会話内容の状態を分けて管理する状態定義として扱います。管理用の問い合わせ ID はウィジェットに表示しません。配信・公開 API の詳細は DD12 を正本とします。</div></div>
+
+<h2 id="2-画面遷移図">2. 画面遷移図</h2>
+<p class="section-lead">本ウィジェットの状態遷移を、状態名と契機(操作・結果)で示します。固有 SCR ID を持たないため、開閉状態と会話状態を遷移ノードとして表します。</p>
+<pre class="mermaid"><code>flowchart LR
+  W0["起動前(丸型ランチャーバッジ)"]
+  W1["展開中 / 通常(質問受付)"]
+  W2["未解決(連絡先表示)"]
+  W3["制限中(受付停止 / 429)"]
+  W0 -- "バッジをクリック / Enter / Space" --&gt; W1
+  W1 -- "閉じるボタン" --&gt; W0
+  W1 -- "AI 回答 type=unanswered" --&gt; W2
+  W2 -- "別の質問を送信" --&gt; W1
+  W2 -- "閉じるボタン" --&gt; W0
+  W1 -- "質問数上限 / 支払ゲート(429)" --&gt; W3
+  W3 -- "閉じるボタン" --&gt; W0
+</code></pre>
+
+<h2 id="3-画面レイアウト">3. 画面レイアウト</h2>
+<div class="layout-embed">
+<div class="le-cap">エンドユーザー向け FAQ ウィジェット(WIDGET)</div>
+<div class="scr-mock"><div class="screen" id="widget-enduser" role="region" aria-labelledby="widget-enduser-title">
+<div class="screen-header">
+<div><span class="scr-id">WIDGET</span><span class="scr-name" id="widget-enduser-title">エンドユーザー向け FAQ ウィジェット(起動前 / 通常 / 未解決 / 制限中)</span></div>
+<div class="scr-user">利用者: エンドユーザー(導入サイト訪問者)。初期表示は丸型ランチャーバッジ。固有 SCR ID を持たない iframe 埋め込み</div>
+</div>
+<div class="public-form-layout">
+<div style="display: flex; gap: 24px; flex-wrap: wrap;">
+<!-- 起動前状態 -->
+<div style="width: 360px;">
+<div class="small" style="margin-bottom: 6px; font-weight: 600;">起動前状態(丸型ランチャーバッジ)</div>
+<div class="widget-launcher-stage">
+<button class="widget-launcher-button" aria-label="FAQチャットを開く"><i data-lucide="message-circle"></i></button>
+</div>
+<div class="small" style="margin-top: 7px; color: var(--text-muted);">右下固定の直径56pxバッジ。クリック、Enter、SpaceでチャットUIを展開します</div>
+</div>
+<!-- 通常状態 -->
+<div style="width: 360px;">
+<div class="small" style="margin-bottom: 6px; font-weight: 600;">通常状態(質問受付中)</div>
+<div class="widget-chat-shell">
+<div class="widget-chat-header">
+<div><span class="title"><i data-lucide="message-circle"></i>サポートサイト ヘルプ</span><span class="status">オンライン / 質問受付中</span></div>
+<button class="widget-close-button" aria-label="FAQチャットを閉じる"><i data-lucide="x"></i></button>
+</div>
+<div class="widget-chat-body">
+<div class="msg-list" aria-label="チャット履歴">
+<div class="msg staff">こんにちは。サポートサイトのFAQチャットです。ご質問を入力してください。<div class="meta">サポートサイト</div></div>
+<div class="msg user">料金プランの変更方法について教えてください。<div class="meta">自分 10:20</div></div>
+<div class="msg staff">料金プランは、契約オーナーが管理画面の「請求」から確認できます。<div class="meta">AI回答 10:20</div></div>
+</div>
+<div class="widget-chat-composer">
+<div class="textarea"><span class="placeholder">メッセージを入力…</span></div>
+<button class="btn primary" aria-label="メッセージを送信"><i data-lucide="send"></i>送信</button>
+</div>
+<div class="small" style="margin-top: 7px; color: var(--text-muted);">AIの回答で解決しない場合は、確認済みの連絡先をご案内します</div>
+</div>
+</div>
+</div>
+<!-- AIで解決できず未解決質問を登録 -->
+<div style="width: 360px;">
+<div class="small" style="margin-bottom: 6px; font-weight: 600; color: var(--info);">未解決状態(連絡先を表示)</div>
+<div class="widget-chat-shell">
+<div class="widget-chat-header">
+<div><span class="title"><i data-lucide="message-circle"></i>サポートサイト ヘルプ</span><span class="status">質問受付中</span></div>
+<button class="widget-close-button" aria-label="FAQチャットを閉じる"><i data-lucide="x"></i></button>
+</div>
+<div class="widget-chat-body">
+<div class="msg-list" aria-label="未解決時のチャット履歴">
+<div class="msg user">請求書に任意の宛名を追加できますか？<div class="meta">自分 10:20</div></div>
+<div class="msg staff">申し訳ありません。登録されているFAQから回答を見つけられませんでした。<div class="meta">AI回答 10:20</div></div>
+<div class="msg staff handoff-reply" role="status" aria-live="polite">必要に応じて、下記のお問い合わせ先までメールでご連絡ください。<br>お問い合わせ先：<a class="link" href="mailto:support@example.com">support@example.com</a><div class="meta">システム 10:20</div></div>
+</div>
+<div class="widget-chat-composer">
+<div class="textarea"><span class="placeholder">別の質問を入力…</span></div>
+<button class="btn primary" aria-label="別のFAQ質問を送信"><i data-lucide="send"></i>送信</button>
+</div>
+<div class="small" style="margin-top: 7px; color: var(--text-muted);">別の FAQ 質問は続けて送信できます</div>
+</div>
+</div>
+</div>
+<!-- 制限中状態(質問数 月次上限件数 100% 到達) -->
+<div style="width: 360px;">
+<div class="small" style="margin-bottom: 6px; font-weight: 600; color: var(--danger);">制限中(質問数が月次上限件数に到達 / 429)</div>
+<div class="widget-chat-shell restricted">
+<div class="widget-chat-header">
+<div><span class="title"><i data-lucide="message-circle"></i>サポートサイト ヘルプ</span><span class="status">新しい質問の受付を停止中</span></div>
+<button class="widget-close-button" aria-label="FAQチャットを閉じる"><i data-lucide="x"></i></button>
+</div>
+<div class="widget-chat-body">
+<div class="msg-list" aria-label="制限中のチャット履歴">
+<div class="msg user">料金プランについて教えてください。<div class="meta">自分 10:20</div></div>
+<div class="msg staff limit-reply" role="alert" aria-live="assertive">ただいま新しいご質問をお受けできません。<br>お手数ですが、下記のお問い合わせ先までメールでご連絡ください。<br><br>お問い合わせ先：<a class="link" href="mailto:support@example.com">support@example.com</a><div class="meta">サポートサイト 10:20</div></div>
+</div>
+<div class="widget-chat-composer disabled" aria-disabled="true">
+<div class="textarea"><span class="placeholder">現在、新しいメッセージは送信できません</span></div>
+<button class="btn" disabled><i data-lucide="send"></i>送信</button>
+</div>
+<div class="small" style="margin-top: 8px; color: var(--text-muted);">※ 連絡先メール未設定時は、返信の3行目を「時間をおいて再度お試しください。」に差し替えます。翌月のリセット、上限引き上げ、または上限OFFで自動復帰します。</div>
+</div>
+</div>
+</div>
+</div>
+<div class="simple-footer">初期表示は右下固定の丸型ランチャーバッジとし、クリックまたはキーボード操作でチャットUIを展開します。ヘッダーの閉じるボタンでバッジ表示へ戻り、再展開時も同一ページ内の会話履歴・入力内容・受付状態を保持します。AIで解決できない場合は管理用の問い合わせ ID を付与して未解決質問を登録しますが、問い合わせ ID はウィジェットに表示しません。確認済みプロジェクト連絡先メールがある場合のみ同じ会話欄へ表示します。質問数が当該プロジェクトの月次上限件数(オーナー / プロジェクト管理者が SCR-021 で設定)100% に到達すると、新規質問に対して受付停止と問い合わせ先をチャット返信として表示します(429 / E-QUOTA-QUESTIONS-LIMIT、契約は active のまま)。サスペンション(423)とは別状態。</div>
+</div>
+</div></div>
+</div>
+
+<h2 id="4-画面項目定義">4. 画面項目定義</h2>
+<p class="section-lead">本ウィジェットの入出力項目(ランチャーバッジ・ヘッダー・会話履歴・入力・送信・連絡先表示)を定義します。項目の正本は本表です。管理用の問い合わせ ID は描画しません。</p>
+<table>
+<thead>
+<tr>
+<th>項目 ID</th>
+<th>項目</th>
+<th>入出力</th>
+<th>種類</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr><td id="IT-01"><code>IT-01</code></td><td>丸型ランチャーバッジ</td><td>入力</td><td>固定ボタン</td><td>右下固定・直径 56px。クリック / Enter / Space でチャット UI を展開。<code>aria-label="FAQチャットを開く"</code></td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>ヘッダー</td><td>出力</td><td>固定領域</td><td>ウィジェットタイトル・現在状態・閉じるボタン。利用規約等の導線は表示しない</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>閉じるボタン</td><td>入力</td><td>アイコンボタン</td><td>押下でチャット UI を閉じ、バッジ表示へ戻る。<code>aria-label="FAQチャットを閉じる"</code></td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>会話履歴</td><td>出力</td><td>チャットメッセージリスト</td><td>質問・AI 回答・システム返信を時系列表示</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>質問入力</td><td>入力</td><td>テキスト入力</td><td>通常状態・未解決表示後は入力可。制限中は無効化</td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>送信</td><td>入力</td><td>ボタン</td><td>通常状態・未解決表示後は活性。制限中は無効化</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>AI 回答</td><td>出力</td><td>システム返信</td><td>登録 FAQ に基づく回答を同じ会話欄に追加</td></tr>
+<tr><td id="IT-08"><code>IT-08</code></td><td>連絡先メール表示</td><td>出力</td><td>システム返信</td><td>未解決・制限中に確認済みプロジェクト連絡先メールを表示(設定済みの場合のみ)</td></tr>
+<tr><td id="IT-09"><code>IT-09</code></td><td>受付停止メッセージ</td><td>出力</td><td>システム返信(alert)</td><td>制限中(429)に受付停止と問い合わせ先を表示。連絡先未設定時は再試行案内に差し替え</td></tr>
+</tbody>
+</table>
+
+<h2 id="5-入出力一覧">5. 入出力一覧</h2>
+<p class="section-lead">本ウィジェットが呼び出す公開 API の一覧です。公開 API のベースは <code>/widget/v1/...</code>、正本は <a href="../02_API設計.html#552-post-widgetv1ask質問送信">02_API設計 §5.5</a> です。ウィジェットはサーバ経由でテーブルへアクセスし、直接の永続更新は行いません。</p>
+<table>
+<thead>
+<tr>
+<th rowspan="2">入出力名</th>
+<th rowspan="2">種別</th>
+<th rowspan="2">I/O</th>
+<th colspan="4">アクセス種別(CRUD)</th>
+<th rowspan="2">備考</th>
+</tr>
+<tr>
+<th>C</th>
+<th>R</th>
+<th>U</th>
+<th>D</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>ウィジェット起動</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>セッション確立・ウィジェット設定取得。<code>POST /widget/v1/bootstrap</code>(<a href="../02_API設計.html#551-post-widgetv1bootstrap">API 設計 5.5.1</a>)</td></tr>
+<tr><td>質問送信</td><td>API</td><td>入出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>質問送信と AI 回答取得。<code>type=unanswered</code> で未解決遷移。<code>POST /widget/v1/ask</code>(<a href="../02_API設計.html#552-post-widgetv1ask質問送信">API 設計 5.5.2</a>)</td></tr>
+<tr><td>未解決質問登録</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>未解決時に質問ログ・未解決質問を登録(問い合わせ ID は非表示)。<code>POST /widget/v1/inquiries</code>(<a href="../02_API設計.html#553-post-widgetv1inquiries未解決質問登録">API 設計 5.5.3</a>)</td></tr>
+</tbody>
+</table>
+
+<h2 id="6-画面イベント一覧">6. 画面イベント一覧</h2>
+<p class="section-lead">本ウィジェットで発生するイベントと発生タイミング・概要の一覧です。</p>
+<table>
+<thead>
+<tr>
+<th>イベント ID</th>
+<th>イベント</th>
+<th>発生タイミング</th>
+<th>概要</th>
+<th>関連項目</th>
+</tr>
+</thead>
+<tbody>
+<tr><td><code>EV-01</code></td><td>チャット UI を開く</td><td>ランチャーバッジのクリック / Enter / Space 時</td><td>バッジを非表示にしチャット UI を展開。<code>POST /widget/v1/bootstrap</code> でセッション・設定を取得</td><td><a href="#IT-01">IT-01</a>, <a href="#IT-02">IT-02</a></td></tr>
+<tr><td><code>EV-02</code></td><td>チャット UI を閉じる</td><td>ヘッダー閉じるボタン押下時</td><td>チャット UI を閉じバッジへ戻る。会話履歴・入力内容・受付状態は保持</td><td><a href="#IT-03">IT-03</a>, <a href="#IT-04">IT-04</a></td></tr>
+<tr><td><code>EV-03</code></td><td>質問送信(通常)</td><td>送信ボタン押下時</td><td><code>POST /widget/v1/ask</code> で質問送信。AI 回答を同じ会話欄に追加</td><td><a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a>, <a href="#IT-07">IT-07</a></td></tr>
+<tr><td><code>EV-04</code></td><td>未解決応答</td><td>AI 回答が <code>type=unanswered</code> の時</td><td>回答不可の旨と確認済み連絡先メールをシステム返信で表示。問い合わせ ID は非表示で別質問は継続可能</td><td><a href="#IT-07">IT-07</a>, <a href="#IT-08">IT-08</a></td></tr>
+<tr><td><code>EV-05</code></td><td>受付停止(制限中)</td><td>質問数上限到達 / 支払方法ゲートで 429 応答時</td><td>受付停止と問い合わせ先をシステム返信で表示。入力欄と送信ボタンを無効化</td><td><a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a>, <a href="#IT-09">IT-09</a></td></tr>
+</tbody>
+</table>
+
+</article>
+<script>(function(){function r(){try{window.lucide&&lucide.createIcons({attrs:{'aria-hidden':'true',focusable:'false'}});}catch(e){}}if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',r);}else{r();}window.addEventListener('load',r);})();</script>
+</body>
+</html>

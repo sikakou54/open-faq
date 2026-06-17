@@ -13,175 +13,168 @@
 <body data-page-id="01_メインシステム/01_要件定義/FR13_プライバシー・データ管理.html">
 <article class="content" id="content">
 <h1 id="fr13-プライバシーデータ管理">FR13: プライバシー・データ管理</h1>
-<h2 id="0-文書情報">0. 文書情報</h2>
-<table>
+<aside class="page-summary">
+<p class="ps-lead"><strong>この要件は、ウィジェット利用者の個人データを適正に扱い、退会・規約改定・Cookie 同意の各場面で利用者の同意と権利を守ることを目的とし、以下について記載します。</strong></p>
+<ul>
+<li>ウィジェット利用者への利用目的・保存期間の案内</li>
+<li>退会時の契約データ削除(猶予期間付き)と猶予期間中の運用制限</li>
+<li>利用規約・プライバシーポリシー改定時の再同意(文書ごとの版管理)</li>
+<li>データ保存リージョンの明示と、ウィジェットの Cookie 同意取得</li>
+</ul>
+</aside>
+<p class="doc-meta"><span><b>版数</b> v1.2</span><span><b>更新</b> 2026-06-16</span><span><b>機能グループ</b> プライバシー・データ管理</span><span><b>優先度</b> Must</span><span class="dm-status">承認済</span></p>
+<h2 id="1-業務要件">1. 業務要件</h2>
+<div class="table-scroll">
+<table class="br-table">
 <thead>
 <tr>
-<th>項目</th>
-<th>内容</th>
+<th>ID</th>
+<th>観点</th>
+<th>ステークホルダ</th>
+<th>業務要件</th>
+<th>関連 NFR</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>文書名</td>
-<td>FR13: プライバシー・データ管理</td>
+<td id="BR-121">BR-121</td>
+<td>利用目的・保存期間の案内</td>
+<td>ウィジェット利用者 / システム</td>
+<td>ウィジェットで質問を入力する時に、入力内容の利用目的と保存期間をウィジェット利用者へ案内する。</td>
+<td>—</td>
 </tr>
 <tr>
-<td>機能グループ</td>
-<td>プライバシー・データ管理</td>
+<td id="BR-122">BR-122</td>
+<td>退会時のデータ削除</td>
+<td>システム</td>
+<td>オーナーが退会を申請した時に、契約データを定められた猶予期間の経過後に削除する。</td>
+<td>—</td>
 </tr>
 <tr>
-<td>対象システム</td>
-<td>FAQ AI ウィジェット SaaS / メインシステム</td>
+<td id="BR-123">BR-123</td>
+<td>退会猶予期間中の運用</td>
+<td>アカウント利用者 / システム</td>
+<td>
+<ul class="role-req">
+<li><strong>アカウント利用者：</strong>退会猶予期間中も管理画面へログインしてデータを参照できる</li>
+<li><strong>システム：</strong>新規 FAQ 登録・新規ウィジェット応答・課金変更などの新規書込みを禁止する(参照中心の運用)</li>
+</ul>
+</td>
+<td>—</td>
 </tr>
 <tr>
-<td>作成日</td>
-<td>2026-05-17</td>
+<td id="BR-124">BR-124</td>
+<td>規約改定時の再同意</td>
+<td>アカウント利用者 / システム</td>
+<td>利用規約・プライバシーポリシーを改定した時に、改定された文書のみを対象として再同意を取得する。両文書は個別に版管理し、閲覧画面も文書ごとに分離する。</td>
+<td>—</td>
 </tr>
 <tr>
-<td>版数</td>
-<td>v1.1</td>
+<td id="BR-125">BR-125</td>
+<td>データ保存リージョン</td>
+<td>システム</td>
+<td>契約データの保存リージョン(例:日本国内)を選択またはサービス側で明示する。</td>
+<td>—</td>
 </tr>
 <tr>
-<td>ステータス</td>
-<td>承認済</td>
-</tr>
-<tr>
-<td>更新履歴</td>
-<td>v1.1(2026-06-16): 要件定義を What 中心へ整理。画面 ID・基本設計の節番号参照を除去し、該当設計書を正本として参照化</td>
+<td id="BR-126">BR-126</td>
+<td>Cookie 同意取得</td>
+<td>ウィジェット利用者 / システム</td>
+<td>ウィジェット表示時に Cookie 利用の同意取得バナーを表示する。必須 Cookie 以外はオプトインとし、第三者トラッキング系は同意取得後にのみ有効化する。</td>
+<td>—</td>
 </tr>
 </tbody>
 </table>
-<h2 id="1-機能概要">1. 機能概要</h2>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>内容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>概要</td>
-<td>エンドユーザーへの利用目的 / 保存期間案内、退会猶予期間付き削除、規約再同意取得、データ保存リージョン明示、Cookie 同意取得バナーを扱う(契約データのエクスポートは MVP 対象外・将来対応)</td>
-</tr>
-<tr>
-<td>利用場面</td>
-<td>利用規約・プライバシーポリシー同意取得、退会申請、規約改定対応、Cookie 同意</td>
-</tr>
-<tr>
-<td>優先度</td>
-<td>Must</td>
-</tr>
-</tbody>
-</table>
-<h2 id="2-収録-fr-nnn-一覧">2. 収録 FR-NNN 一覧</h2>
-<table>
+</div>
+<h2 id="2-機能要件">2. 機能要件</h2>
+<div class="table-scroll">
+<table class="req-table">
 <thead>
 <tr>
 <th>ID</th>
 <th>要件</th>
-<th style="text-align: center;">優先度</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>FR-160</td>
-<td>エンドユーザーに対し、入力内容の利用目的・保存期間を案内できること</td>
-<td style="text-align: center;">P0</td>
-</tr>
-<tr>
-<td>FR-162</td>
-<td>管理者は契約内データをエクスポートできること(<strong>MVP 対象外・将来対応</strong>。退避先 <a href="../05_future/index.html">05_future</a>)</td>
-<td style="text-align: center;">将来</td>
-</tr>
-<tr>
-<td>FR-163</td>
-<td>退会時に契約データを定められた猶予期間後に削除できること</td>
-<td style="text-align: center;">P0</td>
-</tr>
-<tr>
-<td>FR-164</td>
-<td>利用規約・プライバシーポリシー改定時に再同意を取得できること(FR-011 と同義)。利用規約とプライバシーポリシーは <strong>個別の文書として版管理・同意取得</strong>し、改定された文書のみ再同意の対象とする。閲覧画面も文書ごとに分離する</td>
-<td style="text-align: center;">P0</td>
-</tr>
-<tr>
-<td>FR-165</td>
-<td>必要なデータ保存リージョン(例:日本国内など)を選択またはサービス側で明示できること</td>
-<td style="text-align: center;">P1</td>
-</tr>
-<tr>
-<td>FR-167</td>
-<td>退会猶予期間中は管理者ユーザーの管理画面ログインを許可するが、新規 FAQ 登録・新規ウィジェット応答・課金変更などの新規書込みは不可とする(参照中心の運用)</td>
-<td style="text-align: center;">P0</td>
-</tr>
-<tr>
-<td>FR-168</td>
-<td>エンドユーザー側のウィジェットで Cookie 利用について同意取得バナーを表示できること(必須 Cookie 以外はオプトイン)。第三者トラッキング系は同意取得後にのみ有効化すること。同意状態の保持方式は基本設計 / 詳細設計を正本とする</td>
-<td style="text-align: center;">P1</td>
-</tr>
-</tbody>
-</table>
-<h2 id="3-補足説明統合参照">3. 補足説明・統合参照</h2>
-<p>(該当なし。データ分類・ライフサイクル・削除方式選択基準・法令対応マッピングは基本設計を参照)</p>
-<h2 id="4-関連設計">4. 関連設計</h2>
-<table>
-<thead>
-<tr>
-<th>種別</th>
-<th>参照先</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>画面設計</td>
-<td><a href="../02_基本設計/01_画面設計.html">../02_基本設計/01_画面設計.html</a></td>
-</tr>
-<tr>
-<td>API 設計</td>
-<td><a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html</a></td>
-</tr>
-<tr>
-<td>テーブル設計</td>
-<td><a href="../02_基本設計/03_テーブル設計.html">../02_基本設計/03_テーブル設計.html</a></td>
-</tr>
-<tr>
-<td>権限設計</td>
-<td><a href="../02_基本設計/04_権限設計.html">../02_基本設計/04_権限設計.html</a></td>
-</tr>
-<tr>
-<td>エラー設計</td>
-<td><a href="../02_基本設計/05_エラー設計.html">../02_基本設計/05_エラー設計.html</a></td>
-</tr>
-<tr>
-<td>メッセージ</td>
-<td><a href="../02_基本設計/06_メッセージ一覧.html">../02_基本設計/06_メッセージ一覧.html</a></td>
-</tr>
-<tr>
-<td>詳細設計</td>
-<td><a href="../03_詳細設計/index.html">../03_詳細設計/index.html</a></td>
-</tr>
-</tbody>
-</table>
-<h2 id="5-未確定事項確認事項">5. 未確定事項・確認事項</h2>
-<table>
-<thead>
-<tr>
-<th>確認事項ID</th>
-<th>確認内容</th>
+<th>関連業務要件</th>
 <th>優先度</th>
-<th>ステータス</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>-</td>
-<td>v1.0 リリース時点で全項目確定済み</td>
-<td>低</td>
-<td>確認済</td>
+<td id="FR-160">FR-160</td>
+<td>ウィジェット利用者に対し、入力内容の利用目的・保存期間を案内できること</td>
+<td><a href="#BR-121">BR-121</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-163">FR-163</td>
+<td>退会時に契約データを定められた猶予期間後に削除できること</td>
+<td><a href="#BR-122">BR-122</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-164">FR-164</td>
+<td>利用規約・プライバシーポリシー改定時に再同意を取得できること。
+<ol class="alpha">
+<li>利用規約とプライバシーポリシーは個別の文書として版管理し、それぞれ同意を取得する</li>
+<li>改定された文書のみを再同意の対象とする</li>
+<li>閲覧画面も文書ごとに分離する</li>
+</ol></td>
+<td><a href="#BR-124">BR-124</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-165">FR-165</td>
+<td>必要なデータ保存リージョン(例:日本国内など)を選択またはサービス側で明示できること</td>
+<td><a href="#BR-125">BR-125</a></td>
+<td><span class="badge badge-p1">P1</span></td>
+</tr>
+<tr>
+<td id="FR-167">FR-167</td>
+<td>退会猶予期間中は、アカウント利用者の管理画面ログインを許可しつつ新規書込みを禁止すること(参照中心の運用)。
+<ol class="alpha">
+<li>管理画面へのログインと既存データの参照は許可する</li>
+<li>新規 FAQ 登録・新規ウィジェット応答・課金変更などの新規書込みは不可とする</li>
+</ol></td>
+<td><a href="#BR-123">BR-123</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-168">FR-168</td>
+<td>ウィジェットで Cookie 利用について同意取得バナーを表示できること。
+<ol class="alpha">
+<li>必須 Cookie 以外はオプトインとする</li>
+<li>第三者トラッキング系は同意取得後にのみ有効化する</li>
+</ol></td>
+<td><a href="#BR-126">BR-126</a></td>
+<td><span class="badge badge-p1">P1</span></td>
 </tr>
 </tbody>
 </table>
+</div>
+<div class="callout tip"><i class="bi bi-lightbulb"></i><div><span class="c-title">未確定事項</span>v1.0 リリース時点で全項目確定済み。現在オープンな確認事項はありません。</div></div>
+<h2 id="更新履歴">更新履歴</h2>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>版数</th>
+<th>日付</th>
+<th>変更内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>v1.2</td>
+<td>2026-06-16</td>
+<td>記載スタイルを刷新テンプレート v2(業務要件 BR-121〜6 を先頭に定義、機能要件に関連業務要件列、長文要件を主旨 1 文 + 箇条書きへ分割、用語をウィジェット利用者 / アカウント利用者へ統一)へ移行。FR-162(契約データエクスポート / MVP 対象外・将来対応)を本文から除去し将来対応へ退避。識別子(FR-160〜168)は不変</td>
+</tr>
+<tr>
+<td>v1.1</td>
+<td>2026-06-16</td>
+<td>要件定義を What 中心へ整理。画面 ID・基本設計の節番号参照を除去し、該当設計書を正本として参照化</td>
+</tr>
+</tbody>
+</table>
+</div>
 
 </article>
 </body>

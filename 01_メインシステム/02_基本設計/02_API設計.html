@@ -13,87 +13,17 @@
 <body data-page-id="01_メインシステム/02_基本設計/02_API設計.html">
 <article class="content" id="content">
 <h1 id="api-設計書メイン">API 設計書(メイン)</h1>
-<h2 id="1-文書概要">1. 文書概要</h2>
-<h3 id="11-目的">1.1 目的</h3>
-<p>メインシステムのすべての API(管理 API / ウィジェット API / 連携 IF #1〜#12 送信側 / 外部 Webhook)について、エンドポイント / 認証・認可 / リクエスト / レスポンス / ステータスコード / エラー仕様を一元化する。</p>
-<h3 id="12-対象範囲">1.2 対象範囲</h3>
-<ul>
-<li>対象: 利用者向け管理 API(認証 / プロジェクト / FAQ / 未解決質問 / ウィジェット設定 / 利用量・課金 / ユーザー管理 / お知らせ / 規約)、エンドユーザー向けウィジェット API、AI 推論抽象化 IF、メール配信抽象化 IF、顧客管理システムとの連携 IF #1〜#12(送信側)、外部 Webhook(Resend 等)</li>
-<li>対象外: 運営者管理 API(<a href="../../02_運営者システム/個別設計書群/03_API設計書.html">02_運営者システム/個別設計書群/03_API設計書.html</a>)、Stripe Webhook 一次受信(運営者側 §13)</li>
-</ul>
-<h3 id="13-版数">1.3 版数</h3>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>値</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>版数</td>
-<td>1.4</td>
-</tr>
-<tr>
-<td>更新日</td>
-<td>2026-06-14</td>
-</tr>
-</tbody>
-</table>
-<h3 id="14-関連ドキュメント">1.4 関連ドキュメント</h3>
-<table>
-<thead>
-<tr>
-<th>ドキュメント名</th>
-<th>役割</th>
-<th>参照先</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>索引</td>
-<td>11 ドキュメント体系の俯瞰</td>
-<td><a href="00_索引.html">00_索引.html</a></td>
-</tr>
-<tr>
-<td>画面設計書</td>
-<td>API を呼び出す画面</td>
-<td><a href="02_画面設計書.html">02_画面設計書.html</a></td>
-</tr>
-<tr>
-<td>テーブル定義書</td>
-<td>API が操作するテーブル</td>
-<td><a href="04_テーブル定義書.html">04_テーブル定義書.html</a></td>
-</tr>
-<tr>
-<td>認証・認可設計書</td>
-<td>認証要否 / 認可判定ルール</td>
-<td><a href="09_認証認可設計書.html">09_認証認可設計書.html</a></td>
-</tr>
-<tr>
-<td>エラー設計書</td>
-<td>ステータスコード / エラー詳細</td>
-<td><a href="06_エラー設計書.html">06_エラー設計書.html</a></td>
-</tr>
-<tr>
-<td>メッセージ一覧</td>
-<td>エラー文言</td>
-<td><a href="07_メッセージ一覧.html">07_メッセージ一覧.html</a></td>
-</tr>
-<tr>
-<td>課金・請求設計書</td>
-<td>課金 API / IF #1 / IF #10</td>
-<td><a href="11_課金請求設計書.html">11_課金請求設計書.html</a></td>
-</tr>
-<tr>
-<td>運営者側 API 設計書</td>
-<td>連携 IF #1〜#12 受信側</td>
-<td><a href="../../02_運営者システム/個別設計書群/03_API設計書.html">../../02_運営者システム/個別設計書群/03_API設計書.html</a></td>
-</tr>
-</tbody>
-</table>
+
+<aside class="page-summary">
+  <p class="ps-lead"><strong>このページは、メインシステムが公開する API 契約(エンドポイント・リクエスト / レスポンス・認可・想定エラー)の正本を定義します。</strong> 利用者向け管理 API、ウィジェット API、AI / メール抽象化 IF、顧客管理システムとの連携 IF #1〜#12(メイン側)、外部 Webhook を 1 か所に集約し、画面・テーブル・認可・エラーの各正本へ橋渡しします。</p>
+</aside>
+<p class="doc-meta"><span><b>版数</b> v1.5</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<div class="callout important"><i class="bi bi-pin-angle"></i><div><span class="c-title">本書のスコープ</span>本書は <strong>API 契約(I/F)に限定</strong>します。画面項目は <a href="01_画面設計/index.html">01_画面設計/index.html</a>、列定義は <a href="03_テーブル設計.html">03_テーブル設計.html</a>、認可ルールは <a href="04_権限設計.html">04_権限設計.html</a> / <a href="08_認証・認可設計.html">08_認証・認可設計.html</a>、エラー詳細は <a href="05_エラー設計.html">05_エラー設計.html</a> が正本です。値の再掲は避け、本文はリンクで正本へ送ります。対象外: 運営者管理 API(<a href="../../02_運営者システム/02_基本設計/02_API設計.html">運営者 02_API設計.html</a>)、Stripe Webhook 一次受信(運営者側)。</div></div>
+
 <h2 id="2-api-一覧">2. API 一覧</h2>
-<h3 id="21-機能と-api-の対応63">2.1 機能と API の対応(§6.3)</h3>
+<p class="section-lead">機能ごとに、呼び出す API・認可・関連画面を 1 行で対応付けます。詳細仕様は §5、認可の正本は <a href="04_権限設計.html">04_権限設計.html</a> です。</p>
+<h3 id="21-機能と-api-の対応63">2.1 機能と API の対応</h3>
 <table>
 <thead>
 <tr>
@@ -147,6 +77,30 @@
 <td>SCR-005</td>
 </tr>
 <tr>
+<td>検索(FAQ 全文 / 質問ログ)</td>
+<td><code>/projects/{id}/faqs/search</code>, <code>/projects/{id}/question-logs/search</code></td>
+<td>オーナー / 該当 PJ の <code>member</code>+</td>
+<td>SCR-005, SCR-006</td>
+</tr>
+<tr>
+<td>ダッシュボード</td>
+<td><code>/dashboard/summary</code></td>
+<td>オーナー / 該当 PJ の <code>member</code>+(配信失敗・バウンス件数はオーナー専有)</td>
+<td>SCR-008, SCR-016</td>
+</tr>
+<tr>
+<td>支払方法</td>
+<td><code>/billing/payment-method</code>(GET 取得 / PUT 登録・更新)</td>
+<td>オーナー専有(再認証必須)</td>
+<td>SCR-022</td>
+</tr>
+<tr>
+<td>課金イベント受信(FR-139)</td>
+<td><code>/internal/admin-integration/v1/billing-webhook/forward</code>(IF #10)</td>
+<td>mTLS + JWT(署名検証は運営者一次受信側)</td>
+<td>(顧管 → メ 連携)</td>
+</tr>
+<tr>
 <td>通知</td>
 <td><code>/webhooks/resend</code></td>
 <td>署名検証のみ</td>
@@ -190,7 +144,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="22-外部-if-一覧81">2.2 外部 I/F 一覧(§8.1)</h3>
+<h3 id="22-外部-if-一覧81">2.2 外部 I/F 一覧</h3>
 <table>
 <thead>
 <tr>
@@ -234,7 +188,8 @@
 </tbody>
 </table>
 <h2 id="3-共通仕様">3. 共通仕様</h2>
-<h3 id="31-api-共通仕様82">3.1 API 共通仕様(§8.2)</h3>
+<p class="section-lead">全 API に共通する形式・認証ヘッダ・冪等性・論理削除フィルタ・Webhook 規約をここで一括定義します。各エンドポイントの個別仕様(§5)は本節を前提とし、差分のみを記載します。</p>
+<h3 id="31-api-共通仕様82">3.1 API 共通仕様</h3>
 <table>
 <thead>
 <tr>
@@ -278,7 +233,7 @@
 </tbody>
 </table>
 <h3 id="32-オーナー境界判定">3.2 オーナー境界判定</h3>
-<p>すべての操作で <code>actor.contract_owner_user_id == target.contract_owner_user_id</code> を必須(認証・認可設計書 09 §5.2)。違反時は <strong>404 偽装</strong>(エラー設計書 06 §5.3)。</p>
+<p>すべての操作で <code>actor.contract_owner_user_id == target.contract_owner_user_id</code> を必須とする(正本: <a href="08_認証・認可設計.html#52-オーナー境界判定">08_認証・認可設計.html §5.2</a>)。違反時は <strong>404 偽装</strong>で応答する(正本: <a href="05_エラー設計.html#53-認可エラー時の方針">05_エラー設計.html §5.3</a>)。</p>
 <h3 id="32a-論理削除フィルタ">3.2a 論理削除フィルタ</h3>
 <p><code>valid</code> カラムを持つテーブル(<code>users</code> / <code>contract_owners</code> / <code>project_users</code> / <code>projects</code> / <code>allowed_domains</code> / <code>faqs</code> / <code>question_logs</code> / <code>inquiries</code> / <code>billing_subscriptions</code>)に対する全 GET 系 API(一覧 / 詳細)のクエリは、原則として <code>WHERE &lt;table&gt;.valid=1</code> フィルタを追加する。論理削除済み(<code>valid=0</code>)の行は通常 API 経由では返却しない。</p>
 <p>例外:</p>
@@ -290,7 +245,7 @@
 <p><code>WHERE valid=1</code> フィルタの漏れは IDOR 類似の脆弱性として扱う(<a href="09_セキュリティ設計.html">09_セキュリティ設計.html</a>)。</p>
 <h3 id="33-冪等性キー">3.3 冪等性キー</h3>
 <p>書き込み系 API は <code>Idempotency-Key</code> ヘッダ(ULID 推奨、24h 保管)を受け付ける。重複時は既存処理結果を 200 で返却(リトライ安全性)。</p>
-<h3 id="34-webhook-共通仕様873">3.4 Webhook 共通仕様(§8.7.3)</h3>
+<h3 id="34-webhook-共通仕様873">3.4 Webhook 共通仕様</h3>
 <table>
 <thead>
 <tr>
@@ -321,7 +276,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="35-連携-if-エンドポイント命名規約88">3.5 連携 IF エンドポイント命名規約(§8.8)</h3>
+<h3 id="35-連携-if-エンドポイント命名規約88">3.5 連携 IF エンドポイント命名規約</h3>
 <ul>
 <li>受信: <code>/internal/admin-integration/v1/{resource}/{action}</code></li>
 <li>送信: <code>https://&lt;admin-host&gt;/internal/main-integration/v1/...</code></li>
@@ -365,7 +320,8 @@
 </tr>
 </tbody>
 </table>
-<h2 id="4-レート制限キャパシティ117-リミット設計表の正本">4. レート制限・キャパシティ(§11.7 リミット設計表の正本)</h2>
+<h2 id="4-レート制限キャパシティ117-リミット設計表の正本">4. レート制限・キャパシティ(リミット設計表の正本)</h2>
+<p class="section-lead">API 層で適用する警告 / 拒否レベルと超過時の挙動の正本です。プロジェクト単位の月次上限・無料枠は <a href="10_課金・請求設計.html">10_課金・請求設計.html</a> が業務正本で、本表は API での enforcement 仕様を示します。</p>
 <table>
 <thead>
 <tr>
@@ -502,7 +458,9 @@
 </table>
 <p>詳細は <a href="10_課金・請求設計.html">10_課金・請求設計.html §8</a> の選択閾値アラート / 100%停止 / 125%運営者通知を参照。</p>
 <h2 id="5-api-詳細">5. API 詳細</h2>
+<p class="section-lead">エンドポイント単位の契約を機能グループ別に定義します。各 API は §3 の共通仕様を継承し、認可は <a href="08_認証・認可設計.html">08</a> / <a href="04_権限設計.html">04</a>、想定エラーは <a href="05_エラー設計.html">05</a>、画面は <a href="01_画面設計/index.html">01</a> が正本です。</p>
 <h3 id="51-認証-api">5.1 認証 API</h3>
+<p class="section-lead">ログイン / ログアウト / 再認証 / パスワード再設定 / メール確認 / 招待有効化を扱います。ログイン失敗ロックの正本は §4、トークン検証の正本は <a href="08_認証・認可設計.html">08_認証・認可設計.html</a> です。</p>
 <h4 id="511-post-authsignup新規登録">5.1.1 <code>POST /auth/signup</code>(新規登録)</h4>
 <table>
 <thead>
@@ -654,6 +612,7 @@
 <p>リクエスト: ボディなし(URL のトークンのみ)</p>
 <p>レスポンス(200): <code>{ "projectId": "proj_1", "projectName": "サポートサイト", "verifiedAt": "2026-05-21T..." }</code> エラー: 410 <code>TOKEN_EXPIRED</code>(E-AUTH-TOKEN-EXPIRED)、410 <code>TOKEN_USED</code>(E-AUTH-TOKEN-USED)、404 <code>TOKEN_NOT_FOUND</code></p>
 <h3 id="52-利用者メンバーapi">5.2 利用者(メンバー)API</h3>
+<p class="section-lead">プロジェクト単位のメンバー一覧・招待・ロール変更・割当解除・招待再送を扱います。氏名は招待された本人が有効化時に入力し、認可はオーナー / 該当 PJ の <code>admin</code>(<a href="04_権限設計.html">04_権限設計.html</a>)です。</p>
 <h4 id="521-get-projectsidmembers">5.2.1 <code>GET /projects/{id}/members</code></h4>
 <p>| 機能ID | F-015 | | 必要権限 | オーナー / 当該プロジェクト管理者 | | 関連画面 | SCR-009 |</p>
 <p>レスポンス(200):</p>
@@ -708,6 +667,7 @@
 <p><code>status='pending_activation'</code> のメンバーのみ対象。旧 <code>access_tokens.purpose='activation'</code> を失効させ新規トークン(7 日有効、<code>meta</code> を同一の <code>invitedProjectId</code> / <code>invitedRole</code> で再発行)を発行。リクエストボディは空(氏名 <code>displayName</code> を受け付けない。FR-016b / FR-016d)。</p>
 <p>エラー: 403 <code>E-AUTHZ-OWNER-PROTECTED</code>、403 <code>E-AUTHZ-SELF-MUTATION</code>、404 <code>NOT_FOUND</code></p>
 <h3 id="53-プロジェクト管理-api">5.3 プロジェクト管理 API</h3>
+<p class="section-lead">プロジェクトの CRUD・公開キー再発行・許可ドメイン・連絡先メール確認を扱います。作成 / 編集 / 削除はオーナー専有で、作成時にオーナーが自動で当該プロジェクトの管理者となります(FR-030a、<a href="04_権限設計.html">04_権限設計.html</a>)。</p>
 <h4 id="531-get-projects">5.3.1 <code>GET /projects</code></h4>
 <p>| 機能ID | F-034 | | 関連画面 | SCR-004 | | 必要権限 | <strong>オーナー専有</strong> |</p>
 <p>レスポンス(200):</p>
@@ -768,12 +728,18 @@
 <p>| 認証 | 再認証必須 | | 関連画面 | SCR-007 |</p>
 <p>リクエスト: <code>{}</code>(ボディなし。公開キーは無期限のため有効期限指定パラメータは持たない) レスポンス(201): <code>{ "newKey": "pk_live_xyz789...", "deprecationWarning": "..." }</code>(<code>deprecationWarning</code> は旧キーの 24 時間猶予失効予告)</p>
 <h3 id="54-faq-管理-api">5.4 FAQ 管理 API</h3>
+<p class="section-lead">FAQ の CRUD・状態変更・一括状態変更・CSV インポート / エクスポートを扱います。質問 500 字 / 回答 5,000 字・FAQ 件数上限は §4 が正本、画面は SCR-006(<a href="01_画面設計/index.html">01_画面設計/index.html</a>)です。</p>
 <h4 id="541-get-faqsstatusdraftprojectidkeywordcursor">5.4.1 <code>GET /faqs?status=draft&amp;projectId=...&amp;keyword=...&amp;cursor=...</code></h4>
 <p>| 必要権限 | 編集系: オーナー / 該当 PJ の <code>member</code>+(<code>admin</code> または <code>member</code>)/ 参照: 同左 |</p>
 <h4 id="542-post-faqs--patch-faqsid--delete-faqsid">5.4.2 <code>POST /faqs</code> / <code>PATCH /faqs/{id}</code> / <code>DELETE /faqs/{id}</code></h4>
 <p>| 関連画面 | SCR-006 |</p>
 <p>楽観ロック: <code>version</code> 必須。<code>CONFLICT</code> 時 409。</p>
 <p>FAQ の状態(<code>draft</code> / <code>published</code> / <code>hidden</code>)は <code>status</code> フィールドで指定し、<code>PATCH /faqs/{id}</code> の保存操作で相互に自由遷移できる(専用の公開 API・状態遷移ガードは持たない)。SCR-006 の「保存」ボタンは「状態」ラジオで選択した値をそのまま本 API に渡す。<code>status='published'</code> への変更は管理者(admin)が編集画面で内容を確認したうえで明示選択する操作であり、これが FR-045「FAQ の公開前に管理者が内容を確認できること」を満たす。<code>published</code> 設定時は <code>publishedAt</code> をサーバ側で記録する。</p>
+<h4 id="542a-post-faqsbulk-status一括状態変更">5.4.2a <code>POST /faqs/bulk-status</code>(一括状態変更)</h4>
+<p>SCR-006 一覧の BulkActionBar(チェックボックス選択)から呼び出し、選択した複数 FAQ の状態を一括で <code>draft</code> / <code>published</code> / <code>hidden</code> に変更する。1 リクエストの上限は <strong>50 件</strong>(SCR-006 の BulkActionBar 上限、<a href="01_画面設計/index.html">01_画面設計/index.html</a>)。超過時は 400 <code>VALIDATION_ERROR</code>。</p>
+<p>リクエスト: <code>{ "ids": ["faq_...", "faq_..."], "status": "published" }</code></p>
+<p>処理は行単位で評価し、対象外(他契約 / 論理削除済み)の ID は当該行のみ失敗として集計する(オーナー境界違反は §3.2 に従い結果から除外し成功扱いにしない)。<code>published</code> へ変更した行は <code>publishedAt</code> をサーバ側で記録する。</p>
+<p>レスポンス(200): <code>{ "succeeded": 48, "failed": [ { "id": "faq_...", "code": "NOT_FOUND" } ] }</code> エラー: 400 <code>VALIDATION_ERROR</code>(50 件超過 / 不正な <code>status</code>)、403 <code>PROJECT_ACCESS_DENIED</code></p>
 <h4 id="543-post-faqsimport">5.4.3 <code>POST /faqs/import</code></h4>
 <p>関連画面: SCR-006-M1 FAQ CSV インポートモーダル。</p>
 <p>リクエスト: <code>multipart/form-data { file: &lt;CSV&gt; }</code> 受理形式は <strong>CSV のみ</strong>(UTF-8、BOM 許容、ヘッダ行必須、1 ファイル最大 1000 件)。<strong>JSON 形式は受理しない</strong>(不正形式は 415 / 400、E-INPUT-CSV-INVALID)。 CSV 列構成は <code>FAQ ID, 質問, 回答, カテゴリ</code>。各行の <code>FAQ ID</code> で <strong>空欄 = 新規(<code>status=draft</code>)/ 既存 ID 一致 = 上書き(状態維持・<code>faq_revisions</code> に改訂追記)/ 当該契約に存在しない ID = 当該行を失敗</strong>(行単位エラー、E-INPUT-CSV-FAQID-NOTFOUND)と判定する。<code>status</code> 列は受理しない。 レスポンス(202): <code>{ "jobId": "job_...", "status": "processing" }</code></p>
@@ -781,7 +747,18 @@
 <p>関連画面: SCR-006-M1「テンプレートをダウンロード」。 ヘッダ行のみの CSV テンプレート(<code>FAQ ID,質問,回答,カテゴリ</code>)を <code>text/csv; charset=utf-8</code>(UTF-8 BOM 付与可)で返す(200)。<code>Content-Disposition: attachment; filename="faq_import_template.csv"</code>。認可は <code>POST /faqs/import</code> と同一(オーナー / 該当 PJ の <code>member</code>+)。</p>
 <h4 id="545-get-faqsexport">5.4.5 <code>GET /faqs/export</code></h4>
 <p>関連画面: SCR-006 FAQ 管理一覧「CSV をエクスポート」。一覧フィルタ適用結果を <strong>CSV(UTF-8、<code>text/csv</code>)</strong> で返す(JSON 形式は提供しない)。</p>
+<h4 id="546-get-faqssearchfaq-全文検索">5.4.5a <code>GET /projects/{id}/faqs/search</code>(FAQ 全文検索 / FR-300)</h4>
+<p>| 機能ID | F-300 | | 必要権限 | オーナー / 該当 PJ の <code>member</code>+ | | 関連画面 | SCR-006 |</p>
+<p>当該プロジェクトの FAQ をキーワードで全文検索する。検索対象は現在開いているプロジェクトに属する FAQ に限る(§3.2 オーナー境界 + プロジェクト境界)。並び替え・ページングは共通仕様(§3.1)に従う。</p>
+<p>クエリ: <code>keyword</code>(必須)、<code>status</code>(任意 <code>draft</code> / <code>published</code> / <code>hidden</code>)、<code>sort</code>(<code>relevance</code>(既定)/ <code>updated_at</code>)、<code>cursor</code> / <code>limit</code>(50〜200)。全文検索方式・対象列は <a href="03_テーブル設計.html">03_テーブル設計.html</a>(FTS インデックス)を正本とする。</p>
+<p>レスポンス(200): <code>{ "items": [ { "id": "faq_...", "question": "...", "answer": "...", "status": "published", "category": "...", "score": 0.82, "updatedAt": "..." } ], "nextCursor": null }</code></p>
+<h4 id="547-get-question-logssearch質問ログ検索">5.4.5b <code>GET /projects/{id}/question-logs/search</code>(質問ログ検索 / FR-300)</h4>
+<p>| 機能ID | F-300 | | 必要権限 | オーナー / 該当 PJ の <code>member</code>+ | | 関連画面 | SCR-005 |</p>
+<p>当該プロジェクトの質問ログをキーワードおよび期間で検索する。検索対象は現在開いているプロジェクトに属する質問ログに限る。</p>
+<p>クエリ: <code>keyword</code>(任意)、<code>from</code> / <code>to</code>(任意 ISO 8601、期間)、<code>answerType</code>(任意 <code>answered</code> / <code>unanswered</code>)、<code>sort</code>(<code>created_at</code> 降順既定)、<code>cursor</code> / <code>limit</code>(50〜200)。対象列・全文検索方式は <a href="03_テーブル設計.html">03_テーブル設計.html</a> を正本とする。</p>
+<p>レスポンス(200): <code>{ "items": [ { "id": "qlog_...", "question": "...", "answerType": "unanswered", "confidence": 0.42, "inquiryId": "inq_..." | null, "createdAt": "..." } ], "nextCursor": null }</code></p>
 <h3 id="55-ウィジェット-api">5.5 ウィジェット API</h3>
+<p class="section-lead">ウィジェット利用者の埋め込み起動・質問送信・未解決登録を扱います。AI 推論のタイムアウトは 8 秒(FR-347、§5.10 / <a href="03_テーブル設計.html">03_テーブル設計.html</a>)、レート制限は §4 が正本です。</p>
 <h4 id="551-post-widgetv1bootstrap">5.5.1 <code>POST /widget/v1/bootstrap</code></h4>
 <p>| 認証 | 不要(ドメイン検証)|</p>
 <p>リクエスト:</p>
@@ -834,6 +811,7 @@
 <p>レスポンス(201): <code>{ "inquiryId": "inq_...", "inquiryCode": "INQ-20260513-XYZ123", "status": "open" }</code></p>
 <p>未解決質問登録ではチャット部屋を作成しない。</p>
 <h3 id="56-未解決質問-api">5.6 未解決質問 API</h3>
+<p class="section-lead">未解決質問の一覧・詳細・状況切替を扱います。状況は <code>open</code> / <code>closed</code> の 2 値で双方向遷移でき(再オープン制限なし)、FAQ 操作とは連動しません(<a href="../../共有/共有概念.html">共有概念</a>)。</p>
 <h4 id="561-get-inquiriesstatusopenprojectidcursor">5.6.1 <code>GET /inquiries?status=open&amp;projectId=...&amp;cursor=...</code></h4>
 <p><code>status</code> クエリは <code>open</code> / <code>closed</code> のいずれか(または未指定で両方)。</p>
 <h4 id="562-get-inquiriesid--patch-inquiriesid">5.6.2 <code>GET /inquiries/{id}</code> / <code>PATCH /inquiries/{id}</code></h4>
@@ -843,6 +821,7 @@
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
 <p>各フィールドはオプション(指定したものだけ更新)。状況は <code>open</code> ↔︎ <code>closed</code> の双方向遷移を許容(再オープン制限なし)。FAQ 下書き保存・FAQ 公開は本フィールドを変更しない(連動ロジックなし)。状態変更履歴の永続化は行わない。</p>
 <h3 id="57-利用量課金-api">5.7 利用量・課金 API</h3>
+<p class="section-lead">利用量サマリ・請求情報・支払方法・プロジェクト上限 / アラート設定を扱います。課金ロジック・無料枠・サスペンションの正本は <a href="10_課金・請求設計.html">10_課金・請求設計.html</a>、画面は SCR-016 / SCR-021 / SCR-022 です。</p>
 <h4 id="571-get-usageperiodcurrent_monthviewmodeprojectprojectidid">5.7.1 <code>GET /usage?period=current_month&amp;viewMode=project&amp;projectId={id}</code></h4>
 <p>| 機能ID | F-120 | | 関連画面 | SCR-021 / SCR-008 | | 必要権限 | オーナー / 該当プロジェクトの <code>admin</code> または <code>member</code> |</p>
 <p>プロジェクト単位の利用量を返す。契約全体の利用状況は §5.7.2 <code>GET /owner/projects/usage</code> を使用する。</p>
@@ -905,6 +884,11 @@
 <span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
 <span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
 <p><code>pdfUrl</code> は R2 署名 URL(有効期限 5 分)。</p>
+<h4 id="574a-get--put-billingpayment-method支払方法取得登録更新">5.7.4a <code>GET /billing/payment-method</code> / <code>PUT /billing/payment-method</code>(支払方法 取得・登録・更新)</h4>
+<p>| 機能ID | F-BILLING-002 / FR-123 / FR-136 | | 認証 | Cookie + CSRF(PUT は再認証必須)| | 関連画面 | SCR-022 請求 | | 必要権限 | <strong>オーナー専有</strong> |</p>
+<p>支払方法はクレジットカードのみ(FR-136)。カード番号等の生データはサーバで保持せず、課金プロバイダのトークンを受領して紐付ける(PCI スコープ最小化、正本: <a href="09_セキュリティ設計.html">09_セキュリティ設計.html</a>)。サスペンション中もオーナーは本 API を実行できる(FR-138)。</p>
+<p>GET レスポンス(200): <code>{ "registered": true, "brand": "visa", "last4": "4242", "expMonth": 12, "expYear": 2028 }</code>(未登録時は <code>{ "registered": false }</code>)</p>
+<p>PUT リクエスト: <code>{ "paymentToken": "tok_..." }</code>(課金プロバイダ発行トークン) PUT レスポンス(200): <code>{ "registered": true, "brand": "visa", "last4": "4242" }</code> エラー: 400 <code>VALIDATION_ERROR</code>、402 <code>PAYMENT_METHOD_DECLINED</code>(E-BILL-PAYMENT-FAILED)、403 <code>E-AUTHZ-OWNER-ONLY</code></p>
 <h4 id="575-get-projectsidquota-limits">5.7.5 <code>GET /projects/{id}/quota-limits</code></h4>
 <p>| 機能ID | F-LIMIT-001 | | 関連画面 | SCR-021 | | 必要権限 | オーナー / 該当プロジェクトの <code>admin</code> または <code>member</code>(閲覧)|</p>
 <p>当該プロジェクトの質問数について、利用状況・月次上限件数・アラート設定を返す。SCR-021 の表示には <code>used</code> / <code>limitEnabled</code> / <code>limit</code> / <code>percentage</code> / <code>yenEquivalent</code> だけを使用し、アラート設定・設定元は表示しない。SCR-021-M1 は <code>limitEnabled</code> / <code>limit</code> / <code>alertThresholds</code> を使用する。FAQ 件数は扱わないためレスポンスに含めない。質問数の無料利用枠は課金判定用の内部データとして保持するが、本APIのレスポンスには含めない。</p>
@@ -922,6 +906,7 @@
 <p>リクエスト例(ON): <code>{ "limitEnabled": true, "limit": 5000, "alertThresholds": [25, 50, 80, 90, 100] }</code> リクエスト例(OFF): <code>{ "limitEnabled": false, "limit": null, "alertThresholds": [] }</code> レスポンス(200): <code>{ "projectId": "prj_...", "limitEnabled": true, "limit": 5000, "alertThresholds": [25, 50, 80, 90, 100], "yenEquivalent": 2000, "source": "owner", "updatedAt": "..." }</code></p>
 <p>バリデーション: <code>limitEnabled=true</code> の場合、<code>limit</code> は必須かつ 1 件刻みで最小件数・最大件数の範囲内。<code>alertThresholds</code> は <code>25</code> / <code>50</code> / <code>80</code> / <code>90</code> / <code>100</code> の重複しない配列とし、サーバ側で昇順へ正規化する。空配列はアラート通知なし。<code>limitEnabled=false</code> の場合は <code>limit=null</code>、<code>alertThresholds=[]</code> とする。<code>freeQuota</code> / <code>alertEnabled</code> / <code>alertFrequency</code> を指定した場合は未サポート項目として 422。当該プロジェクトに割当のないユーザーは 403。</p>
 <h3 id="58-お知らせ受信箱-api">5.8 お知らせ受信箱 API</h3>
+<p class="section-lead">お知らせの一覧・個別 / 一括既読・未読件数を扱います。一括既読は監査記録の対象です(<a href="09_セキュリティ設計.html">09_セキュリティ設計.html</a>)。配信先解決・契機は <a href="06_メッセージ一覧.html">06_メッセージ一覧.html</a> が正本です。</p>
 <h4 id="581-get-meannouncementscursor">5.8.1 <code>GET /me/announcements?cursor=...</code></h4>
 <p>| 必要権限 | admin 限定 | | 関連画面 | SCR-011 |</p>
 <p>レスポンス(200):</p>
@@ -939,11 +924,30 @@
 <span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
 <span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;nextCursor&quot;</span><span class="fu">:</span> <span class="kw">null</span></span>
 <span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
-<h4 id="582-post-meannouncementsidread">5.8.2 <code>POST /me/announcements/{id}/read</code></h4>
+<h4 id="582-post-meannouncementsidread">5.8.2 <code>POST /me/announcements/{id}/read</code>(個別既読)</h4>
 <p>レスポンス(200): <code>{ "id": "...", "readAt": "..." }</code></p>
-<h4 id="583-get-meannouncementsunread-summary">5.8.3 <code>GET /me/announcements/unread-summary</code></h4>
+<h4 id="582a-post-meannouncementsread一括既読">5.8.2a <code>POST /me/announcements/read</code>(一括既読)</h4>
+<p>SCR-011 の一括既読化操作から呼び出し、選択した複数のお知らせを一括で既読にする。1 リクエストの上限は <strong>100 件</strong>。超過時は 400 <code>VALIDATION_ERROR</code>。冪等(既読済みは再記録しない)。一括既読操作は操作者・対象件数・実行日時を監査記録する(FR-152 相当、正本: <a href="09_セキュリティ設計.html">09_セキュリティ設計.html</a>)。</p>
+<p>リクエスト: <code>{ "ids": ["ann_...", "ann_..."] }</code>(全件既読を指定する場合は <code>{ "all": true }</code>)</p>
+<p>レスポンス(200): <code>{ "readCount": 8, "readAt": "..." }</code> エラー: 400 <code>VALIDATION_ERROR</code>(100 件超過)</p>
+<h4 id="583-get-meannouncementsunread-summary">5.8.3 <code>GET /me/announcements/unread-summary</code>(未読件数)</h4>
 <p>レスポンス(200): <code>{ "unreadsCount": 5, "recent": [...] }</code></p>
+<h3 id="58a-ダッシュボード-api">5.8a ダッシュボード API</h3>
+<p class="section-lead">SCR-008 / SCR-016 のダッシュボード表示に必要な利用量サマリと通知失敗・バウンス件数を 1 エンドポイントで返します。各 KPI の値の正本は利用量(§5.7)・通知(<a href="06_メッセージ一覧.html">06_メッセージ一覧.html</a>)であり、本 API は表示用に集約します。</p>
+<h4 id="58a1-get-dashboardsummary">5.8a.1 <code>GET /dashboard/summary?period=current_month&amp;projectId={id}</code></h4>
+<p>| 機能ID | F-130 | | 必要権限 | オーナー / 該当 PJ の <code>member</code>+(<code>notification</code> ブロックの配信失敗・バウンス件数はオーナー専有)| | 関連画面 | SCR-008 / SCR-016 |</p>
+<p>質問数・未解決数(FR-130)、要対応状況の対応中 / 対応済み内訳(FR-132)、未解決傾向(FR-133)、期間絞り込み(FR-134)、通知失敗・バウンス件数(FR-135)をまとめて返す。<code>projectId</code> 未指定時はオーナーのみ契約全体を集約する(メンバーは <code>projectId</code> 必須)。期間は <code>period</code>(<code>current_month</code> / <code>last_30d</code>)または <code>from</code> / <code>to</code> で指定する。</p>
+<p>レスポンス(200):</p>
+<div class="sourceCode"><pre class="sourceCode json"><code class="sourceCode json">{
+  "period": { "from": "2026-06-01T00:00:00Z", "to": "2026-06-30T23:59:59Z" },
+  "questions": { "total": 2450, "unresolved": 120 },
+  "inquiryStatus": { "open": 35, "closed": 85 },
+  "topQuestions": [ { "question": "返品方法は?", "count": 42 } ],
+  "notification": { "failedCount": 3, "bouncedCount": 1 }
+}</code></pre></div>
+<p><code>notification.failedCount</code> / <code>bouncedCount</code> は <code>notification_logs</code> の配信失敗・バウンス集計(列定義は <a href="03_テーブル設計.html">03_テーブル設計.html</a>)。メンバーが <code>projectId</code> 指定で呼んだ場合、本ブロックは <code>null</code> を返す。エラー: 400 <code>VALIDATION_ERROR</code>(メンバーが <code>projectId</code> 未指定)、403 <code>PROJECT_ACCESS_DENIED</code></p>
 <h3 id="59-規約退会-api">5.9 規約・退会 API</h3>
+<p class="section-lead">利用規約・プライバシーポリシーの取得 / 同意と、オーナーの退会申請を扱います。両文書は独立して扱い、改定再同意では改定された文書のみ同意を送ります。退会はオーナー専有・再認証必須です。</p>
 <p>利用規約とプライバシーポリシーは個別の文書として扱い、閲覧・同意ともに文書ごとに分離する(<code>terms_versions.doc_type</code> / <code>terms_agreements.doc_type</code> = <code>terms_of_service</code> / <code>privacy_policy</code>)。</p>
 <h4 id="591-get-termscurrent利用規約-最新版">5.9.1 <code>GET /terms/current</code>(利用規約 最新版)</h4>
 <p>| 認証要否 | 不要 | | 関連画面 | SCR-010 / SCR-015 |</p>
@@ -961,6 +965,7 @@
 <p>| 認証 | オーナー専有、再認証必須 | | 関連画面 | SCR-014 | | 関連テーブル | <code>withdrawal_requests</code>, <code>contract_owners</code> |</p>
 <p>エラー: 403 <code>PERMISSION_DENIED</code>(メンバー)</p>
 <h3 id="510-ai-推論-ifanswerprovider-抽象化">5.10 AI 推論 IF(<code>AnswerProvider</code> 抽象化)</h3>
+<p class="section-lead">AI 推論をプロバイダ非依存の <code>AnswerProvider</code> 抽象 IF として定義します。タイムアウトは 8 秒(FR-347)、回答は FAQ 限定・新規事実生成禁止のポリシーで制約します。MVP 実装は Cloudflare Workers AI です。</p>
 <div class="sourceCode" id="cb26"><pre class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="im">export type</span> AnswerResult <span class="op">=</span></span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> { kind<span class="op">:</span> <span class="st">&#39;answered&#39;</span><span class="op">;</span> answer<span class="op">:</span> <span class="dt">string</span><span class="op">;</span> cited_faq_ids<span class="op">:</span> <span class="dt">string</span>[]<span class="op">;</span> confidence<span class="op">:</span> <span class="dt">number</span> }</span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> { kind<span class="op">:</span> <span class="st">&#39;unanswerable&#39;</span><span class="op">;</span> reason_code<span class="op">:</span> <span class="st">&#39;no_match&#39;</span><span class="op">|</span><span class="st">&#39;low_confidence&#39;</span><span class="op">|</span><span class="st">&#39;contradiction&#39;</span> }</span>
@@ -979,6 +984,7 @@
 <span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>MVP は Cloudflare Workers AI 実装(<code>WorkersAIAnswerProvider</code>)。</p>
 <h3 id="511-メール配信-ifemailprovider-抽象化">5.11 メール配信 IF(<code>EmailProvider</code> 抽象化)</h3>
+<p class="section-lead">メール送信と Webhook 検証をプロバイダ非依存の <code>EmailProvider</code> 抽象 IF として定義します。件名・本文テンプレートの正本は <a href="11_メール設計.html">11_メール設計.html</a>、配信信頼性は <a href="09_セキュリティ設計.html">09_セキュリティ設計.html</a> です。MVP 実装は Resend です。</p>
 <div class="sourceCode" id="cb27"><pre class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">interface</span> EmailProvider {</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">send</span>(input<span class="op">:</span> {</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    to<span class="op">:</span> <span class="dt">string</span><span class="op">;</span> from<span class="op">:</span> <span class="dt">string</span><span class="op">;</span> reply_to<span class="op">?:</span> <span class="dt">string</span><span class="op">;</span> subject<span class="op">:</span> <span class="dt">string</span><span class="op">;</span></span>
@@ -994,7 +1000,8 @@
 <span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>  }<span class="op">&gt;;</span></span>
 <span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>MVP は Resend 実装(<code>ResendEmailProvider</code>)。</p>
-<h3 id="512-連携-if受信側メイン側エンドポイント">5.12 連携 IF(受信側、メイン側エンドポイント)</h3>
+<h3 id="512-連携-if受信側メイン側エンドポイント">5.12 連携 IF(メイン側エンドポイント)</h3>
+<p class="section-lead">顧客管理システムとの連携 IF #1〜#12 のうち、メインが受信・送信するエンドポイントを定義します。各 IF の主管(受信 / 送信)は §6 の通信仕様一覧が正本で、受信側の対応は運営者 <a href="../../02_運営者システム/02_基本設計/02_API設計.html">02_API設計.html</a> と両正本です。</p>
 <h4 id="5121-if-1-契約停止イベント受信顧管--メ">5.12.1 IF #1 契約停止イベント受信(顧管 → メ)</h4>
 <pre><code>POST /internal/admin-integration/v1/owner/suspend</code></pre>
 <p>認証: mTLS + JWT(<code>aud=main</code>、TTL 5min)</p>
@@ -1047,9 +1054,7 @@
 <li><code>owner_quota_overrides</code> テーブル更新(レート種別のみ。契約単位)</li>
 <li>KV キー <code>ratelimit:{contractOwnerUserId}:{kind}</code> 更新(即時反映)</li>
 </ol>
-<blockquote>
-<p>本 IF はレート制限(契約単位)専用。月次上限件数の運営者上書きはプロジェクト単位のため §5.8.4a を用いる。</p>
-</blockquote>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>本 IF はレート制限(契約単位)専用です。月次上限件数の運営者上書きはプロジェクト単位のため §5.12.4a を用います。</div></div>
 <h4 id="5124a-if-5月次上限件数上書き受信--プロジェクト単位">5.12.4a IF #5(月次上限件数上書き受信 / プロジェクト単位)</h4>
 <pre><code>POST /internal/admin-integration/v1/usage-limit/override</code></pre>
 <p>リクエスト:</p>
@@ -1184,6 +1189,7 @@
 <li>メール通知 Queue 投入(<code>critical</code> の場合はメール強制送信)</li>
 </ol>
 <h3 id="513-外部-webhookresend-等">5.13 外部 Webhook(Resend 等)</h3>
+<p class="section-lead">メール配信プロバイダからの配信状態 Webhook を受信し、配信状態の更新と抑制リスト登録を行います。署名検証と冪等性は §3.4 の共通仕様に従います。課金プロバイダ Webhook は運営者が一次受信し、メインは IF #10(§5.12.9)経由で受け取ります。</p>
 <h4 id="5131-post-webhooksresend">5.13.1 <code>POST /webhooks/resend</code></h4>
 <p>認証: Resend 署名検証(HMAC-SHA256)</p>
 <p>リクエスト(Resend 仕様準拠):</p>
@@ -1204,6 +1210,7 @@
 </ol>
 <p>エラー: 401 <code>SIGNATURE_INVALID</code>、200 + 既存処理結果(冪等性違反)</p>
 <h2 id="6-連携-if-通信仕様一覧">6. 連携 IF 通信仕様一覧</h2>
+<p class="section-lead">IF #1〜#12 の連携先・方向・認証・冪等性・DLQ 上限・タイムアウト・主管(受信 / 送信)を一覧化します。本表はメイン側の主管責任の正本であり、受信側の対応は運営者 <a href="../../02_運営者システム/02_基本設計/02_API設計.html">02_API設計.html</a> と整合します。</p>
 <table>
 <thead>
 <tr>
@@ -1320,8 +1327,9 @@
 </tr>
 </tbody>
 </table>
-<p>詳細は運営者側 <a href="../../02_運営者システム/個別設計書群/03_API設計書.html">03_API設計書.html §5.7</a> を参照。</p>
+<p>詳細は運営者側 <a href="../../02_運営者システム/02_基本設計/02_API設計.html">02_API設計.html</a> を参照。</p>
 <h2 id="7-未決事項">7. 未決事項</h2>
+<p class="section-lead">本書の API 契約に関する未決事項を管理します。現時点で未決事項はありません(確定済)。</p>
 <table>
 <thead>
 <tr>
@@ -1333,6 +1341,25 @@
 </tr>
 </thead>
 <tbody>
+</tbody>
+</table>
+
+<h2 id="更新履歴">更新履歴</h2>
+<p class="section-lead">本書の版数・改訂内容を記録します。最新版が最上行です。</p>
+<table>
+<thead>
+<tr>
+<th>版数</th>
+<th>更新日</th>
+<th>改訂内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>v1.5</td>
+<td>2026-06-17</td>
+<td>設計書シンプルテンプレ v2 へ移行。front-matter を ps-lead(目的 1 文)+ doc-meta に集約し、関連ドキュメントのリンク表を撤去(リンクは本文スコープ callout に集約)。各節の section-lead を整備。API パス / メソッド / ステータスコード / 連携 IF #1〜#12 / エラー ID / スキーマは変更なし。</td>
+</tr>
 </tbody>
 </table>
 

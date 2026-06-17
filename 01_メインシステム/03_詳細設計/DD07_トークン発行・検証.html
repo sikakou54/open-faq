@@ -13,46 +13,15 @@
 <body data-page-id="01_メインシステム/03_詳細設計/DD07_トークン発行・検証.html">
 <article class="content" id="content">
 <h1 id="dd07-トークン発行検証">DD07: トークン発行・検証</h1>
-<h2 id="0-文書情報">0. 文書情報</h2>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>内容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>文書名</td>
-<td>DD07: トークン発行・検証</td>
-</tr>
-<tr>
-<td>詳細設計ID</td>
-<td>DD07</td>
-</tr>
-<tr>
-<td>対象システム</td>
-<td>FAQ AI ウィジェット SaaS / メインシステム</td>
-</tr>
-<tr>
-<td>関連機能ID</td>
-<td>FR-003（メール確認）/ FR-004 / FR-006（パスワード再設定）/ FR-018（管理者ユーザー有効化）</td>
-</tr>
-<tr>
-<td>作成日</td>
-<td>2026-05-17</td>
-</tr>
-<tr>
-<td>版数</td>
-<td>v1.1</td>
-</tr>
-<tr>
-<td>ステータス</td>
-<td>承認済</td>
-</tr>
-</tbody>
-</table>
+
+<aside class="page-summary">
+<p class="ps-lead"><strong>このページは、メール確認・パスワード再設定・管理者ユーザー有効化などで使う一時トークンの発行・検証・1 回限り消費の実装方針を定義します。</strong> 生トークンはユーザーへ返し、DB(<code>access_tokens</code>)には HMAC-SHA256 ハッシュのみを保存します。</p>
+</aside>
+
+<p class="doc-meta"><span><b>版数</b> v1.1</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
 <h2 id="1-対象範囲">1. 対象範囲</h2>
+<p class="section-lead">本 DD が実装方針を定める機能・API・テーブルを示します。次の表は、対象となる FR / API / テーブルを並べたもので、メール確認・パスワード再設定・管理者ユーザー有効化の各トークンと、それらを支える <code>access_tokens</code> 基盤が範囲であることを一望できます。</p>
 <table>
 <thead>
 <tr>
@@ -90,6 +59,7 @@
 </tbody>
 </table>
 <h2 id="2-収録ロジック対応章">2. 収録ロジック・対応章</h2>
+<p class="section-lead">本 DD が詳細化する各ロジックの出所(基本設計の元章)と概要を示します。次の表は、用途別 TTL・HMAC-SHA256 保存方式・1 回限り消費の対応関係をまとめたものです。</p>
 <table>
 <thead>
 <tr>
@@ -117,7 +87,10 @@
 </tbody>
 </table>
 <h2 id="3-詳細設計本文">3. 詳細設計本文</h2>
+<p class="section-lead">トークンの用途別 TTL・HMAC 保存方式・発行検証フロー・1 回限り消費・期限切れ削除の実装ロジックを順に定義します。以降の各小節は、TTL 一覧、生成 / 検証 / 消費関数、用途別フロー、cron 削除を扱います。</p>
+
 <h3 id="31-用途別-ttl-一覧">3.1 用途別 TTL 一覧</h3>
+<p class="section-lead">トークンは用途(<code>purpose</code>)ごとに有効期限・1 回限りの可否・内包データが異なります。次の表は 5 用途の TTL / 一回限り / <code>meta</code> 内包データをまとめたもので、後続の発行・検証ロジックの前提になります。</p>
 <table>
 <thead>
 <tr>
@@ -161,6 +134,39 @@
 </tbody>
 </table>
 <h3 id="32-hmac-sha256-保存方式">3.2 HMAC-SHA256 保存方式</h3>
+<p class="section-lead">生トークンは発行時にユーザーへ返し、DB には <code>MASTER_KEY</code> 由来の HMAC-SHA256 ハッシュ(<code>token_hash</code>)のみを保存します。検証は受け取った生トークンを同じ鍵でハッシュ化して <code>access_tokens</code> を引き当て、用途一致・未使用・有効期限の順に判定します。次のシーケンス図は、発行 → 検証 → 1 回限り消費の流れを示し、検証時の状態分岐(有効 / 不正 / 用途不一致 / 使用済み / 期限切れ)を <code>alt</code> で表します。続く擬似コードが <code>generateToken</code> / <code>verifyToken</code> / <code>consumeToken</code> の実体です。</p>
+<pre class="mermaid"><code>sequenceDiagram
+  participant U as 利用者(ブラウザ)
+  participant W as worker-main-api
+  participant T as token.ts
+  participant D as D1 (access_tokens)
+
+  Note over U,D: 発行(generateToken)
+  W-&gt;&gt;T: トークン生成要求(purpose, payload, ttl)
+  T-&gt;&gt;T: rawToken 生成 + HMAC-SHA256(MASTER_KEY)
+  T-&gt;&gt;D: token_hash / meta / expires_at を INSERT
+  D--&gt;&gt;T:
+  T--&gt;&gt;W: rawToken(DB は hash のみ保持)
+  W--&gt;&gt;U: メール等で rawToken を送付
+
+  Note over U,D: 検証(verifyToken)
+  U-&gt;&gt;W: rawToken を提示
+  W-&gt;&gt;T: 検証要求(rawToken, purpose)
+  T-&gt;&gt;D: token_hash で SELECT
+  D--&gt;&gt;T: 照合結果(該当 / 該当なし)
+  alt 有効
+    T--&gt;&gt;W: payload(meta を JSON parse)
+    W-&gt;&gt;T: 消費要求(consumeToken)
+    T-&gt;&gt;D: used_at を UPDATE
+    D--&gt;&gt;T:
+    W--&gt;&gt;U: 処理完了
+  else 該当なし / 用途不一致
+    T--&gt;&gt;W: TOKEN_INVALID(400)
+  else 使用済み
+    T--&gt;&gt;W: TOKEN_REUSED(400)
+  else 期限切れ
+    T--&gt;&gt;W: TOKEN_EXPIRED(400)
+  end</code></pre>
 <div class="sourceCode" id="cb1"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// app/shared/src/lib/token.ts</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fu">generateToken</span>(</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  purpose<span class="op">:</span> TokenPurpose<span class="op">,</span> payload<span class="op">:</span> <span class="bu">Record</span><span class="op">&lt;</span><span class="dt">string</span><span class="op">,</span> <span class="dt">string</span><span class="op">&gt;,</span> env<span class="op">:</span> Env<span class="op">,</span> ttlSec<span class="op">:</span> <span class="dt">number</span><span class="op">,</span></span>
@@ -204,6 +210,7 @@
 <span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>  )<span class="op">.</span><span class="fu">bind</span>(<span class="kw">new</span> <span class="bu">Date</span>()<span class="op">.</span><span class="fu">toISOString</span>()<span class="op">,</span> tokenHash)<span class="op">.</span><span class="fu">run</span>()<span class="op">;</span></span>
 <span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h3 id="33-一回限りトークン">3.3 一回限りトークン</h3>
+<p class="section-lead">1 回限り用途(<code>email_verify</code> / <code>password_reset</code> / <code>activation</code> / <code>contact_verify</code>)は、検証成功直後に必ず消費し、再使用を防ぎます。</p>
 <p><code>consumeToken()</code> を検証直後に必ず呼び、<code>used_at</code> を設定。再使用時は <code>TOKEN_REUSED</code>。</p>
 <h3 id="33a-メンバー招待トークンactivation-scr-018-有効化">3.3a メンバー招待トークン(activation)+ SCR-018 有効化</h3>
 <p>招待時 (<code>POST /projects/{id}/members</code>) に <code>purpose='activation'</code> で発行し、<code>meta</code> に <code>invitedProjectId</code> / <code>invitedRole</code> を JSON 保持。SCR-018 「登録を完了する」押下時に <code>verifyToken</code> → 同一トランザクションでユーザー有効化 + <code>consumeToken</code> を実行する。</p>
@@ -253,36 +260,7 @@
 <h3 id="34-期限切れトークン削除cron">3.4 期限切れトークン削除（cron）</h3>
 <p><code>access_tokens</code> の <code>expires_at &lt; NOW() - 30 日</code> を物理削除。詳細は <a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html</a> §14.1.9 を参照。</p>
 <h2 id="4-関連設計">4. 関連設計</h2>
-<table>
-<thead>
-<tr>
-<th>種別</th>
-<th>参照先</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>要件</td>
-<td><a href="../01_要件定義/index.html">../01_要件定義/index.html</a></td>
-</tr>
-<tr>
-<td>基本設計</td>
-<td><a href="../02_基本設計/index.html">../02_基本設計/index.html</a></td>
-</tr>
-<tr>
-<td>認証・認可設計</td>
-<td><a href="../02_基本設計/08_認証・認可設計.html">../02_基本設計/08_認証・認可設計.html</a></td>
-</tr>
-<tr>
-<td>運用設計</td>
-<td><a href="../04_運用設計/index.html">../04_運用設計/index.html</a></td>
-</tr>
-<tr>
-<td>関連 DD</td>
-<td><a href="DD01_アカウント・ユーザー管理.html">DD01_アカウント・ユーザー管理.html</a> / <a href="DD10_暗号化・鍵管理.html">DD10_暗号化・鍵管理.html</a></td>
-</tr>
-</tbody>
-</table>
+<p class="section-lead">本 DD に関連する正本ドキュメントを示します。トークンの認証・認可方針は <a href="../02_基本設計/08_認証・認可設計.html">認証・認可設計</a> を正本とし、要件は <a href="../01_要件定義/index.html">要件定義</a>、全体方針は <a href="../02_基本設計/index.html">基本設計</a> を参照します。関連 DD は <a href="DD01_アカウント・ユーザー管理.html">DD01_アカウント・ユーザー管理.html</a> / <a href="DD10_暗号化・鍵管理.html">DD10_暗号化・鍵管理.html</a>、運用面は <a href="../04_運用設計/index.html">運用設計</a> を参照します。</p>
 <h2 id="5-テスト観点">5. テスト観点</h2>
 <table>
 <thead>

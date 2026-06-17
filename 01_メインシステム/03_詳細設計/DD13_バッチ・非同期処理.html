@@ -13,46 +13,15 @@
 <body data-page-id="01_メインシステム/03_詳細設計/DD13_バッチ・非同期処理.html">
 <article class="content" id="content">
 <h1 id="dd13-バッチ非同期処理">DD13: バッチ・非同期処理</h1>
-<h2 id="0-文書情報">0. 文書情報</h2>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>内容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>文書名</td>
-<td>DD13: バッチ・非同期処理</td>
-</tr>
-<tr>
-<td>詳細設計ID</td>
-<td>DD13</td>
-</tr>
-<tr>
-<td>対象システム</td>
-<td>FAQ AI ウィジェット SaaS / メインシステム</td>
-</tr>
-<tr>
-<td>関連機能ID</td>
-<td>FR-148 / FR-191 / NFR-501〜507 / NFR-801〜810 / AC-021 / AC-022</td>
-</tr>
-<tr>
-<td>作成日</td>
-<td>2026-05-17</td>
-</tr>
-<tr>
-<td>版数</td>
-<td>v1.0</td>
-</tr>
-<tr>
-<td>ステータス</td>
-<td>承認済</td>
-</tr>
-</tbody>
-</table>
+
+<aside class="page-summary">
+<p class="ps-lead"><strong>このページは、メインシステムの cron バッチ(9 ジョブ)と Queue / Consumer による非同期処理の実装方針を定義します。</strong> 月次集計・保持期間処理・論理削除データの 90 日後物理削除などの定期ジョブと、メール送信やお知らせ配信を担う Queue の再試行・DLQ・冪等性の共通仕様を扱います(FR-148 / FR-191 / NFR-501〜507 / NFR-801〜810 / AC-021 / AC-022)。</p>
+</aside>
+
+<p class="doc-meta"><span><b>版数</b> v1.0</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
 <h2 id="1-対象範囲">1. 対象範囲</h2>
+<p class="section-lead">本 DD が実装方針を定める cron バッチ・Queue・Consumer・冪等性ライブラリを示します。次の表は、対象となるジョブ群とその種別を一望できるよう整理したものです。</p>
 <table>
 <thead>
 <tr>
@@ -85,6 +54,7 @@
 </tbody>
 </table>
 <h2 id="2-収録ロジック対応章">2. 収録ロジック・対応章</h2>
+<p class="section-lead">本 DD が詳細化するロジックの出所(基本設計の元章)と概要を示します。次の表は、cron 一覧(§14.1)・Queue 一覧(§14.2)・Consumer 共通仕様(§14.3)・冪等性キー管理(§14.4)が基本設計のどの章から派生したかをまとめたものです。</p>
 <table>
 <thead>
 <tr>
@@ -162,16 +132,24 @@
 </tbody>
 </table>
 <h2 id="3-詳細設計本文">3. 詳細設計本文</h2>
+<p class="section-lead">cron バッチの各ジョブ、Queue / Consumer の共通仕様、冪等性キー管理、実装モジュール構成を順に定義します。以降の各小節は、ジョブごとの処理内容と擬似コード・SQL、非同期処理のフロー(投入 → 処理 → 再試行 → DLQ)を扱います。</p>
+
 <h3 id="31-cron-一覧">3.1 cron 一覧</h3>
+<p class="section-lead">scheduled() ハンドラから起動する 9 ジョブの実行時刻と処理内容を定義します。月次集計・月次確定は DD11 を正本とし参照に留め、保持期間処理・物理削除など本 DD が正本となるジョブは擬似コード・SQL を保持します。</p>
 <h4 id="311-月次集計utc-1500月末日のみ実行">3.1.1 月次集計（UTC 15:00、月末日のみ実行）</h4>
+<p class="section-lead">月次の利用量集計ジョブで、本 DD では実行時刻のみ管理し、ロジックは DD11 を正本とします。</p>
 <p>詳細は <a href="DD11_利用量計測・課金.html">DD11_利用量計測・課金.html</a> §3.4 を参照。</p>
 <h4 id="312-月次確定jst-0200月初-1-日">3.1.2 月次確定（JST 02:00、月初 1 日）</h4>
+<p class="section-lead">前月分の請求を確定するジョブで、本 DD では実行時刻のみ管理し、ロジックは DD11 を正本とします。</p>
 <p>詳細は <a href="DD11_利用量計測・課金.html">DD11_利用量計測・課金.html</a> §3.5 を参照。</p>
 <h4 id="313-無料枠超過支払方法未登録判定jst-0000-daily">3.1.3 無料枠超過・支払方法未登録判定（JST 00:00 daily）</h4>
+<p class="section-lead">支払方法ゲート(FR-136)のバックストップとして、支払方法が未登録のまま無料枠を超過したプロジェクトのウィジェット新規質問受付を日次で停止します。</p>
 <p>支払方法ゲート(FR-136)のバックストップ判定。<strong>支払方法が未登録</strong>かつ、いずれかのプロジェクトが質問数無料枠を超過している場合、当該プロジェクトのウィジェット新規質問受付を停止する。FAQの無料枠超過は停止フラグや 429 の対象にせず、利用量記録と課金案内だけを継続する。</p>
 <h4 id="314-未解決質問保持期間通知jst-0900">3.1.4 未解決質問保持期間通知（JST 09:00）</h4>
+<p class="section-lead">保持期間が近づいた未解決質問(<code>status=open</code>)について、管理者ユーザーへ滞留通知を送信します。本処理は通知のみで質問状態は変更しません。</p>
 <p><code>status=open</code> の未解決質問が保持期間に近づいた場合に、管理者ユーザーへ滞留通知を送信する。<code>closed</code>(手動終了)は対象外。状況は本処理で変更しない。</p>
 <h4 id="315-730-日保持期間処理jst-0200">3.1.5 730 日保持期間処理（JST 02:00）</h4>
+<p class="section-lead">作成から 730 日を超えてなお <code>open</code> のまま滞留している未解決質問を抽出し、オーナーへ <code>OPEN_INQUIRY_RETENTION_NOTICE</code> 通知と監査ログを発行します。次の擬似コードは抽出条件(<code>valid=1</code> で論理削除済みを除外)と通知・監査の発行処理です。</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fu">processOpenInquiryRetention</span>(env<span class="op">:</span> Env) {</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> cutoff <span class="op">=</span> <span class="kw">new</span> <span class="bu">Date</span>(<span class="bu">Date</span><span class="op">.</span><span class="fu">now</span>() <span class="op">-</span> <span class="dv">730</span> <span class="op">*</span> <span class="dv">86400000</span>)<span class="op">.</span><span class="fu">toISOString</span>()<span class="op">;</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> stuck <span class="op">=</span> <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`</span></span>
@@ -192,8 +170,10 @@
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h4 id="316-監査ログ完全性検証jst-0300-daily--日次全件再計算">3.1.6 監査ログ完全性検証（JST 03:00 daily / 日次全件再計算）</h4>
+<p class="section-lead">本処理は運営者側 <code>audit_logs</code>(ハッシュチェーン正本)に対してのみ実行され、メイン側は対象外です(メイン側はチェーン構造を持ちません)。</p>
 <p>メイン側 <code>audit_logs</code> は API 操作ログ専用であり、ハッシュチェーン構造を持たない(<code>prev_hash</code> / <code>current_hash</code> 列は持たない)。本処理は <strong>運営者側 <code>audit_logs</code>(ハッシュチェーン正本)に対してのみ実行</strong> される。詳細は運営者側設計 §7 + <a href="DD09_監査ログ書込・完全性検証.html">DD09_監査ログ書込・完全性検証.html</a> §3.6 を参照。</p>
 <h4 id="318-audit_logs-保持期間超過削除バッチjst-0400物理-delete-方式">3.1.8 audit_logs 保持期間超過削除バッチ（JST 04:00、物理 DELETE 方式)</h4>
+<p class="section-lead">メイン側 <code>audit_logs</code> は API 操作ログ専用でチェーン構造を持たないため、保持期間超過後は tombstone を使わず物理 DELETE で処理します。次の擬似コードは保持クラス別(<code>general</code> 1 年 / <code>operator_high_priv</code> 5 年 / <code>billing</code> 7 年)のカットオフ条件です。</p>
 <p>メイン側 <code>audit_logs</code> は「API 操作ログ専用」でありハッシュチェーン正本は運営者側に一本化されている。メイン側ではチェーン破断を防ぐための tombstone 方式は不要のため、保持期間超過後は物理 DELETE で処理する。</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fu">purgeExpiredAuditLogs</span>(env<span class="op">:</span> Env) {</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 一般 (1 年) / 課金 (7 年) / 運営者高権限 (5 年) 経過の audit_logs を物理 DELETE</span></span>
@@ -209,10 +189,9 @@
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">new</span> <span class="bu">Date</span>(<span class="bu">Date</span><span class="op">.</span><span class="fu">now</span>() <span class="op">-</span> <span class="dv">7</span> <span class="op">*</span> <span class="dv">365</span> <span class="op">*</span> <span class="dv">86400000</span>)<span class="op">.</span><span class="fu">toISOString</span>()<span class="op">,</span></span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  )<span class="op">.</span><span class="fu">run</span>()<span class="op">;</span></span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<blockquote>
-<p><strong>注</strong>: 運営者側 <code>audit_logs</code>(ハッシュチェーン正本)では tombstone 方式を維持する(運営者側設計 §7 参照)。本処理はメイン側 D1 限定。</p>
-</blockquote>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">運営者側は tombstone を維持</span>運営者側 <code>audit_logs</code>(ハッシュチェーン正本)では tombstone 方式を維持する(運営者側設計 §7 参照)。本処理はメイン側 D1 限定。</div></div>
 <h4 id="319-定期削除jst-0500">3.1.9 定期削除（JST 05:00）</h4>
+<p class="section-lead">保持期間を超過したログ・トークン・受信メッセージ等を一括で物理削除し、退会確定オーナーの <code>contract_owners</code> を <code>deleted_pending</code> → <code>deleted</code>(<code>valid=0</code> 同時セット)に確定します。次の擬似コードは各テーブルの保持期間と DELETE / UPDATE 条件です。</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fu">retentionCleanup</span>(env<span class="op">:</span> Env) {</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> now <span class="op">=</span> <span class="bu">Date</span><span class="op">.</span><span class="fu">now</span>()<span class="op">;</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">batch</span>([</span>
@@ -244,8 +223,29 @@
 <span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>  ])<span class="op">;</span></span>
 <span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h4 id="3110-d1-容量監視毎時">3.1.10 D1 容量監視(毎時)</h4>
+<p class="section-lead">D1 の容量を毎時監視し、80% 超過時に運営者 inbox へ high アラートを送ります。</p>
 <p>D1 の容量を監視し、80% を超えるとアラート(運営者 inbox に high)。詳細は基本設計を参照。</p>
 <h4 id="3111-論理削除データの-90-日後物理削除バッチ日次-0300-jst">3.1.11 論理削除データの 90 日後物理削除バッチ(日次 03:00 JST)</h4>
+<p class="section-lead">論理削除(<code>valid=0</code>)から <code>updated_at</code> 基準で 90 日経過したデータを物理削除します。次のシーケンス図で <code>users</code> / <code>projects</code> を起点とした CASCADE 連鎖と匿名化分岐の流れを示し、続けて処理ステップと擬似コードを保持します。</p>
+<pre class="mermaid"><code>sequenceDiagram
+  participant C as cronバッチ
+  participant D as D1
+  participant AL as audit_logs
+
+  C-&gt;&gt;D: valid=0 かつ updated_at &lt; 90日前 の対象抽出
+  D--&gt;&gt;C: 対象(users / contract_owners / projects …)
+  loop 対象ユーザーごと
+    C-&gt;&gt;AL: user.hard_delete_by_batch 発行(retention_class=general)
+    C-&gt;&gt;D: data_deletion_mode を照会
+    D--&gt;&gt;C: 削除モード(anonymize / delete)
+    opt anonymize かつ オーナー
+      C-&gt;&gt;D: 契約配下データを匿名化(§4.6)
+    end
+  end
+  C-&gt;&gt;D: DELETE users(ON DELETE CASCADE)
+  C-&gt;&gt;D: DELETE projects(ON DELETE CASCADE)
+  C-&gt;&gt;D: 孤立中間テーブル行を独立 DELETE
+  Note over D: billing_subscriptions / usage_metering は除外(永久保持)</code></pre>
 <p>全削除対象テーブル(<code>users</code> / <code>contract_owners</code> / <code>project_users</code> / <code>projects</code> / <code>allowed_domains</code> / <code>faqs</code> / <code>question_logs</code> / <code>inquiries</code> / <code>project_quota_limits</code>)の <code>valid</code> カラムによる論理削除データを、<code>updated_at</code> 基準で 90 日経過後に物理削除する。<code>billing_subscriptions</code> / <code>usage_metering</code> は除外(電子帳簿保存法 7 年保持、永久維持)。<code>project_quota_limits</code> は単独で論理削除された行も本バッチで物理削除し、<code>projects</code> 物理削除時は CASCADE で連鎖物理削除される。</p>
 <p><strong>処理ステップ</strong>:</p>
 <ol type="1">
@@ -298,6 +298,7 @@
 <li>90 日カットオフは <code>updated_at</code> 基準。論理削除以降に <code>updated_at</code> が変動するイベント(例: 復元処理)が発生した場合は再カウントとなる(復元から 90 日後の物理削除)。MVP では復元 UI は持たず、運営者 IF #4 経由のみ。</li>
 </ul>
 <h3 id="32-queue-一覧">3.2 Queue 一覧</h3>
+<p class="section-lead">非同期処理を担う 5 つの Queue の用途・producer / consumer・最大同時実行数・再試行回数・DLQ を定義します。次の表は、各 Queue の処理特性と失敗時の退避先(<code>webhook-dlq</code>)を一覧化したものです。</p>
 <table>
 <thead>
 <tr>
@@ -359,7 +360,28 @@
 </tbody>
 </table>
 <h3 id="33-consumer-共通仕様">3.3 Consumer 共通仕様</h3>
+<p class="section-lead">全 Consumer に共通する再試行・DLQ 退避・リプレイの仕組みを定義します。次のシーケンス図は、メッセージ投入から処理失敗時の指数バックオフ再試行、上限到達後の DLQ → R2 退避 → 運営者アラートまでの一連の流れを示します。</p>
+<pre class="mermaid"><code>sequenceDiagram
+  participant P as producer
+  participant Q as Queue
+  participant CO as consumer
+  participant DLQ as webhook-dlq
+  participant R2 as R2_DLQ
+  participant OP as 運営者inbox
+
+  P-&gt;&gt;Q: メッセージ投入
+  Q-&gt;&gt;CO: deliver(attempts 付き)
+  alt 処理成功
+    CO--&gt;&gt;Q: ack
+  else 処理失敗 かつ attempts &lt; MAX_RETRY
+    CO-&gt;&gt;Q: retry(指数BO: 60s,120s,…,max 600s)
+  else 処理失敗 かつ attempts &gt;= MAX_RETRY
+    CO-&gt;&gt;DLQ: dlqEnqueue(ペイロード + エラー)
+    DLQ-&gt;&gt;R2: put(30日退避)
+    DLQ-&gt;&gt;OP: serviceAlert(high)
+  end</code></pre>
 <h4 id="331-指数-bo--最大-3-回再試行">3.3.1 指数 BO + 最大 3 回再試行</h4>
+<p class="section-lead">処理失敗時は指数バックオフ(最大 600 秒)で最大 3 回まで再試行し、上限到達時に DLQ へ退避して <code>ack</code> します。</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="cf">catch</span> (e) {</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (msg<span class="op">.</span><span class="at">attempts</span> <span class="op">&gt;=</span> MAX_RETRY) {</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> <span class="fu">dlqEnqueue</span>(env<span class="op">,</span> msg<span class="op">.</span><span class="at">body</span><span class="op">,</span> e)<span class="op">;</span></span>
@@ -370,6 +392,7 @@
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h4 id="332-dlq-4-日--r2-退避-30-日">3.3.2 DLQ 4 日 + R2 退避 30 日</h4>
+<p class="section-lead">DLQ に退避したメッセージは <code>webhook-dlq</code> consumer が R2 に 30 日保持し、運営者へアラートを送ります。次の擬似コードは R2 退避とアラート発行の実装です。</p>
 <p>DLQ Queue は 4 日保持。<code>webhook-dlq</code> consumer が R2 にペイロードを 30 日退避し、運営者へ critical アラート。</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fu">dlqConsume</span>(batch<span class="op">:</span> MessageBatch<span class="op">&lt;</span>DlqEntry<span class="op">&gt;,</span> env<span class="op">:</span> Env) {</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (<span class="kw">const</span> msg <span class="kw">of</span> batch<span class="op">.</span><span class="at">messages</span>) {</span>
@@ -385,8 +408,10 @@
 <span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h4 id="333-リプレイ機構">3.3.3 リプレイ機構</h4>
+<p class="section-lead">R2 退避から手動で元 Queue へ再投入できる仕組みを定義します(退避から 30 日以内に限る)。</p>
 <p>DLQ R2 退避から手動でリプレイ可能。<code>scripts/dlq-replay.ts</code> で R2 から読み込み → 元 Queue に再投入。30 日以内に限る。</p>
 <h3 id="34-冪等性キー管理">3.4 冪等性キー管理</h3>
+<p class="section-lead">KV を使った冪等性キー(TTL 24h)で同一処理の重複実行を防ぎます。次の擬似コードは判定(<code>checkIdempotency</code>)と記録(<code>storeIdempotency</code>)の実装です。</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">// KV: idempotency:{key} (TTL 24h)</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fu">checkIdempotency</span>(env<span class="op">:</span> Env<span class="op">,</span> key<span class="op">:</span> <span class="dt">string</span>)<span class="op">:</span> <span class="bu">Promise</span><span class="op">&lt;</span>{ cached<span class="op">:</span> <span class="dt">any</span> } <span class="op">|</span> <span class="dt">null</span><span class="op">&gt;</span> {</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> v <span class="op">=</span> <span class="cf">await</span> env<span class="op">.</span><span class="at">KV_DEDUP</span><span class="op">.</span><span class="fu">get</span>(<span class="vs">`idempotency:</span><span class="sc">${</span>key<span class="sc">}</span><span class="vs">`</span><span class="op">,</span> <span class="st">&#39;json&#39;</span>)<span class="op">;</span></span>
@@ -396,6 +421,7 @@
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> env<span class="op">.</span><span class="at">KV_DEDUP</span><span class="op">.</span><span class="fu">put</span>(<span class="vs">`idempotency:</span><span class="sc">${</span>key<span class="sc">}</span><span class="vs">`</span><span class="op">,</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">stringify</span>(result)<span class="op">,</span> { expirationTtl<span class="op">:</span> <span class="dv">86400</span> })<span class="op">;</span></span>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h3 id="35-実装モジュール構成">3.5 実装モジュール構成</h3>
+<p class="section-lead">cron ジョブと Queue Consumer のディレクトリ構成を示します。次のツリーは、各ジョブ・consumer の実装ファイルと起動スケジュールの対応です。</p>
 <pre><code>worker-cron/src/
 ├── index.ts                  # scheduled() ハンドラ + cron 分岐
 ├── jobs/
@@ -422,41 +448,9 @@ worker-queue-consumer/src/
 └── lib/
     └── retry.ts              # 指数バックオフ + 最大 3 回</code></pre>
 <h2 id="4-関連設計">4. 関連設計</h2>
-<table>
-<thead>
-<tr>
-<th>種別</th>
-<th>参照先</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>要件</td>
-<td><a href="../01_要件定義/index.html">../01_要件定義/index.html</a></td>
-</tr>
-<tr>
-<td>基本設計</td>
-<td><a href="../02_基本設計/index.html">../02_基本設計/index.html</a></td>
-</tr>
-<tr>
-<td>API 設計</td>
-<td><a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html</a></td>
-</tr>
-<tr>
-<td>課金・請求設計</td>
-<td><a href="../02_基本設計/10_課金・請求設計.html">../02_基本設計/10_課金・請求設計.html</a></td>
-</tr>
-<tr>
-<td>運用設計</td>
-<td><a href="../04_運用設計/index.html">../04_運用設計/index.html</a></td>
-</tr>
-<tr>
-<td>関連 DD</td>
-<td><a href="DD05_inquiry_code採番・未解決質問.html">DD05_inquiry_code採番・未解決質問.html</a> / <a href="DD06_通知ロジック.html">DD06_通知ロジック.html</a> / <a href="DD09_監査ログ書込・完全性検証.html">DD09_監査ログ書込・完全性検証.html</a> / <a href="DD11_利用量計測・課金.html">DD11_利用量計測・課金.html</a></td>
-</tr>
-</tbody>
-</table>
+<p class="section-lead">本 DD に関連する正本ドキュメントを示します。月次集計・課金の正本は <a href="DD11_利用量計測・課金.html">DD11_利用量計測・課金.html</a>、監査ログ書込・完全性検証は <a href="DD09_監査ログ書込・完全性検証.html">DD09_監査ログ書込・完全性検証.html</a>、未解決質問は <a href="DD05_inquiry_code採番・未解決質問.html">DD05_inquiry_code採番・未解決質問.html</a>、通知は <a href="DD06_通知ロジック.html">DD06_通知ロジック.html</a> を参照します。基本設計は <a href="../02_基本設計/02_API設計.html">API 設計</a> / <a href="../02_基本設計/10_課金・請求設計.html">課金・請求設計</a>、運用面は <a href="../04_運用設計/index.html">運用設計</a> を参照します。</p>
 <h2 id="5-テスト観点">5. テスト観点</h2>
+<p class="section-lead">本 DD の受入条件(AC)に対するテスト方式とテストファイルを示します。次の表は、通知・お知らせ配信・監査チェーン・tombstone の各 AC と検証手段の対応です。</p>
 <table>
 <thead>
 <tr>
@@ -494,6 +488,7 @@ worker-queue-consumer/src/
 </tbody>
 </table>
 <h3 id="51-その他観点">5.1 その他観点</h3>
+<p class="section-lead">単体・結合・異常系・境界値・冪等性・性能の各観点で確認すべき内容を示します。次の表は、保持期間の DELETE 条件や DLQ → リプレイの異常系など、本 DD 固有のテスト観点を整理したものです。</p>
 <table>
 <thead>
 <tr>
@@ -529,21 +524,27 @@ worker-queue-consumer/src/
 </tbody>
 </table>
 <h2 id="6-未確定事項確認事項">6. 未確定事項・確認事項</h2>
+<div class="callout tip"><i class="bi bi-lightbulb"></i><div><span class="c-title">確定済</span>v1.0 リリース時点で全項目確定済み。未確定事項はありません。</div></div>
+
+<h2 id="更新履歴">更新履歴</h2>
 <table>
 <thead>
 <tr>
-<th>確認事項ID</th>
-<th>確認内容</th>
-<th>優先度</th>
-<th>ステータス</th>
+<th>版数</th>
+<th>更新日</th>
+<th>内容</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>-</td>
-<td>v1.0 リリース時点で全項目確定済み</td>
-<td>低</td>
-<td>確認済</td>
+<td>v1.0</td>
+<td>2026-06-17</td>
+<td>設計書シンプルテンプレ v2 へ移行(文書情報表を要約ブロック + doc-meta へ統合、各節に section-lead を追加、バッチ・非同期処理フローをシーケンス図化)。識別子・値の変更なし。</td>
+</tr>
+<tr>
+<td>v1.0</td>
+<td>2026-05-17</td>
+<td>初版作成。</td>
 </tr>
 </tbody>
 </table>

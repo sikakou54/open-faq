@@ -29,11 +29,15 @@
   var meta = null;
   NAV.forEach(function(sys){
     sys.cats.forEach(function(cat){
-      cat.pages.forEach(function(p){
+      function scan(p){
         if(p.url === pageId){
           meta = {sysKey:sys.key, sysLabel:sys.label, catKey:cat.key,
                   catLabel:cat.label, title:p.title, kind:p.kind};
         }
+      }
+      cat.pages.forEach(function(p){
+        scan(p);
+        if(p.children) p.children.forEach(scan);
       });
     });
   });
@@ -55,14 +59,29 @@
       h.push('<details class="nav-system"'+(sysOpen?' open':'')+'>');
       h.push('<summary>'+esc(sys.label)+'</summary>');
       var flat = sys.cats.length === 1 && sys.cats[0].key === "__root__";
+      function pageHit(p){
+        return p.url===pageId || (p.children && p.children.some(function(c){return c.url===pageId;}));
+      }
+      function pushPage(p){
+        if(p.children && p.children.length){
+          var grpOpen = sysOpen && pageHit(p);
+          h.push('<li><details class="nav-subcat"'+(grpOpen?' open':'')+'>');
+          h.push('<summary>'+esc(p.title)+'</summary><ul>');
+          if(p.url){ h.push('<li>'+link({url:p.url,title:'画面一覧・共通',kind:p.kind})+'</li>'); }
+          p.children.forEach(function(c){ h.push('<li>'+link(c)+'</li>'); });
+          h.push('</ul></details></li>');
+        } else {
+          h.push('<li>'+link(p)+'</li>');
+        }
+      }
       sys.cats.forEach(function(cat){
-        var catOpen = sysOpen && cat.pages.some(function(p){return p.url===pageId;});
+        var catOpen = sysOpen && cat.pages.some(pageHit);
         if(flat){
           cat.pages.forEach(function(p){ h.push(link(p)); });
         } else {
           h.push('<details class="nav-cat"'+(catOpen?' open':'')+'>');
           h.push('<summary>'+esc(cat.label)+'</summary><ul>');
-          cat.pages.forEach(function(p){ h.push('<li>'+link(p)+'</li>'); });
+          cat.pages.forEach(pushPage);
           h.push('</ul></details>');
         }
       });

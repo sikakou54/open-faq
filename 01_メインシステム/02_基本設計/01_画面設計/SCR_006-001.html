@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCR-006-001 FAQ 編集 | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<link rel="stylesheet" href="../../../assets/css/screen-mock.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@1.17.0/dist/umd/lucide.min.js"></script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/01_画面設計/SCR_006-001.html">
+<article class="content" id="content">
+<h1 id="scr-006-001-faq-編集">SCR-006-001 FAQ 編集</h1>
+
+<aside class="page-summary">
+<p class="ps-lead"><strong>このページは、FAQ の質問・回答・カテゴリ・状態を 1 ペインで作成・編集し、自動保存・改訂履歴・論理削除を提供する画面 SCR-006-001 を定義します。</strong> 画面概要 / 画面遷移図 / 画面レイアウト / 画面項目定義 / 入出力一覧 / 画面イベント一覧 の 6 セクションで記述します。</p>
+</aside>
+<p class="doc-meta"><span><b>版数</b> v1.0</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<h2 id="1-画面概要">1. 画面概要</h2>
+<p class="section-lead">FAQ の質問・回答・カテゴリ・状態を 1 ペインで作成・編集し、保存・削除を行う画面です。新規作成と既存編集の双方を扱います。</p>
+<table>
+<thead>
+<tr>
+<th>画面 ID</th>
+<th>画面名</th>
+<th>機能概要</th>
+</tr>
+</thead>
+<tbody>
+<tr><td id="SCR-006-001"><code>SCR-006-001</code></td><td>FAQ 編集</td><td>FAQ の質問・回答・カテゴリ・状態を編集し保存・削除する</td></tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>関連</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>FR / BR</td><td><a href="../../01_要件定義/FR04_FAQ管理.html#FR-040">FR-040</a>〜<a href="../../01_要件定義/FR04_FAQ管理.html#FR-048">FR-048</a>, <a href="../../01_要件定義/FR07_未解決質問からFAQ登録.html#FR-100">FR-100</a>〜<a href="../../01_要件定義/FR07_未解決質問からFAQ登録.html#FR-103">FR-103</a>, <a href="../../01_要件定義/FR07_未解決質問からFAQ登録.html#FR-105">FR-105</a>, <a href="../../01_要件定義/FR07_未解決質問からFAQ登録.html#FR-106">FR-106</a> / <a href="../../01_要件定義/FR04_FAQ管理.html#BR-055">BR-055</a></td></tr>
+<tr><td>関連画面</td><td><a href="SCR_006.html"><code>SCR-006</code> FAQ 一覧</a> / <a href="SCR_005-001.html"><code>SCR-005-001</code> 要対応の質問詳細</a></td></tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr>
+<th>ステークホルダ</th>
+<th>対象</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>オーナー</td><td>◯</td></tr>
+<tr><td>プロジェクト管理者(<code>admin</code>)</td><td>◯</td></tr>
+<tr><td>メンバー(<code>member</code>)</td><td>◯</td></tr>
+</tbody>
+</table>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>各ステークホルダとも当該プロジェクトへの割当(FAQ 管理権限)が前提です。割当のないプロジェクトの FAQ は編集不可(URL 直アクセスは権限不足表示)。状態(下書き / 公開中 / 非公開)の切替は独立ボタンを設けず「状態」ラジオの選択 + 「保存」で一元化します(専用の公開 API・状態遷移ガードなし)。<code>published</code> を選択して保存する操作が「公開前の管理者確認」(<a href="../../01_要件定義/FR04_FAQ管理.html#FR-045">FR-045</a>)を兼ねます。</div></div>
+
+<h2 id="2-画面遷移図">2. 画面遷移図</h2>
+<p class="section-lead">本画面への流入と本画面からの遷移を、画面 ID・画面名とイベント(操作)で示します。</p>
+<pre class="mermaid"><code>flowchart LR
+  S0["SCR-006 FAQ 一覧"]
+  S1["SCR-006-001 FAQ 編集"]
+  S5["SCR-005-001 要対応の質問詳細"]
+  S0 -- "FAQ ID クリック / 新規作成" --&gt; S1
+  S5 -- "FAQ 登録へ" --&gt; S1
+  S1 -- "保存 / キャンセル / 削除" --&gt; S0
+</code></pre>
+
+<h2 id="3-画面レイアウト">3. 画面レイアウト</h2>
+<div class="layout-embed">
+<div class="le-cap">編集画面(SCR-006-001)</div>
+<div class="scr-mock"><div class="screen" id="scr-006-edit" role="region" aria-labelledby="scr-006-edit-title"> <div class="screen-header"> <div><span class="scr-id">SCR-006</span><span class="scr-name" id="scr-006-edit-title">FAQ 編集</span></div> <div class="scr-user">利用者: 利用者(オーナー / メンバー)(オーナーまたは「FAQ」権限保持メンバー)</div> </div> <div class="app-layout"> <div class="app-header" role="banner"> <div class="left"> <span class="logo" role="link" aria-label="open-faq ホーム">open-faq</span> <span class="ws-switcher" role="button" aria-haspopup="menu" aria-label="管理範囲を切り替え(現在地: サポートサイト)">サポートサイト <i data-lucide="folder"></i></span> </div> <div class="right"> <span class="bell" role="button" aria-label="お知らせ通知ベル(未読 3 件)"><i data-lucide="bell"></i><span class="badge" aria-hidden="true">3</span></span> <span class="user-menu" role="button" aria-haspopup="menu" aria-label="アカウントメニュー(admin@example.com)">▼ admin@example.com</span> </div> </div> <div class="app-sidebar" role="navigation" aria-label="メインナビゲーション"> <div class="item" role="link"><i data-lucide="home"></i>概要</div> <div class="group" role="heading" aria-level="2">対応</div> <div class="item" role="link"><i data-lucide="inbox"></i>要対応の質問<span class="badge">87</span></div>  <div class="group" role="heading" aria-level="2">通知</div> <div class="item" role="link"><i data-lucide="bell"></i>お知らせ<span class="badge">3</span></div> <div class="group" role="heading" aria-level="2">コンテンツ</div> <div class="item active" role="link" aria-current="page"><i data-lucide="book-open"></i>FAQ</div>  <div class="item" role="link"><i data-lucide="puzzle"></i>ウィジェット</div> <div class="group" role="heading" aria-level="2">プロジェクト</div> <div class="item" role="link"><i data-lucide="users"></i>メンバー</div> <div class="item" role="link"><i data-lucide="gauge"></i>利用量と上限</div>  <div class="group" role="heading" aria-level="2">共通</div> <div class="item" role="link"><i data-lucide="scroll-text"></i>利用規約</div> <div class="item" role="link"><i data-lucide="shield"></i>プライバシーポリシー</div> </div> <div class="app-main" role="main" aria-label="メインコンテンツ"> <nav class="breadcrumb" aria-label="現在位置"><a>ホーム</a> / <a>FAQ</a> / <span aria-current="page">faq_01HMK... 編集</span></nav> <header class="page-header"><div><h1>FAQ 編集</h1><p class="page-description">faq_01HMK... の内容を編集します。30 秒ごとに自動保存されます</p></div><div><span class="autosave-indicator">30 秒前に保存しました</span></div></header> <div> <div class="field"> <label>質問<span class="req">●</span></label> <div class="textarea" style="min-height: 60px;"><span class="placeholder">退会後のデータ取扱について教えてください</span></div> <div class="helper">142 / 500</div> </div> <div class="field"> <label>回答<span class="req">●</span></label> <div class="textarea rich" style="min-height: 180px;"><span class="placeholder">退会手続きの受付後、30 日の猶予期間中はデータの確認とダウンロードが可能です...</span></div> <div class="helper">482 / 5,000</div> </div> <div class="field"> <label>カテゴリ <span class="small">(サジェスト付き)</span></label> <div class="input"><span class="placeholder">例: プライバシー(既存カテゴリから選択 or 新規入力)</span></div> </div> <div class="field"> <label>状態</label> <div>○ 下書き &nbsp; ◉ 公開中 &nbsp; ○ 非公開</div> </div> </div> <div style="display: flex; justify-content: space-between; margin-top: 12px; padding-top: 8px; border-top: 1px solid var(--border);"> <button class="btn">キャンセル</button> <div> <button class="btn danger">削除</button> <button class="btn primary">保存</button> </div> </div> </div> </div> </div></div>
+</div>
+
+<h2 id="4-画面項目定義">4. 画面項目定義</h2>
+<p class="section-lead">本画面の入出力項目(入力フォーム・バリデーション・操作ボタン・状態表示)を定義します。項目の正本は本表です。</p>
+<table>
+<thead>
+<tr>
+<th>項目 ID</th>
+<th>項目</th>
+<th>入出力</th>
+<th>種類</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr><td id="IT-01"><code>IT-01</code></td><td>パンくず / FAQ ID</td><td>出力</td><td>Breadcrumb / PageHeader</td><td>「ホーム / FAQ / {FAQ ID} 編集」。新規時は「新規」</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>自動保存インジケータ</td><td>出力</td><td>AutosaveIndicator</td><td>「30 秒前に保存しました」/「保存中…」/「保存できませんでした」</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>質問</td><td>入力</td><td>テキストエリア</td><td>必須。1〜500 文字</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>回答</td><td>入力</td><td>リッチテキストエリア</td><td>必須。1〜5,000 文字。簡易ツールバー</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>カテゴリ</td><td>入力</td><td>テキストボックス + サジェスト</td><td>任意。100 文字以内。既存カテゴリから選択 or 新規入力</td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>状態</td><td>入力</td><td>ラジオボタン</td><td><code>draft</code> / <code>published</code> / <code>hidden</code>。ラベルは「下書き」「公開中」「非公開」。相互に自由遷移(状態遷移ガードなし)</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>登録元未解決質問</td><td>出力</td><td>テキスト + リンク</td><td>存在する場合に SCR-005-001 へリンク</td></tr>
+<tr><td id="IT-08"><code>IT-08</code></td><td>改訂履歴</td><td>入力</td><td>リンク → モーダル</td><td>直近 50 件、差分表示、任意版へのロールバック</td></tr>
+<tr><td id="IT-09"><code>IT-09</code></td><td>キャンセル</td><td>入力</td><td>ボタン(Secondary)</td><td>編集を破棄して一覧へ戻る。未保存変更時は確認ダイアログ</td></tr>
+<tr><td id="IT-10"><code>IT-10</code></td><td>保存</td><td>入力</td><td>ボタン(Primary)</td><td>「状態」ラジオで選択した値のまま <code>PATCH /faqs/{id}</code> で保存。<code>published</code> 選択時は公開確認ダイアログ</td></tr>
+<tr><td id="IT-11"><code>IT-11</code></td><td>削除</td><td>入力</td><td>ボタン(Danger / 確認ダイアログ)</td><td>論理削除(<code>faqs.valid=0</code>)</td></tr>
+<tr><td id="IT-12"><code>IT-12</code></td><td>楽観ロック衝突</td><td>出力</td><td>エラーアラート</td><td><code>faqs.version</code> 不一致時</td></tr>
+</tbody>
+</table>
+
+<h2 id="5-入出力一覧">5. 入出力一覧</h2>
+<p class="section-lead">本画面が読み書きするテーブルと、呼び出す API の一覧です。テーブルの正本は <a href="../03_テーブル設計.html">03_テーブル設計</a>、API の正本は <a href="../02_API設計.html#542-post-faqs--patch-faqsid--delete-faqsid">02_API設計 §5.4.2</a> です。</p>
+<table>
+<thead>
+<tr>
+<th rowspan="2">入出力名</th>
+<th rowspan="2">種別</th>
+<th rowspan="2">I/O</th>
+<th colspan="4">アクセス種別(CRUD)</th>
+<th rowspan="2">備考</th>
+</tr>
+<tr>
+<th>C</th>
+<th>R</th>
+<th>U</th>
+<th>D</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>FAQ</td><td>テーブル</td><td>入力 / 出力</td><td>◯</td><td>◯</td><td>◯</td><td>◯</td><td>FAQ の取得・新規作成・更新・論理削除。<code>faqs</code>(<a href="../03_テーブル設計.html#39-faqs">テーブル設計 3.9</a>)</td></tr>
+<tr><td>未解決質問</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td>登録元未解決質問の参照。<code>inquiries</code>(<a href="../03_テーブル設計.html#314-inquiries">テーブル設計 3.14</a>)</td></tr>
+<tr><td>FAQ 作成</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>新規 FAQ 作成。<code>POST /faqs</code>(<a href="../02_API設計.html#542-post-faqs--patch-faqsid--delete-faqsid">API 設計 5.4.2</a>)</td></tr>
+<tr><td>FAQ 更新</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>FAQ の取得・更新(状態保存含む)。<code>PATCH /faqs/{id}</code>(<a href="../02_API設計.html#542-post-faqs--patch-faqsid--delete-faqsid">API 設計 5.4.2</a>)</td></tr>
+<tr><td>FAQ 削除</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>論理削除。<code>DELETE /faqs/{id}</code>(<a href="../02_API設計.html#542-post-faqs--patch-faqsid--delete-faqsid">API 設計 5.4.2</a>)</td></tr>
+</tbody>
+</table>
+
+<h2 id="6-画面イベント一覧">6. 画面イベント一覧</h2>
+<p class="section-lead">本画面で発生するイベントと発生タイミング・概要の一覧です。</p>
+<table>
+<thead>
+<tr>
+<th>イベント ID</th>
+<th>イベント</th>
+<th>発生タイミング</th>
+<th>概要</th>
+<th>関連項目</th>
+</tr>
+</thead>
+<tbody>
+<tr><td><code>EV-01</code></td><td>編集初期表示</td><td>画面遷移・リロード時</td><td>既存編集は <code>PATCH /faqs/{id}</code> 用に FAQ を取得し各欄へ展開。新規は空フォーム</td><td><a href="#IT-01">IT-01</a>, <a href="#IT-03">IT-03</a>, <a href="#IT-04">IT-04</a>, <a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a>, <a href="#IT-07">IT-07</a></td></tr>
+<tr><td><code>EV-02</code></td><td>入力バリデーション</td><td>各入力欄のフォーカスアウト時</td><td>質問 1〜500 文字・回答 1〜5,000 文字・カテゴリ 100 文字以内を検証しエラーを表示</td><td><a href="#IT-03">IT-03</a>, <a href="#IT-04">IT-04</a>, <a href="#IT-05">IT-05</a></td></tr>
+<tr><td><code>EV-03</code></td><td>自動保存</td><td>編集中 30 秒ごと</td><td>下書きを自動保存しインジケータを更新</td><td><a href="#IT-02">IT-02</a></td></tr>
+<tr><td><code>EV-04</code></td><td>保存</td><td>「保存」押下時</td><td>「状態」ラジオの値で <code>POST /faqs</code>(新規)/ <code>PATCH /faqs/{id}</code>(更新)。<code>published</code> 選択時は公開確認ダイアログ。<code>faqs.version</code> 不一致時は楽観ロックエラー</td><td><a href="#IT-06">IT-06</a>, <a href="#IT-10">IT-10</a>, <a href="#IT-12">IT-12</a></td></tr>
+<tr><td><code>EV-05</code></td><td>削除</td><td>「削除」押下時</td><td>確認ダイアログ後 <code>DELETE /faqs/{id}</code> で論理削除し一覧へ戻る</td><td><a href="#IT-11">IT-11</a></td></tr>
+<tr><td><code>EV-06</code></td><td>改訂履歴表示</td><td>「改訂履歴」押下時</td><td>直近 50 件の差分モーダルを表示。任意版へロールバック</td><td><a href="#IT-08">IT-08</a></td></tr>
+<tr><td><code>EV-07</code></td><td>キャンセル</td><td>「キャンセル」押下時</td><td>編集を破棄して一覧へ戻る。未保存変更時は確認ダイアログ</td><td><a href="#IT-09">IT-09</a></td></tr>
+</tbody>
+</table>
+
+</article>
+<script>(function(){function r(){try{window.lucide&&lucide.createIcons({attrs:{'aria-hidden':'true',focusable:'false'}});}catch(e){}}if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',r);}else{r();}window.addEventListener('load',r);})();</script>
+</body>
+</html>

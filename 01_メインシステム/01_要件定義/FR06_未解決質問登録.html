@@ -13,200 +13,178 @@
 <body data-page-id="01_メインシステム/01_要件定義/FR06_未解決質問登録.html">
 <article class="content" id="content">
 <h1 id="fr06-未解決質問登録">FR06: 未解決質問登録</h1>
-<h2 id="0-文書情報">0. 文書情報</h2>
-<table>
+<aside class="page-summary">
+<p class="ps-lead"><strong>この要件は、FAQ で回答できなかった質問やウィジェット利用者が「解決しなかった」とした質問を未解決質問として記録し、アカウント利用者が対応状況を追跡できるようにすることを目的とし、以下について記載します。</strong></p>
+<ul>
+<li>未解決質問が登録される 2 つの契機(回答不能・利用者の未解決選択)</li>
+<li>未解決質問に記録する情報(問い合わせ ID を含む)</li>
+<li>対応状況の 2 区分(対応中 / 対応済み)と手動切替</li>
+<li>FAQ 操作と状況更新を連動させない非連動ルール</li>
+</ul>
+</aside>
+<p class="doc-meta"><span><b>版数</b> v1.2</span><span><b>更新</b> 2026-06-16</span><span><b>機能グループ</b> 未解決質問登録</span><span><b>優先度</b> Must</span><span class="dm-status">承認済</span></p>
+<h2 id="1-業務要件">1. 業務要件</h2>
+<div class="table-scroll">
+<table class="br-table">
 <thead>
 <tr>
-<th>項目</th>
-<th>内容</th>
+<th>ID</th>
+<th>観点</th>
+<th>ステークホルダ</th>
+<th>業務要件</th>
+<th>関連 NFR</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>文書名</td>
-<td>FR06: 未解決質問登録</td>
+<td id="BR-071">BR-071</td>
+<td>未解決質問の登録契機</td>
+<td>システム / ウィジェット利用者</td>
+<td>
+<ul class="role-req">
+<li><strong>システム：</strong>登録済み FAQ で回答できなかった質問を、未解決質問として登録する</li>
+<li><strong>ウィジェット利用者：</strong>回答に対して「解決しなかった」を選択した時に、その質問を未解決質問として登録させる</li>
+</ul>
+</td>
+<td>—</td>
 </tr>
 <tr>
-<td>機能グループ</td>
-<td>未解決質問登録</td>
+<td id="BR-072">BR-072</td>
+<td>記録する情報</td>
+<td>システム</td>
+<td>未解決質問の登録時に、質問・未解決理由・発生日時・関連プロジェクト・関連質問ログを記録し、追跡用の問い合わせ ID を付与する。</td>
+<td>—</td>
 </tr>
 <tr>
-<td>対象システム</td>
-<td>FAQ AI ウィジェット SaaS / メインシステム</td>
+<td id="BR-073">BR-073</td>
+<td>対応状況の管理</td>
+<td>システム / アカウント利用者</td>
+<td>
+<ul class="role-req">
+<li><strong>システム：</strong>未解決質問の対応状況を「対応中 / 対応済み」の 2 区分で保持し、登録時は「対応中」とする</li>
+<li><strong>アカウント利用者：</strong>詳細画面の手動操作で「対応中 ↔︎ 対応済み」を切り替える(双方向・再オープン回数の制限なし)</li>
+</ul>
+</td>
+<td>—</td>
 </tr>
 <tr>
-<td>作成日</td>
-<td>2026-05-17</td>
+<td id="BR-074">BR-074</td>
+<td>FAQ 操作との非連動</td>
+<td>システム</td>
+<td>FAQ の下書き保存・FAQ の公開成功が起きても、未解決質問の対応状況を変更しない。状況の変更は詳細画面からの手動操作のみとする。</td>
+<td>—</td>
 </tr>
 <tr>
-<td>版数</td>
-<td>v1.1</td>
-</tr>
-<tr>
-<td>ステータス</td>
-<td>承認済</td>
-</tr>
-<tr>
-<td>更新履歴</td>
-<td>v1.2(2026-06-16): 要件定義を What 中心へ整理。状態の内部コード・テーブル名・画面 ID・基本設計の節番号参照を業務語へ置換し、該当設計書を正本として参照化(状況 2 区分・手動切替・非連動などの業務ルールは保持) / v1.1(2026-06-12): 未解決質問を問い合わせ ID と手動状況管理に整理</td>
+<td id="BR-075">BR-075</td>
+<td>対応状況の確認</td>
+<td>アカウント利用者</td>
+<td>未解決質問の現在の対応状況(対応中 / 対応済み)を、一覧画面と詳細画面で確認できる。</td>
+<td>—</td>
 </tr>
 </tbody>
 </table>
-<h2 id="1-機能概要">1. 機能概要</h2>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>内容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>概要</td>
-<td>FAQ で回答できなかった質問、またはユーザーが「解決しなかった」と選択した質問を未解決質問として登録し、対応状況を「対応中 / 対応済み」の 2 区分で管理する</td>
-</tr>
-<tr>
-<td>利用場面</td>
-<td>AI 回答不能時の未解決登録、FAQ 下書き作成、FAQ 公開完了までの進捗確認</td>
-</tr>
-<tr>
-<td>優先度</td>
-<td>Must</td>
-</tr>
-</tbody>
-</table>
-<h2 id="2-収録-fr-nnn-一覧">2. 収録 FR-NNN 一覧</h2>
-<table>
+</div>
+<h2 id="2-機能要件">2. 機能要件</h2>
+<div class="table-scroll">
+<table class="req-table">
 <thead>
 <tr>
 <th>ID</th>
 <th>要件</th>
-<th style="text-align: center;">優先度</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>FR-070</td>
-<td>FAQ登録済みデータでは回答できなかった質問を未解決質問として登録できること</td>
-<td style="text-align: center;">P0</td>
-</tr>
-<tr>
-<td>FR-071</td>
-<td>ユーザーが「解決しなかった」を選択した場合、未解決質問として登録できること</td>
-<td style="text-align: center;">P0</td>
-</tr>
-<tr>
-<td>FR-072</td>
-<td>未解決質問には、質問、未解決理由、発生日時、関連プロジェクト、関連質問ログIDを記録できること</td>
-<td style="text-align: center;">P0</td>
-</tr>
-<tr>
-<td>FR-073</td>
-<td>未解決質問には問い合わせIDを付与できること</td>
-<td style="text-align: center;">P0</td>
-</tr>
-<tr>
-<td>FR-074</td>
-<td>未解決質問の状況は「対応中 / 対応済み」の 2 区分とし、保持すること</td>
-<td style="text-align: center;">P0</td>
-</tr>
-<tr>
-<td>FR-075</td>
-<td>状況は未解決質問の登録時に「対応中」とすること。状況変更は詳細画面からの手動操作のみで行い、FAQ 下書き保存・FAQ 公開成功とは連動しない</td>
-<td style="text-align: center;">P0</td>
-</tr>
-<tr>
-<td>FR-076</td>
-<td>未解決質問について、現在の状況(対応中 / 対応済み)を一覧画面・詳細画面で確認できること。状況は詳細画面からの手動切替のみを表し、FAQ 操作から派生または更新しないこと</td>
-<td style="text-align: center;">P0</td>
-</tr>
-<tr>
-<td>FR-077</td>
-<td>未解決質問の状況変更は詳細画面からの手動操作のみとすること。FAQ 下書き保存・FAQ 公開成功からは変更しない。対応中 ↔︎ 対応済み の双方向の切替を許可し、再オープン回数に制限を設けない</td>
-<td style="text-align: center;">P0</td>
-</tr>
-</tbody>
-</table>
-<h2 id="3-補足説明統合参照">3. 補足説明・統合参照</h2>
-<h3 id="未解決質問の状況遷移">未解決質問の状況遷移</h3>
-<p>本表は FR-074 / FR-075 / FR-076 / FR-077 の業務要件としての正本。状況を表す内部の識別子は基本設計を正本とする。</p>
-<table>
-<thead>
-<tr>
-<th>状況</th>
-<th>更新契機</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>対応中</td>
-<td>未解決質問の登録(初期値)/ 詳細画面での「対応中に戻す」操作(再オープン)</td>
-</tr>
-<tr>
-<td>対応済み</td>
-<td>詳細画面での「対応済みにする」操作</td>
-</tr>
-</tbody>
-</table>
-<p>対応中 ↔︎ 対応済み の切替はいずれも詳細画面からの手動操作のみ。FAQ 下書き保存・FAQ 公開成功は本状況を変更しない。</p>
-<h2 id="4-関連設計">4. 関連設計</h2>
-<table>
-<thead>
-<tr>
-<th>種別</th>
-<th>参照先</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>画面設計</td>
-<td><a href="../02_基本設計/01_画面設計.html">../02_基本設計/01_画面設計.html</a></td>
-</tr>
-<tr>
-<td>API 設計</td>
-<td><a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html</a></td>
-</tr>
-<tr>
-<td>テーブル設計</td>
-<td><a href="../02_基本設計/03_テーブル設計.html">../02_基本設計/03_テーブル設計.html</a></td>
-</tr>
-<tr>
-<td>権限設計</td>
-<td><a href="../02_基本設計/04_権限設計.html">../02_基本設計/04_権限設計.html</a></td>
-</tr>
-<tr>
-<td>エラー設計</td>
-<td><a href="../02_基本設計/05_エラー設計.html">../02_基本設計/05_エラー設計.html</a></td>
-</tr>
-<tr>
-<td>メッセージ</td>
-<td><a href="../02_基本設計/06_メッセージ一覧.html">../02_基本設計/06_メッセージ一覧.html</a></td>
-</tr>
-<tr>
-<td>詳細設計</td>
-<td><a href="../03_詳細設計/index.html">../03_詳細設計/index.html</a></td>
-</tr>
-</tbody>
-</table>
-<h2 id="5-未確定事項確認事項">5. 未確定事項・確認事項</h2>
-<table>
-<thead>
-<tr>
-<th>確認事項ID</th>
-<th>確認内容</th>
+<th>関連業務要件</th>
 <th>優先度</th>
-<th>ステータス</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>-</td>
-<td>v1.0 リリース時点で全項目確定済み</td>
-<td>低</td>
-<td>確認済</td>
+<td id="FR-070">FR-070</td>
+<td>FAQ 登録済みデータでは回答できなかった質問を未解決質問として登録できること</td>
+<td><a href="#BR-071">BR-071</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-071">FR-071</td>
+<td>ウィジェット利用者が「解決しなかった」を選択した場合、未解決質問として登録できること</td>
+<td><a href="#BR-071">BR-071</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-072">FR-072</td>
+<td>未解決質問には、質問・未解決理由・発生日時・関連プロジェクト・関連質問ログを記録できること</td>
+<td><a href="#BR-072">BR-072</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-073">FR-073</td>
+<td>未解決質問には問い合わせ ID を付与できること</td>
+<td><a href="#BR-072">BR-072</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-074">FR-074</td>
+<td>未解決質問の状況は「対応中 / 対応済み」の 2 区分とし、保持すること</td>
+<td><a href="#BR-073">BR-073</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-075">FR-075</td>
+<td>状況は未解決質問の登録時に「対応中」とすること。
+<ol class="alpha">
+<li>状況変更は詳細画面からの手動操作のみで行う</li>
+<li>FAQ 下書き保存・FAQ 公開成功とは連動しない</li>
+</ol></td>
+<td><a href="#BR-073">BR-073</a>, <a href="#BR-074">BR-074</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-076">FR-076</td>
+<td>未解決質問について、現在の状況(対応中 / 対応済み)を一覧画面・詳細画面で確認できること。
+<ol class="alpha">
+<li>状況は詳細画面からの手動切替のみを表す</li>
+<li>FAQ 操作から派生または更新しない</li>
+</ol></td>
+<td><a href="#BR-074">BR-074</a>, <a href="#BR-075">BR-075</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-077">FR-077</td>
+<td>未解決質問の状況変更は詳細画面からの手動操作のみとすること。
+<ol class="alpha">
+<li>FAQ 下書き保存・FAQ 公開成功からは変更しない</li>
+<li>対応中 ↔︎ 対応済み の双方向の切替を許可する</li>
+<li>再オープン回数に制限を設けない</li>
+</ol></td>
+<td><a href="#BR-073">BR-073</a>, <a href="#BR-074">BR-074</a></td>
+<td><span class="badge badge-p0">P0</span></td>
 </tr>
 </tbody>
 </table>
+</div>
+<div class="callout tip"><i class="bi bi-lightbulb"></i><div><span class="c-title">未確定事項</span>v1.0 リリース時点で全項目確定済み。現在オープンな確認事項はありません。</div></div>
+<h2 id="更新履歴">更新履歴</h2>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>版数</th>
+<th>日付</th>
+<th>変更内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>v1.2</td>
+<td>2026-06-16</td>
+<td>記載スタイルを刷新テンプレート(要約ブロック・業務要件 BR-071〜5 を先頭に定義・機能要件に関連業務要件列・優先度バッジ)へ移行。「0. 文書情報」「1. 機能概要」表と「4. 関連設計」を統合・除去し、用語を「ウィジェット利用者 / アカウント利用者」へ統一。識別子(FR-070〜077)は不変</td>
+</tr>
+<tr>
+<td>v1.1</td>
+<td>2026-06-12</td>
+<td>未解決質問を問い合わせ ID と手動状況管理に整理</td>
+</tr>
+</tbody>
+</table>
+</div>
 
 </article>
 </body>

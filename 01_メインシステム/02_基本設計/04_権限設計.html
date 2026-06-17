@@ -12,913 +12,289 @@
 </head>
 <body data-page-id="01_メインシステム/02_基本設計/04_権限設計.html">
 <article class="content" id="content">
-<h1 id="権限設計書メイン">権限設計書(メイン)</h1>
-<h2 id="1-文書概要">1. 文書概要</h2>
-<h3 id="11-目的">1.1 目的</h3>
-<p>メインシステムの権限モデル(オーナー / プロジェクト管理者 / メンバー / エンドユーザー / 運営者)、プロジェクト別ロール 2 値、画面別・機能別・API 別の操作可否、<strong>契約別利用上書き</strong> を一元化する。</p>
-<h3 id="12-対象範囲">1.2 対象範囲</h3>
-<ul>
-<li>対象: 利用者側の操作者種別(管理者 = <code>users</code> テーブル、公開ウィジェット = セッショントークン。運営者は別 D1 の <code>service_operators</code> テーブルで管理し、メイン側 <code>users</code> には格納しない)、プロジェクト別ロール(<code>project_users.role</code> = <code>admin</code> / <code>member</code>)、オーナー専有機能(<code>contract_owners</code> 行存在で判定)、契約別利用上書き</li>
-<li>対象外: 運営者ロール(<a href="../../02_運営者システム/個別設計書群/05_権限設計書.html">02_運営者システム/個別設計書群/05_権限設計書.html</a> 参照)、認証フロー(<a href="09_認証認可設計書.html">09_認証認可設計書.html</a> 参照)</li>
-</ul>
-<h3 id="13-版数">1.3 版数</h3>
+<h1 id="権限設計メイン">権限設計(メイン)</h1>
+<aside class="page-summary">
+<p class="ps-lead"><strong>このページは、メインシステムで「誰が・どの画面で・何をできるか」を操作 × ロールの網羅マトリクスとして定義します。</strong></p>
+</aside>
+<p class="doc-meta"><span><b>版数</b> v1.7</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<h2 id="1-ロールモデル">1. ロールモデル</h2>
+<p class="section-lead">利用者側のロールは <strong>オーナー / プロジェクト管理者 / メンバー</strong> の 3 種です。オーナーは契約全体の全権を恒久的に持ち、プロジェクト管理者とメンバーは「プロジェクト単位」のロールである点が要です。同一ユーザーがプロジェクト A では管理者、B ではメンバー、C には未割当という組合せを取り得ます。判定キーとテーブルの正本は <a href="03_テーブル設計.html">03_テーブル設計.html</a> と <a href="../../共有/共有概念.html">共有概念</a> §6 です。</p>
+<div class="table-scroll">
 <table>
 <thead>
-<tr>
-<th>項目</th>
-<th>値</th>
-</tr>
+<tr><th>ロール</th><th>表示名(UI)</th><th>判定キー</th><th>権限の範囲</th><th>根拠 FR</th></tr>
 </thead>
 <tbody>
 <tr>
-<td>版数</td>
-<td>1.5</td>
-</tr>
-<tr>
-<td>更新日</td>
-<td>2026-06-14</td>
-</tr>
-</tbody>
-</table>
-<h3 id="14-関連ドキュメント">1.4 関連ドキュメント</h3>
-<table>
-<thead>
-<tr>
-<th>ドキュメント名</th>
-<th>役割</th>
-<th>参照先</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>索引</td>
-<td>11 ドキュメント体系の俯瞰</td>
-<td><a href="00_索引.html">00_索引.html</a></td>
-</tr>
-<tr>
-<td>認証・認可設計書</td>
-<td>認可判定ロジック / Principal</td>
-<td><a href="09_認証認可設計書.html">09_認証認可設計書.html</a></td>
-</tr>
-<tr>
-<td>画面設計書</td>
-<td>画面別表示制御</td>
-<td><a href="02_画面設計書.html">02_画面設計書.html</a></td>
-</tr>
-<tr>
-<td>API 設計書</td>
-<td>API 別権限</td>
-<td><a href="03_API設計書.html">03_API設計書.html</a></td>
-</tr>
-<tr>
-<td>課金・請求設計書</td>
-<td>契約別利用上書き(<code>owner_quota_overrides</code> 等)</td>
-<td><a href="11_課金請求設計書.html">11_課金請求設計書.html</a></td>
-</tr>
-<tr>
-<td>エラー設計書</td>
-<td>権限不足時のエラー</td>
-<td><a href="06_エラー設計書.html">06_エラー設計書.html</a></td>
-</tr>
-<tr>
-<td>テーブル定義書</td>
-<td><code>project_users.role</code>(プロジェクト別ロール 2 値)</td>
-<td><a href="04_テーブル定義書.html">04_テーブル定義書.html</a></td>
-</tr>
-</tbody>
-</table>
-<h2 id="2-ロール一覧">2. ロール一覧</h2>
-<p>利用者側は 3 つのロール(オーナー / プロジェクト管理者 / メンバー)で構成する。プロジェクト管理者とメンバーは「プロジェクト単位」のロールであり、同一メンバーがプロジェクト A では <code>admin</code>、プロジェクト B では <code>member</code>、プロジェクト C には未割当、といった組合せをとり得る。</p>
-<table>
-<thead>
-<tr>
-<th>ロールID</th>
-<th>表示名</th>
-<th>説明文(UI)</th>
-<th>DB 値</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>OWNER</td>
+<td>オーナー</td>
 <td>契約オーナー</td>
-<td>契約全体を管理し、プロジェクト作成・課金・退会などすべての設定を操作できます。</td>
-<td><code>users</code> 行存在 AND <code>contract_owners.user_id = users.id</code> 行存在</td>
+<td><code>contract_owners</code> 行が存在する</td>
+<td>自契約配下の全プロジェクトへの全権 + オーナー専有操作(§2)。割当の有無に関わらず全プロジェクトを操作できる。役割変更・降格・譲渡なし</td>
+<td><a href="../01_要件定義/FR02_ユーザー管理.html#FR-015a">FR-015a</a> / <a href="../01_要件定義/FR02_ユーザー管理.html#FR-015d">FR-015d</a></td>
 </tr>
 <tr>
-<td>PROJECT_ADMIN</td>
 <td>プロジェクト管理者</td>
-<td>担当プロジェクトのFAQ、問い合わせ対応、メンバー招待・ロール変更を行えます。</td>
-<td><code>users</code> 行存在 AND <code>contract_owners</code> 行を持たない AND <code>project_users.role='admin'</code>(プロジェクト単位)</td>
+<td>プロジェクト管理者</td>
+<td><code>contract_owners</code> 行を持たず、当該プロジェクトの <code>project_users.role='admin'</code></td>
+<td>当該プロジェクトの FAQ 管理・未解決質問管理・ログ参照に加え、当該プロジェクト範囲のメンバー招待・役割変更・離脱</td>
+<td><a href="../01_要件定義/FR02_ユーザー管理.html#FR-015b">FR-015b</a></td>
 </tr>
 <tr>
-<td>MEMBER</td>
+<td>メンバー</td>
 <td>プロジェクトメンバー</td>
-<td>担当プロジェクトのFAQや問い合わせを確認・対応できます。</td>
-<td><code>users</code> 行存在 AND <code>contract_owners</code> 行を持たない AND <code>project_users.role='member'</code>(プロジェクト単位)</td>
+<td><code>contract_owners</code> 行を持たず、当該プロジェクトの <code>project_users.role='member'</code></td>
+<td>当該プロジェクトの FAQ 管理・未解決質問管理・ログ参照のみ。メンバー管理はできない</td>
+<td><a href="../01_要件定義/FR02_ユーザー管理.html#FR-015b">FR-015b</a></td>
 </tr>
 <tr>
-<td>END_USER</td>
+<td>(未割当)</td>
+<td>—</td>
+<td><code>contract_owners</code> 行も有効な <code>project_users</code> 行も持たない</td>
+<td>ダッシュボード(自分の通知・お知らせ受信箱)のみ。他画面はプロジェクト境界不充足で拒否</td>
+<td><a href="../01_要件定義/FR19_アクセス制御細部.html#FR-337">FR-337</a></td>
+</tr>
+<tr>
 <td>ウィジェット利用者</td>
-<td>公開ウィジェットからFAQ質問を送信し、AI回答・連絡先案内を確認できます。管理用の問い合わせIDは表示されません。</td>
-<td>永続ロールなし。公開キー + ウィジェットセッション</td>
-</tr>
-<tr>
-<td>SERVICE_OPERATOR</td>
-<td>サービス運営者</td>
-<td>サービス提供者として、サポートや障害対応に必要な運用操作を行えます。</td>
-<td><strong>別 D1</strong>(運営者システム <code>service_operators</code> テーブル)── メイン側 <code>users</code> には格納しない。メイン API への運営者アクセスは IF 経由の認可コンテキストで実現し、<code>audit_logs.actor_role='service_operator'</code> の値として記録する</td>
+<td>ウィジェット利用者</td>
+<td>管理画面の主体行を持たない(公開キー + ウィジェットセッション)</td>
+<td>公開ウィジェットからの質問送信のみ。管理画面の Principal は構築されない</td>
+<td>—</td>
 </tr>
 </tbody>
 </table>
-<p><strong>用語の衝突回避</strong>: 管理コンソールの認証主体は <code>users</code> テーブル(全行が管理者)で、ウィジェット利用者は永続アカウントを持たない。<code>project_users.role='admin'</code> はプロジェクト管理者ロールを示し、<code>users</code> テーブルのロール概念とは別軸。<code>audit_logs.actor_role</code> は操作者種別(<code>admin</code> / <code>system</code> / <code>service_operator</code>)を記録するもので、<code>users</code> のロール定義とは独立した概念。</p>
-<h2 id="3-ロール定義project_usersrole-2-値--オーナー">3. ロール定義(<code>project_users.role</code> 2 値 + オーナー)</h2>
-<h3 id="31-ロール概要">3.1 ロール概要</h3>
+</div>
+<div class="callout important"><i class="bi bi-pin-angle"></i><div><span class="c-title">オーナーの自動 admin 行は認可の根拠にしない</span>オーナーはプロジェクト作成時に当該プロジェクトの <code>project_users(role='admin', valid=1)</code> 行を自動取得します(<a href="../01_要件定義/FR02_ユーザー管理.html#FR-015e">FR-015e</a>)。ただし認可は <code>contract_owners</code> 行存在による <code>isOwner=true</code> bypass を最優先とし(判定フローの正本は <a href="08_認証・認可設計.html#51-ユーザー種別とオーナー判定">08_認証・認可設計.html §5.1</a>)、自動付与の admin 行は <strong>通知宛先解決と画面表示の事実情報</strong>としてのみ参照します。最後の管理者保護の件数判定でも、オーナー由来の自動 admin 行は除外します。</div></div>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">役割・割当変更の反映タイミング(D-03)</span>役割やプロジェクト割当の追加・剥奪は既存セッションを即時失効させず、次回の認可チェック時点で反映されます(<a href="../01_要件定義/FR19_アクセス制御細部.html#FR-338">FR-338</a>)。本ページは「変更後に成立する権限状態」を表し、反映上限時間(TTL)とキャッシュ方式の正本は <a href="08_認証・認可設計.html#53-認可判定の順序">08_認証・認可設計.html §5.3</a> です。</div></div>
+
+<h2 id="2-オーナー専有操作">2. オーナー専有操作</h2>
+<p class="section-lead">契約の単一障害点化と事故を避けるため、契約レベルの操作は <strong>オーナー専有</strong>とし、いずれのプロジェクト別ロールにも付与しません。非オーナーが要求した場合は UI 上で非表示にし、API は 403(<code>E-AUTHZ-OWNER-ONLY</code>)を返します。専有機能の認可上の扱いの正本は <a href="08_認証・認可設計.html#54-オーナー保護自己操作最後の管理者保護">08_認証・認可設計.html §5.4</a>、エラー定義の正本は <a href="05_エラー設計.html#43-認可エラーe-authz-">05_エラー設計.html §4.3</a> です。</p>
+<div class="table-scroll">
 <table>
 <thead>
-<tr>
-<th>ロール</th>
-<th>表示名(UI)</th>
-<th>範囲</th>
-<th>できること</th>
-</tr>
+<tr><th>専有操作</th><th>主な画面(正本は 01)</th><th>根拠 FR</th></tr>
 </thead>
 <tbody>
-<tr>
-<td>オーナー</td>
-<td>契約オーナー</td>
-<td>契約全体</td>
-<td>契約全体の利用状況・請求・設定を確認し、各プロジェクトの設定とメンバー管理を行えます。</td>
-</tr>
-<tr>
-<td><code>admin</code></td>
-<td>プロジェクト管理者</td>
-<td>該当プロジェクト</td>
-<td>担当プロジェクトのFAQ公開、問い合わせ対応、ログ確認、データ出力、メンバー招待・ロール変更ができます。</td>
-</tr>
-<tr>
-<td><code>member</code></td>
-<td>プロジェクトメンバー</td>
-<td>該当プロジェクト</td>
-<td>担当プロジェクトのFAQ編集、問い合わせ対応、ログ確認、データ出力ができます。</td>
-</tr>
+<tr><td>プロジェクトの作成・編集・削除</td><td>SCR-004 / SCR-004-M1</td><td><a href="../01_要件定義/FR03_プロジェクト管理.html#FR-030">FR-030</a> / <a href="../01_要件定義/FR02_ユーザー管理.html#FR-015c">FR-015c</a></td></tr>
+<tr><td>課金情報・支払方法・請求履歴の閲覧・変更</td><td>SCR-022 / SCR-023</td><td><a href="../01_要件定義/FR02_ユーザー管理.html#FR-015c">FR-015c</a></td></tr>
+<tr><td>退会申請・解約</td><td>SCR-014</td><td><a href="../01_要件定義/FR02_ユーザー管理.html#FR-015c">FR-015c</a></td></tr>
+<tr><td>規約再同意の同意 / 不同意</td><td>SCR-015</td><td><a href="../01_要件定義/FR02_ユーザー管理.html#FR-015c">FR-015c</a></td></tr>
+<tr><td>契約設定</td><td>SCR-023</td><td><a href="../01_要件定義/FR02_ユーザー管理.html#FR-015c">FR-015c</a></td></tr>
+<tr><td>メンバーユーザー削除(最後の割当解除に伴う論理削除)</td><td>SCR-009 / SCR-009-M1</td><td><a href="../01_要件定義/FR02_ユーザー管理.html#FR-019">FR-019</a></td></tr>
 </tbody>
 </table>
-<p><strong>オーナーの project_users 行</strong>: オーナーはプロジェクト作成時に <code>project_users(role='admin', valid=1)</code> 行が自動 INSERT され、当該プロジェクトの明示的なプロジェクト管理者として行を保持する。認可上は Principal 構築時の <code>isOwner=true</code> 判定(<code>contract_owners</code> 行存在)で bypass が優先され、<code>project_users</code> 行は critical 通知の宛先解決と画面表示の事実情報として参照される(詳細は <a href="08_認証・認可設計.html">08_認証・認可設計.html §6.1</a>)。</p>
-<h3 id="32-ロール--主管-scr--fr-対応">3.2 ロール × 主管 SCR / FR 対応</h3>
-<table>
-<thead>
-<tr>
-<th>ロール</th>
-<th>主な操作対象 SCR / FR</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>オーナー</td>
-<td>全プロジェクト画面 + SCR-016 / SCR-004 / SCR-004-M1 / SCR-022 / SCR-023、FR-015a / FR-015c / FR-030 / FR-115〜127 / FR-189 / FR-193 / 規約</td>
-</tr>
-<tr>
-<td><code>admin</code>(プロジェクト管理者)</td>
-<td>SCR-005 / SCR-006 / SCR-008(該当プロジェクト範囲)/ SCR-009 / SCR-009-M1(操作者が <code>admin</code> のプロジェクト範囲)/ 選択中プロジェクト詳細 / FR-015 / FR-016 / FR-018a〜c / FR-040〜046 / FR-070〜077 / NFR-602 系列</td>
-</tr>
-<tr>
-<td><code>member</code></td>
-<td>SCR-001(ダッシュボード)/ SCR-005 / SCR-006 / SCR-008(該当プロジェクト範囲)/ FR-040〜046 / FR-070〜077</td>
-</tr>
-<tr>
-<td><strong>招待トークン保有者(未認証)</strong></td>
-<td><strong>SCR-018 メンバーアカウント有効化のみ</strong>(<code>access_tokens.purpose='activation'</code> 有効時のみ到達可能)/ FR-016 / FR-016a / FR-016d / FR-016e。本画面以外には到達不可、有効化完了後は SCR-001 ログインへ遷移して通常 Principal が構築される</td>
-</tr>
-<tr>
-<td><strong>連絡先確認トークン保有者(未認証)</strong></td>
-<td><strong>SCR-019 プロジェクト連絡先メール確認完了のみ</strong>(<code>access_tokens.purpose='contact_verify'</code> 有効時のみ到達可能)/ FR-033a。アカウント作成は不要、第三者の共有メールアドレスでも本フローを進められる。確認完了後は静的ランディングに留まる</td>
-</tr>
-</tbody>
-</table>
-<h3 id="33-オーナー専有機能プロジェクト別ロールでは付与不可">3.3 オーナー専有機能(プロジェクト別ロールでは付与不可)</h3>
+</div>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">利用上限・無料枠はオーナー専有ではない</span>プロジェクト単位の月次質問数上限・無料枠・アラート閾値の変更は、<strong>オーナーまたは当該プロジェクトの管理者</strong>が行えます(専有ではない、<a href="../01_要件定義/FR02_ユーザー管理.html#FR-015c">FR-015c</a>)。詳細は §4 を参照します。</div></div>
+
+<h2 id="3-scr--ロール-アクセス制御マトリクス">3. SCR × ロール アクセス制御マトリクス</h2>
+<p class="section-lead">本節が「画面ごとに各ロールが何を参照・操作できるか」の網羅マトリクスの正本です。<strong>SCR の定義そのものは <a href="01_画面設計/index.html">01_画面設計/index.html</a> が正本</strong>で、ここでは可否のみを示します。表の凡例は次のとおりです。</p>
 <ul>
-<li><strong>プロジェクトの作成・編集・削除</strong>(作成・編集・削除 = SCR-004-M1 プロジェクト作成・編集モーダル)</li>
-<li><strong>利用状況・請求・設定</strong>(SCR-016 / SCR-022 / SCR-023)── プロジェクトの質問数上限・アラート変更はSCR-021-M1でプロジェクト管理者にも付与する</li>
-<li><strong>退会</strong>(SCR-014)</li>
-<li><strong>規約再同意</strong>(SCR-015 の同意 / 不同意)</li>
+<li><strong>○</strong> = 参照・操作とも可</li>
+<li><strong>閲覧</strong> = 参照のみ可(操作不可)</li>
+<li><strong>×</strong> = 不可(権限外。原則 UI 非表示 + 直アクセス拒否、<a href="../01_要件定義/FR19_アクセス制御細部.html#FR-341">FR-341</a>)</li>
+<li><strong>—</strong> = ロール概念が適用されない(未認証トークン専用画面)</li>
 </ul>
-<p>UI 上は非表示 + API は 403(<code>E-AUTHZ-OWNER-ONLY</code>)。</p>
-<h2 id="4-画面別権限マトリクス">4. 画面別権限マトリクス</h2>
-<p>凡例: ○ = 常時可、△ = 「緊急時のみ可」(§9 参照)、× = 不可</p>
-<p>プロジェクト管理者 / メンバー列は「該当プロジェクト割当ありかつそのロール保持時」の挙動を表す。</p>
-<p><strong><code>service_operator</code> 列の注記</strong>: メイン側 <code>users</code> には <code>service_operator</code> 行を持たないが、本マトリクスの <code>service_operator</code> 列は「運営者が別 D1 から IF 経由でメイン API を呼び出す際の認可要件」を表現する。認可コンテキストは API ゲートウェイで構築された Principal の <code>actor_role='service_operator'</code> として渡される(<code>audit_logs.actor_role</code> でも同名で記録される)。</p>
+<p>「プロジェクト管理者」「メンバー」列は<strong>当該プロジェクトに割当があり、そのロールを保持する場合</strong>の挙動を示します。割当のないプロジェクトへの直アクセスは 404 偽装で拒否します(<a href="08_認証・認可設計.html#52-オーナー境界判定">08_認証・認可設計.html §5.2</a>)。</p>
+<div class="table-scroll">
 <table>
 <thead>
 <tr>
-<th>操作分類</th>
-<th style="text-align: center;">オーナー</th>
-<th style="text-align: center;">プロジェクト管理者(該当 PJ)</th>
-<th style="text-align: center;">メンバー(該当 PJ)</th>
-<th style="text-align: center;">end_user</th>
-<th style="text-align: center;">service_operator</th>
+<th>SCR(画面)</th>
+<th style="text-align:center;">オーナー</th>
+<th style="text-align:center;">プロジェクト管理者(該当 PJ)</th>
+<th style="text-align:center;">メンバー(該当 PJ)</th>
+<th style="text-align:center;">未割当</th>
+<th>備考</th>
 </tr>
 </thead>
 <tbody>
-<tr>
-<td>ダッシュボード(自分の通知・お知らせ受信箱)</td>
-<td style="text-align: center;">○</td>
-<td style="text-align: center;">○</td>
-<td style="text-align: center;">○</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-</tr>
-<tr>
-<td>管理範囲切替(契約 / プロジェクト)</td>
-<td style="text-align: center;">○</td>
-<td style="text-align: center;">参加PJのみ</td>
-<td style="text-align: center;">参加PJのみ</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-</tr>
-<tr>
-<td>利用状況閲覧(SCR-016)</td>
-<td style="text-align: center;">○(専有)</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-</tr>
-<tr>
-<td>ダッシュボード KPI のクリックドリルダウン(FR-135e)</td>
-<td style="text-align: center;">○</td>
-<td style="text-align: center;">○(該当 PJ 範囲)</td>
-<td style="text-align: center;">○(該当 PJ 範囲)</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-</tr>
-<tr>
-<td>FAQ 登録・編集・公開</td>
-<td style="text-align: center;">○</td>
-<td style="text-align: center;">○</td>
-<td style="text-align: center;">○</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">△(運営者復元時のみ)</td>
-</tr>
-<tr>
-<td>プロジェクト作成・編集・削除</td>
-<td style="text-align: center;">○(専有)</td>
-<td style="text-align: center;">参照のみ</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">△(運営者復元時のみ)</td>
-</tr>
-<tr>
-<td>プロジェクト詳細閲覧(選択中 PJ の基本情報)</td>
-<td style="text-align: center;">○</td>
-<td style="text-align: center;">○</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-</tr>
-<tr>
-<td>メンバー招待・該当PJ割当解除・該当PJ内ロール変更</td>
-<td style="text-align: center;">○</td>
-<td style="text-align: center;">○</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-</tr>
-<tr>
-<td>未解決質問閲覧・対応(状況 open / closed 手動切替)</td>
-<td style="text-align: center;">○</td>
-<td style="text-align: center;">○</td>
-<td style="text-align: center;">○</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">△(障害調査時のみ)</td>
-</tr>
-<tr>
-<td>質問ログ閲覧</td>
-<td style="text-align: center;">○</td>
-<td style="text-align: center;">○</td>
-<td style="text-align: center;">○</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-</tr>
-<tr>
-<td><strong>課金情報(支払方法・請求・解約)閲覧・変更</strong></td>
-<td style="text-align: center;">○(専有)</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">△(訂正・サポート時のみ)</td>
-</tr>
-<tr>
-<td><strong>プロジェクトの質問数上限・アラート 閲覧</strong></td>
-<td style="text-align: center;">○</td>
-<td style="text-align: center;">○(該当 PJ)</td>
-<td style="text-align: center;">○(該当 PJ)</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">△(訂正・サポート時のみ)</td>
-</tr>
-<tr>
-<td><strong>プロジェクトの質問数上限・アラート 変更</strong>(SCR-021-M1、再認証必須)</td>
-<td style="text-align: center;">○</td>
-<td style="text-align: center;">○(該当 PJ)</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">△(運営者プロジェクト上書き時のみ)</td>
-</tr>
-<tr>
-<td><strong>退会申請・解約</strong></td>
-<td style="text-align: center;">○(専有)</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-</tr>
-<tr>
-<td><strong>規約再同意の承諾</strong></td>
-<td style="text-align: center;">○(専有)</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-</tr>
-<tr>
-<td>契約無効化(サスペンション)</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">○</td>
-</tr>
-<tr>
-<td>契約物理削除</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">○(退会後の自動バッチ)</td>
-</tr>
-<tr>
-<td>プロンプトテンプレート編集</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">○(運営者のみ)</td>
-</tr>
-<tr>
-<td>案件「終了」確定</td>
-<td style="text-align: center;">○</td>
-<td style="text-align: center;">○</td>
-<td style="text-align: center;">○</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-</tr>
-<tr>
-<td>案件「解決済み」</td>
-<td style="text-align: center;">○</td>
-<td style="text-align: center;">○</td>
-<td style="text-align: center;">○</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-</tr>
-<tr>
-<td>お知らせ閲覧(自契約)</td>
-<td style="text-align: center;">○</td>
-<td style="text-align: center;">○</td>
-<td style="text-align: center;">○</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">△(運用調査時のみ)</td>
-</tr>
-<tr>
-<td>お知らせ既読化</td>
-<td style="text-align: center;">○</td>
-<td style="text-align: center;">○</td>
-<td style="text-align: center;">○</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-</tr>
-<tr>
-<td>お知らせ作成・配信</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">○</td>
-</tr>
-<tr>
-<td>critical 通知(ロックアウト 等)受信</td>
-<td style="text-align: center;">○</td>
-<td style="text-align: center;">○</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-</tr>
-<tr>
-<td>メンバーアカウント有効化(SCR-018、招待トークン保有者のみ)</td>
-<td style="text-align: center;">-</td>
-<td style="text-align: center;">-</td>
-<td style="text-align: center;">-</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-</tr>
-<tr>
-<td>プロジェクト連絡先メール確認(SCR-019、連絡先確認トークン保有者のみ)</td>
-<td style="text-align: center;">-</td>
-<td style="text-align: center;">-</td>
-<td style="text-align: center;">-</td>
-<td style="text-align: center;">×</td>
-<td style="text-align: center;">×</td>
-</tr>
+<tr><td>SCR-001 ログイン</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td>認証前画面。ロール不問</td></tr>
+<tr><td>SCR-002 アカウント登録</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td><td>新規オーナー登録。認証前画面</td></tr>
+<tr><td>SCR-003 パスワード再設定</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td>トークン経由。ロール不問</td></tr>
+<tr><td>ダッシュボード(通知・お知らせ受信箱)</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td>ロール不問で全員可(<a href="../01_要件定義/FR19_アクセス制御細部.html#FR-337">FR-337</a>)</td></tr>
+<tr><td>SCR-004 プロジェクト(一覧)</td><td style="text-align:center;">○</td><td style="text-align:center;">閲覧</td><td style="text-align:center;">×</td><td style="text-align:center;">×</td><td>作成・編集・削除はオーナー専有(§2)</td></tr>
+<tr><td>SCR-004-M1 プロジェクト作成・編集モーダル</td><td style="text-align:center;">○</td><td style="text-align:center;">×</td><td style="text-align:center;">×</td><td style="text-align:center;">×</td><td>オーナー専有。削除は再認証必須(再認証の正本は 08 §2)</td></tr>
+<tr><td>SCR-005 要対応の質問 一覧 / 詳細</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">×</td><td>状況 <code>open</code> / <code>closed</code> 手動切替を含む(連動ロジックの正本は 06)</td></tr>
+<tr><td>SCR-006 FAQ 管理</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">×</td><td>登録・編集・公開。状態切替は画面側(01 正本)</td></tr>
+<tr><td>SCR-006-M1 FAQ CSV インポートモーダル</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">×</td><td>FAQ 管理権限と同等</td></tr>
+<tr><td>SCR-007 ウィジェット設定</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">閲覧</td><td style="text-align:center;">×</td><td>メンバーは閲覧 + 埋め込みコードのコピーのみ。公開キー再発行は管理者以上 + 再認証(<a href="../01_要件定義/FR03_プロジェクト管理.html#FR-031">FR-031</a>)</td></tr>
+<tr><td>SCR-008 概要(プロジェクト)</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">×</td><td>当該プロジェクトの概要・KPI</td></tr>
+<tr><td>SCR-009 メンバー(プロジェクト)</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">閲覧</td><td style="text-align:center;">×</td><td>メンバーは当該 PJ のメンバー一覧の参照のみ(<a href="../01_要件定義/FR02_ユーザー管理.html#FR-017">FR-017</a>)</td></tr>
+<tr><td>SCR-009-M1 メンバー招待 / 編集モーダル</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">×</td><td style="text-align:center;">×</td><td>当該 PJ 範囲の招待・役割変更・離脱。自己降格・自己割当解除は不可(§5)</td></tr>
+<tr><td>SCR-010 利用規約閲覧</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td>閲覧は認証不要。同意操作はオーナー専有(SCR-015)</td></tr>
+<tr><td>SCR-011 お知らせ一覧</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td>自契約のお知らせ閲覧・既読化</td></tr>
+<tr><td>SCR-012 お知らせ詳細</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td>既読化を伴う</td></tr>
+<tr><td>SCR-013 メール確認</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td>本人のメールアドレス確認</td></tr>
+<tr><td>SCR-014 退会申請</td><td style="text-align:center;">○</td><td style="text-align:center;">×</td><td style="text-align:center;">×</td><td style="text-align:center;">×</td><td>オーナー専有 + 再認証必須(§2)</td></tr>
+<tr><td>SCR-015 規約再同意割込み</td><td style="text-align:center;">○</td><td style="text-align:center;">×</td><td style="text-align:center;">×</td><td style="text-align:center;">×</td><td>同意 / 不同意はオーナー専有。割込み発火条件の正本は <a href="08_認証・認可設計.html#6-規約再同意の認可割込み">08 §6</a></td></tr>
+<tr><td>SCR-016 利用状況</td><td style="text-align:center;">○</td><td style="text-align:center;">×</td><td style="text-align:center;">×</td><td style="text-align:center;">×</td><td>契約全体の利用状況。オーナー専有</td></tr>
+<tr><td>SCR-017 個人設定</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td>自分のプロフィール・セキュリティのみ。氏名は本人のみ変更可</td></tr>
+<tr><td>SCR-018 メンバーアカウント有効化</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td><td>未認証トークン専用画面(§3.1)</td></tr>
+<tr><td>SCR-019 プロジェクト連絡先メール確認完了</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td><td>未認証トークン専用画面(§3.1)</td></tr>
+<tr><td>SCR-020 プライバシーポリシー閲覧</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td>閲覧は認証不要。同意操作はオーナー専有(SCR-015)</td></tr>
+<tr><td>SCR-021 利用量と上限(プロジェクト単位)</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">閲覧</td><td style="text-align:center;">×</td><td>メンバーは閲覧のみ。変更は SCR-021-M1</td></tr>
+<tr><td>SCR-021-M1 質問数上限設定モーダル</td><td style="text-align:center;">○</td><td style="text-align:center;">○</td><td style="text-align:center;">×</td><td style="text-align:center;">×</td><td>オーナー or 当該 PJ 管理者。変更は再認証必須(<a href="../01_要件定義/FR02_ユーザー管理.html#FR-015c">FR-015c</a>)</td></tr>
+<tr><td>SCR-022 請求</td><td style="text-align:center;">○</td><td style="text-align:center;">×</td><td style="text-align:center;">×</td><td style="text-align:center;">×</td><td>オーナー専有(§2)</td></tr>
+<tr><td>SCR-023 設定</td><td style="text-align:center;">○</td><td style="text-align:center;">×</td><td style="text-align:center;">×</td><td style="text-align:center;">×</td><td>契約設定。オーナー専有(§2)</td></tr>
 </tbody>
 </table>
-<p><strong>SCR-018 メンバーアカウント有効化ページ</strong>: 上記表外の特別画面。Cookie セッション認証を持たない未認証ユーザーが招待リンク経由でアクセスする。認可条件は <code>access_tokens.purpose='activation'</code> の有効トークン(期限内 + 未使用)を保持していることのみで、ロール列(オーナー / プロジェクト管理者 / メンバー)は適用されない。トークン認証 Principal(<code>user_id</code> + <code>access_tokens.meta.invitedProjectId</code> / <code>invitedRole</code>)を構築し、本画面以外でこの Principal は使用しない。詳細は 08_認証・認可設計.html §3.4 / §5.1 を参照。</p>
-<p><strong>SCR-019 プロジェクト連絡先メール確認完了ページ</strong>: 同様に未認証ユーザーがプロジェクト連絡先確認トークン経由でアクセスする画面。<code>access_tokens.purpose='contact_verify'</code> の有効トークン保持が唯一の認可条件で、連絡先メール所有者はアカウントを持つ必要がない(第三者の共有メールアドレスでも構わない)。トークン認証 Principal(<code>access_tokens.meta.projectId</code> のみ、<code>user_id</code> は持たない)を構築し、<code>projects.contact_email_verified_at</code> の単純な書き込みのみを行う。本画面以外でこの Principal は使用しない。詳細は 08_認証・認可設計.html §5.1 を参照。</p>
-<h2 id="5-機能別権限">5. 機能別権限</h2>
+</div>
+
+<h3 id="31-未認証トークン専用画面">3.1 未認証トークン専用画面(SCR-018 / SCR-019)</h3>
+<p class="section-lead">SCR-018 と SCR-019 は Cookie セッション認証を持たない未認証ユーザーがアクセスする画面で、ロール(オーナー / 管理者 / メンバー)の概念が適用されません。認可条件はトークンの有効性のみで、トークン認証 Principal の構築仕様は <a href="08_認証・認可設計.html#51-ユーザー種別とオーナー判定">08_認証・認可設計.html §5.1</a> が正本です。</p>
+<div class="table-scroll">
 <table>
 <thead>
-<tr>
-<th>機能ID</th>
-<th>機能名</th>
-<th>必要ロール</th>
-<th>オーナー</th>
-<th>制限事項</th>
-</tr>
+<tr><th>画面</th><th>到達条件(認可)</th><th>到達後にできること</th></tr>
 </thead>
 <tbody>
 <tr>
-<td>F-AUTH-*</td>
-<td>認証</td>
-<td>不要</td>
-<td>◯</td>
-<td>-</td>
+<td>SCR-018 メンバーアカウント有効化</td>
+<td>招待トークン(<code>access_tokens.purpose='activation'</code>)が期限内かつ未使用</td>
+<td>氏名入力・初回パスワード設定・規約同意による有効化のみ。完了後は SCR-001 へ遷移し通常 Principal を構築(<a href="../01_要件定義/FR02_ユーザー管理.html#FR-016">FR-016</a>)</td>
 </tr>
 <tr>
-<td>F-PRJ-*</td>
-<td>プロジェクト管理(作成・編集・削除)</td>
-<td><strong>オーナー専有</strong></td>
-<td>◯</td>
-<td>削除は再認証必須</td>
-</tr>
-<tr>
-<td>F-FAQ-*</td>
-<td>FAQ 管理</td>
-<td><code>member</code>+(該当 PJ)</td>
-<td>◯</td>
-<td>状態(<code>draft</code> / <code>published</code> / <code>hidden</code>)は SCR-006 で「状態」ラジオ選択 + 「保存」により自由遷移(状態遷移ガードなし)</td>
-</tr>
-<tr>
-<td>F-INQ-*</td>
-<td>未解決質問</td>
-<td><code>member</code>+(該当 PJ)</td>
-<td>◯</td>
-<td>状況(<code>open</code> / <code>closed</code>)は SCR-005 詳細画面からの手動操作のみで切替。FAQ 下書き保存・FAQ 公開は連動しない(FR-077)</td>
-</tr>
-<tr>
-<td>F-WIDGET-*</td>
-<td>ウィジェット設定(プロジェクト単位)</td>
-<td><code>admin</code>+(該当 PJ)</td>
-<td>◯</td>
-<td>公開キー再発行は L3(再認証必須)。<code>member</code> は閲覧 + 埋め込みコードのコピーのみ可。配置はプロジェクトワークスペース(SCR-007)</td>
-</tr>
-<tr>
-<td>F-BILL-*</td>
-<td>課金(支払方法・請求・解約)</td>
-<td><strong>オーナー専有</strong></td>
-<td>◯</td>
-<td>支払方法変更 / 解約は再認証必須。質問数の月次上限件数・アラート変更は F-LIMIT-* へ分離</td>
-</tr>
-<tr>
-<td>F-LIMIT-*</td>
-<td>プロジェクトの質問数上限・アラート</td>
-<td><code>admin</code>+(該当 PJ)/ オーナー(自動 admin)</td>
-<td>◯</td>
-<td>変更は再認証必須(L3、SCR-021-M1)。<code>member</code> は閲覧のみ。<code>project_quota_limits.resource_kind='question_monthly_limit'</code> の上限とアラート閾値だけを扱う</td>
-</tr>
-<tr>
-<td>F-USER-*</td>
-<td>プロジェクトメンバー管理</td>
-<td><code>admin</code>+(該当 PJ)/ オーナー</td>
-<td>◯</td>
-<td>招待、ロール変更、当該PJ割当解除。アカウント削除は不可</td>
-</tr>
-<tr>
-<td>F-ACC-*</td>
-<td>個人設定</td>
-<td>全認証ユーザー</td>
-<td>◯</td>
-<td>自分のプロフィール・セキュリティのみ</td>
-</tr>
-<tr>
-<td>F-CONTRACT-*</td>
-<td>契約設定 / 退会</td>
-<td>オーナー専有</td>
-<td>◯</td>
-<td>退会は再認証必須</td>
-</tr>
-<tr>
-<td>F-NOTIF-*</td>
-<td>お知らせ</td>
-<td>全 admin</td>
-<td>◯</td>
-<td>既読化のみ</td>
-</tr>
-<tr>
-<td>F-LEGAL-*</td>
-<td>利用規約 / プライバシーポリシー 閲覧・同意(文書ごとに個別)</td>
-<td><strong>オーナー専有(同意)</strong> / 全ユーザー(閲覧、認証不要)</td>
-<td>◯</td>
-<td>閲覧は SCR-010(利用規約)/ SCR-020(プライバシーポリシー)</td>
+<td>SCR-019 プロジェクト連絡先メール確認完了</td>
+<td>連絡先確認トークン(<code>access_tokens.purpose='contact_verify'</code>)が有効</td>
+<td>連絡先メールの確認完了のみ。アカウント保有は不要で、第三者の共有メールアドレスでも進められる(<a href="../01_要件定義/FR03_プロジェクト管理.html#FR-033a">FR-033a</a>)</td>
 </tr>
 </tbody>
 </table>
-<p>「<code>member</code>+(該当 PJ)」は該当プロジェクトに対するロールが <code>member</code> または <code>admin</code> であることを示す(オーナーは bypass)。「<code>admin</code>+(該当 PJ)」は該当プロジェクトに対するロールが <code>admin</code> のみを示す。</p>
-<h2 id="6-api-別権限">6. API 別権限</h2>
-<p><a href="03_API設計書.html">03_API設計書.html</a> を正本とする。主要 API:</p>
+</div>
+
+<h2 id="4-利用上限の変更権限">4. 利用上限の変更権限</h2>
+<p class="section-lead">利用上限は <strong>2 系統</strong>で、変更できるロールが異なります。月次の質問数上限・無料枠は<strong>プロジェクト単位</strong>でオーナーまたは当該プロジェクト管理者が変更でき、レート制限は<strong>契約単位</strong>で運営者のみが上書きします。値・判定ロジックの正本は <a href="10_課金・請求設計.html">10_課金・請求設計.html</a>、テーブルの正本は <a href="03_テーブル設計.html#324-project_quota_limits">03_テーブル設計.html §3.24</a> です。本節は「誰が変更できるか」のみを定めます。</p>
+<div class="table-scroll">
 <table>
 <thead>
-<tr>
-<th>API</th>
-<th>メソッド</th>
-<th>必要ロール</th>
-<th>オーナー専有</th>
-<th>再認証</th>
-<th>関連エラーID</th>
-</tr>
+<tr><th>利用上限の種別</th><th>判定単位</th><th>変更できるロール</th><th>主な画面</th></tr>
 </thead>
 <tbody>
 <tr>
-<td><code>POST /auth/login</code></td>
-<td>POST</td>
-<td>不要</td>
-<td>-</td>
-<td>-</td>
-<td>E-AUTH-*</td>
+<td>月次質問数上限・無料枠・アラート閾値</td>
+<td>プロジェクト単位</td>
+<td>オーナー / 当該プロジェクト管理者(変更は再認証必須。メンバーは閲覧のみ)</td>
+<td>SCR-021 / SCR-021-M1</td>
 </tr>
 <tr>
-<td><code>POST /projects</code></td>
-<td>POST</td>
-<td><strong>オーナー専有</strong></td>
-<td>◯</td>
-<td>-</td>
-<td>E-AUTHZ-OWNER-ONLY</td>
-</tr>
-<tr>
-<td><code>PATCH /projects/{id}</code></td>
-<td>PATCH</td>
-<td><strong>オーナー専有</strong></td>
-<td>◯</td>
-<td>-</td>
-<td>E-AUTHZ-OWNER-ONLY</td>
-</tr>
-<tr>
-<td><code>DELETE /projects/{id}</code></td>
-<td>DELETE</td>
-<td><strong>オーナー専有</strong></td>
-<td>◯</td>
-<td>◯</td>
-<td>E-AUTHZ-OWNER-ONLY</td>
-</tr>
-<tr>
-<td><code>POST /faqs</code> / <code>PATCH</code> / <code>DELETE</code></td>
-<td>*</td>
-<td><code>member</code>+(該当 PJ)</td>
-<td>-</td>
-<td>DELETE のみ ◯</td>
-<td>-</td>
-</tr>
-<tr>
-<td><code>PATCH /inquiries/{id}</code></td>
-<td>PATCH</td>
-<td><code>member</code>+(該当 PJ)</td>
-<td>-</td>
-<td>-</td>
-<td><code>status</code> の手動切替(<code>open</code> / <code>closed</code>)のみを許可(担当者概念なし)</td>
-</tr>
-<tr>
-<td><code>GET /billing/invoices</code></td>
-<td>GET</td>
-<td>オーナー専有</td>
-<td>◯</td>
-<td>-</td>
-<td>E-AUTHZ-OWNER-ONLY</td>
-</tr>
-<tr>
-<td><code>GET /usage</code></td>
-<td>GET</td>
-<td><code>member</code>+(該当 PJ)/ オーナー</td>
-<td>-</td>
-<td>-</td>
-<td>E-AUTHZ-FORBIDDEN</td>
-</tr>
-<tr>
-<td><code>GET /owner/projects/usage</code></td>
-<td>GET</td>
-<td>オーナー専有</td>
-<td>◯</td>
-<td>-</td>
-<td>E-AUTHZ-OWNER-ONLY</td>
-</tr>
-<tr>
-<td><code>GET /projects/{id}/quota-limits</code></td>
-<td>GET</td>
-<td><code>member</code>+(該当 PJ)/ オーナー</td>
-<td>-</td>
-<td>-</td>
-<td>E-AUTHZ-FORBIDDEN</td>
-</tr>
-<tr>
-<td><code>PATCH /projects/{id}/quota-limits/questions</code></td>
-<td>PATCH</td>
-<td><code>admin</code>+(該当 PJ)/ オーナー</td>
-<td>-</td>
-<td>◯</td>
-<td>E-AUTHZ-FORBIDDEN / E-INPUT-*</td>
-</tr>
-<tr>
-<td><code>POST /projects/{id}/members</code></td>
-<td>POST</td>
-<td><code>admin</code>+(該当 PJ)/ オーナー</td>
-<td>-</td>
-<td>◯</td>
-<td>E-AUTHZ-FORBIDDEN / ALREADY_EXISTS_IN_PROJECT</td>
-</tr>
-<tr>
-<td><code>PATCH /projects/{id}/members/{accountId}</code></td>
-<td>PATCH</td>
-<td><code>admin</code>+(該当 PJ)/ オーナー</td>
-<td>-</td>
-<td>◯</td>
-<td>E-AUTHZ-LAST-ADMIN-PROTECTED(該当 PJ の最後の admin 降格時)</td>
-</tr>
-<tr>
-<td><code>DELETE /projects/{id}/members/{userId}</code></td>
-<td>DELETE</td>
-<td><code>admin</code>+(該当 PJ)/ オーナー</td>
-<td>-</td>
-<td>-</td>
-<td>当該PJ割当を解除し、最後の有効割当ならアカウントも論理削除。E-AUTHZ-OWNER-PROTECTED / E-AUTHZ-SELF-MUTATION</td>
-</tr>
-<tr>
-<td><code>POST /withdrawal-requests</code></td>
-<td>POST</td>
-<td>オーナー専有</td>
-<td>◯</td>
-<td>◯</td>
-<td>-</td>
-</tr>
-<tr>
-<td><code>POST /terms/agree</code></td>
-<td>POST</td>
-<td>オーナー専有(承諾)</td>
-<td>◯</td>
-<td>-</td>
-<td>利用規約同意</td>
-</tr>
-<tr>
-<td><code>POST /privacy/agree</code></td>
-<td>POST</td>
-<td>オーナー専有(承諾)</td>
-<td>◯</td>
-<td>-</td>
-<td>プライバシーポリシー同意</td>
+<td>レート制限(質問・未解決質問・メール・管理 API の各レート)</td>
+<td>契約単位</td>
+<td>利用者側ロールでは変更不可。運営者が上書き(運営者側 4-eyes 承認)</td>
+<td>運営者 SCR-093</td>
 </tr>
 </tbody>
 </table>
-<h2 id="7-利用制限--運営者上書きレート契約単位--月次上限件数プロジェクト単位">7. 利用制限 / 運営者上書き(レート=契約単位 / 月次上限件数=プロジェクト単位)</h2>
-<h3 id="71-利用上限の構成10_課金請求設計md-3--3a-参照">7.1 利用上限の構成(<a href="10_課金・請求設計.html">10_課金・請求設計.html §3 / §3a</a> 参照)</h3>
-<p>MVP は単一プラン(完全従量課金 + 月次無料枠、無料トライアル期間なし)。プラン階層による差別化はない。利用上限は <strong>2 系統</strong> で実装される:</p>
-<ul>
-<li><strong>レート制限(契約単位)</strong>: DDoS / Bot / 暴走対策のセキュリティ施策。<code>owner_quota_overrides.resource_kind</code>(レート種別)で実装。主管 SCR = SCR-093(運営者、4-eyes 承認)。</li>
-<li><strong>月次上限件数・無料枠(プロジェクト単位)</strong>: 暴走コスト防止と課金境界の設定。<code>project_quota_limits</code>(§3.24)で実装。SCR-021 は質問数だけを主管し、FAQ無料枠は SCR-093 の運営者料金設定で管理する。</li>
-</ul>
+</div>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">運営者上書きは運営者システムの正本</span>運営者によるプロジェクト上限の上書き(SCR-093)とレート上書きは運営者システム側の操作です。本ページ(メイン)は利用者側ロールの変更権限のみを扱い、運営者操作の正本は運営者システムの設計に委ねます。</div></div>
+
+<h2 id="5-ロールを満たしても拒否される制約">5. ロールを満たしても拒否される制約</h2>
+<p class="section-lead">必要ロールを満たしていても、事故や契約の単一障害点化を防ぐために拒否される操作があります。本節はその<strong>不可制約の網羅</strong>です。判定順序とエラーへの落とし込みの正本は <a href="08_認証・認可設計.html#54-オーナー保護自己操作最後の管理者保護">08_認証・認可設計.html §5.4</a>、エラー ID・メッセージの正本は <a href="05_エラー設計.html#43-認可エラーe-authz-">05_エラー設計.html §4.3</a> です。</p>
+<div class="table-scroll">
 <table>
 <thead>
-<tr>
-<th><code>resource_kind</code>(<code>owner_quota_overrides</code>、契約単位)</th>
-<th>用途</th>
-<th>主管 SCR</th>
-</tr>
+<tr><th>制約</th><th>拒否される操作</th><th>関連エラー(定義は 05 正本)</th><th>根拠 FR</th></tr>
 </thead>
 <tbody>
 <tr>
-<td><code>widget_ask_per_min</code></td>
-<td>ウィジェット質問レート</td>
-<td>SCR-093</td>
+<td>オーナー保護</td>
+<td>オーナーに対する退会・停止・削除・降格・譲渡。1 契約 = 1 オーナーのため孤立状態は構造的に発生しない</td>
+<td><code>E-AUTHZ-OWNER-PROTECTED</code></td>
+<td><a href="../01_要件定義/FR19_アクセス制御細部.html#FR-333">FR-333</a></td>
 </tr>
 <tr>
-<td><code>widget_inquiry_per_min</code></td>
-<td>ウィジェット未解決質問送信レート</td>
-<td>SCR-093</td>
+<td>自己操作の禁止</td>
+<td>自分自身の利用状態変更・アカウント削除。他人を経由して自身を削除する経路も設けない</td>
+<td><code>E-AUTHZ-SELF-MUTATION</code></td>
+<td><a href="../01_要件定義/FR19_アクセス制御細部.html#FR-334">FR-334</a></td>
 </tr>
 <tr>
-<td><code>email_per_hour</code></td>
-<td>メール送信レート</td>
-<td>SCR-093</td>
+<td>最後の管理者の自己降格禁止</td>
+<td>当該プロジェクトの管理者が自分 1 人のとき、自身を管理者からメンバーへ降格・割当解除する</td>
+<td><code>E-AUTHZ-SELF-MUTATION</code></td>
+<td><a href="../01_要件定義/FR19_アクセス制御細部.html#FR-334">FR-334</a> / <a href="../01_要件定義/FR02_ユーザー管理.html#FR-018a">FR-018a</a></td>
 </tr>
 <tr>
-<td><code>admin_api_per_min</code></td>
-<td>管理 API レート</td>
-<td>SCR-093</td>
+<td>最後の管理者保護</td>
+<td>他者を当該プロジェクトの最後の管理者から外す(降格・割当解除)。オーナー由来の自動 admin 行は件数判定から除外する</td>
+<td><code>E-AUTHZ-LAST-ADMIN-PROTECTED</code></td>
+<td><a href="../01_要件定義/FR02_ユーザー管理.html#FR-018a">FR-018a</a></td>
+</tr>
+<tr>
+<td>オーナー境界違反</td>
+<td>他契約のリソースへの参照・操作(404 偽装で拒否し、相手契約の存在を漏らさない)</td>
+<td><code>E-AUTHZ-OWNER-BOUNDARY</code></td>
+<td><a href="../01_要件定義/FR19_アクセス制御細部.html#FR-335">FR-335</a></td>
+</tr>
+<tr>
+<td>プロジェクト割当なし</td>
+<td>割当のないプロジェクトの画面・データへの直アクセス(404 偽装で拒否)</td>
+<td><code>E-AUTHZ-PROJECT-DENIED</code></td>
+<td><a href="../01_要件定義/FR19_アクセス制御細部.html#FR-339">FR-339</a></td>
+</tr>
+<tr>
+<td>権限外 UI</td>
+<td>権限外の主ナビゲーション・操作は原則非表示。直アクセスは説明と戻り先を添えて拒否する</td>
+<td><code>E-AUTHZ-FORBIDDEN</code></td>
+<td><a href="../01_要件定義/FR19_アクセス制御細部.html#FR-341">FR-341</a></td>
 </tr>
 </tbody>
 </table>
+</div>
+<div class="callout warning"><i class="bi bi-exclamation-triangle"></i><div><span class="c-title">最後の割当解除は自動無効化を伴う</span>メンバーの最後の有効なプロジェクト割当が解除されると、対象アカウントは<strong>自動で無効化</strong>され、全セッションと未使用招待が失効します(<a href="../01_要件定義/FR02_ユーザー管理.html#FR-019">FR-019</a> / <a href="../01_要件定義/FR19_アクセス制御細部.html#FR-339">FR-339</a>)。オーナーは本処理の対象外です。状態遷移の正本は <a href="08_認証・認可設計.html#56-アカウント状態">08_認証・認可設計.html §5.6</a> です。</div></div>
+
+<h2 id="6-契約状態による許可操作の制限">6. 契約状態による許可操作の制限</h2>
+<p class="section-lead">契約が停止・退会猶予中のときは、ロールを満たしていても管理画面の許可操作を必要最小限に絞ります。契約状態値(<code>contract_status</code>)の定義とウィジェット側挙動の正本は <a href="10_課金・請求設計.html">10_課金・請求設計.html</a>、管理画面側の認可ゲートの正本は <a href="08_認証・認可設計.html#57-契約状態によるアクセス制限">08_認証・認可設計.html §5.7</a> です。本節は権限の観点で許可範囲を整理します。</p>
+<div class="table-scroll">
 <table>
 <thead>
-<tr>
-<th><code>resource_kind</code>(<code>project_quota_limits</code>、プロジェクト単位)</th>
-<th>用途</th>
-<th>主管 SCR</th>
-</tr>
+<tr><th>契約状態</th><th>管理画面の許可操作</th><th>根拠 FR</th></tr>
 </thead>
 <tbody>
 <tr>
-<td><code>question_monthly_limit</code></td>
-<td>質問数の月次上限件数・無料枠</td>
-<td>SCR-021(オーナー / PJ admin)/ SCR-093(運営者上書き)</td>
+<td>停止中(<code>suspended</code>)</td>
+<td>課金(請求情報更新)と退会のみ許可。その他の機能と新規ウィジェット応答は機能停止応答に切替</td>
+<td><a href="../01_要件定義/FR09_利用量・課金.html#FR-138">FR-138</a></td>
 </tr>
 <tr>
-<td><code>faq_monthly_limit</code></td>
-<td>FAQ 件数の無料枠(上限なし)</td>
-<td>SCR-093</td>
+<td>退会申請中(<code>deleted_pending</code>)</td>
+<td>管理画面ログインと既存データ参照は可。新規 FAQ 登録・新規ウィジェット応答・課金変更などの新規書込みは不可。退会キャンセル動線を提供</td>
+<td><a href="../01_要件定義/FR13_プライバシー・データ管理.html#FR-167">FR-167</a></td>
+</tr>
+<tr>
+<td>退会済み(<code>deleted</code>)</td>
+<td>ログイン不可・操作不可</td>
+<td>—</td>
 </tr>
 </tbody>
 </table>
-<h3 id="72-選択閾値アラート--100停止--125運営者通知プロジェクト単位に独立判定10_課金請求設計md-8-の参照">7.2 選択閾値アラート / 100%停止 / 125%運営者通知(プロジェクト単位に独立判定、<a href="10_課金・請求設計.html">10_課金・請求設計.html §8</a> の参照)</h3>
+</div>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">支払方法ゲートは契約停止ではない</span>支払方法未登録 + 無料枠超過によるウィジェット質問受付の停止は契約サスペンションではなく、<code>contract_status</code> は <code>active</code> のままです。本表の制限対象外で、管理画面は通常どおり利用できます(正本は <a href="10_課金・請求設計.html">10_課金・請求設計.html</a>)。</div></div>
+
+<h2 id="更新履歴">更新履歴</h2>
+<div class="table-scroll">
 <table>
 <thead>
-<tr>
-<th>データ種別</th>
-<th>80%</th>
-<th>100%</th>
-<th>125%</th>
-</tr>
+<tr><th>版数</th><th>日付</th><th>変更内容</th></tr>
 </thead>
 <tbody>
 <tr>
-<td>質問数</td>
-<td>inbox 通知(<code>normal</code>)</td>
-<td>当該プロジェクトのウィジェット質問受付停止(429)+ inbox + email(<code>critical</code>)</td>
-<td>運営者エスカレーション</td>
+<td>v1.7</td>
+<td>2026-06-17</td>
+<td>基本設計シンプルテンプレ v2 へ刷新。front-matter を最小化し、page-summary を ps-lead(目的 1 文)のみへ縮約(2 列グリッド「このページでわかること」「正本・関連」リンク集を撤去)。各節の section-lead・権限マトリクス・callout は維持。識別子(ロール名・権限値・SCR ID・FR/NFR/エラー ID)は不変。正本委譲は本文中インラインリンクへ集約</td>
 </tr>
 <tr>
-<td>FAQ 件数</td>
-<td>対象外</td>
-<td>月次件数による制限なし</td>
-<td>対象外</td>
+<td>v1.6</td>
+<td>2026-06-17</td>
+<td>要件 v2(FR02 / FR03 / FR09 / FR19 等)を根拠に再設計。記載スタイル標準(page-summary / doc-meta / section-lead / callout)へ移行。3 ロールモデル(オーナー / プロジェクト管理者 / メンバー / 未割当)を正本化し、SCR-001〜023 + モーダル × ロールのアクセス制御マトリクスへ刷新。認可判定順序・isOwner bypass・反映 TTL・契約状態ゲートは 08 を正本としてリンク化、SCR 定義は 01、テーブルは 03、エラーは 05 へ参照化。要件根拠のない記述(運営者 service_operator 列・緊急時のみ可操作の発動条件 / 承認 SLA・機能 ID 別表 / API 別権限表)を削除。識別子は不変</td>
+</tr>
+<tr>
+<td>v1.5</td>
+<td>2026-06-14</td>
+<td>月次上限件数・無料枠をプロジェクト単位へ移行し、変更権限をオーナー + 当該 PJ 管理者へ拡張</td>
 </tr>
 </tbody>
 </table>
-<p>上限判定はプロジェクトごとの質問数だけに適用する。FAQは契約共通の安全上限を除き、月次件数で制限しない。</p>
-<p>詳細は <a href="11_課金請求設計書.html">11_課金請求設計書.html §8</a> を正本とする。</p>
-<h2 id="8-権限不足契約上書き時の動作">8. 権限不足・契約上書き時の動作</h2>
-<table>
-<thead>
-<tr>
-<th>ケース</th>
-<th>システム動作</th>
-<th>画面表示</th>
-<th>メッセージID</th>
-<th>関連エラーID</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ロール不足(<code>member</code> で <code>admin</code> 限定操作を試行)</td>
-<td>403 統一</td>
-<td>「この操作を行う権限がありません。必要な場合は、契約オーナーまたはプロジェクト管理者に依頼してください」</td>
-<td>MSG-COMMON-AUTHZ-403</td>
-<td>E-AUTHZ-FORBIDDEN</td>
-</tr>
-<tr>
-<td><strong>オーナー境界違反</strong>(他契約のリソース参照)</td>
-<td><strong>404 偽装</strong>(403 だと相手契約の存在が漏れる)</td>
-<td>「指定された情報は見つかりませんでした。URLや選択中のワークスペースを確認してください」</td>
-<td>MSG-COMMON-NOT-FOUND</td>
-<td>E-AUTHZ-OWNER-BOUNDARY</td>
-</tr>
-<tr>
-<td>プロジェクト割当不足(<code>project_users</code> に行なし)</td>
-<td>404 偽装</td>
-<td>「指定された情報は見つかりませんでした。URLや選択中のワークスペースを確認してください」</td>
-<td>MSG-COMMON-NOT-FOUND</td>
-<td>E-AUTHZ-PROJECT-DENIED</td>
-</tr>
-<tr>
-<td>オーナー専有機能(<code>contract_owners</code> 行を持たないユーザーがアクセス)</td>
-<td>403 + 専用コード、UI 非表示</td>
-<td>「この機能は契約オーナーのみ利用できます。必要な場合は契約オーナーに依頼してください」</td>
-<td>MSG-COMMON-OWNER-ONLY</td>
-<td>E-AUTHZ-OWNER-ONLY</td>
-</tr>
-<tr>
-<td>オーナー保護違反(オーナー停止 / 削除)</td>
-<td>403</td>
-<td>「契約オーナーは停止・削除できません。変更が必要な場合はサポートへお問い合わせください」</td>
-<td>MSG-COMMON-OWNER-PROTECTED</td>
-<td>E-AUTHZ-OWNER-PROTECTED</td>
-</tr>
-<tr>
-<td>自己操作不可(自分が <code>admin</code> を持つ最後のプロジェクトで自身を降格 / 割当解除)</td>
-<td>403、UI 非活性</td>
-<td>「このプロジェクトの最後の管理者です。先に別の管理者を追加してください」</td>
-<td>MSG-COMMON-SELF-MUTATION</td>
-<td>E-AUTHZ-SELF-MUTATION</td>
-</tr>
-<tr>
-<td>最後の管理者保護(他者をプロジェクトの最後の <code>admin</code> から外す)</td>
-<td>403</td>
-<td>「このプロジェクトには管理者が最低 1 名必要です。先に別の管理者を追加してください」</td>
-<td>MSG-COMMON-LAST-ADMIN</td>
-<td>E-AUTHZ-LAST-ADMIN-PROTECTED</td>
-</tr>
-<tr>
-<td>契約停止中(<code>contract_status=suspended</code>)</td>
-<td>403 + 専用コード、課金画面 / 退会画面のみ許可</td>
-<td>サスペンション理由 + 再決済誘導</td>
-<td>MSG-BILL-CONTRACT-SUSPENDED</td>
-<td>E-BIZ-CONTRACT-SUSPENDED</td>
-</tr>
-</tbody>
-</table>
-<p>詳細は <a href="06_エラー設計書.html">06_エラー設計書.html §5</a> を正本とする。</p>
-<h2 id="9-緊急時のみ可操作321-2-から移管">9. 緊急時のみ可操作(§3.2.1-2 から移管)</h2>
-<h3 id="91--緊急時のみ可操作の発動条件">9.1 「△ 緊急時のみ可」操作の発動条件</h3>
-<table>
-<thead>
-<tr>
-<th>条件</th>
-<th>実装方針(メイン側)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1. サポートチケット ID 必須</td>
-<td>連携 IF #4 / #5 / #6 / #12 のリクエスト JSON に <code>ticket_id</code> フィールドを必須化。メイン側で空文字検証 + 監査ログ記録</td>
-</tr>
-<tr>
-<td>2. 運営者 2 名の承認(自己承認不可)</td>
-<td>顧客管理側で承認を取得し、結果を連携 IF 経由で伝搬。メイン側は <strong>メタフィールド <code>approvals[]</code>(承認者 2 名分)</strong> の検証(承認者 ID が異なる、承認時刻が 24 時間以内、kid 検証)を実施</td>
-</tr>
-<tr>
-<td>3. 管理者ユーザーへの即時通知</td>
-<td>メイン側で <code>inbox_messages</code> レコードを生成(<code>category=system</code>、<code>importance=high</code>)+ メール送信を Queue 投入</td>
-</tr>
-<tr>
-<td>4. 監査ログ必須記録</td>
-<td><code>&lt;resource&gt;.&lt;verb&gt;.by_operator</code> 形式の <code>action</code> コードで <code>audit_logs</code> に記録。<code>retention_class='operator_high_priv'</code>(5 年保持)</td>
-</tr>
-</tbody>
-</table>
-<h3 id="92-緊急区分--検知ハンドラ--承認-sla">9.2 緊急区分 × 検知ハンドラ × 承認 SLA</h3>
-<table>
-<thead>
-<tr>
-<th>緊急区分</th>
-<th>検知ハンドラ</th>
-<th>承認 SLA</th>
-<th>エスカレーション経路</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>重大障害</td>
-<td><code>monitoring:main_outage</code> 監視 / 連携 IF #2 ヘルスチェック(5s × 3 連続失敗)</td>
-<td>15 分以内に 2 名承認</td>
-<td>RB-021(メイン障害時の運営者側縮退運転)と連動</td>
-</tr>
-<tr>
-<td>全員ロックアウト</td>
-<td><code>audit_logs(auth.locked)</code> 集約検知(該当契約内全 admin が <code>auth.locked</code> 状態)</td>
-<td>30 分以内に CS マネージャーへ通報</td>
-<td>サポート窓口経由でオーナーと連絡、紙ベース回復コード(RB-014)も可</td>
-</tr>
-<tr>
-<td>セキュリティインシデント</td>
-<td>NFR-602c 監査ログ完全性検証バッチ / SIEM / 不正アクセス検知(FR-178)</td>
-<td>即時 PagerDuty 起動</td>
-<td>セキュリティ責任者 → CTO → 運営本部</td>
-</tr>
-<tr>
-<td>法令対応</td>
-<td>(運用側で個別判断)</td>
-<td>個別判断</td>
-<td>法務 → CTO</td>
-</tr>
-</tbody>
-</table>
-<h2 id="10-未決事項">10. 未決事項</h2>
-<table>
-<thead>
-<tr>
-<th>No</th>
-<th>内容</th>
-<th>確認先</th>
-<th>期限</th>
-<th>ステータス</th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
+</div>
 
 </article>
 </body>

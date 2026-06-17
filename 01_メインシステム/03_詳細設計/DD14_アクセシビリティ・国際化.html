@@ -13,46 +13,15 @@
 <body data-page-id="01_メインシステム/03_詳細設計/DD14_アクセシビリティ・国際化.html">
 <article class="content" id="content">
 <h1 id="dd14-アクセシビリティ国際化">DD14: アクセシビリティ・国際化</h1>
-<h2 id="0-文書情報">0. 文書情報</h2>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>内容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>文書名</td>
-<td>DD14: アクセシビリティ・国際化</td>
-</tr>
-<tr>
-<td>詳細設計ID</td>
-<td>DD14</td>
-</tr>
-<tr>
-<td>対象システム</td>
-<td>FAQ AI ウィジェット SaaS / メインシステム</td>
-</tr>
-<tr>
-<td>関連機能ID</td>
-<td>NFR-401（プライバシー保護）/ WCAG 2.2 AA 準拠 / i18n 基盤</td>
-</tr>
-<tr>
-<td>作成日</td>
-<td>2026-05-17</td>
-</tr>
-<tr>
-<td>版数</td>
-<td>v1.1</td>
-</tr>
-<tr>
-<td>ステータス</td>
-<td>承認済</td>
-</tr>
-</tbody>
-</table>
+
+<aside class="page-summary">
+<p class="ps-lead"><strong>このページは、メインシステム管理画面のアクセシビリティ(WCAG 2.2 AA 準拠)と国際化(i18n)基盤の実装方針を定義します。</strong> キーボード操作・ARIA・コントラスト比などのアクセシビリティ実装規約、モーダルの focus trap、専用 403 / 401 画面のスクリーンリーダー対応、自動テスト(axe-core)、i18n キー命名規則とカタログ管理、JST 固定のタイムゾーン処理・日時表示・UTF-8 4 バイト対応を扱います(NFR-401 / WCAG 2.2 AA / i18n 基盤)。</p>
+</aside>
+
+<p class="doc-meta"><span><b>版数</b> v1.1</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
 <h2 id="1-対象範囲">1. 対象範囲</h2>
+<p class="section-lead">本 DD が実装方針を定める非機能要件・準拠基準・採用ライブラリを示します。次の表は、対象となる NFR・アクセシビリティ基準・i18n / タイムゾーン関連ライブラリを一望できるよう整理したものです。</p>
 <table>
 <thead>
 <tr>
@@ -90,6 +59,7 @@
 </tbody>
 </table>
 <h2 id="2-収録ロジック対応章">2. 収録ロジック・対応章</h2>
+<p class="section-lead">本 DD が詳細化する規約の出所(基本設計の元章)と概要を示します。次の表は、アクセシビリティ(§13.4 系)と国際化(§13.5 系)の各規約が基本設計のどの章から派生したかをまとめたものです。</p>
 <table>
 <thead>
 <tr>
@@ -147,7 +117,9 @@
 </tbody>
 </table>
 <h2 id="3-詳細設計本文">3. 詳細設計本文</h2>
+<p class="section-lead">アクセシビリティ実装規約(§3.1〜3.4)と国際化基盤(§3.5〜3.10)の実装方針を定めます。基準・対応関係が主体のため、各規約は箇条書き・対応表で示し、実装コードは <code>&lt;pre&gt;&lt;code&gt;</code> でそのまま保持します。</p>
 <h3 id="31-アクセシビリティ実装規約">3.1 アクセシビリティ実装規約</h3>
+<p class="section-lead">WCAG 2.2 AA を満たすための画面共通の実装規約を定めます。次の各項目は、キーボード操作・ARIA・コントラスト比・ターゲットサイズなど、全画面で守るべき要件です。</p>
 <ul>
 <li><strong>キーボード操作</strong>: 全画面で Tab / Enter / Esc が動作。フォーカス可視（<code>:focus-visible</code> 2px outline）</li>
 <li><strong>ARIA</strong>: ランドマーク（<code>role="main"</code>, <code>role="navigation"</code> 等）、<code>aria-label</code>, <code>aria-describedby</code>, <code>aria-live</code></li>
@@ -160,7 +132,7 @@
 <li><strong>ドラッグ代替</strong>: 並べ替え等にドラッグを用いる場合、キーボード操作と上下移動ボタンを併設</li>
 </ul>
 <h3 id="32-モーダル-focus-trap-実装規約">3.2 モーダル focus trap 実装規約</h3>
-<p>axe-core ではキーボードトラップの一部ケース（テスト終了時のフォーカス検証）を自動検出できないため、専用ライブラリと回帰テストで担保する。</p>
+<p class="section-lead">モーダル内でフォーカスを循環させ、外部に抜けないようにする実装規約を定めます。axe-core ではキーボードトラップの一部ケース(テスト終了時のフォーカス検証)を自動検出できないため、専用ライブラリと回帰テストで担保します。</p>
 <ul>
 <li><strong>採用ライブラリ</strong>: <code>focus-trap-react</code>（同等 OSS でも可。MVP 着手時の依存追加 PR で確定）</li>
 <li><strong>対象モーダル</strong> (メイン側): ConfirmDialog / 再認証モーダル / 退会確認モーダル / お知らせ詳細モーダル</li>
@@ -173,6 +145,7 @@
 </ul></li>
 </ul>
 <h4 id="321-キーボードショートカット一覧">3.2.1 キーボードショートカット一覧</h4>
+<p class="section-lead">マウスを使わずに操作を完結できるよう、画面共通およびモーダル内のキー割当を定めます。次の表は、場面ごとのキーと動作の対応です。</p>
 <table>
 <thead>
 <tr>
@@ -205,13 +178,14 @@
 </tbody>
 </table>
 <h4 id="322-回帰テスト">3.2.2 回帰テスト</h4>
-<p><code>apps/admin/e2e/a11y/focus-trap.spec.ts</code> で各モーダルにつき以下を検証</p>
+<p class="section-lead">focus trap が継続して機能することを E2E テストで担保します。<code>apps/admin/e2e/a11y/focus-trap.spec.ts</code> で各モーダルにつき以下を検証します。</p>
 <ul>
 <li>Tab × 50 回押下でフォーカスが循環し外部に抜けないこと</li>
 <li>Esc 挙動が上表通り</li>
 <li>close 後の <code>document.activeElement</code> が発火元一致</li>
 </ul>
 <h3 id="33-専用-403--401-画面のアクセシビリティ">3.3 専用 403 / 401 画面のアクセシビリティ</h3>
+<p class="section-lead">アクセス拒否(403)・契約停止(401)の専用画面で、状態がスクリーンリーダー利用者に確実に伝わるための実装規約を定めます。次の各項目は、<code>role="alert"</code> と <code>aria-live</code> による状態通知、ステータスコードの可読テキスト併記などの要件です。</p>
 <ul>
 <li><strong>IP 許可リスト 403 画面（運営者ログイン前、<code>operator_ip_allowlist</code>）</strong> / <strong>契約停止 401 画面</strong>:
 <ul>
@@ -223,14 +197,15 @@
 </ul></li>
 </ul>
 <h3 id="34-アクセシビリティ自動テスト">3.4 アクセシビリティ自動テスト</h3>
-<p><code>@axe-core/playwright</code> で E2E に組み込み。Critical / Serious 違反は 0 件を維持。focus trap / 専用 403 画面は別途 <code>focus-trap.spec.ts</code> / <code>a11y-error-pages.spec.ts</code> で個別検証。</p>
+<p class="section-lead">アクセシビリティ違反を CI で継続的に検出する方針を定めます。<code>@axe-core/playwright</code> を E2E に組み込み、Critical / Serious 違反は 0 件を維持します。focus trap / 専用 403 画面は axe-core で検出できないため、<code>focus-trap.spec.ts</code> / <code>a11y-error-pages.spec.ts</code> で個別検証します。</p>
 <h3 id="35-i18n-基盤">3.5 i18n 基盤</h3>
+<p class="section-lead">ユーザー向けテキストを一元管理するための i18n ライブラリ構成を定めます。<code>react-i18next</code> を用い、メッセージカタログを <code>app/shared/src/i18n/ja.ts</code> に集約します。次のコードは管理画面側の初期化方針です。</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// app/admin/src/lib/i18n.ts</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { useTranslation } <span class="im">from</span> <span class="st">&#39;react-i18next&#39;</span><span class="op">;</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">// メッセージカタログ: app/shared/src/i18n/ja.ts</span></span></code></pre></div>
 <h3 id="36-i18n-キー命名規則とカタログ管理">3.6 i18n キー命名規則とカタログ管理</h3>
-<p><strong>命名規則</strong>: <code>&lt;scope&gt;.&lt;entity&gt;.&lt;state_or_action&gt;</code> の 3 階層を基本形とし、エラーメッセージは <code>errors.&lt;feature&gt;.&lt;code&gt;</code> を使う。</p>
+<p class="section-lead">i18n キーの命名規則とカタログの管理方法を定めます。キーは <code>&lt;scope&gt;.&lt;entity&gt;.&lt;state_or_action&gt;</code> の 3 階層を基本形とし、エラーメッセージは <code>errors.&lt;feature&gt;.&lt;code&gt;</code> を使います。次の表はカテゴリごとの命名パターンと例です。</p>
 <table>
 <thead>
 <tr>
@@ -274,7 +249,7 @@
 <li>CI 検証: 未使用キー検出 + 翻訳ファイル間のキー欠落検出を <code>i18n-lint</code> 等で実施 <!-- TBD: ツール選定。担当: フロントリード --></li>
 </ul>
 <h3 id="37-タイムゾーン処理">3.7 タイムゾーン処理</h3>
-<p><code>formatJst</code> で JST 固定変換する。</p>
+<p class="section-lead">MVP では全契約のタイムゾーンを JST に固定する方針を定めます。アプリ層の日時表示は <code>formatJst</code> に一本化し、API レスポンスは常に UTC ISO 8601 で受け渡します。次の各項目が MVP 仕様の要点です。</p>
 <p><strong>MVP 仕様</strong>:</p>
 <ul>
 <li>全契約 JST 固定。<code>formatJst</code> を <strong>アプリ層の唯一の日時表示関数</strong> とし、<code>new Date().toLocaleString()</code> の直接呼出は ESLint ルール (<code>no-restricted-syntax</code>) で禁止。</li>
@@ -283,6 +258,7 @@
 </ul>
 <p><strong>回帰テスト</strong>: 既存契約全件が JST 固定で動作することを Integration テストで保証 (<code>it-tz-default-001</code>)。</p>
 <h3 id="38-日時表示">3.8 日時表示</h3>
+<p class="section-lead">日時表示の唯一の関数 <code>formatJst</code> の実装を示します。DB は UTC ISO 8601 で保持し、表示時に JST へ変換します。次のコードがその実装です。</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// app/admin/src/lib/format-date.ts</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">function</span> <span class="fu">formatJst</span>(iso<span class="op">:</span> <span class="dt">string</span>)<span class="op">:</span> <span class="dt">string</span> {</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="kw">new</span> <span class="bu">Date</span>(iso)<span class="op">.</span><span class="fu">toLocaleString</span>(<span class="st">&#39;ja-JP&#39;</span><span class="op">,</span> {</span>
@@ -292,45 +268,13 @@
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>DB は UTC ISO 8601、表示時 JST。</p>
 <h3 id="39-utf-8-4-バイト対応">3.9 UTF-8 4 バイト対応</h3>
-<p>SQLite はデフォルトで UTF-8 対応。絵文字（4 バイト）含む文字列も格納可能。インデックスは BINARY collation で問題なし。</p>
+<p class="section-lead">絵文字を含む 4 バイト UTF-8 文字を安全に格納・検索できることを定めます。SQLite はデフォルトで UTF-8 に対応し、4 バイト文字を含む文字列も格納可能で、インデックスは BINARY collation で問題ありません。</p>
 <h3 id="310-i18n-規約まとめ">3.10 i18n 規約まとめ</h3>
-<p>ユーザー向けテキストは i18n キーで参照、ハードコード禁止。</p>
+<p class="section-lead">国際化対応の最重要原則を 1 点に集約します。ユーザー向けテキストはすべて i18n キーで参照し、画面・コンポーネントへの直接文字列のハードコードは禁止します。</p>
 <h2 id="4-関連設計">4. 関連設計</h2>
-<table>
-<thead>
-<tr>
-<th>種別</th>
-<th>参照先</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>要件</td>
-<td><a href="../01_要件定義/index.html">../01_要件定義/index.html</a></td>
-</tr>
-<tr>
-<td>基本設計</td>
-<td><a href="../02_基本設計/index.html">../02_基本設計/index.html</a></td>
-</tr>
-<tr>
-<td>画面設計</td>
-<td><a href="../02_基本設計/01_画面設計.html">../02_基本設計/01_画面設計.html</a></td>
-</tr>
-<tr>
-<td>メッセージ一覧</td>
-<td><a href="../02_基本設計/06_メッセージ一覧.html">../02_基本設計/06_メッセージ一覧.html</a></td>
-</tr>
-<tr>
-<td>運用設計</td>
-<td><a href="../04_運用設計/index.html">../04_運用設計/index.html</a></td>
-</tr>
-<tr>
-<td>関連 DD</td>
-<td><a href="DD01_アカウント・ユーザー管理.html">DD01_アカウント・ユーザー管理.html</a></td>
-</tr>
-</tbody>
-</table>
+<p class="section-lead">本 DD と関わりの深い設計書を示します。要件は <a href="../01_要件定義/index.html">要件定義</a>、上位方針は <a href="../02_基本設計/index.html">基本設計</a> を正本とし、画面側の規約は <a href="../02_基本設計/01_画面設計/index.html">画面設計</a> と <a href="../02_基本設計/06_メッセージ一覧.html">メッセージ一覧</a>、運用面は <a href="../04_運用設計/index.html">運用設計</a> を参照します。関連する詳細設計は <a href="DD01_アカウント・ユーザー管理.html">DD01 アカウント・ユーザー管理</a> です。</p>
 <h2 id="5-テスト観点">5. テスト観点</h2>
+<p class="section-lead">アクセシビリティ・国際化が継続して満たされることを保証するテスト観点を示します。次の表は、自動 / 単体 / 結合などの観点ごとに検証内容を整理したものです。</p>
 <table>
 <thead>
 <tr>
@@ -382,27 +326,27 @@
 </tbody>
 </table>
 <h2 id="6-未確定事項確認事項">6. 未確定事項・確認事項</h2>
+<div class="callout tip"><i class="bi bi-lightbulb"></i><div><span class="c-title">TBD-DD14-001(優先度: 中 / 未確定: フロントリード)</span><code>i18n-lint</code> 等の翻訳カタログ検証ツール選定が未確定です。その他の項目は v1.0 リリース時点で確定済みです。</div></div>
+
+<h2 id="更新履歴">更新履歴</h2>
 <table>
 <thead>
 <tr>
-<th>確認事項ID</th>
-<th>確認内容</th>
-<th>優先度</th>
-<th>ステータス</th>
+<th>版数</th>
+<th>更新日</th>
+<th>内容</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>TBD-DD14-001</td>
-<td><code>i18n-lint</code> 等の翻訳カタログ検証ツール選定</td>
-<td>中</td>
-<td>未確定（フロントリード）</td>
+<td>v1.1</td>
+<td>2026-06-17</td>
+<td>設計書シンプルテンプレ v2 へ移行(文書情報表を要約ブロック + doc-meta へ統合、各節に section-lead を追加、関連設計をインラインリンク化、未確定事項を callout 化)。アクセシビリティ・国際化は基準・対応表が主体でありフローが無いためシーケンス図は追加せず。識別子・値の変更なし。</td>
 </tr>
 <tr>
-<td>-</td>
-<td>その他は v1.0 リリース時点で確定済み</td>
-<td>低</td>
-<td>確認済</td>
+<td>v1.1</td>
+<td>2026-05-17</td>
+<td>初版作成。</td>
 </tr>
 </tbody>
 </table>

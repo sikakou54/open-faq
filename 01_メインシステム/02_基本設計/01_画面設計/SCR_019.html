@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCR-019 プロジェクト連絡先メール確認完了 | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<link rel="stylesheet" href="../../../assets/css/screen-mock.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@1.17.0/dist/umd/lucide.min.js"></script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/01_画面設計/SCR_019.html">
+<article class="content" id="content">
+<h1 id="scr-019-プロジェクト連絡先メール確認完了">SCR-019 プロジェクト連絡先メール確認完了</h1>
+
+<aside class="page-summary">
+<p class="ps-lead"><strong>このページは、プロジェクト連絡先メールの確認リンク(トークン)から到達する確認完了ページ SCR-019 を定義します。</strong> 画面概要 / 画面遷移図 / 画面レイアウト / 画面項目定義 / 入出力一覧 / 画面イベント一覧 の 6 セクションで記述します。</p>
+</aside>
+<p class="doc-meta"><span><b>版数</b> v1.0</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<h2 id="1-画面概要">1. 画面概要</h2>
+<p class="section-lead">プロジェクト連絡先メールの確認リンクからトークン認証で到達する確認完了ページです。トークン検証成功時に連絡先メールアドレスの所有権を確定し、結果(完了 / 期限切れ / 既使用)を表示するのみで、入力フォームは持ちません。</p>
+<table>
+<thead>
+<tr>
+<th>画面 ID</th>
+<th>画面名</th>
+<th>機能概要</th>
+</tr>
+</thead>
+<tbody>
+<tr><td id="SCR-019"><code>SCR-019</code></td><td>プロジェクト連絡先メール確認完了</td><td>連絡先メールの確認トークンを検証し、完了 / 期限切れ / 既使用の結果を表示する</td></tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>関連</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>FR / BR</td><td><a href="../../01_要件定義/FR03_プロジェクト管理.html#FR-033a">FR-033a</a>, <a href="../../01_要件定義/FR03_プロジェクト管理.html#FR-033c">FR-033c</a>, <a href="../../01_要件定義/FR12_ウィジェット.html#FR-150">FR-150</a>〜<a href="../../01_要件定義/FR12_ウィジェット.html#FR-156">FR-156</a> / —</td></tr>
+<tr><td>関連画面</td><td><a href="SCR_004-M1.html"><code>SCR-004-M1</code> プロジェクト作成 / 編集モーダル</a></td></tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr>
+<th>ステークホルダ</th>
+<th>対象</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>対象ユーザー(トークン)</td><td>◯</td></tr>
+</tbody>
+</table>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>本画面は認証前(連絡先確認トークンによる本人確認)に表示されるため権限は不要です。到達者は連絡先メールアドレスの所有者であり、オーナーや管理者である必要はなく、第三者(共有メールアドレス担当者など)でも構いません。アカウント作成は不要で、未認証画面のためサイドメニューには表示しません。確認リンクの有効期限は 24 時間です。</div></div>
+
+<h2 id="2-画面遷移図">2. 画面遷移図</h2>
+<p class="section-lead">本画面への流入と本画面からの遷移を、画面 ID・画面名とイベント(操作)で示します。</p>
+<pre class="mermaid"><code>flowchart LR
+  S4["SCR-004-M1 プロジェクト編集モーダル"]
+  S1["SCR-019 連絡先メール確認完了"]
+  S4 -- "確認メール送信 → メール内リンク" --&gt; S1
+  S1 -- "閉じる" --&gt; S1
+</code></pre>
+
+<h2 id="3-画面レイアウト">3. 画面レイアウト</h2>
+<div class="layout-embed">
+<div class="le-cap">連絡先メール確認完了(SCR-019)</div>
+<div class="scr-mock"><div class="screen" id="scr-019" role="region" aria-labelledby="scr-019-title"><div class="role-screen-note"><strong>外部確認ステップ:</strong> 実際の到達者は連絡先メール所有者です。プロジェクト管理者は完了状態を確認します。</div>
+<div class="screen-header"><div><span class="scr-id">SCR-019</span><span class="scr-name" id="scr-019-title">プロジェクト連絡先メール確認完了(TPL-PROJECT_CONTACT_VERIFY 着地 / 共通領域)</span></div><div class="scr-user">利用者: プロジェクト連絡先メール所有者(未認証 / `access_tokens.purpose='contact_verify'` 有効時のみ到達可能、アカウント不要)</div></div>
+<div class="public-form-layout"> <div class="simple-header"><i data-lucide="mail"></i>お問い合わせ先メール確認 — open-faq</div> <div style="width: 480px;">
+  <!-- (a) 完了状態 -->
+  <div class="auth-card xwide" style="width: auto;">
+    <h3>✓ お問い合わせ先メールアドレスを確認しました</h3>
+    <div class="alert-bar success" role="status">プロジェクト「サポートサイト」のお問い合わせ先メールアドレスを確認しました。FAQ ウィジェット上にお問い合わせ先として表示されるようになります</div>
+    <button class="btn" style="width: 100%; margin-top: 8px;">閉じる</button>
+  </div>
+  <!-- (b) トークン期限切れ -->
+  <div class="auth-card xwide" style="width: auto; margin-top: 12px;">
+    <h3>確認リンクの有効期限が切れています</h3>
+    <div class="alert-bar danger" role="alert">確認リンクが期限切れ、または無効です(有効期限 24 時間)。プロジェクトのオーナーまたは管理者に再送をご依頼ください</div>
+  </div>
+  <!-- (c) 既使用 -->
+  <div class="auth-card xwide" style="width: auto; margin-top: 12px;">
+    <h3>このリンクは既に使用済みです</h3>
+    <div class="alert-bar warn" role="status">このリンクは既に使用済みです。確認は完了しています</div>
+  </div>
+</div> <div class="simple-footer">FAQ AI ウィジェット SaaS — open-faq</div> </div>
+<div class="note" style="margin-top: 10px;"><strong>備考(v1.7 新規)</strong><ul style="margin: 4px 0 0; padding-left: 18px;"><li>未認証画面(連絡先確認トークン認証のみ、Cookie セッションなし)。URL = <code>/auth/contact-verify?token=...</code></li><li>TPL-PROJECT_CONTACT_VERIFY 確認メールのリンクから到達(`access_tokens.purpose='contact_verify'`、24h、`meta.projectId` を JSON 保持)</li><li>「閉じる」押下前にバックグラウンドで `POST /auth/contact-verifications/{token}` を実行 → 同一トランザクションで `UPDATE projects SET contact_email_verified_at=?` + `consumeToken('contact_verify')`(FR-033a)</li><li>連絡先メール所有者はアカウントを持つ必要がない(第三者の共有メールアドレスでも本フローを進められる)。入力フォームを持たない確認専用ページ</li><li>サイドメニュー除外(未認証画面のため、01_画面設計/index.html §4.4.5)</li></ul></div>
+</div></div>
+</div>
+
+<h2 id="4-画面項目定義">4. 画面項目定義</h2>
+<p class="section-lead">本画面の表示項目を定義します。項目の正本は本表です。確認専用ページのため入力フォームはなく、操作は「閉じる」のみです。</p>
+<table>
+<thead>
+<tr>
+<th>項目 ID</th>
+<th>項目</th>
+<th>入出力</th>
+<th>種類</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr><td id="IT-01"><code>IT-01</code></td><td>確認完了画面</td><td>出力</td><td>SUCCESS ステート</td><td>トークン検証成功時:「プロジェクト「{projectName}」のお問い合わせ先メールアドレスを確認しました。FAQ ウィジェット上にお問い合わせ先として表示されるようになります」+ チェックマークアイコン</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>トークン期限切れ画面</td><td>出力</td><td>ERROR ステート</td><td>API が 410 <code>E-AUTH-TOKEN-EXPIRED</code> を返した場合:「確認リンクが期限切れ、または無効です(有効期限 24 時間)。プロジェクトのオーナーまたは管理者に再送をご依頼ください」</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>既使用画面</td><td>出力</td><td>ERROR ステート</td><td>API が 410 <code>E-AUTH-TOKEN-USED</code> を返した場合:「このリンクは既に使用済みです。確認は完了しています」</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>閉じる</td><td>入力</td><td>ボタン</td><td><code>window.close()</code> または静的なランディングメッセージ表示(認証コンソールへの遷移は行わない。未認証ユーザーは戻り先がないため)</td></tr>
+</tbody>
+</table>
+
+<h2 id="5-入出力一覧">5. 入出力一覧</h2>
+<p class="section-lead">本画面が更新するテーブルと、呼び出す API の一覧です。テーブルの正本は <a href="../03_テーブル設計.html">03_テーブル設計</a>、API の正本は <a href="../02_API設計.html#519-post-authcontact-verificationstokenプロジェクト連絡先メール確認">02_API設計 §5.1.9</a> です。</p>
+<table>
+<thead>
+<tr>
+<th rowspan="2">入出力名</th>
+<th rowspan="2">種別</th>
+<th rowspan="2">I/O</th>
+<th colspan="4">アクセス種別(CRUD)</th>
+<th rowspan="2">備考</th>
+</tr>
+<tr>
+<th>C</th>
+<th>R</th>
+<th>U</th>
+<th>D</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>プロジェクト</td><td>テーブル</td><td>出力</td><td>—</td><td>—</td><td>◯</td><td>—</td><td>連絡先メール確認日時の設定(<code>contact_email_verified_at</code>)。<code>projects</code>(<a href="../03_テーブル設計.html#36-projects">テーブル設計 3.6</a>)</td></tr>
+<tr><td>アクセストークン</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td>トークン検証(<code>purpose='contact_verify'</code>)と消費(<code>used_at</code> セット)。<code>access_tokens</code>(<a href="../03_テーブル設計.html#35-access_tokens">テーブル設計 3.5</a>)</td></tr>
+<tr><td>連絡先メール確認</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>トークン検証 → <code>contact_email_verified_at</code> セット。<code>POST /auth/contact-verifications/{token}</code>(<a href="../02_API設計.html#519-post-authcontact-verificationstokenプロジェクト連絡先メール確認">API 設計 5.1.9</a>)</td></tr>
+</tbody>
+</table>
+
+<h2 id="6-画面イベント一覧">6. 画面イベント一覧</h2>
+<p class="section-lead">本画面で発生するイベントと発生タイミング・概要の一覧です。</p>
+<table>
+<thead>
+<tr>
+<th>イベント ID</th>
+<th>イベント</th>
+<th>発生タイミング</th>
+<th>概要</th>
+<th>関連項目</th>
+</tr>
+</thead>
+<tbody>
+<tr><td><code>EV-01</code></td><td>確認実行</td><td>確認リンクからの URL 訪問時</td><td><code>POST /auth/contact-verifications/{token}</code> でトークンを検証。200 で完了画面、410(期限切れ / 既使用)で各エラー画面へ分岐</td><td><a href="#IT-01">IT-01</a>, <a href="#IT-02">IT-02</a>, <a href="#IT-03">IT-03</a></td></tr>
+<tr><td><code>EV-02</code></td><td>閉じる</td><td>「閉じる」押下時</td><td><code>window.close()</code> または静的なランディングメッセージを表示</td><td><a href="#IT-04">IT-04</a></td></tr>
+</tbody>
+</table>
+
+<div class="callout important"><i class="bi bi-pin-angle"></i><div><span class="c-title">サーバ側処理の正本</span>確認 API は同一トランザクションで <code>verifyToken</code> → <code>UPDATE projects SET contact_email_verified_at=now()</code> → <code>consumeToken</code> → 監査記録(<code>project.contact_email_verified</code>)を行います。トークン検証の正本は <a href="../08_認証・認可設計.html">08_認証・認可設計 §4</a>、メールテンプレート(TPL-PROJECT_CONTACT_VERIFY)の正本は <a href="../11_メール設計.html">11_メール設計</a>、メッセージ(MSG-SCR-019-*)の正本は <a href="../06_メッセージ一覧.html">06_メッセージ一覧</a>。</div></div>
+
+</article>
+<script>(function(){function r(){try{window.lucide&&lucide.createIcons({attrs:{'aria-hidden':'true',focusable:'false'}});}catch(e){}}if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',r);}else{r();}window.addEventListener('load',r);})();</script>
+</body>
+</html>

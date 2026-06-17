@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCR-020 プライバシーポリシー閲覧 | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<link rel="stylesheet" href="../../../assets/css/screen-mock.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@1.17.0/dist/umd/lucide.min.js"></script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/01_画面設計/SCR_020.html">
+<article class="content" id="content">
+<h1 id="scr-020-プライバシーポリシー閲覧">SCR-020 プライバシーポリシー閲覧</h1>
+
+<aside class="page-summary">
+<p class="ps-lead"><strong>このページは、プライバシーポリシーの最新版を 1 枚のページとして閲覧する静的閲覧画面 SCR-020 を定義します。</strong> 画面概要 / 画面遷移図 / 画面レイアウト / 画面項目定義 / 入出力一覧 / 画面イベント一覧 の 6 セクションで記述します。</p>
+</aside>
+<p class="doc-meta"><span><b>版数</b> v1.0</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<h2 id="1-画面概要">1. 画面概要</h2>
+<p class="section-lead">プライバシーポリシーの最新版のみを 1 枚のページとして表示する閲覧専用画面です。上部に同意状態バッジを置き、その下に全文を連続表示します。目次・章ナビ・過去バージョン履歴・差分表示は設けません。利用規約は SCR-010 に分離します。</p>
+<table>
+<thead>
+<tr>
+<th>画面 ID</th>
+<th>画面名</th>
+<th>機能概要</th>
+</tr>
+</thead>
+<tbody>
+<tr><td id="SCR-020"><code>SCR-020</code></td><td>プライバシーポリシー閲覧</td><td>プライバシーポリシーの最新版の全文表示と同意状態バッジ表示を行う</td></tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>関連</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>FR / BR</td><td><a href="../../01_要件定義/FR13_プライバシー・データ管理.html#FR-160">FR-160</a>, <a href="../../01_要件定義/FR13_プライバシー・データ管理.html#FR-164">FR-164</a>, <a href="../../01_要件定義/FR13_プライバシー・データ管理.html#FR-168">FR-168</a> / —</td></tr>
+<tr><td>関連画面</td><td><a href="SCR_010.html"><code>SCR-010</code> 利用規約閲覧</a> / <a href="SCR_015.html"><code>SCR-015</code> 規約再同意</a></td></tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr>
+<th>ステークホルダ</th>
+<th>対象</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>全利用者(認証前可)</td><td>◯</td></tr>
+</tbody>
+</table>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>本画面は認証不要 URL を提供し、認証前でも閲覧できます(権限は不要)。同意状態バッジはログイン済みの場合のみ表示します。ウィジェット内には表示せず、ウィジェット利用者向けの画面図・導線には含めません。</div></div>
+
+<h2 id="2-画面遷移図">2. 画面遷移図</h2>
+<p class="section-lead">本画面からの画面遷移を、画面 ID・画面名とイベント(操作)で示します。</p>
+<pre class="mermaid"><code>flowchart LR
+  S1["SCR-020 プライバシーポリシー閲覧"]
+  S2["SCR-010 利用規約閲覧"]
+  S3["SCR-015 規約再同意"]
+  S1 -- "利用規約へ" --&gt; S2
+  S1 -- "未同意バッジ / 再同意へ" --&gt; S3
+</code></pre>
+
+<h2 id="3-画面レイアウト">3. 画面レイアウト</h2>
+<div class="layout-embed">
+<div class="le-cap">プライバシーポリシー閲覧(SCR-020)</div>
+<div class="scr-mock"><div class="screen" id="scr-020" role="region" aria-labelledby="scr-020-title"> <div class="screen-header"> <div><span class="scr-id">SCR-020</span><span class="scr-name" id="scr-020-title">プライバシーポリシー閲覧</span></div> <div class="scr-user">利用者: 全利用者(認証不要 URL も提供)</div> </div> <div class="app-layout"> <div class="app-header" role="banner"> <div class="left"> <span class="logo" role="link" aria-label="open-faq ホーム">open-faq</span> <span class="ws-switcher" role="button" aria-haspopup="menu" aria-label="管理範囲を切り替え(現在地: サポートサイト)">サポートサイト <i data-lucide="folder"></i></span> </div> <div class="right"> <span class="bell" role="button" aria-label="お知らせ通知ベル(未読 3 件)"><i data-lucide="bell"></i><span class="badge" aria-hidden="true">3</span></span> <span class="user-menu" role="button" aria-haspopup="menu" aria-label="アカウントメニュー(admin@example.com)">▼ admin@example.com</span> </div> </div> <div class="app-sidebar" role="navigation" aria-label="メインナビゲーション"> <div class="item" role="link"><i data-lucide="home"></i>概要</div> <div class="group" role="heading" aria-level="2">対応</div> <div class="item" role="link"><i data-lucide="inbox"></i>要対応の質問<span class="badge">87</span></div>  <div class="group" role="heading" aria-level="2">通知</div> <div class="item" role="link"><i data-lucide="bell"></i>お知らせ<span class="badge">3</span></div> <div class="group" role="heading" aria-level="2">コンテンツ</div> <div class="item" role="link"><i data-lucide="book-open"></i>FAQ</div>  <div class="item" role="link"><i data-lucide="puzzle"></i>ウィジェット</div> <div class="group" role="heading" aria-level="2">プロジェクト</div> <div class="item" role="link"><i data-lucide="users"></i>メンバー</div> <div class="item" role="link"><i data-lucide="gauge"></i>利用量と上限</div>  <div class="group" role="heading" aria-level="2">共通</div> <div class="item" role="link"><i data-lucide="scroll-text"></i>利用規約</div> <div class="item active" role="link" aria-current="page"><i data-lucide="shield"></i>プライバシーポリシー</div> </div> <div class="app-main" role="main" aria-label="メインコンテンツ"> <nav class="breadcrumb" aria-label="現在位置"><a>ホーム</a> / <span aria-current="page">プライバシーポリシー</span></nav> <header class="page-header"><div><h1>プライバシーポリシー</h1><p class="page-description">最新のプライバシーポリシーを確認できます</p></div><div><span class="badge-pill green">プライバシーポリシーに同意済み(2026-04-01)</span></div></header> <div class="panel"> <div style="font-size: 10px; line-height: 1.6;"> <h3 style="font-size: 12px; margin: 8px 0 4px;">1. 個人情報の取得</h3> <p>本サービスは、利用者およびお問い合わせ利用者から以下の個人情報を取得します...</p> <h3 style="font-size: 12px; margin: 8px 0 4px;">2. 利用目的</h3> <p>取得した個人情報は本サービスの提供および運用に必要な範囲で利用します...</p> <h3 style="font-size: 12px; margin: 8px 0 4px;">3. 第三者提供</h3> <p>当社は、法令に基づく場合を除き、あらかじめ本人の同意を得ることなく個人情報を第三者に提供しません...</p> </div> </div> </div> </div> </div></div>
+</div>
+
+<h2 id="4-画面項目定義">4. 画面項目定義</h2>
+<p class="section-lead">本画面の表示項目を定義します。項目の正本は本表です。閲覧専用画面のため入力項目はありません。</p>
+<table>
+<thead>
+<tr>
+<th>項目 ID</th>
+<th>項目</th>
+<th>入出力</th>
+<th>種類</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr><td id="IT-01"><code>IT-01</code></td><td>パンくず</td><td>出力</td><td>Breadcrumb</td><td>「ホーム / プライバシーポリシー」</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>同意状態バッジ</td><td>出力</td><td>バッジ(上部固定)</td><td>「プライバシーポリシーに同意済み({同意日})」(緑)/「プライバシーポリシー 未同意」(赤、SCR-015 へのリンク併記)。<code>doc_type='privacy_policy'</code> 最新版に対する同意状態のみ。ログイン済み時のみ表示</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>最新版の全文</td><td>出力</td><td>リッチテキスト表示(sanitize 済)</td><td><code>GET /privacy/current</code> の最新版のみを 1 枚のページに連続表示。目次・章ナビ・セクション分け・過去バージョン履歴・差分表示は設けない</td></tr>
+</tbody>
+</table>
+
+<h2 id="5-入出力一覧">5. 入出力一覧</h2>
+<p class="section-lead">本画面が読み取るテーブルと、呼び出す API の一覧です。テーブルの正本は <a href="../03_テーブル設計.html">03_テーブル設計</a>、API の正本は <a href="../02_API設計.html#591a-get-privacycurrentプライバシーポリシー-最新版">02_API設計 §5.9.1a</a> です。</p>
+<table>
+<thead>
+<tr>
+<th rowspan="2">入出力名</th>
+<th rowspan="2">種別</th>
+<th rowspan="2">I/O</th>
+<th colspan="4">アクセス種別(CRUD)</th>
+<th rowspan="2">備考</th>
+</tr>
+<tr>
+<th>C</th>
+<th>R</th>
+<th>U</th>
+<th>D</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>規約バージョン</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td>プライバシーポリシー最新版(<code>doc_type='privacy_policy'</code>)の取得。<code>terms_versions</code>(<a href="../03_テーブル設計.html#330-terms_versions">テーブル設計 3.30</a>)</td></tr>
+<tr><td>規約同意</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td>同意状態バッジ用の同意有無照合(ログイン時のみ)。<code>terms_agreements</code>(<a href="../03_テーブル設計.html#331-terms_agreements">テーブル設計 3.31</a>)</td></tr>
+<tr><td>プライバシーポリシー最新版取得</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /privacy/current</code>(<a href="../02_API設計.html#591a-get-privacycurrentプライバシーポリシー-最新版">API 設計 5.9.1a</a>)</td></tr>
+</tbody>
+</table>
+
+<h2 id="6-画面イベント一覧">6. 画面イベント一覧</h2>
+<p class="section-lead">本画面で発生するイベントと発生タイミング・概要の一覧です。</p>
+<table>
+<thead>
+<tr>
+<th>イベント ID</th>
+<th>イベント</th>
+<th>発生タイミング</th>
+<th>概要</th>
+<th>関連項目</th>
+</tr>
+</thead>
+<tbody>
+<tr><td><code>EV-01</code></td><td>ポリシー初期表示</td><td>画面遷移・リロード時</td><td><code>GET /privacy/current</code> で最新版全文を取得し表示。ログイン済みなら同意状態バッジを併せて表示</td><td><a href="#IT-01">IT-01</a>, <a href="#IT-02">IT-02</a>, <a href="#IT-03">IT-03</a></td></tr>
+<tr><td><code>EV-02</code></td><td>再同意へ遷移</td><td>未同意バッジ内リンク押下時</td><td>SCR-015 規約再同意へ遷移</td><td><a href="#IT-02">IT-02</a></td></tr>
+</tbody>
+</table>
+
+</article>
+<script>(function(){function r(){try{window.lucide&&lucide.createIcons({attrs:{'aria-hidden':'true',focusable:'false'}});}catch(e){}}if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',r);}else{r();}window.addEventListener('load',r);})();</script>
+</body>
+</html>

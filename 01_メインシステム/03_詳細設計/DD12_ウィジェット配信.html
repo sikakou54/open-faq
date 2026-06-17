@@ -13,50 +13,15 @@
 <body data-page-id="01_メインシステム/03_詳細設計/DD12_ウィジェット配信.html">
 <article class="content" id="content">
 <h1 id="dd12-ウィジェット配信">DD12: ウィジェット配信</h1>
-<h2 id="0-文書情報">0. 文書情報</h2>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>内容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>文書名</td>
-<td>DD12: ウィジェット配信</td>
-</tr>
-<tr>
-<td>詳細設計ID</td>
-<td>DD12</td>
-</tr>
-<tr>
-<td>対象システム</td>
-<td>FAQ AI ウィジェット SaaS / メインシステム</td>
-</tr>
-<tr>
-<td>関連機能ID</td>
-<td>FR-150〜156, FR-156a〜d（ウィジェット設定 / 配信 / エンドユーザー向けチャット UI）/ FR-070〜077（未解決質問）/ AC-015 / AC-025 / AC-033</td>
-</tr>
-<tr>
-<td>作成日</td>
-<td>2026-05-17</td>
-</tr>
-<tr>
-<td>版数</td>
-<td>v1.6</td>
-</tr>
-<tr>
-<td>ステータス</td>
-<td>承認済</td>
-</tr>
-<tr>
-<td>更新履歴</td>
-<td>v1.6(2026-06-14): 丸型ランチャーバッジからチャット UI を開閉する仕様を追加 / v1.5(2026-06-14): 未解決返信から問い合わせID表示を削除 / v1.4(2026-06-14): エンドユーザー向けヘッダーからメニューと規約導線を削除</td>
-</tr>
-</tbody>
-</table>
+
+<aside class="page-summary">
+<p class="ps-lead"><strong>このページは、エンドユーザー向けウィジェット(<code>widget.js</code> / iframe)と <code>worker-widget-api</code> による配信・チャット UI の実装方針を定義します。</strong> bootstrap での公開鍵・許可ドメイン検証、質問送信(<code>/ask</code>)から AI 応答・未解決質問登録までのリクエストフロー、性能目標・レート制限・質問受付停止・ウィジェット UI 状態遷移を扱います(FR-150〜156 / FR-156a〜d / FR-070〜077 / FR-194 / AC-015 / AC-025 / AC-033)。</p>
+</aside>
+
+<p class="doc-meta"><span><b>版数</b> v1.6</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
 <h2 id="1-対象範囲">1. 対象範囲</h2>
+<p class="section-lead">本 DD が実装方針を定める機能・画面・API・デプロイ単位を示します。次の表は、ウィジェット配信に関わる対象群とその種別を一望できるよう整理したものです。</p>
 <table>
 <thead>
 <tr>
@@ -99,6 +64,7 @@
 </tbody>
 </table>
 <h2 id="2-収録ロジック対応章">2. 収録ロジック・対応章</h2>
+<p class="section-lead">本 DD が詳細化するロジックの出所(基本設計の元章)と概要を示します。次の表は、コンポーネント責務・ウィジェット API リクエストフロー・モジュール構成・応答経路最適化が基本設計のどの章から派生したかをまとめたものです。</p>
 <table>
 <thead>
 <tr>
@@ -141,7 +107,10 @@
 </tbody>
 </table>
 <h2 id="3-詳細設計本文">3. 詳細設計本文</h2>
+<p class="section-lead">ウィジェット API のリクエストフロー、配信構成、実装モジュール、性能目標、応答経路最適化、レート制限・質問受付停止、ウィジェット UI 状態遷移を順に定義します。以降の各小節は、bootstrap から質問送信・AI 応答までの処理とその最適化・制御を扱います。</p>
+
 <h3 id="31-ウィジェット-api-リクエストフロー">3.1 ウィジェット API リクエストフロー</h3>
+<p class="section-lead">ページロード時の bootstrap(公開鍵 <code>pk_live_xxx</code> と Origin 検証 → セッション発行)から、質問送信(<code>/ask</code>)を経て AI 応答または未解決質問登録に至るまでの流れを定義します。次のシーケンス図で、許可ドメイン判定の分岐と回答可能 / 未解決の分岐を示します。</p>
 <pre class="mermaid"><code>sequenceDiagram
   participant E as エンドユーザー
   participant W as widget.js (iframe 内)
@@ -153,31 +122,64 @@
   E-&gt;&gt;W: ページ表示時にロード
   W-&gt;&gt;API: POST /widget/v1/bootstrap (pk_live_xxx, Origin)
   API-&gt;&gt;K: GET allowed_domains:{project_id}
-  API-&gt;&gt;D: SELECT projects (キャッシュミス時)
-  API-&gt;&gt;K: SET widget-session:{sid} (TTL 1h)
-  API--&gt;&gt;W: { session_token, project_config }
-  W--&gt;&gt;E: 右下に丸型ランチャーバッジを表示
+  K--&gt;&gt;API: 許可ドメイン一覧(ヒット / ミス)
+  opt キャッシュミス
+    API-&gt;&gt;D: SELECT projects
+    D--&gt;&gt;API: プロジェクト設定
+  end
+  alt Origin が許可ドメイン
+    API-&gt;&gt;K: SET widget-session:{sid} (TTL 1h)
+    API--&gt;&gt;W: { session_token, project_config }
+    W--&gt;&gt;E: 右下に丸型ランチャーバッジを表示
+  else Origin が不許可
+    API--&gt;&gt;W: 403 (ウィジェット非表示)
+  end
   E-&gt;&gt;W: バッジをクリック / Enter / Space
   W--&gt;&gt;E: チャット UI を展開
   E-&gt;&gt;W: 質問入力 → 送信
   W-&gt;&gt;API: POST /widget/v1/ask { question, session_token }
   API-&gt;&gt;D: FTS5 検索 (faq_search_fts)
-  API-&gt;&gt;AI: 推論（質問 + FAQ 抜粋）
+  D--&gt;&gt;API: FAQ 候補(最大 5 件)
   API-&gt;&gt;K: GET ai_threshold:{contract_owner_user_id}:{project_id}
+  K--&gt;&gt;API: しきい値
+  API-&gt;&gt;AI: 推論（質問 + FAQ 抜粋）
+  AI--&gt;&gt;API: 推論結果(スコア / 回答)
   API-&gt;&gt;D: INSERT question_logs (metering_billable=...)
   alt 回答可能
     API--&gt;&gt;W: { type: &quot;answered&quot;, answer, ... }
+    W--&gt;&gt;E: AI 回答を会話履歴へ追加
   else 未解決
     API-&gt;&gt;D: INSERT inquiries
     API--&gt;&gt;W: { type: &quot;unanswered&quot;, inquiryId, inquiryCode, contactEmail }
     W--&gt;&gt;E: 回答不能メッセージ + 連絡先表示（問い合わせ ID は描画しない）
   end</code></pre>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">公開鍵と Origin の検証</span>bootstrap は公開鍵 <code>pk_live_xxx</code> の検証と Origin が許可ドメインに一致するかを確認し、一致時のみ <code>session_token</code> を発行する。以降の <code>/ask</code> は session_token で認証する。検証ロジックの正本は基本設計(<a href="../02_基本設計/08_認証・認可設計.html">認証・認可設計</a>)。</div></div>
+
 <h3 id="32-配信構成">3.2 配信構成</h3>
-<ul>
-<li><strong><code>pages-widget</code></strong>: <code>widget.js</code> および iframe コンテンツ配信。CSP / HSTS 設定。</li>
-<li><strong><code>worker-widget-api</code></strong>: ウィジェット用 API（<code>/widget/v1/*</code>）。bootstrap → session token 認証。</li>
-</ul>
+<p class="section-lead">ウィジェット配信を担う 2 つのデプロイ単位の責務を示します。静的配信(<code>pages-widget</code>)と API(<code>worker-widget-api</code>)を分離します。</p>
+<table>
+<thead>
+<tr>
+<th>デプロイ単位</th>
+<th>責務</th>
+<th>補足</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pages-widget</code></td>
+<td><code>widget.js</code> および iframe コンテンツ配信</td>
+<td>CSP / HSTS 設定</td>
+</tr>
+<tr>
+<td><code>worker-widget-api</code></td>
+<td>ウィジェット用 API（<code>/widget/v1/*</code>）</td>
+<td>bootstrap → session token 認証</td>
+</tr>
+</tbody>
+</table>
 <h3 id="33-実装モジュール構成">3.3 実装モジュール構成</h3>
+<p class="section-lead"><code>worker-widget-api</code> のディレクトリ構成を示します。次のツリーは、ルート・ハンドラ・ミドルウェア(公開鍵検証 / session 検証 / レート制限)の対応です。</p>
 <pre><code>worker-widget-api/src/
 ├── index.ts
 ├── routes/
@@ -195,6 +197,7 @@
 │   └── audit.ts
 └── lib/</code></pre>
 <h3 id="34-性能目標nfr-101--nfr-102">3.4 性能目標（NFR-101 / NFR-102）</h3>
+<p class="section-lead">各ウィジェット API の p95 応答目標と達成方策を定義します。次の表は、bootstrap と ask(FAQ ヒット / ミス)の目標値と KV キャッシュ・FTS5 等の達成手段の対応です。</p>
 <table>
 <thead>
 <tr>
@@ -222,12 +225,14 @@
 </tbody>
 </table>
 <h3 id="35-ウィジェット応答経路の最適化">3.5 ウィジェット応答経路の最適化</h3>
+<p class="section-lead">応答性能を満たすための KV キャッシュ・埋め込み事前計算・AI モデル選択の方針を示します。これらにより bootstrap / ask の p95 目標を達成します。</p>
 <ul>
 <li>KV 60s キャッシュ: <code>project_key</code>, <code>allowed_domains</code>, <code>ai_threshold</code></li>
 <li>埋め込みベクトル: FAQ 公開時に事前計算、KV または <code>faq_embeddings</code> テーブル保存</li>
 <li>AI モデル: <code>@cf/meta/llama-3.1-8b-instruct</code> を第一選択（早い）、品質要件で <code>llama-3.1-70b</code> に切替可能</li>
 </ul>
 <h3 id="36-ai-推論タイムアウト--フォールバック">3.6 AI 推論タイムアウト + フォールバック</h3>
+<p class="section-lead">AI 推論が 5000ms を超えた場合に <code>unanswered</code>(<code>reason='ai_timeout'</code>)へフォールバックする実装を定義します。次の擬似コードは <code>Promise.race</code> によるタイムアウト処理です。</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> inferencePromise <span class="op">=</span> provider<span class="op">.</span><span class="fu">answer</span>(input)<span class="op">;</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> timeoutPromise <span class="op">=</span> <span class="kw">new</span> <span class="bu">Promise</span><span class="op">&lt;</span><span class="dt">never</span><span class="op">&gt;</span>((_<span class="op">,</span> reject) <span class="kw">=&gt;</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="pp">setTimeout</span>(() <span class="kw">=&gt;</span> <span class="fu">reject</span>(<span class="kw">new</span> <span class="bu">Error</span>(<span class="st">&#39;AI_TIMEOUT&#39;</span>))<span class="op">,</span> <span class="dv">5000</span>)<span class="op">,</span></span>
@@ -243,8 +248,10 @@
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">throw</span> e<span class="op">;</span></span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h3 id="37-レート制限fr-194--ac-033">3.7 レート制限（FR-194 / AC-033）</h3>
+<p class="section-lead">ウィジェット質問の契約単位レート制限と同時並列上限を定義します。レート制限ロジックの正本は DD11 とし、本節は適用値のみ示します。</p>
 <p>ウィジェット質問レートは 50/min（警告）/ 60/min（拒否、429 <code>RATE_LIMITED</code> + Retry-After 付）。同時並列はオーナー 10 / グローバル 200。詳細は <a href="DD11_利用量計測・課金.html">DD11_利用量計測・課金.html</a> §3.1 参照。</p>
 <h3 id="37a-質問受付停止時のウィジェット応答fr-122--fr-136">3.7a 質問受付停止時のウィジェット応答（FR-122 / FR-136）</h3>
+<p class="section-lead">上限件数到達(FR-122)または支払方法ゲート(FR-136)に該当するプロジェクトのウィジェット質問を、AI 推論・FTS5 検索を実行せず即時停止応答する仕様を定義します。次の表で 2 つの停止契機の条件と <code>reason</code>、続けて停止応答の共通仕様を示します。</p>
 <p><code>POST /widget/v1/ask</code> の処理冒頭で、公開キーから解決した <code>project_id</code> について以下 <strong>2 つの契機のいずれか</strong> を満たす場合、<strong>AI 推論・FTS5 検索を実行せず</strong> 即時に停止応答する(KV <code>usage-limit:&lt;owner&gt;:&lt;projectId&gt;</code> 30s TTL を参照。判定はプロジェクト単位):</p>
 <table>
 <thead>
@@ -308,7 +315,9 @@
 </table>
 <p>連絡先メール表示は確認済み(<code>projects.contact_email_verified_at IS NOT NULL</code>)のもののみ。停止判定・通知ロジックの正本は上限件数到達 = <a href="DD11_利用量計測・課金.html">DD11_利用量計測・課金.html §3.8</a>、支払方法ゲート = <a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html §3.1.3</a>。</p>
 <h3 id="37b-ウィジェット-ui-状態遷移fr-156ad">3.7b ウィジェット UI 状態遷移（FR-156a〜d）</h3>
+<p class="section-lead">丸型ランチャーバッジによる開閉状態と、回答結果に応じた会話状態の遷移を定義します。以降の 2 つの表で開閉状態(<code>collapsed</code> ↔ <code>expanded</code>)と会話状態(<code>normal</code> / <code>limited</code>)の遷移を示します。</p>
 <h4 id="開閉状態">開閉状態</h4>
+<p class="section-lead">丸型ランチャーバッジの操作による <code>collapsed</code> と <code>expanded</code> の遷移と、各遷移時の UI 処理(会話履歴・入力内容のメモリ保持を含む)を示します。</p>
 <table>
 <thead>
 <tr>
@@ -334,6 +343,7 @@
 </tbody>
 </table>
 <h4 id="会話状態">会話状態</h4>
+<p class="section-lead"><code>/ask</code> の応答(<code>answered</code> / <code>unanswered</code> / 制限 429)に応じた会話状態の遷移と UI 処理を示します。制限 429 では入力・送信を無効化します。</p>
 <table>
 <thead>
 <tr>
@@ -366,47 +376,16 @@
 </table>
 <p>ウィジェットヘッダーは全状態でウィジェットタイトル、受付状態、閉じるボタンのみを表示する。ハンバーガーメニューその他の操作メニュー、および SCR-010 利用規約・SCR-020 プライバシーポリシーへの導線は表示しない。閉じるボタンには <code>aria-label="FAQチャットを閉じる"</code>、丸型ランチャーバッジには <code>aria-label="FAQチャットを開く"</code> を設定する。</p>
 <h3 id="38-関連する横断設計">3.8 関連する横断設計</h3>
+<p class="section-lead">ウィジェット配信が依存する AI 回答・しきい値・監査ログの横断設計を示します。各正本は別 DD を参照します。</p>
 <ul>
 <li>AI 回答: <a href="DD03_AI回答パイプライン.html">DD03_AI回答パイプライン.html</a></li>
 <li>しきい値: <a href="DD04_AIしきい値3階層適用.html">DD04_AIしきい値3階層適用.html</a></li>
 <li>監査ログ: ウィジェットからの操作は <code>widget.ask</code> / <code>widget.session.start</code> 等で記録（PII マスク）</li>
 </ul>
 <h2 id="4-関連設計">4. 関連設計</h2>
-<table>
-<thead>
-<tr>
-<th>種別</th>
-<th>参照先</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>要件</td>
-<td><a href="../01_要件定義/index.html">../01_要件定義/index.html</a></td>
-</tr>
-<tr>
-<td>基本設計</td>
-<td><a href="../02_基本設計/index.html">../02_基本設計/index.html</a></td>
-</tr>
-<tr>
-<td>画面設計</td>
-<td><a href="../02_基本設計/01_画面設計.html">../02_基本設計/01_画面設計.html</a></td>
-</tr>
-<tr>
-<td>API 設計</td>
-<td><a href="../02_基本設計/02_API設計.html">../02_基本設計/02_API設計.html</a></td>
-</tr>
-<tr>
-<td>運用設計</td>
-<td><a href="../04_運用設計/index.html">../04_運用設計/index.html</a></td>
-</tr>
-<tr>
-<td>関連 DD</td>
-<td><a href="DD03_AI回答パイプライン.html">DD03_AI回答パイプライン.html</a> / <a href="DD04_AIしきい値3階層適用.html">DD04_AIしきい値3階層適用.html</a> / <a href="DD11_利用量計測・課金.html">DD11_利用量計測・課金.html</a></td>
-</tr>
-</tbody>
-</table>
+<p class="section-lead">本 DD に関連する正本ドキュメントを示します。要件は <a href="../01_要件定義/index.html">要件定義</a>、画面・API の正本は <a href="../02_基本設計/01_画面設計/index.html">画面設計</a> / <a href="../02_基本設計/02_API設計.html">API 設計</a>、運用面は <a href="../04_運用設計/index.html">運用設計</a> を参照します。関連 DD は AI 回答が <a href="DD03_AI回答パイプライン.html">DD03_AI回答パイプライン.html</a>、しきい値が <a href="DD04_AIしきい値3階層適用.html">DD04_AIしきい値3階層適用.html</a>、レート制限・課金が <a href="DD11_利用量計測・課金.html">DD11_利用量計測・課金.html</a> を正本とします。</p>
 <h2 id="5-テスト観点">5. テスト観点</h2>
+<p class="section-lead">本 DD の受入条件(AC)に対するテスト方式とテストファイルを示します。次の表は、bootstrap・再入場・レート制限の各 AC と検証手段の対応です。</p>
 <table>
 <thead>
 <tr>
@@ -438,6 +417,7 @@
 </tbody>
 </table>
 <h3 id="51-ウィジェット-e2e-例">5.1 ウィジェット E2E 例</h3>
+<p class="section-lead">埋込テストページでウィジェットを開き、質問が <code>answered</code> になることを確認する E2E の実装例です。</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">test</span>(<span class="st">&#39;ウィジェット質問が answered になる&#39;</span><span class="op">,</span> <span class="kw">async</span> ({ page }) <span class="kw">=&gt;</span> {</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> page<span class="op">.</span><span class="fu">goto</span>(<span class="st">&#39;https://test-site.example.com/&#39;</span>)<span class="op">;</span>  <span class="co">// ウィジェット埋込テストページ</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> page<span class="op">.</span><span class="fu">frameLocator</span>(<span class="st">&#39;iframe.widget&#39;</span>)<span class="op">.</span><span class="fu">locator</span>(<span class="st">&#39;button.trigger&#39;</span>)<span class="op">.</span><span class="fu">click</span>()<span class="op">;</span></span>
@@ -446,6 +426,7 @@
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> <span class="fu">expect</span>(page<span class="op">.</span><span class="fu">frameLocator</span>(<span class="st">&#39;iframe.widget&#39;</span>)<span class="op">.</span><span class="fu">locator</span>(<span class="st">&#39;.answer&#39;</span>))<span class="op">.</span><span class="fu">toContainText</span>(<span class="st">&#39;返品&#39;</span>)<span class="op">;</span></span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div>
 <h3 id="52-負荷試験">5.2 負荷試験</h3>
+<p class="section-lead">ウィジェット配信基盤の性能を検証する負荷シナリオを定義します。次の表は、均等分布・偏在・急増・AI 高並列・ピークの 5 シナリオと各々の検証目的です。</p>
 <table>
 <thead>
 <tr>
@@ -484,6 +465,7 @@
 </table>
 <p>合格基準: 全シナリオで p95 ≤ §3.4 目標値 + http_req_failed &lt; 1%。</p>
 <h3 id="53-その他観点">5.3 その他観点</h3>
+<p class="section-lead">単体・結合・UI・異常系・境界値・性能の各観点で確認すべき内容を示します。次の表は、公開鍵検証・UI 状態遷移・レート制限など本 DD 固有のテスト観点を整理したものです。</p>
 <table>
 <thead>
 <tr>
@@ -531,21 +513,37 @@
 </tbody>
 </table>
 <h2 id="6-未確定事項確認事項">6. 未確定事項・確認事項</h2>
+<div class="callout tip"><i class="bi bi-lightbulb"></i><div><span class="c-title">確定済</span>v1.0 リリース時点で全項目確定済み。未確定事項はありません。</div></div>
+
+<h2 id="更新履歴">更新履歴</h2>
 <table>
 <thead>
 <tr>
-<th>確認事項ID</th>
-<th>確認内容</th>
-<th>優先度</th>
-<th>ステータス</th>
+<th>版数</th>
+<th>更新日</th>
+<th>内容</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>-</td>
-<td>v1.0 リリース時点で全項目確定済み</td>
-<td>低</td>
-<td>確認済</td>
+<td>v1.6</td>
+<td>2026-06-17</td>
+<td>設計書シンプルテンプレ v2 へ移行(文書情報表を要約ブロック + doc-meta へ統合、各節に section-lead を追加、ウィジェット配信フローをシーケンス図化し許可ドメイン分岐・応答線を補完)。識別子・値の変更なし。</td>
+</tr>
+<tr>
+<td>v1.6</td>
+<td>2026-06-14</td>
+<td>丸型ランチャーバッジからチャット UI を開閉する仕様を追加。</td>
+</tr>
+<tr>
+<td>v1.5</td>
+<td>2026-06-14</td>
+<td>未解決返信から問い合わせID表示を削除。</td>
+</tr>
+<tr>
+<td>v1.4</td>
+<td>2026-06-14</td>
+<td>エンドユーザー向けヘッダーからメニューと規約導線を削除。</td>
 </tr>
 </tbody>
 </table>
