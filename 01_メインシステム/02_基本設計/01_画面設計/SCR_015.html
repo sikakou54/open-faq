@@ -99,14 +99,15 @@
 <th>項目</th>
 <th>入出力</th>
 <th>種類</th>
+<th>表示条件</th>
 <th>備考</th>
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>主な変更点</td><td>出力</td><td>パネル(リッチテキスト表示、sanitize 済)</td><td>各文書の <code>terms_versions.diff_summary</code> 最新版を <code>GET /terms/current</code> / <code>GET /privacy/current</code> から取得。「利用規約の主な変更点」「プライバシーポリシーの主な変更点」の見出しで区別。改定された文書のみが対象の場合は当該文書のみ表示</td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>利用規約同意</td><td>入力</td><td>チェックボックス</td><td>必須。<code>doc_type='terms_of_service'</code> 最新版への同意。「利用規約(リンク)に同意します」。リンクは SCR-010 を別タブで開く</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>プライバシーポリシー同意</td><td>入力</td><td>チェックボックス</td><td>必須。<code>doc_type='privacy_policy'</code> 最新版への同意。「プライバシーポリシー(リンク)に同意します」。リンクは SCR-020 を別タブで開く</td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>同意して続行する</td><td>入力</td><td>ボタン(Primary)</td><td>両チェック充足時のみ活性化。<code>POST /terms/agree</code> と <code>POST /privacy/agree</code> を実行し <code>terms_agreements</code> に <code>doc_type</code> 別で各 1 行記録(改定された文書のみが対象の場合は当該文書のみ)</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>主な変更点</td><td>出力</td><td>パネル(リッチテキスト表示、sanitize 済)</td><td>改定された文書のみ表示(利用規約 / プライバシーポリシーの該当文書)</td><td>各文書の <code>terms_versions.diff_summary</code> 最新版を <code>GET /terms/current</code> / <code>GET /privacy/current</code> から取得。「利用規約の主な変更点」「プライバシーポリシーの主な変更点」の見出しで区別</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>利用規約同意</td><td>入力</td><td>チェックボックス</td><td>利用規約が改定対象の場合に表示</td><td>必須。<code>doc_type='terms_of_service'</code> 最新版への同意。「利用規約(リンク)に同意します」。リンクは SCR-010 を別タブで開く</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>プライバシーポリシー同意</td><td>入力</td><td>チェックボックス</td><td>プライバシーポリシーが改定対象の場合に表示</td><td>必須。<code>doc_type='privacy_policy'</code> 最新版への同意。「プライバシーポリシー(リンク)に同意します」。リンクは SCR-020 を別タブで開く</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>同意して続行する</td><td>入力</td><td>ボタン(Primary)</td><td>両チェック充足時のみ活性化</td><td><code>POST /terms/agree</code> と <code>POST /privacy/agree</code> を実行し <code>terms_agreements</code> に <code>doc_type</code> 別で各 1 行記録(改定された文書のみが対象)</td></tr>
 </tbody>
 </table>
 

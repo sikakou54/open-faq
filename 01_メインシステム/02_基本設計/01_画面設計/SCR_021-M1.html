@@ -183,17 +183,18 @@
 <th>項目</th>
 <th>入出力</th>
 <th>種類</th>
+<th>表示条件</th>
 <th>備考</th>
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>上限設定</td><td>入力</td><td>トグル</td><td>ON / OFF。OFF 時は「今月の利用上限」入力と上限アラート設定を無効化し、保存時 <code>limitEnabled=false</code></td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>今月の利用上限</td><td>入力</td><td>数値入力(件、ON 時必須)</td><td>上限 ON 時のみ表示・活性。1 件刻み、最小〜最大件数の入力ガード(KV <code>usage-limit:min</code> / <code>usage-limit:max</code>)。「{limit}件 - {freeQuota}件(無料枠) = {billableCount}件 (¥{yen} / 月)」をリアルタイム併記</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>設定適用の説明</td><td>出力</td><td>helper</td><td>未設定時はデフォルト推奨値が適用される旨を表示。無料利用枠は本モーダルに表示せず更新対象にも含めない</td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>アラート設定</td><td>入力</td><td>チェックボックス群</td><td>25% / 50% / 80% / 90% / 100% を表示、複数選択可。当月初回到達時にメール送信。全未選択は通知なし。上限 OFF 時は全未選択・非活性</td></tr>
-<tr><td id="IT-05"><code>IT-05</code></td><td>アラートメール送信(動作)</td><td>出力</td><td>システム動作</td><td>選択閾値ごとにオーナーと当該 PJ の有効な管理者へ送信。同一アドレスは重複排除。送信先の表示・編集項目は設けない</td></tr>
-<tr><td id="IT-06"><code>IT-06</code></td><td>キャンセル</td><td>入力</td><td>ボタン(Secondary)</td><td>変更を破棄して閉じる。未保存変更があれば UnsavedChangesGuard で警告</td></tr>
-<tr><td id="IT-07"><code>IT-07</code></td><td>保存</td><td>入力</td><td>ボタン(Primary、L3)</td><td>バリデーション通過後、<strong>再認証(パスワード再入力)</strong>を経て <code>PATCH /projects/{id}/quota-limits/questions</code>。成功で TOAST 表示し閉じる</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>上限設定</td><td>入力</td><td>トグル</td><td>—</td><td>ON / OFF。OFF 時は「今月の利用上限」入力と上限アラート設定を無効化し、保存時 <code>limitEnabled=false</code></td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>今月の利用上限</td><td>入力</td><td>数値入力(件、ON 時必須)</td><td>上限 ON 時のみ表示・活性</td><td>1 件刻み、最小〜最大件数の入力ガード(KV <code>usage-limit:min</code> / <code>usage-limit:max</code>)。「{limit}件 - {freeQuota}件(無料枠) = {billableCount}件 (¥{yen} / 月)」をリアルタイム併記</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>設定適用の説明</td><td>出力</td><td>helper</td><td>—</td><td>未設定時はデフォルト推奨値が適用される旨を表示。無料利用枠は本モーダルに表示せず更新対象にも含めない</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>アラート設定</td><td>入力</td><td>チェックボックス群</td><td>上限 OFF 時は全未選択・非活性</td><td>25% / 50% / 80% / 90% / 100% を表示、複数選択可。当月初回到達時にメール送信。全未選択は通知なし</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>アラートメール送信(動作)</td><td>出力</td><td>システム動作</td><td>—</td><td>選択閾値ごとにオーナーと当該 PJ の有効な管理者へ送信。同一アドレスは重複排除。送信先の表示・編集項目は設けない</td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>キャンセル</td><td>入力</td><td>ボタン(Secondary)</td><td>—</td><td>変更を破棄して閉じる。未保存変更があれば UnsavedChangesGuard で警告</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>保存</td><td>入力</td><td>ボタン(Primary、L3)</td><td>—</td><td>バリデーション通過後、<strong>再認証(パスワード再入力)</strong>を経て <code>PATCH /projects/{id}/quota-limits/questions</code>。成功で TOAST 表示し閉じる</td></tr>
 </tbody>
 </table>
 <div class="callout warning"><i class="bi bi-exclamation-triangle"></i><div><span class="c-title">注意</span>バリデーション: 上限件数は上限 ON 時のみ必須・1 件刻み・最小〜最大件数の範囲内(範囲外は <code>E-INPUT-*</code>、MSG-SCR-021-M1-ERR-001)、OFF 時は <code>limit=null</code>。アラート閾値は <code>25</code> / <code>50</code> / <code>80</code> / <code>90</code> / <code>100</code> の配列として保存し、重複値・許可値以外は受け付けない(上限 OFF 時は <code>alertThresholds=[]</code>)。課金対象件数 = <code>max(0, 今月の利用上限 - 無料利用枠)</code>、最大課金額 = <code>課金対象件数 × 質問単価</code> をサーバ側で算出します。保存は再認証成功が前提(失敗時は <code>E-AUTH-REAUTH-FAILED</code> で保存中断)。</div></div>

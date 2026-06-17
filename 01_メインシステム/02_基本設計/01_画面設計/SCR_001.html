@@ -97,17 +97,18 @@
 <th>項目</th>
 <th>入出力</th>
 <th>種類</th>
+<th>表示条件</th>
 <th>備考</th>
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>メールアドレス</td><td>入力</td><td>メールアドレスボックス</td><td>必須。形式チェック</td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>パスワード</td><td>入力</td><td>パスワードボックス</td><td>必須</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>ログインボタン</td><td>入力</td><td>ボタン(Primary)</td><td>認証 → 規約再同意チェック(必要時 SCR-015)→ 利用状況系画面へ</td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>パスワードを忘れた場合</td><td>入力</td><td>リンク</td><td>SCR-003 へ遷移</td></tr>
-<tr><td id="IT-05"><code>IT-05</code></td><td>アカウント登録</td><td>入力</td><td>リンク</td><td>SCR-002 へ遷移</td></tr>
-<tr><td id="IT-06"><code>IT-06</code></td><td>認証エラーメッセージ</td><td>出力</td><td>アラート</td><td>失敗時の共通文言(存在有無を区別しない、<code>MSG-SCR-001-*</code>)</td></tr>
-<tr><td id="IT-07"><code>IT-07</code></td><td>ロックアウト警告</td><td>出力</td><td>アラート</td><td>5 回連続失敗後に表示(<a href="../../01_要件定義/FR01_アカウント管理.html#FR-007">FR-007</a>、15 分ロック)</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>メールアドレス</td><td>入力</td><td>メールアドレスボックス</td><td>—</td><td>必須。形式チェック</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>パスワード</td><td>入力</td><td>パスワードボックス</td><td>—</td><td>必須</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>ログインボタン</td><td>入力</td><td>ボタン(Primary)</td><td>—</td><td>認証 → 規約再同意チェック(必要時 SCR-015)→ 利用状況系画面へ</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>パスワードを忘れた場合</td><td>入力</td><td>リンク</td><td>—</td><td>SCR-003 へ遷移</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>アカウント登録</td><td>入力</td><td>リンク</td><td>—</td><td>SCR-002 へ遷移</td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>認証エラーメッセージ</td><td>出力</td><td>アラート</td><td>認証失敗時のみ</td><td>失敗時の共通文言(存在有無を区別しない、<code>MSG-SCR-001-*</code>)</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>ロックアウト警告</td><td>出力</td><td>アラート</td><td>5 回連続失敗後のみ</td><td>表示(<a href="../../01_要件定義/FR01_アカウント管理.html#FR-007">FR-007</a>、15 分ロック)</td></tr>
 </tbody>
 </table>
 

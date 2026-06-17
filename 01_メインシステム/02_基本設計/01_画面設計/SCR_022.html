@@ -137,19 +137,20 @@
 <th>項目</th>
 <th>入出力</th>
 <th>種類</th>
+<th>表示条件</th>
 <th>備考</th>
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>当月の請求見込み</td><td>出力</td><td>SummaryCard</td><td>契約全体の当月請求見込み合計</td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>次回請求日</td><td>出力</td><td>SummaryCard</td><td>次回の請求確定日</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>請求状態</td><td>出力</td><td>SummaryCard</td><td>正常 / 支払い失敗 / 支払方法未登録 等</td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>プロジェクト別の請求内訳</td><td>出力</td><td>テーブル</td><td>プロジェクト名 / 質問課金 / FAQ 課金 / 小計。最下行に全体合計。課金対象は質問数・FAQ 件数・AI 利用コストの 3 軸だが、AI 利用コストは MVP ではサービス側が吸収する社内可視化指標で顧客請求額には計上しない(計上方法は <a href="../10_課金・請求設計.html#11-課金対象と無料枠初期値">10_課金・請求設計 §1.1</a> を正本とする)</td></tr>
-<tr><td id="IT-05"><code>IT-05</code></td><td>支払方法</td><td>出力</td><td>テキスト</td><td>登録済みカードのブランド・末尾 4 桁・有効期限</td></tr>
-<tr><td id="IT-06"><code>IT-06</code></td><td>支払方法を変更</td><td>入力</td><td>ボタン</td><td>支払方法の登録・更新を行う。<strong>課金情報変更につき再認証(現パスワード再入力)を要する</strong>(<a href="../08_認証・認可設計.html#2-再認証">08_認証・認可設計 §2</a>)</td></tr>
-<tr><td id="IT-07"><code>IT-07</code></td><td>請求履歴</td><td>出力</td><td>テーブル</td><td>請求月 / 金額 / 状態 / 請求書 PDF リンク</td></tr>
-<tr><td id="IT-08"><code>IT-08</code></td><td>請求書 PDF</td><td>出力</td><td>テキストリンク</td><td>各請求行の明細 PDF を表示</td></tr>
-<tr><td id="IT-09"><code>IT-09</code></td><td>支払い失敗・未登録バナー</td><td>出力</td><td>アラート</td><td>原因・影響・復旧手順・復旧 CTA を同一バナーに表示</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>当月の請求見込み</td><td>出力</td><td>SummaryCard</td><td>—</td><td>契約全体の当月請求見込み合計</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>次回請求日</td><td>出力</td><td>SummaryCard</td><td>—</td><td>次回の請求確定日</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>請求状態</td><td>出力</td><td>SummaryCard</td><td>—</td><td>正常 / 支払い失敗 / 支払方法未登録 等</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>プロジェクト別の請求内訳</td><td>出力</td><td>テーブル</td><td>—</td><td>プロジェクト名 / 質問課金 / FAQ 課金 / 小計。最下行に全体合計。課金対象は質問数・FAQ 件数・AI 利用コストの 3 軸だが、AI 利用コストは MVP ではサービス側が吸収する社内可視化指標で顧客請求額には計上しない(計上方法は <a href="../10_課金・請求設計.html#11-課金対象と無料枠初期値">10_課金・請求設計 §1.1</a> を正本とする)</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>支払方法</td><td>出力</td><td>テキスト</td><td>—</td><td>登録済みカードのブランド・末尾 4 桁・有効期限</td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>支払方法を変更</td><td>入力</td><td>ボタン</td><td>—</td><td>支払方法の登録・更新を行う。<strong>課金情報変更につき再認証(現パスワード再入力)を要する</strong>(<a href="../08_認証・認可設計.html#2-再認証">08_認証・認可設計 §2</a>)</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>請求履歴</td><td>出力</td><td>テーブル</td><td>—</td><td>請求月 / 金額 / 状態 / 請求書 PDF リンク</td></tr>
+<tr><td id="IT-08"><code>IT-08</code></td><td>請求書 PDF</td><td>出力</td><td>テキストリンク</td><td>—</td><td>各請求行の明細 PDF を表示</td></tr>
+<tr><td id="IT-09"><code>IT-09</code></td><td>支払い失敗・未登録バナー</td><td>出力</td><td>アラート</td><td>支払い失敗時 / 支払方法未登録時</td><td>原因・影響・復旧手順・復旧 CTA を同一バナーに表示</td></tr>
 </tbody>
 </table>
 

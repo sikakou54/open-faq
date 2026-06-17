@@ -92,20 +92,21 @@
 <th>項目</th>
 <th>入出力</th>
 <th>種類</th>
+<th>表示条件</th>
 <th>備考</th>
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>パンくず</td><td>出力</td><td>Breadcrumb</td><td>「ホーム / お知らせ / {タイトル(短縮)}」</td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>メタ情報バー</td><td>出力</td><td>バッジ群</td><td>タイトル直下。種別バッジ + 重要度バッジ + 配信日時 + 既読日時(あれば)</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>種別バッジ</td><td>出力</td><td>AnnouncementCategoryBadge</td><td><code>billing</code> / <code>announcement</code> / <code>system</code></td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>重要度バッジ</td><td>出力</td><td>ImportanceIndicator</td><td><code>critical</code> / <code>high</code> / <code>normal</code>(無印)/ <code>low</code>(淡色)</td></tr>
-<tr><td id="IT-05"><code>IT-05</code></td><td>タイトル</td><td>出力</td><td>h1</td><td>—</td></tr>
-<tr><td id="IT-06"><code>IT-06</code></td><td>配信日時</td><td>出力</td><td>テキスト</td><td>絶対日時 + 相対日時</td></tr>
-<tr><td id="IT-07"><code>IT-07</code></td><td>既読日時</td><td>出力</td><td>テキスト</td><td>既読の場合のみ表示</td></tr>
-<tr><td id="IT-08"><code>IT-08</code></td><td>本文</td><td>出力</td><td>リッチテキスト表示(sanitize 済 HTML)</td><td>二重サニタイズ、許可タグ・属性ホワイトリスト(<a href="../09_セキュリティ設計.html">09_セキュリティ設計</a>)</td></tr>
-<tr><td id="IT-09"><code>IT-09</code></td><td>一覧へ戻る</td><td>入力</td><td>リンク(画面下部 + パンくず)</td><td>SCR-011 へ</td></tr>
-<tr><td id="IT-10"><code>IT-10</code></td><td>前のお知らせ / 次のお知らせ</td><td>入力</td><td>リンク</td><td>一覧の並び順に基づく前後遷移</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>パンくず</td><td>出力</td><td>Breadcrumb</td><td>—</td><td>「ホーム / お知らせ / {タイトル(短縮)}」</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>メタ情報バー</td><td>出力</td><td>バッジ群</td><td>—</td><td>タイトル直下。種別バッジ + 重要度バッジ + 配信日時 + 既読日時(あれば)</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>種別バッジ</td><td>出力</td><td>AnnouncementCategoryBadge</td><td>—</td><td><code>billing</code> / <code>announcement</code> / <code>system</code></td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>重要度バッジ</td><td>出力</td><td>ImportanceIndicator</td><td>—</td><td><code>critical</code> / <code>high</code> / <code>normal</code>(無印)/ <code>low</code>(淡色)</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>タイトル</td><td>出力</td><td>h1</td><td>—</td><td>—</td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>配信日時</td><td>出力</td><td>テキスト</td><td>—</td><td>絶対日時 + 相対日時</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>既読日時</td><td>出力</td><td>テキスト</td><td>既読の場合のみ表示</td><td>—</td></tr>
+<tr><td id="IT-08"><code>IT-08</code></td><td>本文</td><td>出力</td><td>リッチテキスト表示(sanitize 済 HTML)</td><td>—</td><td>二重サニタイズ、許可タグ・属性ホワイトリスト(<a href="../09_セキュリティ設計.html">09_セキュリティ設計</a>)</td></tr>
+<tr><td id="IT-09"><code>IT-09</code></td><td>一覧へ戻る</td><td>入力</td><td>リンク(画面下部 + パンくず)</td><td>—</td><td>SCR-011 へ</td></tr>
+<tr><td id="IT-10"><code>IT-10</code></td><td>前のお知らせ / 次のお知らせ</td><td>入力</td><td>リンク</td><td>—</td><td>一覧の並び順に基づく前後遷移</td></tr>
 </tbody>
 </table>
 

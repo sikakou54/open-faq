@@ -101,23 +101,24 @@
 <th>項目</th>
 <th>入出力</th>
 <th>種類</th>
+<th>表示条件</th>
 <th>備考</th>
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>モード見出し</td><td>出力</td><td>見出し</td><td>招待「{プロジェクト名} へメンバーを招待」/ 編集「{プロジェクト名} のメンバー編集 — {表示名}」</td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>モーダル閉じる(×)</td><td>入力</td><td>アイコンボタン</td><td>変更を破棄して閉じる。未保存変更があれば UnsavedChangesGuard で警告。Escape / オーバーレイクリックも同等</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>自己編集警告帯</td><td>出力</td><td>アラート帯</td><td><strong>編集モードかつ自分自身編集時のみ</strong>。「このプロジェクトのロールは変更できません / 自分のアカウントは削除できません」</td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>メールアドレス</td><td>入力</td><td>メールアドレスボックス</td><td>必須。招待モードでのみ編集可、編集モードでは表示のみ。同一オーナースコープに既存アカウントがある場合は名前解決し当該 PJ 分の <code>project_users</code> 行を追加(FR-021c)</td></tr>
-<tr><td id="IT-05"><code>IT-05</code></td><td>表示名(氏名)</td><td>出力</td><td>テキスト表示(read-only)</td><td>招待モードでは<strong>表示しない</strong>(個人情報原則)。編集モードは <code>users.name</code> を read-only 表示、<code>NULL</code> は「未設定(本人が SCR-018 で未入力)」</td></tr>
-<tr><td id="IT-06"><code>IT-06</code></td><td>招待モード氏名注記</td><td>出力</td><td>helper</td><td><strong>招待モードのみ</strong>。「氏名(表示名)は招待されたご本人が SCR-018 で入力します」(FR-016d)</td></tr>
-<tr><td id="IT-07"><code>IT-07</code></td><td>このプロジェクトでのロール</td><td>入力</td><td>ラジオボタン(2 値必須)</td><td>「メンバー(<code>member</code>)/ プロジェクト管理者(<code>admin</code>)」。ラジオ末尾にロール説明のヘルプアイコン</td></tr>
-<tr><td id="IT-08"><code>IT-08</code></td><td>招待状態</td><td>出力</td><td>バッジ</td><td><strong>編集モードかつ <code>pending_activation</code> のときのみ</strong>「招待中」を表示(残日数併記なし)。<code>active</code> では非表示</td></tr>
-<tr><td id="IT-09"><code>IT-09</code></td><td>招待メールを再送</td><td>入力</td><td>ボタン(フッター、再認証)</td><td><strong>編集モードかつ <code>pending_activation</code> のみ</strong>。旧リンク失効・新リンク発行</td></tr>
-<tr><td id="IT-10"><code>IT-10</code></td><td>プロジェクトから外す</td><td>入力</td><td>ボタン(Danger、L1 確認)</td><td><strong>編集モードのみ</strong>。当該 PJ の <code>project_users</code> 行を <code>valid=0</code>。最後の有効割当の場合は同一トランザクションで <code>users.valid=0</code>・全セッション失効・未使用招待トークン失効。自分・オーナーには非表示</td></tr>
-<tr><td id="IT-11"><code>IT-11</code></td><td>招待メールを送信</td><td>入力</td><td>ボタン(Primary、再認証)</td><td><strong>招待モードのみ</strong>。<code>access_tokens.purpose='activation'</code>(7 日)を発行(<code>meta</code> に <code>invitedProjectId</code> / <code>invitedRole</code>)</td></tr>
-<tr><td id="IT-12"><code>IT-12</code></td><td>変更を保存</td><td>入力</td><td>ボタン(Primary、再認証)</td><td><strong>編集モードのみ</strong>。当該 PJ の <code>project_users.role</code> をラジオ値で更新</td></tr>
-<tr><td id="IT-13"><code>IT-13</code></td><td>最後の管理者保護ガード</td><td>出力</td><td>UI 制御 / バリデーション</td><td>自分が唯一の <code>admin</code> の場合 <code>member</code> 切替を非活性 + tooltip。他メンバー降格で <code>admin</code> が 0 件になる場合は L2 確認 + <code>E-AUTHZ-LAST-ADMIN-PROTECTED</code> で拒否</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>モード見出し</td><td>出力</td><td>見出し</td><td>—</td><td>招待「{プロジェクト名} へメンバーを招待」/ 編集「{プロジェクト名} のメンバー編集 — {表示名}」</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>モーダル閉じる(×)</td><td>入力</td><td>アイコンボタン</td><td>—</td><td>変更を破棄して閉じる。未保存変更があれば UnsavedChangesGuard で警告。Escape / オーバーレイクリックも同等</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>自己編集警告帯</td><td>出力</td><td>アラート帯</td><td>編集モードかつ自分自身編集時のみ</td><td>「このプロジェクトのロールは変更できません / 自分のアカウントは削除できません」</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>メールアドレス</td><td>入力</td><td>メールアドレスボックス</td><td>招待モードでのみ編集可、編集モードでは表示のみ</td><td>必須。同一オーナースコープに既存アカウントがある場合は名前解決し当該 PJ 分の <code>project_users</code> 行を追加(FR-021c)</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>表示名(氏名)</td><td>出力</td><td>テキスト表示(read-only)</td><td>編集モードのみ表示(招待モードでは表示しない / 個人情報原則)</td><td><code>users.name</code> を read-only 表示、<code>NULL</code> は「未設定(本人が SCR-018 で未入力)」</td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>招待モード氏名注記</td><td>出力</td><td>helper</td><td>招待モードのみ</td><td>「氏名(表示名)は招待されたご本人が SCR-018 で入力します」(FR-016d)</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>このプロジェクトでのロール</td><td>入力</td><td>ラジオボタン(2 値必須)</td><td>—</td><td>「メンバー(<code>member</code>)/ プロジェクト管理者(<code>admin</code>)」。ラジオ末尾にロール説明のヘルプアイコン</td></tr>
+<tr><td id="IT-08"><code>IT-08</code></td><td>招待状態</td><td>出力</td><td>バッジ</td><td>編集モードかつ <code>pending_activation</code> のときのみ(<code>active</code> では非表示)</td><td>「招待中」を表示(残日数併記なし)</td></tr>
+<tr><td id="IT-09"><code>IT-09</code></td><td>招待メールを再送</td><td>入力</td><td>ボタン(フッター、再認証)</td><td>編集モードかつ <code>pending_activation</code> のみ</td><td>旧リンク失効・新リンク発行</td></tr>
+<tr><td id="IT-10"><code>IT-10</code></td><td>プロジェクトから外す</td><td>入力</td><td>ボタン(Danger、L1 確認)</td><td>編集モードのみ(自分・オーナーには非表示)</td><td>当該 PJ の <code>project_users</code> 行を <code>valid=0</code>。最後の有効割当の場合は同一トランザクションで <code>users.valid=0</code>・全セッション失効・未使用招待トークン失効</td></tr>
+<tr><td id="IT-11"><code>IT-11</code></td><td>招待メールを送信</td><td>入力</td><td>ボタン(Primary、再認証)</td><td>招待モードのみ</td><td><code>access_tokens.purpose='activation'</code>(7 日)を発行(<code>meta</code> に <code>invitedProjectId</code> / <code>invitedRole</code>)</td></tr>
+<tr><td id="IT-12"><code>IT-12</code></td><td>変更を保存</td><td>入力</td><td>ボタン(Primary、再認証)</td><td>編集モードのみ</td><td>当該 PJ の <code>project_users.role</code> をラジオ値で更新</td></tr>
+<tr><td id="IT-13"><code>IT-13</code></td><td>最後の管理者保護ガード</td><td>出力</td><td>UI 制御 / バリデーション</td><td>自分が唯一の <code>admin</code> の場合 / 他メンバー降格で <code>admin</code> が 0 件になる場合</td><td>唯一の <code>admin</code> 時は <code>member</code> 切替を非活性 + tooltip。0 件になる場合は L2 確認 + <code>E-AUTHZ-LAST-ADMIN-PROTECTED</code> で拒否</td></tr>
 </tbody>
 </table>
 <div class="callout warning"><i class="bi bi-exclamation-triangle"></i><div><span class="c-title">注意</span>バリデーション: メールアドレスは必須(招待モードのみ編集可)、ロールは <code>member</code> / <code>admin</code> の 2 値必須。「プロジェクトから外す」は L1 確認、最後の有効割当解除時は確認ダイアログに「このメンバーのアカウントも利用停止になります」を追記します。プロジェクト管理者降格は L2 確認 + 最後の管理者保護を行います。ロール定義は <a href="../04_権限設計.html">04_権限設計</a> を正本とします(<code>member</code> = FAQ 管理 / 要対応質問の状況管理 / ログ参照、<code>admin</code> = それに加えメンバー招待・ロール変更・割当解除)。</div></div>

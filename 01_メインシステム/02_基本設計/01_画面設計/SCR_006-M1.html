@@ -99,18 +99,19 @@
 <th>項目</th>
 <th>入出力</th>
 <th>種類</th>
+<th>表示条件</th>
 <th>備考</th>
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>テンプレートをダウンロード</td><td>入力</td><td>リンク / ボタン(Secondary)</td><td><code>GET /faqs/import/template</code> でヘッダ行のみの CSV を取得(<code>FAQ ID, 質問, 回答, カテゴリ</code>)</td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>ファイル選択</td><td>入力</td><td>ドロップゾーン + ファイルピッカー</td><td>必須。<code>.csv</code> のみ。D&amp;D 対応。1 ファイル最大 1000 件 / 1 行 = 1 FAQ。ヘッダ行必須</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>CSV 列構成 / FAQ ID 判定</td><td>出力</td><td>説明テキスト</td><td>列 = <code>FAQ ID, 質問, 回答, カテゴリ</code>。FAQ ID 空欄 = 新規(<code>draft</code>)/ 既存 ID 一致 = 上書き(状態維持・改訂履歴に記録)/ 無効 ID = 当該行を失敗</td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>文字コードエラー</td><td>出力</td><td>アラート</td><td>UTF-8(BOM 許容)以外はアップロードせず即エラー(検出文字コード名を併記)</td></tr>
-<tr><td id="IT-05"><code>IT-05</code></td><td>進捗バー</td><td>出力</td><td>ProgressBar + テキスト</td><td>「処理中…({done} / {total} 件)」。100 件超は非同期ジョブ化、24h タイムアウト</td></tr>
-<tr><td id="IT-06"><code>IT-06</code></td><td>エラー一覧</td><td>出力</td><td>スクロール領域(表)</td><td>「失敗した行: {n} 件」見出し下に「行番号 / エラー理由」の 2 列で表示。CSV ダウンロードは行わない</td></tr>
-<tr><td id="IT-07"><code>IT-07</code></td><td>キャンセル</td><td>入力</td><td>ボタン(Secondary)</td><td>モーダルを閉じる。処理中は中断確認ダイアログ</td></tr>
-<tr><td id="IT-08"><code>IT-08</code></td><td>読み込みを開始</td><td>入力</td><td>ボタン(Primary)</td><td><code>POST /faqs/import</code>(202 + jobId)。バリデーション通過時のみ活性</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>テンプレートをダウンロード</td><td>入力</td><td>リンク / ボタン(Secondary)</td><td>—</td><td><code>GET /faqs/import/template</code> でヘッダ行のみの CSV を取得(<code>FAQ ID, 質問, 回答, カテゴリ</code>)</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>ファイル選択</td><td>入力</td><td>ドロップゾーン + ファイルピッカー</td><td>—</td><td>必須。<code>.csv</code> のみ。D&amp;D 対応。1 ファイル最大 1000 件 / 1 行 = 1 FAQ。ヘッダ行必須</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>CSV 列構成 / FAQ ID 判定</td><td>出力</td><td>説明テキスト</td><td>—</td><td>列 = <code>FAQ ID, 質問, 回答, カテゴリ</code>。FAQ ID 空欄 = 新規(<code>draft</code>)/ 既存 ID 一致 = 上書き(状態維持・改訂履歴に記録)/ 無効 ID = 当該行を失敗</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>文字コードエラー</td><td>出力</td><td>アラート</td><td>UTF-8(BOM 許容)以外を選択時のみ表示</td><td>アップロードせず即エラー(検出文字コード名を併記)</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>進捗バー</td><td>出力</td><td>ProgressBar + テキスト</td><td>取込処理中</td><td>「処理中…({done} / {total} 件)」。100 件超は非同期ジョブ化、24h タイムアウト</td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>エラー一覧</td><td>出力</td><td>スクロール領域(表)</td><td>失敗行が 1 件以上ある時のみ表示</td><td>「失敗した行: {n} 件」見出し下に「行番号 / エラー理由」の 2 列で表示。CSV ダウンロードは行わない</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>キャンセル</td><td>入力</td><td>ボタン(Secondary)</td><td>—</td><td>モーダルを閉じる。処理中は中断確認ダイアログ</td></tr>
+<tr><td id="IT-08"><code>IT-08</code></td><td>読み込みを開始</td><td>入力</td><td>ボタン(Primary)</td><td>バリデーション通過時のみ活性</td><td><code>POST /faqs/import</code>(202 + jobId)</td></tr>
 </tbody>
 </table>
 

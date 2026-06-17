@@ -94,28 +94,29 @@
 <th>項目</th>
 <th>入出力</th>
 <th>種類</th>
+<th>表示条件</th>
 <th>備考</th>
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>パンくず</td><td>出力</td><td>Breadcrumb</td><td>「ホーム / お知らせ」</td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>クイックフィルタチップ</td><td>入力</td><td>QuickFilterChips</td><td>「未読のみ」(デフォルト選択)/「重要のみ」/「課金」/「お知らせ」/「システム」/「すべて」</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>適用済フィルタチップ</td><td>出力</td><td>AppliedFilterChips</td><td>適用条件 +「すべてクリア」</td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>詳細フィルタ</td><td>入力</td><td>常設パネル</td><td>期間 / キーワード検索。折り畳まず常時表示</td></tr>
-<tr><td id="IT-05"><code>IT-05</code></td><td>件数表示</td><td>出力</td><td>テキスト</td><td>「1-50 / 全 24 件(未読 5 件)」形式</td></tr>
-<tr><td id="IT-06"><code>IT-06</code></td><td>未読行強調</td><td>出力</td><td>行背景色</td><td>薄い水色背景 + 行頭ドット。未読タイトルは bold</td></tr>
-<tr><td id="IT-07"><code>IT-07</code></td><td>種別バッジ</td><td>出力</td><td>AnnouncementCategoryBadge</td><td><code>billing</code> / <code>announcement</code> / <code>system</code></td></tr>
-<tr><td id="IT-08"><code>IT-08</code></td><td>重要度</td><td>出力</td><td>バッジ</td><td><code>critical</code> +「重要」/ <code>high</code> +「重要」/ <code>normal</code> 無印 / <code>low</code> 淡色</td></tr>
-<tr><td id="IT-09"><code>IT-09</code></td><td>お知らせ ID</td><td>出力</td><td>テキストリンク</td><td><code>announcements.id</code>(<code>ann_…</code> 形式)。クリックで SCR-012 へ遷移し同時に該当行を既読化</td></tr>
-<tr><td id="IT-10"><code>IT-10</code></td><td>タイトル</td><td>出力</td><td>テキスト</td><td>クリック不可のテキスト表示。未読は bold</td></tr>
-<tr><td id="IT-11"><code>IT-11</code></td><td>配信日時</td><td>出力</td><td>テキスト</td><td>相対表記 + tooltip 絶対日時</td></tr>
-<tr><td id="IT-12"><code>IT-12</code></td><td>選択チェックボックス</td><td>入力</td><td>チェックボックス</td><td>BulkActionBar 用。最大 100 件</td></tr>
-<tr><td id="IT-13"><code>IT-13</code></td><td>BulkActionBar</td><td>出力</td><td>画面下部固定</td><td>1 件以上選択時に表示</td></tr>
-<tr><td id="IT-14"><code>IT-14</code></td><td>一括既読化</td><td>入力</td><td>ボタン(BulkActionBar 内)</td><td>選択した行を既読化</td></tr>
-<tr><td id="IT-15"><code>IT-15</code></td><td>表示中の未読をすべて既読化</td><td>入力</td><td>ボタン(画面右上)</td><td>現在のフィルタで表示中の未読のみを既読化</td></tr>
-<tr><td id="IT-16"><code>IT-16</code></td><td>すべての未読を既読化</td><td>入力</td><td>リンク(副次的)</td><td>フィルタ無視で全未読を既読化。確認ダイアログ</td></tr>
-<tr><td id="IT-17"><code>IT-17</code></td><td>ページング</td><td>入力</td><td>カーソル方式</td><td>—</td></tr>
-<tr><td id="IT-18"><code>IT-18</code></td><td>空状態</td><td>出力</td><td>EmptyState</td><td>「お知らせはまだありません」/「未読のお知らせはありません」</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>パンくず</td><td>出力</td><td>Breadcrumb</td><td>—</td><td>「ホーム / お知らせ」</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>クイックフィルタチップ</td><td>入力</td><td>QuickFilterChips</td><td>—</td><td>「未読のみ」(デフォルト選択)/「重要のみ」/「課金」/「お知らせ」/「システム」/「すべて」</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>適用済フィルタチップ</td><td>出力</td><td>AppliedFilterChips</td><td>—</td><td>適用条件 +「すべてクリア」</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>詳細フィルタ</td><td>入力</td><td>常設パネル</td><td>折り畳まず常時表示</td><td>期間 / キーワード検索</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>件数表示</td><td>出力</td><td>テキスト</td><td>—</td><td>「1-50 / 全 24 件(未読 5 件)」形式</td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>未読行強調</td><td>出力</td><td>行背景色</td><td>未読行のみ(薄い水色背景 + 行頭ドット、未読タイトルは bold)</td><td>—</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>種別バッジ</td><td>出力</td><td>AnnouncementCategoryBadge</td><td>—</td><td><code>billing</code> / <code>announcement</code> / <code>system</code></td></tr>
+<tr><td id="IT-08"><code>IT-08</code></td><td>重要度</td><td>出力</td><td>バッジ</td><td>—</td><td><code>critical</code> +「重要」/ <code>high</code> +「重要」/ <code>normal</code> 無印 / <code>low</code> 淡色</td></tr>
+<tr><td id="IT-09"><code>IT-09</code></td><td>お知らせ ID</td><td>出力</td><td>テキストリンク</td><td>—</td><td><code>announcements.id</code>(<code>ann_…</code> 形式)。クリックで SCR-012 へ遷移し同時に該当行を既読化</td></tr>
+<tr><td id="IT-10"><code>IT-10</code></td><td>タイトル</td><td>出力</td><td>テキスト</td><td>—</td><td>クリック不可のテキスト表示。未読は bold</td></tr>
+<tr><td id="IT-11"><code>IT-11</code></td><td>配信日時</td><td>出力</td><td>テキスト</td><td>—</td><td>相対表記 + tooltip 絶対日時</td></tr>
+<tr><td id="IT-12"><code>IT-12</code></td><td>選択チェックボックス</td><td>入力</td><td>チェックボックス</td><td>—</td><td>BulkActionBar 用。最大 100 件</td></tr>
+<tr><td id="IT-13"><code>IT-13</code></td><td>BulkActionBar</td><td>出力</td><td>画面下部固定</td><td>1 件以上選択時に表示</td><td>—</td></tr>
+<tr><td id="IT-14"><code>IT-14</code></td><td>一括既読化</td><td>入力</td><td>ボタン(BulkActionBar 内)</td><td>—</td><td>選択した行を既読化</td></tr>
+<tr><td id="IT-15"><code>IT-15</code></td><td>表示中の未読をすべて既読化</td><td>入力</td><td>ボタン(画面右上)</td><td>—</td><td>現在のフィルタで表示中の未読のみを既読化</td></tr>
+<tr><td id="IT-16"><code>IT-16</code></td><td>すべての未読を既読化</td><td>入力</td><td>リンク(副次的)</td><td>—</td><td>フィルタ無視で全未読を既読化。確認ダイアログ</td></tr>
+<tr><td id="IT-17"><code>IT-17</code></td><td>ページング</td><td>入力</td><td>カーソル方式</td><td>—</td><td>—</td></tr>
+<tr><td id="IT-18"><code>IT-18</code></td><td>空状態</td><td>出力</td><td>EmptyState</td><td>対象お知らせが 0 件のとき</td><td>「お知らせはまだありません」/「未読のお知らせはありません」</td></tr>
 </tbody>
 </table>
 

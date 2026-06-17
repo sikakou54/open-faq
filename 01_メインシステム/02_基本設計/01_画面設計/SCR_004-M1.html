@@ -95,21 +95,22 @@
 <th>項目</th>
 <th>入出力</th>
 <th>種類</th>
+<th>表示条件</th>
 <th>備考</th>
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>見出し</td><td>出力</td><td>見出し</td><td>新規「新規プロジェクトを作成」/ 編集「プロジェクトを編集」</td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>プロジェクト ID</td><td>出力</td><td>読み取り専用テキスト + コピーボタン</td><td><strong>編集モードのみ</strong>。クリック遷移には使わずコピー操作のみ提供</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>プロジェクト名</td><td>入力</td><td>テキストボックス</td><td>必須。1〜100 文字、placeholder「例: サポートサイト」、文字数カウンタ。編集モードは現値を初期表示</td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>許可ドメイン</td><td>入力</td><td>タグ入力(複数値)</td><td>必須。Enter またはカンマで 1 件追加、即時検証。完全一致 + <code>*.example.com</code> 形式可。IP アドレス・プロトコル指定は不可。編集モードは現値を初期表示</td></tr>
-<tr><td id="IT-05"><code>IT-05</code></td><td>許可ドメイン補足ヘルプ</td><td>出力</td><td>helper</td><td>「ウィジェット埋め込みを許可するドメイン。サブドメインを許可するには <code>*.example.com</code> のように記載します」</td></tr>
-<tr><td id="IT-06"><code>IT-06</code></td><td>プロジェクト連絡先メール</td><td>入力</td><td>メールアドレスボックス</td><td>任意。確認メール送信 → リンククリックで確認完了。確認完了後はウィジェットの未解決時・制限中「お問い合わせ先」表示にのみ利用。編集モードは現値を初期表示</td></tr>
-<tr><td id="IT-07"><code>IT-07</code></td><td>連絡先メール確認状態</td><td>出力</td><td>状態バッジ + 再送ボタン</td><td><strong>編集モードのみ</strong>。「確認済み」/「確認待ち」/「未設定」を表示。確認待ち時は確認メール再送(レート制限あり)を提供</td></tr>
-<tr><td id="IT-08"><code>IT-08</code></td><td>キャンセル</td><td>入力</td><td>ボタン(Secondary)</td><td>変更を破棄して閉じる。未保存変更があれば UnsavedChangesGuard で警告</td></tr>
-<tr><td id="IT-09"><code>IT-09</code></td><td>プロジェクトを作成</td><td>入力</td><td>ボタン(Primary)</td><td><strong>新規モードのみ</strong>。バリデーション通過時に作成。ウィジェット公開キー初回発行 + オーナーを <code>project_users(role='admin', valid=1)</code> 自動 INSERT</td></tr>
-<tr><td id="IT-10"><code>IT-10</code></td><td>保存</td><td>入力</td><td>ボタン(Primary)</td><td><strong>編集モードのみ</strong>。バリデーション通過時に <code>PATCH /projects/{id}</code> で更新。連絡先メール変更時は確認メールを再送信</td></tr>
-<tr><td id="IT-11"><code>IT-11</code></td><td>プロジェクトを削除</td><td>入力</td><td>ボタン(Danger、L3)</td><td><strong>編集モードのみ</strong>(DangerSection)。プロジェクト名タイプ確認 + 再認証を経て <code>DELETE /projects/{id}</code>。論理削除(<code>projects.valid=0</code>)+ 関連 <code>project_users</code> 論理削除(FR-030b)。削除導線は本 DangerSection のみに集約</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>見出し</td><td>出力</td><td>見出し</td><td>—</td><td>新規「新規プロジェクトを作成」/ 編集「プロジェクトを編集」</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>プロジェクト ID</td><td>出力</td><td>読み取り専用テキスト + コピーボタン</td><td>編集モードのみ</td><td>クリック遷移には使わずコピー操作のみ提供</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>プロジェクト名</td><td>入力</td><td>テキストボックス</td><td>—</td><td>必須。1〜100 文字、placeholder「例: サポートサイト」、文字数カウンタ。編集モードは現値を初期表示</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>許可ドメイン</td><td>入力</td><td>タグ入力(複数値)</td><td>—</td><td>必須。Enter またはカンマで 1 件追加、即時検証。完全一致 + <code>*.example.com</code> 形式可。IP アドレス・プロトコル指定は不可。編集モードは現値を初期表示</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>許可ドメイン補足ヘルプ</td><td>出力</td><td>helper</td><td>—</td><td>「ウィジェット埋め込みを許可するドメイン。サブドメインを許可するには <code>*.example.com</code> のように記載します」</td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>プロジェクト連絡先メール</td><td>入力</td><td>メールアドレスボックス</td><td>—</td><td>任意。確認メール送信 → リンククリックで確認完了。確認完了後はウィジェットの未解決時・制限中「お問い合わせ先」表示にのみ利用。編集モードは現値を初期表示</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>連絡先メール確認状態</td><td>出力</td><td>状態バッジ + 再送ボタン</td><td>編集モードのみ</td><td>「確認済み」/「確認待ち」/「未設定」を表示。確認待ち時は確認メール再送(レート制限あり)を提供</td></tr>
+<tr><td id="IT-08"><code>IT-08</code></td><td>キャンセル</td><td>入力</td><td>ボタン(Secondary)</td><td>—</td><td>変更を破棄して閉じる。未保存変更があれば UnsavedChangesGuard で警告</td></tr>
+<tr><td id="IT-09"><code>IT-09</code></td><td>プロジェクトを作成</td><td>入力</td><td>ボタン(Primary)</td><td>新規モードのみ</td><td>バリデーション通過時に作成。ウィジェット公開キー初回発行 + オーナーを <code>project_users(role='admin', valid=1)</code> 自動 INSERT</td></tr>
+<tr><td id="IT-10"><code>IT-10</code></td><td>保存</td><td>入力</td><td>ボタン(Primary)</td><td>編集モードのみ</td><td>バリデーション通過時に <code>PATCH /projects/{id}</code> で更新。連絡先メール変更時は確認メールを再送信</td></tr>
+<tr><td id="IT-11"><code>IT-11</code></td><td>プロジェクトを削除</td><td>入力</td><td>ボタン(Danger、L3)</td><td>編集モードのみ</td><td>DangerSection。プロジェクト名タイプ確認 + 再認証を経て <code>DELETE /projects/{id}</code>。論理削除(<code>projects.valid=0</code>)+ 関連 <code>project_users</code> 論理削除(FR-030b)。削除導線は本 DangerSection のみに集約</td></tr>
 </tbody>
 </table>
 <div class="callout warning"><i class="bi bi-exclamation-triangle"></i><div><span class="c-title">注意</span>バリデーション: プロジェクト名は必須 1〜100 文字、許可ドメインは必須(URL またはワイルドカード形式、IP / プロトコル指定不可)、連絡先メールは任意(メール形式)。削除はプロジェクト名の完全一致タイプ確認 + 再認証(L3)を必須とします。</div></div>

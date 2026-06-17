@@ -96,19 +96,20 @@
 <th>項目</th>
 <th>入出力</th>
 <th>種類</th>
+<th>表示条件</th>
 <th>備考</th>
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>パンくず / ページタイトル</td><td>出力</td><td>Breadcrumb / PageHeader</td><td>「未解決質問 — {inquiry_code}」+ 状況バッジ</td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>質問</td><td>出力</td><td>本文ブロック</td><td>全文</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>未解決理由</td><td>出力</td><td>バッジ + 補足</td><td><code>inquiries.question_log_id</code> 経由</td></tr>
-<tr><td id="IT-04"><code>IT-04</code></td><td>状況バッジ</td><td>出力</td><td>バッジ</td><td><code>open</code> / <code>closed</code></td></tr>
-<tr><td id="IT-05"><code>IT-05</code></td><td>登録先 FAQ</td><td>出力</td><td>リンク</td><td>未作成時は「未作成」(状況と独立)</td></tr>
-<tr><td id="IT-06"><code>IT-06</code></td><td>候補 FAQ</td><td>出力</td><td>リンク一覧</td><td>関連性の高い既存 FAQ(右ペイン)</td></tr>
-<tr><td id="IT-07"><code>IT-07</code></td><td>状況(変更)</td><td>入力</td><td>プルダウン</td><td>現在値を選択済み表示。変更時即時 <code>PATCH /inquiries/{id}</code>。<code>closed</code> への変更時のみ確認ダイアログを表示(EV-02 と整合)</td></tr>
-<tr><td id="IT-08"><code>IT-08</code></td><td>FAQ 登録へ</td><td>入力</td><td>ボタン(<code>admin</code> 以上(オーナーを含む))</td><td>SCR-006 へ遷移</td></tr>
-<tr><td id="IT-09"><code>IT-09</code></td><td>権限不足表示</td><td>出力</td><td>PermissionTooltip</td><td>割当外・範囲外メンバーの URL 直アクセス時はグレーアウト + tooltip</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>パンくず / ページタイトル</td><td>出力</td><td>Breadcrumb / PageHeader</td><td>—</td><td>「未解決質問 — {inquiry_code}」+ 状況バッジ</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>質問</td><td>出力</td><td>本文ブロック</td><td>—</td><td>全文</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>未解決理由</td><td>出力</td><td>バッジ + 補足</td><td>—</td><td><code>inquiries.question_log_id</code> 経由</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>状況バッジ</td><td>出力</td><td>バッジ</td><td>—</td><td><code>open</code> / <code>closed</code></td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>登録先 FAQ</td><td>出力</td><td>リンク</td><td>登録先 FAQ 作成済み時(未作成時は「未作成」)</td><td>状況と独立</td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>候補 FAQ</td><td>出力</td><td>リンク一覧</td><td>—</td><td>関連性の高い既存 FAQ(右ペイン)</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>状況(変更)</td><td>入力</td><td>プルダウン</td><td>—</td><td>現在値を選択済み表示。変更時即時 <code>PATCH /inquiries/{id}</code>。<code>closed</code> への変更時のみ確認ダイアログを表示(EV-02 と整合)</td></tr>
+<tr><td id="IT-08"><code>IT-08</code></td><td>FAQ 登録へ</td><td>入力</td><td>ボタン(<code>admin</code> 以上(オーナーを含む))</td><td><code>admin</code> 以上のみ表示(<code>member</code> 非表示)</td><td>SCR-006 へ遷移</td></tr>
+<tr><td id="IT-09"><code>IT-09</code></td><td>権限不足表示</td><td>出力</td><td>PermissionTooltip</td><td>割当外・範囲外メンバーの URL 直アクセス時</td><td>グレーアウト + tooltip</td></tr>
 </tbody>
 </table>
 
