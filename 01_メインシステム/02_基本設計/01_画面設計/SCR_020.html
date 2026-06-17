@@ -99,9 +99,8 @@
 </tr>
 </thead>
 <tbody>
-<tr><td id="IT-01"><code>IT-01</code></td><td>パンくず</td><td>現在位置「ホーム / プライバシーポリシー」を表示する</td><td>パンくず</td><td>—</td><td>ホーム / プライバシーポリシー</td></tr>
-<tr><td id="IT-02"><code>IT-02</code></td><td>同意状態バッジ</td><td>最新版プライバシーポリシーへの同意状態を上部に表示する</td><td>バッジ</td><td>ログイン済み時のみ表示</td><td>同意済み(同意日付き・緑)/ 未同意(赤・SCR-015 へのリンク併記)</td></tr>
-<tr><td id="IT-03"><code>IT-03</code></td><td>最新版の全文</td><td>プライバシーポリシー最新版の全文を 1 枚のページに連続表示する。目次・章ナビ・セクション分け・過去バージョン履歴・差分表示は設けない</td><td>ラベル</td><td>—</td><td>プライバシーポリシー本文</td></tr>
+<tr><td id="IT-01"><code>IT-01</code></td><td>同意状態バッジ</td><td>最新版プライバシーポリシーへの同意状態を上部に表示する</td><td>バッジ</td><td>ログイン済み時のみ表示</td><td>同意済み(同意日付き・緑)/ 未同意(赤・SCR-015 へのリンク併記)</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>最新版の全文</td><td>プライバシーポリシー最新版の全文を 1 枚のページに連続表示する。目次・章ナビ・セクション分け・過去バージョン履歴・差分表示は設けない</td><td>ラベル</td><td>—</td><td>プライバシーポリシー本文</td></tr>
 </tbody>
 </table>
 
@@ -144,8 +143,8 @@
 </tr>
 </thead>
 <tbody>
-<tr><td><code>EV-01</code></td><td>ポリシー初期表示</td><td>画面遷移・リロード時</td><td><ul><li><code>GET /privacy/current</code> で最新版全文を取得し表示</li><li>ログイン済みなら同意状態バッジを併せて表示</li></ul></td><td><a href="#IT-01">IT-01</a>, <a href="#IT-02">IT-02</a>, <a href="#IT-03">IT-03</a></td></tr>
-<tr><td><code>EV-02</code></td><td>再同意へ遷移</td><td>未同意バッジ内リンク押下時</td><td>SCR-015 規約再同意へ遷移</td><td><a href="#IT-02">IT-02</a></td></tr>
+<tr><td><code>EV-01</code></td><td>ポリシー初期表示</td><td>画面遷移・リロード時</td><td><ul><li><code>GET /privacy/current</code> で最新版全文を取得し表示</li><li>ログイン済みなら同意状態バッジを併せて表示</li></ul></td><td><a href="#IT-01">IT-01</a>, <a href="#IT-01">IT-01</a>, <a href="#IT-02">IT-02</a>, <a href="#IT-02">IT-02</a></td></tr>
+<tr><td><code>EV-02</code></td><td>再同意へ遷移</td><td>未同意バッジ内リンク押下時</td><td>SCR-015 規約再同意へ遷移</td><td><a href="#IT-01">IT-01</a>, <a href="#IT-01">IT-01</a></td></tr>
 </tbody>
 </table>
 
