@@ -52,7 +52,7 @@
 <th>UNIQUE</th>
 <th>DEFAULT</th>
 <th>制約</th>
-<th>説明</th>
+
 </tr>
 </thead>
 <tbody>
@@ -68,7 +68,7 @@
 <td></td>
 <td></td>
 <td>（複合）<code>(resource_kind = 'question_monthly_limit' AND (threshold IS NOT NULL OR alert_thresholds = '[]')) OR (resource_kind = 'faq_monthly_limit' AND threshold IS NULL AND alert_thresholds = '[]')</code><br>（複合）<code>resource_kind = 'question_monthly_limit' OR source = 'operator'</code>。FAQに <code>source='owner'</code> の行を許可しない</td>
-<td>ULID</td>
+
 </tr>
 <tr>
 <td style="text-align: right;">2</td>
@@ -82,7 +82,7 @@
 <td>①</td>
 <td></td>
 <td></td>
-<td><code>projects(id)</code> 参照</td>
+
 </tr>
 <tr>
 <td style="text-align: right;">3</td>
@@ -96,7 +96,7 @@
 <td></td>
 <td></td>
 <td></td>
-<td><code>contract_owners(user_id)</code> 参照(オーナー境界判定用に非正規化)</td>
+
 </tr>
 <tr>
 <td style="text-align: right;">4</td>
@@ -110,7 +110,7 @@
 <td>①</td>
 <td></td>
 <td><code>resource_kind IN ('question_monthly_limit','faq_monthly_limit')</code></td>
-<td>§3.24.7</td>
+
 </tr>
 <tr>
 <td style="text-align: right;">5</td>
@@ -124,7 +124,7 @@
 <td></td>
 <td></td>
 <td></td>
-<td>質問数は値あり=上限ON、NULL=上限OFF。FAQは NULL(上限なし)</td>
+
 </tr>
 <tr>
 <td style="text-align: right;">6</td>
@@ -138,7 +138,7 @@
 <td></td>
 <td></td>
 <td></td>
-<td>NULL = デフォルト無料枠を適用</td>
+
 </tr>
 <tr>
 <td style="text-align: right;">7</td>
@@ -152,7 +152,7 @@
 <td></td>
 <td><code>'[]'</code></td>
 <td><code>json_valid(alert_thresholds) AND json_type(alert_thresholds) = 'array'</code>。要素の許可値・重複排除・昇順化はAPI層で保証</td>
-<td>JSON配列。質問数は <code>25</code> / <code>50</code> / <code>80</code> / <code>90</code> / <code>100</code> を複数保持可能。空配列は通知なし。FAQは空配列固定</td>
+
 </tr>
 <tr>
 <td style="text-align: right;">8</td>
@@ -166,7 +166,7 @@
 <td>①</td>
 <td><code>'owner'</code></td>
 <td><code>source IN ('owner','operator')</code></td>
-<td><code>owner</code>(オーナー / PJ 管理者設定)/ <code>operator</code>(運営者上書き)</td>
+
 </tr>
 <tr>
 <td style="text-align: right;">9</td>
@@ -180,7 +180,7 @@
 <td></td>
 <td></td>
 <td></td>
-<td>運営者上書き(<code>source='operator'</code>)時の理由・チケットID</td>
+
 </tr>
 <tr>
 <td style="text-align: right;">10</td>
@@ -194,7 +194,7 @@
 <td></td>
 <td></td>
 <td></td>
-<td>運営者上書きの有効期限(日時、NULL = 無期限)</td>
+
 </tr>
 <tr>
 <td style="text-align: right;">11</td>
@@ -208,7 +208,7 @@
 <td></td>
 <td><code>1</code></td>
 <td><code>valid IN (0,1)</code></td>
-<td></td>
+
 </tr>
 <tr>
 <td style="text-align: right;">12</td>
@@ -222,7 +222,7 @@
 <td></td>
 <td></td>
 <td></td>
-<td>設定したユーザー ID(運営者上書き時は運営者 ID)</td>
+
 </tr>
 <tr>
 <td style="text-align: right;">13</td>
@@ -236,7 +236,7 @@
 <td></td>
 <td></td>
 <td></td>
-<td>日時</td>
+
 </tr>
 <tr>
 <td style="text-align: right;">14</td>
@@ -250,7 +250,7 @@
 <td></td>
 <td></td>
 <td></td>
-<td>日時</td>
+
 </tr>
 </tbody>
 </table>

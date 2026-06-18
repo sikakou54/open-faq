@@ -49,7 +49,7 @@
 <th>UNIQUE</th>
 <th>DEFAULT</th>
 <th>制約</th>
-<th>説明</th>
+
 </tr>
 </thead>
 <tbody>
@@ -65,7 +65,7 @@
 <td></td>
 <td></td>
 <td></td>
-<td></td>
+
 </tr>
 <tr>
 <td style="text-align: right;">2</td>
@@ -79,7 +79,7 @@
 <td></td>
 <td><code>'active'</code></td>
 <td><code>contract_status IN ('active','suspended','deleted_pending','deleted')</code><br>（複合）<code>contract_status='deleted'</code> のとき必ず <code>valid=0</code>(両者は同時セット)。<code>(contract_status &lt;&gt; 'deleted' AND valid = 1) OR (contract_status = 'deleted' AND valid = 0)</code></td>
-<td><code>active</code> / <code>suspended</code> / <code>deleted_pending</code> / <code>deleted</code>(共有概念正本)</td>
+
 </tr>
 <tr>
 <td style="text-align: right;">3</td>
@@ -93,7 +93,7 @@
 <td></td>
 <td><code>'physical'</code></td>
 <td><code>data_deletion_mode IN ('physical','anonymize')</code></td>
-<td><code>physical</code> / <code>anonymize</code></td>
+
 </tr>
 <tr>
 <td style="text-align: right;">4</td>
@@ -107,7 +107,7 @@
 <td></td>
 <td><code>1</code></td>
 <td><code>valid IN (0,1)</code></td>
-<td></td>
+
 </tr>
 <tr>
 <td style="text-align: right;">5</td>
@@ -121,7 +121,7 @@
 <td></td>
 <td></td>
 <td></td>
-<td>日時</td>
+
 </tr>
 <tr>
 <td style="text-align: right;">6</td>
@@ -135,7 +135,7 @@
 <td></td>
 <td></td>
 <td></td>
-<td>日時</td>
+
 </tr>
 </tbody>
 </table>

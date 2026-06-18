@@ -49,7 +49,7 @@
 <th>UNIQUE</th>
 <th>DEFAULT</th>
 <th>制約</th>
-<th>説明</th>
+
 </tr>
 </thead>
 <tbody>
@@ -65,7 +65,7 @@
 <td></td>
 <td></td>
 <td></td>
-<td>ULID</td>
+
 </tr>
 <tr>
 <td style="text-align: right;">2</td>
@@ -79,7 +79,7 @@
 <td></td>
 <td></td>
 <td></td>
-<td><code>contract_owners(user_id)</code> 参照</td>
+
 </tr>
 <tr>
 <td style="text-align: right;">3</td>
@@ -93,7 +93,7 @@
 <td></td>
 <td></td>
 <td><code>length(name) BETWEEN 1 AND 100</code></td>
-<td>1〜100 文字</td>
+
 </tr>
 <tr>
 <td style="text-align: right;">4</td>
@@ -107,7 +107,7 @@
 <td></td>
 <td></td>
 <td></td>
-<td>任意</td>
+
 </tr>
 <tr>
 <td style="text-align: right;">5</td>
@@ -121,7 +121,7 @@
 <td></td>
 <td><code>'active'</code></td>
 <td><code>status IN ('active','deleted')</code><br>（複合）<code>(status = 'active' AND valid = 1) OR (status = 'deleted' AND valid = 0)</code></td>
-<td><code>active</code> / <code>deleted</code></td>
+
 </tr>
 <tr>
 <td style="text-align: right;">6</td>
@@ -135,7 +135,7 @@
 <td>○</td>
 <td></td>
 <td></td>
-<td>埋め込み用。無期限(失効は再発行でのみ。FR-194)</td>
+
 </tr>
 <tr>
 <td style="text-align: right;">7</td>
@@ -149,7 +149,7 @@
 <td></td>
 <td></td>
 <td>（複合）<code>contact_email_verified_at IS NULL OR contact_email IS NOT NULL</code></td>
-<td></td>
+
 </tr>
 <tr>
 <td style="text-align: right;">8</td>
@@ -163,7 +163,7 @@
 <td></td>
 <td></td>
 <td></td>
-<td>確認済みのみセット</td>
+
 </tr>
 <tr>
 <td style="text-align: right;">9</td>
@@ -177,7 +177,7 @@
 <td></td>
 <td><code>'{}'</code></td>
 <td></td>
-<td>ウィジェット設定 JSON</td>
+
 </tr>
 <tr>
 <td style="text-align: right;">10</td>
@@ -191,7 +191,7 @@
 <td></td>
 <td><code>1</code></td>
 <td><code>valid IN (0,1)</code></td>
-<td></td>
+
 </tr>
 <tr>
 <td style="text-align: right;">11</td>
@@ -205,7 +205,7 @@
 <td></td>
 <td></td>
 <td></td>
-<td>日時</td>
+
 </tr>
 <tr>
 <td style="text-align: right;">12</td>
@@ -219,7 +219,7 @@
 <td></td>
 <td></td>
 <td></td>
-<td>日時</td>
+
 </tr>
 </tbody>
 </table>
