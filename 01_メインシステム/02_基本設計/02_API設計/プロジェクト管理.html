@@ -51,8 +51,7 @@
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
-<h3>レスポンス</h3>
-<p>(200):</p>
+<h3>レスポンス(200)</h3>
 <pre><code>{
   "items": [
     {
@@ -106,8 +105,7 @@
 <li>サーバー側処理: プロジェクト作成成功と同一トランザクション内で <code>INSERT INTO project_users(user_id=actor.userId, project_id=newPid, contract_owner_user_id=actor.contractOwnerUserId, role='admin', valid=1, granted_at=now(), granted_by=actor.userId)</code> を 1 行発行する(オーナー自動 admin 行付与)。認可上は <code>isOwner=true</code> bypass を維持しつつ、本 admin 行は critical 通知の宛先解決(<code>SELECT DISTINCT user_id FROM project_users WHERE role='admin' AND valid=1 …</code>)と画面表示の事実情報として参照される。</li>
 <li>他者をプロジェクト管理者として招待する操作は、プロジェクト作成後に当該プロジェクトの SCR-009 / SCR-009-001(プロジェクト WS)から <code>POST /projects/{id}/members</code>(API-011)経由で行う。</li>
 </ul>
-<h3>レスポンス</h3>
-<p>(201):</p>
+<h3>レスポンス(201)</h3>
 <pre><code>{
   "id": "01HZ...",
   "widgetKey": "pk_live_abc123..."
@@ -159,8 +157,8 @@
 <li>監査ログ <code>project.logical_delete</code> を <code>retention_class='general'</code> で記録(metadata: <code>{projectId, logicallyDeletedUserIds: [...]}</code>)</li>
 </ol>
 <p>上記 1-5 はアプリ層のトランザクション内で実装する。論理削除データは <code>updated_at</code> 基準で 90 日経過後に物理削除バッチ(DD13)で物理削除される。物理削除時は <code>ON DELETE CASCADE</code> で関連行が連鎖物理削除される。</p>
-<h3>レスポンス</h3>
-<p>: PATCH は更新後のプロジェクト、DELETE は <code>{ "ok": true, "status": "deleted" }</code>(200)。</p>
+<h3>レスポンス(200)</h3>
+<p>PATCH は更新後のプロジェクト、DELETE は <code>{ "ok": true, "status": "deleted" }</code>。</p>
 <h3>エラー</h3>
 <table>
 <thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>
@@ -195,8 +193,7 @@
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
 <p>公開キーは無期限のため有効期限指定パラメータは持たない。</p>
-<h3>レスポンス</h3>
-<p>(201):</p>
+<h3>レスポンス(201)</h3>
 <pre><code>{ "newKey": "pk_live_xyz789...", "deprecationWarning": "..." }</code></pre>
 <p>(<code>deprecationWarning</code> は旧キーの 24 時間猶予失効予告)</p>
 <h3>エラー</h3>

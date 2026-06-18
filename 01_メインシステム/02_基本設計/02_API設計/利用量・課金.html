@@ -52,8 +52,8 @@
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
-<h3>レスポンス</h3>
-<p>(200、<code>viewMode=project</code>):</p>
+<h3>レスポンス(200)</h3>
+<p><code>viewMode=project</code> の例:</p>
 <pre><code>{
   "period": "2026-05-01T00:00:00Z",
   "projectId": "prj_...",
@@ -86,8 +86,7 @@
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
-<h3>レスポンス</h3>
-<p>(200):</p>
+<h3>レスポンス(200)</h3>
 <pre><code>{
   "period": { "from": "2026-06-01T00:00:00Z", "to": "2026-06-30T23:59:59Z" },
   "summary": { "projectCount": 3, "questionCount": 2450, "publishedFaqCount": 184 },
@@ -126,8 +125,7 @@
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
-<h3>レスポンス</h3>
-<p>(200):</p>
+<h3>レスポンス(200)</h3>
 <pre><code>{
   "estimatedTotal": 12500,
   "currency": "JPY",
@@ -169,8 +167,7 @@
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
-<h3>レスポンス</h3>
-<p>(200):</p>
+<h3>レスポンス(200)</h3>
 <pre><code>{
   "items": [
     {
@@ -211,8 +208,8 @@
 <h4>Request Body</h4>
 <pre><code>{ "paymentToken": "tok_..." }</code></pre>
 <p>(GET: なし。PUT のみ。<code>paymentToken</code> は課金プロバイダ発行トークン)</p>
-<h3>レスポンス</h3>
-<p>GET(200): <code>{ "registered": true, "brand": "visa", "last4": "4242", "expMonth": 12, "expYear": 2028 }</code>(未登録時は <code>{ "registered": false }</code>)。PUT(200): <code>{ "registered": true, "brand": "visa", "last4": "4242" }</code>。</p>
+<h3>レスポンス(200)</h3>
+<p>GET: <code>{ "registered": true, "brand": "visa", "last4": "4242", "expMonth": 12, "expYear": 2028 }</code>(未登録時は <code>{ "registered": false }</code>)。PUT: <code>{ "registered": true, "brand": "visa", "last4": "4242" }</code>。</p>
 <h3>エラー</h3>
 <table>
 <thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>
@@ -248,8 +245,7 @@
 <pre><code>{ "id": "プロジェクト ID" }</code></pre>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
-<h3>レスポンス</h3>
-<p>(200):</p>
+<h3>レスポンス(200)</h3>
 <pre><code>{
   "projectId": "prj_...",
   "period": "2026-05-01T00:00:00Z",
@@ -284,8 +280,7 @@
 <pre><code>{ "limitEnabled": true, "limit": 5000, "alertThresholds": [25, 50, 80, 90, 100] }</code></pre>
 <p>例(ON)。例(OFF): <code>{ "limitEnabled": false, "limit": null, "alertThresholds": [] }</code>。</p>
 <p>バリデーション: <code>limitEnabled=true</code> の場合、<code>limit</code> は必須かつ 1 件刻みで最小件数・最大件数の範囲内。<code>alertThresholds</code> は <code>25</code> / <code>50</code> / <code>80</code> / <code>90</code> / <code>100</code> の重複しない配列とし、サーバ側で昇順へ正規化する。空配列はアラート通知なし。<code>limitEnabled=false</code> の場合は <code>limit=null</code>、<code>alertThresholds=[]</code> とする。<code>freeQuota</code> / <code>alertEnabled</code> / <code>alertFrequency</code> を指定した場合は未サポート項目として 422。</p>
-<h3>レスポンス</h3>
-<p>(200):</p>
+<h3>レスポンス(200)</h3>
 <pre><code>{ "projectId": "prj_...", "limitEnabled": true, "limit": 5000, "alertThresholds": [25, 50, 80, 90, 100], "yenEquivalent": 2000, "source": "owner", "updatedAt": "..." }</code></pre>
 <h3>エラー</h3>
 <table>

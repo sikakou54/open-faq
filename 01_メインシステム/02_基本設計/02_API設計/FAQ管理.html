@@ -58,8 +58,8 @@
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
-<h3>レスポンス</h3>
-<p>(200): FAQ の配列 + <code>nextCursor</code>(構造は API-025 のレスポンスに準ずる)。</p>
+<h3>レスポンス(200)</h3>
+<p>FAQ の配列 + <code>nextCursor</code>(構造は API-025 のレスポンスに準ずる)。</p>
 <h3>エラー</h3>
 <p>403 <code>PROJECT_ACCESS_DENIED</code> ほか(<a href="../05_エラー設計.html">05_エラー設計.html</a> 正本)。</p>
 
@@ -96,8 +96,8 @@
   "version": 1
 }</code></pre>
 <p>Request Body は FAQ 内容(POST は新規)。</p>
-<h3>レスポンス</h3>
-<p>: 作成 / 更新後の FAQ(<code>publishedAt</code> を含む)。</p>
+<h3>レスポンス(200 / 201)</h3>
+<p>作成 / 更新後の FAQ(<code>publishedAt</code> を含む)。</p>
 <h3>エラー</h3>
 <table>
 <thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>
@@ -132,8 +132,7 @@
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
 <pre><code>{ "ids": ["faq_...", "faq_..."], "status": "published" }</code></pre>
-<h3>レスポンス</h3>
-<p>(200):</p>
+<h3>レスポンス(200)</h3>
 <pre><code>{ "succeeded": 48, "failed": [ { "id": "faq_...", "code": "NOT_FOUND" } ] }</code></pre>
 <h3>エラー</h3>
 <table>
@@ -169,8 +168,7 @@
 <h4>Request Body</h4>
 <pre><code>multipart/form-data { file: &lt;CSV&gt; }</code></pre>
 <p>受理形式は <strong>CSV のみ</strong>(UTF-8、BOM 許容、ヘッダ行必須、1 ファイル最大 1000 件)。<strong>JSON 形式は受理しない</strong>(不正形式は 415 / 400、E-INPUT-CSV-INVALID)。CSV 列構成は <code>FAQ ID, 質問, 回答, カテゴリ</code>。各行の <code>FAQ ID</code> で <strong>空欄 = 新規(<code>status=draft</code>)/ 既存 ID 一致 = 上書き(状態維持・<code>faq_revisions</code> に改訂追記)/ 当該契約に存在しない ID = 当該行を失敗</strong>(行単位エラー、E-INPUT-CSV-FAQID-NOTFOUND)と判定する。<code>status</code> 列は受理しない。</p>
-<h3>レスポンス</h3>
-<p>(202):</p>
+<h3>レスポンス(202)</h3>
 <pre><code>{ "jobId": "job_...", "status": "processing" }</code></pre>
 <h3>エラー</h3>
 <table>
@@ -205,8 +203,8 @@
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
-<h3>レスポンス</h3>
-<p>(200): ヘッダ行のみの CSV テンプレート(<code>FAQ ID,質問,回答,カテゴリ</code>)を <code>text/csv; charset=utf-8</code>(UTF-8 BOM 付与可)で返す。<code>Content-Disposition: attachment; filename="faq_import_template.csv"</code>。</p>
+<h3>レスポンス(200)</h3>
+<p>ヘッダ行のみの CSV テンプレート(<code>FAQ ID,質問,回答,カテゴリ</code>)を <code>text/csv; charset=utf-8</code>(UTF-8 BOM 付与可)で返す。<code>Content-Disposition: attachment; filename="faq_import_template.csv"</code>。</p>
 
 <h2 id="API-FAQ-006">API-FAQ-006 FAQ CSV エクスポート</h2>
 <span id="545-get-faqsexport"></span>
@@ -237,8 +235,8 @@
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
 <p>Query Parameters は一覧フィルタに準ずる。</p>
-<h3>レスポンス</h3>
-<p>(200): 一覧フィルタ適用結果を <strong>CSV(UTF-8、<code>text/csv</code>)</strong> で返す(JSON 形式は提供しない)。</p>
+<h3>レスポンス(200)</h3>
+<p>一覧フィルタ適用結果を <strong>CSV(UTF-8、<code>text/csv</code>)</strong> で返す(JSON 形式は提供しない)。</p>
 
 <h2 id="API-FAQ-007">API-FAQ-007 FAQ 全文検索</h2>
 <span id="546-get-faqssearchfaq-"></span>
@@ -272,8 +270,7 @@
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
 <p>全文検索方式・対象列は <a href="../03_テーブル設計.html">03_テーブル設計.html</a>(FTS インデックス)を正本とする。</p>
-<h3>レスポンス</h3>
-<p>(200):</p>
+<h3>レスポンス(200)</h3>
 <pre><code>{ "items": [ { "id": "faq_...", "question": "...", "answer": "...", "status": "published", "category": "...", "score": 0.82, "updatedAt": "..." } ], "nextCursor": null }</code></pre>
 
 <h2 id="API-FAQ-008">API-FAQ-008 質問ログ検索</h2>
@@ -310,8 +307,7 @@
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
 <p>対象列・全文検索方式は <a href="../03_テーブル設計.html">03_テーブル設計.html</a> を正本とする。</p>
-<h3>レスポンス</h3>
-<p>(200):</p>
+<h3>レスポンス(200)</h3>
 <pre><code>{ "items": [ { "id": "qlog_...", "question": "...", "answerType": "unanswered", "confidence": 0.42, "inquiryId": "inq_..." | null, "createdAt": "..." } ], "nextCursor": null }</code></pre>
 </article>
 </body>

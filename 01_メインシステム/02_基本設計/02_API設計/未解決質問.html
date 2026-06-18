@@ -51,8 +51,8 @@
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
-<h3>レスポンス</h3>
-<p>(200): 未解決質問の配列 + <code>nextCursor</code>。</p>
+<h3>レスポンス(200)</h3>
+<p>未解決質問の配列 + <code>nextCursor</code>。</p>
 
 <h2 id="API-INQ-002">API-INQ-002 未解決質問詳細・状況切替</h2>
 <span id="562-get-inquiriesid--patch-inquiriesid"></span>
@@ -82,8 +82,8 @@
   "status": "open" | "closed"
 }</code></pre>
 <p>Request Body は PATCH 時のもの。各フィールドはオプション(指定したものだけ更新)。状況は <code>open</code> ↔ <code>closed</code> の双方向遷移を許容(再オープン制限なし)。FAQ 下書き保存・FAQ 公開は本フィールドを変更しない(連動ロジックなし)。状態変更履歴の永続化は行わない。</p>
-<h3>レスポンス</h3>
-<p>(200): GET は未解決質問の詳細、PATCH は更新後の状況。</p>
+<h3>レスポンス(200)</h3>
+<p>GET は未解決質問の詳細、PATCH は更新後の状況。</p>
 </article>
 </body>
 </html>

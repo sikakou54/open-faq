@@ -49,8 +49,7 @@
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
-<h3>レスポンス</h3>
-<p>(200):</p>
+<h3>レスポンス(200)</h3>
 <pre><code>{ "docType": "terms_of_service", "version": "...", "effectiveDate": "...", "bodyHtml": "...", "diffSummary": "..." }</code></pre>
 <p>(最新版のみ。<code>diffSummary</code> は <code>terms_versions.diff_summary</code>。SCR-015 の「主な変更点」表示に用いる。NULL の場合は省略)</p>
 
@@ -78,8 +77,7 @@
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
-<h3>レスポンス</h3>
-<p>(200):</p>
+<h3>レスポンス(200)</h3>
 <pre><code>{ "docType": "privacy_policy", "version": "...", "effectiveDate": "...", "bodyHtml": "...", "diffSummary": "..." }</code></pre>
 <p>(最新版のみ。<code>diffSummary</code> は <code>terms_versions.diff_summary</code>。SCR-015 の「主な変更点」表示に用いる。NULL の場合は省略)</p>
 
@@ -109,8 +107,8 @@
 <h4>Request Body</h4>
 <pre><code>{ "version": "..." }</code></pre>
 <p><code>terms_agreements</code> に <code>(user_id, doc_type='terms_of_service', terms_version)</code> で 1 行記録(冪等: 既存同意があれば 200)。</p>
-<h3>レスポンス</h3>
-<p>(200): 同意記録結果。</p>
+<h3>レスポンス(200)</h3>
+<p>同意記録結果。</p>
 
 <h2 id="API-TRM-004">API-TRM-004 プライバシーポリシー 同意</h2>
 <span id="592a-post-privacyagree"></span>
@@ -138,8 +136,8 @@
 <h4>Request Body</h4>
 <pre><code>{ "version": "..." }</code></pre>
 <p><code>terms_agreements</code> に <code>(user_id, doc_type='privacy_policy', terms_version)</code> で 1 行記録(冪等: 既存同意があれば 200)。SCR-015 / SCR-018 では利用規約・プライバシーポリシー双方の同意が必須条件であり、改定再同意では改定された文書の agree のみを呼び出す。</p>
-<h3>レスポンス</h3>
-<p>(200): 同意記録結果。</p>
+<h3>レスポンス(200)</h3>
+<p>同意記録結果。</p>
 
 <h2 id="API-TRM-005">API-TRM-005 退会申請</h2>
 <span id="593-post-withdrawal-requests"></span>
@@ -166,8 +164,8 @@
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
 <pre><code>{ "reason": "退会申請内容(理由等)" }</code></pre>
-<h3>レスポンス</h3>
-<p>(2xx): 退会申請の受付結果。</p>
+<h3>レスポンス(2xx)</h3>
+<p>退会申請の受付結果。</p>
 <h3>エラー</h3>
 <table>
 <thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>

@@ -52,8 +52,7 @@
 <pre><code>{ "id": "プロジェクト ID" }</code></pre>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
-<h3>レスポンス</h3>
-<p>(200):</p>
+<h3>レスポンス(200)</h3>
 <pre><code>{
   "items": [
     {
@@ -98,8 +97,7 @@
   "email": "newmember@...",
   "role": "admin"
 }</code></pre>
-<h3>レスポンス</h3>
-<p>(201):</p>
+<h3>レスポンス(201)</h3>
 <pre><code>{ "userId": "01HZ...", "status": "active|pending_activation", "expiresAt": "..." | null }</code></pre>
 <h3>エラー</h3>
 <table>
@@ -146,8 +144,7 @@
 <li>自分自身が当該プロジェクトの最後の <code>admin</code> で、自身を <code>member</code> へ降格する場合は 403 <code>SELF_MUTATION_FORBIDDEN</code></li>
 <li>ロール変更後も当該プロジェクトに <code>project_users</code> 行が維持される限り、<code>normal</code> / <code>low</code> 通知の配信対象に含まれる(配信先はトグル ON 時にプロジェクトの全メンバー)</li>
 </ul>
-<h3>レスポンス</h3>
-<p>(200):</p>
+<h3>レスポンス(200)</h3>
 <pre><code>{ "userId": "...", "projectId": "...", "role": "admin|member", "updatedAt": "..." }</code></pre>
 <h3>エラー</h3>
 <table>
@@ -193,8 +190,7 @@
 }</code></pre>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
-<h3>レスポンス</h3>
-<p>(200):</p>
+<h3>レスポンス(200)</h3>
 <pre><code>{ "userId": "...", "projectId": "...", "accountDeactivated": true|false }</code></pre>
 <h3>エラー</h3>
 <table>
@@ -233,8 +229,8 @@
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
 <p>氏名 <code>displayName</code> を受け付けない(FR-016b / FR-016d)。</p>
-<h3>レスポンス</h3>
-<p>(200): 再発行結果(<code>{ "ok": true, "expiresAt": "..." }</code>)。</p>
+<h3>レスポンス(200)</h3>
+<p>再発行結果(<code>{ "ok": true, "expiresAt": "..." }</code>)。</p>
 <h3>エラー</h3>
 <table>
 <thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>

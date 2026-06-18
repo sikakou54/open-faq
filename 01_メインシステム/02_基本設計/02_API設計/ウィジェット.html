@@ -50,8 +50,7 @@
   "publicKey": "pk_live_abc123...",
   "origin": "https://example.com"
 }</code></pre>
-<h3>レスポンス</h3>
-<p>(200):</p>
+<h3>レスポンス(200)</h3>
 <pre><code>{
   "sessionToken": "wst_...",
   "expiresIn": 3600,
@@ -96,8 +95,8 @@
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
 <pre><code>{ "question": "返品の手続きは?", "projectId": "proj_..." }</code></pre>
-<h3>レスポンス</h3>
-<p>(200)- answered:</p>
+<h3>レスポンス(200)</h3>
+<p>answered:</p>
 <pre><code>{
   "type": "answered",
   "answer": "返品は商品到着後 7 日以内に...",
@@ -107,8 +106,8 @@
   ],
   "questionLogId": "qlog_..."
 }</code></pre>
-<h3>レスポンス</h3>
-<p>(200)- unanswered:</p>
+<h3>レスポンス(200)</h3>
+<p>unanswered:</p>
 <pre><code>{
   "type": "unanswered",
   "reason": "low_confidence" | "no_faq_match" | "pii_detected",
@@ -154,8 +153,7 @@
   "questionId": "qlog_...",
   "idempotencyKey": "&lt;UUIDv4&gt;"
 }</code></pre>
-<h3>レスポンス</h3>
-<p>(201):</p>
+<h3>レスポンス(201)</h3>
 <pre><code>{ "inquiryId": "inq_...", "inquiryCode": "INQ-20260513-XYZ123", "status": "open" }</code></pre>
 <div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>未解決質問登録ではチャット部屋を作成しない。</div></div>
 </article>
