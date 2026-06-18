@@ -14,7 +14,7 @@
 <article class="content" id="content">
 <h1 id="TBL-010">TBL-010 <code>faq_revisions</code></h1>
 <span id="310-faq_revisions"></span>
-<p class="section-lead">FAQ の改訂履歴を全文スナップショットで最大 50 件保持します。主キーは <code>id</code>、<code>faqs</code> 経由で契約に紐づきます(主管 FR-322)。</p>
+<p class="section-lead">FAQ の改訂履歴を全文スナップショットで最大 50 件保持します。</p>
 <h3 id="3101-概要">概要</h3>
 <table>
 <thead>
@@ -37,10 +37,6 @@
 <td>全文スナップショット 50 件保持</td>
 </tr>
 <tr>
-<td>主管 FR</td>
-<td>FR-322</td>
-</tr>
-<tr>
 <td>保持期間 / 保持起点</td>
 <td>永久(版ごと)/ 改訂日時</td>
 </tr>
@@ -51,10 +47,6 @@
 <tr>
 <td><code>retention_class</code></td>
 <td><code>general</code></td>
-</tr>
-<tr>
-<td>設計判断</td>
-<td><code>valid</code> 持たず(履歴系、論理削除概念外)。<code>faqs</code> 物理削除時に ON DELETE CASCADE で連鎖物理削除</td>
 </tr>
 </tbody>
 </table>

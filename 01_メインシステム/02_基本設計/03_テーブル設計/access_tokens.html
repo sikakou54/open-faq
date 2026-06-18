@@ -14,7 +14,7 @@
 <article class="content" id="content">
 <h1 id="TBL-005">TBL-005 <code>access_tokens</code></h1>
 <span id="35-access_tokens"></span>
-<p class="section-lead">招待・パスワード再設定・メール確認などの短期トークンを保持します。主キーは <code>id</code>、<code>users</code> 経由で契約に紐づき、使用後 30 日で物理削除します(主管 FR-004 / FR-008)。</p>
+<p class="section-lead">招待・パスワード再設定・メール確認などの短期トークンを保持します。</p>
 <h3 id="351-概要">概要</h3>
 <table>
 <thead>
@@ -37,10 +37,6 @@
 <td>招待 / パスワード再設定 / メール確認 / プロジェクト連絡先確認のトークン</td>
 </tr>
 <tr>
-<td>主管 FR</td>
-<td>FR-004, FR-008</td>
-</tr>
-<tr>
 <td>保持期間 / 保持起点</td>
 <td>使用後 30 日 / 発行日時</td>
 </tr>
@@ -51,10 +47,6 @@
 <tr>
 <td><code>retention_class</code></td>
 <td><code>general</code></td>
-</tr>
-<tr>
-<td>設計判断</td>
-<td><code>valid</code> 持たず(<code>used_at</code> で代用)。トークン本体は HMAC ハッシュで保存(平文非保持)。常に物理削除(匿名化対象外)。主体は管理コンソール利用者(<code>user_id</code>)のみ</td>
 </tr>
 </tbody>
 </table>

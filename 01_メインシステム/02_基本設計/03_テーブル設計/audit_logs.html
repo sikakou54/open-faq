@@ -14,7 +14,7 @@
 <article class="content" id="content">
 <h1 id="TBL-018">TBL-018 <code>audit_logs</code></h1>
 <span id="318-audit_logs"></span>
-<p class="section-lead">メイン管理者向けの API 操作ログを保持します。主キーは <code>id</code>、契約境界キー <code>contract_owner_user_id</code> を持ち、<code>retention_class</code>(<code>general</code> / <code>billing</code> / <code>operator_high_priv</code>)別に保持します。ハッシュチェーン正本は運営者側 <code>audit_logs</code>(IF #8 で片方向同期、主管 NFR-602a/b/d)です。</p>
+<p class="section-lead">メイン管理者向けの API 操作ログを保持します。</p>
 <h3 id="3181-概要">概要</h3>
 <table>
 <thead>
@@ -37,10 +37,6 @@
 <td>メイン管理者向けの API 操作ログ。<strong>ハッシュチェーン正本は運営者側 <code>audit_logs</code></strong>(IF #8 で片方向同期)</td>
 </tr>
 <tr>
-<td>主管 FR</td>
-<td>NFR-602a / NFR-602b / NFR-602d</td>
-</tr>
-<tr>
 <td>保持期間 / 保持起点</td>
 <td>retention_class 別(<code>general</code> 1y / <code>billing</code> 7y / <code>operator_high_priv</code> 5y)/ 操作日時</td>
 </tr>
@@ -51,10 +47,6 @@
 <tr>
 <td><code>retention_class</code></td>
 <td><code>general</code> / <code>billing</code> / <code>operator_high_priv</code>(本テーブルのカラム値で表現)</td>
-</tr>
-<tr>
-<td>設計判断</td>
-<td><code>valid</code> 持たず(API 操作ログ専用、<code>created_at + retention 期間</code> で物理 DELETE)。tombstone 方式は採らない(チェーン非対象のため)。<code>actor_role</code> の <code>service_operator</code> は運営者によるメイン API 呼出(IF 経由)を記録する用途で許容値として残す(<code>users</code> のロール概念とは独立)。<code>metadata</code> の JSON 構造例: <code>{"before":{...},"after":{...},"ticket_id":"OPS-1234"}</code>。SCR-019 操作ログ画面など、メイン管理者向けの即時参照クエリに低レイテンシで応える。MVPの操作者参照は <code>actor_user_id</code>(<code>users(id)</code>)のみとし、システム・運営者操作はNULLとする</td>
 </tr>
 </tbody>
 </table>

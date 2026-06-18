@@ -14,7 +14,7 @@
 <article class="content" id="content">
 <h1 id="TBL-016">TBL-016 <code>ai_threshold_persistent_cache</code></h1>
 <span id="316-ai_threshold_persistent_cache"></span>
-<p class="section-lead">3 階層 AI しきい値を永続キャッシュするテーブルです。主キーは <code>id</code>、<code>scope=owner</code> 時に契約境界キーを持ち、30 日保持します(主管 FR-348)。</p>
+<p class="section-lead">3 階層 AI しきい値を永続キャッシュするテーブルです。</p>
 <h3 id="3161-概要">概要</h3>
 <table>
 <thead>
@@ -37,10 +37,6 @@
 <td>3 階層しきい値(<code>global</code> / <code>owner</code> / <code>project</code>)の永続キャッシュ</td>
 </tr>
 <tr>
-<td>主管 FR</td>
-<td>FR-348</td>
-</tr>
-<tr>
 <td>保持期間 / 保持起点</td>
 <td>30 日 / 更新日時</td>
 </tr>
@@ -51,10 +47,6 @@
 <tr>
 <td><code>retention_class</code></td>
 <td><code>general</code></td>
-</tr>
-<tr>
-<td>設計判断</td>
-<td>scope と owner / project の整合は複合 CHECK で強制。詳細は <a href="../02_API設計/index.html">02_API設計/index.html</a>(IF #6)参照</td>
 </tr>
 </tbody>
 </table>

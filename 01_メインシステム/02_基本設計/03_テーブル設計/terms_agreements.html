@@ -14,7 +14,7 @@
 <article class="content" id="content">
 <h1 id="TBL-031">TBL-031 <code>terms_agreements</code></h1>
 <span id="331-terms_agreements"></span>
-<p class="section-lead">利用者ごとの規約同意履歴を保持します。主キーは <code>id</code>、契約境界キー <code>contract_owner_user_id</code> を持ち、7 年保持します。</p>
+<p class="section-lead">利用者ごとの規約同意履歴を保持します。</p>
 <h3 id="3311-概要">概要</h3>
 <table>
 <thead>
@@ -37,10 +37,6 @@
 <td>利用者ごとの利用規約 / プライバシーポリシー同意履歴(<code>doc_type</code> で文書ごとに個別記録)</td>
 </tr>
 <tr>
-<td>主管 FR</td>
-<td>-</td>
-</tr>
-<tr>
 <td>保持期間 / 保持起点</td>
 <td>7 年 / 同意日時</td>
 </tr>
@@ -51,10 +47,6 @@
 <tr>
 <td><code>retention_class</code></td>
 <td><code>billing</code></td>
-</tr>
-<tr>
-<td>設計判断</td>
-<td><code>valid</code> 持たず(法定保管 7 年テーブル)。<code>(user_id, doc_type, terms_version)</code> で一意(文書ごとに独立して同意を記録)</td>
 </tr>
 </tbody>
 </table>

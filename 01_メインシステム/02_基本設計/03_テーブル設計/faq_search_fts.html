@@ -14,7 +14,7 @@
 <article class="content" id="content">
 <h1 id="TBL-011">TBL-011 <code>faq_search_fts</code></h1>
 <span id="311-faq_search_fts"></span>
-<p class="section-lead">FAQ 全文検索用の FTS5 仮想テーブル(trigram トークナイザ)です。<code>faqs</code> に連動し、行は <code>rowid</code> で識別します(主管 FR-300)。</p>
+<p class="section-lead">FAQ 全文検索用の FTS5 仮想テーブル(trigram トークナイザ)です。</p>
 <h3 id="3111-概要">概要</h3>
 <table>
 <thead>
@@ -37,10 +37,6 @@
 <td>FTS5 contentless 仮想テーブル(trigram トークナイザ)</td>
 </tr>
 <tr>
-<td>主管 FR</td>
-<td>FR-300</td>
-</tr>
-<tr>
 <td>保持期間 / 保持起点</td>
 <td><code>faqs</code> に従属 / -</td>
 </tr>
@@ -51,10 +47,6 @@
 <tr>
 <td><code>retention_class</code></td>
 <td>-</td>
-</tr>
-<tr>
-<td>設計判断</td>
-<td>通常テーブルと異なる FTS5 仮想テーブル。<code>content='faqs'</code> / <code>content_rowid='rowid'</code> / <code>tokenize='trigram'</code> で構成し、<code>faqs</code> への INSERT / UPDATE / DELETE をトリガで同期する。<code>(project_id, status='published')</code> 前段フィルタは §4.9 インデックス方針参照</td>
 </tr>
 </tbody>
 </table>

@@ -14,7 +14,7 @@
 <article class="content" id="content">
 <h1 id="TBL-025">TBL-025 <code>service_announcements</code></h1>
 <span id="325-service_announcements"></span>
-<p class="section-lead">運営者が発信するお知らせ本体(Control Plane)を保持します。主キーは <code>id</code>、5 年保持します(<code>retention_class</code>=<code>operator_high_priv</code>)。</p>
+<p class="section-lead">運営者が発信するお知らせ本体(Control Plane)を保持します。</p>
 <h3 id="3251-概要">概要</h3>
 <table>
 <thead>
@@ -37,10 +37,6 @@
 <td>運営者発信のお知らせ本体</td>
 </tr>
 <tr>
-<td>主管 FR</td>
-<td>-</td>
-</tr>
-<tr>
 <td>保持期間 / 保持起点</td>
 <td>5 年 / 配信日時</td>
 </tr>
@@ -51,10 +47,6 @@
 <tr>
 <td><code>retention_class</code></td>
 <td><code>operator_high_priv</code></td>
-</tr>
-<tr>
-<td>設計判断</td>
-<td>配信対象は <code>announcement_audiences</code>(§3.26)で M:N 管理。<code>announcement_audiences</code> 行が 0 件のお知らせは「全契約配信」を意味する。<code>importance</code> 4 値は共有概念正本(<code>critical</code> はメール強制送信)</td>
 </tr>
 </tbody>
 </table>

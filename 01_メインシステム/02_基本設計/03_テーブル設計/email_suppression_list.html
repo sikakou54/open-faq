@@ -14,7 +14,7 @@
 <article class="content" id="content">
 <h1 id="TBL-017">TBL-017 <code>email_suppression_list</code></h1>
 <span id="317-email_suppression_list"></span>
-<p class="section-lead">バウンス・苦情を起こしたメールアドレスを全契約横断で管理するサプレスリストです。主キーは <code>id</code>、契約境界キーは持たず(全契約横断)、永久保持します(主管 FR-149b)。</p>
+<p class="section-lead">バウンス・苦情を起こしたメールアドレスを全契約横断で管理するサプレスリストです。</p>
 <h3 id="3171-概要">概要</h3>
 <table>
 <thead>
@@ -37,10 +37,6 @@
 <td>バウンス / 苦情の全契約横断管理(R-003 共通ドメインレピュテーション保護対策)</td>
 </tr>
 <tr>
-<td>主管 FR</td>
-<td>FR-149b</td>
-</tr>
-<tr>
 <td>保持期間 / 保持起点</td>
 <td>永久 / サプレス日時</td>
 </tr>
@@ -51,10 +47,6 @@
 <tr>
 <td><code>retention_class</code></td>
 <td><code>general</code></td>
-</tr>
-<tr>
-<td>設計判断</td>
-<td><code>valid</code> 持たず(全契約横断、<code>released_at</code> で解除を表現)。<a href="../09_セキュリティ設計.html">09_セキュリティ設計.html §11</a> 参照</td>
 </tr>
 </tbody>
 </table>

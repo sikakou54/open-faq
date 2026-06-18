@@ -14,7 +14,7 @@
 <article class="content" id="content">
 <h1 id="TBL-019">TBL-019 <code>error_logs</code></h1>
 <span id="319-error_logs"></span>
-<p class="section-lead">サーバーエラーを記録するエラーログです。主キーは <code>id</code>、契約境界キー <code>contract_owner_user_id</code> を任意で持ち、180 日保持します(主管 NFR-704)。</p>
+<p class="section-lead">サーバーエラーを記録するエラーログです。</p>
 <h3 id="3191-概要">概要</h3>
 <table>
 <thead>
@@ -37,10 +37,6 @@
 <td>サーバーエラー記録</td>
 </tr>
 <tr>
-<td>主管 FR</td>
-<td>NFR-704</td>
-</tr>
-<tr>
 <td>保持期間 / 保持起点</td>
 <td>180 日 / 発生日時</td>
 </tr>
@@ -51,10 +47,6 @@
 <tr>
 <td><code>retention_class</code></td>
 <td><code>general</code></td>
-</tr>
-<tr>
-<td>設計判断</td>
-<td><code>valid</code> 持たず(ログ系)。PII / トークン / カード情報を記録禁止(FR-114、エンドユーザー入力は先頭 100 文字 + ハッシュのみ)</td>
 </tr>
 </tbody>
 </table>

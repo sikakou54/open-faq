@@ -14,7 +14,7 @@
 <article class="content" id="content">
 <h1 id="TBL-008">TBL-008 <code>allowed_domains</code></h1>
 <span id="38-allowed_domains"></span>
-<p class="section-lead">ウィジェット埋め込みを許可するドメインを保持します。主キーは <code>id</code>、<code>projects</code> 経由で契約に紐づきます。論理削除は <code>valid</code> カラムで表します(主管 FR-150〜156)。</p>
+<p class="section-lead">ウィジェット埋め込みを許可するドメインを保持します。</p>
 <h3 id="381-概要">概要</h3>
 <table>
 <thead>
@@ -37,10 +37,6 @@
 <td>ウィジェット埋め込み許可ドメイン</td>
 </tr>
 <tr>
-<td>主管 FR</td>
-<td>FR-150-156</td>
-</tr>
-<tr>
 <td>保持期間 / 保持起点</td>
 <td>プロジェクトに従属 / -</td>
 </tr>
@@ -51,10 +47,6 @@
 <tr>
 <td><code>retention_class</code></td>
 <td><code>general</code></td>
-</tr>
-<tr>
-<td>設計判断</td>
-<td>同一プロジェクト内 <code>valid=1</code> 行のみ UNIQUE(再追加可能にするため部分 UNIQUE)</td>
 </tr>
 </tbody>
 </table>

@@ -14,7 +14,7 @@
 <article class="content" id="content">
 <h1 id="TBL-022">TBL-022 <code>usage_metering</code></h1>
 <span id="322-usage_metering"></span>
-<p class="section-lead">質問数・FAQ 件数をプロジェクト単位で計測し、請求はオーナーで SUM 集計します。主キーは <code>id</code>、契約境界キー <code>contract_owner_user_id</code> を持ち、7 年保持します(主管 FR-148、<code>retention_class</code>=<code>billing</code>)。</p>
+<p class="section-lead">質問数・FAQ 件数をプロジェクト単位で計測し、請求はオーナーで SUM 集計します。</p>
 <h3 id="3221-概要">概要</h3>
 <table>
 <thead>
@@ -37,10 +37,6 @@
 <td>質問数 / FAQ 件数 / AI トークン / コスト集計を <strong>プロジェクト単位</strong> で計測</td>
 </tr>
 <tr>
-<td>主管 FR</td>
-<td>FR-148</td>
-</tr>
-<tr>
 <td>保持期間 / 保持起点</td>
 <td>7 年 / 計測日時</td>
 </tr>
@@ -51,10 +47,6 @@
 <tr>
 <td><code>retention_class</code></td>
 <td><code>billing</code></td>
-</tr>
-<tr>
-<td>設計判断</td>
-<td><code>valid</code> 持たず(法定保管 7 年テーブル)。<strong>プロジェクト単位で計測</strong>し、<code>(contract_owner_user_id, project_id, billing_year_month)</code> で月次一意。上限件数・無料枠判定はプロジェクト単位の本テーブル値を用い、<strong>Stripe 請求(<code>billing_invoices</code>)は <code>contract_owner_user_id</code> で全プロジェクトを SUM 集計</strong>して確定する(契約集計)。<code>ai_token_*</code> / <code>ai_cost_yen</code> は契約単位の社内原価指標だがプロジェクト粒度でも保持する</td>
 </tr>
 </tbody>
 </table>

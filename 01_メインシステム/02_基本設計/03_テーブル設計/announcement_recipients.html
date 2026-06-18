@@ -14,7 +14,7 @@
 <article class="content" id="content">
 <h1 id="TBL-027">TBL-027 <code>announcement_recipients</code></h1>
 <span id="327-announcement_recipients"></span>
-<p class="section-lead">お知らせの実配信先・配信集計・監査情報を保持します。主キーは <code>id</code>、契約境界キー <code>contract_owner_user_id</code> を持ち、5 年保持します。</p>
+<p class="section-lead">お知らせの実配信先・配信集計・監査情報を保持します。</p>
 <h3 id="3271-概要">概要</h3>
 <table>
 <thead>
@@ -37,10 +37,6 @@
 <td>お知らせ配信先 / 配信集計 / 監査</td>
 </tr>
 <tr>
-<td>主管 FR</td>
-<td>-</td>
-</tr>
-<tr>
 <td>保持期間 / 保持起点</td>
 <td>5 年 / 配信日時</td>
 </tr>
@@ -51,10 +47,6 @@
 <tr>
 <td><code>retention_class</code></td>
 <td><code>general</code></td>
-</tr>
-<tr>
-<td>設計判断</td>
-<td><code>valid</code> 持たず(配信履歴)。<code>service_announcements</code> 物理削除時に CASCADE で連鎖物理削除。配信ファンアウトの user 単位レコード</td>
 </tr>
 </tbody>
 </table>

@@ -14,7 +14,7 @@
 <article class="content" id="content">
 <h1 id="TBL-024">TBL-024 <code>project_quota_limits</code></h1>
 <span id="324-project_quota_limits"></span>
-<p class="section-lead">質問数の月次上限件数・無料枠・アラート、および運営者が管理する FAQ 件数無料枠をプロジェクト単位で保持します。主キーは <code>id</code>、契約境界キー <code>contract_owner_user_id</code> を持ちます。論理削除は <code>valid</code> カラムで表します(主管 FR-121)。</p>
+<p class="section-lead">質問数の月次上限件数・無料枠・アラート、および運営者が管理する FAQ 件数無料枠をプロジェクト単位で保持します。</p>
 <blockquote>
 <p>本テーブルは表番号 #24(§2 全テーブル一覧)。掲載位置は他テーブルとの差分を最小化するため §3.23 直後に置く。</p>
 </blockquote>
@@ -40,10 +40,6 @@
 <td>質問数の月次上限件数・月次無料枠・アラート閾値と、FAQ件数の月次無料枠を課金対象別の行で保持する。管理者ユーザーが変更できるのは質問数行の上限件数とアラート閾値だけとし、無料枠とFAQ行は運営者設定専用とする。質問数の <code>threshold=NULL</code> は上限OFF、FAQの <code>threshold</code> はNULL固定で月次上限なしを表す</td>
 </tr>
 <tr>
-<td>主管 FR</td>
-<td>FR-121, FR-122, FR-125, FR-127</td>
-</tr>
-<tr>
 <td>保持期間 / 保持起点</td>
 <td>永久(プロジェクト存続中) / 設定日時</td>
 </tr>
@@ -54,10 +50,6 @@
 <tr>
 <td><code>retention_class</code></td>
 <td><code>general</code></td>
-</tr>
-<tr>
-<td>設計判断</td>
-<td>質問数上限と課金対象別無料枠を同じ行モデルで扱う。SCR-021 / SCR-021-001 は質問数行の上限とアラートだけを参照・更新し、<code>free_quota</code> は変更しない。FAQは運営者設定専用で、上限・上限アラートを持たず、利用量による新規作成停止を行わない。未設定時は無料枠デフォルトへフォールバックし、質問数だけ上限デフォルトも解決する</td>
 </tr>
 </tbody>
 </table>

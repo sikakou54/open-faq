@@ -14,7 +14,7 @@
 <article class="content" id="content">
 <h1 id="TBL-013">TBL-013 <code>question_log_faq_refs</code></h1>
 <span id="313-question_log_faq_refs"></span>
-<p class="section-lead">質問ログと参照 FAQ の M:N 関係を保持する中間テーブルです。主キーは <code>id</code>、<code>question_logs</code> に従属します。</p>
+<p class="section-lead">質問ログと参照 FAQ の M:N 関係を保持する中間テーブルです。</p>
 <h3 id="3131-概要">概要</h3>
 <table>
 <thead>
@@ -37,10 +37,6 @@
 <td>質問と FAQ の M:N 関係(AI が参照した FAQ を記録)</td>
 </tr>
 <tr>
-<td>主管 FR</td>
-<td>-</td>
-</tr>
-<tr>
 <td>保持期間 / 保持起点</td>
 <td><code>question_logs</code> に従属 / -</td>
 </tr>
@@ -51,10 +47,6 @@
 <tr>
 <td><code>retention_class</code></td>
 <td><code>general</code></td>
-</tr>
-<tr>
-<td>設計判断</td>
-<td><code>valid</code> 持たず(M:N 関係系)。<code>question_logs</code> / <code>faqs</code> 物理削除時に ON DELETE CASCADE で連鎖物理削除</td>
 </tr>
 </tbody>
 </table>

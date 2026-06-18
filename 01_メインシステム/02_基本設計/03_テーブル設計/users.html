@@ -14,7 +14,7 @@
 <article class="content" id="content">
 <h1 id="TBL-001">TBL-001 <code>users</code></h1>
 <span id="31-users"></span>
-<p class="section-lead">管理者(オーナー / プロジェクト管理者 / メンバー)の認証情報(メール / パスワード / 氏名 / セッション状態)を一元保持するユーザーマスタです。主キーは <code>id</code>。「オーナーかどうか」は本テーブル単独では判定せず <code>contract_owners</code> 行存在で判定し、論理削除は <code>valid</code> カラムで表します(主管 FR-001 / FR-015)。</p>
+<p class="section-lead">管理者(オーナー / プロジェクト管理者 / メンバー)の認証情報(メール / パスワード / 氏名 / セッション状態)を一元保持するユーザーマスタです。</p>
 <h3 id="311-概要">概要</h3>
 <table>
 <thead>
@@ -37,10 +37,6 @@
 <td><strong>管理者(オーナー / プロジェクト管理者 / メンバー)</strong> の認証情報(メール / パスワード / 氏名 / セッション状態など)を一元保持。MVPのウィジェット利用者はアカウント行を作成しない</td>
 </tr>
 <tr>
-<td>主管 FR</td>
-<td>FR-001, FR-015</td>
-</tr>
-<tr>
 <td>保持期間 / 保持起点</td>
 <td>永久(契約存続中)/ 作成日時</td>
 </tr>
@@ -51,10 +47,6 @@
 <tr>
 <td><code>retention_class</code></td>
 <td><code>general</code></td>
-</tr>
-<tr>
-<td>設計判断</td>
-<td>本テーブルの行はすべて管理コンソール利用者。MVPのウィジェット利用者は本テーブルにも別テーブルにも永続アカウントを作成しない。<code>role</code> カラムは v1.13 で撤廃。「オーナーかどうか」は本テーブル単独では判定せず、<strong><code>contract_owners</code> 行存在で判定</strong> する(<code>is_owner</code> カラムも <code>owner_account_id</code> 自己参照も持たない)。「契約所属」は <code>contract_owners.user_id = users.id</code>(本人がオーナー)または <code>project_users.user_id = users.id</code> 経由で取得する <code>contract_owner_user_id</code> で表現する。論理削除は <code>valid</code> カラムで表現(<code>valid=0</code> = 論理削除済、<code>valid=1</code> = 有効)。<code>deleted_at</code> 列は持たず、論理削除日時は <code>updated_at</code> で代用する。<code>email_key_version</code> は鍵ローテーション dual-decrypt 期間中の鍵バージョン参照用。<strong>契約内メール一意 UNIQUE</strong> は <code>users</code> 単独では表現不可のため、アプリ層トランザクション(同一 <code>contract_owner_user_id</code> 配下の <code>project_users.user_id</code> の <code>users.email_hmac</code> セット + <code>contract_owners</code> 行の <code>users.email_hmac</code> での重複検査)で担保する</td>
 </tr>
 </tbody>
 </table>

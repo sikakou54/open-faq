@@ -14,7 +14,7 @@
 <article class="content" id="content">
 <h1 id="TBL-023">TBL-023 <code>owner_quota_overrides</code></h1>
 <span id="323-owner_quota_overrides"></span>
-<p class="section-lead">運営者による契約単位のレート制限上書き(SCR-093)を保持します。主キーは <code>id</code>、契約境界キー <code>contract_owner_user_id</code> を持ち、レート種別(<code>*_per_*</code>)専用です。月次上限件数は <code>project_quota_limits</code>(§3.24)へ分離します(主管 IF #5、<code>retention_class</code>=<code>operator_high_priv</code>)。</p>
+<p class="section-lead">運営者による契約単位のレート制限上書き(SCR-093)を保持します。</p>
 <h3 id="3231-概要">概要</h3>
 <table>
 <thead>
@@ -37,10 +37,6 @@
 <td>運営者による契約単位のレート制限上書き(SCR-093、DDoS / Bot / 暴走対策のセキュリティ目的)。レート種別(<code>*_per_*</code>)のみを <code>resource_kind</code> で扱う。<strong>月次上限件数・無料枠はプロジェクト単位の <code>project_quota_limits</code>(§3.24)へ分離</strong>(本テーブルでは扱わない)</td>
 </tr>
 <tr>
-<td>主管 FR</td>
-<td>IF #5 / FR-128</td>
-</tr>
-<tr>
 <td>保持期間 / 保持起点</td>
 <td>5 年 / 設定日時</td>
 </tr>
@@ -51,10 +47,6 @@
 <tr>
 <td><code>retention_class</code></td>
 <td><code>operator_high_priv</code></td>
-</tr>
-<tr>
-<td>設計判断</td>
-<td>レート制限は契約単位のセキュリティ施策のため本テーブル(契約キー)に残置する。<code>valid</code> 持たず(<code>valid_until</code> 経過で無効化)。<code>window_sec</code> に計測窓秒、<code>threshold</code> に上限値を格納する。月次上限件数(<code>*_monthly_limit</code>)は v2.x でプロジェクト単位化に伴い本テーブルの <code>resource_kind</code> から撤去し、<code>project_quota_limits</code>(§3.24)へ移管した</td>
 </tr>
 </tbody>
 </table>

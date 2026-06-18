@@ -14,7 +14,7 @@
 <article class="content" id="content">
 <h1 id="TBL-002">TBL-002 <code>contract_owners</code></h1>
 <span id="32-contract_owners"></span>
-<p class="section-lead">オーナー専有属性(<code>contract_status</code> / <code>data_deletion_mode</code> 等)を保持する契約者テーブルです。<code>user_id</code> を主キーとし、行が存在すること自体がオーナー判定となります(1 契約 = 1 オーナーを DB 制約で担保)。<code>contract_status</code> は <code>active</code> / <code>suspended</code> / <code>deleted_pending</code> / <code>deleted</code> の 4 値です。</p>
+<p class="section-lead">オーナー専有属性(<code>contract_status</code> / <code>data_deletion_mode</code> 等)を保持する契約者テーブルです。</p>
 <h3 id="321-概要">概要</h3>
 <table>
 <thead>
@@ -37,10 +37,6 @@
 <td>オーナー専有属性(<code>contract_status</code> / <code>data_deletion_mode</code>)を分離。<strong>行存在 = オーナー判定</strong>(<code>is_owner</code> カラム不要)</td>
 </tr>
 <tr>
-<td>主管 FR</td>
-<td>FR-015a, FR-333</td>
-</tr>
-<tr>
 <td>保持期間 / 保持起点</td>
 <td>永久(契約存続中)/ 作成日時</td>
 </tr>
@@ -51,10 +47,6 @@
 <tr>
 <td><code>retention_class</code></td>
 <td><code>billing</code></td>
-</tr>
-<tr>
-<td>設計判断</td>
-<td><code>user_id PRIMARY KEY</code> により 1 契約 = 1 オーナー固定が DB 制約で担保される。「契約を持たないオーナー」のような不整合状態は表現不能。<code>contract_status='deleted'</code> ⇔ <code>valid=0</code> の同期は複合 CHECK で強制</td>
 </tr>
 </tbody>
 </table>

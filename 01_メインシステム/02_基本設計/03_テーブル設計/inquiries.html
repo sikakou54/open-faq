@@ -14,7 +14,7 @@
 <article class="content" id="content">
 <h1 id="TBL-014">TBL-014 <code>inquiries</code></h1>
 <span id="314-inquiries"></span>
-<p class="section-lead">FAQ 登録前の未解決質問を保持します。主キーは <code>id</code>、契約境界キー <code>contract_owner_user_id</code> を持ち、<code>status</code> は <code>open</code> / <code>closed</code> の 2 値です。論理削除は <code>valid</code> カラムで表します(主管 FR-070〜077)。</p>
+<p class="section-lead">FAQ 登録前の未解決質問を保持します。</p>
 <h3 id="3141-概要">概要</h3>
 <table>
 <thead>
@@ -37,10 +37,6 @@
 <td>FAQ 登録前の未解決質問</td>
 </tr>
 <tr>
-<td>主管 FR</td>
-<td>FR-070〜077</td>
-</tr>
-<tr>
 <td>保持期間 / 保持起点</td>
 <td>730 日 / 作成日時</td>
 </tr>
@@ -51,10 +47,6 @@
 <tr>
 <td><code>retention_class</code></td>
 <td><code>general</code></td>
-</tr>
-<tr>
-<td>設計判断</td>
-<td>対応状況は <code>status</code> の単一カラムで保持する(2 値: <code>open</code> / <code>closed</code>)。状態変更は SCR-005 詳細画面からの手動操作のみで行い、FAQ 下書き保存・FAQ 公開は本カラムを変更しない</td>
 </tr>
 </tbody>
 </table>

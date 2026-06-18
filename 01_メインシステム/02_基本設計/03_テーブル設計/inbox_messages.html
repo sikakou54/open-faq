@@ -14,7 +14,7 @@
 <article class="content" id="content">
 <h1 id="TBL-028">TBL-028 <code>inbox_messages</code></h1>
 <span id="328-inbox_messages"></span>
-<p class="section-lead">利用者のお知らせ・通知の既読管理(Tenant Plane の受信箱)を保持します。主キーは <code>id</code>、契約境界キー <code>contract_owner_user_id</code> を持ち、1 年保持します(主管 FR-182〜192)。</p>
+<p class="section-lead">利用者のお知らせ・通知の既読管理(Tenant Plane の受信箱)を保持します。</p>
 <h3 id="3281-概要">概要</h3>
 <table>
 <thead>
@@ -37,10 +37,6 @@
 <td>利用者管理者のお知らせ・通知の既読管理</td>
 </tr>
 <tr>
-<td>主管 FR</td>
-<td>FR-182-192</td>
-</tr>
-<tr>
 <td>保持期間 / 保持起点</td>
 <td>1 年 / 既読日時</td>
 </tr>
@@ -51,10 +47,6 @@
 <tr>
 <td><code>retention_class</code></td>
 <td><code>general</code></td>
-</tr>
-<tr>
-<td>設計判断</td>
-<td><code>valid</code> 持たず(ログ系)。<strong>お知らせ二層構成</strong>: Control Plane(<code>service_announcements</code> / <code>announcement_recipients</code>)= 運営者作成お知らせ本体 + 配信集計・監査、Tenant Plane(<code>inbox_messages</code>)= 利用者管理者の受信箱(既読管理)。<code>announcement</code> カテゴリは Control → Tenant の二層経由、<code>billing</code> / <code>system</code> は <code>inbox_messages</code> 直接生成。重複生成対策: <code>(contract_owner_user_id, dedup_key)</code> で 60 分以内は 1 件に集約</td>
 </tr>
 </tbody>
 </table>

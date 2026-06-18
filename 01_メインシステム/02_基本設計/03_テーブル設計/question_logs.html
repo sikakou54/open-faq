@@ -14,7 +14,7 @@
 <article class="content" id="content">
 <h1 id="TBL-012">TBL-012 <code>question_logs</code></h1>
 <span id="312-question_logs"></span>
-<p class="section-lead">ウィジェット利用者からの質問と AI 推論結果を記録する質問ログです。主キーは <code>id</code>、契約境界キー <code>contract_owner_user_id</code> を持ち、730 日経過後に自動匿名化します(主管 FR-003 / NFR-601)。</p>
+<p class="section-lead">ウィジェット利用者からの質問と AI 推論結果を記録する質問ログです。</p>
 <h3 id="3121-概要">概要</h3>
 <table>
 <thead>
@@ -37,10 +37,6 @@
 <td>エンドユーザーからの質問 / AI 推論結果を記録</td>
 </tr>
 <tr>
-<td>主管 FR</td>
-<td>FR-003, NFR-601</td>
-</tr>
-<tr>
 <td>保持期間 / 保持起点</td>
 <td>730 日(自動匿名化) / 投稿日時</td>
 </tr>
@@ -51,10 +47,6 @@
 <tr>
 <td><code>retention_class</code></td>
 <td><code>general</code></td>
-</tr>
-<tr>
-<td>設計判断</td>
-<td><code>metering_billable</code> は課金確定時点のイミュータブルなスナップショット値(派生値ではない。AI モデル / しきい値の事後変更で再評価しても値が変わらないことを保証)</td>
 </tr>
 </tbody>
 </table>

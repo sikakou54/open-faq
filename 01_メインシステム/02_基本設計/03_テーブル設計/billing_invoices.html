@@ -14,7 +14,7 @@
 <article class="content" id="content">
 <h1 id="TBL-021">TBL-021 <code>billing_invoices</code></h1>
 <span id="321-billing_invoices"></span>
-<p class="section-lead">月次請求書を保持します。主キーは <code>id</code>、契約境界キー <code>contract_owner_user_id</code> を持ち、電子帳簿保存法に基づき 7 年保持します(主管 FR-148 / NFR-602b、<code>retention_class</code>=<code>billing</code>)。</p>
+<p class="section-lead">月次請求書を保持します。</p>
 <h3 id="3211-概要">概要</h3>
 <table>
 <thead>
@@ -37,10 +37,6 @@
 <td>月次請求書</td>
 </tr>
 <tr>
-<td>主管 FR</td>
-<td>FR-148, NFR-602b</td>
-</tr>
-<tr>
 <td>保持期間 / 保持起点</td>
 <td>7 年 / 発行日時</td>
 </tr>
@@ -51,10 +47,6 @@
 <tr>
 <td><code>retention_class</code></td>
 <td><code>billing</code></td>
-</tr>
-<tr>
-<td>設計判断</td>
-<td><code>valid</code> 持たず(法定保管 7 年テーブル)。<code>(contract_owner_user_id, billing_year_month)</code> で月次一意</td>
 </tr>
 </tbody>
 </table>

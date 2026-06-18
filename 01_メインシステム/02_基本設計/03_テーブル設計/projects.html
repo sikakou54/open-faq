@@ -14,7 +14,7 @@
 <article class="content" id="content">
 <h1 id="TBL-006">TBL-006 <code>projects</code></h1>
 <span id="36-projects"></span>
-<p class="section-lead">FAQ プロジェクトとウィジェット設定を保持します。主キーは <code>id</code>、契約境界キー <code>contract_owner_user_id</code> を持ちます。論理削除は <code>valid</code> カラムで表します(主管 FR-030〜035)。</p>
+<p class="section-lead">FAQ プロジェクトとウィジェット設定を保持します。</p>
 <h3 id="361-概要">概要</h3>
 <table>
 <thead>
@@ -37,10 +37,6 @@
 <td>FAQ プロジェクト / ウィジェット設定</td>
 </tr>
 <tr>
-<td>主管 FR</td>
-<td>FR-030-035</td>
-</tr>
-<tr>
 <td>保持期間 / 保持起点</td>
 <td>永久(プロジェクト存続中) / 作成日時</td>
 </tr>
@@ -51,10 +47,6 @@
 <tr>
 <td><code>retention_class</code></td>
 <td><code>general</code></td>
-</tr>
-<tr>
-<td>設計判断</td>
-<td><code>status='deleted'</code> ⇔ <code>valid=0</code> の同期は複合 CHECK で強制。<code>widget_public_key</code> はウィジェット埋め込み時の鍵で UNIQUE。ローテーション時は <code>project_legacy_keys</code> に旧鍵を 24 時間保持</td>
 </tr>
 </tbody>
 </table>

@@ -14,7 +14,7 @@
 <article class="content" id="content">
 <h1 id="TBL-003">TBL-003 <code>project_users</code></h1>
 <span id="33-project_users"></span>
-<p class="section-lead">オーナー / メンバーのプロジェクトへの割当とプロジェクト別ロール(<code>admin</code> / <code>member</code>)を保持します。主キーは <code>(user_id, project_id)</code> の複合キーで、契約境界を <code>contract_owner_user_id</code> に冗長保持して認可境界クエリを高速化します(主管 FR-015 / FR-030〜035)。</p>
+<p class="section-lead">オーナー / メンバーのプロジェクトへの割当とプロジェクト別ロール(<code>admin</code> / <code>member</code>)を保持します。</p>
 <h3 id="331-概要">概要</h3>
 <table>
 <thead>
@@ -37,10 +37,6 @@
 <td>オーナー / プロジェクト管理者 / メンバーの全員に対し、プロジェクトごとに <code>admin</code>(プロジェクト管理者) / <code>member</code>(メンバー)のロールを付与する。<strong>オーナーも本テーブルに行を持つ</strong>(プロジェクト作成時に <code>(user_id=オーナー, project_id=新PJ, contract_owner_user_id=オーナー, role='admin', valid=1)</code> 行を自動 INSERT)</td>
 </tr>
 <tr>
-<td>主管 FR</td>
-<td>FR-015, FR-030-035</td>
-</tr>
-<tr>
 <td>保持期間 / 保持起点</td>
 <td>紐づくユーザーに従属 / -</td>
 </tr>
@@ -51,10 +47,6 @@
 <tr>
 <td><code>retention_class</code></td>
 <td><code>general</code></td>
-</tr>
-<tr>
-<td>設計判断</td>
-<td>認可フロー先頭の <code>isOwner=true</code> bypass(<code>contract_owners</code> 行存在で判定)は維持し、本テーブルは critical 通知宛先解決と画面表示に使う。<strong>割当ゼロ状態の発生条件</strong>: メンバー削除はユーザー論理削除(<code>UPDATE users SET valid=0</code>)で行い、<code>project_users</code> 行のみの単独削除(離脱)操作は提供しない。論理削除に伴い <code>project_users</code> 行も <code>valid=0</code> に同時 UPDATE する。<strong>PK と再招待</strong>: <code>(user_id, project_id)</code> の物理 PK 維持。同じユーザー × 同じプロジェクトの再招待は既存行の <code>valid</code> を <code>0 → 1</code> に切り替える UPSERT(<code>INSERT … ON CONFLICT(user_id, project_id) DO UPDATE SET valid=1, role=?, granted_at=now(), granted_by=?, updated_at=now()</code>)で表現。これにより同一ペアで <code>valid=1</code> 行は最大 1 件、部分 UNIQUE インデックスは不要</td>
 </tr>
 </tbody>
 </table>

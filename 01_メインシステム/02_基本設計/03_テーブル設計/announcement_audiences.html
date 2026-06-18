@@ -14,7 +14,7 @@
 <article class="content" id="content">
 <h1 id="TBL-026">TBL-026 <code>announcement_audiences</code></h1>
 <span id="326-announcement_audiences"></span>
-<p class="section-lead">お知らせの配信先オーナーを限定指定する M:N テーブルです。主キーは <code>(announcement_id, contract_owner_user_id)</code> の複合キーで、行が 0 件のときは全契約配信を意味します(<code>retention_class</code>=<code>operator_high_priv</code>)。</p>
+<p class="section-lead">お知らせの配信先オーナーを限定指定する M:N テーブルです。</p>
 <h3 id="3261-概要">概要</h3>
 <table>
 <thead>
@@ -37,10 +37,6 @@
 <td>お知らせの配信先 owner 限定指定(行 0 件 = 全契約配信)</td>
 </tr>
 <tr>
-<td>主管 FR</td>
-<td>-</td>
-</tr>
-<tr>
 <td>保持期間 / 保持起点</td>
 <td>親お知らせに従属 / -</td>
 </tr>
@@ -51,10 +47,6 @@
 <tr>
 <td><code>retention_class</code></td>
 <td><code>operator_high_priv</code></td>
-</tr>
-<tr>
-<td>設計判断</td>
-<td><code>valid</code> 持たず(M:N 関係系)。配信対象は中間テーブルで M:N 管理する(<code>service_announcements</code> 側に JSON 配列の多値列は持たない)。1NF 整合・JOIN 可能性・150 契約スケール時の性能を担保する。行 0 件 = 全契約配信(<code>contract_owners.contract_status='active' AND valid=1</code> の動的解決)、行 1 件以上 = 限定配信。配信ファンアウトは <code>announcement_recipients</code> で user 単位に展開される</td>
 </tr>
 </tbody>
 </table>

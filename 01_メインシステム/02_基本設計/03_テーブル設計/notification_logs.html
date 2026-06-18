@@ -14,7 +14,7 @@
 <article class="content" id="content">
 <h1 id="TBL-015">TBL-015 <code>notification_logs</code></h1>
 <span id="315-notification_logs"></span>
-<p class="section-lead">メール通知の送信履歴を保持します。主キーは <code>id</code>、契約境界キー <code>contract_owner_user_id</code> を持ち、1 年保持します(主管 NFR-506 / NFR-319)。</p>
+<p class="section-lead">メール通知の送信履歴を保持します。</p>
 <h3 id="3151-概要">概要</h3>
 <table>
 <thead>
@@ -37,10 +37,6 @@
 <td>メール通知の送信履歴</td>
 </tr>
 <tr>
-<td>主管 FR</td>
-<td>NFR-506, NFR-319</td>
-</tr>
-<tr>
 <td>保持期間 / 保持起点</td>
 <td>1 年 / 送信日時</td>
 </tr>
@@ -51,10 +47,6 @@
 <tr>
 <td><code>retention_class</code></td>
 <td><code>general</code></td>
-</tr>
-<tr>
-<td>設計判断</td>
-<td><code>valid</code> 持たず(ログ系、論理削除概念外)。匿名化時は <code>recipient_email_hmac</code> → SHA-256、vars → 空 JSON。案件削除でも履歴は残す(<code>inquiry_id</code> SET NULL)</td>
 </tr>
 </tbody>
 </table>

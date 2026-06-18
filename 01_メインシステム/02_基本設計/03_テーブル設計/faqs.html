@@ -14,7 +14,7 @@
 <article class="content" id="content">
 <h1 id="TBL-009">TBL-009 <code>faqs</code></h1>
 <span id="39-faqs"></span>
-<p class="section-lead">FAQ 本体(質問・回答・公開状態)を保持します。主キーは <code>id</code>、契約境界キー <code>contract_owner_user_id</code> を持ちます。論理削除は <code>valid</code> カラムで表します(主管 FR-040〜048 / FR-322)。</p>
+<p class="section-lead">FAQ 本体(質問・回答・公開状態)を保持します。</p>
 <h3 id="391-概要">概要</h3>
 <table>
 <thead>
@@ -37,10 +37,6 @@
 <td>FAQ 本体</td>
 </tr>
 <tr>
-<td>主管 FR</td>
-<td>FR-040-048, FR-322</td>
-</tr>
-<tr>
 <td>保持期間 / 保持起点</td>
 <td>永久(FAQ 存続中) / 作成日時</td>
 </tr>
@@ -51,10 +47,6 @@
 <tr>
 <td><code>retention_class</code></td>
 <td><code>general</code></td>
-</tr>
-<tr>
-<td>設計判断</td>
-<td><code>status='deleted'</code> ⇔ <code>valid=0</code>(プロジェクト削除に伴うカスケード論理削除では <code>status</code> を変えずに <code>valid=0</code> のみセットすることがある。UI / API では <code>valid=0</code> 行を常に除外)。復元は <strong>運営者のみ</strong>(IF #4)</td>
 </tr>
 </tbody>
 </table>

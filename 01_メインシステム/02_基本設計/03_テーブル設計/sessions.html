@@ -14,7 +14,7 @@
 <article class="content" id="content">
 <h1 id="TBL-004">TBL-004 <code>sessions</code></h1>
 <span id="34-sessions"></span>
-<p class="section-lead">複数デバイス対応のログインセッションを管理します。主キーは <code>id</code>、<code>users</code> 経由で契約に紐づきます。論理削除は <code>revoked_at</code> で代用し、期限切れ後 90 日で物理削除します(主管 FR-022 / FR-332)。</p>
+<p class="section-lead">複数デバイス対応のログインセッションを管理します。</p>
 <h3 id="341-概要">概要</h3>
 <table>
 <thead>
@@ -37,10 +37,6 @@
 <td>セッション管理(複数デバイス対応)。<code>revoked_at</code> で論理失効を表現する</td>
 </tr>
 <tr>
-<td>主管 FR</td>
-<td>FR-022, FR-332</td>
-</tr>
-<tr>
 <td>保持期間 / 保持起点</td>
 <td>期限切れ後 90 日 / 最終アクティビティ</td>
 </tr>
@@ -51,10 +47,6 @@
 <tr>
 <td><code>retention_class</code></td>
 <td><code>general</code></td>
-</tr>
-<tr>
-<td>設計判断</td>
-<td><code>valid</code> 持たず(<code>revoked_at IS NOT NULL</code> で論理失効を表現)。物理削除は <code>expires_at + 90 日</code> 経過後にバッチで実施</td>
 </tr>
 </tbody>
 </table>
