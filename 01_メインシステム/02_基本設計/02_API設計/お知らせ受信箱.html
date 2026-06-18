@@ -40,6 +40,13 @@
 <tr><td>権限</td><td>admin 限定</td></tr>
 </tbody>
 </table>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>inbox_messages</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{ "cursor": "共通仕様", "limit": "共通仕様" }</code></pre>
@@ -110,6 +117,13 @@
 <tr><td>権限</td><td>admin 限定</td></tr>
 </tbody>
 </table>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>inbox_messages</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+</tbody>
+</table>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{}</code></pre>
@@ -160,6 +174,14 @@
 </tbody>
 </table>
 <p>選択した複数のお知らせを一括で既読にする。1 リクエストの上限は <strong>100 件</strong>。超過時は 400 <code>VALIDATION_ERROR</code>。冪等(既読済みは再記録しない)。一括既読操作は操作者・対象件数・実行日時を監査記録する(FR-152 相当、正本: <a href="../09_セキュリティ設計.html">09_セキュリティ設計.html</a>)。</p>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>inbox_messages</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>audit_logs</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{}</code></pre>
@@ -218,6 +240,13 @@
 <tr><td>概要</td><td>未読件数と直近お知らせを返す</td></tr>
 <tr><td>認証</td><td>Cookie</td></tr>
 <tr><td>権限</td><td>admin 限定</td></tr>
+</tbody>
+</table>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>inbox_messages</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>

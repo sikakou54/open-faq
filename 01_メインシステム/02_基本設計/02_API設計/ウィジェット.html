@@ -39,6 +39,16 @@
 <tr><td>権限</td><td>end_user(公開キー)</td></tr>
 </tbody>
 </table>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>projects</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>allowed_domains</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>contract_owners</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>sessions</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{}</code></pre>
@@ -115,6 +125,16 @@
 <tr><td>概要</td><td>AI 回答を生成し質問ログを記録する。未回答時は未解決質問を同時生成する</td></tr>
 <tr><td>認証</td><td>Bearer session_token</td></tr>
 <tr><td>権限</td><td>end_user(セッション)</td></tr>
+</tbody>
+</table>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>question_logs</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td><code>faqs</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>usage_metering</code></td><td>◯</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>inquiries</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -213,6 +233,14 @@
 <tr><td>概要</td><td>未解決質問を登録する(チャット部屋は作成しない)</td></tr>
 <tr><td>認証</td><td>Bearer session_token</td></tr>
 <tr><td>権限</td><td>end_user(セッション)</td></tr>
+</tbody>
+</table>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>inquiries</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td><code>question_logs</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>

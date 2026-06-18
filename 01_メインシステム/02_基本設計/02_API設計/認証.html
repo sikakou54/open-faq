@@ -49,8 +49,10 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>accounts</code></td><td>◯</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>users</code></td><td>◯</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>contract_owners</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
 <tr><td><code>terms_agreements</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td><code>access_tokens</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -128,7 +130,8 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>accounts</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
+<tr><td><code>users</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
+<tr><td><code>contract_owners</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
 <tr><td><code>sessions</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
@@ -208,6 +211,13 @@
 <tr><td>権限</td><td>認証済み</td></tr>
 </tbody>
 </table>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>sessions</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+</tbody>
+</table>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{}</code></pre>
@@ -250,6 +260,14 @@
 <tr><td>概要</td><td>再設定メールの送信を要求する</td></tr>
 <tr><td>認証</td><td>不要</td></tr>
 <tr><td>権限</td><td>—(公開)</td></tr>
+</tbody>
+</table>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>users</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>access_tokens</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -300,6 +318,14 @@
 <tr><td>概要</td><td>機微操作の前にパスワードを再確認する</td></tr>
 <tr><td>認証</td><td>要(Cookie)</td></tr>
 <tr><td>権限</td><td>認証済み</td></tr>
+</tbody>
+</table>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>users</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>access_tokens</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -359,6 +385,14 @@
 </tbody>
 </table>
 <p>トークン形式 = <code>email_verify</code> purpose の <code>access_tokens.token_hash</code> 検証。</p>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>access_tokens</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
+<tr><td><code>users</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+</tbody>
+</table>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{}</code></pre>
@@ -417,6 +451,16 @@
 </tbody>
 </table>
 <p>トークン形式 = <code>activation</code> purpose の <code>access_tokens.token_hash</code> 検証。検証成功時は招待情報を返し、SCR-018 の招待情報パネル表示に使用する。Turnstile 不要(プレビューは情報取得のみで状態変更なし)。</p>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>access_tokens</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>projects</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>project_users</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>users</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{}</code></pre>
@@ -486,6 +530,17 @@
 <tr><td>概要</td><td>招待されたメンバー本人が氏名・初回パスワード・規約同意を登録し有効化を完了する</td></tr>
 <tr><td>認証</td><td>未認証可(トークン認証のみ、Turnstile 必須)</td></tr>
 <tr><td>権限</td><td>—</td></tr>
+</tbody>
+</table>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>access_tokens</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
+<tr><td><code>users</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>project_users</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>terms_agreements</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td><code>audit_logs</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -578,6 +633,15 @@
 </tbody>
 </table>
 <p>Turnstile は不要(入力フォームを持たない単純な確認専用エンドポイントで、トークン HMAC-SHA256 検証 + IP / トークン単位のレート制限で十分)。</p>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>access_tokens</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
+<tr><td><code>projects</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
+<tr><td><code>audit_logs</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{}</code></pre>

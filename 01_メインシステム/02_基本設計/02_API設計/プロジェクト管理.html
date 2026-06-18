@@ -40,6 +40,15 @@
 <tr><td>権限</td><td><strong>オーナー専有</strong></td></tr>
 </tbody>
 </table>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>projects</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>faqs</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>allowed_domains</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{
@@ -117,6 +126,15 @@
 <tr><td>概要</td><td>プロジェクトを作成し公開キーを発行する(オーナーを自動 admin 化)</td></tr>
 <tr><td>認証</td><td>Cookie + CSRF</td></tr>
 <tr><td>権限</td><td><strong>オーナー専有</strong>(プロジェクト設定全般を含めオーナーのみ実行可)</td></tr>
+</tbody>
+</table>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>projects</code></td><td>◯</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>allowed_domains</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td><code>project_users</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -220,6 +238,22 @@
 </tbody>
 </table>
 <p>上記 Request Body は PATCH(部分更新)時のもの。DELETE 時はボディなし。<code>DELETE /projects/{id}</code> 実行時の挙動(FR-030b、論理削除)。</p>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>projects</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
+<tr><td><code>allowed_domains</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>project_users</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>users</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>sessions</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>access_tokens</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>faqs</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>question_logs</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>inquiries</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>audit_logs</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
 <h3>処理概要</h3>
 <p class="section-lead">プロジェクトの部分更新 / 論理削除(FR-030b)。</p>
 <table>
@@ -276,6 +310,13 @@
 <tr><td>概要</td><td>公開キーを再発行する(旧キーは 24 時間猶予で失効)</td></tr>
 <tr><td>認証</td><td>再認証必須</td></tr>
 <tr><td>権限</td><td>オーナー専有</td></tr>
+</tbody>
+</table>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>projects</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>

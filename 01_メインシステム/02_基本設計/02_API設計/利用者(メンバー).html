@@ -41,6 +41,14 @@
 <tr><td>権限</td><td>オーナー / 当該プロジェクト管理者</td></tr>
 </tbody>
 </table>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>project_users</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>users</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{
@@ -122,6 +130,16 @@
 </tbody>
 </table>
 <p>既存メンバーアカウントの場合は <code>project_users</code> 行のみ追加(指定ロール)。新規メールアドレスの場合は <code>users</code> を <strong><code>name=NULL</code> / <code>status='pending_activation'</code></strong> で作成 + <code>project_users</code> を <code>valid=0</code> で同時 INSERT + 招待メール送信(7 日有効、<code>access_tokens.purpose='activation'</code>、<code>meta={"invitedProjectId": "...", "invitedRole": "..."}</code> を JSON 保持)。<strong>氏名(<code>displayName</code>)は受け付けない</strong>(招待された本人が SCR-018 メンバーアカウント有効化ページで入力する。FR-016d / FR-016e)。</p>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>project_users</code></td><td>◯</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>users</code></td><td>◯</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>access_tokens</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td><code>notification_logs</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{}</code></pre>
@@ -191,6 +209,13 @@
 <tr><td>概要</td><td>当該プロジェクトの <code>project_users.role</code> を上書きする(他プロジェクトに影響なし)</td></tr>
 <tr><td>認証</td><td>Cookie + CSRF + 再認証必須</td></tr>
 <tr><td>権限</td><td>オーナー / 該当プロジェクトの <code>admin</code> ロール保持メンバー</td></tr>
+</tbody>
+</table>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>project_users</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -280,6 +305,16 @@
 <li>対象ユーザーに他プロジェクトの有効割当が残る場合: <code>users</code>、他プロジェクトの割当、セッション、招待トークンは維持する。</li>
 <li>他プロジェクトの有効割当が 0 件になる場合: 同一トランザクションで <code>users.valid=0</code>、全セッション失効、未使用招待トークン失効を実行する。</li>
 </ul>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>project_users</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
+<tr><td><code>users</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>sessions</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>access_tokens</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+</tbody>
+</table>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{}</code></pre>
@@ -347,6 +382,16 @@
 </tbody>
 </table>
 <p>旧 <code>access_tokens.purpose='activation'</code> を失効させ新規トークン(7 日有効、<code>meta</code> を同一の <code>invitedProjectId</code> / <code>invitedRole</code> で再発行)を発行。</p>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>users</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>project_users</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>access_tokens</code></td><td>◯</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>notification_logs</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{}</code></pre>

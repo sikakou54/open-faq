@@ -44,6 +44,14 @@
 </tbody>
 </table>
 <p>契約全体の利用状況は API-033 <code>GET /owner/projects/usage</code> を使用する。</p>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>usage_metering</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>faqs</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{ "period": "current_month", "viewMode": "project", "projectId": "{id}" }</code></pre>
@@ -111,6 +119,14 @@
 </tbody>
 </table>
 <p>契約全体サマリーとプロジェクト別の質問数、質問数上限に対する利用率、公開 FAQ 件数、最終更新日時を返す。</p>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>usage_metering</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>faqs</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{ "period": "current_month" }</code></pre>
@@ -185,6 +201,14 @@
 <tr><td>概要</td><td>当月請求見込み合計・次回請求日・請求状態・プロジェクト別内訳・支払方法登録状態を返す</td></tr>
 <tr><td>認証</td><td>Cookie</td></tr>
 <tr><td>権限</td><td>オーナー専有</td></tr>
+</tbody>
+</table>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>billing_subscriptions</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>usage_metering</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -264,6 +288,13 @@
 <tr><td>権限</td><td>オーナー専有</td></tr>
 </tbody>
 </table>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>billing_invoices</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{ "limit": "6(等)" }</code></pre>
@@ -331,6 +362,13 @@
 </tbody>
 </table>
 <p>支払方法はクレジットカードのみ(FR-136)。カード番号等の生データはサーバで保持せず、課金プロバイダのトークンを受領して紐付ける(PCI スコープ最小化、正本: <a href="../09_セキュリティ設計.html">09_セキュリティ設計.html</a>)。サスペンション中もオーナーは本 API を実行できる(FR-138)。</p>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>billing_subscriptions</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
+</tbody>
+</table>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{}</code></pre>
@@ -405,6 +443,14 @@
 </tbody>
 </table>
 <p>SCR-021 の表示には <code>used</code> / <code>limitEnabled</code> / <code>limit</code> / <code>percentage</code> / <code>yenEquivalent</code> だけを使用し、アラート設定・設定元は表示しない。SCR-021-001 は <code>limitEnabled</code> / <code>limit</code> / <code>alertThresholds</code> を使用する。FAQ 件数は扱わないためレスポンスに含めない。質問数の無料利用枠は課金判定用の内部データとして保持するが、本 API のレスポンスには含めない。</p>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>project_quota_limits</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>usage_metering</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{}</code></pre>
@@ -468,6 +514,13 @@
 </tbody>
 </table>
 <p><code>project_quota_limits.resource_kind='question_monthly_limit'</code> かつ <code>source='owner'</code> の 1 行だけを upsert する。質問数の <code>free_quota</code> と FAQ 件数の行は更新しない。</p>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>project_quota_limits</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+</tbody>
+</table>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{}</code></pre>

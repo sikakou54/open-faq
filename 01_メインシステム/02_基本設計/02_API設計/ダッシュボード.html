@@ -38,6 +38,16 @@
 </tbody>
 </table>
 <p>質問数・未解決数(FR-130)、要対応状況の対応中 / 対応済み内訳(FR-132)、未解決傾向(FR-133)、期間絞り込み(FR-134)、通知失敗・バウンス件数(FR-135)をまとめて返す。<code>projectId</code> 未指定時はオーナーのみ契約全体を集約する(メンバーは <code>projectId</code> 必須)。期間は <code>period</code>(<code>current_month</code> / <code>last_30d</code>)または <code>from</code> / <code>to</code> で指定する。</p>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>usage_metering</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>question_logs</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>inquiries</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>notification_logs</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{ "period": "current_month", "projectId": "{id}(メンバーは必須)", "from": "任意(period の代わりに範囲指定)", "to": "任意(period の代わりに範囲指定)" }</code></pre>

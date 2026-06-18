@@ -37,6 +37,15 @@
 <p class="section-lead">顧客管理システムからの契約停止イベントを受信し、契約状態とセッションを反映します。</p>
 <pre><code>POST /internal/admin-integration/v1/owner/suspend</code></pre>
 <p>認証: mTLS + JWT(<code>aud=main</code>、TTL 5min)。</p>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>contract_owners</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>sessions</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>audit_logs</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{}</code></pre>
@@ -99,6 +108,14 @@
 
 <p class="section-lead">顧客管理システムからの強制ログアウト指示を受信し、セッションを失効します。</p>
 <pre><code>POST /internal/admin-integration/v1/owner/forced-logout</code></pre>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>sessions</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>audit_logs</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{}</code></pre>
@@ -140,6 +157,13 @@
 <p class="section-lead">運営者の承認を経た削除データ復元の実行指示を受信します。</p>
 <pre><code>POST /internal/admin-integration/v1/owner/restore</code></pre>
 <p>認証: mTLS + JWT + 再認証トークン。</p>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>audit_logs</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{}</code></pre>
@@ -163,6 +187,14 @@
 
 <p class="section-lead">契約単位のレート制限上書きを受信し、即時反映します。</p>
 <pre><code>POST /internal/admin-integration/v1/rate-limit/override</code></pre>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>owner_quota_overrides</code></td><td>◯</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>audit_logs</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{}</code></pre>
@@ -208,6 +240,14 @@
 
 <p class="section-lead">プロジェクト単位の月次上限件数上書き(4-eyes 承認済み)を受信し、即時反映します。</p>
 <pre><code>POST /internal/admin-integration/v1/usage-limit/override</code></pre>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>project_quota_limits</code>(<code>source='operator'</code>)</td><td>◯</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>audit_logs</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{}</code></pre>
@@ -255,6 +295,15 @@
 
 <p class="section-lead">AI 回答可否のしきい値上書きを受信し、KV と永続キャッシュへ反映します。</p>
 <pre><code>POST /internal/admin-integration/v1/threshold/update</code></pre>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>ai_threshold_persistent_cache</code></td><td>◯</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>inbox_messages</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td><code>audit_logs</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{}</code></pre>
@@ -300,6 +349,15 @@
 
 <p class="section-lead">運営者が生成したお知らせを受信し、配信先を解決して inbox へ fan-out します。</p>
 <pre><code>POST /internal/admin-integration/v1/announcement/inbound</code></pre>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>service_announcements</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td><code>inbox_messages</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td><code>audit_logs</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{}</code></pre>
@@ -356,6 +414,13 @@
 <p class="section-lead">メインから顧客管理システムへ監視メトリクスを送信(取得)します。</p>
 <pre><code>GET https://&lt;admin-host&gt;/internal/main-integration/v1/metrics?window=5m|1h|24h</code></pre>
 <p>認証: mTLS + JWT(<code>aud=admin</code>)。</p>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td>(DB アクセスなし。外部プロバイダ呼び出し)</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{ "window": "5m|1h|24h" }</code></pre>
@@ -423,6 +488,13 @@
 
 <p class="section-lead">メインから顧客管理システムへ不正利用検知を通知します。</p>
 <pre><code>POST https://&lt;admin-host&gt;/internal/main-integration/v1/fraud/detected</code></pre>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>audit_logs</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{}</code></pre>
@@ -456,6 +528,15 @@
 
 <p class="section-lead">運営者が一次受信した Stripe 課金イベントを受信し、請求 / 契約状態へ反映します(FR-139)。</p>
 <pre><code>POST /internal/admin-integration/v1/billing-webhook/forward</code></pre>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>billing_subscriptions</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>contract_owners</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>audit_logs</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{}</code></pre>
@@ -499,6 +580,14 @@
 
 <p class="section-lead">運営者操作の通知を受信し、管理者 inbox とメール通知へ反映します。</p>
 <pre><code>POST /internal/admin-integration/v1/admin-operation/notify</code></pre>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>inbox_messages</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td><code>audit_logs</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{}</code></pre>

@@ -60,6 +60,13 @@ export interface AnswerProvider {
 <tr><td><code>model</code></td><td>string</td><td>使用モデル名</td></tr>
 </tbody>
 </table>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td>(DB アクセスなし。外部プロバイダ呼び出し)</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
 <h3>処理概要</h3>
 <p class="section-lead">回答生成(<code>generate</code>)とヘルスチェック(<code>healthcheck</code>)を持つ内部抽象インターフェースです。エンドポイントは持たず、MVP は <code>WorkersAIAnswerProvider</code> として実装します。</p>
 <table>
