@@ -166,7 +166,7 @@
 </table>
 
 <h3 id="32-retention_class-分類の設計意図">3.2 <code>retention_class</code> 分類の設計意図</h3>
-<p class="section-lead">監査ログの保持クラス(<code>retention_class</code> = <code>general</code> / <code>billing</code> / <code>operator_high_priv</code>)は、どの保持規制に対応するかを表します。値の正本表は <a href="index.html#22-retention_class-値の正本定義audit_logsretention_class">テーブル設計 §2.2</a> を参照してください。</p>
+<p class="section-lead">監査ログの保持クラス(<code>retention_class</code> = <code>general</code> / <code>billing</code>)は、どの保持規制に対応するかを表します。値の正本表は <a href="index.html#22-retention_class-値の正本定義audit_logsretention_class">テーブル設計 §2.2</a> を参照してください。</p>
 <table>
 <thead>
 <tr>
@@ -186,14 +186,9 @@
 <td>電子帳簿保存法・国税法の課金/法定保管要請に対応</td>
 <td>7 年(NFR-602b)</td>
 </tr>
-<tr>
-<td><code>operator_high_priv</code></td>
-<td>運営者高権限操作(SOX 類似の内部統制要請)に対応</td>
-<td>5 年(NFR-602d)</td>
-</tr>
 </tbody>
 </table>
-<p>値の意味・代表例の正本は <a href="index.html#22-retention_class-値の正本定義audit_logsretention_class">テーブル設計 §2.2</a>、保持規制の詳細は <a href="../09_セキュリティ設計.html">09_セキュリティ設計.html §7</a>(運営者側 §7 が正本)を参照する。</p>
+<p>値の意味・代表例の正本は <a href="index.html#22-retention_class-値の正本定義audit_logsretention_class">テーブル設計 §2.2</a>、保持規制の詳細は <a href="../09_セキュリティ設計.html">09_セキュリティ設計.html §7</a> を参照する。</p>
 
 <h3 id="33-論理削除と物理削除バッチ">3.3 論理削除(<code>valid</code>)と物理削除バッチ・匿名化モード</h3>
 <p class="section-lead">論理削除は <code>valid=0</code> で表現し、90 日経過後に物理削除バッチが <code>data_deletion_mode</code>(<code>physical</code> / <code>anonymize</code>)に従って実体を処理する取り決めです。詳細表は §6 データ削除モードを正本とします。</p>
@@ -303,7 +298,7 @@
 </tr>
 <tr>
 <td><code>service_announcements</code></td>
-<td>運営者発信のお知らせ本体(配信先は <code>announcement_audiences</code> / <code>announcement_recipients</code> で契約別)</td>
+<td>お知らせ本体(配信先は <code>announcement_audiences</code> / <code>announcement_recipients</code> で契約別)</td>
 </tr>
 </tbody>
 </table>
@@ -316,7 +311,7 @@
 <pre class="mermaid"><code>stateDiagram-v2
   direction LR
   [*] --&gt; active : 契約作成
-  active --&gt; suspended : 支払い失敗7日経過 / 運営者手動
+  active --&gt; suspended : 支払い失敗7日経過 / 手動停止
   suspended --&gt; active : 支払再開 / 解除
   active --&gt; deleted_pending : admin 退会申請
   suspended --&gt; deleted_pending : admin 退会申請
@@ -371,7 +366,7 @@
 <td><code>deleted</code></td>
 <td><code>draft</code></td>
 <td>復元</td>
-<td><strong>運営者のみ</strong>(IF #4)</td>
+<td>サポート対応</td>
 </tr>
 </tbody>
 </table>
@@ -508,19 +503,19 @@
 <tr>
 <td><code>active</code></td>
 <td><code>suspended</code></td>
-<td>IF #1(支払い失敗 7 日猶予経過)</td>
+<td>支払い失敗 7 日猶予経過</td>
 <td><code>payment_failure_grace_expired</code></td>
 </tr>
 <tr>
 <td><code>active</code></td>
 <td><code>suspended</code></td>
-<td>IF #1(運営者手動)</td>
-<td><code>operator_manual</code> / <code>tos_violation</code></td>
+<td>手動停止</td>
+<td><code>manual_suspend</code> / <code>tos_violation</code></td>
 </tr>
 <tr>
 <td><code>suspended</code></td>
 <td><code>active</code></td>
-<td>IF #1(支払再開 / 解除)</td>
+<td>支払再開 / 解除</td>
 <td>—</td>
 </tr>
 <tr>
@@ -687,8 +682,8 @@
 <tr>
 <td><code>audit_logs</code></td>
 <td>(<code>valid</code> なし、メイン側は API 操作ログ専用)</td>
-<td><code>created_at + retention 期間</code> 経過後に物理 DELETE(<code>general</code> 1y / <code>billing</code> 7y / <code>operator_high_priv</code> 5y)</td>
-<td>(匿名化対象外。ハッシュチェーン正本は運営者側)</td>
+<td><code>created_at + retention 期間</code> 経過後に物理 DELETE(<code>general</code> 1y / <code>billing</code> 7y)</td>
+<td>(匿名化対象外。ハッシュチェーンで完全性を検証)</td>
 </tr>
 </tbody>
 </table>
@@ -705,7 +700,7 @@
 <ul>
 <li><strong>データ保持期間はシステム固定値とし、契約・管理者ユーザーによる UI 上の変更は不可</strong>(短縮・長期化いずれも不可)</li>
 <li>固定値は要件定義 NFR-701 / NFR-705 を正本とする</li>
-<li>短縮が必要な場合(法令・契約義務範囲内)はサポート窓口経由の運営者対応とする</li>
+<li>短縮が必要な場合(法令・契約義務範囲内)はサポート窓口経由の対応とする</li>
 <li>データ保持期間は利用者が設定できない(固定値)</li>
 <li><code>usage_metering</code> / <code>billing_invoices</code> / <code>audit_logs(retention_class='billing')</code> は電子帳簿保存法・国税法の要請により最低 7 年保持(NFR-602b)、これを下回る短縮は不可</li>
 </ul>

@@ -400,7 +400,7 @@
 <li>メンバーで <code>project_users</code> 行が 1 件なら <code>/projects/{onlyRow.project_id}</code> (SCR-008)</li>
 <li>メンバーで <code>project_users</code> 行が複数なら最新 <code>last_accessed_at</code> のプロジェクト</li>
 </ol>
-<p>ユーザー削除はユーザーレベル論理削除(<code>users.valid=0</code>)のため、現存するメンバー(<code>users.valid=1</code>)は <code>project_users.valid=1</code> を 1 件以上満たし、「<code>project_users</code> 行が 0 件のケース」は構造的に発生しない。データ不整合等で <code>WHERE valid=1</code> 条件下で <code>projectUsers.length === 0</code> を検出した場合のフェイルセーフは Sentry へ重大度 high を通知し <code>/auth/login</code> へ強制ログアウトする(運営者 IF #2 強制ログアウト発火を期待)。</p>
+<p>ユーザー削除はユーザーレベル論理削除(<code>users.valid=0</code>)のため、現存するメンバー(<code>users.valid=1</code>)は <code>project_users.valid=1</code> を 1 件以上満たし、「<code>project_users</code> 行が 0 件のケース」は構造的に発生しない。データ不整合等で <code>WHERE valid=1</code> 条件下で <code>projectUsers.length === 0</code> を検出した場合のフェイルセーフは Sentry へ重大度 high を通知し <code>/auth/login</code> へ強制ログアウトする。</p>
 <p><strong>認証ミドルウェアの追加チェック</strong>: 認証成功直後に <code>users.valid=1</code> を確認し、<code>valid=0</code> の場合は 401 でログイン拒否(セッション失効扱い)。これにより論理削除済みユーザーのセッションが残存しても再アクセスを防止する。オーナーの場合は加えて <code>contract_owners.valid=1 AND contract_status NOT IN ('deleted')</code> も検証(<code>deleted_pending</code> は 30 日間の猶予期間中は許容)。</p>
 <h3 id="310-scr-016-プロジェクト0件の空状態fr-326">3.10 SCR-016 プロジェクト0件の空状態(FR-326)</h3>
 <p class="section-lead">プロジェクトが 1 件もないときの利用状況画面の表示ロジックを定めます。全体サマリーを出さず、作成 CTA のみを表示します。</p>

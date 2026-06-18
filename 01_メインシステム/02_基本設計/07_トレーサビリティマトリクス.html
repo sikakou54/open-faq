@@ -33,10 +33,9 @@
 <tr><td>メッセージ・通知</td><td><code>MSG-*</code> / <code>NOTIF-*</code></td><td><a href="06_メッセージ一覧.html">06_メッセージ一覧.html</a></td></tr>
 <tr><td>メールテンプレート</td><td>TPL-*</td><td><a href="11_メール設計.html">11_メール設計.html</a></td></tr>
 <tr><td>SCR / AC ID 体系の正本宣言</td><td>SCR / AC</td><td><a href="../../共有/共有概念.html">共有概念対応表</a>(本ページが正本)</td></tr>
-<tr><td>運営者側トレース</td><td>—</td><td><a href="../../02_運営者システム/02_基本設計/07_トレーサビリティマトリクス.html">02_運営者システム/02_基本設計/07_トレーサビリティマトリクス.html</a></td></tr>
 </tbody>
 </table>
-<p>本ページが束ねる対象は、メインシステムの全要件(BR / FR / NFR / AC)、機能ブロック(<code>F-*</code>)、画面(SCR-001〜023 + 各モーダル。旧 SCR-024 は廃番・再利用しない)、API、テーブル、プロジェクト別ロール(<code>admin</code> / <code>member</code>)+ オーナー、エラー ID(<code>E-*</code>)、メッセージ ID(<code>MSG-*</code>)、通知 ID(<code>NOTIF-*</code>)である。運営者側要件は <a href="../../02_運営者システム/02_基本設計/07_トレーサビリティマトリクス.html">運営者 07_トレーサビリティマトリクス.html</a> を参照する。</p>
+<p>本ページが束ねる対象は、メインシステムの全要件(BR / FR / NFR / AC)、機能ブロック(<code>F-*</code>)、画面(SCR-001〜023 + 各モーダル。旧 SCR-024 は廃番・再利用しない)、API、テーブル、プロジェクト別ロール(<code>admin</code> / <code>member</code>)+ オーナー、エラー ID(<code>E-*</code>)、メッセージ ID(<code>MSG-*</code>)、通知 ID(<code>NOTIF-*</code>)である。</p>
 <h2 id="2-業務要件トレース">2. 業務要件トレース(BR → FR → NFR → AC → 主管)</h2>
 <p class="section-lead">業務要件(BR)を起点に、それを実現する機能要件(FR)・関連 NFR・受入条件(AC)・主管系統を対応づける。BR / FR / NFR / AC の定義と全文は <a href="../01_要件定義/index.html">要件定義 index</a>(§5 業務要件一覧・§6 機能要件一覧・§7 非機能要件一覧・§8 要件トレーサビリティ)が正本であり、本表はその対応関係のみを束ねる。BR-028〜BR-173 は各 FR グループファイル(FR01〜FR20)で定義される機能グループ別業務要件で、対応 FR は当該ファイルの機能要件節を正本とする。</p>
 <div class="table-scroll">
@@ -72,12 +71,12 @@
 <tr><td>BR-013g</td><td>資産配置の正規化(プロジェクト単位 / 契約単位の分離)</td><td>FR-031</td><td>—</td><td>—</td><td>メイン</td></tr>
 <tr><td>BR-015</td><td>退会削除(契約データエクスポートは将来対応)</td><td>FR-009, FR-163, FR-167</td><td>NFR-703, NFR-704</td><td>AC-022</td><td>メイン</td></tr>
 <tr><td>BR-016</td><td>FAQ 登録元トレース</td><td>FR-048, FR-106</td><td>—</td><td>AC-015</td><td>メイン</td></tr>
-<tr><td>BR-017</td><td>不正利用検知</td><td>FR-178, FR-195</td><td>NFR-308, NFR-316, NFR-317</td><td>—</td><td>メイン(検知)/ 顧客管理(運営者通知)</td></tr>
-<tr><td>BR-018</td><td>SaaS 全体利用状況把握(メイン側は集計提供のみ)</td><td>FR-120, FR-149a(可視化は顧客管理 FR-230)</td><td>—</td><td>—</td><td>顧客管理(参照側)</td></tr>
+<tr><td>BR-017</td><td>不正利用検知</td><td>FR-178, FR-195</td><td>NFR-308, NFR-316, NFR-317</td><td>—</td><td>メイン(検知)</td></tr>
+<tr><td>BR-018</td><td>SaaS 全体利用状況把握(メイン側は集計提供のみ)</td><td>FR-120, FR-149a</td><td>—</td><td>—</td><td>メイン(集計提供)</td></tr>
 <tr><td>BR-019</td><td>未解決質問の状況表示(対応中 / 対応済み)</td><td>FR-074, FR-076</td><td>—</td><td>AC-023</td><td>メイン</td></tr>
 <tr><td>BR-020</td><td>状況変更の手動操作のみ集約</td><td>FR-077</td><td>NFR-601</td><td>AC-024</td><td>メイン</td></tr>
-<tr><td>BR-021</td><td>月次請求メール</td><td>FR-148</td><td>—</td><td>AC-025, AC-042</td><td>両方(発火=顧客管理、通知=メイン)</td></tr>
-<tr><td>BR-022</td><td>運営者からのお知らせ配信</td><td>FR-149</td><td>—</td><td>AC-026</td><td>顧客管理(作成)/ メイン(配信)</td></tr>
+<tr><td>BR-021</td><td>月次請求メール</td><td>FR-148</td><td>—</td><td>AC-025, AC-042</td><td>メイン(通知)</td></tr>
+<tr><td>BR-022</td><td>お知らせ配信</td><td>FR-149</td><td>—</td><td>AC-026</td><td>メイン(配信)</td></tr>
 <tr><td>BR-023</td><td>お知らせ受信箱</td><td>FR-180, FR-181, FR-183</td><td>—</td><td>AC-027</td><td>メイン</td></tr>
 <tr><td>BR-024</td><td>既読管理(個別 / 一括)</td><td>FR-182, FR-192</td><td>—</td><td>AC-028, AC-029</td><td>メイン</td></tr>
 <tr><td>BR-025</td><td>種別 / 期間絞り込み</td><td>FR-183</td><td>—</td><td>AC-027</td><td>メイン</td></tr>
@@ -506,19 +505,19 @@
 <td><strong>FR-135f</strong></td>
 <td>比較値表記の統一(前月比 / 前週比、増減方向性)。SCR-008 は比較コメント非表示</td>
 <td>F-DASH-001</td>
-<td>SCR-016 / SCR-HOME(運営者)</td>
+<td>SCR-016</td>
 <td><code>GET /usage</code> レスポンスメタ <code>comparison_*</code></td>
 <td>—</td>
 <td>全ロール</td>
 <td>—</td>
-<td>MSG-SCR-016-LBL-009 / MSG-SCR-HOME-LBL-003/004</td>
+<td>MSG-SCR-016-LBL-009</td>
 <td>§1.5.1 共通表示ルール</td>
 </tr>
 <tr>
 <td><strong>FR-135g</strong></td>
 <td>状態表現の共通ルール(EmptyState / null / 集計中 / 取得失敗 / 期間外)</td>
 <td>F-DASH-001</td>
-<td>SCR-008 / SCR-016 / SCR-HOME / SCR-095(運営者)</td>
+<td>SCR-008 / SCR-016</td>
 <td>(各 KPI API のエラーレスポンス)</td>
 <td>—</td>
 <td>全ロール</td>
@@ -540,7 +539,7 @@
 </tr>
 <tr>
 <td><strong>FR-122</strong></td>
-<td>選択閾値アラート / 100%停止 / 125%運営者通知(プロジェクト単位)</td>
+<td>選択閾値アラート / 100%停止 / 125%通知(プロジェクト単位)</td>
 <td>F-LIMIT-001</td>
 <td>SCR-021</td>
 <td>(各 API で上限判定)</td>
@@ -555,7 +554,7 @@
 <td>支払い失敗時の利用制限</td>
 <td>F-BILL-001</td>
 <td>SCR-008</td>
-<td>(IF #1 受信)</td>
+<td>—</td>
 <td><code>contract_owners.contract_status</code></td>
 <td>—</td>
 <td>E-BILL-PAYMENT-FAILED</td>
@@ -572,7 +571,7 @@
 <td>—</td>
 <td>E-QUOTA-*</td>
 <td>—</td>
-<td>契約上書き(SCR-093)</td>
+<td>契約上書き</td>
 </tr>
 <tr>
 <td>FR-136</td>
@@ -675,34 +674,10 @@
 <td>不正利用検知</td>
 <td>F-SEC-001</td>
 <td>—</td>
-<td>(IF #9 送信)</td>
+<td>—</td>
 <td><code>audit_logs</code></td>
 <td>—</td>
 <td>E-BIZ-*</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td>FR-220〜232</td>
-<td>運営者責務 / 監査</td>
-<td>(運営者側)</td>
-<td>—</td>
-<td>—</td>
-<td>—</td>
-<td>—</td>
-<td>—</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><strong>FR-302</strong></td>
-<td>Stripe Webhook 受信</td>
-<td>(運営者側 §13)</td>
-<td>—</td>
-<td>(運営者 API)</td>
-<td>(<code>webhook_events</code>, 運営者側)</td>
-<td>—</td>
-<td>E-OP-WEBHOOK-*</td>
 <td>—</td>
 <td>—</td>
 </tr>
@@ -779,18 +754,6 @@
 <td>管理範囲名は管理範囲切替表示に集約</td>
 </tr>
 <tr>
-<td><strong>FR-331</strong></td>
-<td>海外 IP 遮断を運営者画面のみ既定で有効(利用者側 API・ウィジェットは対象外)</td>
-<td>F-SEC-001</td>
-<td>—</td>
-<td>(運営者画面 router / WAF)</td>
-<td>—</td>
-<td>—</td>
-<td>E-AUTHZ-FORBIDDEN</td>
-<td>—</td>
-<td>正本は運営者側設計</td>
-</tr>
-<tr>
 <td><strong>FR-340</strong></td>
 <td>現在の管理範囲と適用ロールをヘッダー「管理範囲を切り替え」とアカウントメニューで確認(ロールバッジを全画面に重複表示しない)</td>
 <td>F-DASH-001</td>
@@ -828,7 +791,7 @@
 </tr>
 <tr>
 <td><strong>FR-348</strong></td>
-<td>AI しきい値変更の短時間反映。設定取得長期障害時は直近設定 / グローバル既定値(信頼度 0.60 / 関連度 0.50)で推論継続 + 運営者アラート</td>
+<td>AI しきい値変更の短時間反映。設定取得長期障害時は直近設定 / グローバル既定値(信頼度 0.60 / 関連度 0.50)で推論継続</td>
 <td>F-AI-001</td>
 <td>(ウィジェット)</td>
 <td><code>POST /widget/v1/ask</code>(内部しきい値解決)</td>
@@ -837,18 +800,6 @@
 <td>—</td>
 <td>—</td>
 <td>—</td>
-</tr>
-<tr>
-<td><strong>FR-349</strong></td>
-<td>プロンプトテンプレート編集は運営者のみ。編集時に AI 品質回帰テストを連動実行し、合格しない限り本番反映しない</td>
-<td>F-AI-001</td>
-<td>(運営者画面)</td>
-<td>(運営者 API)</td>
-<td>—</td>
-<td>運営者</td>
-<td>—</td>
-<td>—</td>
-<td>正本は運営者側設計 + メイン推論動作</td>
 </tr>
 </tbody>
 </table>
@@ -1024,7 +975,7 @@
 <td>F-SEC-001</td>
 <td>不正利用検知</td>
 <td>(グローバル)</td>
-<td><code>POST /internal/main-integration/v1/fraud/detected</code>(IF #9)</td>
+<td><code>POST /internal/main-integration/v1/fraud/detected</code></td>
 <td><code>audit_logs</code></td>
 </tr>
 </tbody>
@@ -1054,7 +1005,7 @@
 <tr><td>NOTIF-DELETION_REMINDER</td><td>退会猶予期間案内(FR-009 / FR-167、退会 90 日)</td><td>high</td><td>◯</td><td>admin</td></tr>
 <tr><td>NOTIF-BILLING_INVOICE_ISSUED</td><td>月次請求確定(FR-148)</td><td>high</td><td>◯</td><td>admin</td></tr>
 <tr><td>NOTIF-BILLING_PAYMENT_FAILED</td><td>支払い失敗(FR-124)</td><td>high</td><td>◯</td><td>admin</td></tr>
-<tr><td>NOTIF-SERVICE_ANNOUNCEMENT</td><td>運営からのお知らせ(FR-149、IF #7)</td><td>normal / high / critical</td><td>配信時運営者選択</td><td>admin(範囲指定可)</td></tr>
+<tr><td>NOTIF-SERVICE_ANNOUNCEMENT</td><td>お知らせ配信(FR-149)</td><td>normal / high / critical</td><td>配信時選択</td><td>admin(範囲指定可)</td></tr>
 <tr><td>NOTIF-SYSTEM_NOTICE</td><td>運用イベント自動生成。契機 = FR-149a ∪ FR-189(質問数上限 80 / 90 / 100% 接近・到達、通知配信失敗の急増 等)。AI 利用上限到達は MVP では契機にせずメール送信もしない</td><td>normal / high</td><td>×</td><td>admin</td></tr>
 <tr><td>NOTIF-ROLE_ASSIGNMENT_CHANGED</td><td>メンバーのプロジェクト別ロール割当の追加・変更・剥奪(SCR-009-001、FR-145a)</td><td>normal</td><td>×</td><td>対象メンバー本人(inbox / email)</td></tr>
 </tbody>
@@ -1394,18 +1345,6 @@
 <td>401 + 監査 + <code>high</code> alert</td>
 </tr>
 <tr>
-<td>IF #1 受信</td>
-<td>E-IF-001-*</td>
-<td>—</td>
-<td>200 / 401 / 409</td>
-</tr>
-<tr>
-<td>IF #10 受信</td>
-<td>E-IF-010-*</td>
-<td>—</td>
-<td>200 / 401</td>
-</tr>
-<tr>
 <td><code>POST /faqs</code> / <code>PATCH /faqs/{id}</code> / <code>POST /faqs/import</code></td>
 <td>E-INPUT-FAQ-LENGTH</td>
 <td>MSG-SCR-006-*</td>
@@ -1520,28 +1459,28 @@
 <td>F-WIDGET-002 / F-AI-001</td>
 <td>ウィジェット質問レート</td>
 <td>RPS / RPM</td>
-<td>SCR-093(運営者)</td>
+<td>—</td>
 </tr>
 <tr>
 <td><code>widget_inquiry_per_min</code></td>
 <td>F-INQ-001</td>
 <td>未解決質問送信レート</td>
 <td>同上</td>
-<td>SCR-093</td>
+<td>—</td>
 </tr>
 <tr>
 <td><code>email_per_hour</code></td>
 <td>F-NOTIF-001</td>
 <td>メール送信レート</td>
 <td>件数/時間</td>
-<td>SCR-093</td>
+<td>—</td>
 </tr>
 <tr>
 <td><code>admin_api_per_min</code></td>
 <td>F-AUTH-* / F-PRJ-* / F-FAQ-* 等</td>
 <td>管理 API レート</td>
 <td>RPS / RPM</td>
-<td>SCR-093</td>
+<td>—</td>
 </tr>
 </tbody>
 </table>
@@ -1561,14 +1500,14 @@
 <td>F-LIMIT-001</td>
 <td>質問数の月次上限件数・無料枠(円相当併記)</td>
 <td>件 / 月</td>
-<td>SCR-021(オーナー / PJ admin)/ SCR-093(運営者プロジェクト上書き)</td>
+<td>SCR-021(オーナー / PJ admin)</td>
 </tr>
 <tr>
 <td><code>faq_monthly_limit</code></td>
 <td>F-LIMIT-001</td>
 <td>FAQ 件数の無料枠(上限なし)</td>
 <td>件 / 月</td>
-<td>SCR-093</td>
+<td>—</td>
 </tr>
 </tbody>
 </table>
@@ -1613,7 +1552,7 @@
 </tr>
 <tr>
 <td><strong>契約上限・課金</strong></td>
-<td>選択閾値アラート / 100%停止 / 125%運営者通知 / <code>contract_status</code> 遷移</td>
+<td>選択閾値アラート / 100%停止 / 125%通知 / <code>contract_status</code> 遷移</td>
 <td>月次無料枠到達時の挙動、<code>contract_status</code> 各状態での操作可否</td>
 </tr>
 </tbody>
@@ -1655,7 +1594,7 @@
 <td>—</td>
 </tr>
 <tr>
-<td><strong>FR-122</strong>(質問数100%停止・125%運営者通知、プロジェクト単位)</td>
+<td><strong>FR-122</strong>(質問数100%停止・125%通知、プロジェクト単位)</td>
 <td>F-LIMIT-001</td>
 <td>100%未満は通常、FAQは件数にかかわらず通常</td>
 <td>質問数100%でウィジェット停止429。FAQは月次上限エラーなし</td>

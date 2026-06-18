@@ -18,66 +18,11 @@
 <p class="ps-lead"><strong>このページは、メインシステムのデータベース(Cloudflare D1 / SQLite)に存在する全テーブルのスキーマ(カラム定義 / 主キー / 外部キー / インデックス / 制約 / コード値)を定義します。</strong></p>
 </aside>
 
-<p class="doc-meta"><span><b>版数</b> v2.2</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+<p class="doc-meta"><span><b>版数</b> v2.3</span><span><b>更新</b> 2026-06-18</span><span class="dm-status">承認済</span></p>
 
 <div class="callout important"><i class="bi bi-pin-angle"></i><div><span class="c-title">設計意図・取り決めは別ページ</span>テーブル間の関係性・3 表ユーザーモデル・契約境界キーによるデータ分離・状態遷移・データ削除モード・PII 取扱・インデックス方針などの横断的な設計意図と取り決めは <a href="テーブル構造設計.html">テーブル構造設計.html</a>(図解付き)に集約しました。本書はテーブル一覧と各テーブルのスキーマ定義、<code>retention_class</code> の値の正本定義を扱います。</div></div>
 
-<h2 id="1-文書概要">1. 文書概要</h2>
-<p class="section-lead">本書が対象とするテーブルの範囲と、各テーブル節(§3.x)で用いる統一フォーマットを示します。対象は利用者向け MVP データ(認証 / プロジェクト / FAQ / 未解決質問 / 通知 / 課金 / お知らせ / 監査 / 規約 等)で、運営者側専用テーブル(<code>operator_*</code> / ハッシュチェーン正本側 <code>audit_logs</code> / <code>webhook_events</code> / <code>operator_approvals</code> / <code>accounts_retired</code> 等)は <a href="../../../02_運営者システム/02_基本設計/03_テーブル設計/index.html">運営者システムのテーブル設計</a>が正本です。<code>contract_owners.contract_status</code> やオーナーユーザーモデルなどの共有概念は <a href="../../../共有/共有概念.html">共有概念対応表</a>を参照します。</p>
-<h3 id="15-フォーマット規約">1.5 フォーマット規約</h3>
-<p class="section-lead">各テーブル(§3.x)は概要 / カラム定義 / 主キー / 外部キー / インデックス / 制約 / コード値・区分値の 7 サブセクションで統一して記述します。DDL ブロックは持たず、本書の 7 サブセクション表が正本です。次の表は各サブセクションの記載内容を示します。</p>
-<p>各テーブル(§3.x)は以下の 7 サブセクション構成。</p>
-<table>
-<thead>
-<tr>
-<th>サブセクション</th>
-<th>内容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>N.1 概要</td>
-<td>テーブル名 / 論理名 / 説明 / 主管 FR / 保持期間 / <code>contract_owner_user_id</code> / <code>retention_class</code></td>
-</tr>
-<tr>
-<td>N.2 カラム定義</td>
-<td>No / 論理名 / 物理名 / データ型 / 桁数 / NULL / PK / FK / UNIQUE / DEFAULT / 説明(11 列)</td>
-</tr>
-<tr>
-<td>N.3 主キー</td>
-<td>主キー名 / 対象カラム</td>
-</tr>
-<tr>
-<td>N.4 外部キー</td>
-<td>外部キー名 / 対象カラム / 参照先テーブル / 参照先カラム / 更新時 / 削除時</td>
-</tr>
-<tr>
-<td>N.5 インデックス</td>
-<td>インデックス名 / 対象カラム / UNIQUE / 用途</td>
-</tr>
-<tr>
-<td>N.6 制約</td>
-<td>制約名 / 種別(CHECK / UNIQUE / 複合CHECK) / 対象カラム / 条件・内容</td>
-</tr>
-<tr>
-<td>N.7 コード値・区分値</td>
-<td>カラム名 / 値 / 意味</td>
-</tr>
-</tbody>
-</table>
-<ul>
-<li><strong>桁数</strong>: TEXT / INTEGER は空欄(<code>-</code>)、長さ制約は §N.6 制約の CHECK に集約</li>
-<li><strong>PK / FK / UNIQUE 列</strong>: 単一は <code>○</code>、複合は <code>①</code> / <code>②</code> の番号付き</li>
-<li><strong>NULL 列</strong>: <code>YES</code> / <code>NO</code></li>
-<li><strong>外部キー名</strong>: SQLite は名前なしのため <code>(暗黙)</code> 固定</li>
-<li><strong>更新時 / 削除時</strong>: <code>NO ACTION</code> / <code>CASCADE</code> / <code>SET NULL</code> / <code>RESTRICT</code></li>
-<li><strong>部分インデックス</strong>: 対象カラム欄末尾に <code>WHERE …</code> 併記</li>
-<li><strong>コード値の値表記</strong>: バッククォート(SC-007 通過のキー)。状態遷移詳細は §4.5.x へリンク</li>
-</ul>
-<h2 id="2-テーブル一覧">2. テーブル一覧</h2>
-<p class="section-lead">本システムの全テーブルを俯瞰し、各テーブルの主キー・契約境界キー・主管 FR・保持期間・保持クラスを一望できるようにします。あわせて <code>retention_class</code> の正本値を示します(主要なテーブル間関係・3 表ユーザーモデルは <a href="テーブル構造設計.html">テーブル構造設計.html</a> に移設)。</p>
-<h3 id="21-一覧">2.1 一覧</h3>
-<p class="section-lead">全テーブルの一覧です。各テーブルの論理名と概要を 1 行ずつ示します。各テーブルの詳細(カラム定義・主キー・外部キー・インデックス等)は個別テーブルファイルを参照してください。契約境界キーは <code>contract_owner_user_id</code> です。</p>
+<h2 id="1-テーブル一覧">1. テーブル一覧</h2>
 <table>
 <thead>
 <tr>
@@ -339,7 +284,7 @@
 <td>23</td>
 <td>TBL-023</td>
 <td><a href="owner_quota_overrides.html"><code>owner_quota_overrides</code></a><br>契約別レート上書き</td>
-<td>運営者による契約単位のレート制限上書きを保持します。</td>
+<td>契約単位のレート制限上書きを保持します。</td>
 
 
 
@@ -350,7 +295,7 @@
 <td>24</td>
 <td>TBL-024</td>
 <td><a href="project_quota_limits.html"><code>project_quota_limits</code></a><br>プロジェクト別利用設定</td>
-<td>質問数の月次上限件数・無料枠・アラート、および運営者が管理する FAQ 件数無料枠をプロジェクト単位で保持します。</td>
+<td>質問数の月次上限件数・無料枠・アラート、および FAQ 件数無料枠をプロジェクト単位で保持します。</td>
 
 
 
@@ -361,7 +306,7 @@
 <td>25</td>
 <td>TBL-025</td>
 <td><a href="service_announcements.html"><code>service_announcements</code></a><br>お知らせ(Control Plane)</td>
-<td>運営者が発信するお知らせの本体を保持します。</td>
+<td>お知らせの本体を保持します。</td>
 
 
 
@@ -436,7 +381,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="22-retention_class-値の正本定義audit_logsretention_class">2.2 retention_class 値の正本定義(<code>audit_logs.retention_class</code>)</h3>
+<h3 id="11-retention_class-値の正本定義audit_logsretention_class">1.1 retention_class 値の正本定義(<code>audit_logs.retention_class</code>)</h3>
 <p class="section-lead">監査ログの保持クラス(<code>retention_class</code>)の取り得る値を正本定義します。次の表は各値の保持期間・用途・代表例を示します。</p>
 <table>
 <thead>
@@ -460,62 +405,9 @@
 <td>課金・法定保管</td>
 <td>請求 / 支払 / サブスク / 上限件数 / <code>owner.suspend</code> prefix</td>
 </tr>
-<tr>
-<td><code>operator_high_priv</code></td>
-<td><strong>5 年</strong>(NFR-602d、SOX 類似)</td>
-<td>運営者高権限操作</td>
-<td>復元 / 契約停止 / 物理削除 / AI 変更 / レート上書き / 鍵ローテーション</td>
-</tr>
 </tbody>
 </table>
-<p>詳細は <a href="../09_セキュリティ設計.html">09_セキュリティ設計.html §7</a>(運営者側 §7 が正本)を参照。値の意味・代表例・関連クラスの解説は <a href="テーブル構造設計.html#32-retention_class-分類の設計意図">テーブル構造設計.html §3.2</a> も参照。</p>
-<h3 id="23-主要状態カラムの値早見">2.3 主要状態カラムの値(早見)</h3>
-<p class="section-lead">テーブルが持つ主要な状態カラムの取り得る値を早見表として示します。状態遷移(From / To / トリガー)の正本は <a href="テーブル構造設計.html#45-状態遷移">テーブル構造設計.html §5</a> です。次の表はカラムと取り得る値の一覧です。</p>
-<table>
-<thead>
-<tr>
-<th>カラム</th>
-<th>取り得る値</th>
-<th>遷移の正本</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>contract_owners.contract_status</code></td>
-<td><code>active</code> / <code>suspended</code> / <code>deleted_pending</code> / <code>deleted</code></td>
-<td><a href="テーブル構造設計.html#455-契約状態遷移contract_ownerscontract_status共有概念正本">テーブル構造設計.html §5.4</a>(共有概念正本)</td>
-</tr>
-<tr>
-<td><code>inquiries.status</code></td>
-<td><code>open</code> / <code>closed</code></td>
-<td><a href="テーブル構造設計.html#452-未解決質問の状況遷移inquiriesstatus共有概念正本">テーブル構造設計.html §5.2</a>(共有概念正本)</td>
-</tr>
-<tr>
-<td><code>faqs.status</code></td>
-<td><code>draft</code> / <code>published</code> / <code>hidden</code> / <code>deleted</code></td>
-<td><a href="テーブル構造設計.html#451-faq-状態遷移faqsstatus">テーブル構造設計.html §5.1</a></td>
-</tr>
-<tr>
-<td><code>notification_logs.delivery_state</code></td>
-<td><code>queued</code> / <code>sending</code> / <code>sent</code> / <code>delivered</code> / <code>bounced</code> / <code>complained</code> / <code>delayed</code> / <code>failed</code> / <code>suppressed</code></td>
-<td><a href="テーブル構造設計.html#454-通知状態遷移notification_logsdelivery_state">テーブル構造設計.html §5.3</a></td>
-</tr>
-</tbody>
-</table>
-<div class="callout note" id="主要関係性-移設"><i class="bi bi-info-circle"></i><div><span class="c-title">主要関係性 / 3 表ユーザーモデルは移設しました</span>旧 §2.3 主要関係性・旧 §2.4 ユーザー権限保持方式(3 表モデル)は、図解付きで <a href="テーブル構造設計.html#1-主要関係性">テーブル構造設計.html §1(主要関係性)</a> / <a href="テーブル構造設計.html#2-ユーザー権限保持方式3-表モデル">§2(3 表ユーザーモデル)</a> へ移設しました。</div></div>
-<div class="callout important"><i class="bi bi-pin-angle"></i><div><span class="c-title">横断仕様(設計意図・取り決め)は移設しました</span>旧 §4 横断仕様一式(ER 図・命名規則 / 型方針・SaaS データ分離・全契約横断テーブル・状態遷移・データ削除モード・保持調整制約・PII 取扱・インデックス方針)は、図解付きで <a href="テーブル構造設計.html">テーブル構造設計.html</a> へ移設しました。各節は次のアンカーに対応します(外部参照アンカーは移設先で温存)。</div></div>
-<ul>
-<li><a href="テーブル構造設計.html#10-er-図">ER 図</a></li>
-<li><a href="テーブル構造設計.html#41-命名規則型方針">命名規則・型方針</a></li>
-<li><a href="テーブル構造設計.html#43-saas-データ分離">SaaS データ分離</a></li>
-<li><a href="テーブル構造設計.html#44-全契約横断テーブルcontract_owner_user_id-を持たない">全契約横断テーブル</a></li>
-<li><a href="テーブル構造設計.html#45-状態遷移">状態遷移</a>(<a href="テーブル構造設計.html#452-未解決質問の状況遷移inquiriesstatus共有概念正本"><code>inquiries.status</code></a> / <a href="テーブル構造設計.html#455-契約状態遷移contract_ownerscontract_status共有概念正本"><code>contract_owners.contract_status</code></a> 共有概念正本)</li>
-<li><a href="テーブル構造設計.html#46-データ削除モード">データ削除モード</a></li>
-<li><a href="テーブル構造設計.html#47-データ保持の調整制約nfr-702">データ保持の調整制約</a></li>
-<li><a href="テーブル構造設計.html#48-pii-取扱">PII 取扱</a></li>
-<li><a href="テーブル構造設計.html#49-インデックス方針">インデックス方針</a></li>
-</ul>
-<h2 id="5-未決事項">5. 未決事項</h2>
+<h2 id="2-未決事項">2. 未決事項</h2>
 <p class="section-lead">現時点で確認待ち・既決の検討事項を記録します。次の表は各事項の内容・確認先・期限・ステータスを示します。</p>
 <table>
 <thead>
@@ -555,6 +447,11 @@
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>2026-06-18</td>
+<td>v2.3</td>
+<td>index をテーブル一覧 + <code>retention_class</code> 正本定義に絞り込み。§1.5 フォーマット規約(記載フォーマット説明)を撤去し <code>CLAUDE.md</code> へ集約。§1 文書概要・§2.1 一覧見出し・§2.3 主要状態カラムの値(早見)・横断仕様/主要関係性の移設 callout を撤去(各正本は <a href="テーブル構造設計.html">テーブル構造設計.html</a>)。テーブル一覧・<code>retention_class</code> 定義・コード値は不変。</td>
+</tr>
 <tr>
 <td>2026-06-17</td>
 <td>v2.2</td>

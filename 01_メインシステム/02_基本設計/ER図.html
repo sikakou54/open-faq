@@ -190,9 +190,9 @@ erDiagram
     TEXT id PK
     TEXT contract_owner_user_id FK "contract_owners(user_id) opt"
     TEXT actor_user_id FK "users(id) opt"
-    TEXT actor_role "admin/system/service_operator"
+    TEXT actor_role "admin/system"
     TEXT action
-    TEXT retention_class "general/billing/operator_high_priv"
+    TEXT retention_class "general/billing"
   }
   error_logs {
     TEXT id PK
@@ -235,7 +235,7 @@ erDiagram
     TEXT contract_owner_user_id FK "contract_owners(user_id)"
     TEXT resource_kind "(project_id,resource_kind) UNIQUE"
     INTEGER threshold "月次上限件数(NULL=上限OFF)"
-    INTEGER free_quota "月次無料枠(運営者設定)"
+    INTEGER free_quota "月次無料枠"
   }
   service_announcements {
     TEXT id PK

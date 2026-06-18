@@ -65,7 +65,6 @@
 <li><strong>管理画面</strong>（管理者ユーザー admin 向け、SCR-001〜027）</li>
 <li><strong>公開ウィジェット</strong>（エンドユーザー end_user 向け、JavaScript 配信、iframe sandbox）</li>
 <li><strong>公開ウィジェット</strong>（通常 / 未解決 / 制限中）</li>
-<li><strong>内部連携 API</strong>（顧客管理システムとの IF #1〜#12 送受信）</li>
 <li><strong>非同期処理基盤</strong>（cron / Queue / Webhook 受信）</li>
 </ul>
 <h3 id="13-スコープ">1.3 スコープ</h3>
@@ -128,7 +127,6 @@
       direction LR
       MW[&quot;main-api Worker&lt;br/&gt;(/api/v1/*)&quot;]
       WW[&quot;widget-api Worker&lt;br/&gt;(/widget/v1/*)&quot;]
-      IW[&quot;internal-api Worker&lt;br/&gt;(/internal/admin-integration/v1/*)&quot;]
       WHW[&quot;webhook Worker&lt;br/&gt;(/webhooks/*)&quot;]
       QC[&quot;Queue Consumer Workers&lt;br/&gt;(email / fanout / export / ai-regression)&quot;]
       CRW[&quot;Cron Worker&lt;br/&gt;(daily / monthly / 5min)&quot;]
@@ -144,12 +142,8 @@
   subgraph Ext[&quot;外部サービス&quot;]
     direction TB
     RS[&quot;Resend&lt;br/&gt;(メール送信 + Webhook)&quot;]
-    ST[&quot;Stripe&lt;br/&gt;(課金 + Webhook、顧管経由)&quot;]
+    ST[&quot;Stripe&lt;br/&gt;(課金 + Webhook)&quot;]
     TS[&quot;Turnstile&lt;br/&gt;(reCAPTCHA 代替)&quot;]
-  end
-
-  subgraph Adm[&quot;顧客管理システム&quot;]
-    AAPI[&quot;内部連携 API&lt;br/&gt;(mTLS + 短期 JWT)&quot;]
   end
 
   EU --&gt; WJS
@@ -163,16 +157,14 @@
   MW --&gt; KV1
   MW --&gt; R2
   MW --&gt; QU
-  IW &lt;--&gt; AAPI
   RS -.Webhook.-&gt; WHW
-  AAPI -.IF #10 転送.-&gt; WHW
+  ST -.Webhook.-&gt; WHW
   WHW --&gt; QU
   QC --&gt; RS
   QC --&gt; D1
   QC --&gt; R2
   CRW --&gt; D1
-  CRW --&gt; QU
-  MW -.IF #9 / #11 送信.-&gt; AAPI</code></pre>
+  CRW --&gt; QU</code></pre>
 <h3 id="22-コンポーネント詳細責務">2.2 コンポーネント詳細責務</h3>
 <table>
 <thead>
@@ -222,27 +214,20 @@
 </tr>
 <tr>
 <td>6</td>
-<td><code>worker-internal-api</code></td>
-<td>Workers</td>
-<td>顧客管理連携 API（<code>/internal/admin-integration/v1/*</code>）。mTLS + 短期 JWT 認証。</td>
-<td>D1 / KV / QU / SS</td>
-</tr>
-<tr>
-<td>7</td>
 <td><code>worker-webhook</code></td>
 <td>Workers</td>
-<td>外部 Webhook 受信（Resend / Stripe 経由 / Turnstile）。署名検証 → Queue 投入。</td>
+<td>外部 Webhook 受信（Resend / Stripe / Turnstile）。署名検証 → Queue 投入。</td>
 <td>D1 / KV / QU / R2 / SS</td>
 </tr>
 <tr>
-<td>8</td>
+<td>7</td>
 <td><code>worker-queue-consumer</code></td>
 <td>Workers Queue Consumer</td>
 <td>Queue ジョブ実行（email / fanout / export / ai-regression / dlq）。</td>
 <td>D1 / R2 / QU / SS / 外部 API</td>
 </tr>
 <tr>
-<td>9</td>
+<td>8</td>
 <td><code>worker-cron</code></td>
 <td>Workers Cron Trigger</td>
 <td>定期処理（日次 / 月次 / 5 分間隔）。</td>
@@ -294,26 +279,6 @@
   API-&gt;&gt;K: GET ai_threshold:{contract_owner_user_id}:{project_id}
   API-&gt;&gt;D: INSERT question_logs (metering_billable=...)
   API--&gt;&gt;W: { type: &quot;answered&quot; | &quot;unanswered&quot; | &quot;error&quot;, ... }</code></pre>
-<h4 id="233-内部連携-api顧客管理--メイン">2.3.3 内部連携 API（顧客管理 → メイン）</h4>
-<pre class="mermaid"><code>sequenceDiagram
-  participant ADM as 顧客管理 Worker
-  participant IW as worker-internal-api
-  participant K as KV (idempotency / ratelimit)
-  participant D as D1
-  participant Q as Queue
-
-  ADM-&gt;&gt;IW: POST /internal/admin-integration/v1/owner/forced-logout&lt;br/&gt;(mTLS + JWT + Idempotency-Key)
-  IW-&gt;&gt;IW: mTLS 証明書検証
-  IW-&gt;&gt;IW: JWT 検証 (HS256 / exp 5min / aud check)
-  IW-&gt;&gt;K: GET idempotency:{key}
-  alt 既存
-    IW--&gt;&gt;ADM: 200 OK (キャッシュ結果)
-  else 新規
-    IW-&gt;&gt;D: UPDATE users SET force_logout_at = ?
-    IW-&gt;&gt;Q: SEND session-invalidation-queue
-    IW-&gt;&gt;K: SET idempotency:{key} = result (TTL 24h)
-    IW--&gt;&gt;ADM: 201 Created
-  end</code></pre>
 <h3 id="24-環境構成">2.4 環境構成</h3>
 <table>
 <thead>
@@ -452,12 +417,6 @@
 <td>同上</td>
 </tr>
 <tr>
-<td><code>worker-internal-api</code></td>
-<td><code>app/workers/internal-api/</code></td>
-<td>wrangler deploy</td>
-<td>同上</td>
-</tr>
-<tr>
 <td><code>worker-webhook</code></td>
 <td><code>app/workers/webhook/</code></td>
 <td>wrangler deploy</td>
@@ -506,7 +465,6 @@
 │   ├── workers/                         # Cloudflare Workers 群
 │   │   ├── main-api/                    # /api/v1/*
 │   │   ├── widget-api/                  # /widget/v1/*
-│   │   ├── internal-api/                # /internal/admin-integration/v1/*
 │   │   ├── webhook/                     # /webhooks/*
 │   │   ├── queue-consumer/              # Queue Consumer
 │   │   └── cron/                        # Cron Trigger
@@ -558,7 +516,7 @@
 <tr>
 <td>アダプタ</td>
 <td><code>adapter/</code></td>
-<td>外部 API クライアント（Resend / Stripe / 顧客管理）、Queue 投入、KV/R2 アクセス</td>
+<td>外部 API クライアント（Resend / Stripe）、Queue 投入、KV/R2 アクセス</td>
 <td>（<code>shared</code> のみ）</td>
 </tr>
 <tr>
@@ -623,7 +581,6 @@
 │   ├── resend-email-provider.ts
 │   ├── answer-provider.ts
 │   ├── workers-ai-answer-provider.ts
-│   ├── admin-integration-client.ts
 │   └── stripe-client.ts
 ├── middleware/
 │   ├── authenticate.ts
@@ -664,31 +621,12 @@
 │   ├── rate-limit.ts
 │   └── audit.ts
 └── lib/</code></pre>
-<h4 id="333-worker-internal-api-モジュール構成">3.3.3 <code>worker-internal-api</code> モジュール構成</h4>
-<pre><code>src/
-├── index.ts
-├── routes/
-│   ├── owner.ts             # IF #1 (suspend/resume) / IF #2 (forced-logout)
-│   ├── restore.ts            # IF #4
-│   ├── rate-limit.ts         # IF #5
-│   ├── threshold.ts          # IF #6
-│   ├── announcement.ts       # IF #7
-│   ├── metrics.ts            # IF #8
-│   ├── billing-webhook.ts    # IF #10
-│   ├── operator-operation.ts # IF #12
-│   └── ai-regression.ts      # v2.1 新規
-├── middleware/
-│   ├── verify-mtls.ts
-│   ├── verify-jwt.ts
-│   ├── idempotency.ts
-│   └── audit.ts
-└── ...</code></pre>
-<h4 id="334-worker-webhook-モジュール構成">3.3.4 <code>worker-webhook</code> モジュール構成</h4>
+<h4 id="333-worker-webhook-モジュール構成">3.3.3 <code>worker-webhook</code> モジュール構成</h4>
 <pre><code>src/
 ├── index.ts
 ├── routes/
 │   ├── resend.ts
-│   └── stripe.ts             # 実質 IF #10 経由
+│   └── stripe.ts
 ├── handlers/
 │   ├── resend/               # 8 イベント種別
 │   │   ├── delivered.ts
@@ -699,7 +637,7 @@
 │   │   ├── clicked.ts
 │   │   ├── failed.ts
 │   │   └── suppressed.ts
-│   └── stripe/               # 8 イベント種別 (IF #10)
+│   └── stripe/               # 8 イベント種別
 │       ├── invoice-paid.ts
 │       ├── invoice-payment-failed.ts
 │       ├── customer-subscription-created.ts
@@ -713,7 +651,7 @@
 │   ├── verify-stripe-signature.ts
 │   └── idempotency.ts
 └── ...</code></pre>
-<h4 id="335-worker-queue-consumer-モジュール構成">3.3.5 <code>worker-queue-consumer</code> モジュール構成</h4>
+<h4 id="334-worker-queue-consumer-モジュール構成">3.3.4 <code>worker-queue-consumer</code> モジュール構成</h4>
 <pre><code>src/
 ├── index.ts                  # Queue Consumer 共通エントリ
 ├── consumers/
@@ -724,7 +662,7 @@
 │   └── dlq.ts                # DLQ 退避 (R2 退避 + 監視通知)
 └── lib/
     └── retry.ts              # 指数バックオフ + 最大 3 回</code></pre>
-<h4 id="336-worker-cron-モジュール構成">3.3.6 <code>worker-cron</code> モジュール構成</h4>
+<h4 id="335-worker-cron-モジュール構成">3.3.5 <code>worker-cron</code> モジュール構成</h4>
 <pre><code>src/
 ├── index.ts                  # scheduled() ハンドラ + cron 分岐
 ├── jobs/
@@ -866,11 +804,6 @@
 <td>年次</td>
 </tr>
 <tr>
-<td><code>JWT_HS256_KEY</code></td>
-<td>連携 IF JWT 署名</td>
-<td>年次</td>
-</tr>
-<tr>
 <td><code>RESEND_API_KEY</code></td>
 <td>Resend API 認証</td>
 <td>必要時</td>
@@ -879,16 +812,6 @@
 <td><code>TURNSTILE_SECRET</code></td>
 <td>Turnstile 検証</td>
 <td>必要時</td>
-</tr>
-<tr>
-<td><code>ADMIN_INTEGRATION_MTLS_CERT</code></td>
-<td>顧管送信時のクライアント証明書</td>
-<td>年次</td>
-</tr>
-<tr>
-<td><code>ADMIN_INTEGRATION_MTLS_KEY</code></td>
-<td>同上の秘密鍵</td>
-<td>年次</td>
 </tr>
 </tbody>
 </table>
@@ -932,12 +855,6 @@
 <td>Cloudflare Logpush → R2</td>
 <td>180 日</td>
 <td>IP マスク</td>
-</tr>
-<tr>
-<td>連携 IF ログ</td>
-<td><code>integration_logs</code> (D1)</td>
-<td>90 日</td>
-<td>-</td>
 </tr>
 </tbody>
 </table>
@@ -1232,7 +1149,7 @@
 </tbody>
 </table>
 <ul>
-<li>顧客管理障害時もウィジェット応答 / 既存チャット返信 / FAQ 検索編集 / 既存ログインは継続</li>
+<li>外部依存（メール送信 / 課金）の障害時もウィジェット応答 / 既存チャット返信 / FAQ 検索編集 / 既存ログインは継続</li>
 <li><code>announcement.kind = critical</code> は障害時に Resend 直送フォールバック経路を持つ</li>
 </ul>
 <h3 id="73-スケーラビリティ133">7.3 スケーラビリティ（§13.3）</h3>
@@ -1305,8 +1222,8 @@
 <td>created_at / closed_at</td>
 </tr>
 <tr>
-<td>監査ログ (general / billing / operator_high_priv)</td>
-<td>1y / 7y / 5y</td>
+<td>監査ログ (general / billing)</td>
+<td>1y / 7y</td>
 <td>created_at</td>
 </tr>
 <tr>
@@ -1316,7 +1233,7 @@
 </tr>
 </tbody>
 </table>
-<p>調整制約は <a href="../02_基本設計/03_テーブル設計/index.html">03_テーブル設計/index.html §4.7</a> を正本。短縮は法令・契約義務範囲内でサポート窓口経由運営者対応とする。</p>
+<p>調整制約は <a href="../02_基本設計/03_テーブル設計/index.html">03_テーブル設計/index.html §4.7</a> を正本。短縮は法令・契約義務範囲内でサポート窓口経由で対応する。</p>
 <h3 id="77-コンプライアンス13x">7.7 コンプライアンス（§13.X）</h3>
 <ul>
 <li>個人情報保護法 / GDPR / 電子帳簿保存法 / 特定電子メール法 / ISO/IEC 27017 を適用</li>

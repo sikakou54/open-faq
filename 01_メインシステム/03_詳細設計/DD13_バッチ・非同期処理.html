@@ -170,26 +170,23 @@
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h4 id="316-監査ログ完全性検証jst-0300-daily--日次全件再計算">3.1.6 監査ログ完全性検証（JST 03:00 daily / 日次全件再計算）</h4>
-<p class="section-lead">本処理は運営者側 <code>audit_logs</code>(ハッシュチェーン正本)に対してのみ実行され、メイン側は対象外です(メイン側はチェーン構造を持ちません)。</p>
-<p>メイン側 <code>audit_logs</code> は API 操作ログ専用であり、ハッシュチェーン構造を持たない(<code>prev_hash</code> / <code>current_hash</code> 列は持たない)。本処理は <strong>運営者側 <code>audit_logs</code>(ハッシュチェーン正本)に対してのみ実行</strong> される。詳細は運営者側設計 §7 + <a href="DD09_監査ログ書込・完全性検証.html">DD09_監査ログ書込・完全性検証.html</a> §3.6 を参照。</p>
+<p class="section-lead"><code>audit_logs</code> のハッシュチェーンを日次で再計算し、完全性を検証します。</p>
+<p>詳細は <a href="DD09_監査ログ書込・完全性検証.html">DD09_監査ログ書込・完全性検証.html</a> §3.6 を参照する。</p>
 <h4 id="318-audit_logs-保持期間超過削除バッチjst-0400物理-delete-方式">3.1.8 audit_logs 保持期間超過削除バッチ（JST 04:00、物理 DELETE 方式)</h4>
-<p class="section-lead">メイン側 <code>audit_logs</code> は API 操作ログ専用でチェーン構造を持たないため、保持期間超過後は tombstone を使わず物理 DELETE で処理します。次の擬似コードは保持クラス別(<code>general</code> 1 年 / <code>operator_high_priv</code> 5 年 / <code>billing</code> 7 年)のカットオフ条件です。</p>
-<p>メイン側 <code>audit_logs</code> は「API 操作ログ専用」でありハッシュチェーン正本は運営者側に一本化されている。メイン側ではチェーン破断を防ぐための tombstone 方式は不要のため、保持期間超過後は物理 DELETE で処理する。</p>
+<p class="section-lead">保持期間を超過した <code>audit_logs</code> を物理 DELETE で処理します。次の擬似コードは保持クラス別(<code>general</code> 1 年 / <code>billing</code> 7 年)のカットオフ条件です。</p>
+<p>保持期間超過後は物理 DELETE で処理する。tombstone 方式による本文削除 + チェーン継続の詳細は <a href="DD09_監査ログ書込・完全性検証.html">DD09_監査ログ書込・完全性検証.html</a> §3.7 を参照する。</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fu">purgeExpiredAuditLogs</span>(env<span class="op">:</span> Env) {</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 一般 (1 年) / 課金 (7 年) / 運営者高権限 (5 年) 経過の audit_logs を物理 DELETE</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 一般 (1 年) / 課金 (7 年) 経過の audit_logs を物理 DELETE</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="vs">    DELETE FROM audit_logs WHERE (</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="vs">      (retention_class = &#39;general&#39;           AND created_at &lt; ?1) OR</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="vs">      (retention_class = &#39;operator_high_priv&#39; AND created_at &lt; ?2) OR</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="vs">      (retention_class = &#39;billing&#39;           AND created_at &lt; ?3)</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="vs">      (retention_class = &#39;billing&#39;           AND created_at &lt; ?2)</span></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="vs">    )</span></span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="vs">  `</span>)<span class="op">.</span><span class="fu">bind</span>(</span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">new</span> <span class="bu">Date</span>(<span class="bu">Date</span><span class="op">.</span><span class="fu">now</span>() <span class="op">-</span> <span class="dv">1</span> <span class="op">*</span> <span class="dv">365</span> <span class="op">*</span> <span class="dv">86400000</span>)<span class="op">.</span><span class="fu">toISOString</span>()<span class="op">,</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">new</span> <span class="bu">Date</span>(<span class="bu">Date</span><span class="op">.</span><span class="fu">now</span>() <span class="op">-</span> <span class="dv">5</span> <span class="op">*</span> <span class="dv">365</span> <span class="op">*</span> <span class="dv">86400000</span>)<span class="op">.</span><span class="fu">toISOString</span>()<span class="op">,</span></span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">new</span> <span class="bu">Date</span>(<span class="bu">Date</span><span class="op">.</span><span class="fu">now</span>() <span class="op">-</span> <span class="dv">7</span> <span class="op">*</span> <span class="dv">365</span> <span class="op">*</span> <span class="dv">86400000</span>)<span class="op">.</span><span class="fu">toISOString</span>()<span class="op">,</span></span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  )<span class="op">.</span><span class="fu">run</span>()<span class="op">;</span></span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">運営者側は tombstone を維持</span>運営者側 <code>audit_logs</code>(ハッシュチェーン正本)では tombstone 方式を維持する(運営者側設計 §7 参照)。本処理はメイン側 D1 限定。</div></div>
 <h4 id="319-定期削除jst-0500">3.1.9 定期削除（JST 05:00）</h4>
 <p class="section-lead">保持期間を超過したログ・トークン・受信メッセージ等を一括で物理削除し、退会確定オーナーの <code>contract_owners</code> を <code>deleted_pending</code> → <code>deleted</code>(<code>valid=0</code> 同時セット)に確定します。次の擬似コードは各テーブルの保持期間と DELETE / UPDATE 条件です。</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fu">retentionCleanup</span>(env<span class="op">:</span> Env) {</span>
@@ -223,8 +220,8 @@
 <span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>  ])<span class="op">;</span></span>
 <span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h4 id="3110-d1-容量監視毎時">3.1.10 D1 容量監視(毎時)</h4>
-<p class="section-lead">D1 の容量を毎時監視し、80% 超過時に運営者 inbox へ high アラートを送ります。</p>
-<p>D1 の容量を監視し、80% を超えるとアラート(運営者 inbox に high)。詳細は基本設計を参照。</p>
+<p class="section-lead">D1 の容量を毎時監視し、80% 超過時に high アラートを送ります。</p>
+<p>D1 の容量を監視し、80% を超えるとアラート(high)。詳細は基本設計を参照。</p>
 <h4 id="3111-論理削除データの-90-日後物理削除バッチ日次-0300-jst">3.1.11 論理削除データの 90 日後物理削除バッチ(日次 03:00 JST)</h4>
 <p class="section-lead">論理削除(<code>valid=0</code>)から <code>updated_at</code> 基準で 90 日経過したデータを物理削除します。次のシーケンス図で <code>users</code> / <code>projects</code> を起点とした CASCADE 連鎖と匿名化分岐の流れを示し、続けて処理ステップと擬似コードを保持します。</p>
 <pre class="mermaid"><code>sequenceDiagram
@@ -295,7 +292,7 @@
 <ul>
 <li><code>users</code> の物理 DELETE は <code>ON DELETE CASCADE</code> で広範囲が連鎖する(<code>contract_owners</code> / <code>project_users</code> / <code>sessions</code> / <code>access_tokens</code> / <code>terms_agreements</code> 等)。そのため <code>users</code> を最初に処理し、その後の独立 DELETE は孤立行を拾うのみとなる</li>
 <li>監査ログ自体は tombstone 方式(<code>audit_logs.tombstone</code>)で保持されるため、物理削除バッチは本テーブルには適用しない</li>
-<li>90 日カットオフは <code>updated_at</code> 基準。論理削除以降に <code>updated_at</code> が変動するイベント(例: 復元処理)が発生した場合は再カウントとなる(復元から 90 日後の物理削除)。MVP では復元 UI は持たず、運営者 IF #4 経由のみ。</li>
+<li>90 日カットオフは <code>updated_at</code> 基準。論理削除以降に <code>updated_at</code> が変動するイベント(例: 復元処理)が発生した場合は再カウントとなる(復元から 90 日後の物理削除)。MVP では復元 UI は持たない。</li>
 </ul>
 <h3 id="32-queue-一覧">3.2 Queue 一覧</h3>
 <p class="section-lead">非同期処理を担う 5 つの Queue の用途・producer / consumer・最大同時実行数・再試行回数・DLQ を定義します。次の表は、各 Queue の処理特性と失敗時の退避先(<code>webhook-dlq</code>)を一覧化したものです。</p>
@@ -324,7 +321,7 @@
 <tr>
 <td><code>announcement-fanout-queue</code></td>
 <td>お知らせ配信</td>
-<td>IF #7 受信</td>
+<td>お知らせ作成</td>
 <td>consumers/fanout.ts</td>
 <td>5</td>
 <td>3 回</td>
@@ -352,7 +349,7 @@
 <td><code>webhook-dlq</code></td>
 <td>DLQ 退避</td>
 <td>上記 consumer 失敗時</td>
-<td>consumers/dlq.ts (運営者通知)</td>
+<td>consumers/dlq.ts (運用通知)</td>
 <td>-</td>
 <td>-</td>
 <td>-</td>
@@ -360,14 +357,14 @@
 </tbody>
 </table>
 <h3 id="33-consumer-共通仕様">3.3 Consumer 共通仕様</h3>
-<p class="section-lead">全 Consumer に共通する再試行・DLQ 退避・リプレイの仕組みを定義します。次のシーケンス図は、メッセージ投入から処理失敗時の指数バックオフ再試行、上限到達後の DLQ → R2 退避 → 運営者アラートまでの一連の流れを示します。</p>
+<p class="section-lead">全 Consumer に共通する再試行・DLQ 退避・リプレイの仕組みを定義します。次のシーケンス図は、メッセージ投入から処理失敗時の指数バックオフ再試行、上限到達後の DLQ → R2 退避 → 運用アラートまでの一連の流れを示します。</p>
 <pre class="mermaid"><code>sequenceDiagram
   participant P as producer
   participant Q as Queue
   participant CO as consumer
   participant DLQ as webhook-dlq
   participant R2 as R2_DLQ
-  participant OP as 運営者inbox
+  participant OP as 運用通知
 
   P-&gt;&gt;Q: メッセージ投入
   Q-&gt;&gt;CO: deliver(attempts 付き)
@@ -392,8 +389,8 @@
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h4 id="332-dlq-4-日--r2-退避-30-日">3.3.2 DLQ 4 日 + R2 退避 30 日</h4>
-<p class="section-lead">DLQ に退避したメッセージは <code>webhook-dlq</code> consumer が R2 に 30 日保持し、運営者へアラートを送ります。次の擬似コードは R2 退避とアラート発行の実装です。</p>
-<p>DLQ Queue は 4 日保持。<code>webhook-dlq</code> consumer が R2 にペイロードを 30 日退避し、運営者へ critical アラート。</p>
+<p class="section-lead">DLQ に退避したメッセージは <code>webhook-dlq</code> consumer が R2 に 30 日保持し、運用アラートを送ります。次の擬似コードは R2 退避とアラート発行の実装です。</p>
+<p>DLQ Queue は 4 日保持。<code>webhook-dlq</code> consumer が R2 にペイロードを 30 日退避し、運用へ critical アラート。</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fu">dlqConsume</span>(batch<span class="op">:</span> MessageBatch<span class="op">&lt;</span>DlqEntry<span class="op">&gt;,</span> env<span class="op">:</span> Env) {</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (<span class="kw">const</span> msg <span class="kw">of</span> batch<span class="op">.</span><span class="at">messages</span>) {</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> key <span class="op">=</span> <span class="vs">`dlq/</span><span class="sc">${</span>msg<span class="op">.</span><span class="at">body</span><span class="op">.</span><span class="at">queue</span><span class="sc">}</span><span class="vs">/</span><span class="sc">${</span>msg<span class="op">.</span><span class="at">body</span><span class="op">.</span><span class="at">messageId</span><span class="sc">}</span><span class="vs">.json`</span><span class="op">;</span></span>
@@ -503,11 +500,11 @@ worker-queue-consumer/src/
 </tr>
 <tr>
 <td>結合</td>
-<td>cron 連鎖（月次集計 → 月次確定 → IF #10 → 通知 → 監査ログ）</td>
+<td>cron 連鎖（月次集計 → 月次確定 → Stripe → 通知 → 監査ログ）</td>
 </tr>
 <tr>
 <td>異常系</td>
-<td>Consumer 3 回失敗 → DLQ → R2 退避 → 運営者 critical / リプレイで再処理成功</td>
+<td>Consumer 3 回失敗 → DLQ → R2 退避 → 運用 critical / リプレイで再処理成功</td>
 </tr>
 <tr>
 <td>境界値</td>

@@ -63,7 +63,7 @@
 </tr>
 <tr>
 <td>ダッシュボード</td>
-<td>Grafana(外部)に Cloudflare Workers Analytics + IF #8 メトリクスを集約</td>
+<td>Grafana(外部)に Cloudflare Workers Analytics メトリクスを集約</td>
 </tr>
 <tr>
 <td>主要パネル</td>
@@ -79,7 +79,7 @@
 </tr>
 <tr>
 <td>自動復旧</td>
-<td>Worker 自動再デプロイ / Queue リトライ / サーキットブレーカ。手動介入が必要な場合は SYSTEM_NOTICE で運営者通知</td>
+<td>Worker 自動再デプロイ / Queue リトライ / サーキットブレーカ。手動介入が必要な場合は SYSTEM_NOTICE で運用担当へ通知</td>
 </tr>
 </tbody>
 </table>
@@ -104,7 +104,7 @@
 <td>公開 API 5xx 率</td>
 <td>&lt; 0.5%</td>
 <td>-</td>
-<td>5 分間で 1% 超過時に運営者アラート</td>
+<td>5 分間で 1% 超過時に運用担当へアラート</td>
 </tr>
 <tr>
 <td>管理画面可用性</td>
@@ -212,7 +212,7 @@
 </tbody>
 </table>
 <p>§(i) は SCR-008(プロジェクト概要) / SCR-016(利用状況) / SCR-021(利用量と上限)の最終更新タイムスタンプ表示と連動する。画面側で「<i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i> 集計遅延」と表示されている期間が長引く場合は監視側でも警告化し、ユーザーの誤解(リアルタイム値だと思い込む / 取得失敗と区別がつかない)を防ぐ。</p>
-<h2 id="4-監視ダッシュボード運営者向け">4. 監視ダッシュボード(運営者向け)</h2>
+<h2 id="4-監視ダッシュボード">4. 監視ダッシュボード</h2>
 <table>
 <thead>
 <tr>
@@ -250,10 +250,6 @@
 <td>許可ドメイン外、レート超過(FR-195)</td>
 </tr>
 <tr>
-<td>レート制限上書き状況(契約単位)</td>
-<td><code>owner_quota_overrides</code> の有効件数、しきい値超過契約、有効期限切迫の上書き</td>
-</tr>
-<tr>
 <td>プロジェクト上限・無料枠状況(プロジェクト単位)</td>
 <td><code>project_quota_limits</code> の行数推移、KV <code>usage-limit:&lt;owner&gt;:&lt;projectId&gt;</code> ミラー鮮度(≤ 30s)、プロジェクト別の選択閾値/100%/125%到達件数、プロジェクト別アラートメール送信成功率</td>
 </tr>
@@ -264,10 +260,6 @@
 <tr>
 <td>D1 容量</td>
 <td>NFR-804 (h)、8GB 警告</td>
-</tr>
-<tr>
-<td>連携 IF 状況</td>
-<td>IF #1〜#12 の送受信成功率、DLQ 滞留、リプレイ実行数</td>
 </tr>
 </tbody>
 </table>
@@ -363,7 +355,7 @@ high 検知
 <li><code>error_logs</code> 中で 180 日超過の行が残っていないか</li>
 <li><code>audit_logs</code> の <code>retention_class='1y'</code> で 1 年超過行が残っていないか</li>
 </ul></li>
-<li><strong>検知時のアクション</strong>: <code>audit_logs</code> に <code>retention.inconsistency.detected</code>(5y)を記録、<code>#ops-warn</code> に normal 重要度で通知、運営者 inbox に詳細</li>
+<li><strong>検知時のアクション</strong>: <code>audit_logs</code> に <code>retention.inconsistency.detected</code>(5y)を記録、<code>#ops-warn</code> に normal 重要度で通知</li>
 <li><strong>テスト</strong>: Integration テストで <code>it-retention-consistency-001</code> を整備し、意図的な不整合を検知できることを確認</li>
 </ul>
 <h2 id="7-アラートルール定義">7. アラートルール定義</h2>

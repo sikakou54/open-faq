@@ -389,11 +389,11 @@
 </tr>
 <tr>
 <td><strong>チューニング手順</strong></td>
-<td>(a) <code>question_logs</code> から週次サンプリング (信頼度層別 100 件)、(b) 運営者 (SCR-097) が AI 判定結果を確認・ラベル付け、(c) 月次集計で FP/FN 率を更新、(d) 閾値変更は <code>feature.post_check_threshold.update</code> action コード (<code>operator_high_priv = 5y</code>)、4-eyes 承認必須（緊急一時無効化として KV <code>feature:post-check-threshold:override</code> を許容）。</td>
+<td>(a) <code>question_logs</code> から週次サンプリング (信頼度層別 100 件)、(b) AI 判定結果を確認・ラベル付け、(c) 月次集計で FP/FN 率を更新、(d) 閾値変更は監査記録のうえ反映（緊急一時無効化として KV <code>feature:post-check-threshold:override</code> を許容）。</td>
 </tr>
 <tr>
 <td><strong>緊急時上書き</strong></td>
-<td>重大な偽陽性 (大量ブロック) が観測され、セキュリティインシデント区分（大量誤遮断による業務影響）に該当 + 発動条件 4 項目（対応チケット ID / 2 名承認 / 契約通知 / 監査ログ）が成立する場合に限り、運営者 4-eyes 承認で KV <code>feature:post-check-threshold:override</code> に一時値 (例 <code>0.2</code>) を設定可能。TTL 24 時間、ローテーション後は自動失効。設定は <code>feature.post_check_threshold.toggle</code> action コードで監査記録 (operator_high_priv = 5y)。</td>
+<td>重大な偽陽性 (大量ブロック) が観測され、セキュリティインシデント区分（大量誤遮断による業務影響）に該当 + 発動条件 4 項目（対応チケット ID / 2 名承認 / 契約通知 / 監査ログ）が成立する場合に限り、KV <code>feature:post-check-threshold:override</code> に一時値 (例 <code>0.2</code>) を設定可能。TTL 24 時間、ローテーション後は自動失効。設定は監査記録する。</td>
 </tr>
 <tr>
 <td><strong>モデル変更時の追従</strong></td>
@@ -405,7 +405,7 @@
 </tr>
 </tbody>
 </table>
-<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">要件側との関連</span>本閾値は FR-058(誤情報抑止)/ FR-059(AI 出力品質保証)/ NFR-301(PII 漏洩防止)/ AC-042(AI 品質回帰)に対応します。閾値変更の最終判断責任は AI 推論オーナー(顧管 SCR-092 系)と PO が共同で持ちます。</div></div>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">要件側との関連</span>本閾値は FR-058(誤情報抑止)/ FR-059(AI 出力品質保証)/ NFR-301(PII 漏洩防止)/ AC-042(AI 品質回帰)に対応します。閾値変更の最終判断責任は PO が持ちます。</div></div>
 
 <h3 id="35-piiscrubber-実装">3.5 PiiScrubber 実装</h3>
 <p class="section-lead">回答本文に含まれる PII をパターン辞書でマスクし、機微度の高い種別(クレジットカード / マイナンバー)はブロックします。次の擬似コードはメール・電話・クレジットカード・マイナンバーのパターンと、マスク / ブロックを判定する <code>piiScrub</code> の実装です。</p>
@@ -440,7 +440,7 @@
 <span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> { masked<span class="op">,</span> detected<span class="op">,</span> action<span class="op">:</span> detected<span class="op">.</span><span class="at">length</span> <span class="op">&gt;</span> <span class="dv">0</span> <span class="op">?</span> <span class="st">&#39;masked&#39;</span> <span class="op">:</span> <span class="st">&#39;pass&#39;</span> }<span class="op">;</span></span>
 <span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a><span class="co">// 誤検出報告フロー: ユーザーが「誤検出」を報告 → SCR-097 (運営者) で 3 営業日以内に判定</span></span></code></pre></div>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a><span class="co">// 誤検出報告フロー: ユーザーが「誤検出」を報告 → 3 営業日以内に判定</span></span></code></pre></div>
 <h3 id="36-矛盾検知">3.6 矛盾検知</h3>
 <p class="section-lead">FAQ が否定的に書いているのに肯定で答える等の矛盾を、MVP ではキーワード辞書のルールベースで簡易検出します。次の擬似コードは否定 / 肯定キーワードを用いた <code>detectContradiction</code> の骨子です(FR-060)。</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">// MVP: ルールベース (キーワード辞書による)</span></span>
@@ -468,9 +468,9 @@
 <ol type="1">
 <li>Cloudflare ダッシュボードの Data Localization 設定スクリーンショットを <code>docs/operations/region-audit/YYYY-Q.png</code> に保存。</li>
 <li>Workers AI 推論のリージョン確認ログを記録し、<code>apac</code> 以外を検出した場合は即時 high alert + AC-064 違反として停止判断。</li>
-<li><code>audit_logs</code> への記録: <code>action=ai.region.verify</code> を四半期で記録 (<code>operator_high_priv</code>, 5 年保持)、エビデンスへの参照を含める。</li>
+<li><code>audit_logs</code> への記録: <code>action=ai.region.verify</code> を四半期で記録 (<code>general</code>, 1 年保持)、エビデンスへの参照を含める。</li>
 </ol></li>
-<li><strong>逸脱時の対応</strong>: リージョン外推論を検出した場合は (a) サーキットブレーカ即時 open、(b) 当該 question_logs にフラグ立て、(c) 該当管理者ユーザーへ in-app 通知 + メール (NFR-906)、(d) 顧管側で <code>owner.suspend</code> 一時凍結の検討 (4-eyes 承認)。</li>
+<li><strong>逸脱時の対応</strong>: リージョン外推論を検出した場合は (a) サーキットブレーカ即時 open、(b) 当該 question_logs にフラグ立て、(c) 該当管理者ユーザーへ in-app 通知 + メール (NFR-906)。</li>
 </ul>
 <h3 id="39-ai-モデル切替時の回帰テスト">3.9 AI モデル切替時の回帰テスト</h3>
 <p class="section-lead">AI モデルを切り替える前に、テストペアで旧モデルとの精度を比較し、劣化があれば自動ロールバックします。次の擬似コードは Queue コンシューマが合格率を算出し、5pt 低下で自動無効化 + high アラート、2pt 低下で normal アラートを出す <code>consume</code> の実装です(FR-059 / FR-349 / AC-042)。</p>
@@ -501,10 +501,7 @@
 <span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>        level<span class="op">:</span> <span class="st">&#39;normal&#39;</span><span class="op">,</span> message<span class="op">:</span> <span class="vs">`AI 回帰テスト要注意: </span><span class="sc">${</span>modelVersion<span class="sc">}</span><span class="vs"> → -</span><span class="sc">${</span>(drop<span class="op">*</span><span class="dv">100</span>)<span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">1</span>)<span class="sc">}</span><span class="vs">pt`</span><span class="op">,</span></span>
 <span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>      })<span class="op">;</span></span>
 <span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 結果を顧管 SCR-097 へ報告 (IF #9 と同様)</span></span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> <span class="fu">sendToAdminIntegration</span>(env<span class="op">,</span> <span class="st">&#39;/internal/main-integration/v1/ai-regression/result&#39;</span><span class="op">,</span></span>
-<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>                                  { testSetId<span class="op">,</span> modelVersion<span class="op">,</span> passRate<span class="op">,</span> results })<span class="op">;</span></span>
-<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>    msg<span class="op">.</span><span class="fu">ack</span>()<span class="op">;</span></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>    msg<span class="op">.</span><span class="fu">ack</span>()<span class="op">;</span></span>
 <span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h4 id="391-回帰テスト合格基準-詳細">3.9.1 回帰テスト合格基準 (詳細)</h4>
@@ -571,8 +568,8 @@
 <p class="section-lead">§3.9.2 の判定結果ごとの切替・監視・ロールバック動作を定めます。次の箇条書きは <code>pass</code>(段階展開で切替)・<code>warn</code>(切替するが 24h 監視強化)・<code>fail</code>(自動ロールバック + high アラート)の扱いを示します。</p>
 <ul>
 <li><strong>pass</strong>: 新モデルを <code>ai_models.active=1</code> に設定、旧モデルを <code>active=0</code> (ただし 60 日間並走可能、<code>feature:ai-model:rollout:&lt;version&gt;</code> で段階展開)</li>
-<li><strong>warn</strong>: 切替するが運営者 inbox に normal、24h 監視強化、超過時は手動ロールバック</li>
-<li><strong>fail</strong>: 自動ロールバック (<code>ai_models.active</code> を旧モデルに戻し、新モデル PR を block)、運営者 inbox に high</li>
+<li><strong>warn</strong>: 切替するがサービス通知に normal、24h 監視強化、超過時は手動ロールバック</li>
+<li><strong>fail</strong>: 自動ロールバック (<code>ai_models.active</code> を旧モデルに戻し、新モデル PR を block)、サービス通知に high</li>
 </ul>
 <h4 id="394-テストペア管理">3.9.4 テストペア管理</h4>
 <p class="section-lead">回帰テストに用いるテストペアの規模・更新頻度・棄却基準を定めます。次の箇条書きは 50 ペア / カテゴリ網羅、四半期 10% 入れ替え、過剰冗長ペアの棄却基準を示します。</p>
@@ -629,7 +626,7 @@
 <tbody>
 <tr>
 <td>入れ替え頻度</td>
-<td><strong>四半期 1 回</strong> (Q1/Q4: 3 月末、Q2: 6 月末、Q3: 9 月末、Q4: 12 月末)。担当: AI 推論オーナー (顧管 SCR-092 系操作者)。</td>
+<td><strong>四半期 1 回</strong> (Q1/Q4: 3 月末、Q2: 6 月末、Q3: 9 月末、Q4: 12 月末)。担当: AI 推論オーナー。</td>
 </tr>
 <tr>
 <td>入れ替え割合</td>
@@ -649,7 +646,7 @@
 </tr>
 <tr>
 <td>データセット棄却の閾値変更</td>
-<td><code>dataset.test_pair.threshold</code> action コード (<code>operator_high_priv = 5y</code>)、4-eyes 承認</td>
+<td><code>dataset.test_pair.threshold</code> action コード (<code>general = 1y</code>) で監査記録</td>
 </tr>
 <tr>
 <td>バージョニング</td>
@@ -661,7 +658,7 @@
 </tr>
 <tr>
 <td>精度劣化 5pt 以上発生時の復元手順</td>
-<td>(a) <code>testSet_v(N)</code> を <code>testSet_v(N-1)</code> にロールバック (PR revert)、(b) <code>dataset.test_pair.rollback</code> action (<code>operator_high_priv = 5y</code>) を 4-eyes 承認 + 記録、(c) 棄却済の関連ペアを <code>testSet_archive</code> から自動復元、(d) 復元後の合格率を <code>assessRegression</code> で再確認</td>
+<td>(a) <code>testSet_v(N)</code> を <code>testSet_v(N-1)</code> にロールバック (PR revert)、(b) <code>dataset.test_pair.rollback</code> action (<code>general = 1y</code>) を監査記録、(c) 棄却済の関連ペアを <code>testSet_archive</code> から自動復元、(d) 復元後の合格率を <code>assessRegression</code> で再確認</td>
 </tr>
 </tbody>
 </table>

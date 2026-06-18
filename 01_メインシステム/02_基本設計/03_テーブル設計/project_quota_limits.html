@@ -14,7 +14,7 @@
 <article class="content" id="content">
 <h1 id="TBL-024">TBL-024 <code>project_quota_limits</code></h1>
 <span id="324-project_quota_limits"></span>
-<p class="section-lead">質問数の月次上限件数・無料枠・アラート、および運営者が管理する FAQ 件数無料枠をプロジェクト単位で保持します。</p>
+<p class="section-lead">質問数の月次上限件数・無料枠・アラート、および FAQ 件数無料枠をプロジェクト単位で保持します。</p>
 <blockquote>
 <p>本テーブルは表番号 #24(§2 全テーブル一覧)。掲載位置は他テーブルとの差分を最小化するため §3.23 直後に置く。</p>
 </blockquote>
@@ -78,7 +78,7 @@
 <td></td>
 <td></td>
 <td></td>
-<td>（複合）<code>(resource_kind = 'question_monthly_limit' AND (threshold IS NOT NULL OR alert_thresholds = '[]')) OR (resource_kind = 'faq_monthly_limit' AND threshold IS NULL AND alert_thresholds = '[]')</code><br>（複合）<code>resource_kind = 'question_monthly_limit' OR source = 'operator'</code>。FAQに <code>source='owner'</code> の行を許可しない</td>
+<td>（複合）<code>(resource_kind = 'question_monthly_limit' AND (threshold IS NOT NULL OR alert_thresholds = '[]')) OR (resource_kind = 'faq_monthly_limit' AND threshold IS NULL AND alert_thresholds = '[]')</code></td>
 
 </tr>
 <tr>
@@ -176,7 +176,7 @@
 <td></td>
 <td>①</td>
 <td><code>'owner'</code></td>
-<td><code>source IN ('owner','operator')</code></td>
+<td><code>source IN ('owner')</code></td>
 
 </tr>
 <tr>

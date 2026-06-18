@@ -7,7 +7,7 @@ set -euo pipefail
 # 同じツリー構造で一括 PDF 化する。
 #
 # 仕様:
-# - 対象: 01_メインシステム/ / 02_運営者システム/ / 共有/ 配下の *.html(本文ページ)
+# - 対象: 01_メインシステム/ / 共有/ 配下の *.html(本文ページ)
 # - 除外: 画面遷移図ラッパー(*.view.html)、assets/、99_script/、PDF出力/
 # - 出力先: PDF出力/<元の相対パス>/<basename>.{pdf}
 # - html_to_pdf.sh を内部で呼び出す(Chrome headless が portal.js を実行しシェルを描画)

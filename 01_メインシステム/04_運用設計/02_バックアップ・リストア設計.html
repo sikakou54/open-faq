@@ -274,7 +274,7 @@
 </tr>
 <tr>
 <td>論理削除データのリストア(v1.10)</td>
-<td>90 日経過前なら運営者経由(連携 IF #4)で <code>UPDATE … SET valid=1</code> で復元可能。関連 <code>project_users</code> / 子テーブル(<code>faqs</code> / <code>inquiries</code> 等)も同時復元する。90 日経過後は物理削除バッチで物理 DELETE 済みのため、R2 月次バックアップからのリストアが必要</td>
+<td>90 日経過前なら <code>UPDATE … SET valid=1</code> で復元可能。関連 <code>project_users</code> / 子テーブル(<code>faqs</code> / <code>inquiries</code> 等)も同時復元する。90 日経過後は物理削除バッチで物理 DELETE 済みのため、R2 月次バックアップからのリストアが必要</td>
 </tr>
 <tr>
 <td>90 日後物理削除バッチ実行記録</td>

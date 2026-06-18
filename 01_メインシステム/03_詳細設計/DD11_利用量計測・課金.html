@@ -15,7 +15,7 @@
 <h1 id="dd11-利用量計測課金">DD11: 利用量計測・課金</h1>
 
 <aside class="page-summary">
-<p class="ps-lead"><strong>このページは、メインシステムの利用量計測(プロジェクト単位)と課金集計(契約単位)の実装方針を定義します。</strong> 月次集計から請求確定・Stripe Webhook 受信までの課金フローと、質問数月次上限による選択閾値アラート・100% 受付停止・125% 運営者通知のリミット判定ロジックを扱います(FR-120〜127 / FR-139 / AC-020 / AC-040)。</p>
+<p class="ps-lead"><strong>このページは、メインシステムの利用量計測(プロジェクト単位)と課金集計(契約単位)の実装方針を定義します。</strong> 月次集計から請求確定・Stripe Webhook 受信までの課金フローと、質問数月次上限による選択閾値アラート・100% 受付停止のリミット判定ロジックを扱います(FR-120〜127 / FR-139 / AC-020 / AC-040)。</p>
 </aside>
 
 <p class="doc-meta"><span><b>版数</b> v1.4</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
@@ -34,12 +34,12 @@
 <tr>
 <td>機能</td>
 <td>FR-120〜127</td>
-<td>利用量・課金ダッシュボード / 月次集計 / 選択閾値アラート / 100%停止 / 125%運営者通知</td>
+<td>利用量・課金ダッシュボード / 月次集計 / 選択閾値アラート / 100%停止</td>
 </tr>
 <tr>
 <td>機能</td>
 <td>FR-139</td>
-<td>Stripe 9 ハンドラ（IF #10 経由）</td>
+<td>Stripe イベントハンドラ</td>
 </tr>
 <tr>
 <td>画面</td>
@@ -69,7 +69,7 @@
 <tr>
 <td>Webhook</td>
 <td><code>/webhooks/stripe</code></td>
-<td>Stripe 9 イベント受信（IF #10）</td>
+<td>Stripe イベント受信</td>
 </tr>
 <tr>
 <td>テーブル</td>
@@ -112,7 +112,7 @@
 <tr>
 <td>§14.1.2</td>
 <td>月次確定（JST 02:00、月初 1 日）</td>
-<td>billing_invoices 発行 + IF #10</td>
+<td>billing_invoices 発行 + Stripe 連携</td>
 </tr>
 <tr>
 <td>§6 SCR-016 / SCR-021 / SCR-022</td>
@@ -340,12 +340,12 @@
 <h3 id="345-請求表示モデルscr-022">3.4.5 請求表示モデル（SCR-022）</h3>
 <p class="section-lead">請求画面(SCR-022)の表示モデルへの変換ルールと、請求履歴を利用量表示モデルと混在させない方針を定義します。<code>GET /billing/summary</code> の <code>estimatedTotal</code>、<code>nextBillingDate</code>、<code>billingStatus</code>、<code>paymentMethod</code>、<code>projects[]</code> をそのまま請求画面の表示モデルへ変換する。<code>projects[]</code> は <code>projectName</code> / <code>questionCharge</code> / <code>faqCharge</code> / <code>subtotal</code> を表示し、末尾に <code>estimatedTotal</code> と一致する全体合計を置く。請求履歴は <code>GET /billing/invoices</code> を別取得し、利用量表示モデルとは混在させない。</p>
 <h3 id="35-月次確定jst-0200月初-1-日">3.5 月次確定（JST 02:00、月初 1 日）</h3>
-<p class="section-lead">月初 1 日に前月分の請求を契約単位で確定するジョブで、冪等キーで重複生成を抑止しつつ <code>billing_invoices</code> を発行し、IF #10 経由で Stripe へ請求書発行を依頼します。次のシーケンス図で、課金対象オーナー抽出から請求書発行・通知・監査記録までの流れと冪等分岐(生成済 / 未生成)を示し、続けて擬似コードを保持します。</p>
+<p class="section-lead">月初 1 日に前月分の請求を契約単位で確定するジョブで、冪等キーで重複生成を抑止しつつ <code>billing_invoices</code> を発行し、Stripe へ請求書発行を依頼します。次のシーケンス図で、課金対象オーナー抽出から請求書発行・通知・監査記録までの流れと冪等分岐(生成済 / 未生成)を示し、続けて擬似コードを保持します。</p>
 <pre class="mermaid"><code>sequenceDiagram
   participant C as cronバッチ
   participant D as D1
   participant KV as KV_DEDUP
-  participant AD as 顧客管理(IF #10)
+  participant ST as Stripe
   participant N as 通知Queue
   participant AL as audit_logs
 
@@ -358,7 +358,7 @@
     KV--&gt;&gt;C: 生成状態(生成済 / 未生成)
     alt 未生成
       C-&gt;&gt;D: billing_invoices INSERT + usage_metering 確定
-      C-&gt;&gt;AD: 請求書発行依頼(invoice-issued)
+      C-&gt;&gt;ST: 請求書発行依頼(invoice-issued)
       C-&gt;&gt;N: BILLING_INVOICE_ISSUED 通知投入
       C-&gt;&gt;KV: 冪等キー記録(TTL 90日)
       C-&gt;&gt;AL: billing.invoice.issue 監査記録(retention_class=billing)
@@ -397,8 +397,8 @@
 <span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`UPDATE usage_metering SET finalized_at = ?1 WHERE id = ?2`</span>)</span>
 <span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>      <span class="op">.</span><span class="fu">bind</span>(<span class="kw">new</span> <span class="bu">Date</span>()<span class="op">.</span><span class="fu">toISOString</span>()<span class="op">,</span> usage<span class="op">.</span><span class="at">id</span>)<span class="op">.</span><span class="fu">run</span>()<span class="op">;</span></span>
 <span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>    <span class="co">// IF #10 経由で Stripe へ請求書発行依頼 (顧管経由)</span></span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> <span class="fu">sendToAdminIntegration</span>(env<span class="op">,</span> <span class="st">&#39;/internal/main-integration/v1/billing/invoice-issued&#39;</span><span class="op">,</span> {</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Stripe へ請求書発行依頼</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> <span class="fu">issueStripeInvoice</span>(env<span class="op">,</span> {</span>
 <span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>      invoiceId<span class="op">,</span> contractOwnerUserId<span class="op">:</span> t<span class="op">.</span><span class="at">id</span><span class="op">,</span> ym<span class="op">:</span> prevYm<span class="op">,</span> amount<span class="op">:</span> amount<span class="op">.</span><span class="at">total</span><span class="op">,</span></span>
 <span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
 <span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a></span>
@@ -413,8 +413,8 @@
 <span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
 <span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<h3 id="36-stripe-webhookif-10-経由">3.6 Stripe Webhook（IF #10 経由）</h3>
-<p class="section-lead">IF #10 経由で受信する Stripe イベントと、<code>handlers/stripe/</code> 配下のハンドラ分岐先を定義します。Stripe Webhook 受信の正本は運営者側であり、メイン側は IF #10 で受信します。<code>worker-webhook</code> で受信し、<code>handlers/stripe/</code> 配下の 8 ハンドラに分岐します。</p>
+<h3 id="36-stripe-webhook">3.6 Stripe Webhook</h3>
+<p class="section-lead">受信する Stripe イベントと、<code>handlers/stripe/</code> 配下のハンドラ分岐先を定義します。<code>worker-webhook</code> で受信し、<code>handlers/stripe/</code> 配下の 8 ハンドラに分岐します。</p>
 <ul>
 <li><code>invoice.paid</code></li>
 <li><code>invoice.payment_failed</code></li>
@@ -425,18 +425,17 @@
 <li><code>charge.dispute.created</code></li>
 <li><code>customer.tax_id.updated</code></li>
 </ul>
-<p>詳細は <a href="../02_基本設計/02_API設計/index.html">../02_基本設計/02_API設計/index.html</a> を正本とする。Stripe Webhook 受信は運営者側を正本とし、メイン側は IF #10 で受信する。</p>
+<p>詳細は <a href="../02_基本設計/02_API設計/index.html">../02_基本設計/02_API設計/index.html</a> を正本とする。</p>
 <h3 id="37-pci-dss-スコープ外宣言">3.7 PCI-DSS スコープ外宣言</h3>
 <p class="section-lead">本サービスがカード情報を保持せず PCI-DSS スコープ外となる根拠を示します。本サービスはクレジットカード情報を一切扱わず、Stripe Elements でクライアントから直接送信します。SAQ A の自己評価で十分です。</p>
-<h3 id="38-選択閾値アラート--100停止--125運営者通知プロジェクトの月次上限件数比">3.8 選択閾値アラート / 100%停止 / 125%運営者通知(プロジェクトの月次上限件数比)</h3>
-<p class="section-lead">ウィジェット質問受付時の月次上限判定と、選択閾値アラート(FR-127)・100% 受付停止(FR-122)・125% 運営者通知の発火条件を定義します。判定基準は <strong>プロジェクトごとの質問数月次上限件数</strong>(<code>question_monthly_limit</code>)で、<code>threshold</code> が NULL の上限 OFF 時は判定をスキップします。上限 ON 時は、<code>alert_thresholds</code> で選択された 25% / 50% / 80% / 90% / 100% への当月初回到達時にメール通知し、100% で受付停止、125% で運営者へ追加通知します。FAQ 件数は月次上限判定を行わず、件数にかかわらず新規作成を継続します。次のシーケンス図で、ウィジェット質問到達時の上限判定(上限内 / 超過)と閾値到達時の通知分岐を示し、続けて FR-127 / FR-122 の詳細を保持します。</p>
+<h3 id="38-選択閾値アラート--100停止プロジェクトの月次上限件数比">3.8 選択閾値アラート / 100%停止(プロジェクトの月次上限件数比)</h3>
+<p class="section-lead">ウィジェット質問受付時の月次上限判定と、選択閾値アラート(FR-127)・100% 受付停止(FR-122)の発火条件を定義します。判定基準は <strong>プロジェクトごとの質問数月次上限件数</strong>(<code>question_monthly_limit</code>)で、<code>threshold</code> が NULL の上限 OFF 時は判定をスキップします。上限 ON 時は、<code>alert_thresholds</code> で選択された 25% / 50% / 80% / 90% / 100% への当月初回到達時にメール通知し、100% で受付停止します。FAQ 件数は月次上限判定を行わず、件数にかかわらず新規作成を継続します。次のシーケンス図で、ウィジェット質問到達時の上限判定(上限内 / 超過)と閾値到達時の通知分岐を示し、続けて FR-127 / FR-122 の詳細を保持します。</p>
 <pre class="mermaid"><code>sequenceDiagram
   participant W as ウィジェット利用者
   participant Wk as Worker(ask)
   participant KV as KV(上限設定)
   participant D as D1
   participant N as 通知Queue
-  participant OP as 運営者inbox
 
   W-&gt;&gt;Wk: 質問送信(公開キー)
   Wk-&gt;&gt;KV: プロジェクトの上限設定を取得
@@ -454,9 +453,6 @@
     opt 100%閾値を選択済
       Wk-&gt;&gt;N: 100%停止アラート投入(1通)
     end
-    opt 125%到達
-      Wk-&gt;&gt;OP: 運営者へエスカレーション通知
-    end
   end</code></pre>
 <p><strong>選択閾値アラート(FR-127)</strong>:</p>
 <ul>
@@ -471,7 +467,6 @@
 <li>停止はカウントしない(429 で返した質問は <code>question_logs</code> に計上せず、<code>metering_billable=false</code>)。</li>
 <li>管理者向けメールは上記の選択閾値アラートに従う。100%未選択時は停止のみ実行し、管理者向け上限メールは送信しない。</li>
 <li><strong>復帰</strong>: (a) 翌月 1 日 00:00 JST の月次リセットで自動復帰、(b) オーナー / 当該プロジェクト管理者が SCR-021-001 で <code>question_monthly_limit</code> を当月利用件数超に引き上げた時点、または上限をOFFにした時点で KV 反映(最大 30s)後に即時復帰。</li>
-<li>質問数の 125% 到達は既に 100% で停止済みのため追加のレート制限は発生しないが、運営者へエスカレーション通知する。</li>
 </ul>
 <blockquote>
 <p><strong>無料枠との区別</strong>: 無料枠はMVP課金対象の課金境界、上限は質問数だけの停止境界。FAQの無料枠超過は従量課金として扱い、月次件数による作成停止は行わない。</p>
@@ -527,7 +522,7 @@
 </tr>
 <tr>
 <td>結合</td>
-<td>月次集計 → 月次確定 → IF #10 送信 → 通知配信</td>
+<td>月次集計 → 月次確定 → Stripe 送信 → 通知配信</td>
 </tr>
 <tr>
 <td>異常系</td>
@@ -535,7 +530,7 @@
 </tr>
 <tr>
 <td>境界値</td>
-<td>選択閾値25/50/80/90/100% / 100%停止 / 125%運営者通知のぴったり境界</td>
+<td>選択閾値25/50/80/90/100% / 100%停止のぴったり境界</td>
 </tr>
 <tr>
 <td>表示</td>

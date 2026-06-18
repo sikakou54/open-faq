@@ -20,7 +20,7 @@
 
 <p class="doc-meta"><span><b>版数</b> v1.2</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
 
-<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">本書の範囲と対象外</span>本書は §4 のテンプレート ID <code>TPL-*</code> 全件の件名 / テキスト本文 / HTML 本文・送信契機(<code>NOTIF-*</code>)・配信先 / 重要度 / 添付 / リンク有効期限・メール共通要件(送信元・i18n・サニタイズ・配信信頼性)を扱います。アプリ内お知らせ受信箱(<code>inbox</code> 限定の <code>NOTIF-CHAT_HOLD_CHECK</code> 等)は <a href="06_メッセージ一覧.html">06_メッセージ一覧.html</a> §6、画面文言(<code>MSG-SCR-*</code>)は <a href="01_画面設計/index.html">01_画面設計/index.html</a>、運営者送信メールは <a href="../../02_運営者システム/02_基本設計/11_メール設計.html">運営者 11_メール設計.html</a> が正本(本書対象外)。配信信頼性(DMARC 等)は <a href="09_セキュリティ設計.html">09_セキュリティ設計.html</a> §11、通知契機・配信先は <a href="06_メッセージ一覧.html">06_メッセージ一覧.html</a> §6.1 が正本です。</div></div>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">本書の範囲と対象外</span>本書は §4 のテンプレート ID <code>TPL-*</code> 全件の件名 / テキスト本文 / HTML 本文・送信契機(<code>NOTIF-*</code>)・配信先 / 重要度 / 添付 / リンク有効期限・メール共通要件(送信元・i18n・サニタイズ・配信信頼性)を扱います。アプリ内お知らせ受信箱(<code>inbox</code> 限定の <code>NOTIF-CHAT_HOLD_CHECK</code> 等)は <a href="06_メッセージ一覧.html">06_メッセージ一覧.html</a> §6、画面文言(<code>MSG-SCR-*</code>)は <a href="01_画面設計/index.html">01_画面設計/index.html</a> が正本です。配信信頼性(DMARC 等)は <a href="09_セキュリティ設計.html">09_セキュリティ設計.html</a> §11、通知契機・配信先は <a href="06_メッセージ一覧.html">06_メッセージ一覧.html</a> §6.1 が正本です。</div></div>
 
 <h2 id="2-共通基準">2. 共通基準</h2>
 <p class="section-lead">全テンプレートに共通する送信元・件名・本文構造・文字コード・サニタイズ・配信失敗時挙動・添付の基準をまとめます。各小節は個別テンプレート(§4)が前提とする土台を定めるもので、テンプレート固有の差分のみを §4 側に記載します。</p>
@@ -245,8 +245,8 @@
 <td>NOTIF-SERVICE_ANNOUNCEMENT</td>
 <td>normal/high/critical</td>
 <td>admin(範囲指定可)</td>
-<td>運営者選択</td>
-<td>運営者入力 URL</td>
+<td>配信時に選択</td>
+<td>入力 URL</td>
 </tr>
 <tr>
 <td>14</td>
@@ -554,7 +554,7 @@ open-faq &lt;noreply@&lt;service-domain&gt;&gt;</code></pre>
 <td>失効日時(JST)</td>
 </tr>
 <tr>
-<td><code>{operator_owner_name}</code></td>
+<td><code>{owner_name}</code></td>
 <td>設定操作したオーナーの表示名</td>
 </tr>
 </tbody>
@@ -563,7 +563,7 @@ open-faq &lt;noreply@&lt;service-domain&gt;&gt;</code></pre>
 <p><strong>本文(テキスト版)</strong>:</p>
 <pre><code>お客様
 
-{operator_owner_name} 様が open-faq の {project_name} のお問い合わせ先メー
+{owner_name} 様が open-faq の {project_name} のお問い合わせ先メー
 ルアドレスとしてこのアドレスを登録しました。FAQ ウィジェット上でお問い合
 わせ先として表示するため、以下のリンクから確認をお願いします。
 
@@ -1008,7 +1008,7 @@ open-faq &lt;noreply@&lt;service-domain&gt;&gt;</code></pre>
 </tr>
 <tr>
 <td><code>{summary_text}</code></td>
-<td>改定要約(運営者入力、HTML sanitize 済)</td>
+<td>改定要約(HTML sanitize 済)</td>
 </tr>
 <tr>
 <td><code>{new_terms_url}</code></td>
@@ -1051,8 +1051,8 @@ open-faq &lt;noreply@&lt;service-domain&gt;&gt;</code></pre>
 <p><strong>本文(HTML 版)</strong>: 改定要約をパネル表示 + 「新規約を読む」「再同意する」の 2 プライマリボタン。<code>critical</code> 重要度のため強制送信。</p>
 <hr />
 <h3 id="413-tpl-service_announcement運営からのお知らせ">4.13 TPL-SERVICE_ANNOUNCEMENT(運営からのお知らせ)</h3>
-<p class="section-lead">運営者システム(連携 IF #7)が配信トリガーするお知らせメールです。重要度(<code>normal</code> / <code>high</code> / <code>critical</code>)は運営者が配信時に選択し、本書はメインシステム側の受信時表現のみを定めます。</p>
-<p><strong>発火条件</strong>: 連携 IF #7 で運営者システムが配信トリガーした時。重要度 <code>normal</code> / <code>high</code> / <code>critical</code> は配信時に運営者が選択。</p>
+<p class="section-lead">サービス運営側から配信トリガーされるお知らせメールです。重要度(<code>normal</code> / <code>high</code> / <code>critical</code>)は配信時に選択し、本書はメインシステム側の受信時表現を定めます。</p>
+<p><strong>発火条件</strong>: お知らせの配信がトリガーされた時。重要度 <code>normal</code> / <code>high</code> / <code>critical</code> は配信時に選択。</p>
 <p><strong>テンプレート変数</strong>:</p>
 <table>
 <thead>
@@ -1068,19 +1068,19 @@ open-faq &lt;noreply@&lt;service-domain&gt;&gt;</code></pre>
 </tr>
 <tr>
 <td><code>{announcement_title}</code></td>
-<td>お知らせタイトル(運営者入力)</td>
+<td>お知らせタイトル</td>
 </tr>
 <tr>
 <td><code>{announcement_body_html}</code></td>
-<td>お知らせ本文(運営者入力、HTML sanitize 済)</td>
+<td>お知らせ本文(HTML sanitize 済)</td>
 </tr>
 <tr>
-<td><code>{operator_signature}</code></td>
+<td><code>{signature}</code></td>
 <td>配信元署名(<code>open-faq 運営事務局</code>)</td>
 </tr>
 </tbody>
 </table>
-<p><strong>件名</strong>: <code>{announcement_title}</code>(運営者入力。<code>critical</code> の場合は <code>【重要】</code> プレフィックスを自動付与)</p>
+<p><strong>件名</strong>: <code>{announcement_title}</code>(<code>critical</code> の場合は <code>【重要】</code> プレフィックスを自動付与)</p>
 <p><strong>本文(テキスト版)</strong>:</p>
 <pre><code>{recipient_display_name} 様
 
@@ -1090,10 +1090,10 @@ open-faq 運営事務局よりお知らせいたします。
 
 ──────────────────────────────────────────────
 このメールに直接返信しないでください。
-{operator_signature}</code></pre>
-<p><strong>本文(HTML 版)</strong>: 運営者入力本文は HTML 版でリッチテキスト(リスト・太字・リンクのみ許可)で表示。</p>
-<p><strong>強制送信</strong>: 規約改定・価格改定・重要セキュリティに該当するお知らせは運営者が重要度 <code>critical</code> を選択して配信し、受信者はオプトアウトできない(FR-149 / BR-105。利用規約改定そのものは専用の <code>TPL-TERMS_REVISION</code> を用いる)。それ以外の <code>normal</code> / <code>high</code> は §5.2 のルールに従う。</p>
-<p><strong>備考</strong>: 運営者システム側 SCR-API_KEY-ANNOUNCE 等の配信トリガー画面が正本(別ドキュメント)。本書ではメインシステム側の受信時表現のみを定義する。</p>
+{signature}</code></pre>
+<p><strong>本文(HTML 版)</strong>: お知らせ本文は HTML 版でリッチテキスト(リスト・太字・リンクのみ許可)で表示。</p>
+<p><strong>強制送信</strong>: 規約改定・価格改定・重要セキュリティに該当するお知らせは重要度 <code>critical</code> を選択して配信し、受信者はオプトアウトできない(FR-149 / BR-105。利用規約改定そのものは専用の <code>TPL-TERMS_REVISION</code> を用いる)。それ以外の <code>normal</code> / <code>high</code> は §5.2 のルールに従う。</p>
+<p><strong>備考</strong>: 本書ではメインシステム側の受信時表現を定義する。</p>
 <hr />
 <h3 id="414-tpl-system_noticeサブ契機ごとの定型文--メタテンプレート">4.14 TPL-SYSTEM_NOTICE(サブ契機ごとの定型文 = メタテンプレート)</h3>
 <p class="section-lead">質問数の選択アラート閾値到達や契約上書き反映など運用系イベントを通知するメタテンプレートです。サブ契機(<code>event_type</code>)ごとに件名・本文を動的に組み立て、AI 利用上限到達などメール対象外の契機は受信箱のみで通知します。</p>
@@ -1114,7 +1114,7 @@ open-faq 運営事務局よりお知らせいたします。
 </tr>
 <tr>
 <td><code>{event_type}</code></td>
-<td>サブ契機名(<code>question_limit_threshold_reached</code> / <code>operator_override_applied</code> 等)</td>
+<td>サブ契機名(<code>question_limit_threshold_reached</code> / <code>quota_override_applied</code> 等)</td>
 </tr>
 <tr>
 <td><code>{event_at_jst}</code></td>
@@ -1156,8 +1156,8 @@ open-faq 運営事務局よりお知らせいたします。
 <td>{related_resource}: 当月の質問数が上限の {threshold_percent}% に達しました</td>
 </tr>
 <tr>
-<td>operator_override_applied</td>
-<td>運営者によりプロジェクト上限が更新されました</td>
+<td>quota_override_applied</td>
+<td>プロジェクト上限が更新されました</td>
 </tr>
 </tbody>
 </table>
@@ -1225,7 +1225,7 @@ open-faq &lt;noreply@&lt;service-domain&gt;&gt;</code></pre>
 </tr>
 <tr>
 <td>TPL-SERVICE_ANNOUNCEMENT</td>
-<td>配信時に運営者が指定する範囲(全契約 / 単一契約 / 特定プロジェクト)</td>
+<td>配信時に指定する範囲(全契約 / 単一契約 / 特定プロジェクト)</td>
 </tr>
 <tr>
 <td>TPL-SYSTEM_NOTICE</td>

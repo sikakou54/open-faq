@@ -38,7 +38,7 @@
 </tr>
 <tr>
 <td>シークレット</td>
-<td><code>MASTER_KEY</code> <code>BACKUP_KEY</code> <code>JWT_HS256_KEY</code> 等</td>
+<td><code>MASTER_KEY</code> <code>BACKUP_KEY</code> 等</td>
 <td>鍵管理</td>
 </tr>
 <tr>
@@ -142,7 +142,7 @@
 <h3 id="34-鍵ローテーション運用">3.4 鍵ローテーション運用</h3>
 <p>オーナー派生鍵は <code>MASTER_KEY</code> のローテーションで自動的に変わる（派生関数の入力が変わるため）。再暗号化バックフィルが必須。</p>
 <h4 id="341-鍵ローテーション一覧-両書同期">3.4.1 鍵ローテーション一覧 (両書同期)</h4>
-<p>顧管 §12.6 / §12.6.1 の表現と揃える。MVP では以下の鍵を年次ローテーション + 60 日 dual-decrypt 期間で運用する。</p>
+<p>MVP では以下の鍵を年次ローテーション + 60 日 dual-decrypt 期間で運用する。</p>
 <table>
 <thead>
 <tr>
@@ -169,7 +169,7 @@
 <td><code>audit-export</code></td>
 <td>MASTER_KEY 連動</td>
 <td>同上</td>
-<td>顧管 §12.6</td>
+<td>メイン</td>
 </tr>
 <tr>
 <td>派生鍵 <code>mfa-setup</code></td>
@@ -177,7 +177,7 @@
 <td><code>mfa-setup</code></td>
 <td>MASTER_KEY 連動</td>
 <td>同上</td>
-<td>顧管</td>
+<td>共通</td>
 </tr>
 <tr>
 <td>派生鍵 <code>password-reset</code></td>
@@ -196,14 +196,6 @@
 <td>共通</td>
 </tr>
 <tr>
-<td>派生鍵 <code>internal-api</code> (<code>JWT_HS256_KEY</code>)</td>
-<td>連携 IF #1〜#12 JWT HS256 署名</td>
-<td><code>internal-api</code></td>
-<td><strong>年次 + 60 日 dual-decrypt</strong> (顧管 §12.6.2 と同形式)</td>
-<td>60 日</td>
-<td>メイン / 顧管 共通</td>
-</tr>
-<tr>
 <td><code>BACKUP_KEY</code></td>
 <td>R2 バックアップ暗号化 (AES-256-GCM)</td>
 <td><code>backup-key</code></td>
@@ -211,33 +203,11 @@
 <td>60 日</td>
 <td>共通</td>
 </tr>
-<tr>
-<td>mTLS Origin CA 証明書</td>
-<td>連携 IF #1〜#12 クライアント証明書</td>
-<td>—</td>
-<td>年次</td>
-<td>30 日</td>
-<td>Cloudflare 管理</td>
-</tr>
 </tbody>
 </table>
-<blockquote>
-<p><strong>重要</strong>: <code>JWT_HS256_KEY</code> のローテーション運用は顧管 §12.6.2 と整合させ、本書 (メイン側) でも <strong>60 日 dual-decrypt</strong> 期間を設ける。これにより、メイン側 Worker が新鍵で発行した JWT を顧管側 Worker が旧鍵で受信した場合 (デプロイのタイムラグ) でも 60 日間は検証成功する。</p>
-</blockquote>
 <h4 id="342-dual-decrypt-期間の運用">3.4.2 dual-decrypt 期間の運用</h4>
 <ul>
-<li><strong>鍵更新フロー</strong>: (1) 新鍵 <code>JWT_HS256_KEY_NEXT</code> を <code>wrangler secret put</code> で投入、(2) 検証側 Worker (本書側 internal-api + 顧管側 admin-api) を <strong>dual-decrypt 対応版</strong> にデプロイ、(3) 発行側 Worker (メイン側で IF #11 / IF #12 を発火、顧管側で IF #1〜#7 を発火) を <strong>新鍵で発行する版</strong> にデプロイ、(4) 60 日経過後、旧鍵 <code>JWT_HS256_KEY_PREV</code> を削除。</li>
-<li><strong>検証実装</strong> (両書共通):</li>
-</ul>
-<div class="sourceCode" id="cb3"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">function</span> <span class="fu">verifyJwt</span>(env<span class="op">:</span> Env<span class="op">,</span> token<span class="op">:</span> <span class="dt">string</span>) {</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> keys <span class="op">=</span> [env<span class="op">.</span><span class="at">JWT_HS256_KEY</span><span class="op">,</span> env<span class="op">.</span><span class="at">JWT_HS256_KEY_PREV</span>]<span class="op">.</span><span class="fu">filter</span>(<span class="bu">Boolean</span>)<span class="op">;</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (<span class="kw">const</span> k <span class="kw">of</span> keys) {</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="cf">await</span> <span class="fu">verifyWithKey</span>(token<span class="op">,</span> k)) <span class="cf">return</span> <span class="kw">true</span><span class="op">;</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">throw</span> <span class="kw">new</span> <span class="fu">HTTPException</span>(<span class="dv">401</span><span class="op">,</span> { message<span class="op">:</span> <span class="st">&#39;INVALID_JWT&#39;</span> })<span class="op">;</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<ul>
-<li><strong>監査ログ</strong>: 鍵更新時は <code>key.rotation.start</code> / <code>key.rotation.complete</code> (5y / operator_high_priv) を audit_logs に記録。</li>
+<li><strong>監査ログ</strong>: 鍵更新時は <code>key.rotation.start</code> / <code>key.rotation.complete</code> (<code>general</code> = 1y) を audit_logs に記録。</li>
 <li><strong>アラート</strong>: 旧鍵 (<code>_PREV</code>) の使用率が 0% に近づいたら 60 日経過前でも撤去判断 (Cloudflare Analytics で旧鍵使用ヒット数を監視)。</li>
 </ul>
 <h3 id="35-backup_key-dual-decrypt-期間の運用">3.5 BACKUP_KEY dual-decrypt 期間の運用</h3>
@@ -308,10 +278,6 @@
 <tr>
 <td>鍵ローテーション</td>
 <td>年次バックフィルジョブで全 PII 列の再暗号化が完了</td>
-</tr>
-<tr>
-<td>連携 IF</td>
-<td>メイン → 顧管の JWT (HS256) を 60 日 dual-decrypt 期間中に旧鍵 / 新鍵で送受信</td>
 </tr>
 </tbody>
 </table>

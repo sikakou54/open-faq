@@ -91,7 +91,7 @@
 <tr>
 <td>NFR-810</td>
 <td>DLQ 運用</td>
-<td>サービス間連携および外部 Webhook の Dead Letter Queue は (a) Cloudflare Queues DLQ 保持 4 日、R2 退避、(b) 1 時間以内自動指数 BO、以降は明示的リプレイ、(c) リプレイ可能範囲 30 日、(d) 滞留が IF 別上限を超過した瞬間に運営者へ high アラート</td>
+<td>サービス間連携および外部 Webhook の Dead Letter Queue は (a) Cloudflare Queues DLQ 保持 4 日、R2 退避、(b) 1 時間以内自動指数 BO、以降は明示的リプレイ、(c) リプレイ可能範囲 30 日、(d) 滞留が上限を超過した瞬間に運用担当へ high アラート</td>
 </tr>
 </tbody>
 </table>
@@ -194,7 +194,7 @@
 </tr>
 <tr>
 <td>重大障害時のメール通知</td>
-<td>全オーナー / メンバー(ユーザー管理権限保持)・運営者へ</td>
+<td>全オーナー / メンバー(ユーザー管理権限保持)へ</td>
 </tr>
 </tbody>
 </table>
@@ -214,7 +214,7 @@
 </tr>
 <tr>
 <td>自動再処理</td>
-<td>DLQ 投入から <strong>1 時間以内</strong> は自動指数 BO で再試行、それ以降は運営者の明示的リプレイ操作のみ(運営者側 SCR-096)</td>
+<td>DLQ 投入から <strong>1 時間以内</strong> は自動指数 BO で再試行、それ以降は運用担当の明示的リプレイ操作のみ</td>
 </tr>
 <tr>
 <td>リプレイ可能範囲</td>
@@ -222,7 +222,7 @@
 </tr>
 <tr>
 <td>監視</td>
-<td>DLQ 滞留が IF 別上限を超過した瞬間に運営者 high お知らせ + メール通知</td>
+<td>DLQ 滞留が上限を超過した瞬間に運用担当へ high お知らせ + メール通知</td>
 </tr>
 </tbody>
 </table>
@@ -253,7 +253,7 @@
 </tr>
 <tr>
 <td>DLQ リプレイ</td>
-<td>運営者側 SCR-096 から手動リプレイ</td>
+<td>運用担当による手動リプレイ</td>
 <td>§5</td>
 </tr>
 <tr>

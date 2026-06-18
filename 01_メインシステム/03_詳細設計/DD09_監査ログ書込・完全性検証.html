@@ -112,7 +112,7 @@
 <tr>
 <td>§15.2</td>
 <td>監査ログ</td>
-<td>9 カテゴリ action コード網羅表 / retention_class / tombstone</td>
+<td>action コード網羅表 / retention_class / tombstone</td>
 </tr>
 </tbody>
 </table>
@@ -122,7 +122,7 @@
 <h3 id="31-チェーンセグメント分割方針-長大化対策">3.1 チェーンセグメント分割方針 (長大化対策)</h3>
 <p class="section-lead">ハッシュチェーンが長大化すると検証コストが線形に増えるため、契約単位 × 月次でセグメントを分割する方針を定めます。次の段落でセグメントキーと連続性の担保方法を述べ、続く表で検証の性能目標を示します。</p>
 <p>ハッシュチェーンは「契約単位 × 月次セグメント」を原則とする。<code>segment_key = YYYY-MM</code> をキーとして、チェーンの prev_hash 連結は同セグメント内のみで完結させる。月初の最初の行は前月末の最後の行の current_hash を <code>prev_segment_hash</code> として別カラムに記録し、セグメント間の連続性を担保する。</p>
-<p>これにより、運営者操作 (contract_owner_user_id=NULL) のグローバルチェーンも月次セグメントに分割され、日次検証バッチの O(N) コストを 30 日分のみに抑制する。差分検証 (前日分の prev_hash 連結のみ再計算) との併用で、性能目標は次の通り。</p>
+<p>これにより、契約に紐づかない操作 (contract_owner_user_id=NULL) のグローバルチェーンも月次セグメントに分割され、日次検証バッチの O(N) コストを 30 日分のみに抑制する。差分検証 (前日分の prev_hash 連結のみ再計算) との併用で、性能目標は次の通り。</p>
 <table>
 <thead>
 <tr>
@@ -197,11 +197,6 @@
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">&#39;chat.&#39;</span><span class="op">:</span> <span class="st">&#39;general&#39;</span><span class="op">,</span></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">&#39;billing.&#39;</span><span class="op">:</span> <span class="st">&#39;billing&#39;</span><span class="op">,</span>         <span class="co">// 7 年</span></span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">&#39;usage.&#39;</span><span class="op">:</span> <span class="st">&#39;billing&#39;</span><span class="op">,</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">&#39;data.restore.&#39;</span><span class="op">:</span> <span class="st">&#39;operator_high_priv&#39;</span><span class="op">,</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">&#39;owner.suspend&#39;</span><span class="op">:</span> <span class="st">&#39;operator_high_priv&#39;</span><span class="op">,</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">&#39;owner.resume&#39;</span><span class="op">:</span> <span class="st">&#39;operator_high_priv&#39;</span><span class="op">,</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">&#39;threshold.update&#39;</span><span class="op">:</span> <span class="st">&#39;operator_high_priv&#39;</span><span class="op">,</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="st">&#39;rate_limit.override&#39;</span><span class="op">:</span> <span class="st">&#39;operator_high_priv&#39;</span><span class="op">,</span></span>
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>}<span class="op">;</span></span>
 <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co">// CI 検証: action コードを書き込む全箇所で本 map にヒットすることを保証</span></span>
@@ -274,7 +269,7 @@
 <li><strong>不正検知への影響緩和</strong>: GDPR 強化モード時はレート制限の判定キーを <code>ip_masked</code> → <code>user_id (またはセッション ID)</code> に切替（不正検知バッチで <code>ip_mask_mode='gdpr_enhanced'</code> 契約には <code>user_id</code> キーを優先）。</li>
 <li><strong>監査ログ整合性</strong>: マスク方式の変更は <strong>適用日時を <code>contract_owners.ip_mask_mode_changed_at</code> に保存</strong>、変更前後の <code>audit_logs.ip_masked</code> 値は混在する想定で検証バッチを設計 (hash 連鎖検証は影響なし、列値の比較分析時にモード境界を考慮)。</li>
 </ul>
-<h3 id="35-9-カテゴリ-action-コード網羅表">3.5 9 カテゴリ action コード網羅表</h3>
+<h3 id="35-action-コード網羅表">3.5 action コード網羅表</h3>
 <table>
 <thead>
 <tr>
@@ -300,16 +295,6 @@
 <td>billing</td>
 </tr>
 <tr>
-<td>連携 IF</td>
-<td><code>integration.if1.receive</code>, <code>integration.if6.receive</code>, <code>integration.if9.send</code>, <code>integration.if10.event.invoice.paid</code></td>
-<td>general</td>
-</tr>
-<tr>
-<td>データエクスポート・復元</td>
-<td><code>data.export.request</code>, <code>data.export.complete</code>, <code>data.restore.execute</code></td>
-<td>operator_high_priv (restore のみ) / general (他)。※ 契約全データエクスポート(<code>data.export.*</code>)は MVP 対象外・将来対応</td>
-</tr>
-<tr>
 <td>一括操作</td>
 <td><code>faq.bulk_import</code>, <code>inbox.read_all</code></td>
 <td>general</td>
@@ -319,31 +304,21 @@
 <td><code>user.logical_delete</code>, <code>project.logical_delete</code>, <code>project_users.logical_delete</code>, <code>user.hard_delete_by_batch</code>, <code>project.hard_delete_by_batch</code>, <code>project.created_with_owner_admin</code>(プロジェクト作成時のオーナー admin 行自動 INSERT)</td>
 <td>general</td>
 </tr>
-<tr>
-<td>セキュリティ運用</td>
-<td><code>security.rate_limit.override</code>, <code>security.threshold.update</code>, <code>security.cache.invalidate</code>, <code>security.session.force_invalidate</code></td>
-<td>operator_high_priv</td>
-</tr>
-<tr>
-<td>DB 直接クエリ</td>
-<td><code>db.direct_query.execute</code></td>
-<td>operator_high_priv</td>
-</tr>
 </tbody>
 </table>
 <h3 id="36-監査ログ完全性検証">3.6 監査ログ完全性検証</h3>
 <div class="sourceCode" id="cb4"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">// app/workers/cron/src/jobs/audit-chain-verify.ts (JST 03:00)</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fu">verifyAuditChain</span>(env<span class="op">:</span> Env) {</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> contractOwnerUserIds <span class="op">=</span> <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="vs">`SELECT DISTINCT COALESCE(contract_owner_user_id, &#39;__operator__&#39;) as tid FROM audit_logs`</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="vs">`SELECT DISTINCT COALESCE(contract_owner_user_id, &#39;__global__&#39;) as tid FROM audit_logs`</span></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  )<span class="op">.</span><span class="fu">all</span><span class="op">&lt;</span>{ tid<span class="op">:</span> <span class="dt">string</span> }<span class="op">&gt;</span>()<span class="op">;</span></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (<span class="kw">const</span> t <span class="kw">of</span> contractOwnerUserIds<span class="op">.</span><span class="at">results</span>) {</span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> rows <span class="op">=</span> <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`</span></span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="vs">      SELECT * FROM audit_logs</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="vs">      WHERE COALESCE(contract_owner_user_id, &#39;__operator__&#39;) = ?1 AND tombstone = 0</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="vs">      WHERE COALESCE(contract_owner_user_id, &#39;__global__&#39;) = ?1 AND tombstone = 0</span></span>
 <span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="vs">      ORDER BY created_at</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="vs">    `</span>)<span class="op">.</span><span class="fu">bind</span>(t<span class="op">.</span><span class="at">tid</span> <span class="op">===</span> <span class="st">&#39;__operator__&#39;</span> <span class="op">?</span> <span class="kw">null</span> <span class="op">:</span> t<span class="op">.</span><span class="at">tid</span>)<span class="op">.</span><span class="fu">all</span>()<span class="op">;</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="vs">    `</span>)<span class="op">.</span><span class="fu">bind</span>(t<span class="op">.</span><span class="at">tid</span> <span class="op">===</span> <span class="st">&#39;__global__&#39;</span> <span class="op">?</span> <span class="kw">null</span> <span class="op">:</span> t<span class="op">.</span><span class="at">tid</span>)<span class="op">.</span><span class="fu">all</span>()<span class="op">;</span></span>
 <span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> prevHash<span class="op">:</span> <span class="dt">string</span> <span class="op">|</span> <span class="dt">null</span> <span class="op">=</span> <span class="kw">null</span><span class="op">;</span></span>
 <span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (<span class="kw">const</span> row <span class="kw">of</span> rows<span class="op">.</span><span class="at">results</span>) {</span>
@@ -386,7 +361,7 @@ tombstone=1 の行: action, actor_id, current_hash のみ残し、PII を含む�
 <div class="sourceCode" id="cb6"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">// app/workers/cron/src/jobs/audit-tombstone-consistency.ts (月次 JST 04:00)</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fu">verifyTombstoneConsistency</span>(env<span class="op">:</span> Env) {</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> lastMonth <span class="op">=</span> <span class="fu">getLastMonthRange</span>()<span class="op">;</span>  <span class="co">// YYYY-MM</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (<span class="kw">const</span> retentionClass <span class="kw">of</span> [<span class="st">&#39;5y&#39;</span><span class="op">,</span> <span class="st">&#39;7y&#39;</span>]) {  <span class="co">// 1y は archive 対象外</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (<span class="kw">const</span> retentionClass <span class="kw">of</span> [<span class="st">&#39;7y&#39;</span>]) {  <span class="co">// 1y は archive 対象外</span></span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">// (a) D1 から tombstone=1 行を取得</span></span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> d1Rows <span class="op">=</span> <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`</span></span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="vs">      SELECT id, current_hash FROM audit_logs</span></span>
@@ -422,14 +397,14 @@ tombstone=1 の行: action, actor_id, current_hash のみ残し、PII を含む�
 <span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> <span class="fu">writeAudit</span>(env<span class="op">,</span> {</span>
-<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>    action<span class="op">:</span> <span class="st">&#39;audit.chain.tombstone.verify&#39;</span><span class="op">,</span> retentionClass<span class="op">:</span> <span class="st">&#39;5y&#39;</span><span class="op">,</span></span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>    action<span class="op">:</span> <span class="st">&#39;audit.chain.tombstone.verify&#39;</span><span class="op">,</span> retentionClass<span class="op">:</span> <span class="st">&#39;7y&#39;</span><span class="op">,</span></span>
 <span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
 <span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h4 id="373-アラート時の対応">3.7.3 アラート時の対応</h4>
 <ul>
 <li><strong>R2 オブジェクト欠落</strong>: critical → 復元手順 (RB-016) を即時実行、原因究明</li>
 <li><strong>id 集合不一致</strong>: critical → 該当行を個別調査、tombstone バッチ と R2AuditArchive のジョブ実行記録を確認</li>
-<li><strong>hash 連鎖断絶</strong>: critical → tombstone=1 行が攻撃で改ざんされた可能性、セキュリティインシデント（完全性検証失敗）発動 → 4-eyes 緊急対応 + 法的相談</li>
+<li><strong>hash 連鎖断絶</strong>: critical → tombstone=1 行が攻撃で改ざんされた可能性、セキュリティインシデント（完全性検証失敗）発動 → 緊急対応 + 法的相談</li>
 </ul>
 <h4 id="374-テスト">3.7.4 テスト</h4>
 <p><code>it-audit-tombstone-consistency-001</code> で:</p>
@@ -438,8 +413,8 @@ tombstone=1 の行: action, actor_id, current_hash のみ残し、PII を含む�
 <li>異常ケース 1: R2 オブジェクトを意図的に削除 → critical 発火</li>
 <li>異常ケース 2: D1 の tombstone=1 行を意図的に DELETE → id 集合不一致検知</li>
 </ul>
-<h3 id="38-retention_class-3-区分">3.8 retention_class 3 区分</h3>
-<p><code>general</code> 1 年 / <code>operator_high_priv</code> 5 年 / <code>billing</code> 7 年。<code>tombstone</code> フラグで本文を物理削除しつつチェーン継続性を維持。tombstone 化のバッチ実装は <a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html</a> §14.1.8 を参照。</p>
+<h3 id="38-retention_class-2-区分">3.8 retention_class 2 区分</h3>
+<p><code>general</code> 1 年 / <code>billing</code> 7 年。<code>tombstone</code> フラグで本文を物理削除しつつチェーン継続性を維持。tombstone 化のバッチ実装は <a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html</a> §14.1.8 を参照。</p>
 <h2 id="4-関連設計">4. 関連設計</h2>
 <p class="section-lead">本 DD に関連する正本ドキュメントを示します。監査ログのセキュリティ要件は <a href="../02_基本設計/09_セキュリティ設計.html">セキュリティ設計</a>、<code>audit_logs</code> 等のスキーマは <a href="../02_基本設計/03_テーブル設計/index.html">テーブル設計</a> を正本とし、ハッシュチェーン監査の共有ルールは <a href="../../共有/共有概念.html">共有概念</a> を参照します。要件は <a href="../01_要件定義/index.html">要件定義</a>、全体方針は <a href="../02_基本設計/index.html">基本設計</a> を参照します。関連 DD は <a href="DD08_認可ヘルパ.html">DD08_認可ヘルパ.html</a> / <a href="DD10_暗号化・鍵管理.html">DD10_暗号化・鍵管理.html</a> / <a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html</a>、運用面は <a href="../04_運用設計/index.html">運用設計</a> を参照します。</p>
 <h2 id="5-テスト観点">5. テスト観点</h2>

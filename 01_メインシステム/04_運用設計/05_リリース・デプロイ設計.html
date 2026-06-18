@@ -209,7 +209,7 @@
 </tr>
 <tr>
 <td>(2) 本サービス MVP リリース判定期間中の月次稼働率</td>
-<td>Cloudflare Workers Analytics Engine + SCR-095 KPI ダッシュボード</td>
+<td>Cloudflare Workers Analytics Engine</td>
 <td>4 週間連続で NFR-201 / NFR-203 を 99.9% 以上維持</td>
 </tr>
 <tr>
@@ -219,7 +219,7 @@
 </tr>
 <tr>
 <td>(4) Cloudflare サービス全断時のフォールバック</td>
-<td>AI しきい値 3 段フォールバック / 縮退運転(顧客管理)</td>
+<td>AI しきい値 3 段フォールバック / 縮退運転</td>
 <td>Cloudflare 部分障害でもエンドユーザー側ウィジェット最低機能が継続可能</td>
 </tr>
 <tr>
@@ -345,7 +345,7 @@
 </tr>
 <tr>
 <td>本番直接変更</td>
-<td>緊急時のみ運営者の対応チケット ID 必須、全クエリを監査ログに記録(<code>db.query.execute</code>)</td>
+<td>緊急時のみ運用担当の対応チケット ID 必須、全クエリを監査ログに記録(<code>db.query.execute</code>)</td>
 </tr>
 <tr>
 <td>マイグレーション</td>
@@ -369,7 +369,7 @@
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="ex">wrangler</span> d1 migrations apply main-db-staging <span class="at">--remote</span></span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="ex">pnpm</span> test:integration <span class="at">--</span> <span class="at">--env</span><span class="op">=</span>staging</span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># (4) 本番適用(PR マージ後 / CI 経由を推奨。手動時は 4-eyes)</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># (4) 本番適用(PR マージ後 / CI 経由を推奨。手動時は 2 名承認)</span></span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="ex">wrangler</span> d1 migrations apply main-db-prod <span class="at">--remote</span></span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co"># (5) 適用済確認(適用済 migration 一覧)</span></span>
@@ -452,7 +452,7 @@
 <li>初回起動は本マイグレーションのデプロイから 90 日後(早すぎる物理削除を回避)</li>
 </ul></li>
 </ol>
-<p><strong>ロールバック手順</strong>: アプリレベルは <code>wrangler rollback</code>、DB スキーマは D1 Time Travel で本マイグレーション実行前へ巻き戻し可能。<code>account_project_grants</code> のオーナー admin 行が大量にバックフィルされている場合の DELETE 戦略は別途検討(運営者経由のクリーンアップ)。</p>
+<p><strong>ロールバック手順</strong>: アプリレベルは <code>wrangler rollback</code>、DB スキーマは D1 Time Travel で本マイグレーション実行前へ巻き戻し可能。<code>account_project_grants</code> のオーナー admin 行が大量にバックフィルされている場合の DELETE 戦略は別途検討。</p>
 <h2 id="5b-d1sqlite-リファクタリング-マイグレーション順序v110-履歴">5b. D1/SQLite リファクタリング マイグレーション順序(v1.10 履歴)</h2>
 <p>本変更を本番反映する際の手順(計画停止を最小化するため、再作成系は運用窓を確保):</p>
 <blockquote>
@@ -501,7 +501,7 @@
 </tr>
 <tr>
 <td>M7</td>
-<td><code>audit_logs</code> テーブル再作成(<code>prev_hash</code> / <code>current_hash</code> / <code>tombstone</code> 列削除、FK 明示)。<code>tombstone=1</code> 行は捨象(運営者側に正本あり)</td>
+<td><code>audit_logs</code> テーブル再作成(<code>prev_hash</code> / <code>current_hash</code> / <code>tombstone</code> 列削除、FK 明示)。<code>tombstone=1</code> 行は捨象</td>
 <td>テーブル再作成</td>
 <td>中</td>
 </tr>
@@ -580,12 +580,12 @@
 <span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div>
 <h3 id="5b3-アプリ層の連動修正">5b.3 アプリ層の連動修正</h3>
 <ul>
-<li><strong><code>accounts.role</code> CHECK 変更</strong>: 認可ミドルウェアで <code>service_operator</code> 値を許容している箇所を削除(運営者は別 D1)</li>
+<li><strong><code>accounts.role</code> CHECK 変更</strong>: 認可ミドルウェアで <code>service_operator</code> 値を許容している箇所を削除</li>
 <li><strong>お知らせ作成</strong>: <code>service_announcements</code> 単独 INSERT から、<code>service_announcements</code> + <code>announcement_audiences</code> の 2 段 INSERT(D1 batch API)に変更</li>
 <li><strong>配信先取得 API</strong>: <code>audience_owner_account_ids</code> の JSON パースから <code>JOIN announcement_audiences</code> に切替</li>
 <li><strong>論理削除日時参照</strong>: <code>deleted_at</code> を見ていたコードを <code>updated_at</code> に統一</li>
 <li><strong>暗号鍵バージョン</strong>: 復号処理で <code>email_key_version</code> 列を読み、対応する鍵を Secrets Store から取得(セキュリティ設計 §8.2.1)</li>
-<li><strong><code>audit_logs</code></strong>: メイン側で <code>prev_hash</code> / <code>current_hash</code> を計算していたコードを削除し、IF #8 で運営者側に転送する形に統一</li>
+<li><strong><code>audit_logs</code></strong>: <code>prev_hash</code> / <code>current_hash</code> を計算していたコードを削除する</li>
 <li><strong>DD13 物理削除バッチ</strong>: §3.1.7 / §3.1.8 / §3.1.9 / §3.1.11 のクエリで <code>deleted_at</code> 参照を <code>valid</code> / <code>updated_at</code> に置換(本マイグレーション併走で実施)</li>
 </ul>
 <h3 id="5b4-ロールバック方針">5b.4 ロールバック方針</h3>
@@ -614,11 +614,6 @@
 <td><code>service_announcements.audience_owner_account_ids</code> が JSON 非互換形式</td>
 <td>中</td>
 <td>M2 開始前に §5b.2 SQL #3 で全件 json_valid チェック、非互換行は手動で配列化</td>
-</tr>
-<tr>
-<td><code>audit_logs</code> 再作成時に運営者側 IF #8 同期がズレる</td>
-<td>中</td>
-<td>マイグレーション窓に IF #8 同期を一時停止し、終了後再開。再開時に再送防止のため Idempotency-Key を厳格化</td>
 </tr>
 <tr>
 <td>D1 のマイグレーションタイムアウト(30 秒上限)</td>
@@ -721,7 +716,7 @@
 </tr>
 <tr>
 <td>M12-4</td>
-<td>既存 <code>question_monthly_limit</code> は各プロジェクトの質問数上限へ展開。FAQは旧上限値と管理者ユーザー由来の無料枠上書きを破棄し、運営者上書きだけを <code>source='operator'</code>、<code>threshold=NULL</code>、アラート無効で移行</td>
+<td>既存 <code>question_monthly_limit</code> は各プロジェクトの質問数上限へ展開する</td>
 <td>データ移行</td>
 <td>中</td>
 </tr>
@@ -861,7 +856,7 @@
 <span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. スモークテスト</span></span>
 <span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="ex">pnpm</span> test:smoke <span class="at">--</span> <span class="at">--env</span><span class="op">=</span>prod</span>
 <span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co"># 6. 監査ログ記録(4-eyes)</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co"># 6. 監査ログ記録(2 名承認)</span></span>
 <span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co"># → audit_logs に prod.rollback (5y 保持) を記録</span></span></code></pre></div>
 <h4 id="612-必須事後検証">6.1.2 必須事後検証</h4>
 <ul>
@@ -956,11 +951,6 @@
 <td>エンドユーザー疑似データ</td>
 <td>1 契約あたり 100 件</td>
 <td>メール・問い合わせ ID・チャットメッセージ</td>
-</tr>
-<tr>
-<td>検証用運営者アカウント</td>
-<td>3 名</td>
-<td>役割: (a) 全権、(b) 課金 / 契約管理のみ、(c) 監査ログ閲覧のみ</td>
 </tr>
 <tr>
 <td>プロンプト注入攻撃セット</td>

@@ -67,7 +67,7 @@
 </tr>
 <tr>
 <td>対象外</td>
-<td>運営者システム(<a href="../../02_運営者システム/02_基本設計/">../../02_運営者システム/02_基本設計/</a>)、実装ディレクトリ構成(詳細設計)、デプロイ詳細(運用設計)</td>
+<td>実装ディレクトリ構成(詳細設計)、デプロイ詳細(運用設計)</td>
 </tr>
 <tr>
 <td>想定読者</td>
@@ -95,7 +95,7 @@
 <tr>
 <td>2</td>
 <td>API 設計方針</td>
-<td>REST + JSON。<code>/v1</code> 配下に統一。<code>Authorization</code> ヘッダ。連携 IF #1〜#12(送信側)。</td>
+<td>REST + JSON。<code>/v1</code> 配下に統一。<code>Authorization</code> ヘッダ。</td>
 <td><a href="02_API設計/index.html">02_API設計/index.html</a></td>
 </tr>
 <tr>
@@ -113,7 +113,7 @@
 <tr>
 <td>5</td>
 <td>エラー設計方針</td>
-<td><code>E-AUTH-*</code> / <code>E-AUTHZ-*</code> / <code>E-BIZ-*</code> / <code>E-INPUT-*</code> / <code>E-IF-*</code> の ID 体系。ステータスコード対応表。</td>
+<td><code>E-AUTH-*</code> / <code>E-AUTHZ-*</code> / <code>E-BIZ-*</code> / <code>E-INPUT-*</code> の ID 体系。ステータスコード対応表。</td>
 <td><a href="05_エラー設計.html">05_エラー設計.html</a></td>
 </tr>
 <tr>
@@ -181,8 +181,8 @@
 </tr>
 <tr>
 <td>外部連携</td>
-<td>Stripe / Resend / OpenAI / 運営者システム / メール SMTP</td>
-<td>連携 IF #1〜#12 で明文化</td>
+<td>Stripe / Resend / OpenAI / メール SMTP</td>
+<td>API 設計で明文化</td>
 </tr>
 <tr>
 <td>インフラ</td>
@@ -342,8 +342,7 @@
     Inquiry --&gt;|FAQ 化| FAQ[(faqs)]
     API --&gt;|利用量計測| Meter[(usage_metering)]
     Meter --&gt;|月次集計| Stripe[Stripe]
-    Stripe --&gt;|Webhook IF#10| Operator[運営者システム]
-    Operator --&gt;|転送| API</code></pre>
+    Stripe --&gt;|Webhook| API</code></pre>
 <h2 id="6-非機能要件への対応方針基本">6. 非機能要件への対応方針(基本)</h2>
 <table>
 <thead>
@@ -409,7 +408,7 @@
 <tr>
 <td>02</td>
 <td><a href="02_API設計/index.html">02_API設計/index.html</a></td>
-<td>管理 API + 連携 IF #1〜#12(送信側)の全エンドポイント</td>
+<td>管理 API の全エンドポイント</td>
 </tr>
 <tr>
 <td>03</td>
@@ -803,114 +802,7 @@
 </tr>
 </tbody>
 </table>
-<h2 id="9-連携-if--ドキュメント-カバレッジ">9. 連携 IF × ドキュメント カバレッジ</h2>
-<table>
-<thead>
-<tr>
-<th>IF #</th>
-<th>方向</th>
-<th>概要</th>
-<th>API</th>
-<th>エラー</th>
-<th>セキュリティ</th>
-<th>課金</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>#1</td>
-<td>顧管 → メ</td>
-<td>契約停止イベント受信</td>
-<td>§5 IF #1</td>
-<td>E-IF-001-*</td>
-<td>-</td>
-<td>§5 サスペンション</td>
-</tr>
-<tr>
-<td>#2</td>
-<td>顧管 → メ</td>
-<td>強制ログアウト受信</td>
-<td>§5 IF #2</td>
-<td>E-IF-002-*</td>
-<td>§7 監査</td>
-<td>-</td>
-</tr>
-<tr>
-<td>#4</td>
-<td>顧管 → メ</td>
-<td>復元実行</td>
-<td>§5 IF #4</td>
-<td>E-IF-004-*</td>
-<td>§7 監査</td>
-<td>-</td>
-</tr>
-<tr>
-<td>#5</td>
-<td>顧管 → メ</td>
-<td>レート制限上書き</td>
-<td>§5 IF #5</td>
-<td>E-IF-005-*</td>
-<td>-</td>
-<td>§3 契約上書き</td>
-</tr>
-<tr>
-<td>#6</td>
-<td>顧管 → メ</td>
-<td>AI パラメータ上書き</td>
-<td>§5 IF #6</td>
-<td>E-IF-006-*</td>
-<td>-</td>
-<td>-</td>
-</tr>
-<tr>
-<td>#7</td>
-<td>顧管 → メ</td>
-<td>お知らせ生成</td>
-<td>§5 IF #7</td>
-<td>E-IF-007-*</td>
-<td>-</td>
-<td>-</td>
-</tr>
-<tr>
-<td>#8</td>
-<td>メ → 顧管</td>
-<td>監視メトリクス取得</td>
-<td>§5 IF #8</td>
-<td>E-IF-008-*</td>
-<td>§10 監視</td>
-<td>-</td>
-</tr>
-<tr>
-<td>#9</td>
-<td>メ → 顧管</td>
-<td>不正利用検知通知</td>
-<td>§5 IF #9</td>
-<td>E-IF-009-*</td>
-<td>§10 不正利用検知</td>
-<td>-</td>
-</tr>
-<tr>
-<td>#10</td>
-<td>外 → 顧管 → メ</td>
-<td>課金 Webhook 受信・転送</td>
-<td>§5 IF #10</td>
-<td>E-IF-010-*</td>
-<td>§7 監査</td>
-<td>§13 Webhook 処理</td>
-</tr>
-<tr>
-<td>#12</td>
-<td>顧管 → メ → 利用者</td>
-<td>運営者操作通知</td>
-<td>§5 IF #12</td>
-<td>E-IF-012-*</td>
-<td>-</td>
-<td>-</td>
-</tr>
-</tbody>
-</table>
-<p>(#3 / #11 は要件側で予約。MVP では未割り当て)</p>
-<h2 id="10-関連ドキュメント">10. 関連ドキュメント</h2>
+<h2 id="10-関連ドキュメント">9. 関連ドキュメント</h2>
 <table>
 <thead>
 <tr>
@@ -941,18 +833,13 @@
 <td><a href="01_画面設計/index.html">画面設計(メイン)</a></td>
 </tr>
 <tr>
-<td>運営者側ドキュメント</td>
-<td>顧客管理システム側設計書</td>
-<td><a href="../../02_運営者システム/02_基本設計/index.html">../../02_運営者システム/02_基本設計/index.html</a></td>
-</tr>
-<tr>
 <td>共有概念対応表</td>
-<td>メイン / 運営者の正本所在</td>
+<td>共有概念の正本所在</td>
 <td><a href="../../共有/共有概念.html">../../共有/共有概念.html</a></td>
 </tr>
 </tbody>
 </table>
-<h2 id="11-未確定事項確認事項">11. 未確定事項・確認事項</h2>
+<h2 id="11-未確定事項確認事項">10. 未確定事項・確認事項</h2>
 <table>
 <thead>
 <tr>

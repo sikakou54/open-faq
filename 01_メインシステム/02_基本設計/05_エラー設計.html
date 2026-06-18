@@ -78,12 +78,6 @@
 <td>Workers AI 推論失敗 / Resend 配信失敗</td>
 </tr>
 <tr>
-<td>連携 IF エラー</td>
-<td>連携 IF #1〜#12 エラー</td>
-<td><code>E-IF-NNN-*</code></td>
-<td>IF 受信時の冪等性違反 / 認証失敗</td>
-</tr>
-<tr>
 <td>Webhook エラー</td>
 <td>外部 Webhook(Resend など)受信エラー</td>
 <td><code>E-WH-*</code></td>
@@ -711,7 +705,7 @@
 <tr>
 <td>E-EXT-EMAIL-SOFT-BOUNCE</td>
 <td>メール bounce(soft)5 連続</td>
-<td>サプレス登録(復帰可、SCR-093 経由)</td>
+<td>サプレス登録(復帰可、承認を経て復帰)</td>
 <td>INFO</td>
 </tr>
 <tr>
@@ -723,102 +717,8 @@
 </tbody>
 </table>
 </div>
-<h3 id="49-連携-if-エラーe-if-nnn-">4.9 連携 IF エラー(<code>E-IF-NNN-*</code>)</h3>
-<p class="section-lead">顧客管理システムとの連携 IF #1〜#12 のエラーです。冪等性違反はリトライ安全性のため 200 + 既存処理結果を返し、認証失敗は 401 + 監査記録とします。IF 仕様の正本は <a href="02_API設計/index.html">02_API設計/index.html</a> の連携 IF 節です。</p>
-<div class="table-scroll">
-<table>
-<thead>
-<tr>
-<th>エラーID</th>
-<th>発生条件</th>
-<th>システム動作</th>
-<th>ログレベル</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>E-IF-COMMON-AUTH</td>
-<td>mTLS / JWT 認証失敗</td>
-<td>401 + 監査記録</td>
-<td>WARN</td>
-</tr>
-<tr>
-<td>E-IF-COMMON-IDEMPOTENCY</td>
-<td>冪等性違反</td>
-<td>200 + 既存処理結果(リトライ安全性)</td>
-<td>INFO</td>
-</tr>
-<tr>
-<td>E-IF-COMMON-SCHEMA</td>
-<td>JSON Schema 不整合</td>
-<td>400</td>
-<td>WARN</td>
-</tr>
-<tr>
-<td>E-IF-001-*</td>
-<td>IF #1(契約停止イベント)関連</td>
-<td>-</td>
-<td>WARN</td>
-</tr>
-<tr>
-<td>E-IF-002-*</td>
-<td>IF #2(強制ログアウト)関連</td>
-<td>-</td>
-<td>WARN</td>
-</tr>
-<tr>
-<td>E-IF-004-*</td>
-<td>IF #4(復元実行)関連</td>
-<td>-</td>
-<td>WARN</td>
-</tr>
-<tr>
-<td>E-IF-005-*</td>
-<td>IF #5(レート制限上書き)関連</td>
-<td>-</td>
-<td>INFO</td>
-</tr>
-<tr>
-<td>E-IF-006-*</td>
-<td>IF #6(AI しきい値上書き)関連</td>
-<td>-</td>
-<td>INFO</td>
-</tr>
-<tr>
-<td>E-IF-007-*</td>
-<td>IF #7(お知らせ生成)関連</td>
-<td>-</td>
-<td>INFO</td>
-</tr>
-<tr>
-<td>E-IF-008-*</td>
-<td>IF #8(監視メトリクス取得、送信側)関連</td>
-<td>-</td>
-<td>INFO</td>
-</tr>
-<tr>
-<td>E-IF-009-*</td>
-<td>IF #9(不正利用検知通知、送信側)関連</td>
-<td>-</td>
-<td>WARN</td>
-</tr>
-<tr>
-<td>E-IF-010-*</td>
-<td>IF #10(課金 Webhook 受信)関連</td>
-<td>-</td>
-<td>WARN</td>
-</tr>
-<tr>
-<td>E-IF-012-*</td>
-<td>IF #12(運営者操作通知)関連</td>
-<td>-</td>
-<td>INFO</td>
-</tr>
-</tbody>
-</table>
-</div>
-<h3 id="410-webhook-エラーe-wh-">4.10 Webhook エラー(<code>E-WH-*</code>)</h3>
-<p class="section-lead">外部 Webhook(Resend / Stripe)受信のエラーです。署名検証失敗は 401 + 監査記録、冪等性違反は 200 + 既存処理結果とし、ペイロード差分検出時は自動上書きを禁止して運営者レビュー待ちにします。</p>
+<h3 id="49-webhook-エラーe-wh-">4.9 Webhook エラー(<code>E-WH-*</code>)</h3>
+<p class="section-lead">外部 Webhook(Resend / Stripe)受信のエラーです。署名検証失敗は 401 + 監査記録、冪等性違反は 200 + 既存処理結果とし、ペイロード差分検出時は自動上書きを禁止してレビュー待ちにします。</p>
 <div class="table-scroll">
 <table>
 <thead>
@@ -833,7 +733,7 @@
 <tr>
 <td>E-WH-SIGNATURE-INVALID</td>
 <td>Resend / Stripe 署名 HMAC 不正</td>
-<td>401 + 監査記録 + 運営者 <code>high</code> alert</td>
+<td>401 + 監査記録 + <code>high</code> alert</td>
 <td>WARN</td>
 </tr>
 <tr>
@@ -845,19 +745,19 @@
 <tr>
 <td>E-WH-PAYLOAD-DIFF</td>
 <td>同 event_id + ハッシュ不一致</td>
-<td>200 + <code>webhook_payload_diffs</code> INSERT + 運営者 high alert + <strong>自動上書き禁止</strong></td>
+<td>200 + <code>webhook_payload_diffs</code> INSERT + high alert + <strong>自動上書き禁止</strong></td>
 <td>WARN</td>
 </tr>
 <tr>
 <td>E-WH-DLQ-FAILED</td>
 <td>DLQ 自動 BO 3 回失敗</td>
-<td>永久失敗 → 運営者手動リプレイ待ち</td>
+<td>永久失敗 → 手動リプレイ待ち</td>
 <td>WARN</td>
 </tr>
 </tbody>
 </table>
 </div>
-<h3 id="411-規約エラーe-legal-">4.11 規約エラー(<code>E-LEGAL-*</code>)</h3>
+<h3 id="410-規約エラーe-legal-">4.10 規約エラー(<code>E-LEGAL-*</code>)</h3>
 <p class="section-lead">規約・プライバシーポリシー未同意のエラーです。未同意は SCR-015 の再同意フローへ誘導し、同意期限超過時は機能制限ガードを適用します。再同意フローの根拠は <a href="08_認証・認可設計.html#6-規約再同意の認可割込み">08_認証・認可設計.html §6</a> を正本とします。</p>
 <div class="table-scroll">
 <table>
@@ -883,7 +783,7 @@
 </table>
 </div>
 <h2 id="5-異常系共通方針">5. 異常系共通方針</h2>
-<p class="section-lead">この節では、分類ごとの共通的な扱い方針を定めます。再試行案内・連打防止のリトライ回数とクールダウンは §5.10 を本ページの正本とします。</p>
+<p class="section-lead">この節では、分類ごとの共通的な扱い方針を定めます。再試行案内・連打防止のリトライ回数とクールダウンは §5.9 を本ページの正本とします。</p>
 <h3 id="51-入力エラー時の方針">5.1 入力エラー時の方針</h3>
 <p class="section-lead">入力バリデーション失敗は 400 とフィールド単位のエラー配列で返し、画面側で各項目の近くにインライン表示します。値域・範囲チェックは入力スキーマで検証します。</p>
 <ul>
@@ -935,21 +835,14 @@
 <li><strong>メール bounce</strong>: <code>email_suppression_list</code> 即時追加(全契約横断、R-003 共通ドメイン対策)</li>
 <li><strong>メール苦情(complained)</strong>: 永久サプレス、<strong>復帰不可</strong></li>
 </ul>
-<h3 id="58-連携-if-エラー時の方針">5.8 連携 IF エラー時の方針</h3>
-<p class="section-lead">連携 IF の冪等性違反はリトライ安全性のため 200 + 既存処理結果を返します。認証失敗(mTLS / JWT)は 401 統一とし、JSON Schema 不整合は 400 + 監査記録とします。</p>
+<h3 id="58-webhook-エラー時の方針">5.8 Webhook エラー時の方針</h3>
+<p class="section-lead">Webhook の署名検証失敗は 401 + 監査記録 + アラートで即時破棄します。冪等性違反は 200 + 既存処理結果を返し、ペイロード差分検出時は自動上書きを禁止してレビュー待ちにします。</p>
 <ul>
-<li>冪等性違反: <strong>200 + 既存処理結果</strong> を返却(リトライ安全性)</li>
-<li>認証失敗(mTLS / JWT): 401 統一、署名検証失敗は別ログ出力</li>
-<li>JSON Schema 不整合: 400 + 監査記録</li>
-</ul>
-<h3 id="59-webhook-エラー時の方針">5.9 Webhook エラー時の方針</h3>
-<p class="section-lead">Webhook の署名検証失敗は 401 + 監査記録 + 運営者アラートで即時破棄します。冪等性違反は 200 + 既存処理結果を返し、ペイロード差分検出時は自動上書きを禁止して運営者レビュー待ちにします。</p>
-<ul>
-<li>署名検証失敗: <strong>401 + 監査記録 + 運営者 <code>high</code> alert</strong> + 即時破棄</li>
+<li>署名検証失敗: <strong>401 + 監査記録 + <code>high</code> alert</strong> + 即時破棄</li>
 <li>冪等性違反: 200 + 既存処理結果</li>
-<li>ペイロード差分検出: 200 + <code>webhook_payload_diffs</code> INSERT + <strong>自動上書き禁止</strong>(SCR-098 レビュー待ち)</li>
+<li>ペイロード差分検出: 200 + <code>webhook_payload_diffs</code> INSERT + <strong>自動上書き禁止</strong>(レビュー待ち)</li>
 </ul>
-<h3 id="510-システムエラーと再試行案内">5.10 システムエラー・再試行案内・記録(FR-112 / FR-113 / FR-114 正本)</h3>
+<h3 id="59-システムエラーと再試行案内">5.9 システムエラー・再試行案内・記録(FR-112 / FR-113 / FR-114 正本)</h3>
 <p class="section-lead">サーバー内部起因のエラーは 500 で内部詳細を隠し、利用者にはエラー識別子のみを提示します。再試行のリトライ回数・クールダウン、提示する識別子、記録から除外する項目は<strong>本ページを正本</strong>とします(<a href="../01_要件定義/FR08_処理エラー.html#FR-113">FR-113</a> / <a href="../01_要件定義/FR08_処理エラー.html#FR-112">FR-112</a> / <a href="../01_要件定義/FR08_処理エラー.html#FR-114">FR-114</a>)。</p>
 <ul>
 <li><strong>システムエラー</strong>: 500 統一、内部詳細(スタックトレース・内部メッセージ)は応答に含めない</li>
@@ -964,10 +857,10 @@
 </ul>
 </div></div>
 <div class="callout warning"><i class="bi bi-exclamation-triangle"></i><div><span class="c-title">記録から除外する項目(FR-114)</span>エラー記録には個人情報(PII)・認証トークン・パスワードハッシュ・カード情報を<strong>含めない</strong>。ウィジェット利用者の入力は全文保存せず、先頭 100 文字 + SHA-256 ハッシュのみを最小限の手掛かりとして記録する。詳細は §7 を参照。</div></div>
-<h3 id="511-不正利用検知エラー時の方針fr-195">5.11 不正利用検知エラー時の方針(FR-195)</h3>
-<p class="section-lead">不正利用検知パターン(FR-195 / NFR-308)に該当した場合は IF #9 で運営者へ通知します。閾値超過時は自動サスペンションと管理者・メール通知を行います。</p>
+<h3 id="510-不正利用検知エラー時の方針fr-195">5.10 不正利用検知エラー時の方針(FR-195)</h3>
+<p class="section-lead">不正利用検知パターン(FR-195 / NFR-308)に該当した場合は検知記録を残します。閾値超過時は自動サスペンションと管理者・メール通知を行います。</p>
 <ul>
-<li>不正利用検知パターン(FR-195 / NFR-308)に該当 → IF #9 送出 + 運営者通知</li>
+<li>不正利用検知パターン(FR-195 / NFR-308)に該当 → 検知記録</li>
 <li>閾値超過時は自動 suspension + 管理者 + email 通知</li>
 </ul>
 <h2 id="6-ステータスコード対応表">6. ステータスコード対応表</h2>
@@ -984,18 +877,18 @@
 <tbody>
 <tr>
 <td>200</td>
-<td>未解決登録分岐(§3.2、正常)/ Webhook・IF 冪等受信</td>
-<td>E-BIZ-AI-* / E-WH-* / E-IF-COMMON-IDEMPOTENCY</td>
+<td>未解決登録分岐(§3.2、正常)/ Webhook 冪等受信</td>
+<td>E-BIZ-AI-* / E-WH-*</td>
 </tr>
 <tr>
 <td>400</td>
 <td>入力エラー / Schema 不整合 / 業務不変条件違反</td>
-<td>E-INPUT-* / E-IF-COMMON-SCHEMA</td>
+<td>E-INPUT-*</td>
 </tr>
 <tr>
 <td>401</td>
 <td>認証エラー / 署名失敗</td>
-<td>E-AUTH-* / E-WH-SIGNATURE-INVALID / E-IF-COMMON-AUTH</td>
+<td>E-AUTH-* / E-WH-SIGNATURE-INVALID</td>
 </tr>
 <tr>
 <td>403</td>

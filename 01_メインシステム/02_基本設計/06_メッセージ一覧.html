@@ -17,7 +17,7 @@
 <p class="ps-lead"><strong>このページは、メインシステムでアカウント利用者・ウィジェット利用者に表示するすべての文言と、各通知イベントの契機・配信先を定義します。</strong> 画面メッセージ ID(<code>MSG-SCR-*</code>)の文言全文と、通知の「いつ・誰に・どのチャネルで」を本書の正本とします。メール件名・本文の全文、エラー ID 定義、画面項目、配信信頼性の実装方式は他ドキュメントが正本のため、本書からはリンクで参照します。</p>
 </aside>
 <p class="doc-meta"><span><b>版数</b> v2.0</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
-<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">対象範囲</span>SCR-001〜023 + モーダルの全画面文言、エラー文言(<a href="05_エラー設計.html">05_エラー設計.html</a> と対応)、通知契機・配信先(§6、メール本文は <a href="11_メール設計.html">11_メール設計.html</a> 正本)、課金・契約関連メッセージ、サイドメニュー文言。対象外: 運営者側メッセージ(<a href="../../02_運営者システム/02_基本設計/06_メッセージ一覧.html">運営者 06_メッセージ一覧.html</a>)、コード内デバッグログ。</div></div>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">対象範囲</span>SCR-001〜023 + モーダルの全画面文言、エラー文言(<a href="05_エラー設計.html">05_エラー設計.html</a> と対応)、通知契機・配信先(§6、メール本文は <a href="11_メール設計.html">11_メール設計.html</a> 正本)、課金・契約関連メッセージ、サイドメニュー文言。対象外: コード内デバッグログ。</div></div>
 <h2 id="2-共通基準">2. 共通基準</h2>
 <p class="section-lead">全文言は本節の共通基準(トーン・ボタン文言・確認ダイアログ・通知重要度・エラー文言・禁則語)に従う。各画面の具体文言は §4 以降で定義する。</p>
 <h3 id="21-文言トーン">2.1 文言トーン</h3>
@@ -74,7 +74,7 @@
 <tr>
 <td>本文</td>
 <td>操作結果 + 取消可否</td>
-<td>「公開するとウィジェット利用者に表示されます。」「削除すると元に戻せません(運営者への復元依頼が必要です)」</td>
+<td>「公開するとウィジェット利用者に表示されます。」「削除すると元に戻せません(復元には別途依頼が必要です)」</td>
 </tr>
 </tbody>
 </table>
@@ -984,7 +984,7 @@
 <tr>
 <td>MSG-SCR-006-CONFIRM_MSG-002</td>
 <td>CONFIRM_MSG</td>
-<td>削除すると元に戻せません(運営者への復元依頼が必要です)。</td>
+<td>削除すると元に戻せません(復元には別途依頼が必要です)。</td>
 <td>削除確認本文</td>
 </tr>
 <tr>
@@ -1786,7 +1786,7 @@
 <tr>
 <td>MSG-SCR-011-DESC-001</td>
 <td>DESC</td>
-<td>サービス運営者からの通知を確認します(未読 {N} / 全 {M})</td>
+<td>お知らせ・通知を確認します(未読 {N} / 全 {M})</td>
 <td>画面説明</td>
 </tr>
 <tr>
@@ -2806,9 +2806,9 @@
 </tr>
 <tr>
 <td>NOTIF-SERVICE_ANNOUNCEMENT</td>
-<td>運営からのお知らせ(連携 IF #7)</td>
+<td>お知らせ配信</td>
 <td>admin(範囲指定可)</td>
-<td>配信時運営者選択</td>
+<td>配信時に選択</td>
 <td>admin</td>
 <td><code>normal</code>/<code>high</code>/<code>critical</code></td>
 <td>inbox/email</td>
@@ -2842,7 +2842,7 @@
 <td>対象メンバー本人</td>
 <td><code>normal</code></td>
 <td>inbox/email</td>
-<td>—(MVP メール本文は運営お知らせ種別で生成。新規 TPL なし)</td>
+<td>—(MVP メール本文はお知らせ種別で生成。新規 TPL なし)</td>
 </tr>
 <tr>
 <td>NOTIF-LOCKOUT_NOTIFY</td>
@@ -2856,7 +2856,7 @@
 </tr>
 </tbody>
 </table>
-<div class="callout important"><i class="bi bi-pin-angle"></i><div><span class="c-title">AI 利用上限到達はシステム通知の契機にしない(MVP)</span>AI 利用上限到達は MVP ではシステム通知(NOTIF-SYSTEM_NOTICE)の契機とせず、メールも送信しない(将来対応)。NOTIF-SYSTEM_NOTICE の質問数上限関連(80% / 90% / 100% 到達)はメール対象、125% 超過は運営者のみへの追加通知とする(FR-122 / FR-127)。本ルールは <a href="11_メール設計.html">11_メール設計.html §4.14</a> の「メール対象外」記述と一致させる。</div></div>
+<div class="callout important"><i class="bi bi-pin-angle"></i><div><span class="c-title">AI 利用上限到達はシステム通知の契機にしない(MVP)</span>AI 利用上限到達は MVP ではシステム通知(NOTIF-SYSTEM_NOTICE)の契機とせず、メールも送信しない(将来対応)。NOTIF-SYSTEM_NOTICE の質問数上限関連(80% / 90% / 100% 到達)はメール対象とする(FR-122 / FR-127)。本ルールは <a href="11_メール設計.html">11_メール設計.html §4.14</a> の「メール対象外」記述と一致させる。</div></div>
 <h3 id="62-通知テンプレート94-全件">6.2 通知 ID → テンプレート ID 対応(インデックス)</h3>
 <p class="section-lead">通知 ID とテンプレート ID の対応関係のみを示す。<strong>件名・本文・テンプレート変数・リンク有効期限・テンプレート別の配信先解決は <a href="11_メール設計.html">11_メール設計.html</a>(§3 索引 / §4 詳細 / §5.1 配信先解決)が正本</strong>であり、本書では再掲しない。</p>
 <table>

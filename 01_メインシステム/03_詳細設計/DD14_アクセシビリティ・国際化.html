@@ -187,7 +187,7 @@
 <h3 id="33-専用-403--401-画面のアクセシビリティ">3.3 専用 403 / 401 画面のアクセシビリティ</h3>
 <p class="section-lead">アクセス拒否(403)・契約停止(401)の専用画面で、状態がスクリーンリーダー利用者に確実に伝わるための実装規約を定めます。次の各項目は、<code>role="alert"</code> と <code>aria-live</code> による状態通知、ステータスコードの可読テキスト併記などの要件です。</p>
 <ul>
-<li><strong>IP 許可リスト 403 画面（運営者ログイン前、<code>operator_ip_allowlist</code>）</strong> / <strong>契約停止 401 画面</strong>:
+<li><strong>契約停止 401 画面</strong>:
 <ul>
 <li>ページ単位で <code>role="alert"</code> を main 領域に付与し、SR 利用者に状態が伝わるようにする</li>
 <li>文言は <strong><code>&lt;h1&gt;</code> で「アクセスが拒否されました」</strong>、本文に原因と次のアクション（連絡先 / 管理者向けガイド URL）を <code>aria-live="assertive"</code> で読み上げ可</li>

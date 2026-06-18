@@ -21,7 +21,7 @@
 <p class="doc-meta"><span><b>版数</b> v1.0</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
 
 <h2 id="1-対象範囲">1. 対象範囲</h2>
-<p class="section-lead">本 DD が扱う機能・受入条件・API・データストアを 1 表で示します。次の表は、しきい値取得を内包する <code>/widget/v1/ask</code> から、IF #6 受信・明示的キャッシュ無効化、永続キャッシュテーブル・KV キーまでを並べたもので、実装が触れる構成要素を一望できます(<a href="../01_要件定義/index.html">FR-347 / FR-348</a> / AC-038)。</p>
+<p class="section-lead">本 DD が扱う機能・受入条件・API・データストアを 1 表で示します。次の表は、しきい値取得を内包する <code>/widget/v1/ask</code> から、しきい値更新・明示的キャッシュ無効化、永続キャッシュテーブル・KV キーまでを並べたもので、実装が触れる構成要素を一望できます(<a href="../01_要件定義/index.html">FR-347 / FR-348</a> / AC-038)。</p>
 <table>
 <thead>
 <tr>
@@ -48,12 +48,12 @@
 </tr>
 <tr>
 <td>API</td>
-<td><code>POST /internal/admin-integration/v1/threshold/*</code></td>
-<td>IF #6 受信側</td>
+<td><code>PATCH /projects/{id}/ai-threshold</code></td>
+<td>しきい値更新</td>
 </tr>
 <tr>
 <td>API</td>
-<td><code>POST /internal/admin-integration/v1/cache/ai-threshold/invalidate</code></td>
+<td><code>POST /internal/v1/cache/ai-threshold/invalidate</code></td>
 <td>明示的キャッシュ無効化</td>
 </tr>
 <tr>
@@ -87,7 +87,7 @@
 <tr>
 <td>§10.2.2</td>
 <td>KV TTL 60s + 永続キャッシュ更新</td>
-<td>IF #6 受信時の両更新</td>
+<td>しきい値更新時の両更新</td>
 </tr>
 <tr>
 <td>§10.2.3</td>
@@ -153,7 +153,7 @@
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> kvHit <span class="op">=</span> <span class="cf">await</span> env<span class="op">.</span><span class="at">KV_CACHE</span><span class="op">.</span><span class="fu">get</span><span class="op">&lt;</span>Threshold<span class="op">&gt;</span>(kvKey<span class="op">,</span> <span class="st">&#39;json&#39;</span>)<span class="op">;</span></span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (kvHit) <span class="cf">return</span> { <span class="op">...</span>kvHit<span class="op">,</span> source<span class="op">:</span> <span class="st">&#39;kv&#39;</span> }<span class="op">;</span></span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 2) 連携 IF #6 経由で受信したものが KV 反映されている前提。</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 2) しきい値更新が KV 反映されている前提。</span></span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="co">//    KV miss なら D1 永続キャッシュへフォールバック</span></span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> persistent <span class="op">=</span> <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`</span></span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="vs">    SELECT confidence_threshold, relevance_threshold FROM ai_threshold_persistent_cache</span></span>
@@ -175,13 +175,13 @@
 <span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> { confidenceThreshold<span class="op">:</span> <span class="fl">0.60</span><span class="op">,</span> relevanceThreshold<span class="op">:</span> <span class="fl">0.50</span><span class="op">,</span> source<span class="op">:</span> <span class="st">&#39;global_default&#39;</span> }<span class="op">;</span></span>
 <span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h3 id="32-kv-ttl-60s--永続キャッシュ更新">3.2 KV TTL 60s + 永続キャッシュ更新</h3>
-<p class="section-lead">運営者からのしきい値変更(IF #6)を受信したときのキャッシュ更新方針を定めます。KV の鮮度(TTL 60 秒)と D1 の永続性を両立させ、KV ミス時は D1 から再ロードして書き戻します。</p>
+<p class="section-lead">しきい値変更を反映したときのキャッシュ更新方針を定めます。KV の鮮度(TTL 60 秒)と D1 の永続性を両立させ、KV ミス時は D1 から再ロードして書き戻します。</p>
 <table>
 <thead>
 <tr><th>契機</th><th>更新対象</th><th>内容</th></tr>
 </thead>
 <tbody>
-<tr><td>IF #6 受信</td><td>KV + D1 両方</td><td>D1 (<code>ai_threshold_persistent_cache</code>) を更新し、KV (<code>expirationTtl: 60</code>) も同時に更新する</td></tr>
+<tr><td>しきい値更新</td><td>KV + D1 両方</td><td>D1 (<code>ai_threshold_persistent_cache</code>) を更新し、KV (<code>expirationTtl: 60</code>) も同時に更新する</td></tr>
 <tr><td>KV ミス</td><td>KV(書き戻し)</td><td>D1 から再ロードし、KV へ TTL 60 秒で書き戻す(§3.1 取得フロー)</td></tr>
 </tbody>
 </table>
@@ -206,11 +206,11 @@
 <tr><th>API</th><th>効果</th></tr>
 </thead>
 <tbody>
-<tr><td><code>POST /internal/admin-integration/v1/cache/ai-threshold/invalidate</code></td><td>該当 KV キー(<code>ai_threshold:{owner}:{project}</code>)を削除し、次回アクセス時に D1 から再ロードさせる</td></tr>
+<tr><td><code>POST /internal/v1/cache/ai-threshold/invalidate</code></td><td>該当 KV キー(<code>ai_threshold:{owner}:{project}</code>)を削除し、次回アクセス時に D1 から再ロードさせる</td></tr>
 </tbody>
 </table>
 <h2 id="4-関連設計">4. 関連設計</h2>
-<p class="section-lead">本 DD に関連する正本ドキュメントを示します。AI しきい値の要件は <a href="../01_要件定義/index.html">要件定義</a>(FR-347 / FR-348)、IF #6 受信・しきい値取得 API は <a href="../02_基本設計/02_API設計/index.html">API 設計</a>、<code>ai_threshold_persistent_cache</code> のスキーマは <a href="../02_基本設計/03_テーブル設計/index.html">テーブル設計</a>、フォールバック監視は <a href="../04_運用設計/index.html">運用設計</a> を参照します。関連 DD は <a href="DD03_AI回答パイプライン.html">DD03_AI回答パイプライン.html</a> / <a href="DD12_ウィジェット配信.html">DD12_ウィジェット配信.html</a> を参照します。</p>
+<p class="section-lead">本 DD に関連する正本ドキュメントを示します。AI しきい値の要件は <a href="../01_要件定義/index.html">要件定義</a>(FR-347 / FR-348)、しきい値更新・取得 API は <a href="../02_基本設計/02_API設計/index.html">API 設計</a>、<code>ai_threshold_persistent_cache</code> のスキーマは <a href="../02_基本設計/03_テーブル設計/index.html">テーブル設計</a>、フォールバック監視は <a href="../04_運用設計/index.html">運用設計</a> を参照します。関連 DD は <a href="DD03_AI回答パイプライン.html">DD03_AI回答パイプライン.html</a> / <a href="DD12_ウィジェット配信.html">DD12_ウィジェット配信.html</a> を参照します。</p>
 <h2 id="5-テスト観点">5. テスト観点</h2>
 <p class="section-lead">AC-038 を担保するテストの方式とファイル、および補完する単体・異常系・境界・性能観点を定めます。次の表は受入条件と結合テストの対応を示し、続く §5.1 でその他観点を補います。実装連携は <a href="DD03_AI回答パイプライン.html">DD03_AI回答パイプライン.html</a> / <a href="DD12_ウィジェット配信.html">DD12_ウィジェット配信.html</a> を参照します。</p>
 <table>
@@ -247,7 +247,7 @@
 </tr>
 <tr>
 <td>結合</td>
-<td>IF #6 受信 → KV + D1 更新 → 後続 <code>/widget/v1/ask</code> で反映確認</td>
+<td>しきい値更新 → KV + D1 更新 → 後続 <code>/widget/v1/ask</code> で反映確認</td>
 </tr>
 <tr>
 <td>異常系</td>

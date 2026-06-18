@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>共有概念対応表(メイン / 運営者 + 全体) | FAQ 設計ポータル</title>
+<title>主要概念対応表(メインシステム) | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../assets/css/style.css">
 <script>window.PORTAL_ROOT="../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script src="../assets/js/nav-data.js" defer></script>
@@ -12,34 +12,29 @@
 </head>
 <body data-page-id="共有/共有概念.html">
 <article class="content" id="content">
-<h1 id="共有概念対応表メイン--運営者--全体">共有概念対応表(メイン / 運営者 + 全体)</h1>
+<h1 id="主要概念対応表メインシステム">主要概念対応表(メインシステム)</h1>
 <h2 id="1-本書の位置づけ">1. 本書の位置づけ</h2>
-<p>本書は <code>01_メインシステム/02_基本設計/</code> と <code>02_運営者システム/02_基本設計/</code> の両セット間で共有される概念について、<strong>どのドキュメントが正本で、どこから参照されるか</strong> を機械検査可能な形式で正本化する索引である。保守ルール「同期ルール」を表化し、<code>99_script/check-spec-sync.sh</code> の検査対象とする。</p>
-<p>両セットで重複記載すべきではない概念について、本表で示された正本ファイル以外への再掲は欠陥として扱う。参照側ドキュメントでは「正本: [リンク]」の形でリンクのみ記載すること。</p>
+<p>本書は <code>01_メインシステム/02_基本設計/</code> の各設計書間で共有される主要概念について、<strong>どのドキュメントが正本で、どこから参照されるか</strong> を機械検査可能な形式で正本化する索引である。保守ルール「同期ルール」を表化し、<code>99_script/check-spec-sync.sh</code> の検査対象とする。</p>
+<p>複数ファイルに重複記載すべきではない概念について、本表で示された正本ファイル以外への再掲は欠陥として扱う。参照側ドキュメントでは「正本: [リンク]」の形でリンクのみ記載すること。</p>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">運営者システムは別途再設計予定</span>SaaS 提供事業者向け管理コンソール(運営者システム)は本リポジトリから一旦削除した。メインシステムの設計が固まった段階で再設計する。運営者システムに関わる共有概念は、その再設計時に本表へ追加する。</div></div>
 <h2 id="2-適用範囲">2. 適用範囲</h2>
 <ul>
 <li>対象ファイル群:
 <ul>
-<li><code>01_メインシステム/02_基本設計/01_画面設計.html</code> 〜 <code>11_メール設計.html</code>(計 11 ファイル)</li>
-<li><code>02_運営者システム/02_基本設計/01_画面設計.html</code> 〜 <code>11_メール設計.html</code>(計 11 ファイル)</li>
-<li><code>01_メインシステム/02_基本設計/index.html</code> / <code>02_運営者システム/02_基本設計/index.html</code></li>
+<li><code>01_メインシステム/02_基本設計/01_画面設計/index.html</code> + 各 <code>SCR_*.html</code></li>
+<li><code>01_メインシステム/02_基本設計/02_API設計/index.html</code> + 各カテゴリファイル</li>
+<li><code>01_メインシステム/02_基本設計/03_テーブル設計/index.html</code> + 各テーブルファイル</li>
+<li><code>01_メインシステム/02_基本設計/04_権限設計.html</code> 〜 <code>11_メール設計.html</code></li>
 </ul></li>
-<li>対象外:
-<ul>
-<li>詳細設計(<code>03_詳細設計/</code>)── 実装関連の詳細のみ扱う層</li>
-<li>要件定義(<code>01_要件定義/</code>)── WHAT の正本</li>
-<li>画面遷移図(メイン: アカウント種別別 <code>画面遷移図_&lt;種別&gt;.html</code> 4 ファイル / 運営者: <code>画面遷移図.html</code>)</li>
-<li>運用設計(<code>04_運用設計/</code>)/ 将来対応(<code>05_future/</code>)/ スクリプト(<code>99_script/</code>)</li>
-</ul></li>
+<li>対象外: 詳細設計(<code>03_詳細設計/</code>)/ 要件定義(<code>01_要件定義/</code>)/ 運用設計(<code>04_運用設計/</code>)/ 将来対応(<code>05_future/</code>)/ スクリプト(<code>99_script/</code>)</li>
 </ul>
-<h2 id="3-共有概念の正本ルール">3. 共有概念の正本ルール</h2>
+<h2 id="3-主要概念の正本ルール">3. 主要概念の正本ルール</h2>
 <table>
 <thead>
 <tr>
 <th>#</th>
-<th>共有概念</th>
+<th>概念</th>
 <th>正本ドキュメント</th>
-<th>参照側ドキュメント</th>
 <th>検査キーワード</th>
 </tr>
 </thead>
@@ -47,147 +42,97 @@
 <tr>
 <td>1</td>
 <td><code>contract_owners.contract_status</code>(4 値: <code>active</code> / <code>suspended</code> / <code>deleted_pending</code> / <code>deleted</code>)</td>
-<td>メイン <a href="../01_メインシステム/02_基本設計/10_課金・請求設計.html">10_課金・請求設計.html</a> §4 + メイン <a href="../01_メインシステム/02_基本設計/03_テーブル設計/index.html">03_テーブル設計/index.html</a> <code>contract_owners</code></td>
-<td>運営者 <a href="../02_運営者システム/02_基本設計/10_課金・請求設計.html">10_課金・請求設計.html</a> / 運営者 <a href="../02_運営者システム/02_基本設計/03_テーブル設計/index.html">03_テーブル設計/index.html</a></td>
+<td><a href="../01_メインシステム/02_基本設計/10_課金・請求設計.html">10_課金・請求設計.html</a> §4 + <a href="../01_メインシステム/02_基本設計/03_テーブル設計/contract_owners.html">03_テーブル設計/contract_owners.html</a></td>
 <td><code>contract_status</code>, <code>active</code>, <code>suspended</code>, <code>deleted_pending</code>, <code>deleted</code></td>
 </tr>
 <tr>
 <td>2</td>
 <td><code>inquiries.status</code>(<code>open</code> / <code>closed</code> の 2 値、SCR-005 詳細画面の手動操作のみで遷移 = FR-077)</td>
-<td>メイン <a href="../01_メインシステム/02_基本設計/03_テーブル設計/index.html">03_テーブル設計/index.html</a> <code>inquiries</code> §3.14 + メイン <a href="../01_メインシステム/02_基本設計/03_テーブル設計/index.html">03_テーブル設計/index.html</a> §4.5.2 状態遷移</td>
-<td>運営者側は参照のみ</td>
+<td><a href="../01_メインシステム/02_基本設計/03_テーブル設計/inquiries.html">03_テーブル設計/inquiries.html</a> + <a href="../01_メインシステム/02_基本設計/03_テーブル設計/テーブル構造設計.html#45-状態遷移">テーブル構造設計.html §5 状態遷移</a></td>
 <td><code>inquiries.status</code>, <code>FR-077</code>, <code>open</code>, <code>closed</code>, <code>manual</code></td>
 </tr>
 <tr>
 <td>3</td>
 <td>通知重要度(<code>low</code> / <code>normal</code> / <code>high</code> / <code>critical</code>)+ <strong>critical → メール強制送信</strong></td>
-<td>メイン <a href="../01_メインシステム/02_基本設計/06_メッセージ一覧.html">06_メッセージ一覧.html</a> §0 + メイン <a href="../01_メインシステム/02_基本設計/08_認証・認可設計.html">08_認証・認可設計.html</a> § 通知宛先解決(<code>project_users.role='admin' AND valid=1</code> を 1 件でも保持するユーザー。v1.10 でオーナーも作成時に admin 行を自動取得するため自動的に網羅される)</td>
-<td>運営者 <a href="../02_運営者システム/02_基本設計/06_メッセージ一覧.html">06_メッセージ一覧.html</a> / 運営者 <a href="../02_運営者システム/02_基本設計/08_認証・認可設計.html">08_認証・認可設計.html</a></td>
+<td><a href="../01_メインシステム/02_基本設計/06_メッセージ一覧.html">06_メッセージ一覧.html</a> §0 + <a href="../01_メインシステム/02_基本設計/08_認証・認可設計.html">08_認証・認可設計.html</a> § 通知宛先解決(<code>project_users.role='admin' AND valid=1</code> を 1 件でも保持するユーザー)</td>
 <td><code>low</code>, <code>normal</code>, <code>high</code>, <code>critical</code>, <code>role = 'admin'</code></td>
 </tr>
 <tr>
 <td>4</td>
 <td>SCR ID / AC ID 体系</td>
-<td>メイン <a href="../01_メインシステム/02_基本設計/07_トレーサビリティマトリクス.html">07_トレーサビリティマトリクス.html</a></td>
-<td>運営者 <a href="../02_運営者システム/02_基本設計/07_トレーサビリティマトリクス.html">07_トレーサビリティマトリクス.html</a>(SCR-090〜098 / SCR-AUTH / SCR-HOME / SCR-APPROVALS)</td>
+<td><a href="../01_メインシステム/02_基本設計/07_トレーサビリティマトリクス.html">07_トレーサビリティマトリクス.html</a></td>
 <td><code>SCR-[0-9A-Z-]+</code>, <code>AC-[0-9]+</code></td>
 </tr>
 <tr>
 <td>5</td>
-<td>連携 IF #1〜#12</td>
-<td>メイン <a href="../01_メインシステム/02_基本設計/02_API設計/index.html">02_API設計/index.html</a> § 連携 IF(送信側)+ 運営者 <a href="../02_運営者システム/02_基本設計/02_API設計/index.html">02_API設計/index.html</a> § 連携 IF(受信側)</td>
-<td>互いに参照(両方が正本)</td>
-<td><code>IF #1</code>〜<code>IF #12</code></td>
-</tr>
-<tr>
-<td>6</td>
-<td>利用者側のユーザーモデル: <strong>管理者 3 ロール</strong>(オーナー / プロジェクト管理者 / メンバー = <code>users</code> マスタ + <code>contract_owners</code>(オーナー専有属性、行存在 = オーナー判定)+ <code>project_users</code>(プロジェクト割当、<code>role</code>='admin'/'member')、契約境界キー = <code>contract_owner_user_id</code>)+ <strong>エンドユーザー独立</strong>(<code>end_users</code> テーブル、プロジェクト単位スコープ、<code>users</code> とは完全分離)。<strong>v1.10 でオーナーもプロジェクト作成時に <code>project_users(role='admin', valid=1)</code> 行を自動取得</strong>(維持)。認可は <code>contract_owners</code> 行存在による <code>isOwner=true</code> bypass を最優先、<code>project_users.admin</code> 行は通知宛先解決と画面表示の事実情報として参照される。エンドユーザー認可は <code>end_users</code> 行存在 + 再入室トークン検証(<code>access_tokens.purpose='reentry'</code> + <code>end_user_id</code>)</td>
-<td>メイン <a href="../01_メインシステム/02_基本設計/03_テーブル設計/index.html">03_テーブル設計/index.html</a> + メイン <a href="../01_メインシステム/02_基本設計/04_権限設計.html">04_権限設計.html</a> + メイン <a href="../01_メインシステム/02_基本設計/08_認証・認可設計.html">08_認証・認可設計.html</a></td>
-<td>運営者 <a href="../02_運営者システム/02_基本設計/04_権限設計.html">04_権限設計.html</a> / 運営者 <a href="../02_運営者システム/02_基本設計/08_認証・認可設計.html">08_認証・認可設計.html</a>(参照のみ、再掲なし)</td>
+<td>利用者側のユーザーモデル: <strong>管理者 3 ロール</strong>(オーナー / プロジェクト管理者 / メンバー = <code>users</code> マスタ + <code>contract_owners</code>(オーナー専有属性、行存在 = オーナー判定)+ <code>project_users</code>(プロジェクト割当、<code>role</code>='admin'/'member')、契約境界キー = <code>contract_owner_user_id</code>)+ <strong>エンドユーザー独立</strong>(<code>end_users</code> テーブル、プロジェクト単位スコープ、<code>users</code> とは完全分離)。認可は <code>contract_owners</code> 行存在による <code>isOwner=true</code> bypass を最優先、<code>project_users.admin</code> 行は通知宛先解決と画面表示の事実情報として参照される</td>
+<td><a href="../01_メインシステム/02_基本設計/03_テーブル設計/index.html">03_テーブル設計/index.html</a> + <a href="../01_メインシステム/02_基本設計/04_権限設計.html">04_権限設計.html</a> + <a href="../01_メインシステム/02_基本設計/08_認証・認可設計.html">08_認証・認可設計.html</a></td>
 <td><code>users</code>, <code>contract_owners</code>, <code>project_users</code>, <code>end_users</code>, <code>contract_owner_user_id</code>, <code>role IN ('admin','member')</code></td>
 </tr>
 <tr>
+<td>6</td>
+<td>監査ログ(ハッシュチェーン完全性検証・保持クラス <code>general</code> / <code>billing</code>)</td>
+<td><a href="../01_メインシステム/02_基本設計/09_セキュリティ設計.html">09_セキュリティ設計.html</a> §7 + <a href="../01_メインシステム/02_基本設計/03_テーブル設計/audit_logs.html">03_テーブル設計/audit_logs.html</a></td>
+<td><code>retention_class</code>, <code>audit_logs</code>, ハッシュチェーン, <code>general</code>, <code>billing</code></td>
+</tr>
+<tr>
 <td>7</td>
-<td>監査ログハッシュチェーン構造・3 区分保持(1y / 5y / 7y)</td>
-<td>運営者 <a href="../02_運営者システム/02_基本設計/09_セキュリティ設計.html">09_セキュリティ設計.html</a> §7 + 運営者 <a href="../02_運営者システム/02_基本設計/03_テーブル設計/index.html">03_テーブル設計/index.html</a> <code>audit_logs</code></td>
-<td>メイン <a href="../01_メインシステム/02_基本設計/09_セキュリティ設計.html">09_セキュリティ設計.html</a></td>
-<td><code>retention_class</code>, <code>audit_logs</code>, ハッシュチェーン, <code>1y</code>/<code>5y</code>/<code>7y</code></td>
-</tr>
-<tr>
-<td>8</td>
-<td>IP allowlist(運営者ログイン向け = <code>operator_ip_allowlist</code>、運営者を正本)</td>
-<td>運営者 <a href="../02_運営者システム/02_基本設計/08_認証・認可設計.html">08_認証・認可設計.html</a> § IP allowlist + 運営者 <a href="../02_運営者システム/02_基本設計/03_テーブル設計/index.html">03_テーブル設計/index.html</a> <code>operator_ip_allowlist</code></td>
-<td>メイン側は本概念を参照しない</td>
-<td><code>IP allowlist</code>, <code>operator_ip_allowlist</code></td>
-</tr>
-<tr>
-<td>9</td>
 <td>PII 暗号化(AES-256-GCM)・オーナー派生鍵</td>
-<td>メイン <a href="../01_メインシステム/02_基本設計/09_セキュリティ設計.html">09_セキュリティ設計.html</a> §3 / §8</td>
-<td>運営者 <a href="../02_運営者システム/02_基本設計/09_セキュリティ設計.html">09_セキュリティ設計.html</a>(参照のみ)</td>
+<td><a href="../01_メインシステム/02_基本設計/09_セキュリティ設計.html">09_セキュリティ設計.html</a> §3 / §8</td>
 <td><code>AES-256-GCM</code>, オーナー派生鍵, <code>deriveOwnerKey</code></td>
 </tr>
 <tr>
-<td>10</td>
+<td>8</td>
 <td>暗号鍵管理(Master / Backup / ローテーション)</td>
-<td>メイン <a href="../01_メインシステム/02_基本設計/09_セキュリティ設計.html">09_セキュリティ設計.html</a> §8</td>
-<td>運営者 <a href="../02_運営者システム/02_基本設計/09_セキュリティ設計.html">09_セキュリティ設計.html</a>(参照のみ)</td>
+<td><a href="../01_メインシステム/02_基本設計/09_セキュリティ設計.html">09_セキュリティ設計.html</a> §8</td>
 <td>Master Key, Backup Key, ローテーション</td>
 </tr>
 <tr>
-<td>11</td>
-<td>4-eyes 承認基盤(<code>operator_approvals</code> 物理スキーマ + 判定ルール)</td>
-<td>運営者 <a href="../02_運営者システム/02_基本設計/08_認証・認可設計.html">08_認証・認可設計.html</a> §6 + 運営者 <a href="../02_運営者システム/02_基本設計/03_テーブル設計/index.html">03_テーブル設計/index.html</a> <code>operator_approvals</code></td>
-<td>運営者 <a href="../02_運営者システム/02_基本設計/04_権限設計.html">04_権限設計.html</a>(参照)</td>
-<td><code>operator_approvals</code>, <code>4-eyes</code>, ハードゲート</td>
-</tr>
-<tr>
-<td>12</td>
-<td>Stripe Webhook 受信(冪等性 / DLQ / リプレイ / ペイロード差分検出)</td>
-<td>運営者 <a href="../02_運営者システム/02_基本設計/10_課金・請求設計.html">10_課金・請求設計.html</a> §13</td>
-<td>メイン <a href="../01_メインシステム/02_基本設計/10_課金・請求設計.html">10_課金・請求設計.html</a>(参照)</td>
-<td><code>webhook_events</code>, DLQ, リプレイ, <code>webhook_payload_diffs</code></td>
-</tr>
-<tr>
-<td>13</td>
+<td>9</td>
 <td>不正利用検知(FR-195 / NFR-308)</td>
-<td>メイン <a href="../01_メインシステム/02_基本設計/09_セキュリティ設計.html">09_セキュリティ設計.html</a> §10</td>
-<td>メイン <a href="../01_メインシステム/02_基本設計/02_API設計/index.html">02_API設計/index.html</a> § IF #9 / 運営者 <a href="../02_運営者システム/02_基本設計/02_API設計/index.html">02_API設計/index.html</a> § IF #9</td>
+<td><a href="../01_メインシステム/02_基本設計/09_セキュリティ設計.html">09_セキュリティ設計.html</a> §10</td>
 <td><code>FR-195</code>, <code>NFR-308</code>, 不正利用検知</td>
 </tr>
 <tr>
-<td>14</td>
-<td>エラーコード体系(<code>E-&lt;分類&gt;-&lt;連番&gt;</code> / 運営者 <code>E-OP-*</code>)</td>
-<td>メイン <a href="../01_メインシステム/02_基本設計/05_エラー設計.html">05_エラー設計.html</a> / 運営者 <a href="../02_運営者システム/02_基本設計/05_エラー設計.html">05_エラー設計.html</a></td>
-<td>互いに参照(両方が正本)</td>
-<td><code>E-[A-Z]+-[0-9]+</code>, <code>E-OP-[A-Z]+-[0-9]+</code></td>
+<td>10</td>
+<td>エラーコード体系(<code>E-&lt;分類&gt;-&lt;連番&gt;</code>)</td>
+<td><a href="../01_メインシステム/02_基本設計/05_エラー設計.html">05_エラー設計.html</a></td>
+<td><code>E-[A-Z]+-[0-9]+</code></td>
 </tr>
 <tr>
-<td>15</td>
-<td>利用上限上書き(レート=契約単位 <code>owner_quota_overrides</code> / 月次上限件数・無料枠=プロジェクト単位 <code>project_quota_limits</code>)</td>
-<td>メイン <a href="../01_メインシステム/02_基本設計/10_課金・請求設計.html">10_課金・請求設計.html</a> §3(レート)/ §3a(プロジェクト上限)+ メイン <a href="../01_メインシステム/02_基本設計/04_権限設計.html">04_権限設計.html</a> §7 + メイン <a href="../01_メインシステム/02_基本設計/03_テーブル設計/index.html">03_テーブル設計/index.html</a> §3.24</td>
-<td>運営者 <a href="../02_運営者システム/02_基本設計/10_課金・請求設計.html">10_課金・請求設計.html</a> / 運営者 <a href="../02_運営者システム/02_基本設計/04_権限設計.html">04_権限設計.html</a></td>
+<td>11</td>
+<td>利用上限(月次上限件数・無料枠 = プロジェクト単位 <code>project_quota_limits</code> / レート制限 = 契約単位 <code>owner_quota_overrides</code>)</td>
+<td><a href="../01_メインシステム/02_基本設計/10_課金・請求設計.html">10_課金・請求設計.html</a> §1〜§3 + <a href="../01_メインシステム/02_基本設計/04_権限設計.html">04_権限設計.html</a> + <a href="../01_メインシステム/02_基本設計/03_テーブル設計/project_quota_limits.html">03_テーブル設計/project_quota_limits.html</a></td>
 <td><code>owner_quota_overrides</code>, <code>project_quota_limits</code></td>
 </tr>
 <tr>
-<td>16</td>
+<td>12</td>
 <td>規約再同意フロー(SCR-015)+ 利用規約 / プライバシーポリシー閲覧(SCR-010 / SCR-020、文書ごとに完全分離。<code>doc_type</code>=<code>terms_of_service</code> / <code>privacy_policy</code> で版・同意を個別管理)</td>
-<td>メイン <a href="../01_メインシステム/02_基本設計/08_認証・認可設計.html">08_認証・認可設計.html</a> §3</td>
-<td>メイン <a href="../01_メインシステム/02_基本設計/06_メッセージ一覧.html">06_メッセージ一覧.html</a> / 運営者(参照なし。運営者は独自の規約フローを持たない)</td>
+<td><a href="../01_メインシステム/02_基本設計/08_認証・認可設計.html">08_認証・認可設計.html</a> §3</td>
 <td><code>terms_versions</code>, <code>terms_agreements</code>, <code>doc_type</code>, <code>terms_of_service</code>, <code>privacy_policy</code>, <code>SCR-015</code>, <code>SCR-010</code>, <code>SCR-020</code></td>
 </tr>
 <tr>
-<td>17</td>
-<td>アカウント削除モード(物理削除 / 匿名化、運営者側 <code>accounts_retired</code>(運営者スキーマ専有、契約証跡として永久保持))</td>
-<td>メイン <a href="../01_メインシステム/02_基本設計/03_テーブル設計/index.html">03_テーブル設計/index.html</a> § 削除ポリシー + メイン <a href="../01_メインシステム/02_基本設計/09_セキュリティ設計.html">09_セキュリティ設計.html</a> § データ保護</td>
-<td>運営者 <a href="../02_運営者システム/02_基本設計/03_テーブル設計/index.html">03_テーブル設計/index.html</a> <code>accounts_retired</code>(永久保持)/ 運営者 <a href="../02_運営者システム/02_基本設計/10_課金・請求設計.html">10_課金・請求設計.html</a> §5(退会フロー)</td>
-<td><code>accounts_retired</code>, 物理削除, 匿名化, <code>deleted_pending</code></td>
+<td>13</td>
+<td>アカウント削除モード(物理削除 / 匿名化、<code>deleted_pending</code> から 90 日猶予)</td>
+<td><a href="../01_メインシステム/02_基本設計/03_テーブル設計/テーブル構造設計.html#46-データ削除モード">テーブル構造設計.html § 削除モード</a> + <a href="../01_メインシステム/02_基本設計/09_セキュリティ設計.html">09_セキュリティ設計.html</a> § データ保護</td>
+<td>物理削除, 匿名化, <code>deleted_pending</code></td>
 </tr>
 <tr>
-<td>18</td>
+<td>14</td>
 <td>リミット設計(80/100/125% 三段階 + Retry-After。<strong>判定単位 = プロジェクト</strong>(月次上限件数・無料枠)、<strong>請求集計 = 契約</strong>)</td>
-<td>メイン <a href="../01_メインシステム/02_基本設計/02_API設計/index.html">02_API設計/index.html</a> §4 レート制限・キャパシティ + メイン <a href="../01_メインシステム/02_基本設計/10_課金・請求設計.html">10_課金・請求設計.html</a> §8 + メイン <a href="../01_メインシステム/02_基本設計/05_エラー設計.html">05_エラー設計.html</a> §5</td>
-<td>運営者 <a href="../02_運営者システム/02_基本設計/02_API設計/index.html">02_API設計/index.html</a> / 運営者 <a href="../02_運営者システム/02_基本設計/10_課金・請求設計.html">10_課金・請求設計.html</a></td>
+<td><a href="../01_メインシステム/02_基本設計/02_API設計/index.html">02_API設計/index.html</a> §3 レート制限・キャパシティ + <a href="../01_メインシステム/02_基本設計/10_課金・請求設計.html">10_課金・請求設計.html</a> + <a href="../01_メインシステム/02_基本設計/05_エラー設計.html">05_エラー設計.html</a></td>
 <td><code>80%</code>, <code>100%</code>, <code>125%</code>, <code>Retry-After</code></td>
 </tr>
 <tr>
-<td>19</td>
-<td>連携 IF 認証(mTLS + JWT)</td>
-<td>メイン <a href="../01_メインシステム/02_基本設計/02_API設計/index.html">02_API設計/index.html</a> § 連携 IF 共通仕様 + 運営者 <a href="../02_運営者システム/02_基本設計/02_API設計/index.html">02_API設計/index.html</a> § 連携 IF 共通仕様</td>
-<td>互いに参照</td>
-<td>mTLS, JWT, 連携 IF 認証</td>
-</tr>
-<tr>
-<td>20</td>
+<td>15</td>
 <td>ダッシュボード共通表記ルール(数値・単位・期間・最終更新タイムスタンプ / 比較値ラベル / 色 + アイコン語彙 / 状態表現 = EmptyState / null / 集計中 / 取得失敗 / 期間外)</td>
-<td>メイン <a href="../01_メインシステム/02_基本設計/01_画面設計.html">01_画面設計.html</a> §1.5 ダッシュボード / KPI 共通表示ルール</td>
-<td>運営者 <a href="../02_運営者システム/02_基本設計/01_画面設計.html">01_画面設計.html</a> §1.5(両方が正本、語彙を共有)</td>
+<td><a href="../01_メインシステム/02_基本設計/01_画面設計/index.html">01_画面設計/index.html</a> § ダッシュボード / KPI 共通表示ルール</td>
 <td><code>共通表示ルール</code>, <code>最終更新</code>, <code>集計遅延</code>, <code>前月比</code>, <code>前週比</code>, <code>EmptyState</code>, <code>要対応</code>, <code>要監視</code>, <code>異常なし</code></td>
 </tr>
 </tbody>
 </table>
 <h2 id="4-機械検査ルール99_scriptcheck-spec-syncsh-仕様">4. 機械検査ルール(<code>99_script/check-spec-sync.sh</code> 仕様)</h2>
-<p><code>99_script/check-spec-sync.sh</code> は以下の検査を実装する。</p>
+<p><code>99_script/check-spec-sync.sh</code> はメインシステムを対象に以下の検査を実装する。</p>
 <table>
 <thead>
 <tr>
@@ -197,66 +142,17 @@
 </tr>
 </thead>
 <tbody>
-<tr>
-<td>SC-001</td>
-<td>各個別設計ファイルの必須ヘッダ存在(<code># 文書名</code>, <code>## 1. ...</code>)</td>
-<td>構造不適合</td>
-</tr>
-<tr>
-<td>SC-002</td>
-<td>共有概念正本ファイルでの必須キーワード出現(本表の「検査キーワード」列)</td>
-<td>正本ドキュメントから記載が抜けている</td>
-</tr>
-<tr>
-<td>SC-003</td>
-<td>参照側ドキュメントの相互リンク存在(共有概念正本以外の場所で再掲しないことを軽くチェック)</td>
-<td>共有概念の二重正本化</td>
-</tr>
-<tr>
-<td>SC-004</td>
-<td>SCR ID クロスチェック(画面設計 ・ トレーサビリティマトリクス の SCR 集合一致)</td>
-<td>SCR 漏れ / 不一致</td>
-</tr>
-<tr>
-<td>SC-005</td>
-<td>メッセージ ID 体系 <code>MSG-SCR-NNN-&lt;種別&gt;-NNN</code> の出現</td>
-<td>メッセージ一覧 06 の体系破綻</td>
-</tr>
-<tr>
-<td>SC-006</td>
-<td>エラー ID 体系 <code>E-&lt;分類&gt;-NNN</code> / <code>E-OP-*</code> の出現</td>
-<td>エラー設計 05 の体系破綻</td>
-</tr>
-<tr>
-<td>SC-007</td>
-<td><code>contract_owners.contract_status</code> 4 値が正本ドキュメントに出現</td>
-<td>列挙値の取りこぼし</td>
-</tr>
-<tr>
-<td>SC-008</td>
-<td>通知重要度 4 値が正本ドキュメントに出現、<code>critical</code> 行に "強制送信" 文言を伴う</td>
-<td>critical 通知ルール違反</td>
-</tr>
-<tr>
-<td>SC-009</td>
-<td>連携 IF #1〜#12 すべてが メイン / 運営者 双方の API 設計に出現</td>
-<td>IF 漏れ</td>
-</tr>
-<tr>
-<td>SC-010</td>
-<td>主要相対パスのリンク到達性確認</td>
-<td>参照リンク切れ</td>
-</tr>
-<tr>
-<td>SC-011</td>
-<td>要件定義 FR グループファイル / 詳細設計 DD グループファイル / 将来対応 FUT ファイルが両システムで揃っているか</td>
-<td>構成不適合</td>
-</tr>
-<tr>
-<td>SC-012</td>
-<td>FR / DD / FUT、SCR、テーブル、API 節、メッセージ節、メール節の連番と削除済み識別子の再混入防止</td>
-<td>欠番 / 重複 / 削除済み識別子の再混入</td>
-</tr>
+<tr><td>SC-001</td><td>各基本設計 11 ファイルに <code>&lt;h1&gt;</code> / <code>&lt;h2&gt;</code> 見出しが存在</td><td>構造不適合</td></tr>
+<tr><td>SC-002</td><td>主要概念正本ファイルでの必須キーワード出現(本表の「検査キーワード」列)</td><td>正本ドキュメントから記載が抜けている</td></tr>
+<tr><td>SC-003</td><td>基本設計 index から共有概念へのリンク存在(再掲しないことを軽くチェック)</td><td>主要概念の二重正本化</td></tr>
+<tr><td>SC-004</td><td>SCR ID クロスチェック(画面設計 ・ トレーサビリティマトリクス の SCR 集合一致)</td><td>SCR 漏れ / 不一致</td></tr>
+<tr><td>SC-005</td><td>メッセージ ID 体系 <code>MSG-SCR-NNN-&lt;種別&gt;-NNN</code> の出現</td><td>メッセージ一覧 06 の体系破綻</td></tr>
+<tr><td>SC-006</td><td>エラー ID 体系 <code>E-&lt;分類&gt;-NNN</code> の出現</td><td>エラー設計 05 の体系破綻</td></tr>
+<tr><td>SC-007</td><td><code>contract_owners.contract_status</code> 4 値が正本ドキュメントに出現</td><td>列挙値の取りこぼし</td></tr>
+<tr><td>SC-008</td><td>通知重要度 4 値が正本ドキュメントに出現、<code>critical</code> に "強制送信" 文言を伴う</td><td>critical 通知ルール違反</td></tr>
+<tr><td>SC-010</td><td>主要相対パスのリンク到達性 + CLAUDE.md の層構成記述</td><td>参照リンク切れ</td></tr>
+<tr><td>SC-011</td><td>要件定義 FR / 詳細設計 DD / 将来対応 FUT グループファイルの連番・件数</td><td>構成不適合</td></tr>
+<tr><td>SC-012</td><td>FR / SCR / テーブル / API 節 / メッセージ節 / メール節の連番と削除済み識別子の再混入防止</td><td>欠番 / 重複 / 削除済み識別子の再混入</td></tr>
 </tbody>
 </table>
 <h2 id="5-関連ドキュメント">5. 関連ドキュメント</h2>
@@ -275,14 +171,9 @@
 <td><a href="../01_メインシステム/02_基本設計/index.html">../01_メインシステム/02_基本設計/index.html</a></td>
 </tr>
 <tr>
-<td>運営者 基本設計</td>
-<td>運営者側設計索引</td>
-<td><a href="../02_運営者システム/02_基本設計/index.html">../02_運営者システム/02_基本設計/index.html</a></td>
-</tr>
-<tr>
 <td>リポジトリ保守ルール</td>
 <td>フェーズ境界 / 変更適用順序 / 同期ルール</td>
-<td>保守ルール</td>
+<td>保守ルール(<code>CLAUDE.md</code>)</td>
 </tr>
 </tbody>
 </table>
@@ -297,29 +188,29 @@
 </thead>
 <tbody>
 <tr>
-<td>2026-05-17</td>
-<td>1.0</td>
-<td>初版作成(新構成への再編)</td>
-</tr>
-<tr>
-<td>2026-05-19</td>
-<td>1.1</td>
-<td>共有概念 #20「ダッシュボード共通表記ルール」を追加。SCR-008 / SCR-016 / SCR-HOME / SCR-095 のダッシュボード系 UI 表記語彙(最終更新タイムスタンプ / 比較値ラベル / 色 + アイコン語彙 / 状態表現)をメイン <a href="../01_メインシステム/02_基本設計/01_画面設計.html">01_画面設計.html §1.5</a> + 運営者 <a href="../02_運営者システム/02_基本設計/01_画面設計.html">01_画面設計.html §1.5</a> 両方の正本に置く</td>
-</tr>
-<tr>
-<td>2026-05-20</td>
-<td>1.2</td>
-<td>メインシステム ユーザー情報管理テーブル 3 表分割リファクタリングに追従。<code>accounts</code> → <code>users</code> + <code>contract_owners</code> + <code>project_users</code> への分離(契約境界キー = <code>contract_owner_user_id</code>)。#1(<code>contract_owners.contract_status</code>)/ #3(通知宛先解決 <code>project_users.role='admin'</code>)/ #6(3 ロールユーザーモデル) の正本ルール表 + SC-007 検査キーワードを改訂</td>
-</tr>
-<tr>
-<td>2026-05-20</td>
-<td>1.3</td>
-<td>メインシステム エンドユーザー独立テーブル化(v1.13)に追従。<code>users.role</code> カラム撤廃 + <code>inquiry_contacts</code> 廃止 + 新規 <code>end_users</code> テーブル(プロジェクト単位スコープ)導入。#6(ユーザーモデル)を 4 主体(オーナー / プロジェクト管理者 / メンバー / エンドユーザー)モデルに改訂し、<code>end_users</code> を検査キーワードに追加。<code>chat_messages.actor_id</code> を <code>actor_user_id</code> / <code>actor_end_user_id</code> の 2 カラムに分離、<code>audit_logs.actor_end_user_id</code> 追加、<code>access_tokens.end_user_id</code> 追加</td>
+<td>2026-06-18</td>
+<td>2.0</td>
+<td>運営者システムをリポジトリから一旦削除したことに伴い、本表をメインシステム単独の「主要概念対応表」へ改編。運営者側のみが正本だった概念(連携 IF #1〜#12、IP allowlist、4-eyes 承認基盤、Stripe Webhook 一次受信、運営者監査 / <code>operator_high_priv</code>、運営者エラー <code>E-OP-*</code>)を撤去。監査ログのハッシュチェーン完全性検証はメイン側正本に統合、保持クラスを <code>general</code> / <code>billing</code> に整理。検査ルール表から SC-009(連携 IF)を撤去。</td>
 </tr>
 <tr>
 <td>2026-06-10</td>
 <td>1.4</td>
-<td>月次上限件数・無料枠を契約単位からプロジェクト単位へ移行。#15 を「利用上限上書き(レート=契約単位 <code>owner_quota_overrides</code> / 月次上限件数・無料枠=プロジェクト単位 <code>project_quota_limits</code>)」に改題し検査キーワードを <code>owner_quota_overrides</code>, <code>project_quota_limits</code> に更新。#18 に「判定単位=プロジェクト、請求集計=契約」を追記。プロジェクト単位の上限管理画面と設定モーダルを追加し、旧オーナー専有モーダルを廃止。月次上限件数の運営者上書きをプロジェクト単位化。<code>usage_metering</code> に <code>project_id</code> 追加、<code>project_quota_limits</code> 新設(<code>valid</code> 論理削除対象、削除対象テーブルが 12 に)</td>
+<td>月次上限件数・無料枠を契約単位からプロジェクト単位へ移行。#11 を「利用上限(レート=契約単位 <code>owner_quota_overrides</code> / 月次上限件数・無料枠=プロジェクト単位 <code>project_quota_limits</code>)」に改題。判定単位=プロジェクト、請求集計=契約。<code>usage_metering</code> に <code>project_id</code> 追加、<code>project_quota_limits</code> 新設。</td>
+</tr>
+<tr>
+<td>2026-05-20</td>
+<td>1.3</td>
+<td>エンドユーザー独立テーブル化(v1.13)。<code>users.role</code> 撤廃 + <code>end_users</code> 導入。#5 ユーザーモデルを 4 主体(オーナー / プロジェクト管理者 / メンバー / エンドユーザー)に改訂。</td>
+</tr>
+<tr>
+<td>2026-05-20</td>
+<td>1.2</td>
+<td>ユーザー情報管理テーブル 3 表分割(<code>accounts</code> → <code>users</code> + <code>contract_owners</code> + <code>project_users</code>、契約境界キー = <code>contract_owner_user_id</code>)。</td>
+</tr>
+<tr>
+<td>2026-05-17</td>
+<td>1.0</td>
+<td>初版作成(新構成への再編)。</td>
 </tr>
 </tbody>
 </table>

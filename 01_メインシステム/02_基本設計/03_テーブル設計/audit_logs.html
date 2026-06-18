@@ -117,7 +117,7 @@
 <td></td>
 <td></td>
 <td></td>
-<td><code>actor_role IS NULL OR actor_role IN ('admin','system','service_operator')</code></td>
+<td><code>actor_role IS NULL OR actor_role IN ('admin','system')</code></td>
 
 </tr>
 <tr>
@@ -215,7 +215,7 @@
 <td></td>
 <td></td>
 <td><code>'general'</code></td>
-<td><code>retention_class IN ('general','billing','operator_high_priv')</code></td>
+<td><code>retention_class IN ('general','billing')</code></td>
 
 </tr>
 <tr>
@@ -288,11 +288,6 @@
 <td><code>actor_role</code></td>
 <td><code>system</code></td>
 <td>システム</td>
-</tr>
-<tr>
-<td><code>actor_role</code></td>
-<td><code>service_operator</code></td>
-<td>運営者</td>
 </tr>
 </tbody>
 </table>

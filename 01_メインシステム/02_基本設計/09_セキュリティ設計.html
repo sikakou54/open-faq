@@ -45,7 +45,7 @@
 <li><strong>多層防御</strong>(認証 → 認可 → 入力検証 → 出力検査 → 監査)</li>
 <li><strong>最小権限原則</strong>(オーナー専有 / プロジェクト別ロール <code>admin</code> / <code>member</code>(<code>project_users.role</code>)の二段階)</li>
 <li><strong>監査の網羅性</strong>(変更系操作は全て監査、参照系は高権限操作のみ)</li>
-<li><strong>改ざん検知</strong>(ハッシュチェーン + 完全性検証バッチ。完全性方式は <a href="../../02_運営者システム/02_基本設計/09_セキュリティ設計.html#7-監査ログ本書の中核共有概念正本">運営者 09_セキュリティ設計.html §7</a> を正本とする)</li>
+<li><strong>改ざん検知</strong>(ハッシュチェーン + 完全性検証バッチによる完全性検証を行う)</li>
 </ul>
 <h2 id="3-データ保護">3. データ保護</h2>
 <p class="section-lead">機密データは「暗号化(復号が必要なもの)」と「ハッシュ保存(照合だけ必要なもの)」を使い分け、PII はオーナー派生鍵で暗号化する(FR-171)。PII 暗号化方式とオーナー派生鍵はメインを共有概念正本とする(<a href="../../共有/共有概念.html">共有概念.html</a> #9)。</p>
@@ -173,11 +173,11 @@
 <p>担保事項:</p>
 <ul>
 <li><strong>不可逆性</strong>: メールアドレスハッシュ化など、原文復元不可な置換のみ</li>
-<li>設定管理: <code>contract_owners.data_deletion_mode</code> は契約締結時に既定 <code>physical</code>。MVP では UI 上の変更操作を提供せず、変更が必要な場合はサポート窓口経由の運営者対応とする(SCR-017 個人設定にデータ保持・削除モード設定 UI は持たない)</li>
-<li>監査: <code>audit_logs.action='owner.data_deletion_mode.change'</code>(運営者操作時、<code>retention_class=operator_high_priv</code>)</li>
+<li>設定管理: <code>contract_owners.data_deletion_mode</code> は契約締結時に既定 <code>physical</code>。MVP では UI 上の変更操作を提供せず、変更が必要な場合はサポート窓口経由の対応とする(SCR-017 個人設定にデータ保持・削除モード設定 UI は持たない)</li>
+<li>監査: <code>audit_logs.action='owner.data_deletion_mode.change'</code>(<code>retention_class=general</code>)</li>
 </ul>
 <h3 id="34-お知らせ二層構成">3.4 お知らせ二層構成</h3>
-<p class="section-lead">運営お知らせ等の通知は、配信元・配信宛先・受信箱の三層に分けて記録する。重複生成を抑止しつつ配信集計と監査を両立させるための分離方針を示す。各テーブルの定義は <a href="03_テーブル設計/index.html#21-一覧">03_テーブル設計/index.html §2</a> を正本とする。</p>
+<p class="section-lead">運営お知らせ等の通知は、配信元・配信宛先・受信箱の三層に分けて記録する。重複生成を抑止しつつ配信集計と監査を両立させるための分離方針を示す。各テーブルの定義は <a href="03_テーブル設計/index.html#1-テーブル一覧">03_テーブル設計/index.html §1</a> を正本とする。</p>
 <p>三層構造:</p>
 <ul>
 <li><strong>配信元層(Control Plane)</strong>: <code>service_announcements</code> テーブル</li>
@@ -196,7 +196,7 @@
 <tbody>
 <tr>
 <td><code>announcement</code></td>
-<td>運営者がお知らせを公開(IF #7)</td>
+<td>お知らせを公開</td>
 <td>service_announcements → announcement_recipients → inbox_messages</td>
 <td>配信集計が必要</td>
 </tr>
@@ -341,7 +341,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 <h3 id="53-お知らせ本文サニタイズ2-重防御">5.3 お知らせ本文サニタイズ(2 重防御)</h3>
 <p class="section-lead">運営お知らせの HTML 本文は、入稿時(受信時)と表示時の二重でサニタイズし、許可タグ・属性のホワイトリストで XSS を防ぐ。エンドユーザー入力はお知らせ本文に一切含めない(NFR-309)。</p>
 <ul>
-<li><strong>入稿時</strong>: 連携 IF #7 受信時にサーバ側 sanitize(許可タグ・属性ホワイトリスト)</li>
+<li><strong>入稿時</strong>: お知らせ入稿時にサーバ側 sanitize(許可タグ・属性ホワイトリスト)</li>
 <li><strong>表示時</strong>: GET <code>/me/announcements/{id}</code> 時に再度 sanitize</li>
 <li><strong>許可タグ</strong>: <code>&lt;p&gt;&lt;div&gt;&lt;h2-4&gt;&lt;ul&gt;&lt;ol&gt;&lt;li&gt;&lt;blockquote&gt;&lt;pre&gt;&lt;a&gt;&lt;strong&gt;&lt;em&gt;&lt;code&gt;&lt;span&gt;&lt;br&gt;&lt;img&gt;</code></li>
 <li><strong>禁止</strong>: <code>&lt;script&gt;&lt;iframe&gt;&lt;object&gt;&lt;embed&gt;&lt;form&gt;&lt;input&gt;&lt;style&gt;</code> + <code>on*</code> イベント属性</li>
@@ -369,11 +369,6 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 <td>§12 / <a href="02_API設計/index.html">02_API設計/index.html</a></td>
 </tr>
 <tr>
-<td>連携 IF</td>
-<td>mTLS + JWT</td>
-<td><a href="02_API設計/index.html">02_API設計/index.html §6</a></td>
-</tr>
-<tr>
 <td>監査ログ参照</td>
 <td>プロジェクト別ロール(該当 PJ の <code>member</code> 以上)</td>
 <td><a href="04_権限設計.html">04_権限設計.html</a></td>
@@ -381,9 +376,9 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </tbody>
 </table>
 <h2 id="7-監査ログ">7. 監査・ログ</h2>
-<p class="section-lead">重要操作は改ざん検知可能な形で監査ログに記録する(FR-175 / FR-178a)。ハッシュチェーンによる完全性方式と 3 区分保持(<code>general</code> / <code>billing</code> / <code>operator_high_priv</code>)は <a href="../../02_運営者システム/02_基本設計/09_セキュリティ設計.html#7-監査ログ本書の中核共有概念正本">運営者 09_セキュリティ設計.html §7</a> を正本とし、本書はメイン側固有の監査対象操作とログ種別を定める。</p>
+<p class="section-lead">重要操作は改ざん検知可能な形で監査ログに記録する(FR-175 / FR-178a)。ハッシュチェーンによる完全性検証と 2 区分保持(<code>general</code> / <code>billing</code>)を行い、本書はメイン側固有の監査対象操作とログ種別を定める。</p>
 <h3 id="71-ログ種別と保持目的106-から移管">7.1 ログ種別と保持目的</h3>
-<p class="section-lead">メイン側で扱う 4 種のログと保持目的を示す。保持期間の区分(<code>retention_class</code>)とその年数は <a href="03_テーブル設計/index.html#22-retention_class-値の正本定義audit_logsretention_class">03_テーブル設計/index.html §2.2</a> を正本とする。</p>
+<p class="section-lead">メイン側で扱う 4 種のログと保持目的を示す。保持期間の区分(<code>retention_class</code>)とその年数は <a href="03_テーブル設計/index.html#11-retention_class-値の正本定義audit_logsretention_class">03_テーブル設計/index.html §1.1</a> を正本とする。</p>
 <table>
 <thead>
 <tr>
@@ -396,9 +391,9 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 <tbody>
 <tr>
 <td>監査ログ</td>
-<td>重要操作(認証 / 認可境界 / 状態変更 P0 機能 / 課金 / 連携 IF / データ削除復元 / 一括操作 / セキュリティ運用 / DB 直接クエリ)</td>
+<td>重要操作(認証 / 認可境界 / 状態変更 P0 機能 / 課金 / データ削除復元 / 一括操作 / セキュリティ運用 / DB 直接クエリ)</td>
 <td>監査・不正対応</td>
-<td><code>retention_class</code> 区分に従う(<a href="03_テーブル設計/index.html#22-retention_class-値の正本定義audit_logsretention_class">03_テーブル設計/index.html §2.2</a> 正本)</td>
+<td><code>retention_class</code> 区分に従う(<a href="03_テーブル設計/index.html#11-retention_class-値の正本定義audit_logsretention_class">03_テーブル設計/index.html §1.1</a> 正本)</td>
 </tr>
 <tr>
 <td>エラーログ</td>
@@ -421,7 +416,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </tbody>
 </table>
 <h3 id="72-メイン側の監査対象操作1065-から移管">7.2 メイン側の監査対象操作</h3>
-<p class="section-lead">メイン側で監査対象とする操作カテゴリと <code>action</code> 例を示す。各行の <code>retention_class</code> は <a href="03_テーブル設計/index.html#22-retention_class-値の正本定義audit_logsretention_class">03_テーブル設計/index.html §2.2</a> の区分に従う。</p>
+<p class="section-lead">メイン側で監査対象とする操作カテゴリと <code>action</code> 例を示す。各行の <code>retention_class</code> は <a href="03_テーブル設計/index.html#11-retention_class-値の正本定義audit_logsretention_class">03_テーブル設計/index.html §1.1</a> の区分に従う。</p>
 <table>
 <thead>
 <tr>
@@ -437,11 +432,6 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 <td><code>general</code></td>
 </tr>
 <tr>
-<td>認可境界</td>
-<td><code>&lt;resource&gt;.&lt;verb&gt;.by_operator</code></td>
-<td><code>operator_high_priv</code></td>
-</tr>
-<tr>
 <td>状態変更 P0 機能</td>
 <td><code>faq.create</code> / <code>update</code> / <code>publish</code> / <code>delete</code>、<code>case.close</code>、<code>member.invite</code> / <code>activate</code> / <code>disable</code> / <code>delete</code></td>
 <td><code>general</code></td>
@@ -452,14 +442,9 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 <td><code>billing</code></td>
 </tr>
 <tr>
-<td>連携 IF</td>
-<td><code>integration.if1.received</code>、<code>integration.if10.forwarded</code></td>
-<td><code>general</code>(内容応じて <code>operator_high_priv</code> も)</td>
-</tr>
-<tr>
 <td>データ削除復元</td>
-<td><code>data.delete.execute</code>、<code>&lt;resource&gt;.restore.by_operator</code>、<code>audit_log.tombstone</code></td>
-<td><code>operator_high_priv</code></td>
+<td><code>data.delete.execute</code>、<code>&lt;resource&gt;.restore</code>、<code>audit_log.tombstone</code></td>
+<td><code>general</code></td>
 </tr>
 <tr>
 <td>一括操作</td>
@@ -469,12 +454,12 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 <tr>
 <td>セキュリティ運用</td>
 <td><code>key.rotation</code>、<code>webhook.signature_failed</code>、<code>abuse.detection_fired</code></td>
-<td><code>operator_high_priv</code></td>
+<td><code>general</code></td>
 </tr>
 <tr>
 <td>DB 直接クエリ</td>
 <td><code>db.query.execute</code>(操作者 / クエリ / 実行時刻 / 件数記録)</td>
-<td><code>operator_high_priv</code></td>
+<td><code>general</code></td>
 </tr>
 </tbody>
 </table>
@@ -491,7 +476,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 <tbody>
 <tr>
 <td>操作者</td>
-<td>実行したアカウント利用者(<code>actor_user_id</code>)。運営者代行時は <code>by_operator</code> 区分を併記</td>
+<td>実行したアカウント利用者(<code>actor_user_id</code>)</td>
 </tr>
 <tr>
 <td>対象メンバー</td>
@@ -513,7 +498,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </table>
 </div>
 <h3 id="73-改ざん検知方式nfr-306">7.3 改ざん検知方式(NFR-306)</h3>
-<p class="section-lead">監査ログの改ざん検知はハッシュチェーンで行う(NFR-306)。チェーン構造・ダイジェスト保管・完全性検証バッチの仕様は <a href="../../02_運営者システム/02_基本設計/09_セキュリティ設計.html#7-監査ログ本書の中核共有概念正本">運営者 09_セキュリティ設計.html §7</a> を正本とする(共有概念 #7)。メイン側はその方式に従って <code>audit_logs</code> へ記録する。</p>
+<p class="section-lead">監査ログの改ざん検知はハッシュチェーンで行う(NFR-306)。チェーン構造・ダイジェスト保管・完全性検証バッチにより <code>audit_logs</code> の完全性検証を行う。</p>
 <h3 id="74-エラーログerror_logs">7.4 エラーログ(<code>error_logs</code>)</h3>
 <p class="section-lead">サーバー内部起因のエラーは運用確認用に記録するが、PII・トークン・カード情報は一切残さない(FR-113 / FR-114)。テーブル定義は <a href="03_テーブル設計/error_logs.html">03_テーブル設計/index.html §3.19</a> を正本とする。</p>
 <ul>
@@ -526,7 +511,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 <h2 id="8-秘密情報管理共有概念正本--メイン側">8. 秘密情報管理(暗号鍵管理 = メイン側が共有概念正本)</h2>
 <p class="section-lead">マスター鍵・派生鍵・ウィジェット公開キーの保管とローテーションを定める(FR-171 / FR-193 / FR-194、NFR-320〜324)。暗号鍵管理はメインを共有概念正本とする(<a href="../../共有/共有概念.html">共有概念.html</a> #10)。鍵を用いた実装手順は <a href="../03_詳細設計/index.html">詳細設計(DD10)</a> をリンク先とする。</p>
 <h3 id="81-暗号鍵管理109-から移管">8.1 暗号鍵管理</h3>
-<p class="section-lead">マスター鍵はクラウド機密保管領域に置き年次ローテーションする(NFR-320 / NFR-321)。バックアップ鍵はマスター鍵と分離する(NFR-324)。利用者向け API・ウィジェットは IP allowlist の対象外であり、海外 IP 遮断は運営者ログイン専用機能である(FR19 / 共有概念 #8、operator_ip_allowlist は運営者正本)。</p>
+<p class="section-lead">マスター鍵はクラウド機密保管領域に置き年次ローテーションする(NFR-320 / NFR-321)。バックアップ鍵はマスター鍵と分離する(NFR-324)。</p>
 <table>
 <thead>
 <tr>
@@ -570,7 +555,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </tbody>
 </table>
 <h3 id="82-ローテーション運用">8.2 ローテーション運用</h3>
-<p class="section-lead">マスター鍵交換中は新旧両鍵で復号を試みる dual-decrypt 期間を設け、ウィジェット公開キーの再発行は 24 時間の猶予を置く(NFR-322 / FR-193)。マスター鍵ローテーションは 4-eyes 承認(ハードゲート)を要する。4-eyes 承認基盤は <a href="../../02_運営者システム/02_基本設計/08_認証・認可設計.html">運営者 08_認証・認可設計.html §6</a> を正本とする(共有概念 #11)。</p>
+<p class="section-lead">マスター鍵交換中は新旧両鍵で復号を試みる dual-decrypt 期間を設け、ウィジェット公開キーの再発行は 24 時間の猶予を置く(NFR-322 / FR-193)。マスター鍵ローテーションは承認を要する。</p>
 <table>
 <thead>
 <tr>
@@ -581,7 +566,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 <tbody>
 <tr>
 <td>Master Key ローテーション中</td>
-<td><strong>60 日 dual-decrypt</strong>(旧鍵と新鍵の両方で復号を試行)(NFR-321)、<strong>MVP ハードゲート 4-eyes 対象</strong>(<a href="../../02_運営者システム/02_基本設計/08_認証・認可設計.html">運営者 08_認証・認可設計.html §6</a> 正本)</td>
+<td><strong>60 日 dual-decrypt</strong>(旧鍵と新鍵の両方で復号を試行)(NFR-321)、ローテーションは承認を要する</td>
 </tr>
 <tr>
 <td>API キーローテーション猶予</td>
@@ -593,7 +578,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </tr>
 <tr>
 <td>漏洩検知時</td>
-<td>(a)Secrets Store 即時ローテーション、(b)該当プロバイダ管理画面から旧キー revoke、(c)影響契約へ inbox/high 通知、(d)全運営者・管理者セッション無効化</td>
+<td>(a)Secrets Store 即時ローテーション、(b)該当プロバイダ管理画面から旧キー revoke、(c)影響契約へ inbox/high 通知、(d)全管理者セッション無効化</td>
 </tr>
 </tbody>
 </table>
@@ -693,32 +678,25 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 <td>カード情報は Stripe に委譲、自システムでは保持しない(PCI-DSS 範囲外化、NFR-319)</td>
 <td><a href="10_課金・請求設計.html#4-支払方法ゲート">10_課金・請求設計.html §4</a></td>
 </tr>
-<tr>
-<td><strong>連携 IF の改ざん防止</strong></td>
-<td>mTLS + JWT + ペイロード SHA-256(運営者側 Webhook 差分検出と連携)</td>
-<td><a href="02_API設計/index.html">02_API設計/index.html §6</a></td>
-</tr>
 </tbody>
 </table>
 <h2 id="10-不正利用検知基本設計書-1010--fr-195--nfr-308--共有概念正本">10. 不正利用検知(FR-195 / NFR-308 = 共有概念正本)</h2>
-<p class="section-lead">大量送信・Bot 疑い・規約違反を自動検知し、自動ブロック(レート制限緊急引き下げ・契約 <code>suspended</code> 遷移)を行ったうえで、管理者ユーザーへ即時通知し申し立て窓口を案内する(FR-195、NFR-308 / NFR-317)。不正利用検知はメインを共有概念正本とする(<a href="../../共有/共有概念.html">共有概念.html</a> #13)。判定しきい値の契約別上書きは他システム(顧客管理)の操作を契機とする。</p>
+<p class="section-lead">大量送信・Bot 疑い・規約違反を自動検知し、自動ブロック(レート制限緊急引き下げ・契約 <code>suspended</code> 遷移)を行ったうえで、管理者ユーザーへ即時通知し申し立て窓口を案内する(FR-195、NFR-308 / NFR-317)。不正利用検知はメインを共有概念正本とする(<a href="../../共有/共有概念.html">共有概念.html</a> #13)。判定しきい値は契約別に上書きできる。</p>
 <h3 id="101-検知対応体系">10.1 検知・対応体系</h3>
-<p class="section-lead">検知ロジックと自動ブロックはメインシステム側で実行する。しきい値は契約別に上書きでき(IF #5 / #6 を契機)、発火時は管理者へ inbox + メールで通知する。次のシーケンス図は、しきい値超過の判定から自動ブロック(レート緊急引き下げ / 契約 <code>suspended</code> 遷移)・監査記録・管理者通知・運営者通知(IF #9)までの流れと、しきい値内かどうかの分岐を示す。続く表は図に表れない検知ロジックの所在・上書き契機・監査 <code>action</code> を補う。</p>
+<p class="section-lead">検知ロジックと自動ブロックはメインシステム側で実行する。しきい値は契約別に上書きでき、発火時は管理者へ inbox + メールで通知する。次のシーケンス図は、しきい値超過の判定から自動ブロック(レート緊急引き下げ / 契約 <code>suspended</code> 遷移)・監査記録・管理者通知までの流れと、しきい値内かどうかの分岐を示す。続く表は図に表れない検知ロジックの所在・上書き契機・監査 <code>action</code> を補う。</p>
 <pre class="mermaid"><code>sequenceDiagram
   participant E as ウィジェット利用者
   participant W as worker-main-api
   participant D as D1 (audit_logs)
   participant M as 管理者ユーザー
-  participant OP as 運営者システム
 
   E-&gt;&gt;W: 大量送信 / Bot 疑い / 規約違反となる挙動
   W-&gt;&gt;W: 既定 or 契約別しきい値で判定
   alt しきい値超過
     W-&gt;&gt;W: 自動ブロック(レート緊急引き下げ / 契約 suspended 遷移)
-    W-&gt;&gt;D: 監査記録(abuse.detection_fired / operator_high_priv)
+    W-&gt;&gt;D: 監査記録(abuse.detection_fired / general)
     D--&gt;&gt;W:
     W-&gt;&gt;M: inbox(system/high) + email 即時通知 + 申し立て窓口案内
-    W-&gt;&gt;OP: 運営者通知(IF #9)
   else しきい値内
     W--&gt;&gt;E: 通常応答(ブロックなし)
   end</code></pre>
@@ -736,7 +714,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </tr>
 <tr>
 <td>しきい値</td>
-<td>IF #5 / #6 経由で契約別に上書き可能(FR-195(b)、設定は他システムの操作を契機)。既定しきい値はメイン側検知ロジックが保持する</td>
+<td>契約別に上書き可能(FR-195(b))。既定しきい値はメイン側検知ロジックが保持する</td>
 </tr>
 <tr>
 <td>自動ブロック</td>
@@ -747,63 +725,54 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 <td>自動ブロック発火時、<strong>管理者ユーザーへ inbox(system/high)+ email 即時通知</strong>、申し立て窓口案内(FR-195(d) / NFR-317)</td>
 </tr>
 <tr>
-<td>運営者手動停止</td>
-<td>運営者の手動停止操作(IF #1 経由)を契機に契約状態を更新する</td>
-</tr>
-<tr>
 <td>監査</td>
-<td><code>audit_logs.action='abuse.detection_fired'</code>(<code>retention_class='operator_high_priv'</code>)</td>
+<td><code>audit_logs.action='abuse.detection_fired'</code>(<code>retention_class='general'</code>)</td>
 </tr>
 </tbody>
 </table>
 <h3 id="102-検知パターン">10.2 検知パターン</h3>
-<p class="section-lead">主な検知パターンと対応アクション・関連連携 IF を示す。不正利用検知の運営者通知は IF #9、メール起因のサプレスは §11 の配信信頼性方式に従う。</p>
+<p class="section-lead">主な検知パターンと対応アクションを示す。メール起因のサプレスは §11 の配信信頼性方式に従う。</p>
 <table>
 <thead>
 <tr>
 <th>検知パターン</th>
 <th>検知ロジック</th>
 <th>アクション</th>
-<th>関連 IF</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>異常リクエスト</td>
 <td>Rate limit 突破 / 異常パス</td>
-<td>レート制限強化 + 運営者通知</td>
-<td>IF #9</td>
+<td>レート制限強化 + 検知記録</td>
 </tr>
 <tr>
 <td>メール bounce 多発</td>
 <td>bounce 率しきい値超過</td>
-<td>サプレスリスト追加 + 運営者通知</td>
-<td>§11</td>
+<td>サプレスリスト追加 + 検知記録(§11)</td>
 </tr>
 <tr>
 <td>不正ログイン</td>
 <td>同一 IP 多数 user_id ロックアウト</td>
-<td>IP 単位ブロック + 運営者通知</td>
-<td>IF #9</td>
+<td>IP 単位ブロック + 検知記録</td>
 </tr>
 <tr>
 <td>プロンプト注入試行</td>
 <td>§13.2 検出パターン</td>
-<td>ブロック + 監査 + 運営者通知</td>
-<td>IF #9</td>
+<td>ブロック + 監査 + 検知記録</td>
 </tr>
 </tbody>
 </table>
 <h2 id="11-メール配信信頼性レピュテーション保護">11. メール配信信頼性・レピュテーション保護</h2>
 <div class="callout important"><i class="bi bi-pin-angle"></i><div><span class="c-title">この §11 が配信信頼性方式の正本</span>メール再送・バウンス / 苦情検知・全契約横断サプレスといった<strong>配信信頼性の方式は本節を正本</strong>とする(<a href="11_メール設計.html">11_メール設計.html</a> §5 から参照)。11_メール設計はテンプレート単位の挙動差のみを扱う。</div></div>
-<p class="section-lead">通知メールは Queue 経由で送信し、一時失敗は当方制御で最大 3 回・最大遅延 24 時間まで自動再送する(FR-141 / FR-147、NFR-502 / NFR-506)。バウンス・苦情は検知して送信停止し、停止リストは全契約横断で共有する(FR-142 / FR-149b、NFR-503)。受信 Webhook は冪等処理し、滞留は 1 時間以内に運営者へアラートする(NFR-505 / NFR-507)。次のシーケンス図は、Queue 投入から送信成功 / 一時失敗時の再送 / バウンス・苦情 Webhook によるサプレス / 上限超過時の DLQ までの全体フローと分岐を示す。各節の表は図に無いしきい値・保持期間・イベント別処理を補う。</p>
+<p class="section-lead">通知メールは Queue 経由で送信し、一時失敗は当方制御で最大 3 回・最大遅延 24 時間まで自動再送する(FR-141 / FR-147、NFR-502 / NFR-506)。バウンス・苦情は検知して送信停止し、停止リストは全契約横断で共有する(FR-142 / FR-149b、NFR-503)。受信 Webhook は冪等処理し、滞留は 1 時間以内にアラートする(NFR-505 / NFR-507)。次のシーケンス図は、Queue 投入から送信成功 / 一時失敗時の再送 / バウンス・苦情 Webhook によるサプレス / 上限超過時の DLQ までの全体フローと分岐を示す。各節の表は図に無いしきい値・保持期間・イベント別処理を補う。</p>
 <pre class="mermaid"><code>sequenceDiagram
   participant A as worker-main-api
   participant Q as Cloudflare Queues
   participant R as Resend
   participant N as D1 (notification_logs)
   participant DLQ as DLQ
-  participant OP as 運営者システム
+  participant AL as アラート通知
 
   A-&gt;&gt;Q: 送信ジョブを投入(同期処理外)
   Q--&gt;&gt;A:
@@ -817,14 +786,14 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
     Q-&gt;&gt;Q: 指数バックオフ再送(最大 3 回 / 最大 24h)
     opt 上限到達
       Q-&gt;&gt;DLQ: DLQ へ退避
-      DLQ-&gt;&gt;OP: 滞留が上限超過で high 通知 + メール
+      DLQ-&gt;&gt;AL: 滞留が上限超過で high 通知 + メール
     end
   end
   opt バウンス / 苦情 Webhook
     R-&gt;&gt;A: email.bounced / complained
     A-&gt;&gt;N: サプレス(email_suppression_list 追加・全契約横断)
     N--&gt;&gt;A:
-    A-&gt;&gt;OP: 苦情・署名検証失敗時は high 通知
+    A-&gt;&gt;AL: 苦情・署名検証失敗時は high 通知
   end</code></pre>
 <h3 id="111-メール配信信頼性nfr-501507">11.1 メール配信信頼性(NFR-502〜507)</h3>
 <p class="section-lead">送信から再送・冪等・DLQ までの配信信頼性方針を一覧する。当方の再送カウンタは Resend 側の自動再送と区別する。</p>
@@ -870,7 +839,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </tr>
 <tr>
 <td>DLQ</td>
-<td>Cloudflare Queues DLQ、1 時間以内に運営者へアラート(NFR-507)</td>
+<td>Cloudflare Queues DLQ、1 時間以内にアラート(NFR-507)</td>
 </tr>
 </tbody>
 </table>
@@ -886,7 +855,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 <tbody>
 <tr>
 <td>送信レート制限</td>
-<td>契約別時間あたり通数の上限設定(運営者調整可、IF #5)</td>
+<td>契約別時間あたり通数の上限設定(調整可)</td>
 </tr>
 <tr>
 <td>バウンス率監視</td>
@@ -906,7 +875,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </tr>
 <tr>
 <td>異常検知</td>
-<td>短時間急増・未配信率急上昇を運営者に通知</td>
+<td>短時間急増・未配信率急上昇を検知して通知</td>
 </tr>
 <tr>
 <td><strong>全契約横断サプレス</strong></td>
@@ -914,12 +883,12 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </tr>
 <tr>
 <td>復帰承認</td>
-<td>サプレスリスト復帰承認は運営者操作(SCR-093)を契機とする</td>
+<td>サプレスリスト復帰は承認を要する</td>
 </tr>
 </tbody>
 </table>
 <h3 id="113-resend-webhook-処理">11.3 Resend Webhook 処理</h3>
-<p class="section-lead">送信プロバイダ(Resend)からの配信状態 Webhook を受信し、<code>notification_logs</code>(<a href="03_テーブル設計/notification_logs.html">03_テーブル設計/index.html §3.15</a>)の配信状態を更新する。署名検証に失敗した受信は即時破棄し運営者へ通知する(NFR-310)。</p>
+<p class="section-lead">送信プロバイダ(Resend)からの配信状態 Webhook を受信し、<code>notification_logs</code>(<a href="03_テーブル設計/notification_logs.html">03_テーブル設計/index.html §3.15</a>)の配信状態を更新する。署名検証に失敗した受信は即時破棄し通知する(NFR-310)。</p>
 <table>
 <thead>
 <tr>
@@ -946,7 +915,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </tr>
 <tr>
 <td><code>email.complained</code></td>
-<td>即時永久サプレス + 運営者 high 通知</td>
+<td>即時永久サプレス + high 通知</td>
 </tr>
 <tr>
 <td><code>email.delivery_delayed</code></td>
@@ -958,12 +927,12 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </tr>
 <tr>
 <td><strong>署名検証失敗</strong></td>
-<td><strong>即時破棄 + 運営者 high 通知</strong>(NFR-310)</td>
+<td><strong>即時破棄 + high 通知</strong>(NFR-310)</td>
 </tr>
 </tbody>
 </table>
 <h3 id="114-サプレスリスト復帰フロー">11.4 サプレスリスト復帰フロー</h3>
-<p class="section-lead">サプレス事由ごとの復帰可否と復帰方法を示す。苦情(complaint)は永久サプレスで復帰不可、ハード / ソフトバウンスは運営者承認を経て復帰できる。</p>
+<p class="section-lead">サプレス事由ごとの復帰可否と復帰方法を示す。苦情(complaint)は永久サプレスで復帰不可、ハード / ソフトバウンスは承認を経て復帰できる。</p>
 <div class="table-scroll">
 <table>
 <thead>
@@ -977,12 +946,12 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 <tr>
 <td>ハードバウンス</td>
 <td>即時サプレス、全契約横断共有</td>
-<td>SCR-023 設定からサポート申請 → 運営者承認(IF #5)→ 復帰</td>
+<td>SCR-023 設定からサポート申請 → 承認 → 復帰</td>
 </tr>
 <tr>
 <td>ソフトバウンス 5 連続</td>
 <td>サプレス、全契約横断共有</td>
-<td>同上(運営者承認 → 復帰)</td>
+<td>同上(承認 → 復帰)</td>
 </tr>
 <tr>
 <td>苦情(complaint)</td>
@@ -991,14 +960,14 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </tr>
 <tr>
 <td>レピュテーション低下警告</td>
-<td>契約送信レート -50%(IF #5)</td>
+<td>契約送信レート -50%</td>
 <td>24h 経過 + バウンス率 &lt;1% で自動復帰</td>
 </tr>
 </tbody>
 </table>
 </div>
 <h3 id="115-dlq-運用119-から移管">11.5 DLQ 運用</h3>
-<p class="section-lead">配信に失敗した通知ジョブは DLQ で保持し、一定時間は自動再試行、それ以降は運営者の明示的リプレイで処理する(NFR-507)。署名検証失敗は再処理せず即時破棄する。</p>
+<p class="section-lead">配信に失敗した通知ジョブは DLQ で保持し、一定時間は自動再試行、それ以降は明示的リプレイで処理する(NFR-507)。署名検証失敗は再処理せず即時破棄する。</p>
 <table>
 <thead>
 <tr>
@@ -1013,7 +982,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </tr>
 <tr>
 <td>自動再処理</td>
-<td>DLQ 投入から <strong>1 時間以内</strong> は自動指数 BO 再試行、それ以降は運営者の明示的リプレイ操作のみ(SCR-096)</td>
+<td>DLQ 投入から <strong>1 時間以内</strong> は自動指数 BO 再試行、それ以降は明示的リプレイ操作のみ</td>
 </tr>
 <tr>
 <td>リプレイ範囲</td>
@@ -1021,11 +990,11 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </tr>
 <tr>
 <td>DLQ 監視</td>
-<td>DLQ 滞留が IF 別上限値を超えた瞬間に運営者 high 通知 + メール</td>
+<td>DLQ 滞留が上限値を超えた瞬間に high 通知 + メール</td>
 </tr>
 <tr>
 <td>署名検証失敗</td>
-<td>即時破棄 + 運営者 high 通知(NFR-310)</td>
+<td>即時破棄 + high 通知(NFR-310)</td>
 </tr>
 </tbody>
 </table>
@@ -1061,7 +1030,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </tr>
 <tr>
 <td>レート制限</td>
-<td>プロジェクト / IP / セッション単位(IF #5 で運営者調整可)</td>
+<td>プロジェクト / IP / セッション単位(調整可)</td>
 </tr>
 <tr>
 <td>Bot 対策</td>
@@ -1076,7 +1045,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 <h2 id="13-pii-マスキングプロンプト注入対策">13. AI 安全性(PII マスキング・プロンプト注入対策・出力検査)</h2>
 <p class="section-lead">AI 回答の安全性は、入力(プロンプト注入耐性)・処理(FAQ 限定方針の固定)・出力(参照 FAQ 外要素の検出と PII マスキング)の三段で担保する(FR-058 / FR-060)。PII マスキングはメインを共有概念正本とする(<a href="../../共有/共有概念.html">共有概念.html</a> #9)。AI モデル / プロンプトの変更時は攻撃パターンを含む回帰テストを実行する(FR-058 / FR-349)。</p>
 <h3 id="131-pii-マスキング107-から移管">13.1 PII マスキング</h3>
-<p class="section-lead">個人情報は Cloudflare ネットワーク内で検出し、所定形式でマスキングして返却する。検出種別は記録し、マスク前データは残さない(FR-060)。検出ルールは運営者(SCR-097)が保守する。</p>
+<p class="section-lead">個人情報は Cloudflare ネットワーク内で検出し、所定形式でマスキングして返却する。検出種別は記録し、マスク前データは残さない(FR-060)。検出ルールは保守可能とする。</p>
 <table>
 <thead>
 <tr>
@@ -1091,7 +1060,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </tr>
 <tr>
 <td>検出ルール保守</td>
-<td>KV に保持、運営者システム(SCR-097)で更新可能</td>
+<td>KV に保持、更新可能</td>
 </tr>
 <tr>
 <td>監査記録</td>
@@ -1099,7 +1068,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </tr>
 <tr>
 <td>誤検出改善ループ</td>
-<td>管理者ユーザーが「誤検出」報告 → SCR-097 に集約 → 検出ルール改善(AC-036、3 営業日以内判定)</td>
+<td>管理者ユーザーが「誤検出」報告 → 集約 → 検出ルール改善(AC-036、3 営業日以内判定)</td>
 </tr>
 </tbody>
 </table>
@@ -1160,10 +1129,6 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 <tr>
 <td>復旧目標</td>
 <td>RPO 1 時間 / RTO 4 時間</td>
-</tr>
-<tr>
-<td>災害時手順</td>
-<td>RB-021(メイン障害時の運営者側縮退運転)</td>
 </tr>
 </tbody>
 </table>
