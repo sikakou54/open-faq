@@ -100,7 +100,7 @@
 <p>オーナー固定化(FR-030a / FR-015e):</p>
 <ul>
 <li>リクエストに <code>initialAdmins</code> フィールド(<code>selfAsAdmin</code> フラグや <code>adminEmails[]</code>)は持たない。オーナーは作成時に自動で当該プロジェクトの管理者となるため、UI / API での個別指定は不要。</li>
-<li>サーバー側処理: プロジェクト作成成功と同一トランザクション内で <code>INSERT INTO project_users(user_id=actor.userId, project_id=newPid, contract_owner_user_id=actor.contractOwnerUserId, role='admin', valid=1, granted_at=now(), granted_by=actor.userId)</code> を 1 行発行する(オーナー自動 admin 行付与)。認可上は <code>isOwner=true</code> bypass を維持しつつ、本 admin 行は critical 通知の宛先解決(<code>SELECT DISTINCT user_id FROM project_users WHERE role='admin' AND valid=1 …</code>)と画面表示の事実情報として参照される。</li>
+<li>サーバー側処理: プロジェクト作成と同一トランザクションで、オーナーを当該プロジェクトの管理者(<code>project_users.role='admin'</code>・<code>valid=1</code>)として 1 行自動付与する(オーナー自動 admin 行付与)。認可上は <code>isOwner=true</code> bypass を維持しつつ、本 admin 行は critical 通知の宛先解決(<code>role='admin'</code> かつ <code>valid=1</code> の利用者)と画面表示の事実情報として参照される。</li>
 <li>他者をプロジェクト管理者として招待する操作は、プロジェクト作成後に当該プロジェクトの SCR-009 / SCR-009-001(プロジェクト WS)から <code>POST /projects/{id}/members</code>(API-011)経由で行う。</li>
 </ul>
 <h3>レスポンス(201)</h3>
@@ -145,14 +145,16 @@
   "allowedDomains": ["..."],
   "contactEmail": "..."
 }</code></pre>
-<p>上記 Request Body は PATCH(部分更新)時のもの。DELETE 時はボディなし。<code>DELETE /projects/{id}</code> 実行時の挙動(FR-030b、論理削除):</p>
-<ol type="1">
-<li><code>UPDATE project_users SET valid=0, updated_at=now() WHERE project_id=? AND valid=1</code>(オーナー自身の admin 行も含む全行を論理削除)</li>
-<li>UPDATE 後、他プロジェクト割当(<code>valid=1</code> 行)が 0 件かつ <code>contract_owners</code> 行を持たないメンバーの <code>users</code> を <code>UPDATE users SET valid=0, updated_at=now()</code> で論理削除 + 全セッション失効(<code>UPDATE sessions SET revoked_at=now() WHERE user_id IN (...)</code>)+ 未使用招待トークン失効(<code>UPDATE access_tokens SET used_at=now() WHERE user_id IN (...) AND used_at IS NULL</code>)</li>
-<li><code>UPDATE projects SET status='deleted', valid=0, deleted_at=now(), updated_at=now() WHERE id=?</code></li>
-<li>関連テーブル(<code>allowed_domains</code> / <code>faqs</code> / <code>inquiries</code> / <code>question_logs</code>)の対象行を <code>valid=0, updated_at=now()</code> に伝播。匿名化モード(<code>contract_owners.data_deletion_mode='anonymize'</code>)の場合の即時匿名化は本処理では行わず、90 日後の物理削除バッチ時に実施する</li>
-<li>監査ログ <code>project.logical_delete</code> を <code>retention_class='general'</code> で記録(metadata: <code>{projectId, logicallyDeletedUserIds: [...]}</code>)</li>
-</ol>
+<p>上記 Request Body は PATCH(部分更新)時のもの。DELETE 時はボディなし。<code>DELETE /projects/{id}</code> 実行時の挙動(FR-030b、論理削除)。</p>
+<h3>処理概要</h3>
+<p class="section-lead">論理削除として以下を実行する(具体的なクエリは詳細設計を正本とする)。</p>
+<ul>
+<li>当該プロジェクトの全メンバー割当を論理削除する(オーナー自身の管理者割当を含む)</li>
+<li>他プロジェクトの有効な割当が 0 件かつオーナーでない利用者は、アカウントを論理削除し、全セッション失効と未使用招待トークンの失効を行う</li>
+<li>プロジェクトを削除状態(<code>status='deleted'</code>・論理削除)にする</li>
+<li>関連データ(許可ドメイン / FAQ / 未解決質問 / 質問ログ)へ論理削除を伝播する。匿名化モードの即時匿名化は行わず、90 日後の物理削除バッチで実施する</li>
+<li>監査ログ(プロジェクト論理削除・<code>retention_class='general'</code>)を記録する</li>
+</ul>
 <p>上記 1-5 はアプリ層のトランザクション内で実装する。論理削除データは <code>updated_at</code> 基準で 90 日経過後に物理削除バッチ(DD13)で物理削除される。物理削除時は <code>ON DELETE CASCADE</code> で関連行が連鎖物理削除される。</p>
 <h3>レスポンス(200)</h3>
 <p>PATCH は更新後のプロジェクト、DELETE は <code>{ "ok": true, "status": "deleted" }</code>。</p>

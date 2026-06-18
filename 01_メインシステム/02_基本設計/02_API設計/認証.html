@@ -299,16 +299,17 @@
 <tr><td>権限</td><td>—</td></tr>
 </tbody>
 </table>
-<p>同一トランザクションで以下を実行する:</p>
-<ol type="1">
-<li><code>verifyToken(rawToken, 'activation', env)</code> → 期限・使用済みチェック</li>
-<li><code>access_tokens.meta</code> から <code>invitedProjectId</code> / <code>invitedRole</code> を取得</li>
-<li><code>UPDATE users SET name=?, password_hash=?, status='active', updated_at=now() WHERE id=?</code></li>
-<li><code>INSERT INTO terms_agreements (user_id, doc_type, terms_version, agreed_at) VALUES (?, 'terms_of_service', ?, now()), (?, 'privacy_policy', ?, now())</code>(利用規約・プライバシーポリシーの各最新版に対して <code>doc_type</code> 別の 2 行を記録)</li>
-<li><code>UPDATE project_users SET valid=1, updated_at=now() WHERE user_id=? AND project_id=?</code></li>
-<li><code>consumeToken(rawToken, 'activation', env)</code> → <code>access_tokens.used_at</code> セット</li>
-<li><code>writeAudit('user.activation_completed', { user_id, project_id, role })</code></li>
-</ol>
+<h3>処理概要</h3>
+<p class="section-lead">以下を 1 つのトランザクションで実行する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<ul>
+<li>招待トークンの有効性(期限・使用済み)を検証する</li>
+<li>トークンから招待先プロジェクトと付与ロールを取得する</li>
+<li>利用者の氏名・パスワードを設定し、アカウントを有効化する</li>
+<li>利用規約・プライバシーポリシーの最新版への同意を記録する(各文書種別に 1 件)</li>
+<li>対象プロジェクトへの割当を有効化する</li>
+<li>招待トークンを使用済みにする</li>
+<li>監査ログ(アカウント有効化完了)を記録する</li>
+</ul>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{}</code></pre>
@@ -360,14 +361,16 @@
 <tr><td>権限</td><td>—</td></tr>
 </tbody>
 </table>
-<p>Turnstile は不要(入力フォームを持たない単純な確認専用エンドポイントで、トークン HMAC-SHA256 検証 + IP / トークン単位のレート制限で十分)。同一トランザクションで以下:</p>
-<ol type="1">
-<li><code>verifyToken(rawToken, 'contact_verify', env)</code> → 期限・使用済みチェック</li>
-<li><code>access_tokens.meta.projectId</code> を取得(JSON パース)</li>
-<li><code>UPDATE projects SET contact_email_verified_at=now(), updated_at=now() WHERE id=?</code></li>
-<li><code>consumeToken(rawToken, 'contact_verify', env)</code> → <code>access_tokens.used_at</code> セット</li>
-<li><code>writeAudit('project.contact_email_verified', { project_id, email_hmac })</code></li>
-</ol>
+<p>Turnstile は不要(入力フォームを持たない単純な確認専用エンドポイントで、トークン HMAC-SHA256 検証 + IP / トークン単位のレート制限で十分)。</p>
+<h3>処理概要</h3>
+<p class="section-lead">以下を 1 つのトランザクションで実行する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<ul>
+<li>確認トークンの有効性(期限・使用済み)を検証する</li>
+<li>トークンから対象プロジェクトを取得する</li>
+<li>プロジェクトの連絡先メールを確認済みにする</li>
+<li>確認トークンを使用済みにする</li>
+<li>監査ログ(連絡先メール確認)を記録する</li>
+</ul>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{}</code></pre>
