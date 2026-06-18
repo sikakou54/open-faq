@@ -77,6 +77,22 @@
   ],
   "nextCursor": null
 }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>items</code></td><td>array&lt;object&gt;</td><td>契約配下のプロジェクト一覧</td></tr>
+<tr><td><code>　└ id</code></td><td>string</td><td>プロジェクト ID</td></tr>
+<tr><td><code>　└ name</code></td><td>string</td><td>プロジェクト名</td></tr>
+<tr><td><code>　└ status</code></td><td>enum</td><td>プロジェクト状態(<code>active</code> / <code>deleted</code>)</td></tr>
+<tr><td><code>　└ createdAt</code></td><td>string (ISO 8601)</td><td>作成日時</td></tr>
+<tr><td><code>　└ faqCount</code></td><td>integer</td><td>当該プロジェクトの FAQ 件数</td></tr>
+<tr><td><code>　└ widgetKey</code></td><td>string</td><td>ウィジェット公開キー</td></tr>
+<tr><td><code>　└ allowedDomains</code></td><td>array</td><td>許可ドメインのリスト</td></tr>
+<tr><td><code>　└ contactEmail</code></td><td>string</td><td>プロジェクト連絡先メールアドレス</td></tr>
+<tr><td><code>　└ contactEmailVerifiedAt</code></td><td>string (ISO 8601)</td><td>連絡先メール確認日時(未確認は <code>null</code>)</td></tr>
+<tr><td><code>nextCursor</code></td><td>string</td><td>次ページ取得用カーソル(末尾は <code>null</code>)</td></tr>
+</tbody>
+</table>
 <h3>エラー</h3>
 <p>想定エラーは <a href="../05_エラー設計.html">05_エラー設計.html</a> を正本とする。</p>
 
@@ -130,6 +146,13 @@
   "id": "01HZ...",
   "widgetKey": "pk_live_abc123..."
 }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>id</code></td><td>string</td><td>作成したプロジェクトの ID</td></tr>
+<tr><td><code>widgetKey</code></td><td>string</td><td>発行したウィジェット公開キー</td></tr>
+</tbody>
+</table>
 <h3>エラー</h3>
 <table>
 <thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>
@@ -183,6 +206,24 @@
 <p>上記 1-5 はアプリ層のトランザクション内で実装する。論理削除データは <code>updated_at</code> 基準で 90 日経過後に物理削除バッチ(DD13)で物理削除される。物理削除時は <code>ON DELETE CASCADE</code> で関連行が連鎖物理削除される。</p>
 <h3>レスポンス(200)</h3>
 <p>PATCH は更新後のプロジェクト、DELETE は <code>{ "ok": true, "status": "deleted" }</code>。</p>
+<p class="ps-label">PATCH(更新後のプロジェクト)</p>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>id</code></td><td>string</td><td>更新したプロジェクトの ID</td></tr>
+<tr><td><code>name</code></td><td>string</td><td>更新後のプロジェクト名</td></tr>
+<tr><td><code>allowedDomains</code></td><td>array</td><td>更新後の許可ドメインのリスト</td></tr>
+<tr><td><code>contactEmail</code></td><td>string</td><td>更新後の連絡先メールアドレス</td></tr>
+</tbody>
+</table>
+<p class="ps-label">DELETE(論理削除結果)</p>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>ok</code></td><td>boolean</td><td>論理削除の成否</td></tr>
+<tr><td><code>status</code></td><td>enum</td><td>削除後のプロジェクト状態(<code>deleted</code>)</td></tr>
+</tbody>
+</table>
 <h3>エラー</h3>
 <table>
 <thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>
@@ -229,6 +270,13 @@
 </table>
 <h3>レスポンス(201)</h3>
 <pre><code>{ "newKey": "pk_live_xyz789...", "deprecationWarning": "..." }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>newKey</code></td><td>string</td><td>再発行したウィジェット公開キー</td></tr>
+<tr><td><code>deprecationWarning</code></td><td>string</td><td>旧キーの 24 時間猶予失効予告メッセージ</td></tr>
+</tbody>
+</table>
 <p>(<code>deprecationWarning</code> は旧キーの 24 時間猶予失効予告)</p>
 <h3>エラー</h3>
 <p>想定エラーは <a href="../05_エラー設計.html">05_エラー設計.html</a> を正本とする。</p>

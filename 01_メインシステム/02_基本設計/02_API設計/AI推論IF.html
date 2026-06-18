@@ -40,6 +40,26 @@ export interface AnswerProvider {
   healthcheck(): Promise&lt;{ ok: boolean; provider: string; model: string }&gt;;
 }</code></pre>
 <p>MVP は Cloudflare Workers AI 実装(<code>WorkersAIAnswerProvider</code>)。</p>
+<p class="ps-label"><code>generate</code> の戻り値(<code>AnswerResult</code>)</p>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>kind</code></td><td>enum</td><td>結果種別(<code>answered</code> / <code>unanswerable</code> / <code>error</code>)。以下の項目は kind により異なる</td></tr>
+<tr><td><code>answer</code></td><td>string</td><td>　└ <code>kind=answered</code> 時の生成回答本文</td></tr>
+<tr><td><code>cited_faq_ids</code></td><td>array</td><td>　└ <code>kind=answered</code> 時の引用元 FAQ ID 配列(string)</td></tr>
+<tr><td><code>confidence</code></td><td>number</td><td>　└ <code>kind=answered</code> 時の確信度</td></tr>
+<tr><td><code>reason_code</code></td><td>enum</td><td>　└ <code>kind=unanswerable</code> 時は <code>no_match</code> / <code>low_confidence</code> / <code>contradiction</code>、<code>kind=error</code> 時は <code>provider_error</code> / <code>timeout</code> / <code>rate_limited</code></td></tr>
+</tbody>
+</table>
+<p class="ps-label"><code>healthcheck</code> の戻り値</p>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>ok</code></td><td>boolean</td><td>プロバイダが稼働中か</td></tr>
+<tr><td><code>provider</code></td><td>string</td><td>プロバイダ名</td></tr>
+<tr><td><code>model</code></td><td>string</td><td>使用モデル名</td></tr>
+</tbody>
+</table>
 <h3>処理概要</h3>
 <p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
 <table>

@@ -66,6 +66,14 @@
 </table>
 <h3>レスポンス(200)</h3>
 <pre><code>{ "ok": true, "newStatus": "suspended", "appliedAt": "..." }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>ok</code></td><td>boolean</td><td>受領・反映の成否</td></tr>
+<tr><td><code>newStatus</code></td><td>string</td><td>反映後の契約状態(<code>contract_owners.contract_status</code>)</td></tr>
+<tr><td><code>appliedAt</code></td><td>string (ISO 8601)</td><td>反映を適用した時刻</td></tr>
+</tbody>
+</table>
 <h3>エラー</h3>
 <table>
 <thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>
@@ -309,6 +317,25 @@
   ],
   "global": { "d1UsageRatio": 0.65 }
 }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>window</code></td><td>string</td><td>集計ウィンドウ(<code>5m</code> / <code>1h</code> / <code>24h</code>)</td></tr>
+<tr><td><code>since</code></td><td>string (ISO 8601)</td><td>集計期間の開始時刻</td></tr>
+<tr><td><code>until</code></td><td>string (ISO 8601)</td><td>集計期間の終了時刻</td></tr>
+<tr><td><code>owners</code></td><td>array&lt;object&gt;</td><td>契約別メトリクスの配列</td></tr>
+<tr><td>　└ <code>contractOwnerUserId</code></td><td>string</td><td>契約オーナーのユーザー ID</td></tr>
+<tr><td>　└ <code>errorRate5xx</code></td><td>number</td><td>5xx エラー率</td></tr>
+<tr><td>　└ <code>aiInferenceP95Ms</code></td><td>integer</td><td>AI 推論レイテンシ p95(ミリ秒)</td></tr>
+<tr><td>　└ <code>queueDlqCount</code></td><td>integer</td><td>Queue の DLQ 滞留件数</td></tr>
+<tr><td>　└ <code>emailBounceRate</code></td><td>number</td><td>メールバウンス率</td></tr>
+<tr><td>　└ <code>emailComplaintRate</code></td><td>number</td><td>メール苦情率</td></tr>
+<tr><td>　└ <code>billingWebhookFailures</code></td><td>integer</td><td>課金 Webhook 処理失敗件数</td></tr>
+<tr><td>　└ <code>aiAnswerableRate</code></td><td>number</td><td>AI 回答可能率</td></tr>
+<tr><td><code>global</code></td><td>object</td><td>グローバルメトリクス</td></tr>
+<tr><td>　└ <code>d1UsageRatio</code></td><td>number</td><td>D1 使用率</td></tr>
+</tbody>
+</table>
 
 <h2 id="API-LNK-009">API-LNK-009 IF #9 不正利用検知通知(送信側、メ → 顧管)</h2>
 <span id="5128-if-9-不正利用検知通知送信側メ--顧管"></span>

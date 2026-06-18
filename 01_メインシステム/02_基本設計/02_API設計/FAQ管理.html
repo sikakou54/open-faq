@@ -69,6 +69,13 @@
 </table>
 <h3>レスポンス(200)</h3>
 <p>FAQ の配列 + <code>nextCursor</code>(構造は API-025 のレスポンスに準ずる)。</p>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>items</code></td><td>array&lt;object&gt;</td><td>フィルタ条件に一致した FAQ の一覧(各要素の構造は API-FAQ-007 全文検索のレスポンスに準ずる)</td></tr>
+<tr><td><code>nextCursor</code></td><td>string</td><td>次ページ取得用カーソル(末尾は <code>null</code>)</td></tr>
+</tbody>
+</table>
 <h3>エラー</h3>
 <p>403 <code>PROJECT_ACCESS_DENIED</code> ほか(<a href="../05_エラー設計.html">05_エラー設計.html</a> 正本)。</p>
 
@@ -119,6 +126,18 @@
 </table>
 <h3>レスポンス(200 / 201)</h3>
 <p>作成 / 更新後の FAQ(<code>publishedAt</code> を含む)。</p>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>id</code></td><td>string</td><td>作成 / 更新した FAQ の ID</td></tr>
+<tr><td><code>question</code></td><td>string</td><td>質問文</td></tr>
+<tr><td><code>answer</code></td><td>string</td><td>回答文</td></tr>
+<tr><td><code>category</code></td><td>string</td><td>カテゴリ</td></tr>
+<tr><td><code>status</code></td><td>enum</td><td>FAQ 状態(<code>draft</code> / <code>published</code> / <code>hidden</code>)</td></tr>
+<tr><td><code>version</code></td><td>integer</td><td>楽観ロック用バージョン番号</td></tr>
+<tr><td><code>publishedAt</code></td><td>string (ISO 8601)</td><td>公開日時(<code>published</code> 化時に記録、未公開は <code>null</code>)</td></tr>
+</tbody>
+</table>
 <h3>エラー</h3>
 <table>
 <thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>
@@ -166,6 +185,15 @@
 </table>
 <h3>レスポンス(200)</h3>
 <pre><code>{ "succeeded": 48, "failed": [ { "id": "faq_...", "code": "NOT_FOUND" } ] }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>succeeded</code></td><td>integer</td><td>状態変更に成功した件数</td></tr>
+<tr><td><code>failed</code></td><td>array&lt;object&gt;</td><td>失敗した行の明細</td></tr>
+<tr><td><code>　└ id</code></td><td>string</td><td>失敗した FAQ の ID</td></tr>
+<tr><td><code>　└ code</code></td><td>string</td><td>失敗理由のエラーコード(例 <code>NOT_FOUND</code>)</td></tr>
+</tbody>
+</table>
 <h3>エラー</h3>
 <table>
 <thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>
@@ -213,6 +241,13 @@
 </table>
 <h3>レスポンス(202)</h3>
 <pre><code>{ "jobId": "job_...", "status": "processing" }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>jobId</code></td><td>string</td><td>受け付けた取込ジョブの ID</td></tr>
+<tr><td><code>status</code></td><td>enum</td><td>ジョブの受付状態(<code>processing</code>)</td></tr>
+</tbody>
+</table>
 <h3>エラー</h3>
 <table>
 <thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>
@@ -257,6 +292,12 @@
 </table>
 <h3>レスポンス(200)</h3>
 <p>ヘッダ行のみの CSV テンプレート(<code>FAQ ID,質問,回答,カテゴリ</code>)を <code>text/csv; charset=utf-8</code>(UTF-8 BOM 付与可)で返す。<code>Content-Disposition: attachment; filename="faq_import_template.csv"</code>。</p>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td>(本体)</td><td>string</td><td>ヘッダ行のみの CSV ファイル(列 <code>FAQ ID</code> / <code>質問</code> / <code>回答</code> / <code>カテゴリ</code>)。JSON 本体は返さない</td></tr>
+</tbody>
+</table>
 
 <h2 id="API-FAQ-006">API-FAQ-006 FAQ CSV エクスポート</h2>
 <span id="545-get-faqsexport"></span>
@@ -298,6 +339,12 @@
 </table>
 <h3>レスポンス(200)</h3>
 <p>一覧フィルタ適用結果を <strong>CSV(UTF-8、<code>text/csv</code>)</strong> で返す(JSON 形式は提供しない)。</p>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td>(本体)</td><td>string</td><td>一覧フィルタ適用結果の CSV ファイル(UTF-8、<code>text/csv</code>)。JSON 本体は返さない</td></tr>
+</tbody>
+</table>
 
 <h2 id="API-FAQ-007">API-FAQ-007 FAQ 全文検索</h2>
 <span id="546-get-faqssearchfaq-"></span>
@@ -343,6 +390,20 @@
 </table>
 <h3>レスポンス(200)</h3>
 <pre><code>{ "items": [ { "id": "faq_...", "question": "...", "answer": "...", "status": "published", "category": "...", "score": 0.82, "updatedAt": "..." } ], "nextCursor": null }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>items</code></td><td>array&lt;object&gt;</td><td>検索に一致した FAQ の一覧</td></tr>
+<tr><td><code>　└ id</code></td><td>string</td><td>FAQ ID</td></tr>
+<tr><td><code>　└ question</code></td><td>string</td><td>質問文</td></tr>
+<tr><td><code>　└ answer</code></td><td>string</td><td>回答文</td></tr>
+<tr><td><code>　└ status</code></td><td>enum</td><td>FAQ 状態(<code>draft</code> / <code>published</code> / <code>hidden</code>)</td></tr>
+<tr><td><code>　└ category</code></td><td>string</td><td>カテゴリ</td></tr>
+<tr><td><code>　└ score</code></td><td>number</td><td>検索の関連度スコア</td></tr>
+<tr><td><code>　└ updatedAt</code></td><td>string (ISO 8601)</td><td>更新日時</td></tr>
+<tr><td><code>nextCursor</code></td><td>string</td><td>次ページ取得用カーソル(末尾は <code>null</code>)</td></tr>
+</tbody>
+</table>
 
 <h2 id="API-FAQ-008">API-FAQ-008 質問ログ検索</h2>
 <span id="547-get-question-logssearch"></span>
@@ -390,6 +451,19 @@
 </table>
 <h3>レスポンス(200)</h3>
 <pre><code>{ "items": [ { "id": "qlog_...", "question": "...", "answerType": "unanswered", "confidence": 0.42, "inquiryId": "inq_..." | null, "createdAt": "..." } ], "nextCursor": null }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>items</code></td><td>array&lt;object&gt;</td><td>検索に一致した質問ログの一覧</td></tr>
+<tr><td><code>　└ id</code></td><td>string</td><td>質問ログ ID</td></tr>
+<tr><td><code>　└ question</code></td><td>string</td><td>質問文</td></tr>
+<tr><td><code>　└ answerType</code></td><td>enum</td><td>回答有無(<code>answered</code> / <code>unanswered</code>)</td></tr>
+<tr><td><code>　└ confidence</code></td><td>number</td><td>回答の確信度スコア</td></tr>
+<tr><td><code>　└ inquiryId</code></td><td>string</td><td>関連する未解決質問の ID(無い場合は <code>null</code>)</td></tr>
+<tr><td><code>　└ createdAt</code></td><td>string (ISO 8601)</td><td>質問の作成日時</td></tr>
+<tr><td><code>nextCursor</code></td><td>string</td><td>次ページ取得用カーソル(末尾は <code>null</code>)</td></tr>
+</tbody>
+</table>
 </article>
 </body>
 </html>

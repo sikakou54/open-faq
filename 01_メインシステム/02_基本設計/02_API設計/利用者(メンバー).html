@@ -76,6 +76,20 @@
   ],
   "nextCursor": "01HZ..." | null
 }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>items</code></td><td>array&lt;object&gt;</td><td>指定プロジェクトのメンバー割当一覧</td></tr>
+<tr><td><code>　└ id</code></td><td>string</td><td>メンバー(利用者)の ID</td></tr>
+<tr><td><code>　└ email</code></td><td>string</td><td>メンバーのメールアドレス</td></tr>
+<tr><td><code>　└ status</code></td><td>enum</td><td>アカウント状態(<code>active</code> / <code>pending_activation</code>)</td></tr>
+<tr><td><code>　└ role</code></td><td>string</td><td>当該プロジェクトでのロール</td></tr>
+<tr><td><code>　└ isOwner</code></td><td>boolean</td><td>オーナーかどうか</td></tr>
+<tr><td><code>　└ projectRole</code></td><td>string</td><td>当該プロジェクトでのプロジェクトロール</td></tr>
+<tr><td><code>　└ invitationExpiresAt</code></td><td>string (ISO 8601)</td><td>未有効化時の招待トークン有効期限</td></tr>
+<tr><td><code>nextCursor</code></td><td>string</td><td>次ページ取得用カーソル(末尾は <code>null</code>)</td></tr>
+</tbody>
+</table>
 <div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span><code>items[]</code> は URL で指定したプロジェクトの割当だけを返す。最終ログイン日時と他プロジェクトの割当は返さない。</div></div>
 
 <h2 id="API-MBR-002">API-MBR-002 メンバー招待</h2>
@@ -119,6 +133,14 @@
 </table>
 <h3>レスポンス(201)</h3>
 <pre><code>{ "userId": "01HZ...", "status": "active|pending_activation", "expiresAt": "..." | null }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>userId</code></td><td>string</td><td>招待した(または既存の)メンバーの ID</td></tr>
+<tr><td><code>status</code></td><td>enum</td><td>アカウント状態(<code>active</code> / <code>pending_activation</code>)</td></tr>
+<tr><td><code>expiresAt</code></td><td>string (ISO 8601)</td><td>新規招待時のトークン有効期限(既存アカウントは <code>null</code>)</td></tr>
+</tbody>
+</table>
 <h3>エラー</h3>
 <table>
 <thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>
@@ -177,6 +199,15 @@
 </table>
 <h3>レスポンス(200)</h3>
 <pre><code>{ "userId": "...", "projectId": "...", "role": "admin|member", "updatedAt": "..." }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>userId</code></td><td>string</td><td>ロールを変更した対象利用者の ID</td></tr>
+<tr><td><code>projectId</code></td><td>string</td><td>対象プロジェクトの ID</td></tr>
+<tr><td><code>role</code></td><td>enum</td><td>変更後のロール(<code>admin</code> / <code>member</code>)</td></tr>
+<tr><td><code>updatedAt</code></td><td>string (ISO 8601)</td><td>ロール更新日時</td></tr>
+</tbody>
+</table>
 <h3>エラー</h3>
 <table>
 <thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>
@@ -234,6 +265,14 @@
 </table>
 <h3>レスポンス(200)</h3>
 <pre><code>{ "userId": "...", "projectId": "...", "accountDeactivated": true|false }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>userId</code></td><td>string</td><td>割当を解除した対象利用者の ID</td></tr>
+<tr><td><code>projectId</code></td><td>string</td><td>割当を解除したプロジェクトの ID</td></tr>
+<tr><td><code>accountDeactivated</code></td><td>boolean</td><td>他プロジェクトの有効割当が 0 件となりアカウントを論理削除したかどうか</td></tr>
+</tbody>
+</table>
 <h3>エラー</h3>
 <table>
 <thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>
@@ -283,6 +322,13 @@
 </table>
 <h3>レスポンス(200)</h3>
 <p>再発行結果(<code>{ "ok": true, "expiresAt": "..." }</code>)。</p>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>ok</code></td><td>boolean</td><td>招待メール再送の成否</td></tr>
+<tr><td><code>expiresAt</code></td><td>string (ISO 8601)</td><td>再発行した招待トークンの有効期限</td></tr>
+</tbody>
+</table>
 <h3>エラー</h3>
 <table>
 <thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>

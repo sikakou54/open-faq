@@ -75,6 +75,12 @@
 </table>
 <h3>レスポンス(202)</h3>
 <pre><code>{ "ok": true }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>ok</code></td><td>boolean</td><td>登録受付の成否(確認メール送信を受け付けた場合 <code>true</code>)</td></tr>
+</tbody>
+</table>
 <h3>エラー</h3>
 <table>
 <thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>
@@ -132,6 +138,18 @@
     { "id": "...", "ipAddress": "203.0.113.x", "createdAt": "..." }
   ]
 }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>userId</code></td><td>string</td><td>認証された利用者の ID</td></tr>
+<tr><td><code>role</code></td><td>string</td><td>利用者のロール(例 <code>admin</code>)</td></tr>
+<tr><td><code>requireTermsAgreement</code></td><td>boolean</td><td>再規約同意が必要かどうか</td></tr>
+<tr><td><code>activeSessions</code></td><td>array&lt;object&gt;</td><td>現在有効なセッションの一覧</td></tr>
+<tr><td><code>　└ id</code></td><td>string</td><td>セッション ID</td></tr>
+<tr><td><code>　└ ipAddress</code></td><td>string</td><td>セッション発行元の IP アドレス</td></tr>
+<tr><td><code>　└ createdAt</code></td><td>string (ISO 8601)</td><td>セッション作成日時</td></tr>
+</tbody>
+</table>
 <h3>エラー</h3>
 <table>
 <thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>
@@ -176,6 +194,12 @@
 </table>
 <h3>レスポンス(200)</h3>
 <pre><code>{ "ok": true }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>ok</code></td><td>boolean</td><td>セッション失効の成否</td></tr>
+</tbody>
+</table>
 <h3>エラー</h3>
 <p>想定エラーは <a href="../05_エラー設計.html">05_エラー設計.html</a> を正本とする(本 API 固有のエラーコードなし)。</p>
 
@@ -214,6 +238,12 @@
 </table>
 <h3>レスポンス(202)</h3>
 <pre><code>{ "ok": true }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>ok</code></td><td>boolean</td><td>再設定要求の受付成否(アカウントの存在有無に関わらず一律 <code>true</code>)</td></tr>
+</tbody>
+</table>
 <div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>列挙攻撃対策として、アカウントの存在有無は応答に含めない。</div></div>
 
 <h2 id="API-AUTH-005">API-AUTH-005 再認証</h2>
@@ -251,6 +281,13 @@
 </table>
 <h3>レスポンス(200)</h3>
 <pre><code>{ "ok": true, "token": "reauth_..." }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>ok</code></td><td>boolean</td><td>再認証の成否</td></tr>
+<tr><td><code>token</code></td><td>string</td><td>機微操作に使う再認証トークン</td></tr>
+</tbody>
+</table>
 <h3>エラー</h3>
 <table>
 <thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>
@@ -296,6 +333,13 @@
 </table>
 <h3>レスポンス(200)</h3>
 <pre><code>{ "userId": "...", "verifiedAt": "..." }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>userId</code></td><td>string</td><td>メール確認の対象アカウント ID</td></tr>
+<tr><td><code>verifiedAt</code></td><td>string (ISO 8601)</td><td>メールアドレスを確認済みとした日時</td></tr>
+</tbody>
+</table>
 <h3>エラー</h3>
 <table>
 <thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>
@@ -348,6 +392,18 @@
   "inviterOwnerName": "山田 一郎",
   "expiresAt": "2026-05-28T..."
 }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>userId</code></td><td>string</td><td>招待された利用者の ID</td></tr>
+<tr><td><code>email</code></td><td>string</td><td>招待先メールアドレス</td></tr>
+<tr><td><code>projectId</code></td><td>string</td><td>招待先プロジェクトの ID</td></tr>
+<tr><td><code>projectName</code></td><td>string</td><td>招待先プロジェクトの名称</td></tr>
+<tr><td><code>invitedRole</code></td><td>enum</td><td>付与されるロール(<code>admin</code> / <code>member</code>)</td></tr>
+<tr><td><code>inviterOwnerName</code></td><td>string</td><td>招待元オーナーの氏名</td></tr>
+<tr><td><code>expiresAt</code></td><td>string (ISO 8601)</td><td>招待トークンの有効期限</td></tr>
+</tbody>
+</table>
 <h3>エラー</h3>
 <table>
 <thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>
@@ -412,6 +468,13 @@
 </table>
 <h3>レスポンス(200)</h3>
 <pre><code>{ "userId": "01HZ...", "redirectUrl": "/auth/login" }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>userId</code></td><td>string</td><td>有効化が完了した利用者の ID</td></tr>
+<tr><td><code>redirectUrl</code></td><td>string</td><td>有効化完了後の遷移先 URL(ログイン画面)</td></tr>
+</tbody>
+</table>
 <h3>エラー</h3>
 <table>
 <thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>
@@ -461,6 +524,14 @@
 </table>
 <h3>レスポンス(200)</h3>
 <pre><code>{ "projectId": "proj_1", "projectName": "サポートサイト", "verifiedAt": "2026-05-21T..." }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>projectId</code></td><td>string</td><td>連絡先メールを確認した対象プロジェクトの ID</td></tr>
+<tr><td><code>projectName</code></td><td>string</td><td>対象プロジェクトの名称</td></tr>
+<tr><td><code>verifiedAt</code></td><td>string (ISO 8601)</td><td>連絡先メールを確認済みとした日時</td></tr>
+</tbody>
+</table>
 <h3>エラー</h3>
 <table>
 <thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>
