@@ -46,6 +46,13 @@
   "cursor": "(共通仕様)",
   "limit": "(共通仕様)"
 }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>cursor</code></td><td>string</td><td>次ページ取得用カーソル(任意・共通ページング仕様)</td></tr>
+<tr><td><code>limit</code></td><td>integer</td><td>1 ページの取得件数(任意・共通ページング仕様)</td></tr>
+</tbody>
+</table>
 <h4>Path Parameters</h4>
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
@@ -123,6 +130,14 @@
   "description": "説明文",
   "allowedDomains": ["example.com"]
 }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>name</code></td><td>string</td><td>プロジェクト名(必須)</td></tr>
+<tr><td><code>description</code></td><td>string</td><td>プロジェクトの説明文(任意)</td></tr>
+<tr><td><code>allowedDomains</code></td><td>array</td><td>ウィジェット許可ドメインのリスト(必須)</td></tr>
+</tbody>
+</table>
 <p>オーナー固定化(FR-030a / FR-015e):</p>
 <ul>
 <li>リクエストに <code>initialAdmins</code> フィールド(<code>selfAsAdmin</code> フラグや <code>adminEmails[]</code>)は持たない。オーナーは作成時に自動で当該プロジェクトの管理者となるため、UI / API での個別指定は不要。</li>
@@ -184,12 +199,26 @@
 <pre><code>{}</code></pre>
 <h4>Path Parameters</h4>
 <pre><code>{ "id": "プロジェクト ID" }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>id</code></td><td>string</td><td>更新 / 削除の対象プロジェクトの ID(必須・パス内で指定)</td></tr>
+</tbody>
+</table>
 <h4>Request Body</h4>
 <pre><code>{
   "name": "...",
   "allowedDomains": ["..."],
   "contactEmail": "..."
 }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>name</code></td><td>string</td><td>更新後のプロジェクト名(PATCH 時・任意の部分更新項目)</td></tr>
+<tr><td><code>allowedDomains</code></td><td>array</td><td>更新後の許可ドメインのリスト(PATCH 時・任意の部分更新項目)</td></tr>
+<tr><td><code>contactEmail</code></td><td>string</td><td>更新後の連絡先メールアドレス(PATCH 時・任意の部分更新項目)</td></tr>
+</tbody>
+</table>
 <p>上記 Request Body は PATCH(部分更新)時のもの。DELETE 時はボディなし。<code>DELETE /projects/{id}</code> 実行時の挙動(FR-030b、論理削除)。</p>
 <h3>処理概要</h3>
 <p class="section-lead">プロジェクトの部分更新 / 論理削除(FR-030b)。</p>
@@ -254,6 +283,12 @@
 <pre><code>{}</code></pre>
 <h4>Path Parameters</h4>
 <pre><code>{ "id": "プロジェクト ID" }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>id</code></td><td>string</td><td>鍵をローテーションする対象プロジェクトの ID(必須・パス内で指定)</td></tr>
+</tbody>
+</table>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
 <p>公開キーは無期限のため有効期限指定パラメータは持たない。</p>

@@ -51,6 +51,17 @@
   "occurredAt": "2026-05-13T10:00:00Z",
   "operatorAccountId": "..."
 }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>operationId</code></td><td>string</td><td>操作 ID(冪等性キー構成要素、必須)</td></tr>
+<tr><td><code>contractOwnerUserId</code></td><td>string</td><td>対象契約オーナーのユーザー ID(必須)</td></tr>
+<tr><td><code>targetStatus</code></td><td>enum</td><td>反映する契約状態(<code>suspended</code> 等、必須)</td></tr>
+<tr><td><code>reason</code></td><td>enum</td><td>停止理由(<code>payment_failed</code> / <code>terms_violation</code> / <code>manual_admin</code>、必須)</td></tr>
+<tr><td><code>occurredAt</code></td><td>string (ISO 8601)</td><td>イベント発生時刻(必須)</td></tr>
+<tr><td><code>operatorAccountId</code></td><td>string</td><td>操作した運営者アカウント ID(任意)</td></tr>
+</tbody>
+</table>
 <p>ヘッダ: <code>Idempotency-Key: (operation_id, contract_owner_user_id, target_status)</code>。</p>
 <h3>処理概要</h3>
 <p class="section-lead">顧客管理システムからの契約停止イベントを受信し、契約状態とセッションを反映します。</p>
@@ -101,6 +112,16 @@
   "userId": "...",
   "reason": "..."
 }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>operationId</code></td><td>string</td><td>操作 ID(冪等性キー、必須)</td></tr>
+<tr><td><code>contractOwnerUserId</code></td><td>string</td><td>対象契約オーナーのユーザー ID(必須)</td></tr>
+<tr><td><code>scope</code></td><td>enum</td><td>失効範囲(<code>all</code>=全体 / <code>single_account</code>=単一アカウント、必須)</td></tr>
+<tr><td><code>userId</code></td><td>string</td><td>対象ユーザー ID(<code>scope=single_account</code> 時に指定)</td></tr>
+<tr><td><code>reason</code></td><td>string</td><td>強制ログアウトの理由(任意)</td></tr>
+</tbody>
+</table>
 <h3>処理概要</h3>
 <p class="section-lead">顧客管理システムからの強制ログアウト指示を受信し、セッションを失効します。</p>
 <table>
@@ -155,6 +176,20 @@
   "reason": "...",
   "operatorAccountId": "..."
 }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>contractOwnerUserId</code></td><td>string</td><td>対象契約オーナーのユーザー ID(必須)</td></tr>
+<tr><td><code>overrideId</code></td><td>string</td><td>上書き ID(冪等性キー、必須)</td></tr>
+<tr><td><code>limits</code></td><td>array&lt;object&gt;</td><td>上書きするレート制限の配列(必須)</td></tr>
+<tr><td>　└ <code>kind</code></td><td>string</td><td>レート制限種別(例 <code>ask</code>)</td></tr>
+<tr><td>　└ <code>limit</code></td><td>integer</td><td>許可上限回数</td></tr>
+<tr><td>　└ <code>windowSec</code></td><td>integer</td><td>レート制限の時間窓(秒)</td></tr>
+<tr><td>　└ <code>validUntil</code></td><td>string (ISO 8601)</td><td>上書きの有効期限</td></tr>
+<tr><td><code>reason</code></td><td>string</td><td>上書きの理由(任意)</td></tr>
+<tr><td><code>operatorAccountId</code></td><td>string</td><td>操作した運営者アカウント ID(任意)</td></tr>
+</tbody>
+</table>
 <h3>処理概要</h3>
 <p class="section-lead">契約単位のレート制限上書きを受信し、即時反映します。</p>
 <table>
@@ -187,6 +222,21 @@
   "reason": "...",
   "operatorAccountId": "..."
 }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>contractOwnerUserId</code></td><td>string</td><td>対象契約オーナーのユーザー ID(必須)</td></tr>
+<tr><td><code>projectId</code></td><td>string</td><td>上書き対象のプロジェクト ID(必須)</td></tr>
+<tr><td><code>overrideId</code></td><td>string</td><td>上書き ID(冪等性キー、必須)</td></tr>
+<tr><td><code>limits</code></td><td>array&lt;object&gt;</td><td>上書きする月次上限件数の配列(必須)</td></tr>
+<tr><td>　└ <code>kind</code></td><td>enum</td><td>上限種別(<code>question_monthly_limit</code> / <code>faq_monthly_limit</code>)</td></tr>
+<tr><td>　└ <code>limit</code></td><td>integer</td><td>月次上限件数(FAQ は常に NULL、指定時 422)</td></tr>
+<tr><td>　└ <code>freeQuota</code></td><td>integer</td><td>無料枠件数</td></tr>
+<tr><td>　└ <code>validUntil</code></td><td>string (ISO 8601)</td><td>上書きの有効期限</td></tr>
+<tr><td><code>reason</code></td><td>string</td><td>上書きの理由(任意)</td></tr>
+<tr><td><code>operatorAccountId</code></td><td>string</td><td>操作した運営者アカウント ID(任意)</td></tr>
+</tbody>
+</table>
 <h3>処理概要</h3>
 <p class="section-lead">プロジェクト単位の月次上限件数上書き(4-eyes 承認済み)を受信し、即時反映します。</p>
 <table>
@@ -220,6 +270,18 @@
   "scope": "owner|project",
   "operatorAccountId": "..."
 }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>contractOwnerUserId</code></td><td>string</td><td>対象契約オーナーのユーザー ID(必須)</td></tr>
+<tr><td><code>version</code></td><td>string (ISO 8601)</td><td>上書きのバージョン(冪等性判定、必須)</td></tr>
+<tr><td><code>projectId</code></td><td>string</td><td>対象プロジェクト ID(<code>scope=project</code> 時に指定、owner 時は null)</td></tr>
+<tr><td><code>confidenceThreshold</code></td><td>number</td><td>AI 回答可否の確信度しきい値</td></tr>
+<tr><td><code>relevanceThreshold</code></td><td>number</td><td>AI 回答可否の関連度しきい値</td></tr>
+<tr><td><code>scope</code></td><td>enum</td><td>適用範囲(<code>owner</code>=契約全体 / <code>project</code>=プロジェクト単位、必須)</td></tr>
+<tr><td><code>operatorAccountId</code></td><td>string</td><td>操作した運営者アカウント ID(任意)</td></tr>
+</tbody>
+</table>
 <h3>処理概要</h3>
 <p class="section-lead">AI 回答可否のしきい値上書きを受信し、KV と永続キャッシュへ反映します。</p>
 <table>
@@ -254,6 +316,19 @@
   "publishedAt": "...",
   "operatorAccountId": "..."
 }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>announcementId</code></td><td>string</td><td>お知らせ ID(冪等性キー、必須)</td></tr>
+<tr><td><code>contractOwnerUserId</code></td><td>string</td><td>対象契約オーナーのユーザー ID(全契約配信時は null)</td></tr>
+<tr><td><code>title</code></td><td>string</td><td>お知らせのタイトル(必須)</td></tr>
+<tr><td><code>bodyHtml</code></td><td>string</td><td>お知らせ本文 HTML(必須)</td></tr>
+<tr><td><code>importance</code></td><td>enum</td><td>重要度(<code>low</code> / <code>normal</code> / <code>high</code> / <code>critical</code>、必須)</td></tr>
+<tr><td><code>audienceContractOwnerUserIds</code></td><td>array</td><td>配信先 contract_owner_user_id の配列(null / 空配列で全契約配信、列挙で限定配信)</td></tr>
+<tr><td><code>publishedAt</code></td><td>string (ISO 8601)</td><td>公開時刻(必須)</td></tr>
+<tr><td><code>operatorAccountId</code></td><td>string</td><td>操作した運営者アカウント ID(任意)</td></tr>
+</tbody>
+</table>
 <ul>
 <li><code>audienceContractOwnerUserIds</code>:
 <ul>
@@ -284,6 +359,12 @@
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{ "window": "5m|1h|24h" }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>window</code></td><td>enum</td><td>集計ウィンドウ(<code>5m</code> / <code>1h</code> / <code>24h</code>、必須)</td></tr>
+</tbody>
+</table>
 <h4>Path Parameters</h4>
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
@@ -349,6 +430,15 @@
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
 <pre><code>{ "detectionId": "...", "contractOwnerUserId": "...", "pattern": "...", "details": {...} }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>detectionId</code></td><td>string</td><td>検知 ID(必須)</td></tr>
+<tr><td><code>contractOwnerUserId</code></td><td>string</td><td>対象契約オーナーのユーザー ID(必須)</td></tr>
+<tr><td><code>pattern</code></td><td>string</td><td>検知した不正利用パターン(必須)</td></tr>
+<tr><td><code>details</code></td><td>object</td><td>検知の詳細情報</td></tr>
+</tbody>
+</table>
 <h3>処理概要</h3>
 <p class="section-lead">メインから顧客管理システムへ不正利用検知を通知します。</p>
 <table>
@@ -380,6 +470,17 @@
   "receivedAt": "...",
   "signatureVerifiedAt": "..."
 }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>stripeEventId</code></td><td>string</td><td>Stripe イベント ID(<code>evt_*</code>、冪等性キー、必須)</td></tr>
+<tr><td><code>eventType</code></td><td>string</td><td>Stripe イベント種別(<code>invoice.paid</code> / <code>invoice.payment_failed</code> / <code>customer.subscription.created</code> 等、必須)</td></tr>
+<tr><td><code>contractOwnerUserId</code></td><td>string</td><td>対象契約オーナーのユーザー ID(必須)</td></tr>
+<tr><td><code>payload</code></td><td>object</td><td>Stripe イベントの生ペイロード</td></tr>
+<tr><td><code>receivedAt</code></td><td>string (ISO 8601)</td><td>運営者側で受信した時刻</td></tr>
+<tr><td><code>signatureVerifiedAt</code></td><td>string (ISO 8601)</td><td>署名検証を完了した時刻</td></tr>
+</tbody>
+</table>
 <h3>処理概要</h3>
 <p class="section-lead">運営者が一次受信した Stripe 課金イベントを受信し、請求 / 契約状態へ反映します(FR-139)。</p>
 <table>
@@ -413,6 +514,18 @@
   "ticketId": "...",
   "summary": "削除データを復元しました"
 }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>operationId</code></td><td>string</td><td>操作 ID(冪等性キー、必須)</td></tr>
+<tr><td><code>contractOwnerUserId</code></td><td>string</td><td>対象契約オーナーのユーザー ID(必須)</td></tr>
+<tr><td><code>operationKind</code></td><td>string</td><td>運営者操作の種別(<code>owner.restore_data</code> / <code>owner.suspend</code> / <code>rate_limit.override</code> 等、必須)</td></tr>
+<tr><td><code>occurredAt</code></td><td>string (ISO 8601)</td><td>操作の発生時刻(必須)</td></tr>
+<tr><td><code>actorOperatorId</code></td><td>string</td><td>操作を実行した運営者 ID</td></tr>
+<tr><td><code>ticketId</code></td><td>string</td><td>関連するチケット ID(任意)</td></tr>
+<tr><td><code>summary</code></td><td>string</td><td>操作内容の要約文言</td></tr>
+</tbody>
+</table>
 <h3>処理概要</h3>
 <p class="section-lead">運営者操作の通知を受信し、管理者 inbox とメール通知へ反映します。</p>
 <table>

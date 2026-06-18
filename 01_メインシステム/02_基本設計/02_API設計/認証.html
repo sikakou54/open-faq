@@ -60,6 +60,17 @@
   "agreedPrivacy": true,
   "turnstileToken": "..."
 }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>email</code></td><td>string</td><td>登録するメールアドレス(必須)</td></tr>
+<tr><td><code>password</code></td><td>string</td><td>初回パスワード(必須)</td></tr>
+<tr><td><code>passwordConfirm</code></td><td>string</td><td>パスワード確認用(必須・<code>password</code> と一致)</td></tr>
+<tr><td><code>agreedTerms</code></td><td>boolean</td><td>利用規約への同意(必須・<code>true</code>)</td></tr>
+<tr><td><code>agreedPrivacy</code></td><td>boolean</td><td>プライバシーポリシーへの同意(必須・<code>true</code>)</td></tr>
+<tr><td><code>turnstileToken</code></td><td>string</td><td>Turnstile 検証トークン(必須)</td></tr>
+</tbody>
+</table>
 <h3>処理概要</h3>
 <p class="section-lead">オーナーアカウントを新規登録し、メール確認を要求する。</p>
 <table>
@@ -118,6 +129,14 @@
   "password": "...",
   "turnstileToken": "..."
 }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>email</code></td><td>string</td><td>ログインするメールアドレス(必須)</td></tr>
+<tr><td><code>password</code></td><td>string</td><td>パスワード(必須)</td></tr>
+<tr><td><code>turnstileToken</code></td><td>string</td><td>Turnstile 検証トークン(連続失敗時に要求される場合に必須)</td></tr>
+</tbody>
+</table>
 <h3>処理概要</h3>
 <p class="section-lead">メール / パスワードを認証しセッションを発行する。</p>
 <table>
@@ -226,6 +245,13 @@
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
 <pre><code>{ "email": "admin@example.com", "turnstileToken": "..." }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>email</code></td><td>string</td><td>再設定メールの送信先メールアドレス(必須)</td></tr>
+<tr><td><code>turnstileToken</code></td><td>string</td><td>Turnstile 検証トークン(必須)</td></tr>
+</tbody>
+</table>
 <h3>処理概要</h3>
 <p class="section-lead">再設定メールの送信を要求する。</p>
 <table>
@@ -269,6 +295,12 @@
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
 <pre><code>{ "password": "..." }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>password</code></td><td>string</td><td>再確認するパスワード(必須)</td></tr>
+</tbody>
+</table>
 <h3>処理概要</h3>
 <p class="section-lead">機微操作の前にパスワードを再確認する。</p>
 <table>
@@ -318,6 +350,12 @@
 <pre><code>{}</code></pre>
 <h4>Path Parameters</h4>
 <pre><code>{ "token": "メール確認トークン" }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>token</code></td><td>string</td><td>メール確認トークン(必須・パス末尾で指定)</td></tr>
+</tbody>
+</table>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
 <h3>処理概要</h3>
@@ -370,6 +408,12 @@
 <pre><code>{}</code></pre>
 <h4>Path Parameters</h4>
 <pre><code>{ "token": "招待トークン" }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>token</code></td><td>string</td><td>招待トークン(必須・パス内で指定)</td></tr>
+</tbody>
+</table>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
 <h3>処理概要</h3>
@@ -435,6 +479,12 @@
 <pre><code>{}</code></pre>
 <h4>Path Parameters</h4>
 <pre><code>{ "token": "招待トークン" }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>token</code></td><td>string</td><td>招待トークン(必須・パス内で指定)</td></tr>
+</tbody>
+</table>
 <h4>Request Body</h4>
 <pre><code>{
   "displayName": "山田 太郎",
@@ -444,6 +494,17 @@
   "privacyAgreed": true,
   "turnstileToken": "..."
 }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>displayName</code></td><td>string</td><td>本人の表示氏名(必須・1〜100 文字、前後空白トリム)</td></tr>
+<tr><td><code>password</code></td><td>string</td><td>初回パスワード(必須・12 文字以上、英大文字 / 小文字 / 数字 / 記号のうち 3 種類以上)</td></tr>
+<tr><td><code>passwordConfirm</code></td><td>string</td><td>パスワード確認用(必須・<code>password</code> と一致)</td></tr>
+<tr><td><code>termsAgreed</code></td><td>boolean</td><td>利用規約への同意(必須・<code>true</code>)</td></tr>
+<tr><td><code>privacyAgreed</code></td><td>boolean</td><td>プライバシーポリシーへの同意(必須・<code>true</code>)</td></tr>
+<tr><td><code>turnstileToken</code></td><td>string</td><td>Turnstile 検証トークン(必須)</td></tr>
+</tbody>
+</table>
 <p>バリデーション:</p>
 <ul>
 <li><code>displayName</code>: 必須、1〜100 文字(前後空白トリム)</li>
@@ -508,6 +569,12 @@
 <pre><code>{}</code></pre>
 <h4>Path Parameters</h4>
 <pre><code>{ "token": "連絡先確認トークン" }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>token</code></td><td>string</td><td>連絡先確認トークン(必須・パス内で指定)</td></tr>
+</tbody>
+</table>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
 <h3>処理概要</h3>

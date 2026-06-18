@@ -41,6 +41,15 @@
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{ "period": "current_month", "projectId": "{id}(メンバーは必須)", "from": "任意(period の代わりに範囲指定)", "to": "任意(period の代わりに範囲指定)" }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>period</code></td><td>enum</td><td>集計期間。任意。<code>current_month</code> / <code>last_30d</code>。<code>from</code> / <code>to</code> を指定する場合は不要</td></tr>
+<tr><td><code>projectId</code></td><td>string</td><td>対象プロジェクトの ID。オーナーは任意(未指定で契約全体を集約)、メンバーは必須</td></tr>
+<tr><td><code>from</code></td><td>string (ISO 8601)</td><td>集計期間の起点。任意(<code>period</code> の代わりに範囲指定する場合に使用)</td></tr>
+<tr><td><code>to</code></td><td>string (ISO 8601)</td><td>集計期間の終点。任意(<code>period</code> の代わりに範囲指定する場合に使用)</td></tr>
+</tbody>
+</table>
 <h4>Path Parameters</h4>
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>

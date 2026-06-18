@@ -53,6 +53,16 @@
   "cursor": "(共通仕様)",
   "limit": "(共通仕様)"
 }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>status</code></td><td>enum</td><td>状態での絞り込み(任意・<code>draft</code> / <code>published</code> / <code>hidden</code>)</td></tr>
+<tr><td><code>projectId</code></td><td>string</td><td>対象プロジェクトの ID(必須)</td></tr>
+<tr><td><code>keyword</code></td><td>string</td><td>キーワードでの絞り込み(任意)</td></tr>
+<tr><td><code>cursor</code></td><td>string</td><td>次ページ取得用カーソル(任意・共通ページング仕様)</td></tr>
+<tr><td><code>limit</code></td><td>integer</td><td>1 ページの取得件数(任意・共通ページング仕様)</td></tr>
+</tbody>
+</table>
 <h4>Path Parameters</h4>
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
@@ -102,6 +112,12 @@
 <pre><code>{}</code></pre>
 <h4>Path Parameters</h4>
 <pre><code>{ "id": "FAQ ID(PATCH / DELETE 時)" }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>id</code></td><td>string</td><td>対象 FAQ の ID(PATCH / DELETE 時は必須・パス内で指定。POST 時は不要)</td></tr>
+</tbody>
+</table>
 <h4>Request Body</h4>
 <pre><code>{
   "question": "...",
@@ -110,6 +126,16 @@
   "status": "draft | published | hidden",
   "version": 1
 }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>question</code></td><td>string</td><td>質問文(必須・最大 500 字)</td></tr>
+<tr><td><code>answer</code></td><td>string</td><td>回答文(必須・最大 5,000 字)</td></tr>
+<tr><td><code>category</code></td><td>string</td><td>カテゴリ(任意)</td></tr>
+<tr><td><code>status</code></td><td>enum</td><td>FAQ 状態(必須・<code>draft</code> / <code>published</code> / <code>hidden</code>)</td></tr>
+<tr><td><code>version</code></td><td>integer</td><td>楽観ロック用バージョン番号(更新 / 削除時は必須・不一致は 409)</td></tr>
+</tbody>
+</table>
 <p>Request Body は FAQ 内容(POST は新規)。</p>
 <h3>処理概要</h3>
 <p class="section-lead">FAQ の CRUD と状態(<code>draft</code> / <code>published</code> / <code>hidden</code>)の相互遷移。</p>
@@ -171,6 +197,13 @@
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
 <pre><code>{ "ids": ["faq_...", "faq_..."], "status": "published" }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>ids</code></td><td>array</td><td>状態を変更する FAQ の ID リスト(必須・1 リクエスト上限 50 件)</td></tr>
+<tr><td><code>status</code></td><td>enum</td><td>変更後の状態(必須・<code>draft</code> / <code>published</code> / <code>hidden</code>)</td></tr>
+</tbody>
+</table>
 <h3>処理概要</h3>
 <p class="section-lead">選択した複数 FAQ の状態を一括で変更する(1 リクエスト上限 50 件)。</p>
 <table>
@@ -226,6 +259,12 @@
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
 <pre><code>multipart/form-data { file: &lt;CSV&gt; }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>file</code></td><td>string</td><td>取込対象の CSV ファイル(必須・<code>multipart/form-data</code>、UTF-8、ヘッダ行必須、1 ファイル最大 1000 件)</td></tr>
+</tbody>
+</table>
 <p>受理形式は <strong>CSV のみ</strong>(UTF-8、BOM 許容、ヘッダ行必須、1 ファイル最大 1000 件)。<strong>JSON 形式は受理しない</strong>(不正形式は 415 / 400、E-INPUT-CSV-INVALID)。CSV 列構成は <code>FAQ ID, 質問, 回答, カテゴリ</code>。各行の <code>FAQ ID</code> で <strong>空欄 = 新規(<code>status=draft</code>)/ 既存 ID 一致 = 上書き(状態維持・<code>faq_revisions</code> に改訂追記)/ 当該契約に存在しない ID = 当該行を失敗</strong>(行単位エラー、E-INPUT-CSV-FAQID-NOTFOUND)と判定する。<code>status</code> 列は受理しない。</p>
 <h3>処理概要</h3>
 <p class="section-lead">CSV による FAQ の一括取込(新規 / 上書き)。</p>
@@ -322,6 +361,14 @@
   "projectId": "(一覧フィルタに準ずる)",
   "keyword": "(任意・一覧フィルタに準ずる)"
 }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>status</code></td><td>enum</td><td>状態での絞り込み(任意・一覧フィルタに準ずる)</td></tr>
+<tr><td><code>projectId</code></td><td>string</td><td>対象プロジェクトの ID(一覧フィルタに準ずる)</td></tr>
+<tr><td><code>keyword</code></td><td>string</td><td>キーワードでの絞り込み(任意・一覧フィルタに準ずる)</td></tr>
+</tbody>
+</table>
 <h4>Path Parameters</h4>
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
@@ -372,8 +419,24 @@
   "cursor": "(共通仕様)",
   "limit": "(50〜200)"
 }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>keyword</code></td><td>string</td><td>検索キーワード(必須)</td></tr>
+<tr><td><code>status</code></td><td>enum</td><td>状態での絞り込み(任意・<code>draft</code> / <code>published</code> / <code>hidden</code>)</td></tr>
+<tr><td><code>sort</code></td><td>enum</td><td>並び順(任意・<code>relevance</code>(既定) / <code>updated_at</code>)</td></tr>
+<tr><td><code>cursor</code></td><td>string</td><td>次ページ取得用カーソル(任意・共通ページング仕様)</td></tr>
+<tr><td><code>limit</code></td><td>integer</td><td>1 ページの取得件数(任意・50〜200)</td></tr>
+</tbody>
+</table>
 <h4>Path Parameters</h4>
 <pre><code>{ "id": "プロジェクト ID" }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>id</code></td><td>string</td><td>検索対象プロジェクトの ID(必須・パス内で指定)</td></tr>
+</tbody>
+</table>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
 <p>全文検索方式・対象列は <a href="../03_テーブル設計.html">03_テーブル設計.html</a>(FTS インデックス)を正本とする。</p>
@@ -433,8 +496,26 @@
   "cursor": "(共通仕様)",
   "limit": "(50〜200)"
 }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>keyword</code></td><td>string</td><td>検索キーワード(任意)</td></tr>
+<tr><td><code>from</code></td><td>string (ISO 8601)</td><td>検索期間の開始日時(任意)</td></tr>
+<tr><td><code>to</code></td><td>string (ISO 8601)</td><td>検索期間の終了日時(任意)</td></tr>
+<tr><td><code>answerType</code></td><td>enum</td><td>回答有無での絞り込み(任意・<code>answered</code> / <code>unanswered</code>)</td></tr>
+<tr><td><code>sort</code></td><td>enum</td><td>並び順(任意・<code>created_at</code> 降順が既定)</td></tr>
+<tr><td><code>cursor</code></td><td>string</td><td>次ページ取得用カーソル(任意・共通ページング仕様)</td></tr>
+<tr><td><code>limit</code></td><td>integer</td><td>1 ページの取得件数(任意・50〜200)</td></tr>
+</tbody>
+</table>
 <h4>Path Parameters</h4>
 <pre><code>{ "id": "プロジェクト ID" }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>id</code></td><td>string</td><td>検索対象プロジェクトの ID(必須・パス内で指定)</td></tr>
+</tbody>
+</table>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
 <p>対象列・全文検索方式は <a href="../03_テーブル設計.html">03_テーブル設計.html</a> を正本とする。</p>

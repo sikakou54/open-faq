@@ -46,6 +46,15 @@
   "cursor": "(共通仕様)",
   "limit": "(共通仕様)"
 }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>status</code></td><td>enum</td><td>状況での絞り込み。任意。<code>open</code> / <code>closed</code> のいずれか(未指定で両方)</td></tr>
+<tr><td><code>projectId</code></td><td>string</td><td>プロジェクトでの絞り込み。任意</td></tr>
+<tr><td><code>cursor</code></td><td>string</td><td>ページネーション用カーソル。任意(共通仕様)</td></tr>
+<tr><td><code>limit</code></td><td>integer</td><td>1 ページの取得件数。任意(共通仕様)</td></tr>
+</tbody>
+</table>
 <h4>Path Parameters</h4>
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
@@ -98,10 +107,22 @@
 <pre><code>{}</code></pre>
 <h4>Path Parameters</h4>
 <pre><code>{ "id": "未解決質問 ID" }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>id</code></td><td>string</td><td>対象の未解決質問の ID。必須</td></tr>
+</tbody>
+</table>
 <h4>Request Body</h4>
 <pre><code>{
   "status": "open" | "closed"
 }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>status</code></td><td>enum</td><td>切り替える状況。<code>open</code> / <code>closed</code>。PATCH 時のみ。任意(指定したものだけ更新)</td></tr>
+</tbody>
+</table>
 <p>Request Body は PATCH 時のもの。各フィールドはオプション(指定したものだけ更新)。状況は <code>open</code> ↔ <code>closed</code> の双方向遷移を許容(再オープン制限なし)。FAQ 下書き保存・FAQ 公開は本フィールドを変更しない(連動ロジックなし)。状態変更履歴の永続化は行わない。</p>
 <h3>処理概要</h3>
 <p class="section-lead">詳細取得と状況の手動切替(担当者概念は持たない)。</p>

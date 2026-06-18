@@ -53,6 +53,17 @@
     "timestamp": "..."
   }
 }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>type</code></td><td>enum</td><td>配信イベント種別(<code>email.delivered</code> / <code>email.bounced</code> / <code>email.complained</code> / <code>email.delivery_delayed</code>)</td></tr>
+<tr><td><code>data</code></td><td>object</td><td>イベント詳細データ</td></tr>
+<tr><td>　└ <code>message_id</code></td><td>string</td><td>対象メールのメッセージ ID</td></tr>
+<tr><td>　└ <code>to</code></td><td>string</td><td>宛先メールアドレス</td></tr>
+<tr><td>　└ <code>subject</code></td><td>string</td><td>メール件名</td></tr>
+<tr><td>　└ <code>timestamp</code></td><td>string (ISO 8601)</td><td>イベント発生時刻</td></tr>
+</tbody>
+</table>
 <h3>処理概要</h3>
 <p class="section-lead">メール配信状態 Webhook を受信し配信状態 / 抑制リストを更新する。</p>
 <table>

@@ -47,6 +47,14 @@
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{ "period": "current_month", "viewMode": "project", "projectId": "{id}" }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>period</code></td><td>enum</td><td>集計期間。任意。<code>current_month</code> 等</td></tr>
+<tr><td><code>viewMode</code></td><td>enum</td><td>集計の表示単位。任意。<code>project</code>(プロジェクト単位)</td></tr>
+<tr><td><code>projectId</code></td><td>string</td><td>対象プロジェクトの ID。必須</td></tr>
+</tbody>
+</table>
 <h4>Path Parameters</h4>
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
@@ -106,6 +114,12 @@
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{ "period": "current_month" }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>period</code></td><td>enum</td><td>集計期間。任意。<code>current_month</code> 等</td></tr>
+</tbody>
+</table>
 <h4>Path Parameters</h4>
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
@@ -176,6 +190,12 @@
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{ "period": "current_month" }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>period</code></td><td>enum</td><td>集計期間。任意。<code>current_month</code> 等</td></tr>
+</tbody>
+</table>
 <h4>Path Parameters</h4>
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
@@ -247,6 +267,12 @@
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{ "limit": "6(等)" }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>limit</code></td><td>integer</td><td>取得する請求書の件数。任意(例: <code>6</code>)</td></tr>
+</tbody>
+</table>
 <h4>Path Parameters</h4>
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
@@ -312,6 +338,12 @@
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
 <pre><code>{ "paymentToken": "tok_..." }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>paymentToken</code></td><td>string</td><td>課金プロバイダが発行した支払方法トークン。PUT 時のみ必須(GET ではボディなし)</td></tr>
+</tbody>
+</table>
 <p>(GET: なし。PUT のみ。<code>paymentToken</code> は課金プロバイダ発行トークン)</p>
 <h3>処理概要</h3>
 <p class="section-lead">支払方法の取得と登録 / 更新(クレジットカードのみ)。</p>
@@ -378,6 +410,12 @@
 <pre><code>{}</code></pre>
 <h4>Path Parameters</h4>
 <pre><code>{ "id": "プロジェクト ID" }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>id</code></td><td>string</td><td>対象プロジェクトの ID。必須</td></tr>
+</tbody>
+</table>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
 <h3>処理概要</h3>
@@ -435,8 +473,22 @@
 <pre><code>{}</code></pre>
 <h4>Path Parameters</h4>
 <pre><code>{ "id": "プロジェクト ID" }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>id</code></td><td>string</td><td>対象プロジェクトの ID。必須</td></tr>
+</tbody>
+</table>
 <h4>Request Body</h4>
 <pre><code>{ "limitEnabled": true, "limit": 5000, "alertThresholds": [25, 50, 80, 90, 100] }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>limitEnabled</code></td><td>boolean</td><td>月次上限の有効 / 無効。必須</td></tr>
+<tr><td><code>limit</code></td><td>integer</td><td>月次上限件数。<code>limitEnabled=true</code> の場合は必須(範囲内・1 件刻み)、<code>false</code> の場合は <code>null</code></td></tr>
+<tr><td><code>alertThresholds</code></td><td>array</td><td>アラート発火の閾値(%)の配列。<code>25</code> / <code>50</code> / <code>80</code> / <code>90</code> / <code>100</code> の重複しない値。空配列で通知なし</td></tr>
+</tbody>
+</table>
 <p>例(ON)。例(OFF): <code>{ "limitEnabled": false, "limit": null, "alertThresholds": [] }</code>。</p>
 <p>バリデーション: <code>limitEnabled=true</code> の場合、<code>limit</code> は必須かつ 1 件刻みで最小件数・最大件数の範囲内。<code>alertThresholds</code> は <code>25</code> / <code>50</code> / <code>80</code> / <code>90</code> / <code>100</code> の重複しない配列とし、サーバ側で昇順へ正規化する。空配列はアラート通知なし。<code>limitEnabled=false</code> の場合は <code>limit=null</code>、<code>alertThresholds=[]</code> とする。<code>freeQuota</code> / <code>alertEnabled</code> / <code>alertFrequency</code> を指定した場合は未サポート項目として 422。</p>
 <h3>処理概要</h3>

@@ -47,8 +47,21 @@
   "cursor": "(共通仕様)",
   "limit": "(共通仕様)"
 }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>cursor</code></td><td>string</td><td>次ページ取得用カーソル(任意・共通ページング仕様)</td></tr>
+<tr><td><code>limit</code></td><td>integer</td><td>1 ページの取得件数(任意・共通ページング仕様)</td></tr>
+</tbody>
+</table>
 <h4>Path Parameters</h4>
 <pre><code>{ "id": "プロジェクト ID" }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>id</code></td><td>string</td><td>対象プロジェクトの ID(必須・パス内で指定)</td></tr>
+</tbody>
+</table>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
 <h3>処理概要</h3>
@@ -114,11 +127,24 @@
 <pre><code>{}</code></pre>
 <h4>Path Parameters</h4>
 <pre><code>{ "id": "プロジェクト ID" }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>id</code></td><td>string</td><td>招待先プロジェクトの ID(必須・パス内で指定)</td></tr>
+</tbody>
+</table>
 <h4>Request Body</h4>
 <pre><code>{
   "email": "newmember@...",
   "role": "admin"
 }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>email</code></td><td>string</td><td>招待先メールアドレス(必須)</td></tr>
+<tr><td><code>role</code></td><td>enum</td><td>付与するロール(必須・<code>admin</code> / <code>member</code>)</td></tr>
+</tbody>
+</table>
 <h3>処理概要</h3>
 <p class="section-lead">該当プロジェクト 1 件に対する単発招待を行う。</p>
 <table>
@@ -175,10 +201,23 @@
   "id": "プロジェクト ID",
   "userId": "対象ユーザー ID"
 }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>id</code></td><td>string</td><td>対象プロジェクトの ID(必須・パス内で指定)</td></tr>
+<tr><td><code>userId</code></td><td>string</td><td>ロールを変更する対象利用者の ID(必須・パス内で指定)</td></tr>
+</tbody>
+</table>
 <h4>Request Body</h4>
 <pre><code>{
   "role": "admin" | "member"
 }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>role</code></td><td>enum</td><td>変更後のロール(必須・<code>admin</code> / <code>member</code>)</td></tr>
+</tbody>
+</table>
 <ul>
 <li>同時に表示名(<code>displayName</code>)を更新する場合は別途 <code>PATCH /members/{id}</code> を呼び出す(プロジェクト範囲外の属性のため)</li>
 <li>「該当プロジェクトの最後の <code>admin</code> を <code>member</code> へ降格」する結果になる場合は 403 <code>LAST_ADMIN_PROTECTED</code>(E-AUTHZ-LAST-ADMIN-PROTECTED)で拒否</li>
@@ -249,6 +288,13 @@
   "id": "プロジェクト ID",
   "userId": "対象ユーザー ID"
 }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>id</code></td><td>string</td><td>割当を解除するプロジェクトの ID(必須・パス内で指定)</td></tr>
+<tr><td><code>userId</code></td><td>string</td><td>割当を解除する対象利用者の ID(必須・パス内で指定)</td></tr>
+</tbody>
+</table>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
 <h3>処理概要</h3>
@@ -306,6 +352,12 @@
 <pre><code>{}</code></pre>
 <h4>Path Parameters</h4>
 <pre><code>{ "id": "メンバーユーザー ID" }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>id</code></td><td>string</td><td>招待メールを再送する対象メンバーの利用者 ID(必須・パス内で指定)</td></tr>
+</tbody>
+</table>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
 <p>氏名 <code>displayName</code> を受け付けない(FR-016b / FR-016d)。</p>
