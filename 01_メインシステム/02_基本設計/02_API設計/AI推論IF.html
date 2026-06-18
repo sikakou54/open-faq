@@ -61,7 +61,7 @@ export interface AnswerProvider {
 </tbody>
 </table>
 <h3>処理概要</h3>
-<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<p class="section-lead">回答生成(<code>generate</code>)とヘルスチェック(<code>healthcheck</code>)を持つ内部抽象インターフェースです。エンドポイントは持たず、MVP は <code>WorkersAIAnswerProvider</code> として実装します。具体的なクエリ・関数仕様は詳細設計を正本とする。</p>
 <table>
 <thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
 <tbody>

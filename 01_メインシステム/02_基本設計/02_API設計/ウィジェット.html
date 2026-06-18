@@ -50,7 +50,7 @@
   "origin": "https://example.com"
 }</code></pre>
 <h3>処理概要</h3>
-<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<p class="section-lead">公開キーとドメインを検証しウィジェットセッションを発行する。具体的なクエリ・関数仕様は詳細設計を正本とする。</p>
 <table>
 <thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
 <tbody>
@@ -118,7 +118,7 @@
 <h4>Request Body</h4>
 <pre><code>{ "question": "返品の手続きは?", "projectId": "proj_..." }</code></pre>
 <h3>処理概要</h3>
-<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<p class="section-lead">AI 回答を生成し質問ログを記録する。未回答時は未解決質問を同時生成する。具体的なクエリ・関数仕様は詳細設計を正本とする。</p>
 <table>
 <thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
 <tbody>
@@ -212,7 +212,7 @@
   "idempotencyKey": "&lt;UUIDv4&gt;"
 }</code></pre>
 <h3>処理概要</h3>
-<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<p class="section-lead">未解決質問を登録する(チャット部屋は作成しない)。具体的なクエリ・関数仕様は詳細設計を正本とする。</p>
 <table>
 <thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
 <tbody>

@@ -51,7 +51,7 @@
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
 <h3>処理概要</h3>
-<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<p class="section-lead">契約配下のプロジェクト一覧を返す。具体的なクエリ・関数仕様は詳細設計を正本とする。</p>
 <table>
 <thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
 <tbody>
@@ -130,7 +130,7 @@
 <li>他者をプロジェクト管理者として招待する操作は、プロジェクト作成後に当該プロジェクトの SCR-009 / SCR-009-001(プロジェクト WS)から <code>POST /projects/{id}/members</code>(API-011)経由で行う。</li>
 </ul>
 <h3>処理概要</h3>
-<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<p class="section-lead">プロジェクトを作成し公開キーを発行する(オーナーを自動 admin 化)。具体的なクエリ・関数仕様は詳細設計を正本とする。</p>
 <table>
 <thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
 <tbody>
@@ -192,7 +192,7 @@
 }</code></pre>
 <p>上記 Request Body は PATCH(部分更新)時のもの。DELETE 時はボディなし。<code>DELETE /projects/{id}</code> 実行時の挙動(FR-030b、論理削除)。</p>
 <h3>処理概要</h3>
-<p class="section-lead">論理削除として以下を実行する(具体的なクエリは詳細設計を正本とする)。</p>
+<p class="section-lead">プロジェクトの部分更新 / 論理削除(FR-030b)。具体的なクエリ・関数仕様は詳細設計を正本とする。</p>
 <table>
 <thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
 <tbody>
@@ -258,7 +258,7 @@
 <pre><code>{}</code></pre>
 <p>公開キーは無期限のため有効期限指定パラメータは持たない。</p>
 <h3>処理概要</h3>
-<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<p class="section-lead">公開キーを再発行する(旧キーは 24 時間猶予で失効)。具体的なクエリ・関数仕様は詳細設計を正本とする。</p>
 <table>
 <thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
 <tbody>

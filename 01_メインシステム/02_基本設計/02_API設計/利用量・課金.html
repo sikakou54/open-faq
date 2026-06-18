@@ -52,7 +52,7 @@
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
 <h3>処理概要</h3>
-<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<p class="section-lead">プロジェクト単位の利用量を返す。具体的なクエリ・関数仕様は詳細設計を正本とする。</p>
 <table>
 <thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
 <tbody>
@@ -111,7 +111,7 @@
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
 <h3>処理概要</h3>
-<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<p class="section-lead">契約全体サマリーとプロジェクト別利用量を返す。具体的なクエリ・関数仕様は詳細設計を正本とする。</p>
 <table>
 <thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
 <tbody>
@@ -181,7 +181,7 @@
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
 <h3>処理概要</h3>
-<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<p class="section-lead">当月請求見込み合計・次回請求日・請求状態・プロジェクト別内訳・支払方法登録状態を返す。具体的なクエリ・関数仕様は詳細設計を正本とする。</p>
 <table>
 <thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
 <tbody>
@@ -252,7 +252,7 @@
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
 <h3>処理概要</h3>
-<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<p class="section-lead">過去請求書を一覧取得する。具体的なクエリ・関数仕様は詳細設計を正本とする。</p>
 <table>
 <thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
 <tbody>
@@ -314,7 +314,7 @@
 <pre><code>{ "paymentToken": "tok_..." }</code></pre>
 <p>(GET: なし。PUT のみ。<code>paymentToken</code> は課金プロバイダ発行トークン)</p>
 <h3>処理概要</h3>
-<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<p class="section-lead">支払方法の取得と登録 / 更新(クレジットカードのみ)。具体的なクエリ・関数仕様は詳細設計を正本とする。</p>
 <table>
 <thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
 <tbody>
@@ -381,7 +381,7 @@
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
 <h3>処理概要</h3>
-<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<p class="section-lead">当該プロジェクトの質問数について利用状況・月次上限件数・アラート設定を返す。具体的なクエリ・関数仕様は詳細設計を正本とする。</p>
 <table>
 <thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
 <tbody>
@@ -440,7 +440,7 @@
 <p>例(ON)。例(OFF): <code>{ "limitEnabled": false, "limit": null, "alertThresholds": [] }</code>。</p>
 <p>バリデーション: <code>limitEnabled=true</code> の場合、<code>limit</code> は必須かつ 1 件刻みで最小件数・最大件数の範囲内。<code>alertThresholds</code> は <code>25</code> / <code>50</code> / <code>80</code> / <code>90</code> / <code>100</code> の重複しない配列とし、サーバ側で昇順へ正規化する。空配列はアラート通知なし。<code>limitEnabled=false</code> の場合は <code>limit=null</code>、<code>alertThresholds=[]</code> とする。<code>freeQuota</code> / <code>alertEnabled</code> / <code>alertFrequency</code> を指定した場合は未サポート項目として 422。</p>
 <h3>処理概要</h3>
-<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<p class="section-lead">質問数の月次上限 ON/OFF・件数・アラート閾値を更新する。具体的なクエリ・関数仕様は詳細設計を正本とする。</p>
 <table>
 <thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
 <tbody>
