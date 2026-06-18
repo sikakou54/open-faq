@@ -38,7 +38,9 @@ def extract(html_path):
     body = m.group(1) if m else txt
     heads = [strip_tags(h.group(2))
              for h in re.finditer(r"<h([1-3])[^>]*>(.*?)</h\1>", body, re.S)]
-    return heads, strip_tags(body)[:4000]
+    # 本文は全文を索引対象にする(上限は安全弁)。大きなページでも末尾の
+    # NFR / BR / FR 定義まで検索に乗るよう、最大ページを十分に上回る値にする。
+    return heads, strip_tags(body)[:40000]
 
 
 def main():
