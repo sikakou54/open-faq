@@ -38,6 +38,17 @@
 </tbody>
 </table>
 <p>質問数・未解決数(FR-130)、要対応状況の対応中 / 対応済み内訳(FR-132)、未解決傾向(FR-133)、期間絞り込み(FR-134)、通知失敗・バウンス件数(FR-135)をまとめて返す。<code>projectId</code> 未指定時はオーナーのみ契約全体を集約する(メンバーは <code>projectId</code> 必須)。期間は <code>period</code>(<code>current_month</code> / <code>last_30d</code>)または <code>from</code> / <code>to</code> で指定する。</p>
+<h3>処理概要</h3>
+<p class="section-lead">質問数・未解決・要対応状況・通知失敗 / バウンスをまとめて返す。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>認証・認可(対象プロジェクトへのアクセス権、メンバーは <code>projectId</code> 必須)を検証する</td></tr>
+<tr><td>P-02</td><td>期間・プロジェクトの質問数・未解決数・要対応状況を集計する</td></tr>
+<tr><td>P-03</td><td>オーナー向けに通知失敗・バウンス件数を集計する(メンバー指定時は <code>null</code>)</td></tr>
+<tr><td>P-04</td><td>整形して返却する</td></tr>
+</tbody>
+</table>
 <h3>I/O</h3>
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
@@ -63,19 +74,7 @@
 <h4>Path Parameters</h4>
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
-<pre><code>{}</code></pre>
-<h3>処理概要</h3>
-<p class="section-lead">質問数・未解決・要対応状況・通知失敗 / バウンスをまとめて返す。</p>
-<table>
-<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
-<tbody>
-<tr><td>P-01</td><td>認証・認可(対象プロジェクトへのアクセス権、メンバーは <code>projectId</code> 必須)を検証する</td></tr>
-<tr><td>P-02</td><td>期間・プロジェクトの質問数・未解決数・要対応状況を集計する</td></tr>
-<tr><td>P-03</td><td>オーナー向けに通知失敗・バウンス件数を集計する(メンバー指定時は <code>null</code>)</td></tr>
-<tr><td>P-04</td><td>整形して返却する</td></tr>
-</tbody>
-</table>
-<h3>レスポンス(200)</h3>
+<pre><code>{}</code></pre><h3>レスポンス(200)</h3>
 <pre><code>{
   "period": { "from": "2026-06-01T00:00:00Z", "to": "2026-06-30T23:59:59Z" },
   "questions": { "total": 2450, "unresolved": 120 },

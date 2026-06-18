@@ -37,6 +37,18 @@
 <p class="section-lead">顧客管理システムからの契約停止イベントを受信し、契約状態とセッションを反映します。</p>
 <pre><code>POST /internal/admin-integration/v1/owner/suspend</code></pre>
 <p>認証: mTLS + JWT(<code>aud=main</code>、TTL 5min)。</p>
+<h3>処理概要</h3>
+<p class="section-lead">顧客管理システムからの契約停止イベントを受信し、契約状態とセッションを反映します。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>JWT と Idempotency-Key を検証する</td></tr>
+<tr><td>P-02</td><td><code>contract_owners.contract_status</code> を更新する</td></tr>
+<tr><td>P-03</td><td>KV キャッシュ(セッション / KV / レート制限)を無効化する</td></tr>
+<tr><td>P-04</td><td>reason に応じてセッション処理(<code>operator_manual</code> / <code>tos_violation</code> は 5 秒以内に全セッション無効化)を行う</td></tr>
+<tr><td>P-05</td><td>受領応答を返す</td></tr>
+</tbody>
+</table>
 <h3>I/O</h3>
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
@@ -71,20 +83,7 @@
 <tr><td><code>operatorAccountId</code></td><td>string</td><td>操作した運営者アカウント ID(任意)</td></tr>
 </tbody>
 </table>
-<p>ヘッダ: <code>Idempotency-Key: (operation_id, contract_owner_user_id, target_status)</code>。</p>
-<h3>処理概要</h3>
-<p class="section-lead">顧客管理システムからの契約停止イベントを受信し、契約状態とセッションを反映します。</p>
-<table>
-<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
-<tbody>
-<tr><td>P-01</td><td>JWT と Idempotency-Key を検証する</td></tr>
-<tr><td>P-02</td><td><code>contract_owners.contract_status</code> を更新する</td></tr>
-<tr><td>P-03</td><td>KV キャッシュ(セッション / KV / レート制限)を無効化する</td></tr>
-<tr><td>P-04</td><td>reason に応じてセッション処理(<code>operator_manual</code> / <code>tos_violation</code> は 5 秒以内に全セッション無効化)を行う</td></tr>
-<tr><td>P-05</td><td>受領応答を返す</td></tr>
-</tbody>
-</table>
-<h3>レスポンス(200)</h3>
+<p>ヘッダ: <code>Idempotency-Key: (operation_id, contract_owner_user_id, target_status)</code>。</p><h3>レスポンス(200)</h3>
 <pre><code>{ "ok": true, "newStatus": "suspended", "appliedAt": "..." }</code></pre>
 <table>
 <thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
@@ -108,6 +107,17 @@
 
 <p class="section-lead">顧客管理システムからの強制ログアウト指示を受信し、セッションを失効します。</p>
 <pre><code>POST /internal/admin-integration/v1/owner/forced-logout</code></pre>
+<h3>処理概要</h3>
+<p class="section-lead">顧客管理システムからの強制ログアウト指示を受信し、セッションを失効します。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>JWT を検証する</td></tr>
+<tr><td>P-02</td><td>対象範囲(全体 / 単一アカウント)のセッションを失効する(<code>sessions.revoked_at</code> 設定)</td></tr>
+<tr><td>P-03</td><td>KV キャッシュを 5 秒以内に強制無効化する</td></tr>
+<tr><td>P-04</td><td>受領応答を返す</td></tr>
+</tbody>
+</table>
 <h3>I/O</h3>
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
@@ -139,24 +149,22 @@
 <tr><td><code>reason</code></td><td>string</td><td>強制ログアウトの理由(任意)</td></tr>
 </tbody>
 </table>
-<h3>処理概要</h3>
-<p class="section-lead">顧客管理システムからの強制ログアウト指示を受信し、セッションを失効します。</p>
-<table>
-<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
-<tbody>
-<tr><td>P-01</td><td>JWT を検証する</td></tr>
-<tr><td>P-02</td><td>対象範囲(全体 / 単一アカウント)のセッションを失効する(<code>sessions.revoked_at</code> 設定)</td></tr>
-<tr><td>P-03</td><td>KV キャッシュを 5 秒以内に強制無効化する</td></tr>
-<tr><td>P-04</td><td>受領応答を返す</td></tr>
-</tbody>
-</table>
-
 <h2 id="API-LNK-003">API-LNK-003 IF #4 復元実行受信</h2>
 <span id="5123-if-4-復元実行受信"></span>
 
 <p class="section-lead">運営者の承認を経た削除データ復元の実行指示を受信します。</p>
 <pre><code>POST /internal/admin-integration/v1/owner/restore</code></pre>
 <p>認証: mTLS + JWT + 再認証トークン。</p>
+<h3>処理概要</h3>
+<p class="section-lead">運営者の承認を経た削除データ復元の実行指示を受信します。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>JWT と再認証トークンを検証する</td></tr>
+<tr><td>P-02</td><td>運営者承認済みの復元指示として対象データの復元を実行する</td></tr>
+<tr><td>P-03</td><td>受領応答を返す</td></tr>
+</tbody>
+</table>
 <h3>I/O</h3>
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
@@ -171,22 +179,23 @@
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
-<h3>処理概要</h3>
-<p class="section-lead">運営者の承認を経た削除データ復元の実行指示を受信します。</p>
-<table>
-<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
-<tbody>
-<tr><td>P-01</td><td>JWT と再認証トークンを検証する</td></tr>
-<tr><td>P-02</td><td>運営者承認済みの復元指示として対象データの復元を実行する</td></tr>
-<tr><td>P-03</td><td>受領応答を返す</td></tr>
-</tbody>
-</table>
-
 <h2 id="API-LNK-004">API-LNK-004 IF #5 レート制限上書き受信</h2>
 <span id="5124-if-5-レート制限上書き受信"></span>
 
 <p class="section-lead">契約単位のレート制限上書きを受信し、即時反映します。</p>
 <pre><code>POST /internal/admin-integration/v1/rate-limit/override</code></pre>
+<h3>処理概要</h3>
+<p class="section-lead">契約単位のレート制限上書きを受信し、即時反映します。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>JWT と Idempotency-Key を検証する</td></tr>
+<tr><td>P-02</td><td><code>owner_quota_overrides</code>(レート種別のみ・契約単位)を更新する</td></tr>
+<tr><td>P-03</td><td>KV キー <code>ratelimit:{contractOwnerUserId}:{kind}</code> を即時反映する</td></tr>
+<tr><td>P-04</td><td>受領応答を返す</td></tr>
+</tbody>
+</table>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>本 IF はレート制限(契約単位)専用です。月次上限件数の運営者上書きはプロジェクト単位のため API-055 を用います。</div></div>
 <h3>I/O</h3>
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
@@ -222,24 +231,23 @@
 <tr><td><code>operatorAccountId</code></td><td>string</td><td>操作した運営者アカウント ID(任意)</td></tr>
 </tbody>
 </table>
-<h3>処理概要</h3>
-<p class="section-lead">契約単位のレート制限上書きを受信し、即時反映します。</p>
-<table>
-<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
-<tbody>
-<tr><td>P-01</td><td>JWT と Idempotency-Key を検証する</td></tr>
-<tr><td>P-02</td><td><code>owner_quota_overrides</code>(レート種別のみ・契約単位)を更新する</td></tr>
-<tr><td>P-03</td><td>KV キー <code>ratelimit:{contractOwnerUserId}:{kind}</code> を即時反映する</td></tr>
-<tr><td>P-04</td><td>受領応答を返す</td></tr>
-</tbody>
-</table>
-<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>本 IF はレート制限(契約単位)専用です。月次上限件数の運営者上書きはプロジェクト単位のため API-055 を用います。</div></div>
-
 <h2 id="API-LNK-005">API-LNK-005 IF #5(月次上限件数上書き受信 / プロジェクト単位)</h2>
 <span id="5124a-if-5月次上限件数上書き受信--プロジェクト単位"></span>
 
 <p class="section-lead">プロジェクト単位の月次上限件数上書き(4-eyes 承認済み)を受信し、即時反映します。</p>
 <pre><code>POST /internal/admin-integration/v1/usage-limit/override</code></pre>
+<h3>処理概要</h3>
+<p class="section-lead">プロジェクト単位の月次上限件数上書き(4-eyes 承認済み)を受信し、即時反映します。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>JWT と Idempotency-Key を検証する(4-eyes 承認済みであること)</td></tr>
+<tr><td>P-02</td><td><code>project_quota_limits</code>(<code>source='operator'</code>、対象プロジェクト単位)を更新する</td></tr>
+<tr><td>P-03</td><td>KV キー <code>usage-limit:{contractOwnerUserId}:{projectId}</code> を即時反映する(30s TTL)</td></tr>
+<tr><td>P-04</td><td>受領応答を返す</td></tr>
+</tbody>
+</table>
+<p><code>kind</code> は <code>question_monthly_limit</code> / <code>faq_monthly_limit</code>。質問数は <code>limit</code> と <code>freeQuota</code>、FAQ は運営者が管理する <code>freeQuota</code> だけを受け付ける。FAQ の <code>limit</code> は常に NULL とし、指定時は 422。質問数の優先順位は「プロジェクト設定 &gt; 運営者上書き &gt; デフォルト推奨値」、FAQ 無料枠は「運営者上書き &gt; デフォルト値」。</p>
 <h3>I/O</h3>
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
@@ -277,24 +285,23 @@
 <tr><td><code>operatorAccountId</code></td><td>string</td><td>操作した運営者アカウント ID(任意)</td></tr>
 </tbody>
 </table>
-<h3>処理概要</h3>
-<p class="section-lead">プロジェクト単位の月次上限件数上書き(4-eyes 承認済み)を受信し、即時反映します。</p>
-<table>
-<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
-<tbody>
-<tr><td>P-01</td><td>JWT と Idempotency-Key を検証する(4-eyes 承認済みであること)</td></tr>
-<tr><td>P-02</td><td><code>project_quota_limits</code>(<code>source='operator'</code>、対象プロジェクト単位)を更新する</td></tr>
-<tr><td>P-03</td><td>KV キー <code>usage-limit:{contractOwnerUserId}:{projectId}</code> を即時反映する(30s TTL)</td></tr>
-<tr><td>P-04</td><td>受領応答を返す</td></tr>
-</tbody>
-</table>
-<p><code>kind</code> は <code>question_monthly_limit</code> / <code>faq_monthly_limit</code>。質問数は <code>limit</code> と <code>freeQuota</code>、FAQ は運営者が管理する <code>freeQuota</code> だけを受け付ける。FAQ の <code>limit</code> は常に NULL とし、指定時は 422。質問数の優先順位は「プロジェクト設定 &gt; 運営者上書き &gt; デフォルト推奨値」、FAQ 無料枠は「運営者上書き &gt; デフォルト値」。</p>
-
 <h2 id="API-LNK-006">API-LNK-006 IF #6 AI しきい値上書き受信</h2>
 <span id="5125-if-6-ai-しきい値上書き受信"></span>
 
 <p class="section-lead">AI 回答可否のしきい値上書きを受信し、KV と永続キャッシュへ反映します。</p>
 <pre><code>POST /internal/admin-integration/v1/threshold/update</code></pre>
+<h3>処理概要</h3>
+<p class="section-lead">AI 回答可否のしきい値上書きを受信し、KV と永続キャッシュへ反映します。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>JWT と Idempotency-Key を検証する</td></tr>
+<tr><td>P-02</td><td>KV <code>ai_threshold:{contractOwnerUserId}:{projectId}</code> を更新する(60s TTL)</td></tr>
+<tr><td>P-03</td><td><code>ai_threshold_persistent_cache</code> に永続化する</td></tr>
+<tr><td>P-04</td><td>IF #12 経由で管理者ユーザーに inbox 配信する</td></tr>
+<tr><td>P-05</td><td>受領応答を返す</td></tr>
+</tbody>
+</table>
 <h3>I/O</h3>
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
@@ -331,24 +338,24 @@
 <tr><td><code>operatorAccountId</code></td><td>string</td><td>操作した運営者アカウント ID(任意)</td></tr>
 </tbody>
 </table>
-<h3>処理概要</h3>
-<p class="section-lead">AI 回答可否のしきい値上書きを受信し、KV と永続キャッシュへ反映します。</p>
-<table>
-<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
-<tbody>
-<tr><td>P-01</td><td>JWT と Idempotency-Key を検証する</td></tr>
-<tr><td>P-02</td><td>KV <code>ai_threshold:{contractOwnerUserId}:{projectId}</code> を更新する(60s TTL)</td></tr>
-<tr><td>P-03</td><td><code>ai_threshold_persistent_cache</code> に永続化する</td></tr>
-<tr><td>P-04</td><td>IF #12 経由で管理者ユーザーに inbox 配信する</td></tr>
-<tr><td>P-05</td><td>受領応答を返す</td></tr>
-</tbody>
-</table>
-
 <h2 id="API-LNK-007">API-LNK-007 IF #7 お知らせ生成受信</h2>
 <span id="5126-if-7-お知らせ生成受信"></span>
 
 <p class="section-lead">運営者が生成したお知らせを受信し、配信先を解決して inbox へ fan-out します。</p>
 <pre><code>POST /internal/admin-integration/v1/announcement/inbound</code></pre>
+<h3>処理概要</h3>
+<p class="section-lead">運営者が生成したお知らせを受信し、配信先を解決して inbox へ fan-out します。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>JWT と Idempotency-Key を検証する</td></tr>
+<tr><td>P-02</td><td><code>service_announcements</code> レコードを作成する</td></tr>
+<tr><td>P-03</td><td>配信先指定がある場合は <code>announcement_audiences</code> 行を登録する(中間テーブル化)</td></tr>
+<tr><td>P-04</td><td>宛先範囲(全契約 / 列挙 owner)に応じて <code>announcement_recipients</code> を生成する</td></tr>
+<tr><td>P-05</td><td>fan-out queue 経由で <code>inbox_messages</code> へ配信する</td></tr>
+<tr><td>P-06</td><td>受領応答を返す</td></tr>
+</tbody>
+</table>
 <h3>I/O</h3>
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
@@ -394,26 +401,22 @@
 <li>配列 → 列挙された <code>contract_owner_user_id</code> への限定配信(各要素は ULID 形式)</li>
 </ul></li>
 </ul>
-<h3>処理概要</h3>
-<p class="section-lead">運営者が生成したお知らせを受信し、配信先を解決して inbox へ fan-out します。</p>
-<table>
-<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
-<tbody>
-<tr><td>P-01</td><td>JWT と Idempotency-Key を検証する</td></tr>
-<tr><td>P-02</td><td><code>service_announcements</code> レコードを作成する</td></tr>
-<tr><td>P-03</td><td>配信先指定がある場合は <code>announcement_audiences</code> 行を登録する(中間テーブル化)</td></tr>
-<tr><td>P-04</td><td>宛先範囲(全契約 / 列挙 owner)に応じて <code>announcement_recipients</code> を生成する</td></tr>
-<tr><td>P-05</td><td>fan-out queue 経由で <code>inbox_messages</code> へ配信する</td></tr>
-<tr><td>P-06</td><td>受領応答を返す</td></tr>
-</tbody>
-</table>
-
 <h2 id="API-LNK-008">API-LNK-008 IF #8 監視メトリクス取得(送信側、メ → 顧管)</h2>
 <span id="5127-if-8-監視メトリクス取得送信側メ--顧管"></span>
 
 <p class="section-lead">メインから顧客管理システムへ監視メトリクスを送信(取得)します。</p>
 <pre><code>GET https://&lt;admin-host&gt;/internal/main-integration/v1/metrics?window=5m|1h|24h</code></pre>
 <p>認証: mTLS + JWT(<code>aud=admin</code>)。</p>
+<h3>処理概要</h3>
+<p class="section-lead">メインから顧客管理システムへ監視メトリクスを送信(取得)します。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>顧客管理システムへ mTLS + JWT で接続する</td></tr>
+<tr><td>P-02</td><td>指定ウィンドウの監視メトリクス(契約別・グローバル)を取得する</td></tr>
+<tr><td>P-03</td><td>取得結果を整形して返す</td></tr>
+</tbody>
+</table>
 <h3>I/O</h3>
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
@@ -433,18 +436,7 @@
 <h4>Path Parameters</h4>
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
-<pre><code>{}</code></pre>
-<h3>処理概要</h3>
-<p class="section-lead">メインから顧客管理システムへ監視メトリクスを送信(取得)します。</p>
-<table>
-<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
-<tbody>
-<tr><td>P-01</td><td>顧客管理システムへ mTLS + JWT で接続する</td></tr>
-<tr><td>P-02</td><td>指定ウィンドウの監視メトリクス(契約別・グローバル)を取得する</td></tr>
-<tr><td>P-03</td><td>取得結果を整形して返す</td></tr>
-</tbody>
-</table>
-<h3>レスポンス(200)</h3>
+<pre><code>{}</code></pre><h3>レスポンス(200)</h3>
 <pre><code>{
   "window": "5m",
   "since": "...",
@@ -488,6 +480,17 @@
 
 <p class="section-lead">メインから顧客管理システムへ不正利用検知を通知します。</p>
 <pre><code>POST https://&lt;admin-host&gt;/internal/main-integration/v1/fraud/detected</code></pre>
+<h3>処理概要</h3>
+<p class="section-lead">メインから顧客管理システムへ不正利用検知を通知します。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>検知した不正利用パターンと対象契約を集約する</td></tr>
+<tr><td>P-02</td><td>顧客管理システムへ mTLS + JWT で通知を送信する(DLQ 上限 200/30 分)</td></tr>
+<tr><td>P-03</td><td>送信結果を受領する</td></tr>
+</tbody>
+</table>
+<p>DLQ 上限: 200/30 分。</p>
 <h3>I/O</h3>
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
@@ -511,23 +514,23 @@
 <tr><td><code>details</code></td><td>object</td><td>検知の詳細情報</td></tr>
 </tbody>
 </table>
-<h3>処理概要</h3>
-<p class="section-lead">メインから顧客管理システムへ不正利用検知を通知します。</p>
-<table>
-<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
-<tbody>
-<tr><td>P-01</td><td>検知した不正利用パターンと対象契約を集約する</td></tr>
-<tr><td>P-02</td><td>顧客管理システムへ mTLS + JWT で通知を送信する(DLQ 上限 200/30 分)</td></tr>
-<tr><td>P-03</td><td>送信結果を受領する</td></tr>
-</tbody>
-</table>
-<p>DLQ 上限: 200/30 分。</p>
-
 <h2 id="API-LNK-010">API-LNK-010 IF #10 課金 Webhook 受信(顧管 → メ)</h2>
 <span id="5129-if-10-課金-webhook-受信顧管--メ"></span>
 
 <p class="section-lead">運営者が一次受信した Stripe 課金イベントを受信し、請求 / 契約状態へ反映します(FR-139)。</p>
 <pre><code>POST /internal/admin-integration/v1/billing-webhook/forward</code></pre>
+<h3>処理概要</h3>
+<p class="section-lead">運営者が一次受信した Stripe 課金イベントを受信し、請求 / 契約状態へ反映します(FR-139)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>JWT を検証し event_id で冪等性を担保する</td></tr>
+<tr><td>P-02</td><td>Stripe イベント種別に応じてハンドラを分岐し請求 / 契約状態へ反映する(<code>invoice.paid</code> / <code>invoice.payment_failed</code> / <code>customer.subscription.created</code> / <code>charge.refunded</code> 等)</td></tr>
+<tr><td>P-03</td><td>IF #1 経由で <code>contract_owners.contract_status</code> へ反映する</td></tr>
+<tr><td>P-04</td><td>受領応答を返す</td></tr>
+</tbody>
+</table>
+<p>Idempotency-Key: event_id(Stripe <code>evt_*</code>)。DLQ 滞留上限: 1000/24h。</p>
 <h3>I/O</h3>
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
@@ -562,24 +565,25 @@
 <tr><td><code>signatureVerifiedAt</code></td><td>string (ISO 8601)</td><td>署名検証を完了した時刻</td></tr>
 </tbody>
 </table>
-<h3>処理概要</h3>
-<p class="section-lead">運営者が一次受信した Stripe 課金イベントを受信し、請求 / 契約状態へ反映します(FR-139)。</p>
-<table>
-<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
-<tbody>
-<tr><td>P-01</td><td>JWT を検証し event_id で冪等性を担保する</td></tr>
-<tr><td>P-02</td><td>Stripe イベント種別に応じてハンドラを分岐し請求 / 契約状態へ反映する(<code>invoice.paid</code> / <code>invoice.payment_failed</code> / <code>customer.subscription.created</code> / <code>charge.refunded</code> 等)</td></tr>
-<tr><td>P-03</td><td>IF #1 経由で <code>contract_owners.contract_status</code> へ反映する</td></tr>
-<tr><td>P-04</td><td>受領応答を返す</td></tr>
-</tbody>
-</table>
-<p>Idempotency-Key: event_id(Stripe <code>evt_*</code>)。DLQ 滞留上限: 1000/24h。</p>
-
 <h2 id="API-LNK-011">API-LNK-011 IF #12 運営者操作通知受信</h2>
 <span id="51210-if-12-運営者操作通知受信"></span>
 
 <p class="section-lead">運営者操作の通知を受信し、管理者 inbox とメール通知へ反映します。</p>
 <pre><code>POST /internal/admin-integration/v1/admin-operation/notify</code></pre>
+<h3>処理概要</h3>
+<p class="section-lead">運営者操作の通知を受信し、管理者 inbox とメール通知へ反映します。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>JWT と Idempotency-Key を検証する</td></tr>
+<tr><td>P-02</td><td><code>inbox_messages</code> に重要度 <code>high</code> で生成し管理者 inbox に表示する</td></tr>
+<tr><td>P-03</td><td>メール通知 Queue に投入する(<code>critical</code> はメール強制送信)</td></tr>
+<tr><td>P-04</td><td>受領応答を返す</td></tr>
+</tbody>
+</table>
+</article>
+</body>
+</html>
 <h3>I/O</h3>
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
@@ -615,17 +619,3 @@
 <tr><td><code>summary</code></td><td>string</td><td>操作内容の要約文言</td></tr>
 </tbody>
 </table>
-<h3>処理概要</h3>
-<p class="section-lead">運営者操作の通知を受信し、管理者 inbox とメール通知へ反映します。</p>
-<table>
-<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
-<tbody>
-<tr><td>P-01</td><td>JWT と Idempotency-Key を検証する</td></tr>
-<tr><td>P-02</td><td><code>inbox_messages</code> に重要度 <code>high</code> で生成し管理者 inbox に表示する</td></tr>
-<tr><td>P-03</td><td>メール通知 Queue に投入する(<code>critical</code> はメール強制送信)</td></tr>
-<tr><td>P-04</td><td>受領応答を返す</td></tr>
-</tbody>
-</table>
-</article>
-</body>
-</html>

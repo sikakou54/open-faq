@@ -45,6 +45,19 @@
 <tr><td>権限</td><td>—(公開)</td></tr>
 </tbody>
 </table>
+<h3>処理概要</h3>
+<p class="section-lead">オーナーアカウントを新規登録し、メール確認を要求する。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>Turnstile トークンを検証する</td></tr>
+<tr><td>P-02</td><td>入力値(メール形式・パスワード強度・パスワード一致・規約 / プライバシー同意)を検証する</td></tr>
+<tr><td>P-03</td><td>オーナーアカウントを新規作成する</td></tr>
+<tr><td>P-04</td><td>利用規約・プライバシーポリシーへの同意を記録する</td></tr>
+<tr><td>P-05</td><td>メール確認トークンを発行し確認メールを送信する</td></tr>
+<tr><td>P-06</td><td>受付結果を返す</td></tr>
+</tbody>
+</table>
 <h3>I/O</h3>
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
@@ -79,21 +92,7 @@
 <tr><td><code>agreedPrivacy</code></td><td>boolean</td><td>プライバシーポリシーへの同意(必須・<code>true</code>)</td></tr>
 <tr><td><code>turnstileToken</code></td><td>string</td><td>Turnstile 検証トークン(必須)</td></tr>
 </tbody>
-</table>
-<h3>処理概要</h3>
-<p class="section-lead">オーナーアカウントを新規登録し、メール確認を要求する。</p>
-<table>
-<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
-<tbody>
-<tr><td>P-01</td><td>Turnstile トークンを検証する</td></tr>
-<tr><td>P-02</td><td>入力値(メール形式・パスワード強度・パスワード一致・規約 / プライバシー同意)を検証する</td></tr>
-<tr><td>P-03</td><td>オーナーアカウントを新規作成する</td></tr>
-<tr><td>P-04</td><td>利用規約・プライバシーポリシーへの同意を記録する</td></tr>
-<tr><td>P-05</td><td>メール確認トークンを発行し確認メールを送信する</td></tr>
-<tr><td>P-06</td><td>受付結果を返す</td></tr>
-</tbody>
-</table>
-<h3>レスポンス(202)</h3>
+</table><h3>レスポンス(202)</h3>
 <pre><code>{ "ok": true }</code></pre>
 <table>
 <thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
@@ -126,6 +125,17 @@
 <tr><td>権限</td><td>—(公開)</td></tr>
 </tbody>
 </table>
+<h3>処理概要</h3>
+<p class="section-lead">メール / パスワードを認証しセッションを発行する。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>連続失敗時は Turnstile を要求し、提示があれば検証する</td></tr>
+<tr><td>P-02</td><td>メール / パスワードの資格情報を照合する(不一致は失敗試行として計上)</td></tr>
+<tr><td>P-03</td><td>アカウントロック状態・契約停止状態を判定する</td></tr>
+<tr><td>P-04</td><td>セッションを発行し、再規約同意要否と有効セッション一覧を返す</td></tr>
+</tbody>
+</table>
 <h3>I/O</h3>
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
@@ -153,19 +163,7 @@
 <tr><td><code>password</code></td><td>string</td><td>パスワード(必須)</td></tr>
 <tr><td><code>turnstileToken</code></td><td>string</td><td>Turnstile 検証トークン(連続失敗時に要求される場合に必須)</td></tr>
 </tbody>
-</table>
-<h3>処理概要</h3>
-<p class="section-lead">メール / パスワードを認証しセッションを発行する。</p>
-<table>
-<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
-<tbody>
-<tr><td>P-01</td><td>連続失敗時は Turnstile を要求し、提示があれば検証する</td></tr>
-<tr><td>P-02</td><td>メール / パスワードの資格情報を照合する(不一致は失敗試行として計上)</td></tr>
-<tr><td>P-03</td><td>アカウントロック状態・契約停止状態を判定する</td></tr>
-<tr><td>P-04</td><td>セッションを発行し、再規約同意要否と有効セッション一覧を返す</td></tr>
-</tbody>
-</table>
-<h3>レスポンス(200)</h3>
+</table><h3>レスポンス(200)</h3>
 <pre><code>{
   "userId": "01HZ...",
   "role": "admin",
@@ -211,6 +209,16 @@
 <tr><td>権限</td><td>認証済み</td></tr>
 </tbody>
 </table>
+<h3>処理概要</h3>
+<p class="section-lead">現在のセッションを失効する。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>セッション Cookie と CSRF トークンを検証する</td></tr>
+<tr><td>P-02</td><td>現在のセッションを失効する</td></tr>
+<tr><td>P-03</td><td>完了結果を返す</td></tr>
+</tbody>
+</table>
 <h3>I/O</h3>
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
@@ -224,18 +232,7 @@
 <h4>Path Parameters</h4>
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
-<pre><code>{}</code></pre>
-<h3>処理概要</h3>
-<p class="section-lead">現在のセッションを失効する。</p>
-<table>
-<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
-<tbody>
-<tr><td>P-01</td><td>セッション Cookie と CSRF トークンを検証する</td></tr>
-<tr><td>P-02</td><td>現在のセッションを失効する</td></tr>
-<tr><td>P-03</td><td>完了結果を返す</td></tr>
-</tbody>
-</table>
-<h3>レスポンス(200)</h3>
+<pre><code>{}</code></pre><h3>レスポンス(200)</h3>
 <pre><code>{ "ok": true }</code></pre>
 <table>
 <thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
@@ -262,6 +259,16 @@
 <tr><td>権限</td><td>—(公開)</td></tr>
 </tbody>
 </table>
+<h3>処理概要</h3>
+<p class="section-lead">再設定メールの送信を要求する。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>Turnstile トークンを検証する</td></tr>
+<tr><td>P-02</td><td>該当アカウントが存在する場合のみ再設定トークンを発行し再設定メールを送信する</td></tr>
+<tr><td>P-03</td><td>アカウントの存在有無を漏らさず一律の受付結果を返す</td></tr>
+</tbody>
+</table>
 <h3>I/O</h3>
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
@@ -283,18 +290,7 @@
 <tr><td><code>email</code></td><td>string</td><td>再設定メールの送信先メールアドレス(必須)</td></tr>
 <tr><td><code>turnstileToken</code></td><td>string</td><td>Turnstile 検証トークン(必須)</td></tr>
 </tbody>
-</table>
-<h3>処理概要</h3>
-<p class="section-lead">再設定メールの送信を要求する。</p>
-<table>
-<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
-<tbody>
-<tr><td>P-01</td><td>Turnstile トークンを検証する</td></tr>
-<tr><td>P-02</td><td>該当アカウントが存在する場合のみ再設定トークンを発行し再設定メールを送信する</td></tr>
-<tr><td>P-03</td><td>アカウントの存在有無を漏らさず一律の受付結果を返す</td></tr>
-</tbody>
-</table>
-<h3>レスポンス(202)</h3>
+</table><h3>レスポンス(202)</h3>
 <pre><code>{ "ok": true }</code></pre>
 <table>
 <thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
@@ -320,6 +316,16 @@
 <tr><td>権限</td><td>認証済み</td></tr>
 </tbody>
 </table>
+<h3>処理概要</h3>
+<p class="section-lead">機微操作の前にパスワードを再確認する。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>セッションから認証済み利用者を特定する</td></tr>
+<tr><td>P-02</td><td>パスワードを再照合する(不一致は 401)</td></tr>
+<tr><td>P-03</td><td>機微操作に使う再認証トークンを発行して返す</td></tr>
+</tbody>
+</table>
 <h3>I/O</h3>
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
@@ -340,18 +346,7 @@
 <tbody>
 <tr><td><code>password</code></td><td>string</td><td>再確認するパスワード(必須)</td></tr>
 </tbody>
-</table>
-<h3>処理概要</h3>
-<p class="section-lead">機微操作の前にパスワードを再確認する。</p>
-<table>
-<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
-<tbody>
-<tr><td>P-01</td><td>セッションから認証済み利用者を特定する</td></tr>
-<tr><td>P-02</td><td>パスワードを再照合する(不一致は 401)</td></tr>
-<tr><td>P-03</td><td>機微操作に使う再認証トークンを発行して返す</td></tr>
-</tbody>
-</table>
-<h3>レスポンス(200)</h3>
+</table><h3>レスポンス(200)</h3>
 <pre><code>{ "ok": true, "token": "reauth_..." }</code></pre>
 <table>
 <thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
@@ -385,6 +380,17 @@
 </tbody>
 </table>
 <p>トークン形式 = <code>email_verify</code> purpose の <code>access_tokens.token_hash</code> 検証。</p>
+<h3>処理概要</h3>
+<p class="section-lead">登録メールアドレスを確認する。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>メール確認トークンの有効性(期限)を検証する</td></tr>
+<tr><td>P-02</td><td>対象アカウントのメールアドレスを確認済みにする</td></tr>
+<tr><td>P-03</td><td>確認トークンを使用済みにする</td></tr>
+<tr><td>P-04</td><td>確認結果を返す</td></tr>
+</tbody>
+</table>
 <h3>I/O</h3>
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
@@ -405,19 +411,7 @@
 </tbody>
 </table>
 <h4>Request Body</h4>
-<pre><code>{}</code></pre>
-<h3>処理概要</h3>
-<p class="section-lead">登録メールアドレスを確認する。</p>
-<table>
-<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
-<tbody>
-<tr><td>P-01</td><td>メール確認トークンの有効性(期限)を検証する</td></tr>
-<tr><td>P-02</td><td>対象アカウントのメールアドレスを確認済みにする</td></tr>
-<tr><td>P-03</td><td>確認トークンを使用済みにする</td></tr>
-<tr><td>P-04</td><td>確認結果を返す</td></tr>
-</tbody>
-</table>
-<h3>レスポンス(200)</h3>
+<pre><code>{}</code></pre><h3>レスポンス(200)</h3>
 <pre><code>{ "userId": "...", "verifiedAt": "..." }</code></pre>
 <table>
 <thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
@@ -451,6 +445,16 @@
 </tbody>
 </table>
 <p>トークン形式 = <code>activation</code> purpose の <code>access_tokens.token_hash</code> 検証。検証成功時は招待情報を返し、SCR-018 の招待情報パネル表示に使用する。Turnstile 不要(プレビューは情報取得のみで状態変更なし)。</p>
+<h3>処理概要</h3>
+<p class="section-lead">招待情報(プロジェクト名 / 付与ロール / 招待元オーナー名 / 招待者メール)をプレビュー取得する。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>招待トークンの存在・有効性(期限・使用済み)を検証する</td></tr>
+<tr><td>P-02</td><td>トークンから招待先プロジェクト・付与ロール・招待元情報を取得する</td></tr>
+<tr><td>P-03</td><td>状態変更を行わず招待情報のプレビューを返す</td></tr>
+</tbody>
+</table>
 <h3>I/O</h3>
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
@@ -473,18 +477,7 @@
 </tbody>
 </table>
 <h4>Request Body</h4>
-<pre><code>{}</code></pre>
-<h3>処理概要</h3>
-<p class="section-lead">招待情報(プロジェクト名 / 付与ロール / 招待元オーナー名 / 招待者メール)をプレビュー取得する。</p>
-<table>
-<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
-<tbody>
-<tr><td>P-01</td><td>招待トークンの存在・有効性(期限・使用済み)を検証する</td></tr>
-<tr><td>P-02</td><td>トークンから招待先プロジェクト・付与ロール・招待元情報を取得する</td></tr>
-<tr><td>P-03</td><td>状態変更を行わず招待情報のプレビューを返す</td></tr>
-</tbody>
-</table>
-<h3>レスポンス(200)</h3>
+<pre><code>{}</code></pre><h3>レスポンス(200)</h3>
 <pre><code>{
   "userId": "01HZ...",
   "email": "newmember@...",
@@ -530,6 +523,20 @@
 <tr><td>概要</td><td>招待されたメンバー本人が氏名・初回パスワード・規約同意を登録し有効化を完了する</td></tr>
 <tr><td>認証</td><td>未認証可(トークン認証のみ、Turnstile 必須)</td></tr>
 <tr><td>権限</td><td>—</td></tr>
+</tbody>
+</table>
+<h3>処理概要</h3>
+<p class="section-lead">招待されたメンバー本人が氏名・初回パスワード・規約同意を登録し有効化を完了する。本処理は 1 つのトランザクションで実行する。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>招待トークンの有効性(期限・使用済み)を検証する</td></tr>
+<tr><td>P-02</td><td>トークンから招待先プロジェクトと付与ロールを取得する</td></tr>
+<tr><td>P-03</td><td>利用者の氏名・パスワードを設定し、アカウントを有効化する</td></tr>
+<tr><td>P-04</td><td>利用規約・プライバシーポリシーの最新版への同意を記録する(各文書種別に 1 件)</td></tr>
+<tr><td>P-05</td><td>対象プロジェクトへの割当を有効化する</td></tr>
+<tr><td>P-06</td><td>招待トークンを使用済みにする</td></tr>
+<tr><td>P-07</td><td>監査ログ(アカウント有効化完了)を記録する</td></tr>
 </tbody>
 </table>
 <h3>I/O</h3>
@@ -581,22 +588,7 @@
 <li><code>passwordConfirm</code>: <code>password</code> と一致</li>
 <li><code>termsAgreed</code> / <code>privacyAgreed</code>: 両方 <code>true</code> 必須(FR-160 / FR-164)</li>
 <li><code>turnstileToken</code>: 検証成功(FR-177)</li>
-</ul>
-<h3>処理概要</h3>
-<p class="section-lead">招待されたメンバー本人が氏名・初回パスワード・規約同意を登録し有効化を完了する。本処理は 1 つのトランザクションで実行する。</p>
-<table>
-<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
-<tbody>
-<tr><td>P-01</td><td>招待トークンの有効性(期限・使用済み)を検証する</td></tr>
-<tr><td>P-02</td><td>トークンから招待先プロジェクトと付与ロールを取得する</td></tr>
-<tr><td>P-03</td><td>利用者の氏名・パスワードを設定し、アカウントを有効化する</td></tr>
-<tr><td>P-04</td><td>利用規約・プライバシーポリシーの最新版への同意を記録する(各文書種別に 1 件)</td></tr>
-<tr><td>P-05</td><td>対象プロジェクトへの割当を有効化する</td></tr>
-<tr><td>P-06</td><td>招待トークンを使用済みにする</td></tr>
-<tr><td>P-07</td><td>監査ログ(アカウント有効化完了)を記録する</td></tr>
-</tbody>
-</table>
-<h3>レスポンス(200)</h3>
+</ul><h3>レスポンス(200)</h3>
 <pre><code>{ "userId": "01HZ...", "redirectUrl": "/auth/login" }</code></pre>
 <table>
 <thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
@@ -633,6 +625,18 @@
 </tbody>
 </table>
 <p>Turnstile は不要(入力フォームを持たない単純な確認専用エンドポイントで、トークン HMAC-SHA256 検証 + IP / トークン単位のレート制限で十分)。</p>
+<h3>処理概要</h3>
+<p class="section-lead">プロジェクト連絡先メールを確認済みとし <code>projects.contact_email_verified_at</code> をセットする。本処理は 1 つのトランザクションで実行する。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>確認トークンの有効性(期限・使用済み)を検証する</td></tr>
+<tr><td>P-02</td><td>トークンから対象プロジェクトを取得する</td></tr>
+<tr><td>P-03</td><td>プロジェクトの連絡先メールを確認済みにする</td></tr>
+<tr><td>P-04</td><td>確認トークンを使用済みにする</td></tr>
+<tr><td>P-05</td><td>監査ログ(連絡先メール確認)を記録する</td></tr>
+</tbody>
+</table>
 <h3>I/O</h3>
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
@@ -654,20 +658,7 @@
 </tbody>
 </table>
 <h4>Request Body</h4>
-<pre><code>{}</code></pre>
-<h3>処理概要</h3>
-<p class="section-lead">プロジェクト連絡先メールを確認済みとし <code>projects.contact_email_verified_at</code> をセットする。本処理は 1 つのトランザクションで実行する。</p>
-<table>
-<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
-<tbody>
-<tr><td>P-01</td><td>確認トークンの有効性(期限・使用済み)を検証する</td></tr>
-<tr><td>P-02</td><td>トークンから対象プロジェクトを取得する</td></tr>
-<tr><td>P-03</td><td>プロジェクトの連絡先メールを確認済みにする</td></tr>
-<tr><td>P-04</td><td>確認トークンを使用済みにする</td></tr>
-<tr><td>P-05</td><td>監査ログ(連絡先メール確認)を記録する</td></tr>
-</tbody>
-</table>
-<h3>レスポンス(200)</h3>
+<pre><code>{}</code></pre><h3>レスポンス(200)</h3>
 <pre><code>{ "projectId": "proj_1", "projectName": "サポートサイト", "verifiedAt": "2026-05-21T..." }</code></pre>
 <table>
 <thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>

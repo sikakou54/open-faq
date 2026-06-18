@@ -44,6 +44,16 @@
 </tbody>
 </table>
 <p>契約全体の利用状況は API-033 <code>GET /owner/projects/usage</code> を使用する。</p>
+<h3>処理概要</h3>
+<p class="section-lead">プロジェクト単位の利用量を返す。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>認証・認可(対象プロジェクトへのアクセス権)を検証する</td></tr>
+<tr><td>P-02</td><td>対象期間・プロジェクトの質問数・FAQ 件数を集計する</td></tr>
+<tr><td>P-03</td><td>上限・無料枠・利用率を算出し整形して返却する</td></tr>
+</tbody>
+</table>
 <h3>I/O</h3>
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
@@ -66,18 +76,7 @@
 <h4>Path Parameters</h4>
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
-<pre><code>{}</code></pre>
-<h3>処理概要</h3>
-<p class="section-lead">プロジェクト単位の利用量を返す。</p>
-<table>
-<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
-<tbody>
-<tr><td>P-01</td><td>認証・認可(対象プロジェクトへのアクセス権)を検証する</td></tr>
-<tr><td>P-02</td><td>対象期間・プロジェクトの質問数・FAQ 件数を集計する</td></tr>
-<tr><td>P-03</td><td>上限・無料枠・利用率を算出し整形して返却する</td></tr>
-</tbody>
-</table>
-<h3>レスポンス(200)</h3>
+<pre><code>{}</code></pre><h3>レスポンス(200)</h3>
 <p><code>viewMode=project</code> の例:</p>
 <pre><code>{
   "period": "2026-05-01T00:00:00Z",
@@ -119,6 +118,16 @@
 </tbody>
 </table>
 <p>契約全体サマリーとプロジェクト別の質問数、質問数上限に対する利用率、公開 FAQ 件数、最終更新日時を返す。</p>
+<h3>処理概要</h3>
+<p class="section-lead">契約全体サマリーとプロジェクト別利用量を返す。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>認証・認可(オーナー専有)を検証する</td></tr>
+<tr><td>P-02</td><td>契約配下の全プロジェクトの質問数・公開 FAQ 件数を集計する</td></tr>
+<tr><td>P-03</td><td>契約全体サマリーとプロジェクト別内訳を整形して返却する</td></tr>
+</tbody>
+</table>
 <h3>I/O</h3>
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
@@ -139,18 +148,7 @@
 <h4>Path Parameters</h4>
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
-<pre><code>{}</code></pre>
-<h3>処理概要</h3>
-<p class="section-lead">契約全体サマリーとプロジェクト別利用量を返す。</p>
-<table>
-<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
-<tbody>
-<tr><td>P-01</td><td>認証・認可(オーナー専有)を検証する</td></tr>
-<tr><td>P-02</td><td>契約配下の全プロジェクトの質問数・公開 FAQ 件数を集計する</td></tr>
-<tr><td>P-03</td><td>契約全体サマリーとプロジェクト別内訳を整形して返却する</td></tr>
-</tbody>
-</table>
-<h3>レスポンス(200)</h3>
+<pre><code>{}</code></pre><h3>レスポンス(200)</h3>
 <pre><code>{
   "period": { "from": "2026-06-01T00:00:00Z", "to": "2026-06-30T23:59:59Z" },
   "summary": { "projectCount": 3, "questionCount": 2450, "publishedFaqCount": 184 },
@@ -203,6 +201,17 @@
 <tr><td>権限</td><td>オーナー専有</td></tr>
 </tbody>
 </table>
+<h3>処理概要</h3>
+<p class="section-lead">当月請求見込み合計・次回請求日・請求状態・プロジェクト別内訳・支払方法登録状態を返す。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>認証・認可(オーナー専有)を検証する</td></tr>
+<tr><td>P-02</td><td>当月の請求見込み・プロジェクト別内訳を算出する</td></tr>
+<tr><td>P-03</td><td>次回請求日・請求状態・支払方法登録状態を解決する</td></tr>
+<tr><td>P-04</td><td>整形して返却する</td></tr>
+</tbody>
+</table>
 <h3>I/O</h3>
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
@@ -223,19 +232,7 @@
 <h4>Path Parameters</h4>
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
-<pre><code>{}</code></pre>
-<h3>処理概要</h3>
-<p class="section-lead">当月請求見込み合計・次回請求日・請求状態・プロジェクト別内訳・支払方法登録状態を返す。</p>
-<table>
-<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
-<tbody>
-<tr><td>P-01</td><td>認証・認可(オーナー専有)を検証する</td></tr>
-<tr><td>P-02</td><td>当月の請求見込み・プロジェクト別内訳を算出する</td></tr>
-<tr><td>P-03</td><td>次回請求日・請求状態・支払方法登録状態を解決する</td></tr>
-<tr><td>P-04</td><td>整形して返却する</td></tr>
-</tbody>
-</table>
-<h3>レスポンス(200)</h3>
+<pre><code>{}</code></pre><h3>レスポンス(200)</h3>
 <pre><code>{
   "estimatedTotal": 12500,
   "currency": "JPY",
@@ -288,6 +285,16 @@
 <tr><td>権限</td><td>オーナー専有</td></tr>
 </tbody>
 </table>
+<h3>処理概要</h3>
+<p class="section-lead">過去請求書を一覧取得する。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>認証・認可(オーナー専有)を検証する</td></tr>
+<tr><td>P-02</td><td>過去請求書を新しい順に取得する</td></tr>
+<tr><td>P-03</td><td>PDF 署名 URL(有効期限 5 分)を付与して返却する</td></tr>
+</tbody>
+</table>
 <h3>I/O</h3>
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
@@ -307,18 +314,7 @@
 <h4>Path Parameters</h4>
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
-<pre><code>{}</code></pre>
-<h3>処理概要</h3>
-<p class="section-lead">過去請求書を一覧取得する。</p>
-<table>
-<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
-<tbody>
-<tr><td>P-01</td><td>認証・認可(オーナー専有)を検証する</td></tr>
-<tr><td>P-02</td><td>過去請求書を新しい順に取得する</td></tr>
-<tr><td>P-03</td><td>PDF 署名 URL(有効期限 5 分)を付与して返却する</td></tr>
-</tbody>
-</table>
-<h3>レスポンス(200)</h3>
+<pre><code>{}</code></pre><h3>レスポンス(200)</h3>
 <pre><code>{
   "items": [
     {
@@ -362,6 +358,17 @@
 </tbody>
 </table>
 <p>支払方法はクレジットカードのみ(FR-136)。カード番号等の生データはサーバで保持せず、課金プロバイダのトークンを受領して紐付ける(PCI スコープ最小化、正本: <a href="../09_セキュリティ設計.html">09_セキュリティ設計.html</a>)。サスペンション中もオーナーは本 API を実行できる(FR-138)。</p>
+<h3>処理概要</h3>
+<p class="section-lead">支払方法の取得と登録 / 更新(クレジットカードのみ)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>認証・認可(オーナー専有、PUT は再認証必須)を検証する</td></tr>
+<tr><td>P-02</td><td>GET は登録済み支払方法(ブランド・下 4 桁等)を取得する</td></tr>
+<tr><td>P-03</td><td>PUT は課金プロバイダのトークンを検証し支払方法を登録 / 更新する(生データは保持しない)</td></tr>
+<tr><td>P-04</td><td>結果を返却する</td></tr>
+</tbody>
+</table>
 <h3>I/O</h3>
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
@@ -382,19 +389,7 @@
 <tr><td><code>paymentToken</code></td><td>string</td><td>課金プロバイダが発行した支払方法トークン。PUT 時のみ必須(GET ではボディなし)</td></tr>
 </tbody>
 </table>
-<p>(GET: なし。PUT のみ。<code>paymentToken</code> は課金プロバイダ発行トークン)</p>
-<h3>処理概要</h3>
-<p class="section-lead">支払方法の取得と登録 / 更新(クレジットカードのみ)。</p>
-<table>
-<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
-<tbody>
-<tr><td>P-01</td><td>認証・認可(オーナー専有、PUT は再認証必須)を検証する</td></tr>
-<tr><td>P-02</td><td>GET は登録済み支払方法(ブランド・下 4 桁等)を取得する</td></tr>
-<tr><td>P-03</td><td>PUT は課金プロバイダのトークンを検証し支払方法を登録 / 更新する(生データは保持しない)</td></tr>
-<tr><td>P-04</td><td>結果を返却する</td></tr>
-</tbody>
-</table>
-<h3>レスポンス(200)</h3>
+<p>(GET: なし。PUT のみ。<code>paymentToken</code> は課金プロバイダ発行トークン)</p><h3>レスポンス(200)</h3>
 <p>GET: <code>{ "registered": true, "brand": "visa", "last4": "4242", "expMonth": 12, "expYear": 2028 }</code>(未登録時は <code>{ "registered": false }</code>)。PUT: <code>{ "registered": true, "brand": "visa", "last4": "4242" }</code>。</p>
 <p class="ps-label">GET レスポンス</p>
 <table>
@@ -443,6 +438,16 @@
 </tbody>
 </table>
 <p>SCR-021 の表示には <code>used</code> / <code>limitEnabled</code> / <code>limit</code> / <code>percentage</code> / <code>yenEquivalent</code> だけを使用し、アラート設定・設定元は表示しない。SCR-021-001 は <code>limitEnabled</code> / <code>limit</code> / <code>alertThresholds</code> を使用する。FAQ 件数は扱わないためレスポンスに含めない。質問数の無料利用枠は課金判定用の内部データとして保持するが、本 API のレスポンスには含めない。</p>
+<h3>処理概要</h3>
+<p class="section-lead">当該プロジェクトの質問数について利用状況・月次上限件数・アラート設定を返す。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>認証・認可(対象プロジェクトへのアクセス権)を検証する</td></tr>
+<tr><td>P-02</td><td>質問数の利用状況・月次上限・アラート設定を取得する</td></tr>
+<tr><td>P-03</td><td>上限消化時の参考課金額(<code>yenEquivalent</code>)を算出して返却する</td></tr>
+</tbody>
+</table>
 <h3>I/O</h3>
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
@@ -463,18 +468,7 @@
 </tbody>
 </table>
 <h4>Request Body</h4>
-<pre><code>{}</code></pre>
-<h3>処理概要</h3>
-<p class="section-lead">当該プロジェクトの質問数について利用状況・月次上限件数・アラート設定を返す。</p>
-<table>
-<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
-<tbody>
-<tr><td>P-01</td><td>認証・認可(対象プロジェクトへのアクセス権)を検証する</td></tr>
-<tr><td>P-02</td><td>質問数の利用状況・月次上限・アラート設定を取得する</td></tr>
-<tr><td>P-03</td><td>上限消化時の参考課金額(<code>yenEquivalent</code>)を算出して返却する</td></tr>
-</tbody>
-</table>
-<h3>レスポンス(200)</h3>
+<pre><code>{}</code></pre><h3>レスポンス(200)</h3>
 <pre><code>{
   "projectId": "prj_...",
   "period": "2026-05-01T00:00:00Z",
@@ -514,6 +508,17 @@
 </tbody>
 </table>
 <p><code>project_quota_limits.resource_kind='question_monthly_limit'</code> かつ <code>source='owner'</code> の 1 行だけを upsert する。質問数の <code>free_quota</code> と FAQ 件数の行は更新しない。</p>
+<h3>処理概要</h3>
+<p class="section-lead">質問数の月次上限 ON/OFF・件数・アラート閾値を更新する。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>認証・認可(オーナー / 該当 PJ の <code>admin</code>、再認証必須)を検証する</td></tr>
+<tr><td>P-02</td><td>入力(上限 ON/OFF・件数・アラート閾値)を検証し正規化する</td></tr>
+<tr><td>P-03</td><td>質問数月次上限(<code>source='owner'</code>)を作成 / 更新する</td></tr>
+<tr><td>P-04</td><td>参考課金額を再算出し更新後の値を返却する</td></tr>
+</tbody>
+</table>
 <h3>I/O</h3>
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
@@ -543,19 +548,7 @@
 </tbody>
 </table>
 <p>例(ON)。例(OFF): <code>{ "limitEnabled": false, "limit": null, "alertThresholds": [] }</code>。</p>
-<p>バリデーション: <code>limitEnabled=true</code> の場合、<code>limit</code> は必須かつ 1 件刻みで最小件数・最大件数の範囲内。<code>alertThresholds</code> は <code>25</code> / <code>50</code> / <code>80</code> / <code>90</code> / <code>100</code> の重複しない配列とし、サーバ側で昇順へ正規化する。空配列はアラート通知なし。<code>limitEnabled=false</code> の場合は <code>limit=null</code>、<code>alertThresholds=[]</code> とする。<code>freeQuota</code> / <code>alertEnabled</code> / <code>alertFrequency</code> を指定した場合は未サポート項目として 422。</p>
-<h3>処理概要</h3>
-<p class="section-lead">質問数の月次上限 ON/OFF・件数・アラート閾値を更新する。</p>
-<table>
-<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
-<tbody>
-<tr><td>P-01</td><td>認証・認可(オーナー / 該当 PJ の <code>admin</code>、再認証必須)を検証する</td></tr>
-<tr><td>P-02</td><td>入力(上限 ON/OFF・件数・アラート閾値)を検証し正規化する</td></tr>
-<tr><td>P-03</td><td>質問数月次上限(<code>source='owner'</code>)を作成 / 更新する</td></tr>
-<tr><td>P-04</td><td>参考課金額を再算出し更新後の値を返却する</td></tr>
-</tbody>
-</table>
-<h3>レスポンス(200)</h3>
+<p>バリデーション: <code>limitEnabled=true</code> の場合、<code>limit</code> は必須かつ 1 件刻みで最小件数・最大件数の範囲内。<code>alertThresholds</code> は <code>25</code> / <code>50</code> / <code>80</code> / <code>90</code> / <code>100</code> の重複しない配列とし、サーバ側で昇順へ正規化する。空配列はアラート通知なし。<code>limitEnabled=false</code> の場合は <code>limit=null</code>、<code>alertThresholds=[]</code> とする。<code>freeQuota</code> / <code>alertEnabled</code> / <code>alertFrequency</code> を指定した場合は未サポート項目として 422。</p><h3>レスポンス(200)</h3>
 <pre><code>{ "projectId": "prj_...", "limitEnabled": true, "limit": 5000, "alertThresholds": [25, 50, 80, 90, 100], "yenEquivalent": 2000, "source": "owner", "updatedAt": "..." }</code></pre>
 <table>
 <thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>

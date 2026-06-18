@@ -40,6 +40,16 @@
 <tr><td>権限</td><td><strong>オーナー専有</strong></td></tr>
 </tbody>
 </table>
+<h3>処理概要</h3>
+<p class="section-lead">契約配下のプロジェクト一覧を返す。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>認証・認可(オーナー専有)を検証する</td></tr>
+<tr><td>P-02</td><td>契約配下の有効なプロジェクトを取得する(FAQ 件数・許可ドメイン等を付帯)</td></tr>
+<tr><td>P-03</td><td>ページング(カーソル)で整形して返す</td></tr>
+</tbody>
+</table>
 <h3>I/O</h3>
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
@@ -65,18 +75,7 @@
 <h4>Path Parameters</h4>
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
-<pre><code>{}</code></pre>
-<h3>処理概要</h3>
-<p class="section-lead">契約配下のプロジェクト一覧を返す。</p>
-<table>
-<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
-<tbody>
-<tr><td>P-01</td><td>認証・認可(オーナー専有)を検証する</td></tr>
-<tr><td>P-02</td><td>契約配下の有効なプロジェクトを取得する(FAQ 件数・許可ドメイン等を付帯)</td></tr>
-<tr><td>P-03</td><td>ページング(カーソル)で整形して返す</td></tr>
-</tbody>
-</table>
-<h3>レスポンス(200)</h3>
+<pre><code>{}</code></pre><h3>レスポンス(200)</h3>
 <pre><code>{
   "items": [
     {
@@ -128,6 +127,18 @@
 <tr><td>権限</td><td><strong>オーナー専有</strong>(プロジェクト設定全般を含めオーナーのみ実行可)</td></tr>
 </tbody>
 </table>
+<h3>処理概要</h3>
+<p class="section-lead">プロジェクトを作成し公開キーを発行する(オーナーを自動 admin 化)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>認証・認可(オーナー専有)を検証する</td></tr>
+<tr><td>P-02</td><td>入力値(プロジェクト名・許可ドメイン)を検証し、名称重複を判定する</td></tr>
+<tr><td>P-03</td><td>プロジェクトを作成しウィジェット公開キーを発行する</td></tr>
+<tr><td>P-04</td><td>同一トランザクションでオーナーを当該プロジェクトの管理者として自動付与する</td></tr>
+<tr><td>P-05</td><td>作成結果(ID・公開キー)を返す</td></tr>
+</tbody>
+</table>
 <h3>I/O</h3>
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
@@ -161,20 +172,7 @@
 <li>リクエストに <code>initialAdmins</code> フィールド(<code>selfAsAdmin</code> フラグや <code>adminEmails[]</code>)は持たない。オーナーは作成時に自動で当該プロジェクトの管理者となるため、UI / API での個別指定は不要。</li>
 <li>サーバー側処理: プロジェクト作成と同一トランザクションで、オーナーを当該プロジェクトの管理者(<code>project_users.role='admin'</code>・<code>valid=1</code>)として 1 行自動付与する(オーナー自動 admin 行付与)。認可上は <code>isOwner=true</code> bypass を維持しつつ、本 admin 行は critical 通知の宛先解決(<code>role='admin'</code> かつ <code>valid=1</code> の利用者)と画面表示の事実情報として参照される。</li>
 <li>他者をプロジェクト管理者として招待する操作は、プロジェクト作成後に当該プロジェクトの SCR-009 / SCR-009-001(プロジェクト WS)から <code>POST /projects/{id}/members</code>(API-011)経由で行う。</li>
-</ul>
-<h3>処理概要</h3>
-<p class="section-lead">プロジェクトを作成し公開キーを発行する(オーナーを自動 admin 化)。</p>
-<table>
-<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
-<tbody>
-<tr><td>P-01</td><td>認証・認可(オーナー専有)を検証する</td></tr>
-<tr><td>P-02</td><td>入力値(プロジェクト名・許可ドメイン)を検証し、名称重複を判定する</td></tr>
-<tr><td>P-03</td><td>プロジェクトを作成しウィジェット公開キーを発行する</td></tr>
-<tr><td>P-04</td><td>同一トランザクションでオーナーを当該プロジェクトの管理者として自動付与する</td></tr>
-<tr><td>P-05</td><td>作成結果(ID・公開キー)を返す</td></tr>
-</tbody>
-</table>
-<h3>レスポンス(201)</h3>
+</ul><h3>レスポンス(201)</h3>
 <pre><code>{
   "id": "01HZ...",
   "widgetKey": "pk_live_abc123..."
@@ -212,7 +210,35 @@
 <tr><td>権限</td><td><strong>オーナー専有</strong></td></tr>
 </tbody>
 </table>
-<h3>リクエストパラメータ</h3>
+<h3>処理概要</h3>
+<p class="section-lead">プロジェクトの部分更新 / 論理削除(FR-030b)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>当該プロジェクトの全メンバー割当を論理削除する(オーナー自身の管理者割当を含む)</td></tr>
+<tr><td>P-02</td><td>他プロジェクトの有効な割当が 0 件かつオーナーでない利用者は、アカウントを論理削除し、全セッション失効と未使用招待トークンの失効を行う</td></tr>
+<tr><td>P-03</td><td>プロジェクトを削除状態(<code>status='deleted'</code>・論理削除)にする</td></tr>
+<tr><td>P-04</td><td>関連データ(許可ドメイン / FAQ / 未解決質問 / 質問ログ)へ論理削除を伝播する。匿名化モードの即時匿名化は行わず、90 日後の物理削除バッチで実施する</td></tr>
+<tr><td>P-05</td><td>監査ログ(プロジェクト論理削除・<code>retention_class='general'</code>)を記録する</td></tr>
+</tbody>
+</table>
+<p>上記 1-5 はアプリ層のトランザクション内で実装する。論理削除データは <code>updated_at</code> 基準で 90 日経過後に物理削除バッチ(DD13)で物理削除される。物理削除時は <code>ON DELETE CASCADE</code> で関連行が連鎖物理削除される。</p>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>projects</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
+<tr><td><code>allowed_domains</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>project_users</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>users</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>sessions</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>access_tokens</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>faqs</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>question_logs</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>inquiries</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>audit_logs</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+</tbody>
+</table><h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{}</code></pre>
 <h4>Path Parameters</h4>
@@ -238,35 +264,6 @@
 </tbody>
 </table>
 <p>上記 Request Body は PATCH(部分更新)時のもの。DELETE 時はボディなし。<code>DELETE /projects/{id}</code> 実行時の挙動(FR-030b、論理削除)。</p>
-<h3>I/O</h3>
-<table>
-<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
-<tbody>
-<tr><td><code>projects</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
-<tr><td><code>allowed_domains</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
-<tr><td><code>project_users</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
-<tr><td><code>users</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
-<tr><td><code>sessions</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
-<tr><td><code>access_tokens</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
-<tr><td><code>faqs</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
-<tr><td><code>question_logs</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
-<tr><td><code>inquiries</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
-<tr><td><code>audit_logs</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
-</tbody>
-</table>
-<h3>処理概要</h3>
-<p class="section-lead">プロジェクトの部分更新 / 論理削除(FR-030b)。</p>
-<table>
-<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
-<tbody>
-<tr><td>P-01</td><td>当該プロジェクトの全メンバー割当を論理削除する(オーナー自身の管理者割当を含む)</td></tr>
-<tr><td>P-02</td><td>他プロジェクトの有効な割当が 0 件かつオーナーでない利用者は、アカウントを論理削除し、全セッション失効と未使用招待トークンの失効を行う</td></tr>
-<tr><td>P-03</td><td>プロジェクトを削除状態(<code>status='deleted'</code>・論理削除)にする</td></tr>
-<tr><td>P-04</td><td>関連データ(許可ドメイン / FAQ / 未解決質問 / 質問ログ)へ論理削除を伝播する。匿名化モードの即時匿名化は行わず、90 日後の物理削除バッチで実施する</td></tr>
-<tr><td>P-05</td><td>監査ログ(プロジェクト論理削除・<code>retention_class='general'</code>)を記録する</td></tr>
-</tbody>
-</table>
-<p>上記 1-5 はアプリ層のトランザクション内で実装する。論理削除データは <code>updated_at</code> 基準で 90 日経過後に物理削除バッチ(DD13)で物理削除される。物理削除時は <code>ON DELETE CASCADE</code> で関連行が連鎖物理削除される。</p>
 <h3>レスポンス(200)</h3>
 <p>PATCH は更新後のプロジェクト、DELETE は <code>{ "ok": true, "status": "deleted" }</code>。</p>
 <p class="ps-label">PATCH(更新後のプロジェクト)</p>
@@ -312,6 +309,17 @@
 <tr><td>権限</td><td>オーナー専有</td></tr>
 </tbody>
 </table>
+<h3>処理概要</h3>
+<p class="section-lead">公開キーを再発行する(旧キーは 24 時間猶予で失効)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>認証・認可(オーナー専有)と再認証を検証する</td></tr>
+<tr><td>P-02</td><td>新しいウィジェット公開キーを発行して有効化する</td></tr>
+<tr><td>P-03</td><td>旧キーを 24 時間猶予で失効予約する</td></tr>
+<tr><td>P-04</td><td>新キーと失効予告を返す</td></tr>
+</tbody>
+</table>
 <h3>I/O</h3>
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
@@ -332,19 +340,7 @@
 </table>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
-<p>公開キーは無期限のため有効期限指定パラメータは持たない。</p>
-<h3>処理概要</h3>
-<p class="section-lead">公開キーを再発行する(旧キーは 24 時間猶予で失効)。</p>
-<table>
-<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
-<tbody>
-<tr><td>P-01</td><td>認証・認可(オーナー専有)と再認証を検証する</td></tr>
-<tr><td>P-02</td><td>新しいウィジェット公開キーを発行して有効化する</td></tr>
-<tr><td>P-03</td><td>旧キーを 24 時間猶予で失効予約する</td></tr>
-<tr><td>P-04</td><td>新キーと失効予告を返す</td></tr>
-</tbody>
-</table>
-<h3>レスポンス(201)</h3>
+<p>公開キーは無期限のため有効期限指定パラメータは持たない。</p><h3>レスポンス(201)</h3>
 <pre><code>{ "newKey": "pk_live_xyz789...", "deprecationWarning": "..." }</code></pre>
 <table>
 <thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>

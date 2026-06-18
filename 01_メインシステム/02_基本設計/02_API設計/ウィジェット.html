@@ -39,6 +39,18 @@
 <tr><td>権限</td><td>end_user(公開キー)</td></tr>
 </tbody>
 </table>
+<h3>処理概要</h3>
+<p class="section-lead">公開キーとドメインを検証しウィジェットセッションを発行する。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>公開キーを検証し、対象プロジェクトを特定する</td></tr>
+<tr><td>P-02</td><td>リクエスト元オリジンが許可ドメインに含まれるか検証する</td></tr>
+<tr><td>P-03</td><td>契約状態(停止中か)を確認する</td></tr>
+<tr><td>P-04</td><td>ウィジェットセッショントークンを発行する</td></tr>
+<tr><td>P-05</td><td>プロジェクト表示設定を整形して返却する</td></tr>
+</tbody>
+</table>
 <h3>I/O</h3>
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
@@ -65,20 +77,7 @@
 <tr><td><code>publicKey</code></td><td>string</td><td>プロジェクトの公開キー。必須</td></tr>
 <tr><td><code>origin</code></td><td>string</td><td>リクエスト元オリジン(許可ドメイン検証に使用)。必須</td></tr>
 </tbody>
-</table>
-<h3>処理概要</h3>
-<p class="section-lead">公開キーとドメインを検証しウィジェットセッションを発行する。</p>
-<table>
-<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
-<tbody>
-<tr><td>P-01</td><td>公開キーを検証し、対象プロジェクトを特定する</td></tr>
-<tr><td>P-02</td><td>リクエスト元オリジンが許可ドメインに含まれるか検証する</td></tr>
-<tr><td>P-03</td><td>契約状態(停止中か)を確認する</td></tr>
-<tr><td>P-04</td><td>ウィジェットセッショントークンを発行する</td></tr>
-<tr><td>P-05</td><td>プロジェクト表示設定を整形して返却する</td></tr>
-</tbody>
-</table>
-<h3>レスポンス(200)</h3>
+</table><h3>レスポンス(200)</h3>
 <pre><code>{
   "sessionToken": "wst_...",
   "expiresIn": 3600,
@@ -127,6 +126,19 @@
 <tr><td>権限</td><td>end_user(セッション)</td></tr>
 </tbody>
 </table>
+<h3>処理概要</h3>
+<p class="section-lead">AI 回答を生成し質問ログを記録する。未回答時は未解決質問を同時生成する。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>セッショントークンとオリジンを検証する</td></tr>
+<tr><td>P-02</td><td>契約単位のレート制限とプロジェクト月次上限を判定する</td></tr>
+<tr><td>P-03</td><td>AI 推論 IF で候補 FAQ から回答を生成する</td></tr>
+<tr><td>P-04</td><td>質問ログを記録する</td></tr>
+<tr><td>P-05</td><td>未回答時は未解決質問を同一トランザクションで生成する</td></tr>
+<tr><td>P-06</td><td>回答または未回答理由・連絡先を返却する</td></tr>
+</tbody>
+</table>
 <h3>I/O</h3>
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
@@ -150,21 +162,7 @@
 <tr><td><code>question</code></td><td>string</td><td>ウィジェット利用者が送信した質問内容。必須</td></tr>
 <tr><td><code>projectId</code></td><td>string</td><td>対象プロジェクトの ID。必須</td></tr>
 </tbody>
-</table>
-<h3>処理概要</h3>
-<p class="section-lead">AI 回答を生成し質問ログを記録する。未回答時は未解決質問を同時生成する。</p>
-<table>
-<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
-<tbody>
-<tr><td>P-01</td><td>セッショントークンとオリジンを検証する</td></tr>
-<tr><td>P-02</td><td>契約単位のレート制限とプロジェクト月次上限を判定する</td></tr>
-<tr><td>P-03</td><td>AI 推論 IF で候補 FAQ から回答を生成する</td></tr>
-<tr><td>P-04</td><td>質問ログを記録する</td></tr>
-<tr><td>P-05</td><td>未回答時は未解決質問を同一トランザクションで生成する</td></tr>
-<tr><td>P-06</td><td>回答または未回答理由・連絡先を返却する</td></tr>
-</tbody>
-</table>
-<h3>レスポンス(200)</h3>
+</table><h3>レスポンス(200)</h3>
 <p>answered:</p>
 <pre><code>{
   "type": "answered",
@@ -235,6 +233,17 @@
 <tr><td>権限</td><td>end_user(セッション)</td></tr>
 </tbody>
 </table>
+<h3>処理概要</h3>
+<p class="section-lead">未解決質問を登録する(チャット部屋は作成しない)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>セッショントークンを検証する</td></tr>
+<tr><td>P-02</td><td>冪等キーで重複登録を排除する</td></tr>
+<tr><td>P-03</td><td>対象質問ログから未解決質問を登録する(チャット部屋は作成しない)</td></tr>
+<tr><td>P-04</td><td>登録結果(未解決質問 ID・状況)を返却する</td></tr>
+</tbody>
+</table>
 <h3>I/O</h3>
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
@@ -259,19 +268,7 @@
 <tr><td><code>questionId</code></td><td>string</td><td>未解決質問の元となる質問ログの ID。必須</td></tr>
 <tr><td><code>idempotencyKey</code></td><td>string</td><td>重複登録を排除する冪等キー(UUIDv4)。必須</td></tr>
 </tbody>
-</table>
-<h3>処理概要</h3>
-<p class="section-lead">未解決質問を登録する(チャット部屋は作成しない)。</p>
-<table>
-<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
-<tbody>
-<tr><td>P-01</td><td>セッショントークンを検証する</td></tr>
-<tr><td>P-02</td><td>冪等キーで重複登録を排除する</td></tr>
-<tr><td>P-03</td><td>対象質問ログから未解決質問を登録する(チャット部屋は作成しない)</td></tr>
-<tr><td>P-04</td><td>登録結果(未解決質問 ID・状況)を返却する</td></tr>
-</tbody>
-</table>
-<h3>レスポンス(201)</h3>
+</table><h3>レスポンス(201)</h3>
 <pre><code>{ "inquiryId": "inq_...", "inquiryCode": "INQ-20260513-XYZ123", "status": "open" }</code></pre>
 <table>
 <thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
