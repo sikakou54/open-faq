@@ -238,8 +238,14 @@
 
   /* --- 見出しアンカー + 目次 + スクロールスパイ --- */
   var heads = article.querySelectorAll('h2, h3');
+  var usedIds = {};
   heads.forEach(function(h){
-    if(!h.id) h.id = h.textContent.trim().replace(/\s+/g,'-');
+    if(!h.id){
+      var base = h.textContent.trim().replace(/\s+/g,'-'), id = base, k = 2;
+      while(usedIds[id] || document.getElementById(id)){ id = base+'-'+k; k++; }
+      h.id = id;
+    }
+    usedIds[h.id] = true;
     var a = document.createElement('a');
     a.className='heading-anchor'; a.href='#'+h.id;
     a.innerHTML='<i class="bi bi-link-45deg" aria-hidden="true"></i>';
