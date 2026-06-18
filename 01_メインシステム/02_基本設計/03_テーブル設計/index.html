@@ -83,8 +83,7 @@
 <tr>
 <th>#</th>
 <th>TBL-ID</th>
-<th>テーブル名</th>
-<th>論理名</th>
+<th>テーブル名 / 論理名</th>
 <th>概要</th>
 <th>主キー</th>
 <th><code>contract_owner_user_id</code></th>
@@ -98,8 +97,7 @@
 <tr>
 <td>1</td>
 <td>TBL-001</td>
-<td><a href="users.html"><code>users</code></a></td>
-<td>ユーザーマスタ(管理者専用)</td>
+<td><a href="users.html"><code>users</code></a><br>ユーザーマスタ(管理者専用)</td>
 <td>管理者(オーナー / プロジェクト管理者 / メンバー)の認証情報を一元保持(<code>contract_owners</code> 行存在でオーナー判定)。エンドユーザーは含まない</td>
 <td><code>id</code></td>
 <td>(<code>users</code> 単独では持たず、<code>contract_owners.user_id</code> / <code>project_users.contract_owner_user_id</code> で表現)</td>
@@ -111,8 +109,7 @@
 <tr>
 <td>2</td>
 <td>TBL-002</td>
-<td><a href="contract_owners.html"><code>contract_owners</code></a></td>
-<td>契約者ユーザー</td>
+<td><a href="contract_owners.html"><code>contract_owners</code></a><br>契約者ユーザー</td>
 <td>オーナー専有属性(<code>contract_status</code> / <code>data_deletion_mode</code>)。行存在 = オーナー判定</td>
 <td><code>user_id</code></td>
 <td>(本テーブル自身が契約境界、<code>user_id</code> = <code>contract_owner_user_id</code>)</td>
@@ -124,8 +121,7 @@
 <tr>
 <td>3</td>
 <td>TBL-003</td>
-<td><a href="project_users.html"><code>project_users</code></a></td>
-<td>プロジェクトユーザー割当 + プロジェクト別ロール</td>
+<td><a href="project_users.html"><code>project_users</code></a><br>プロジェクトユーザー割当 + プロジェクト別ロール</td>
 <td>オーナー / メンバーのプロジェクトアクセスとロール(<code>admin</code> / <code>member</code>)</td>
 <td><code>(user_id, project_id)</code></td>
 <td>あり(<code>contract_owner_user_id</code> で契約境界冗長保持)</td>
@@ -137,8 +133,7 @@
 <tr>
 <td>4</td>
 <td>TBL-004</td>
-<td><a href="sessions.html"><code>sessions</code></a></td>
-<td>セッション</td>
+<td><a href="sessions.html"><code>sessions</code></a><br>セッション</td>
 <td>セッション管理(複数デバイス対応)</td>
 <td><code>id</code></td>
 <td>(<code>users</code> 経由)</td>
@@ -150,8 +145,7 @@
 <tr>
 <td>5</td>
 <td>TBL-005</td>
-<td><a href="access_tokens.html"><code>access_tokens</code></a></td>
-<td>アクセストークン</td>
+<td><a href="access_tokens.html"><code>access_tokens</code></a><br>アクセストークン</td>
 <td>招待 / パスワード再設定等のトークン</td>
 <td><code>id</code></td>
 <td>(<code>users</code> 経由)</td>
@@ -163,8 +157,7 @@
 <tr>
 <td>6</td>
 <td>TBL-006</td>
-<td><a href="projects.html"><code>projects</code></a></td>
-<td>プロジェクト</td>
+<td><a href="projects.html"><code>projects</code></a><br>プロジェクト</td>
 <td>FAQ プロジェクト / ウィジェット設定</td>
 <td><code>id</code></td>
 <td>あり</td>
@@ -176,8 +169,7 @@
 <tr>
 <td>7</td>
 <td>TBL-007</td>
-<td><a href="project_legacy_keys.html"><code>project_legacy_keys</code></a></td>
-<td>レガシー API キー</td>
+<td><a href="project_legacy_keys.html"><code>project_legacy_keys</code></a><br>レガシー API キー</td>
 <td>ウィジェット鍵ローテーション 24 時間猶予</td>
 <td><code>id</code></td>
 <td>(<code>projects</code> 経由)</td>
@@ -189,8 +181,7 @@
 <tr>
 <td>8</td>
 <td>TBL-008</td>
-<td><a href="allowed_domains.html"><code>allowed_domains</code></a></td>
-<td>許可ドメイン</td>
+<td><a href="allowed_domains.html"><code>allowed_domains</code></a><br>許可ドメイン</td>
 <td>ウィジェット埋め込み許可ドメイン</td>
 <td><code>id</code></td>
 <td>(<code>projects</code> 経由)</td>
@@ -202,8 +193,7 @@
 <tr>
 <td>9</td>
 <td>TBL-009</td>
-<td><a href="faqs.html"><code>faqs</code></a></td>
-<td>FAQ</td>
+<td><a href="faqs.html"><code>faqs</code></a><br>FAQ</td>
 <td>FAQ 本体</td>
 <td><code>id</code></td>
 <td>あり</td>
@@ -215,8 +205,7 @@
 <tr>
 <td>10</td>
 <td>TBL-010</td>
-<td><a href="faq_revisions.html"><code>faq_revisions</code></a></td>
-<td>FAQ 改訂履歴</td>
+<td><a href="faq_revisions.html"><code>faq_revisions</code></a><br>FAQ 改訂履歴</td>
 <td>全文スナップショット 50 件保持</td>
 <td><code>id</code></td>
 <td>(<code>faqs</code> 経由)</td>
@@ -228,8 +217,7 @@
 <tr>
 <td>11</td>
 <td>TBL-011</td>
-<td><a href="faq_search_fts.html"><code>faq_search_fts</code></a></td>
-<td>FAQ 全文検索</td>
+<td><a href="faq_search_fts.html"><code>faq_search_fts</code></a><br>FAQ 全文検索</td>
 <td>FTS5 仮想テーブル(trigram)</td>
 <td>(rowid)</td>
 <td>(<code>faqs</code> 連動)</td>
@@ -241,8 +229,7 @@
 <tr>
 <td>12</td>
 <td>TBL-012</td>
-<td><a href="question_logs.html"><code>question_logs</code></a></td>
-<td>質問ログ</td>
+<td><a href="question_logs.html"><code>question_logs</code></a><br>質問ログ</td>
 <td>エンドユーザーからの質問 / AI 推論</td>
 <td><code>id</code></td>
 <td>あり</td>
@@ -254,8 +241,7 @@
 <tr>
 <td>13</td>
 <td>TBL-013</td>
-<td><a href="question_log_faq_refs.html"><code>question_log_faq_refs</code></a></td>
-<td>参照 FAQ</td>
+<td><a href="question_log_faq_refs.html"><code>question_log_faq_refs</code></a><br>参照 FAQ</td>
 <td>質問と FAQ の M:N 関係</td>
 <td><code>id</code></td>
 <td>(経由)</td>
@@ -267,8 +253,7 @@
 <tr>
 <td>14</td>
 <td>TBL-014</td>
-<td><a href="inquiries.html"><code>inquiries</code></a></td>
-<td>未解決質問</td>
+<td><a href="inquiries.html"><code>inquiries</code></a><br>未解決質問</td>
 <td>FAQ 登録前の未解決質問</td>
 <td><code>id</code></td>
 <td>あり</td>
@@ -280,8 +265,7 @@
 <tr>
 <td>15</td>
 <td>TBL-015</td>
-<td><a href="notification_logs.html"><code>notification_logs</code></a></td>
-<td>通知ログ</td>
+<td><a href="notification_logs.html"><code>notification_logs</code></a><br>通知ログ</td>
 <td>メール通知の送信履歴</td>
 <td><code>id</code></td>
 <td>あり</td>
@@ -293,8 +277,7 @@
 <tr>
 <td>16</td>
 <td>TBL-016</td>
-<td><a href="ai_threshold_persistent_cache.html"><code>ai_threshold_persistent_cache</code></a></td>
-<td>AI しきい値キャッシュ</td>
+<td><a href="ai_threshold_persistent_cache.html"><code>ai_threshold_persistent_cache</code></a><br>AI しきい値キャッシュ</td>
 <td>3 階層しきい値の永続キャッシュ</td>
 <td><code>id</code></td>
 <td>あり(scope=<code>owner</code> 時)</td>
@@ -306,8 +289,7 @@
 <tr>
 <td>17</td>
 <td>TBL-017</td>
-<td><a href="email_suppression_list.html"><code>email_suppression_list</code></a></td>
-<td>メールサプレスリスト</td>
+<td><a href="email_suppression_list.html"><code>email_suppression_list</code></a><br>メールサプレスリスト</td>
 <td>バウンス・苦情の全契約横断管理</td>
 <td><code>id</code></td>
 <td>(全契約横断)</td>
@@ -319,8 +301,7 @@
 <tr>
 <td>18</td>
 <td>TBL-018</td>
-<td><a href="audit_logs.html"><code>audit_logs</code></a></td>
-<td>監査ログ(メイン側、API 操作ログ専用)</td>
+<td><a href="audit_logs.html"><code>audit_logs</code></a><br>監査ログ(メイン側、API 操作ログ専用)</td>
 <td>メイン管理者向けの API 操作ログ。<strong>ハッシュチェーン正本は運営者側 <code>audit_logs</code></strong>(IF #8 で片方向同期)</td>
 <td><code>id</code></td>
 <td>あり(<code>contract_owner_user_id</code> カラム)</td>
@@ -332,8 +313,7 @@
 <tr>
 <td>19</td>
 <td>TBL-019</td>
-<td><a href="error_logs.html"><code>error_logs</code></a></td>
-<td>エラーログ</td>
+<td><a href="error_logs.html"><code>error_logs</code></a><br>エラーログ</td>
 <td>サーバーエラー記録</td>
 <td><code>id</code></td>
 <td>あり(可)</td>
@@ -345,8 +325,7 @@
 <tr>
 <td>20</td>
 <td>TBL-020</td>
-<td><a href="billing_subscriptions.html"><code>billing_subscriptions</code></a></td>
-<td>課金サブスクリプション</td>
+<td><a href="billing_subscriptions.html"><code>billing_subscriptions</code></a><br>課金サブスクリプション</td>
 <td>Stripe Subscription 連動</td>
 <td><code>id</code></td>
 <td>あり</td>
@@ -358,8 +337,7 @@
 <tr>
 <td>21</td>
 <td>TBL-021</td>
-<td><a href="billing_invoices.html"><code>billing_invoices</code></a></td>
-<td>請求書</td>
+<td><a href="billing_invoices.html"><code>billing_invoices</code></a><br>請求書</td>
 <td>月次請求書(電子帳簿保存法)</td>
 <td><code>id</code></td>
 <td>あり</td>
@@ -371,8 +349,7 @@
 <tr>
 <td>22</td>
 <td>TBL-022</td>
-<td><a href="usage_metering.html"><code>usage_metering</code></a></td>
-<td>利用量計測(プロジェクト単位)</td>
+<td><a href="usage_metering.html"><code>usage_metering</code></a><br>利用量計測(プロジェクト単位)</td>
 <td>質問数 / FAQ 件数を <strong>プロジェクト単位</strong> で計測(請求は owner で SUM 集計)</td>
 <td><code>id</code></td>
 <td>あり</td>
@@ -384,8 +361,7 @@
 <tr>
 <td>23</td>
 <td>TBL-023</td>
-<td><a href="owner_quota_overrides.html"><code>owner_quota_overrides</code></a></td>
-<td>契約別レート上書き</td>
+<td><a href="owner_quota_overrides.html"><code>owner_quota_overrides</code></a><br>契約別レート上書き</td>
 <td>運営者によるレート制限上書き。<strong>月次上限件数は <code>project_quota_limits</code>(#24)へ分離</strong>。本テーブルはレート種別(<code>*_per_*</code>)専用</td>
 <td><code>id</code></td>
 <td>あり</td>
@@ -397,8 +373,7 @@
 <tr>
 <td>24</td>
 <td>TBL-024</td>
-<td><a href="project_quota_limits.html"><code>project_quota_limits</code></a></td>
-<td>プロジェクト別利用設定</td>
+<td><a href="project_quota_limits.html"><code>project_quota_limits</code></a><br>プロジェクト別利用設定</td>
 <td>質問数の月次上限件数・無料枠・アラートと、運営者が管理するFAQ件数の無料枠をプロジェクト単位で保持</td>
 <td><code>id</code></td>
 <td>あり</td>
@@ -410,8 +385,7 @@
 <tr>
 <td>25</td>
 <td>TBL-025</td>
-<td><a href="service_announcements.html"><code>service_announcements</code></a></td>
-<td>お知らせ(Control Plane)</td>
+<td><a href="service_announcements.html"><code>service_announcements</code></a><br>お知らせ(Control Plane)</td>
 <td>運営者発信のお知らせ本体</td>
 <td><code>id</code></td>
 <td>(全契約横断 or 限定)</td>
@@ -423,8 +397,7 @@
 <tr>
 <td>26</td>
 <td>TBL-026</td>
-<td><a href="announcement_audiences.html"><code>announcement_audiences</code></a></td>
-<td>お知らせ配信対象 M:N</td>
+<td><a href="announcement_audiences.html"><code>announcement_audiences</code></a><br>お知らせ配信対象 M:N</td>
 <td>お知らせの配信先 owner 限定指定(行 0 件 = 全契約配信)</td>
 <td><code>(announcement_id, contract_owner_user_id)</code></td>
 <td>(限定)</td>
@@ -436,8 +409,7 @@
 <tr>
 <td>27</td>
 <td>TBL-027</td>
-<td><a href="announcement_recipients.html"><code>announcement_recipients</code></a></td>
-<td>お知らせ受信者</td>
+<td><a href="announcement_recipients.html"><code>announcement_recipients</code></a><br>お知らせ受信者</td>
 <td>お知らせ配信先・配信集計・監査</td>
 <td><code>id</code></td>
 <td>あり</td>
@@ -449,8 +421,7 @@
 <tr>
 <td>28</td>
 <td>TBL-028</td>
-<td><a href="inbox_messages.html"><code>inbox_messages</code></a></td>
-<td>受信箱(Tenant Plane)</td>
+<td><a href="inbox_messages.html"><code>inbox_messages</code></a><br>受信箱(Tenant Plane)</td>
 <td>利用者のお知らせ・通知の既読管理</td>
 <td><code>id</code></td>
 <td>あり</td>
@@ -462,8 +433,7 @@
 <tr>
 <td>29</td>
 <td>TBL-029</td>
-<td><a href="withdrawal_requests.html"><code>withdrawal_requests</code></a></td>
-<td>退会申請</td>
+<td><a href="withdrawal_requests.html"><code>withdrawal_requests</code></a><br>退会申請</td>
 <td>退会申請レコード(90 日猶予)</td>
 <td><code>id</code></td>
 <td>あり</td>
@@ -475,8 +445,7 @@
 <tr>
 <td>30</td>
 <td>TBL-030</td>
-<td><a href="terms_versions.html"><code>terms_versions</code></a></td>
-<td>規約版数</td>
+<td><a href="terms_versions.html"><code>terms_versions</code></a><br>規約版数</td>
 <td>規約 / プライバシーポリシーの版</td>
 <td><code>version</code></td>
 <td>(全契約横断)</td>
@@ -488,8 +457,7 @@
 <tr>
 <td>31</td>
 <td>TBL-031</td>
-<td><a href="terms_agreements.html"><code>terms_agreements</code></a></td>
-<td>規約同意</td>
+<td><a href="terms_agreements.html"><code>terms_agreements</code></a><br>規約同意</td>
 <td>利用者ごとの同意履歴</td>
 <td><code>id</code></td>
 <td>(<code>users</code> 経由)</td>
