@@ -78,7 +78,7 @@
 <td></td>
 <td></td>
 <td><code>'active'</code></td>
-<td><code>contract_status IN ('active','suspended','deleted_pending','deleted')</code><br>（複合）<code>contract_status='deleted'</code> のとき必ず <code>valid=0</code>(両者は同時セット)。<code>(contract_status &lt;&gt; 'deleted' AND valid = 1) OR (contract_status = 'deleted' AND valid = 0)</code></td>
+<td><code>contract_status IN ('active','suspended','deleted_pending','deleted')</code></td>
 
 </tr>
 <tr>
@@ -239,7 +239,7 @@
 <tr>
 <td><code>contract_status</code></td>
 <td><code>deleted</code></td>
-<td>削除済み(オーナー退会完了。<code>valid=0</code> も同時セット = CHECK 制約で強制)</td>
+<td>削除済み(オーナー退会完了。<code>valid=0</code> も同時セット)</td>
 </tr>
 <tr>
 <td><code>data_deletion_mode</code></td>
