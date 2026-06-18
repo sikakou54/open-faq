@@ -39,7 +39,6 @@
 <tr><td>エンドポイント</td><td><code>/usage</code></td></tr>
 <tr><td>HTTP メソッド</td><td>GET</td></tr>
 <tr><td>概要</td><td>プロジェクト単位の利用量を返す</td></tr>
-<tr><td>利用画面</td><td>SCR-021 / SCR-008</td></tr>
 <tr><td>認証</td><td>Cookie</td></tr>
 <tr><td>権限</td><td>オーナー / 該当プロジェクトの <code>admin</code> または <code>member</code></td></tr>
 </tbody>
@@ -73,7 +72,6 @@
 <tr><td>エンドポイント</td><td><code>/owner/projects/usage</code></td></tr>
 <tr><td>HTTP メソッド</td><td>GET</td></tr>
 <tr><td>概要</td><td>契約全体サマリーとプロジェクト別利用量を返す</td></tr>
-<tr><td>利用画面</td><td>SCR-016 利用状況</td></tr>
 <tr><td>認証</td><td>Cookie</td></tr>
 <tr><td>権限</td><td>オーナー専有</td></tr>
 </tbody>
@@ -113,7 +111,6 @@
 <tr><td>エンドポイント</td><td><code>/billing/summary</code></td></tr>
 <tr><td>HTTP メソッド</td><td>GET</td></tr>
 <tr><td>概要</td><td>当月請求見込み合計・次回請求日・請求状態・プロジェクト別内訳・支払方法登録状態を返す</td></tr>
-<tr><td>利用画面</td><td>SCR-022 請求</td></tr>
 <tr><td>認証</td><td>Cookie</td></tr>
 <tr><td>権限</td><td>オーナー専有</td></tr>
 </tbody>
@@ -155,7 +152,6 @@
 <tr><td>エンドポイント</td><td><code>/billing/invoices</code></td></tr>
 <tr><td>HTTP メソッド</td><td>GET</td></tr>
 <tr><td>概要</td><td>過去請求書を一覧取得する</td></tr>
-<tr><td>利用画面</td><td>SCR-022 請求</td></tr>
 <tr><td>認証</td><td>Cookie</td></tr>
 <tr><td>権限</td><td>オーナー専有</td></tr>
 </tbody>
@@ -194,7 +190,6 @@
 <tr><td>エンドポイント</td><td><code>/billing/payment-method</code></td></tr>
 <tr><td>HTTP メソッド</td><td>GET / PUT</td></tr>
 <tr><td>概要</td><td>支払方法の取得と登録 / 更新(クレジットカードのみ)</td></tr>
-<tr><td>利用画面</td><td>SCR-022 請求</td></tr>
 <tr><td>認証</td><td>Cookie + CSRF(PUT は再認証必須)</td></tr>
 <tr><td>権限</td><td><strong>オーナー専有</strong></td></tr>
 </tbody>
@@ -232,7 +227,6 @@
 <tr><td>エンドポイント</td><td><code>/projects/{id}/quota-limits</code></td></tr>
 <tr><td>HTTP メソッド</td><td>GET</td></tr>
 <tr><td>概要</td><td>当該プロジェクトの質問数について利用状況・月次上限件数・アラート設定を返す</td></tr>
-<tr><td>利用画面</td><td>SCR-021</td></tr>
 <tr><td>認証</td><td>Cookie</td></tr>
 <tr><td>権限</td><td>オーナー / 該当プロジェクトの <code>admin</code> または <code>member</code>(閲覧)</td></tr>
 </tbody>
@@ -265,7 +259,6 @@
 <tr><td>エンドポイント</td><td><code>/projects/{id}/quota-limits/questions</code></td></tr>
 <tr><td>HTTP メソッド</td><td>PATCH</td></tr>
 <tr><td>概要</td><td>質問数の月次上限 ON/OFF・件数・アラート閾値を更新する</td></tr>
-<tr><td>利用画面</td><td>SCR-021-001</td></tr>
 <tr><td>認証</td><td>再認証必須</td></tr>
 <tr><td>権限</td><td>オーナー / 該当プロジェクトの <code>admin</code>(member は <code>E-AUTHZ-FORBIDDEN</code>)</td></tr>
 </tbody>

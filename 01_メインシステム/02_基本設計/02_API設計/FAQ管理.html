@@ -40,7 +40,6 @@
 <tr><td>エンドポイント</td><td><code>/faqs</code></td></tr>
 <tr><td>HTTP メソッド</td><td>GET</td></tr>
 <tr><td>概要</td><td>状態 / プロジェクト / キーワードで FAQ を一覧取得する</td></tr>
-<tr><td>利用画面</td><td>SCR-006</td></tr>
 <tr><td>認証</td><td>Cookie</td></tr>
 <tr><td>権限</td><td>編集系・参照: オーナー / 該当 PJ の <code>member</code>+(<code>admin</code> または <code>member</code>)</td></tr>
 </tbody>
@@ -75,7 +74,6 @@
 <tr><td>エンドポイント</td><td><code>/faqs</code>, <code>/faqs/{id}</code></td></tr>
 <tr><td>HTTP メソッド</td><td>POST / PATCH / DELETE</td></tr>
 <tr><td>概要</td><td>FAQ の CRUD と状態(<code>draft</code> / <code>published</code> / <code>hidden</code>)の相互遷移</td></tr>
-<tr><td>利用画面</td><td>SCR-006</td></tr>
 <tr><td>認証</td><td>Cookie + CSRF</td></tr>
 <tr><td>権限</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
 </tbody>
@@ -119,12 +117,11 @@
 <tr><td>エンドポイント</td><td><code>/faqs/bulk-status</code></td></tr>
 <tr><td>HTTP メソッド</td><td>POST</td></tr>
 <tr><td>概要</td><td>選択した複数 FAQ の状態を一括で変更する(1 リクエスト上限 50 件)</td></tr>
-<tr><td>利用画面</td><td>SCR-006 一覧 BulkActionBar</td></tr>
 <tr><td>認証</td><td>Cookie + CSRF</td></tr>
 <tr><td>権限</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
 </tbody>
 </table>
-<p>SCR-006 一覧の BulkActionBar(チェックボックス選択)から呼び出し、選択した複数 FAQ の状態を一括で <code>draft</code> / <code>published</code> / <code>hidden</code> に変更する。1 リクエストの上限は <strong>50 件</strong>(SCR-006 の BulkActionBar 上限、<a href="../01_画面設計/index.html">01_画面設計/index.html</a>)。超過時は 400 <code>VALIDATION_ERROR</code>。処理は行単位で評価し、対象外(他契約 / 論理削除済み)の ID は当該行のみ失敗として集計する(オーナー境界違反は §2.2 に従い結果から除外し成功扱いにしない)。<code>published</code> へ変更した行は <code>publishedAt</code> をサーバ側で記録する。</p>
+<p>選択した複数 FAQ の状態を一括で <code>draft</code> / <code>published</code> / <code>hidden</code> に変更する。1 リクエストの上限は <strong>50 件</strong>(SCR-006 の BulkActionBar 上限、<a href="../01_画面設計/index.html">01_画面設計/index.html</a>)。超過時は 400 <code>VALIDATION_ERROR</code>。処理は行単位で評価し、対象外(他契約 / 論理削除済み)の ID は当該行のみ失敗として集計する(オーナー境界違反は §2.2 に従い結果から除外し成功扱いにしない)。<code>published</code> へ変更した行は <code>publishedAt</code> をサーバ側で記録する。</p>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{}</code></pre>
@@ -155,7 +152,6 @@
 <tr><td>エンドポイント</td><td><code>/faqs/import</code></td></tr>
 <tr><td>HTTP メソッド</td><td>POST</td></tr>
 <tr><td>概要</td><td>CSV による FAQ の一括取込(新規 / 上書き)</td></tr>
-<tr><td>利用画面</td><td>SCR-006-002 FAQ CSV インポートモーダル</td></tr>
 <tr><td>認証</td><td>Cookie + CSRF</td></tr>
 <tr><td>権限</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
 </tbody>
@@ -191,7 +187,6 @@
 <tr><td>エンドポイント</td><td><code>/faqs/import/template</code></td></tr>
 <tr><td>HTTP メソッド</td><td>GET</td></tr>
 <tr><td>概要</td><td>ヘッダ行のみの CSV テンプレートを返す</td></tr>
-<tr><td>利用画面</td><td>SCR-006-002「テンプレートをダウンロード」</td></tr>
 <tr><td>認証</td><td>Cookie</td></tr>
 <tr><td>権限</td><td>オーナー / 該当 PJ の <code>member</code>+(API-022 と同一)</td></tr>
 </tbody>
@@ -218,7 +213,6 @@
 <tr><td>エンドポイント</td><td><code>/faqs/export</code></td></tr>
 <tr><td>HTTP メソッド</td><td>GET</td></tr>
 <tr><td>概要</td><td>一覧フィルタ適用結果を CSV で出力する</td></tr>
-<tr><td>利用画面</td><td>SCR-006 FAQ 管理一覧「CSV をエクスポート」</td></tr>
 <tr><td>認証</td><td>Cookie</td></tr>
 <tr><td>権限</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
 </tbody>
@@ -250,7 +244,6 @@
 <tr><td>エンドポイント</td><td><code>/projects/{id}/faqs/search</code></td></tr>
 <tr><td>HTTP メソッド</td><td>GET</td></tr>
 <tr><td>概要</td><td>当該プロジェクトの FAQ をキーワードで全文検索する</td></tr>
-<tr><td>利用画面</td><td>SCR-006</td></tr>
 <tr><td>認証</td><td>Cookie</td></tr>
 <tr><td>権限</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
 </tbody>
@@ -285,7 +278,6 @@
 <tr><td>エンドポイント</td><td><code>/projects/{id}/question-logs/search</code></td></tr>
 <tr><td>HTTP メソッド</td><td>GET</td></tr>
 <tr><td>概要</td><td>当該プロジェクトの質問ログをキーワード・期間で検索する</td></tr>
-<tr><td>利用画面</td><td>SCR-005</td></tr>
 <tr><td>認証</td><td>Cookie</td></tr>
 <tr><td>権限</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
 </tbody>

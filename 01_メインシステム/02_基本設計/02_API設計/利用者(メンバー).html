@@ -37,7 +37,6 @@
 <tr><td>エンドポイント</td><td><code>/projects/{id}/members</code></td></tr>
 <tr><td>HTTP メソッド</td><td>GET</td></tr>
 <tr><td>概要</td><td>指定プロジェクトのメンバー割当一覧を返す</td></tr>
-<tr><td>利用画面</td><td>SCR-009</td></tr>
 <tr><td>認証</td><td>Cookie</td></tr>
 <tr><td>権限</td><td>オーナー / 当該プロジェクト管理者</td></tr>
 </tbody>
@@ -81,7 +80,6 @@
 <tr><td>エンドポイント</td><td><code>/projects/{id}/members</code></td></tr>
 <tr><td>HTTP メソッド</td><td>POST</td></tr>
 <tr><td>概要</td><td>該当プロジェクト 1 件に対する単発招待を行う</td></tr>
-<tr><td>利用画面</td><td>SCR-009-001(プロジェクト管理者の招待操作)</td></tr>
 <tr><td>認証</td><td>Cookie + CSRF + 再認証必須</td></tr>
 <tr><td>権限</td><td>オーナー / 該当プロジェクトの <code>admin</code> ロール保持メンバー</td></tr>
 </tbody>
@@ -121,7 +119,6 @@
 <tr><td>エンドポイント</td><td><code>/projects/{id}/members/{userId}</code></td></tr>
 <tr><td>HTTP メソッド</td><td>PATCH</td></tr>
 <tr><td>概要</td><td>当該プロジェクトの <code>project_users.role</code> を上書きする(他プロジェクトに影響なし)</td></tr>
-<tr><td>利用画面</td><td>SCR-009-001(編集モードの「変更を保存」)</td></tr>
 <tr><td>認証</td><td>Cookie + CSRF + 再認証必須</td></tr>
 <tr><td>権限</td><td>オーナー / 該当プロジェクトの <code>admin</code> ロール保持メンバー</td></tr>
 </tbody>
@@ -170,7 +167,6 @@
 <tr><td>エンドポイント</td><td><code>/projects/{id}/members/{userId}</code></td></tr>
 <tr><td>HTTP メソッド</td><td>DELETE</td></tr>
 <tr><td>概要</td><td>対象プロジェクトの <code>project_users.valid=0</code> を更新する</td></tr>
-<tr><td>利用画面</td><td>SCR-009-001「プロジェクトから外す」(L1)</td></tr>
 <tr><td>認証</td><td>Cookie + CSRF + 再認証必須</td></tr>
 <tr><td>権限</td><td>オーナー / 該当プロジェクトの <code>admin</code> ロール保持メンバー</td></tr>
 </tbody>
@@ -215,7 +211,6 @@
 <tr><td>エンドポイント</td><td><code>/members/{id}/resend-invitation</code></td></tr>
 <tr><td>HTTP メソッド</td><td>POST</td></tr>
 <tr><td>概要</td><td><code>status='pending_activation'</code> のメンバーへ招待メールを再送する</td></tr>
-<tr><td>利用画面</td><td>SCR-009-001(招待再送)</td></tr>
 <tr><td>認証</td><td>Cookie + CSRF + 再認証必須</td></tr>
 <tr><td>権限</td><td>オーナー / 該当プロジェクトの <code>admin</code> 保持メンバー</td></tr>
 </tbody>

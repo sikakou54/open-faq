@@ -36,7 +36,6 @@
 <tr><td>エンドポイント</td><td><code>/me/announcements</code></td></tr>
 <tr><td>HTTP メソッド</td><td>GET</td></tr>
 <tr><td>概要</td><td>お知らせ受信箱の一覧を返す</td></tr>
-<tr><td>利用画面</td><td>SCR-011</td></tr>
 <tr><td>認証</td><td>Cookie</td></tr>
 <tr><td>権限</td><td>admin 限定</td></tr>
 </tbody>
@@ -76,7 +75,6 @@
 <tr><td>エンドポイント</td><td><code>/me/announcements/{id}/read</code></td></tr>
 <tr><td>HTTP メソッド</td><td>POST</td></tr>
 <tr><td>概要</td><td>お知らせ 1 件を既読にする</td></tr>
-<tr><td>利用画面</td><td>SCR-011 / SCR-012</td></tr>
 <tr><td>認証</td><td>Cookie + CSRF</td></tr>
 <tr><td>権限</td><td>admin 限定</td></tr>
 </tbody>
@@ -103,12 +101,11 @@
 <tr><td>エンドポイント</td><td><code>/me/announcements/read</code></td></tr>
 <tr><td>HTTP メソッド</td><td>POST</td></tr>
 <tr><td>概要</td><td>選択した複数のお知らせを一括で既読にする(1 リクエスト上限 100 件)</td></tr>
-<tr><td>利用画面</td><td>SCR-011</td></tr>
 <tr><td>認証</td><td>Cookie + CSRF</td></tr>
 <tr><td>権限</td><td>admin 限定</td></tr>
 </tbody>
 </table>
-<p>SCR-011 の一括既読化操作から呼び出し、選択した複数のお知らせを一括で既読にする。1 リクエストの上限は <strong>100 件</strong>。超過時は 400 <code>VALIDATION_ERROR</code>。冪等(既読済みは再記録しない)。一括既読操作は操作者・対象件数・実行日時を監査記録する(FR-152 相当、正本: <a href="../09_セキュリティ設計.html">09_セキュリティ設計.html</a>)。</p>
+<p>選択した複数のお知らせを一括で既読にする。1 リクエストの上限は <strong>100 件</strong>。超過時は 400 <code>VALIDATION_ERROR</code>。冪等(既読済みは再記録しない)。一括既読操作は操作者・対象件数・実行日時を監査記録する(FR-152 相当、正本: <a href="../09_セキュリティ設計.html">09_セキュリティ設計.html</a>)。</p>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{}</code></pre>
@@ -139,7 +136,6 @@
 <tr><td>エンドポイント</td><td><code>/me/announcements/unread-summary</code></td></tr>
 <tr><td>HTTP メソッド</td><td>GET</td></tr>
 <tr><td>概要</td><td>未読件数と直近お知らせを返す</td></tr>
-<tr><td>利用画面</td><td>SCR-011</td></tr>
 <tr><td>認証</td><td>Cookie</td></tr>
 <tr><td>権限</td><td>admin 限定</td></tr>
 </tbody>

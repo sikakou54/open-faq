@@ -36,7 +36,6 @@
 <tr><td>エンドポイント</td><td><code>/projects</code></td></tr>
 <tr><td>HTTP メソッド</td><td>GET</td></tr>
 <tr><td>概要</td><td>契約配下のプロジェクト一覧を返す</td></tr>
-<tr><td>利用画面</td><td>SCR-004</td></tr>
 <tr><td>認証</td><td>Cookie</td></tr>
 <tr><td>権限</td><td><strong>オーナー専有</strong></td></tr>
 </tbody>
@@ -83,7 +82,6 @@
 <tr><td>エンドポイント</td><td><code>/projects</code></td></tr>
 <tr><td>HTTP メソッド</td><td>POST</td></tr>
 <tr><td>概要</td><td>プロジェクトを作成し公開キーを発行する(オーナーを自動 admin 化)</td></tr>
-<tr><td>利用画面</td><td>SCR-004-001(新規作成モード)</td></tr>
 <tr><td>認証</td><td>Cookie + CSRF</td></tr>
 <tr><td>権限</td><td><strong>オーナー専有</strong>(プロジェクト設定全般を含めオーナーのみ実行可)</td></tr>
 </tbody>
@@ -132,7 +130,6 @@
 <tr><td>エンドポイント</td><td><code>/projects/{id}</code></td></tr>
 <tr><td>HTTP メソッド</td><td>PATCH / DELETE</td></tr>
 <tr><td>概要</td><td>プロジェクトの部分更新 / 論理削除(FR-030b)</td></tr>
-<tr><td>利用画面</td><td>SCR-004-001 プロジェクト作成・編集モーダル(編集モード)</td></tr>
 <tr><td>認証</td><td>Cookie + CSRF(削除は再認証必須、L3 = プロジェクト名タイプ確認 + パスワード再認証)</td></tr>
 <tr><td>権限</td><td><strong>オーナー専有</strong></td></tr>
 </tbody>
@@ -180,7 +177,6 @@
 <tr><td>エンドポイント</td><td><code>/projects/{id}/widget-key/rotate</code></td></tr>
 <tr><td>HTTP メソッド</td><td>POST</td></tr>
 <tr><td>概要</td><td>公開キーを再発行する(旧キーは 24 時間猶予で失効)</td></tr>
-<tr><td>利用画面</td><td>SCR-007</td></tr>
 <tr><td>認証</td><td>再認証必須</td></tr>
 <tr><td>権限</td><td>オーナー専有</td></tr>
 </tbody>
