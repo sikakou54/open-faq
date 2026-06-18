@@ -53,7 +53,7 @@
 }</code></pre>
 <p>ヘッダ: <code>Idempotency-Key: (operation_id, contract_owner_user_id, target_status)</code>。</p>
 <h3>処理概要</h3>
-<p class="section-lead">顧客管理システムからの契約停止イベントを受信し、契約状態とセッションを反映します。具体的なクエリ・関数仕様は詳細設計を正本とする。</p>
+<p class="section-lead">顧客管理システムからの契約停止イベントを受信し、契約状態とセッションを反映します。</p>
 <table>
 <thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
 <tbody>
@@ -102,7 +102,7 @@
   "reason": "..."
 }</code></pre>
 <h3>処理概要</h3>
-<p class="section-lead">顧客管理システムからの強制ログアウト指示を受信し、セッションを失効します。具体的なクエリ・関数仕様は詳細設計を正本とする。</p>
+<p class="section-lead">顧客管理システムからの強制ログアウト指示を受信し、セッションを失効します。</p>
 <table>
 <thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
 <tbody>
@@ -127,7 +127,7 @@
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
 <h3>処理概要</h3>
-<p class="section-lead">運営者の承認を経た削除データ復元の実行指示を受信します。具体的なクエリ・関数仕様は詳細設計を正本とする。</p>
+<p class="section-lead">運営者の承認を経た削除データ復元の実行指示を受信します。</p>
 <table>
 <thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
 <tbody>
@@ -156,7 +156,7 @@
   "operatorAccountId": "..."
 }</code></pre>
 <h3>処理概要</h3>
-<p class="section-lead">契約単位のレート制限上書きを受信し、即時反映します。具体的なクエリ・関数仕様は詳細設計を正本とする。</p>
+<p class="section-lead">契約単位のレート制限上書きを受信し、即時反映します。</p>
 <table>
 <thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
 <tbody>
@@ -188,7 +188,7 @@
   "operatorAccountId": "..."
 }</code></pre>
 <h3>処理概要</h3>
-<p class="section-lead">プロジェクト単位の月次上限件数上書き(4-eyes 承認済み)を受信し、即時反映します。具体的なクエリ・関数仕様は詳細設計を正本とする。</p>
+<p class="section-lead">プロジェクト単位の月次上限件数上書き(4-eyes 承認済み)を受信し、即時反映します。</p>
 <table>
 <thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
 <tbody>
@@ -221,7 +221,7 @@
   "operatorAccountId": "..."
 }</code></pre>
 <h3>処理概要</h3>
-<p class="section-lead">AI 回答可否のしきい値上書きを受信し、KV と永続キャッシュへ反映します。具体的なクエリ・関数仕様は詳細設計を正本とする。</p>
+<p class="section-lead">AI 回答可否のしきい値上書きを受信し、KV と永続キャッシュへ反映します。</p>
 <table>
 <thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
 <tbody>
@@ -262,7 +262,7 @@
 </ul></li>
 </ul>
 <h3>処理概要</h3>
-<p class="section-lead">運営者が生成したお知らせを受信し、配信先を解決して inbox へ fan-out します。具体的なクエリ・関数仕様は詳細設計を正本とする。</p>
+<p class="section-lead">運営者が生成したお知らせを受信し、配信先を解決して inbox へ fan-out します。</p>
 <table>
 <thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
 <tbody>
@@ -289,7 +289,7 @@
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
 <h3>処理概要</h3>
-<p class="section-lead">メインから顧客管理システムへ監視メトリクスを送信(取得)します。具体的なクエリ・関数仕様は詳細設計を正本とする。</p>
+<p class="section-lead">メインから顧客管理システムへ監視メトリクスを送信(取得)します。</p>
 <table>
 <thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
 <tbody>
@@ -350,7 +350,7 @@
 <h4>Request Body</h4>
 <pre><code>{ "detectionId": "...", "contractOwnerUserId": "...", "pattern": "...", "details": {...} }</code></pre>
 <h3>処理概要</h3>
-<p class="section-lead">メインから顧客管理システムへ不正利用検知を通知します。具体的なクエリ・関数仕様は詳細設計を正本とする。</p>
+<p class="section-lead">メインから顧客管理システムへ不正利用検知を通知します。</p>
 <table>
 <thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
 <tbody>
@@ -381,7 +381,7 @@
   "signatureVerifiedAt": "..."
 }</code></pre>
 <h3>処理概要</h3>
-<p class="section-lead">運営者が一次受信した Stripe 課金イベントを受信し、請求 / 契約状態へ反映します(FR-139)。具体的なクエリ・関数仕様は詳細設計を正本とする。</p>
+<p class="section-lead">運営者が一次受信した Stripe 課金イベントを受信し、請求 / 契約状態へ反映します(FR-139)。</p>
 <table>
 <thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
 <tbody>
@@ -414,7 +414,7 @@
   "summary": "削除データを復元しました"
 }</code></pre>
 <h3>処理概要</h3>
-<p class="section-lead">運営者操作の通知を受信し、管理者 inbox とメール通知へ反映します。具体的なクエリ・関数仕様は詳細設計を正本とする。</p>
+<p class="section-lead">運営者操作の通知を受信し、管理者 inbox とメール通知へ反映します。</p>
 <table>
 <thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
 <tbody>
