@@ -48,6 +48,7 @@
 <th>FK</th>
 <th>UNIQUE</th>
 <th>DEFAULT</th>
+<th>制約</th>
 <th>説明</th>
 </tr>
 </thead>
@@ -60,6 +61,7 @@
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td>○</td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -76,6 +78,7 @@
 <td>○</td>
 <td></td>
 <td></td>
+<td></td>
 <td><code>contract_owners(user_id)</code> 参照</td>
 </tr>
 <tr>
@@ -87,6 +90,7 @@
 <td>NO</td>
 <td></td>
 <td>○</td>
+<td></td>
 <td></td>
 <td></td>
 <td><code>projects(id)</code> 参照</td>
@@ -102,6 +106,7 @@
 <td></td>
 <td></td>
 <td></td>
+<td><code>length(user_question) BETWEEN 1 AND 2000</code></td>
 <td>1〜2000 文字</td>
 </tr>
 <tr>
@@ -111,6 +116,7 @@
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -128,6 +134,7 @@
 <td></td>
 <td></td>
 <td><code>0</code></td>
+<td></td>
 <td>0 / 1</td>
 </tr>
 <tr>
@@ -141,6 +148,7 @@
 <td></td>
 <td></td>
 <td><code>0</code></td>
+<td></td>
 <td>スナップショット値</td>
 </tr>
 <tr>
@@ -154,6 +162,7 @@
 <td></td>
 <td></td>
 <td></td>
+<td></td>
 <td>0.0〜1.0</td>
 </tr>
 <tr>
@@ -163,6 +172,7 @@
 <td>REAL</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -181,6 +191,7 @@
 <td></td>
 <td></td>
 <td></td>
+<td></td>
 </tr>
 <tr>
 <td style="text-align: right;">11</td>
@@ -189,6 +200,7 @@
 <td>INTEGER</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -206,6 +218,7 @@
 <td></td>
 <td></td>
 <td></td>
+<td></td>
 <td>-</td>
 </tr>
 <tr>
@@ -219,6 +232,7 @@
 <td></td>
 <td></td>
 <td></td>
+<td><code>result_type IN ('answered','unanswered','error')</code>(NULL 許容)</td>
 <td><code>answered</code> / <code>unanswered</code> / <code>error</code></td>
 </tr>
 <tr>
@@ -228,6 +242,7 @@
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -245,6 +260,7 @@
 <td></td>
 <td></td>
 <td><code>0</code></td>
+<td></td>
 <td>0 / 1</td>
 </tr>
 <tr>
@@ -254,6 +270,7 @@
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -271,6 +288,7 @@
 <td></td>
 <td></td>
 <td></td>
+<td></td>
 <td>-</td>
 </tr>
 <tr>
@@ -284,6 +302,7 @@
 <td></td>
 <td></td>
 <td><code>1</code></td>
+<td><code>valid IN (0,1)</code></td>
 <td></td>
 </tr>
 <tr>
@@ -297,7 +316,8 @@
 <td></td>
 <td></td>
 <td></td>
-<td>ISO 8601 UTC</td>
+<td></td>
+<td>日時</td>
 </tr>
 <tr>
 <td style="text-align: right;">20</td>
@@ -310,7 +330,8 @@
 <td></td>
 <td></td>
 <td><code>datetime('now')</code></td>
-<td>ISO 8601 UTC</td>
+<td></td>
+<td>日時</td>
 </tr>
 </tbody>
 </table>
@@ -399,41 +420,6 @@
 <td><code>valid</code> WHERE <code>valid = 0</code></td>
 <td></td>
 <td>論理削除対象抽出</td>
-</tr>
-</tbody>
-</table>
-<h3 id="3126-制約">制約</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: right;">No</th>
-<th>制約名</th>
-<th>種別</th>
-<th>対象カラム</th>
-<th>条件・内容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: right;">1</td>
-<td>(暗黙)</td>
-<td>CHECK</td>
-<td><code>user_question</code></td>
-<td><code>length(user_question) BETWEEN 1 AND 2000</code></td>
-</tr>
-<tr>
-<td style="text-align: right;">2</td>
-<td>(暗黙)</td>
-<td>CHECK</td>
-<td><code>result_type</code></td>
-<td><code>result_type IN ('answered','unanswered','error')</code>(NULL 許容)</td>
-</tr>
-<tr>
-<td style="text-align: right;">3</td>
-<td>(暗黙)</td>
-<td>CHECK</td>
-<td><code>valid</code></td>
-<td><code>valid IN (0,1)</code></td>
 </tr>
 </tbody>
 </table>

@@ -48,6 +48,7 @@
 <th>FK</th>
 <th>UNIQUE</th>
 <th>DEFAULT</th>
+<th>制約</th>
 <th>説明</th>
 </tr>
 </thead>
@@ -60,6 +61,7 @@
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td>○</td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -76,6 +78,7 @@
 <td>○</td>
 <td></td>
 <td></td>
+<td></td>
 <td><code>contract_owners(user_id)</code> 参照</td>
 </tr>
 <tr>
@@ -87,6 +90,7 @@
 <td>NO</td>
 <td></td>
 <td>○</td>
+<td></td>
 <td></td>
 <td></td>
 <td><code>projects(id)</code> 参照</td>
@@ -102,6 +106,7 @@
 <td></td>
 <td></td>
 <td></td>
+<td><code>length(title) BETWEEN 1 AND 500</code>(FAQ 質問、FR-040)</td>
 <td>FAQ 質問。1〜500 文字(FR-040)</td>
 </tr>
 <tr>
@@ -115,6 +120,7 @@
 <td></td>
 <td></td>
 <td></td>
+<td><code>length(body) BETWEEN 1 AND 5000</code>(FAQ 回答、FR-040)</td>
 <td>FAQ 回答。1〜5000 文字(FR-040)</td>
 </tr>
 <tr>
@@ -124,6 +130,7 @@
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -141,6 +148,7 @@
 <td></td>
 <td></td>
 <td><code>'draft'</code></td>
+<td><code>status IN ('draft','published','hidden','deleted')</code></td>
 <td><code>draft</code> / <code>published</code> / <code>hidden</code> / <code>deleted</code></td>
 </tr>
 <tr>
@@ -154,6 +162,7 @@
 <td></td>
 <td></td>
 <td><code>1</code></td>
+<td></td>
 <td>改訂版数</td>
 </tr>
 <tr>
@@ -163,6 +172,7 @@
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -180,6 +190,7 @@
 <td>○</td>
 <td></td>
 <td></td>
+<td></td>
 <td><code>inquiries(id)</code> 参照</td>
 </tr>
 <tr>
@@ -193,6 +204,7 @@
 <td></td>
 <td></td>
 <td><code>1</code></td>
+<td><code>valid IN (0,1)</code></td>
 <td></td>
 </tr>
 <tr>
@@ -204,6 +216,7 @@
 <td>YES</td>
 <td></td>
 <td>○</td>
+<td></td>
 <td></td>
 <td></td>
 <td><code>users(id)</code> 参照(削除でも整合維持)</td>
@@ -219,6 +232,7 @@
 <td>○</td>
 <td></td>
 <td></td>
+<td></td>
 <td><code>users(id)</code> 参照(同上)</td>
 </tr>
 <tr>
@@ -232,7 +246,8 @@
 <td></td>
 <td></td>
 <td></td>
-<td>ISO 8601 UTC</td>
+<td></td>
+<td>日時</td>
 </tr>
 <tr>
 <td style="text-align: right;">15</td>
@@ -245,7 +260,8 @@
 <td></td>
 <td></td>
 <td></td>
-<td>ISO 8601 UTC</td>
+<td></td>
+<td>日時</td>
 </tr>
 </tbody>
 </table>
@@ -375,48 +391,6 @@
 <td><code>valid</code> WHERE <code>valid = 0</code></td>
 <td></td>
 <td>論理削除対象抽出</td>
-</tr>
-</tbody>
-</table>
-<h3 id="396-制約">制約</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: right;">No</th>
-<th>制約名</th>
-<th>種別</th>
-<th>対象カラム</th>
-<th>条件・内容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: right;">1</td>
-<td>(暗黙)</td>
-<td>CHECK</td>
-<td><code>title</code></td>
-<td><code>length(title) BETWEEN 1 AND 500</code>(FAQ 質問、FR-040)</td>
-</tr>
-<tr>
-<td style="text-align: right;">2</td>
-<td>(暗黙)</td>
-<td>CHECK</td>
-<td><code>body</code></td>
-<td><code>length(body) BETWEEN 1 AND 5000</code>(FAQ 回答、FR-040)</td>
-</tr>
-<tr>
-<td style="text-align: right;">3</td>
-<td>(暗黙)</td>
-<td>CHECK</td>
-<td><code>status</code></td>
-<td><code>status IN ('draft','published','hidden','deleted')</code></td>
-</tr>
-<tr>
-<td style="text-align: right;">4</td>
-<td>(暗黙)</td>
-<td>CHECK</td>
-<td><code>valid</code></td>
-<td><code>valid IN (0,1)</code></td>
 </tr>
 </tbody>
 </table>

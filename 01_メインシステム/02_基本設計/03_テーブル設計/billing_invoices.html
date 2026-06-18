@@ -48,6 +48,7 @@
 <th>FK</th>
 <th>UNIQUE</th>
 <th>DEFAULT</th>
+<th>制約</th>
 <th>説明</th>
 </tr>
 </thead>
@@ -60,6 +61,7 @@
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td>○</td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -76,6 +78,7 @@
 <td>○</td>
 <td>①</td>
 <td></td>
+<td></td>
 <td><code>contract_owners(user_id)</code> 参照</td>
 </tr>
 <tr>
@@ -88,6 +91,7 @@
 <td></td>
 <td></td>
 <td>②</td>
+<td></td>
 <td></td>
 <td>YYYY-MM</td>
 </tr>
@@ -102,6 +106,7 @@
 <td></td>
 <td></td>
 <td></td>
+<td><code>status IN ('draft','issued','paid','past_due','refunded','void')</code></td>
 <td>§3.21.7</td>
 </tr>
 <tr>
@@ -111,6 +116,7 @@
 <td>INTEGER</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -128,6 +134,7 @@
 <td></td>
 <td></td>
 <td><code>0</code></td>
+<td></td>
 <td>円</td>
 </tr>
 <tr>
@@ -141,6 +148,7 @@
 <td></td>
 <td></td>
 <td><code>'JPY'</code></td>
+<td></td>
 <td>ISO 4217</td>
 </tr>
 <tr>
@@ -154,6 +162,7 @@
 <td></td>
 <td>○</td>
 <td></td>
+<td></td>
 <td>Stripe ID</td>
 </tr>
 <tr>
@@ -163,6 +172,7 @@
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -180,6 +190,7 @@
 <td></td>
 <td></td>
 <td></td>
+<td></td>
 <td>-</td>
 </tr>
 <tr>
@@ -189,6 +200,7 @@
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -206,6 +218,7 @@
 <td></td>
 <td></td>
 <td></td>
+<td></td>
 <td>-</td>
 </tr>
 <tr>
@@ -219,7 +232,8 @@
 <td></td>
 <td></td>
 <td></td>
-<td>ISO 8601 UTC</td>
+<td></td>
+<td>日時</td>
 </tr>
 </tbody>
 </table>
@@ -292,27 +306,6 @@
 <td><code>status</code></td>
 <td></td>
 <td>状態別集計</td>
-</tr>
-</tbody>
-</table>
-<h3 id="3216-制約">制約</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: right;">No</th>
-<th>制約名</th>
-<th>種別</th>
-<th>対象カラム</th>
-<th>条件・内容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: right;">1</td>
-<td>(暗黙)</td>
-<td>CHECK</td>
-<td><code>status</code></td>
-<td><code>status IN ('draft','issued','paid','past_due','refunded','void')</code></td>
 </tr>
 </tbody>
 </table>

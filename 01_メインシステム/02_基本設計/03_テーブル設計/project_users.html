@@ -48,6 +48,7 @@
 <th>FK</th>
 <th>UNIQUE</th>
 <th>DEFAULT</th>
+<th>制約</th>
 <th>説明</th>
 </tr>
 </thead>
@@ -63,6 +64,7 @@
 <td>○</td>
 <td></td>
 <td></td>
+<td></td>
 <td>複合 PK / <code>users(id)</code> 参照</td>
 </tr>
 <tr>
@@ -74,6 +76,7 @@
 <td>NO</td>
 <td>②</td>
 <td>○</td>
+<td></td>
 <td></td>
 <td></td>
 <td>複合 PK / <code>projects(id)</code> 参照</td>
@@ -89,6 +92,7 @@
 <td>○</td>
 <td></td>
 <td></td>
+<td></td>
 <td>認可境界クエリ高速化(<code>projects.contract_owner_user_id</code> と必ず一致、アプリ層担保)</td>
 </tr>
 <tr>
@@ -102,6 +106,7 @@
 <td></td>
 <td></td>
 <td></td>
+<td><code>role IN ('admin','member')</code></td>
 <td><code>admin</code> / <code>member</code></td>
 </tr>
 <tr>
@@ -115,6 +120,7 @@
 <td></td>
 <td></td>
 <td><code>1</code></td>
+<td><code>valid IN (0,1)</code></td>
 <td></td>
 </tr>
 <tr>
@@ -128,7 +134,8 @@
 <td></td>
 <td></td>
 <td></td>
-<td>ISO 8601 UTC</td>
+<td></td>
+<td>日時</td>
 </tr>
 <tr>
 <td style="text-align: right;">7</td>
@@ -139,6 +146,7 @@
 <td>YES</td>
 <td></td>
 <td>○</td>
+<td></td>
 <td></td>
 <td></td>
 <td><code>users(id)</code> 参照(招待者削除でも整合維持)</td>
@@ -154,7 +162,8 @@
 <td></td>
 <td></td>
 <td></td>
-<td>ISO 8601 UTC</td>
+<td></td>
+<td>日時</td>
 </tr>
 </tbody>
 </table>
@@ -268,34 +277,6 @@
 <td><code>valid</code> WHERE <code>valid = 0</code></td>
 <td></td>
 <td>論理削除対象抽出</td>
-</tr>
-</tbody>
-</table>
-<h3 id="336-制約">制約</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: right;">No</th>
-<th>制約名</th>
-<th>種別</th>
-<th>対象カラム</th>
-<th>条件・内容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: right;">1</td>
-<td>(暗黙)</td>
-<td>CHECK</td>
-<td><code>role</code></td>
-<td><code>role IN ('admin','member')</code></td>
-</tr>
-<tr>
-<td style="text-align: right;">2</td>
-<td>(暗黙)</td>
-<td>CHECK</td>
-<td><code>valid</code></td>
-<td><code>valid IN (0,1)</code></td>
 </tr>
 </tbody>
 </table>

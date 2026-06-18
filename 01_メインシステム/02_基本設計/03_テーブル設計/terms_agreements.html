@@ -48,6 +48,7 @@
 <th>FK</th>
 <th>UNIQUE</th>
 <th>DEFAULT</th>
+<th>制約</th>
 <th>説明</th>
 </tr>
 </thead>
@@ -60,6 +61,7 @@
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td>○</td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -76,6 +78,7 @@
 <td>○</td>
 <td>①</td>
 <td></td>
+<td></td>
 <td><code>users(id)</code> 参照</td>
 </tr>
 <tr>
@@ -88,6 +91,7 @@
 <td></td>
 <td>②</td>
 <td>①</td>
+<td></td>
 <td></td>
 <td><code>terms_of_service</code> / <code>privacy_policy</code>。<code>terms_versions(doc_type, version)</code> 参照の一部</td>
 </tr>
@@ -102,6 +106,7 @@
 <td>②</td>
 <td>①</td>
 <td></td>
+<td></td>
 <td><code>terms_versions(version)</code> 参照の一部</td>
 </tr>
 <tr>
@@ -115,7 +120,8 @@
 <td></td>
 <td></td>
 <td></td>
-<td>ISO 8601 UTC</td>
+<td></td>
+<td>日時</td>
 </tr>
 <tr>
 <td style="text-align: right;">6</td>
@@ -124,6 +130,7 @@
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -206,8 +213,6 @@
 </tr>
 </tbody>
 </table>
-<h3 id="3316-制約">制約</h3>
-<p>(なし)</p>
 <h3 id="3317-コード値区分値">コード値・区分値</h3>
 <p>(なし)</p>
 </article>

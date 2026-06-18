@@ -48,6 +48,7 @@
 <th>FK</th>
 <th>UNIQUE</th>
 <th>DEFAULT</th>
+<th>制約</th>
 <th>説明</th>
 </tr>
 </thead>
@@ -64,6 +65,7 @@
 <td></td>
 <td></td>
 <td></td>
+<td></td>
 </tr>
 <tr>
 <td style="text-align: right;">2</td>
@@ -76,6 +78,7 @@
 <td></td>
 <td></td>
 <td><code>'active'</code></td>
+<td><code>contract_status IN ('active','suspended','deleted_pending','deleted')</code><br>（複合）<code>contract_status='deleted'</code> のとき必ず <code>valid=0</code>(両者は同時セット)。<code>(contract_status &lt;&gt; 'deleted' AND valid = 1) OR (contract_status = 'deleted' AND valid = 0)</code></td>
 <td><code>active</code> / <code>suspended</code> / <code>deleted_pending</code> / <code>deleted</code>(共有概念正本)</td>
 </tr>
 <tr>
@@ -89,6 +92,7 @@
 <td></td>
 <td></td>
 <td><code>'physical'</code></td>
+<td><code>data_deletion_mode IN ('physical','anonymize')</code></td>
 <td><code>physical</code> / <code>anonymize</code></td>
 </tr>
 <tr>
@@ -102,6 +106,7 @@
 <td></td>
 <td></td>
 <td><code>1</code></td>
+<td><code>valid IN (0,1)</code></td>
 <td></td>
 </tr>
 <tr>
@@ -115,7 +120,8 @@
 <td></td>
 <td></td>
 <td></td>
-<td>ISO 8601 UTC</td>
+<td></td>
+<td>日時</td>
 </tr>
 <tr>
 <td style="text-align: right;">6</td>
@@ -128,7 +134,8 @@
 <td></td>
 <td></td>
 <td></td>
-<td>ISO 8601 UTC</td>
+<td></td>
+<td>日時</td>
 </tr>
 </tbody>
 </table>
@@ -201,48 +208,6 @@
 <td><code>valid</code> WHERE <code>valid = 0</code></td>
 <td></td>
 <td>論理削除対象抽出</td>
-</tr>
-</tbody>
-</table>
-<h3 id="326-制約">制約</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: right;">No</th>
-<th>制約名</th>
-<th>種別</th>
-<th>対象カラム</th>
-<th>条件・内容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: right;">1</td>
-<td>(暗黙)</td>
-<td>CHECK</td>
-<td><code>contract_status</code></td>
-<td><code>contract_status IN ('active','suspended','deleted_pending','deleted')</code></td>
-</tr>
-<tr>
-<td style="text-align: right;">2</td>
-<td>(暗黙)</td>
-<td>CHECK</td>
-<td><code>data_deletion_mode</code></td>
-<td><code>data_deletion_mode IN ('physical','anonymize')</code></td>
-</tr>
-<tr>
-<td style="text-align: right;">3</td>
-<td>(暗黙)</td>
-<td>CHECK</td>
-<td><code>valid</code></td>
-<td><code>valid IN (0,1)</code></td>
-</tr>
-<tr>
-<td style="text-align: right;">4</td>
-<td>(暗黙)</td>
-<td>複合CHECK</td>
-<td><code>contract_status × valid</code></td>
-<td><code>contract_status='deleted'</code> のとき必ず <code>valid=0</code>(両者は同時セット)。<code>(contract_status &lt;&gt; 'deleted' AND valid = 1) OR (contract_status = 'deleted' AND valid = 0)</code></td>
 </tr>
 </tbody>
 </table>

@@ -48,6 +48,7 @@
 <th>FK</th>
 <th>UNIQUE</th>
 <th>DEFAULT</th>
+<th>制約</th>
 <th>説明</th>
 </tr>
 </thead>
@@ -60,6 +61,7 @@
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td>○</td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -76,6 +78,7 @@
 <td>○</td>
 <td></td>
 <td></td>
+<td></td>
 <td><code>contract_owners(user_id)</code> 参照</td>
 </tr>
 <tr>
@@ -87,6 +90,7 @@
 <td>YES</td>
 <td></td>
 <td>○</td>
+<td></td>
 <td></td>
 <td></td>
 <td><code>users(id)</code> 参照(<code>actor_role='admin'</code> 時)</td>
@@ -102,6 +106,7 @@
 <td></td>
 <td></td>
 <td></td>
+<td><code>actor_role IS NULL OR actor_role IN ('admin','system','service_operator')</code></td>
 <td>§3.18.7</td>
 </tr>
 <tr>
@@ -111,6 +116,7 @@
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -128,6 +134,7 @@
 <td></td>
 <td></td>
 <td></td>
+<td></td>
 <td>-</td>
 </tr>
 <tr>
@@ -137,6 +144,7 @@
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -154,6 +162,7 @@
 <td></td>
 <td></td>
 <td></td>
+<td></td>
 <td>末尾オクテットマスク</td>
 </tr>
 <tr>
@@ -163,6 +172,7 @@
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -180,6 +190,7 @@
 <td></td>
 <td></td>
 <td></td>
+<td></td>
 <td>JSON 文字列(差分・補助情報)</td>
 </tr>
 <tr>
@@ -193,6 +204,7 @@
 <td></td>
 <td></td>
 <td><code>'general'</code></td>
+<td><code>retention_class IN ('general','billing','operator_high_priv')</code></td>
 <td><code>general</code> / <code>billing</code> / <code>operator_high_priv</code></td>
 </tr>
 <tr>
@@ -206,7 +218,8 @@
 <td></td>
 <td></td>
 <td></td>
-<td>ISO 8601 UTC</td>
+<td></td>
+<td>日時</td>
 </tr>
 </tbody>
 </table>
@@ -295,34 +308,6 @@
 <td><code>(actor_user_id, created_at DESC)</code></td>
 <td></td>
 <td>管理者操作の操作者別新着</td>
-</tr>
-</tbody>
-</table>
-<h3 id="3186-制約">制約</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: right;">No</th>
-<th>制約名</th>
-<th>種別</th>
-<th>対象カラム</th>
-<th>条件・内容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: right;">1</td>
-<td>(暗黙)</td>
-<td>CHECK</td>
-<td><code>actor_role</code></td>
-<td><code>actor_role IS NULL OR actor_role IN ('admin','system','service_operator')</code></td>
-</tr>
-<tr>
-<td style="text-align: right;">2</td>
-<td>(暗黙)</td>
-<td>CHECK</td>
-<td><code>retention_class</code></td>
-<td><code>retention_class IN ('general','billing','operator_high_priv')</code></td>
 </tr>
 </tbody>
 </table>

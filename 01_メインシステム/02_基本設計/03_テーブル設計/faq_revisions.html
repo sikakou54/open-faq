@@ -48,6 +48,7 @@
 <th>FK</th>
 <th>UNIQUE</th>
 <th>DEFAULT</th>
+<th>制約</th>
 <th>説明</th>
 </tr>
 </thead>
@@ -60,6 +61,7 @@
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td>○</td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -76,6 +78,7 @@
 <td>○</td>
 <td></td>
 <td></td>
+<td></td>
 <td><code>faqs(id)</code> 参照</td>
 </tr>
 <tr>
@@ -85,6 +88,7 @@
 <td>INTEGER</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -102,6 +106,7 @@
 <td></td>
 <td></td>
 <td></td>
+<td></td>
 <td>スナップショット</td>
 </tr>
 <tr>
@@ -111,6 +116,7 @@
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -128,6 +134,7 @@
 <td></td>
 <td></td>
 <td></td>
+<td></td>
 <td>スナップショット</td>
 </tr>
 <tr>
@@ -137,6 +144,7 @@
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -154,6 +162,7 @@
 <td></td>
 <td></td>
 <td></td>
+<td><code>status_snapshot IN ('draft','published','hidden','deleted')</code></td>
 <td><code>draft</code> / <code>published</code> / <code>hidden</code> / <code>deleted</code></td>
 </tr>
 <tr>
@@ -167,6 +176,7 @@
 <td></td>
 <td></td>
 <td><code>'manual'</code></td>
+<td><code>source IN ('manual','import')</code></td>
 <td><code>manual</code> / <code>import</code></td>
 </tr>
 <tr>
@@ -180,7 +190,8 @@
 <td></td>
 <td></td>
 <td></td>
-<td>ISO 8601 UTC</td>
+<td></td>
+<td>日時</td>
 </tr>
 <tr>
 <td style="text-align: right;">11</td>
@@ -191,6 +202,7 @@
 <td>NO</td>
 <td></td>
 <td>○</td>
+<td></td>
 <td></td>
 <td></td>
 <td><code>users(id)</code> 参照</td>
@@ -275,34 +287,6 @@
 <td><code>source</code></td>
 <td></td>
 <td>由来別集計</td>
-</tr>
-</tbody>
-</table>
-<h3 id="3106-制約-1">制約</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: right;">No</th>
-<th>制約名</th>
-<th>種別</th>
-<th>対象カラム</th>
-<th>条件・内容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: right;">1</td>
-<td>(暗黙)</td>
-<td>CHECK</td>
-<td><code>status_snapshot</code></td>
-<td><code>status_snapshot IN ('draft','published','hidden','deleted')</code></td>
-</tr>
-<tr>
-<td style="text-align: right;">2</td>
-<td>(暗黙)</td>
-<td>CHECK</td>
-<td><code>source</code></td>
-<td><code>source IN ('manual','import')</code></td>
 </tr>
 </tbody>
 </table>

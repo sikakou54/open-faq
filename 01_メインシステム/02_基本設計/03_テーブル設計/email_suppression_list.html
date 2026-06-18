@@ -48,6 +48,7 @@
 <th>FK</th>
 <th>UNIQUE</th>
 <th>DEFAULT</th>
+<th>制約</th>
 <th>説明</th>
 </tr>
 </thead>
@@ -60,6 +61,7 @@
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td>○</td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -76,6 +78,7 @@
 <td></td>
 <td>○</td>
 <td></td>
+<td></td>
 <td>HMAC-SHA256</td>
 </tr>
 <tr>
@@ -89,6 +92,7 @@
 <td></td>
 <td></td>
 <td></td>
+<td><code>reason IN ('bounced_hard','bounced_soft_5x','complained','manual')</code></td>
 <td>§3.17.7</td>
 </tr>
 <tr>
@@ -102,6 +106,7 @@
 <td></td>
 <td></td>
 <td><code>1</code></td>
+<td></td>
 <td>0 / 1</td>
 </tr>
 <tr>
@@ -115,7 +120,8 @@
 <td></td>
 <td></td>
 <td></td>
-<td>ISO 8601 UTC</td>
+<td></td>
+<td>日時</td>
 </tr>
 <tr>
 <td style="text-align: right;">6</td>
@@ -124,6 +130,7 @@
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -171,27 +178,6 @@
 <td><code>(is_permanent, email_hmac)</code></td>
 <td></td>
 <td>永久 / 一時別検索</td>
-</tr>
-</tbody>
-</table>
-<h3 id="3176-制約">制約</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: right;">No</th>
-<th>制約名</th>
-<th>種別</th>
-<th>対象カラム</th>
-<th>条件・内容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: right;">1</td>
-<td>(暗黙)</td>
-<td>CHECK</td>
-<td><code>reason</code></td>
-<td><code>reason IN ('bounced_hard','bounced_soft_5x','complained','manual')</code></td>
 </tr>
 </tbody>
 </table>
