@@ -128,7 +128,7 @@
 <td></td>
 <td></td>
 <td></td>
-<td>表示名。<strong>招待時は <code>NULL</code></strong> で作成され、招待された本人が SCR-018 メンバーアカウント有効化ページで入力した時点で設定される(FR-016d / FR-016e、個人情報原則により管理者は他人の氏名を入力できない)。本人による変更は SCR-018 / SCR-017 個人設定で可能</td>
+<td>表示名</td>
 </tr>
 <tr>
 <td style="text-align: right;">7</td>
@@ -305,7 +305,7 @@
 <tr>
 <td><code>status</code></td>
 <td><code>pending_activation</code></td>
-<td>招待中(SCR-018 メンバーアカウント有効化ページで氏名 + 初回パスワード + 規約同意 未完了)。<code>users.name=NULL</code> で作成され、SCR-018 完了時に <code>users.name</code> 設定 + <code>status='active'</code> に遷移する(FR-016e)</td>
+<td>招待中(氏名 + 初回パスワード + 規約同意 未完了)。<code>users.name=NULL</code> で作成され、有効化完了時に <code>users.name</code> 設定 + <code>status='active'</code> に遷移する(FR-016e)</td>
 </tr>
 <tr>
 <td><code>status</code></td>

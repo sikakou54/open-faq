@@ -328,8 +328,8 @@
 <pre class="mermaid"><code>stateDiagram-v2
   direction LR
   [*] --&gt; open : 未解決質問登録(システム自動)
-  open --&gt; closed : SCR-005 詳細で手動操作
-  closed --&gt; open : SCR-005 詳細で手動操作(再オープン)
+  open --&gt; closed : 手動操作
+  closed --&gt; open : 手動操作(再オープン)
 </code></pre>
 
 <h3 id="451-faq-状態遷移faqsstatus">5.1 FAQ 状態遷移(<code>faqs.status</code>)</h3>
@@ -352,7 +352,7 @@
 <tr>
 <td><code>draft</code> / <code>hidden</code> ↔︎ <code>published</code></td>
 <td>(相互)</td>
-<td>SCR-006 で「状態」ラジオを選択して保存(<code>PATCH /faqs/{id}</code>)</td>
+<td>「状態」を選択して保存(<code>PATCH /faqs/{id}</code>)</td>
 <td>admin のみ。状態遷移ガードなし(<code>draft</code>/<code>published</code>/<code>hidden</code> を自由遷移)</td>
 </tr>
 <tr>
@@ -375,7 +375,7 @@
 </tr>
 </tbody>
 </table>
-<p><strong>運用方針</strong>: <code>draft</code> / <code>published</code> / <code>hidden</code> の 3 状態は SCR-006 編集画面の「状態」ラジオで選択し「保存」ボタンで相互に自由遷移する。専用の公開 API・状態遷移ガードは持たない。<code>published</code> を選択して保存する操作が管理者(admin)による公開前の内容確認(FR-045)を兼ねる。<code>published</code> 設定時のみ保存前に確認ダイアログを表示する(UI 上の確認であり遷移制約ではない)。</p>
+<p><strong>運用方針</strong>: <code>draft</code> / <code>published</code> / <code>hidden</code> の 3 状態は相互に自由遷移する。専用の公開 API・状態遷移ガードは持たない。<code>published</code> への変更が管理者(admin)による公開前の内容確認(FR-045)を兼ねる。</p>
 
 <h3 id="452-未解決質問の状況遷移inquiriesstatus共有概念正本">5.2 未解決質問の状況遷移(<code>inquiries.status</code>、共有概念正本)</h3>
 <table>
@@ -399,14 +399,14 @@
 <tr>
 <td><code>open</code></td>
 <td><code>closed</code></td>
-<td>SCR-005 詳細画面の手動操作</td>
+<td>手動操作</td>
 <td>なし</td>
 <td>なし</td>
 </tr>
 <tr>
 <td><code>closed</code></td>
 <td><code>open</code></td>
-<td>SCR-005 詳細画面の手動操作(再オープン)</td>
+<td>手動操作(再オープン)</td>
 <td>なし</td>
 <td>なし</td>
 </tr>
@@ -526,7 +526,7 @@
 <tr>
 <td><code>active</code> / <code>suspended</code></td>
 <td><code>deleted_pending</code></td>
-<td>admin 退会申請(SCR-014)</td>
+<td>admin 退会申請</td>
 <td>—</td>
 </tr>
 <tr>
@@ -575,7 +575,7 @@
 <h2 id="46-データ削除モード">6. データ削除モード</h2>
 <p class="section-lead">退会・削除時のデータ処理モード(物理削除 / 匿名化)と、対象テーブルごとの削除挙動を定義します。</p>
 <p><strong>設定</strong>: <code>contract_owners.data_deletion_mode</code>(<code>physical</code> / <code>anonymize</code>、初期値 <code>physical</code>)で保持する独立カラム。</p>
-<p><strong>論理削除</strong> は <code>UPDATE … SET valid=0</code> で行い、90 日経過後の物理削除バッチ(DD13)で物理削除モード(<code>physical</code> / <code>anonymize</code>)に従って実体を消去する。SCR-009-001 の「プロジェクトから外す」は対象 <code>project_users</code> 行だけを論理削除する。オーナーによるメンバーの契約からの削除は <code>users</code> と当該ユーザーの全 <code>project_users</code> を論理削除する。SCR-004-001(編集モード)のプロジェクト削除は <code>projects</code> と関連 <code>project_users</code> 行を論理削除する。</p>
+<p><strong>論理削除</strong> は <code>UPDATE … SET valid=0</code> で行い、90 日経過後の物理削除バッチ(DD13)で物理削除モード(<code>physical</code> / <code>anonymize</code>)に従って実体を消去する。メンバーのプロジェクト割当解除は対象 <code>project_users</code> 行だけを論理削除する。オーナーによるメンバーの契約からの削除は <code>users</code> と当該ユーザーの全 <code>project_users</code> を論理削除する。プロジェクト削除は <code>projects</code> と関連 <code>project_users</code> 行を論理削除する。</p>
 <h3 id="461-削除モード対応表">6.1 削除モード対応表</h3>
 <p class="section-lead">各テーブルの論理削除・物理削除・匿名化の挙動を一覧します。次の表は対象テーブルごとに 3 モードの処理内容を並べたものです。</p>
 <table>
@@ -706,7 +706,7 @@
 <li><strong>データ保持期間はシステム固定値とし、契約・管理者ユーザーによる UI 上の変更は不可</strong>(短縮・長期化いずれも不可)</li>
 <li>固定値は <a href="index.html#21-一覧">テーブル設計 §2.1</a> のテーブル一覧「保持期間」列および要件定義 NFR-701 / NFR-705 を正本とする</li>
 <li>短縮が必要な場合(法令・契約義務範囲内)はサポート窓口経由の運営者対応とする</li>
-<li>SCR-017 個人設定にデータ保持期間設定 UI を持たない(<a href="../01_画面設計/index.html">01_画面設計/index.html §5.24</a> 参照)</li>
+<li>データ保持期間は利用者が設定できない(固定値)</li>
 <li><code>usage_metering</code> / <code>billing_invoices</code> / <code>audit_logs(retention_class='billing')</code> は電子帳簿保存法・国税法の要請により最低 7 年保持(NFR-602b)、これを下回る短縮は不可</li>
 </ul>
 

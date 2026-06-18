@@ -115,7 +115,7 @@
 <td></td>
 <td></td>
 <td></td>
-<td>JSON 補助情報。<code>purpose='activation'</code> の場合は <code>{"invitedProjectId": "...", "invitedRole": "admin|member"}</code> を保持(SCR-018 有効化時に当該プロジェクトの予約行を特定、FR-016e)。<code>purpose='contact_verify'</code> の場合は <code>{"projectId": "..."}</code> を保持(SCR-019 着地時に <code>projects.contact_email_verified_at</code> を更新する対象プロジェクトを特定、FR-033a)</td>
+<td>JSON 補助情報。<code>purpose='activation'</code> の場合は <code>{"invitedProjectId": "...", "invitedRole": "admin|member"}</code> を保持(有効化時に当該プロジェクトの予約行を特定、FR-016e)。<code>purpose='contact_verify'</code> の場合は <code>{"projectId": "..."}</code> を保持(連絡先確認時に <code>projects.contact_email_verified_at</code> を更新する対象プロジェクトを特定、FR-033a)</td>
 </tr>
 <tr>
 <td style="text-align: right;">6</td>
@@ -274,12 +274,12 @@
 <tr>
 <td><code>purpose</code></td>
 <td><code>activation</code></td>
-<td>メンバーアカウント有効化(招待受諾。SCR-018 で氏名 + 初回パスワード + 規約同意。<code>meta</code> に <code>invitedProjectId</code> / <code>invitedRole</code> を JSON 保持)</td>
+<td>メンバーアカウント有効化(招待受諾。氏名 + 初回パスワード + 規約同意。<code>meta</code> に <code>invitedProjectId</code> / <code>invitedRole</code> を JSON 保持)</td>
 </tr>
 <tr>
 <td><code>purpose</code></td>
 <td><code>contact_verify</code></td>
-<td>プロジェクト連絡先メール確認(SCR-019 着地ページで <code>projects.contact_email_verified_at</code> セット。TTL 24 時間、<code>meta</code> に <code>projectId</code> を JSON 保持)</td>
+<td>プロジェクト連絡先メール確認(<code>projects.contact_email_verified_at</code> セット。TTL 24 時間、<code>meta</code> に <code>projectId</code> を JSON 保持)</td>
 </tr>
 </tbody>
 </table>
