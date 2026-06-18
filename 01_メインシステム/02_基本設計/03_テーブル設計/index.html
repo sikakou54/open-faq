@@ -77,7 +77,7 @@
 <h2 id="2-テーブル一覧">2. テーブル一覧</h2>
 <p class="section-lead">本システムの全テーブルを俯瞰し、各テーブルの主キー・契約境界キー・主管 FR・保持期間・保持クラスを一望できるようにします。あわせて <code>retention_class</code> の正本値を示します(主要なテーブル間関係・3 表ユーザーモデルは <a href="テーブル構造設計.html">テーブル構造設計.html</a> に移設)。</p>
 <h3 id="21-一覧">2.1 一覧</h3>
-<p class="section-lead">全テーブルの一覧です。次の表は、各テーブルの論理名・概要・主キー・契約境界キー(<code>contract_owner_user_id</code>)の有無・主管 FR・保持期間・<code>retention_class</code> を 1 行ずつ並べたものです。</p>
+<p class="section-lead">全テーブルの一覧です。各テーブルの論理名と概要を 1 行ずつ示します。各テーブルの詳細(カラム定義・主キー・外部キー・インデックス等)は個別テーブルファイルを参照してください。契約境界キーは <code>contract_owner_user_id</code> です。</p>
 <table>
 <thead>
 <tr>
@@ -85,11 +85,11 @@
 <th>TBL-ID</th>
 <th>テーブル名 / 論理名</th>
 <th>概要</th>
-<th><code>contract_owner_user_id</code></th>
-<th>主管 FR</th>
-<th>保持期間</th>
-<th>保持起点</th>
-<th>retention_class</th>
+
+
+
+
+
 </tr>
 </thead>
 <tbody>
@@ -98,341 +98,341 @@
 <td>TBL-001</td>
 <td><a href="users.html"><code>users</code></a><br>ユーザーマスタ(管理者専用)</td>
 <td>管理者(オーナー / プロジェクト管理者 / メンバー)の認証情報(メール / パスワード / 氏名 / セッション状態)を一元保持するユーザーマスタです。</td>
-<td>(<code>users</code> 単独では持たず、<code>contract_owners.user_id</code> / <code>project_users.contract_owner_user_id</code> で表現)</td>
-<td>FR-001, FR-015</td>
-<td>永久(契約存続中)/ 退会後は §4.6 削除ポリシー</td>
-<td>作成日時</td>
-<td><code>general</code></td>
+
+
+
+
+
 </tr>
 <tr>
 <td>2</td>
 <td>TBL-002</td>
 <td><a href="contract_owners.html"><code>contract_owners</code></a><br>契約者ユーザー</td>
 <td>オーナーごとの契約状態やデータ削除モードなど、オーナー専有の契約属性を保持する契約者テーブルです。</td>
-<td>(本テーブル自身が契約境界、<code>user_id</code> = <code>contract_owner_user_id</code>)</td>
-<td>FR-015a, FR-333</td>
-<td>永久(契約存続中)/ 退会後は §4.6 削除ポリシー</td>
-<td>作成日時</td>
-<td><code>billing</code></td>
+
+
+
+
+
 </tr>
 <tr>
 <td>3</td>
 <td>TBL-003</td>
 <td><a href="project_users.html"><code>project_users</code></a><br>プロジェクトユーザー割当 + プロジェクト別ロール</td>
 <td>オーナー・メンバーのプロジェクトへの割当と、プロジェクトごとのロール(プロジェクト管理者 / メンバー)を保持します。</td>
-<td>あり(<code>contract_owner_user_id</code> で契約境界冗長保持)</td>
-<td>FR-015, FR-030-035</td>
-<td>紐づくユーザーに従属</td>
-<td>-</td>
-<td><code>general</code></td>
+
+
+
+
+
 </tr>
 <tr>
 <td>4</td>
 <td>TBL-004</td>
 <td><a href="sessions.html"><code>sessions</code></a><br>セッション</td>
 <td>複数デバイス対応のログインセッションを管理します。</td>
-<td>(<code>users</code> 経由)</td>
-<td>FR-022, FR-332</td>
-<td>期限切れ後 90 日</td>
-<td>最終アクティビティ</td>
-<td><code>general</code></td>
+
+
+
+
+
 </tr>
 <tr>
 <td>5</td>
 <td>TBL-005</td>
 <td><a href="access_tokens.html"><code>access_tokens</code></a><br>アクセストークン</td>
 <td>招待・パスワード再設定・メール確認などの短期トークンを保持します。</td>
-<td>(<code>users</code> 経由)</td>
-<td>FR-004, FR-008</td>
-<td>使用後 30 日</td>
-<td>発行日時</td>
-<td><code>general</code></td>
+
+
+
+
+
 </tr>
 <tr>
 <td>6</td>
 <td>TBL-006</td>
 <td><a href="projects.html"><code>projects</code></a><br>プロジェクト</td>
 <td>FAQ プロジェクトとウィジェット設定を保持します。</td>
-<td>あり</td>
-<td>FR-030-035</td>
-<td>永久(プロジェクト存続中)</td>
-<td>作成日時</td>
-<td><code>general</code></td>
+
+
+
+
+
 </tr>
 <tr>
 <td>7</td>
 <td>TBL-007</td>
 <td><a href="project_legacy_keys.html"><code>project_legacy_keys</code></a><br>レガシー API キー</td>
 <td>ウィジェット鍵ローテーション時に旧キーを 24 時間だけ有効にするためのレガシー API キーを保持します。</td>
-<td>(<code>projects</code> 経由)</td>
-<td>-</td>
-<td>24 時間</td>
-<td>ローテーション日時</td>
-<td><code>general</code></td>
+
+
+
+
+
 </tr>
 <tr>
 <td>8</td>
 <td>TBL-008</td>
 <td><a href="allowed_domains.html"><code>allowed_domains</code></a><br>許可ドメイン</td>
 <td>ウィジェット埋め込みを許可するドメインを保持します。</td>
-<td>(<code>projects</code> 経由)</td>
-<td>FR-150-156</td>
-<td>プロジェクトに従属</td>
-<td>-</td>
-<td><code>general</code></td>
+
+
+
+
+
 </tr>
 <tr>
 <td>9</td>
 <td>TBL-009</td>
 <td><a href="faqs.html"><code>faqs</code></a><br>FAQ</td>
 <td>FAQ 本体(質問・回答・公開状態)を保持します。</td>
-<td>あり</td>
-<td>FR-040-048, FR-322</td>
-<td>永久(FAQ 存続中)</td>
-<td>作成日時</td>
-<td><code>general</code></td>
+
+
+
+
+
 </tr>
 <tr>
 <td>10</td>
 <td>TBL-010</td>
 <td><a href="faq_revisions.html"><code>faq_revisions</code></a><br>FAQ 改訂履歴</td>
 <td>FAQ の改訂履歴を全文スナップショットで最大 50 件保持します。</td>
-<td>(<code>faqs</code> 経由)</td>
-<td>FR-322</td>
-<td>永久(版ごと)</td>
-<td>改訂日時</td>
-<td><code>general</code></td>
+
+
+
+
+
 </tr>
 <tr>
 <td>11</td>
 <td>TBL-011</td>
 <td><a href="faq_search_fts.html"><code>faq_search_fts</code></a><br>FAQ 全文検索</td>
 <td>FAQ 全文検索用の FTS5 仮想テーブル(trigram トークナイザ)です。</td>
-<td>(<code>faqs</code> 連動)</td>
-<td>FR-300</td>
-<td><code>faqs</code> に従属</td>
-<td>-</td>
-<td>-</td>
+
+
+
+
+
 </tr>
 <tr>
 <td>12</td>
 <td>TBL-012</td>
 <td><a href="question_logs.html"><code>question_logs</code></a><br>質問ログ</td>
 <td>ウィジェット利用者からの質問と AI 推論結果を記録する質問ログです。</td>
-<td>あり</td>
-<td>FR-003, NFR-601</td>
-<td>730 日(自動匿名化)</td>
-<td>投稿日時</td>
-<td><code>general</code></td>
+
+
+
+
+
 </tr>
 <tr>
 <td>13</td>
 <td>TBL-013</td>
 <td><a href="question_log_faq_refs.html"><code>question_log_faq_refs</code></a><br>参照 FAQ</td>
 <td>質問ログと参照 FAQ の M:N 関係を保持する中間テーブルです。</td>
-<td>(経由)</td>
-<td>-</td>
-<td><code>question_logs</code> に従属</td>
-<td>-</td>
-<td><code>general</code></td>
+
+
+
+
+
 </tr>
 <tr>
 <td>14</td>
 <td>TBL-014</td>
 <td><a href="inquiries.html"><code>inquiries</code></a><br>未解決質問</td>
 <td>FAQ 登録前の未解決質問を保持します。</td>
-<td>あり</td>
-<td>FR-070〜077</td>
-<td>730 日</td>
-<td>作成日時</td>
-<td><code>general</code></td>
+
+
+
+
+
 </tr>
 <tr>
 <td>15</td>
 <td>TBL-015</td>
 <td><a href="notification_logs.html"><code>notification_logs</code></a><br>通知ログ</td>
 <td>メール通知の送信履歴を保持します。</td>
-<td>あり</td>
-<td>NFR-506, NFR-319</td>
-<td>1 年</td>
-<td>送信日時</td>
-<td><code>general</code></td>
+
+
+
+
+
 </tr>
 <tr>
 <td>16</td>
 <td>TBL-016</td>
 <td><a href="ai_threshold_persistent_cache.html"><code>ai_threshold_persistent_cache</code></a><br>AI しきい値キャッシュ</td>
 <td>3 階層 AI しきい値を永続キャッシュするテーブルです。</td>
-<td>あり(scope=<code>owner</code> 時)</td>
-<td>FR-348</td>
-<td>30 日</td>
-<td>更新日時</td>
-<td><code>general</code></td>
+
+
+
+
+
 </tr>
 <tr>
 <td>17</td>
 <td>TBL-017</td>
 <td><a href="email_suppression_list.html"><code>email_suppression_list</code></a><br>メールサプレスリスト</td>
 <td>バウンス・苦情を起こしたメールアドレスを全契約横断で管理するサプレスリストです。</td>
-<td>(全契約横断)</td>
-<td>FR-149b</td>
-<td>永久</td>
-<td>サプレス日時</td>
-<td><code>general</code></td>
+
+
+
+
+
 </tr>
 <tr>
 <td>18</td>
 <td>TBL-018</td>
 <td><a href="audit_logs.html"><code>audit_logs</code></a><br>監査ログ(メイン側、API 操作ログ専用)</td>
 <td>メイン管理者向けの API 操作ログを保持します。</td>
-<td>あり(<code>contract_owner_user_id</code> カラム)</td>
-<td>NFR-602a/b/d</td>
-<td>retention_class 別(1 / 7 / 5 年)</td>
-<td>操作日時</td>
-<td><code>general</code> / <code>billing</code> / <code>operator_high_priv</code></td>
+
+
+
+
+
 </tr>
 <tr>
 <td>19</td>
 <td>TBL-019</td>
 <td><a href="error_logs.html"><code>error_logs</code></a><br>エラーログ</td>
 <td>サーバーエラーを記録するエラーログです。</td>
-<td>あり(可)</td>
-<td>NFR-704</td>
-<td>180 日</td>
-<td>発生日時</td>
-<td><code>general</code></td>
+
+
+
+
+
 </tr>
 <tr>
 <td>20</td>
 <td>TBL-020</td>
 <td><a href="billing_subscriptions.html"><code>billing_subscriptions</code></a><br>課金サブスクリプション</td>
 <td>Stripe のサブスクリプションと連動する、課金サブスクリプション情報を保持します。</td>
-<td>あり</td>
-<td>FR-148</td>
-<td>永久(契約存続中)</td>
-<td>作成日時</td>
-<td><code>billing</code></td>
+
+
+
+
+
 </tr>
 <tr>
 <td>21</td>
 <td>TBL-021</td>
 <td><a href="billing_invoices.html"><code>billing_invoices</code></a><br>請求書</td>
 <td>月次請求書を保持します。</td>
-<td>あり</td>
-<td>FR-148, NFR-602b</td>
-<td>7 年</td>
-<td>発行日時</td>
-<td><code>billing</code></td>
+
+
+
+
+
 </tr>
 <tr>
 <td>22</td>
 <td>TBL-022</td>
 <td><a href="usage_metering.html"><code>usage_metering</code></a><br>利用量計測(プロジェクト単位)</td>
 <td>質問数・FAQ 件数をプロジェクト単位で計測し、請求はオーナーで SUM 集計します。</td>
-<td>あり</td>
-<td>FR-148</td>
-<td>7 年</td>
-<td>計測日時</td>
-<td><code>billing</code></td>
+
+
+
+
+
 </tr>
 <tr>
 <td>23</td>
 <td>TBL-023</td>
 <td><a href="owner_quota_overrides.html"><code>owner_quota_overrides</code></a><br>契約別レート上書き</td>
 <td>運営者による契約単位のレート制限上書きを保持します。</td>
-<td>あり</td>
-<td>IF #5</td>
-<td>5 年</td>
-<td>設定日時</td>
-<td><code>operator_high_priv</code></td>
+
+
+
+
+
 </tr>
 <tr>
 <td>24</td>
 <td>TBL-024</td>
 <td><a href="project_quota_limits.html"><code>project_quota_limits</code></a><br>プロジェクト別利用設定</td>
 <td>質問数の月次上限件数・無料枠・アラート、および運営者が管理する FAQ 件数無料枠をプロジェクト単位で保持します。</td>
-<td>あり</td>
-<td>FR-121</td>
-<td>永久(プロジェクト存続中)</td>
-<td>設定日時</td>
-<td><code>general</code></td>
+
+
+
+
+
 </tr>
 <tr>
 <td>25</td>
 <td>TBL-025</td>
 <td><a href="service_announcements.html"><code>service_announcements</code></a><br>お知らせ(Control Plane)</td>
 <td>運営者が発信するお知らせの本体を保持します。</td>
-<td>(全契約横断 or 限定)</td>
-<td>-</td>
-<td>5 年</td>
-<td>配信日時</td>
-<td><code>operator_high_priv</code></td>
+
+
+
+
+
 </tr>
 <tr>
 <td>26</td>
 <td>TBL-026</td>
 <td><a href="announcement_audiences.html"><code>announcement_audiences</code></a><br>お知らせ配信対象 M:N</td>
 <td>お知らせの配信先オーナーを限定指定する M:N テーブルです。</td>
-<td>(限定)</td>
-<td>-</td>
-<td>親お知らせに従属</td>
-<td>-</td>
-<td><code>operator_high_priv</code></td>
+
+
+
+
+
 </tr>
 <tr>
 <td>27</td>
 <td>TBL-027</td>
 <td><a href="announcement_recipients.html"><code>announcement_recipients</code></a><br>お知らせ受信者</td>
 <td>お知らせの実配信先・配信集計・監査情報を保持します。</td>
-<td>あり</td>
-<td>-</td>
-<td>5 年</td>
-<td>配信日時</td>
-<td><code>general</code></td>
+
+
+
+
+
 </tr>
 <tr>
 <td>28</td>
 <td>TBL-028</td>
 <td><a href="inbox_messages.html"><code>inbox_messages</code></a><br>受信箱(Tenant Plane)</td>
 <td>利用者(テナント側)が受け取るお知らせ・通知の既読状態を管理する受信箱です。</td>
-<td>あり</td>
-<td>FR-182-192</td>
-<td>1 年</td>
-<td>既読日時</td>
-<td><code>general</code></td>
+
+
+
+
+
 </tr>
 <tr>
 <td>29</td>
 <td>TBL-029</td>
 <td><a href="withdrawal_requests.html"><code>withdrawal_requests</code></a><br>退会申請</td>
 <td>退会申請レコード(90 日猶予)を保持します。</td>
-<td>あり</td>
-<td>FR-189</td>
-<td>7 年</td>
-<td>申請日時</td>
-<td><code>billing</code></td>
+
+
+
+
+
 </tr>
 <tr>
 <td>30</td>
 <td>TBL-030</td>
 <td><a href="terms_versions.html"><code>terms_versions</code></a><br>規約版数</td>
 <td>利用規約・プライバシーポリシーの版を保持します。</td>
-<td>(全契約横断)</td>
-<td>-</td>
-<td>永久</td>
-<td>制定日時</td>
-<td><code>general</code></td>
+
+
+
+
+
 </tr>
 <tr>
 <td>31</td>
 <td>TBL-031</td>
 <td><a href="terms_agreements.html"><code>terms_agreements</code></a><br>規約同意</td>
 <td>利用者ごとの規約同意履歴を保持します。</td>
-<td>(<code>users</code> 経由)</td>
-<td>-</td>
-<td>7 年</td>
-<td>同意日時</td>
-<td><code>billing</code></td>
+
+
+
+
+
 </tr>
 </tbody>
 </table>

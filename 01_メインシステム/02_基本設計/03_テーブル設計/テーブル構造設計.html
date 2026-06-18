@@ -704,7 +704,7 @@
 <p class="section-lead">データ保持期間の変更可否に関する制約を示します。保持期間はシステム固定値であり、UI からの変更はできません。</p>
 <ul>
 <li><strong>データ保持期間はシステム固定値とし、契約・管理者ユーザーによる UI 上の変更は不可</strong>(短縮・長期化いずれも不可)</li>
-<li>固定値は <a href="index.html#21-一覧">テーブル設計 §2.1</a> のテーブル一覧「保持期間」列および要件定義 NFR-701 / NFR-705 を正本とする</li>
+<li>固定値は要件定義 NFR-701 / NFR-705 を正本とする</li>
 <li>短縮が必要な場合(法令・契約義務範囲内)はサポート窓口経由の運営者対応とする</li>
 <li>データ保持期間は利用者が設定できない(固定値)</li>
 <li><code>usage_metering</code> / <code>billing_invoices</code> / <code>audit_logs(retention_class='billing')</code> は電子帳簿保存法・国税法の要請により最低 7 年保持(NFR-602b)、これを下回る短縮は不可</li>
