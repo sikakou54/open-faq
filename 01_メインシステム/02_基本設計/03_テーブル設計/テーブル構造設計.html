@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>テーブル構造設計(メイン) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/テーブル構造設計.html">
+<article class="content" id="content">
+<h1 id="テーブル構造設計">テーブル構造設計</h1>
+
+<aside class="page-summary">
+<p class="ps-lead"><strong>このページは、メインシステムの各テーブルを横断する設計意図と取り決め(テーブル間関係・3 表ユーザーモデル・契約境界キーによるデータ分離・状態遷移・削除モード・PII 取扱・インデックス方針)を、図解付きで集約します。</strong> 個々のテーブルのスキーマ定義は <a href="index.html">テーブル設計(一覧)</a>と各テーブルファイル(<code>users.html</code> 等)が正本です。</p>
+<ul>
+<li>主要テーブルがどのような関係(カーディナリティ)で結ばれるか</li>
+<li>ユーザー権限を保持する 3 表モデル(<code>users</code> / <code>contract_owners</code> / <code>project_users</code>)の役割分担</li>
+<li>契約境界キー <code>contract_owner_user_id</code> によるマルチテナント分離の仕組み</li>
+<li>命名規則・型方針・SaaS データ分離・全契約横断テーブルの扱い</li>
+<li>主要な状態遷移(FAQ / 未解決質問 / 通知 / 契約)とデータ削除モード・保持調整制約・PII 取扱・インデックス方針</li>
+</ul>
+</aside>
+
+<p class="doc-meta"><span><b>版数</b> v1.6</span><span><b>更新</b> 2026-06-18</span><span class="dm-status">承認済</span></p>
+
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">本ページの位置づけ</span>本ページは <a href="index.html">テーブル設計(一覧)</a>から「設計意図・取り決め」セクション(旧 §2.3 / §2.4 / §4 一式)を移設して集約したものです。テーブルの一覧と各テーブルのスキーマは <a href="index.html">テーブル設計</a>、<code>retention_class</code> の値の正本定義は <a href="index.html#22-retention_class-値の正本定義audit_logsretention_class">テーブル設計 §2.2</a> を参照してください。</div></div>
+
+<h2 id="1-主要関係性">1. 主要関係性</h2>
+<p class="section-lead">主要なテーブル間の対応関係(カーディナリティ)を示します。まずドメイン別の主要 FK 関係を概観図で俯瞰し、続けて代表的な関係を表で整理します。</p>
+
+<h3 id="11-テーブル関係概観図">1.1 テーブル関係概観図</h3>
+<p class="section-lead">主要な外部キー関係をドメイン(認証・ユーザー / プロジェクト・FAQ / 課金 / お知らせ)別にグルーピングした概観です。共通技術カラムや一部の従属テーブルは省略しています。完全な関係は <a href="../ER図.html">ER図.html</a> を参照してください。</p>
+<pre class="mermaid"><code>erDiagram
+  users ||--o| contract_owners : "行存在=オーナー"
+  users ||--o{ project_users : "割当"
+  users ||--o{ sessions : ""
+  users ||--o{ access_tokens : ""
+  contract_owners ||--o{ projects : "contract_owner_user_id"
+  projects ||--o{ project_users : "割当先"
+  projects ||--o{ faqs : ""
+  projects ||--o{ inquiries : ""
+  projects ||--o{ allowed_domains : ""
+  projects ||--o| project_quota_limits : ""
+  faqs ||--o{ faq_revisions : "改訂履歴"
+  faqs ||--o| inquiries : "source_unresolved_question_id"
+  contract_owners ||--o{ billing_subscriptions : ""
+  contract_owners ||--o{ billing_invoices : ""
+  contract_owners ||--o{ usage_metering : "プロジェクト計測/契約集計"
+  contract_owners ||--o| owner_quota_overrides : "レート上書き"
+  service_announcements ||--o{ announcement_recipients : "fan-out"
+  announcement_recipients ||--o{ inbox_messages : "受信箱"
+</code></pre>
+
+<h3 id="12-関係一覧">1.2 関係一覧</h3>
+<p class="section-lead">ユーザー・契約者・プロジェクト・FAQ・未解決質問・お知らせの間の主要な関係と、それを表現する外部キーを並べたものです。</p>
+<table>
+<thead>
+<tr>
+<th>関係</th>
+<th>型</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ユーザー ↔︎ 契約者</td>
+<td>1:0..1</td>
+<td><code>users</code> 1 行に対し <code>contract_owners</code> は 0 行(メンバー)or 1 行(オーナー)。<code>contract_owners</code> 行存在 = オーナー判定</td>
+</tr>
+<tr>
+<td>契約者 ↔︎ プロジェクト</td>
+<td>1:N</td>
+<td>契約削除時にプロジェクトも削除対象(<code>projects.contract_owner_user_id</code> REFERENCES <code>contract_owners(user_id)</code>)</td>
+</tr>
+<tr>
+<td>プロジェクト ↔︎ FAQ</td>
+<td>1:N</td>
+<td>FAQ はプロジェクトに帰属</td>
+</tr>
+<tr>
+<td>プロジェクト ↔︎ 未解決質問</td>
+<td>1:N</td>
+<td>—</td>
+</tr>
+<tr>
+<td>未解決質問 ↔︎ FAQ</td>
+<td>0..1:N</td>
+<td><code>faqs.source_unresolved_question_id</code> で参照可</td>
+</tr>
+<tr>
+<td>お知らせ ↔︎ 受信箱</td>
+<td>1:N</td>
+<td><code>service_announcements</code> → <code>announcement_recipients</code> → <code>inbox_messages</code> の fan-out</td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="2-ユーザー権限保持方式3-表モデル">2. ユーザー権限保持方式(3 表モデル)</h2>
+<p class="section-lead">ユーザーの権限(オーナー / プロジェクト管理者 / メンバー)を 3 つのテーブルに分離して保持する方式を示します。まず役割分担を図解し、続けて各表の責務と運用上の取り決めを述べます。</p>
+
+<h3 id="21-3-表モデル図">2.1 3 表モデル図</h3>
+<p class="section-lead"><code>users</code>(認証主体)に対し、<code>contract_owners</code> 行の存在がオーナーを表し、<code>project_users</code> 行がプロジェクト割当とロール(<code>admin</code> / <code>member</code>)を表します。<code>project_users.contract_owner_user_id</code> はオーナー(契約境界)を冗長保持します。</p>
+<pre class="mermaid"><code>flowchart TD
+  U["users<br/>(全ロール共通の認証主体 + PII)"]
+  CO["contract_owners<br/>(オーナー専有属性)<br/>user_id PRIMARY KEY"]
+  PU["project_users<br/>(プロジェクト割当 + role)<br/>(user_id, project_id) PK"]
+  PJ["projects"]
+
+  U -->|"行存在=オーナー判定"| CO
+  U -->|"割当(0..N)"| PU
+  PU -->|"project_id"| PJ
+  PU -->|"contract_owner_user_id<br/>(契約境界を冗長保持)"| CO
+  CO -->|"プロジェクト所有(1:N)"| PJ
+</code></pre>
+
+<h3 id="22-各表の責務">2.2 各表の責務</h3>
+<p class="section-lead">採用方式は <strong>3 表分離型</strong>(<code>users</code> + <code>contract_owners</code> + <code>project_users</code>)です。個別権限フラグ方式は採用しません。</p>
+<ul>
+<li><code>users</code>: 全ロール共通の認証主体(認証情報 + PII)。「オーナーかどうか」は <code>users</code> 単独では判定せず、<code>contract_owners</code> 行存在で判定する</li>
+<li><code>contract_owners</code>: オーナー専有属性(<code>contract_status</code> / <code>data_deletion_mode</code>)を分離。<code>user_id PRIMARY KEY</code> により 1 契約 = 1 オーナー固定が DB 制約で担保される</li>
+<li><code>project_users</code>: プロジェクト単位ロール(<code>admin</code> / <code>member</code>)。<code>(user_id, project_id)</code> 複合 PK + <code>contract_owner_user_id</code> 冗長保持(認可境界クエリ高速化と意図明示) + <code>granted_at</code> / <code>granted_by</code> 保持で行レベル監査</li>
+</ul>
+<p><strong>オーナーも <code>project_users</code> に行を持つ</strong>(プロジェクト作成時に <code>project_users(user_id=オーナー, project_id=新PJ, contract_owner_user_id=オーナー, role='admin', valid=1)</code> を自動 INSERT。FR-030a)。認可フロー先頭の <code>isOwner=true</code> bypass(<code>contract_owners</code> 行存在で判定)は維持し、<code>project_users</code> 行は critical 通知宛先解決と画面表示(プロジェクト管理者一覧)の事実情報として参照する。</p>
+<p><strong>最後の管理者保護判定</strong>(<code>E-AUTHZ-LAST-ADMIN-PROTECTED</code>): オーナー由来の <code>project_users</code> 行を判定対象から除外する。具体的には <code>pu.user_id NOT IN (SELECT user_id FROM contract_owners WHERE valid=1)</code> で「メンバー由来 admin 行」のみを抽出して件数判定する(オーナーは常に admin 行を持つため判定対象外)。</p>
+<p><strong><code>valid</code> カラムによる論理削除を全削除対象テーブルに適用する</strong>(対象テーブルは §6 削除モード表を正本)。<code>valid INTEGER NOT NULL DEFAULT 1 CHECK (valid IN (0,1))</code> を持つテーブルでは、論理削除は <code>UPDATE … SET valid=0</code> で表現する。論理削除データは <code>updated_at</code> 基準で 90 日経過後に物理削除バッチで物理削除する(<a href="../../03_詳細設計/DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html</a> を正本)。<code>deleted_at</code> カラムは持たず、論理削除日時は既存 <code>updated_at</code>(<code>valid</code> が 0 に更新された時刻)で代用する。例外テーブル: <code>audit_logs</code>(API 操作ログ専用、<code>created_at + retention 期間</code> で物理 DELETE)、<code>sessions</code>(<code>revoked_at</code> で代用)、法定保管 7 年テーブル(<code>billing_invoices</code> / <code>usage_metering</code> / <code>withdrawal_requests</code> / <code>terms_versions</code> / <code>terms_agreements</code>)、全契約横断テーブル(<code>email_suppression_list</code>)、ログ系(<code>notification_logs</code> / <code>error_logs</code> / <code>inbox_messages</code>)、トークン / 履歴系(<code>access_tokens</code> / <code>faq_revisions</code> / <code>faq_search_fts</code> / <code>question_log_faq_refs</code>)、M:N 関係系(<code>announcement_audiences</code>)。</p>
+
+<h2 id="3-設計意図の補足">3. 設計意図の補足</h2>
+<p class="section-lead">各テーブルの概要メタからは省いた、テーブル横断の設計意図(契約境界キーの持ち方・<code>retention_class</code> 分類・論理削除と物理削除バッチ)をここに一元化します。</p>
+
+<h3 id="31-契約境界キー-contract_owner_user_id">3.1 契約境界キー <code>contract_owner_user_id</code></h3>
+<p class="section-lead">マルチテナント(SaaS)分離の境界キーが <code>contract_owner_user_id</code> です。多くのテーブルは本列を直接持ちますが、一部のテーブルは親テーブル経由で契約所属を間接表現します。下表でどのテーブルが直接保持 / 間接表現かを整理します。</p>
+<table>
+<thead>
+<tr>
+<th>保持方式</th>
+<th>対象テーブル(代表)</th>
+<th>取り決め</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>直接保持(<code>contract_owner_user_id</code> カラムを持つ)</td>
+<td><code>projects</code> / <code>faqs</code> / <code>question_logs</code> / <code>inquiries</code> / <code>notification_logs</code> / <code>billing_subscriptions</code> / <code>billing_invoices</code> / <code>usage_metering</code> / <code>owner_quota_overrides</code> / <code>project_quota_limits</code> / <code>audit_logs</code> / <code>announcement_recipients</code> / <code>inbox_messages</code> / <code>withdrawal_requests</code> 等</td>
+<td>全契約スコープのテーブルに必須。境界 FK 系列は <code>contract_owners(user_id)</code> を参照し、契約境界違反を物理的に弾く</td>
+</tr>
+<tr>
+<td>間接表現(親テーブル経由)</td>
+<td><code>users</code>(<code>contract_owners.user_id</code> 行存在 / <code>project_users.contract_owner_user_id</code> 経由)、<code>sessions</code> / <code>access_tokens</code> / <code>terms_agreements</code>(<code>users</code> 経由)、<code>project_legacy_keys</code> / <code>allowed_domains</code>(<code>projects</code> 経由)、<code>faq_revisions</code> / <code>faq_search_fts</code>(<code>faqs</code> 連動)、<code>question_log_faq_refs</code>(<code>question_logs</code> 経由)</td>
+<td><code>users</code> は <code>contract_owner_user_id</code> を持たず、<code>contract_owners.user_id</code>(行存在=オーナー判定)/ <code>project_users.contract_owner_user_id</code> で契約所属を表現する</td>
+</tr>
+<tr>
+<td>契約境界そのもの</td>
+<td><code>contract_owners</code></td>
+<td>本テーブル自身が契約境界(<code>user_id</code> = <code>contract_owner_user_id</code>)</td>
+</tr>
+<tr>
+<td>全契約横断(境界キーを持たない)</td>
+<td><code>email_suppression_list</code> / <code>terms_versions</code> / <code>service_announcements</code></td>
+<td>全契約共通で共有するため境界キーを持たない(§4.2 参照)</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="32-retention_class-分類の設計意図">3.2 <code>retention_class</code> 分類の設計意図</h3>
+<p class="section-lead">監査ログの保持クラス(<code>retention_class</code> = <code>general</code> / <code>billing</code> / <code>operator_high_priv</code>)は、どの保持規制に対応するかを表します。値の正本表は <a href="index.html#22-retention_class-値の正本定義audit_logsretention_class">テーブル設計 §2.2</a> を参照してください。</p>
+<table>
+<thead>
+<tr>
+<th>クラス</th>
+<th>保持規制(設計意図)</th>
+<th>保持期間</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>general</code></td>
+<td>一般業務監査(法定保管要件なし、運用上の証跡)</td>
+<td>1 年(NFR-602a)</td>
+</tr>
+<tr>
+<td><code>billing</code></td>
+<td>電子帳簿保存法・国税法の課金/法定保管要請に対応</td>
+<td>7 年(NFR-602b)</td>
+</tr>
+<tr>
+<td><code>operator_high_priv</code></td>
+<td>運営者高権限操作(SOX 類似の内部統制要請)に対応</td>
+<td>5 年(NFR-602d)</td>
+</tr>
+</tbody>
+</table>
+<p>値の意味・代表例の正本は <a href="index.html#22-retention_class-値の正本定義audit_logsretention_class">テーブル設計 §2.2</a>、保持規制の詳細は <a href="../09_セキュリティ設計.html">09_セキュリティ設計.html §7</a>(運営者側 §7 が正本)を参照する。</p>
+
+<h3 id="33-論理削除と物理削除バッチ">3.3 論理削除(<code>valid</code>)と物理削除バッチ・匿名化モード</h3>
+<p class="section-lead">論理削除は <code>valid=0</code> で表現し、90 日経過後に物理削除バッチが <code>data_deletion_mode</code>(<code>physical</code> / <code>anonymize</code>)に従って実体を処理する取り決めです。詳細表は §6 データ削除モードを正本とします。</p>
+<ul>
+<li><strong>論理削除</strong>: 全削除対象テーブル(§6 削除モード表が正本)で <code>UPDATE … SET valid=0</code>。論理削除日時は <code>updated_at</code> で代用(<code>deleted_at</code> は持たない)</li>
+<li><strong>物理削除バッチ(90 日)</strong>: 日次バッチが <code>valid=0 AND updated_at &lt; now() - 90d</code> の行を <code>contract_owners.data_deletion_mode</code> に従って処理する(<a href="../../03_詳細設計/DD13_バッチ・非同期処理.html">DD13</a> 正本)</li>
+<li><strong>匿名化モード</strong>: <code>data_deletion_mode='anonymize'</code> 選択時は、原文復元不可な置換(<code>email_encrypted</code> → <code>anon_&lt;sha256&gt;</code>、<code>name</code> → 「匿名」等)を行い集計値を維持する(§6 参照)</li>
+</ul>
+
+<h2 id="4-命名規則型方針saas-データ分離">4. 命名規則・型方針 / SaaS データ分離</h2>
+<p class="section-lead">全テーブルに共通する命名規則・型方針と、SaaS マルチテナントのデータ分離方式を示します。</p>
+
+<h3 id="41-命名規則型方針">4.1 命名規則・型方針</h3>
+<p class="section-lead">テーブル名・カラム名・データ型に関する全テーブル共通の命名規則と型方針を示します。次の表は対象と規則を並べたものです。</p>
+<table>
+<thead>
+<tr>
+<th>対象</th>
+<th>規則</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>テーブル</td>
+<td>snake_case 複数形</td>
+</tr>
+<tr>
+<td>主キー</td>
+<td>文字列 ID(ULID)/ <code>*_versions</code> 等の例外あり</td>
+</tr>
+<tr>
+<td>外部キー</td>
+<td><code>{table_singular}_id</code></td>
+</tr>
+<tr>
+<td>日時</td>
+<td>TEXT(ISO 8601 UTC、NFR-1103)</td>
+</tr>
+<tr>
+<td>状態</td>
+<td><code>status</code> または <code>{対象}_status</code></td>
+</tr>
+<tr>
+<td>真偽値</td>
+<td>INTEGER 0/1</td>
+</tr>
+<tr>
+<td>JSON</td>
+<td>TEXT 列に JSON 文字列で保存</td>
+</tr>
+<tr>
+<td>暗号化</td>
+<td><code>{column}_encrypted</code>(AES-256-GCM) + <code>{column}_hmac</code>(検索用)の 2 列構成</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="43-saas-データ分離">4.2 SaaS データ分離</h3>
+<p class="section-lead">契約境界キー <code>contract_owner_user_id</code> を用いたマルチテナント分離の概念と判定方式を示します。まず概念図で分離の仕組みを俯瞰します。</p>
+<pre class="mermaid"><code>flowchart TD
+  subgraph A["契約 A(オーナー A)"]
+    AO["contract_owners(user_id=A)"]
+    AP["projects / faqs / inquiries …<br/>contract_owner_user_id = A"]
+    AO --- AP
+  end
+  subgraph B["契約 B(オーナー B)"]
+    BO["contract_owners(user_id=B)"]
+    BP["projects / faqs / inquiries …<br/>contract_owner_user_id = B"]
+    BO --- BP
+  end
+  REQ["API リクエスト<br/>principal.contractOwnerUserId"]
+  REQ -->|"=== target.contract_owner_user_id"| AP
+  REQ -.->|"境界違反は 404 偽装"| BP
+</code></pre>
+<ul>
+<li>全契約スコープのテーブルに <code>contract_owner_user_id</code> カラム必須(全契約横断テーブルを除く ── §4.3 参照)</li>
+<li>「契約境界(owner)」を表す FK 系列 → <code>contract_owners(user_id)</code> を参照(契約境界違反を物理的に弾く)。「操作者・主体(actor)」系 → <code>users(id)</code> を参照</li>
+<li>API / 認可レイヤで境界検証: <code>principal.contractOwnerUserId === target.contract_owner_user_id</code>(<a href="../08_認証・認可設計.html">08_認証・認可設計.html §5</a>)</li>
+<li>違反時は <strong>404 偽装</strong>(403 だと相手契約のリソース存在が漏れる)</li>
+</ul>
+<h4 id="431-オーナー--プロジェクト管理者--メンバーの判定">4.2.1 オーナー / プロジェクト管理者 / メンバーの判定</h4>
+<ul>
+<li><strong>オーナー判定</strong>: <code>contract_owners.user_id = users.id</code> 行が存在するユーザー(行存在 = オーナー)</li>
+<li><strong>プロジェクト管理者</strong>: 非オーナー かつ <code>project_users.role='admin' AND valid=1</code> を 1 件以上保持するユーザー</li>
+<li><strong>メンバー</strong>: 非オーナー かつ <code>project_users.role='member' AND valid=1</code> のみを保持するユーザー</li>
+<li>同一ユーザーがオーナー兼任 / 複数プロジェクト所属する場合の権限解決は、認可フロー先頭の <code>isOwner</code> bypass を最優先(<a href="../08_認証・認可設計.html">08_認証・認可設計.html §5</a> を正本)</li>
+<li>1 契約 = 1 オーナー固定は <code>contract_owners.user_id PRIMARY KEY</code> で DB レベル担保(<code>is_owner</code> カラムや <code>owner_account_id</code> 自己参照は持たない)</li>
+</ul>
+
+<h3 id="44-全契約横断テーブルcontract_owner_user_id-を持たない">4.3 全契約横断テーブル(<code>contract_owner_user_id</code> を持たない)</h3>
+<p class="section-lead">契約境界キー <code>contract_owner_user_id</code> を持たない、全契約横断で共有するテーブルを列挙します。次の表は各テーブルと横断保持とする理由を示します。</p>
+<table>
+<thead>
+<tr>
+<th>テーブル名</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>email_suppression_list</code></td>
+<td>メール bounce / 苦情の全契約横断管理(R-003 共通ドメイン対策)</td>
+</tr>
+<tr>
+<td><code>terms_versions</code></td>
+<td>規約 / プライバシーポリシーの版(全利用者共通)</td>
+</tr>
+<tr>
+<td><code>service_announcements</code></td>
+<td>運営者発信のお知らせ本体(配信先は <code>announcement_audiences</code> / <code>announcement_recipients</code> で契約別)</td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="45-状態遷移">5. 状態遷移</h2>
+<p class="section-lead">状態カラムを持つ主要テーブル(FAQ / 未解決質問 / 通知 / 契約)の状態遷移を定義します。<code>inquiries.status</code> と <code>contract_owners.contract_status</code> は共有概念の正本としてここで定義します。主要 2 つは状態遷移図で俯瞰してから表で示します。</p>
+
+<h3 id="50-主要状態遷移図">5.0 主要状態遷移図</h3>
+<p class="section-lead">共有概念の正本である契約状態(<code>contract_owners.contract_status</code>)と未解決質問の状況(<code>inquiries.status</code>)を状態遷移図で示します。</p>
+<pre class="mermaid"><code>stateDiagram-v2
+  direction LR
+  [*] --&gt; active : 契約作成
+  active --&gt; suspended : 支払い失敗7日経過 / 運営者手動
+  suspended --&gt; active : 支払再開 / 解除
+  active --&gt; deleted_pending : admin 退会申請
+  suspended --&gt; deleted_pending : admin 退会申請
+  deleted_pending --&gt; active : admin 撤回(90日以内)
+  deleted_pending --&gt; suspended : admin 撤回(90日以内)
+  deleted_pending --&gt; deleted : 90日経過 + 物理削除Batch
+  deleted --&gt; [*]
+</code></pre>
+<pre class="mermaid"><code>stateDiagram-v2
+  direction LR
+  [*] --&gt; open : 未解決質問登録(システム自動)
+  open --&gt; closed : SCR-005 詳細で手動操作
+  closed --&gt; open : SCR-005 詳細で手動操作(再オープン)
+</code></pre>
+
+<h3 id="451-faq-状態遷移faqsstatus">5.1 FAQ 状態遷移(<code>faqs.status</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>From</th>
+<th>To</th>
+<th>トリガー</th>
+<th>条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>—</td>
+<td><code>draft</code></td>
+<td>FAQ 作成</td>
+<td>admin のみ</td>
+</tr>
+<tr>
+<td><code>draft</code> / <code>hidden</code> ↔︎ <code>published</code></td>
+<td>(相互)</td>
+<td>SCR-006 で「状態」ラジオを選択して保存(<code>PATCH /faqs/{id}</code>)</td>
+<td>admin のみ。状態遷移ガードなし(<code>draft</code>/<code>published</code>/<code>hidden</code> を自由遷移)</td>
+</tr>
+<tr>
+<td><code>draft</code> ↔︎ <code>hidden</code></td>
+<td>(相互)</td>
+<td>同上</td>
+<td>admin のみ</td>
+</tr>
+<tr>
+<td>any</td>
+<td><code>deleted</code></td>
+<td>論理削除</td>
+<td>admin のみ</td>
+</tr>
+<tr>
+<td><code>deleted</code></td>
+<td><code>draft</code></td>
+<td>復元</td>
+<td><strong>運営者のみ</strong>(IF #4)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>運用方針</strong>: <code>draft</code> / <code>published</code> / <code>hidden</code> の 3 状態は SCR-006 編集画面の「状態」ラジオで選択し「保存」ボタンで相互に自由遷移する。専用の公開 API・状態遷移ガードは持たない。<code>published</code> を選択して保存する操作が管理者(admin)による公開前の内容確認(FR-045)を兼ねる。<code>published</code> 設定時のみ保存前に確認ダイアログを表示する(UI 上の確認であり遷移制約ではない)。</p>
+
+<h3 id="452-未解決質問の状況遷移inquiriesstatus共有概念正本">5.2 未解決質問の状況遷移(<code>inquiries.status</code>、共有概念正本)</h3>
+<table>
+<thead>
+<tr>
+<th>From</th>
+<th>To</th>
+<th>トリガー</th>
+<th>条件</th>
+<th>通知</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>—</td>
+<td><code>open</code></td>
+<td>未解決質問登録</td>
+<td>システム自動</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>open</code></td>
+<td><code>closed</code></td>
+<td>SCR-005 詳細画面の手動操作</td>
+<td>なし</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>closed</code></td>
+<td><code>open</code></td>
+<td>SCR-005 詳細画面の手動操作(再オープン)</td>
+<td>なし</td>
+<td>なし</td>
+</tr>
+</tbody>
+</table>
+<p>FAQ 下書き保存・FAQ 公開成功は本状況を変更しない(連動ロジックなし)。再オープン回数に制限を設けない。</p>
+
+<h3 id="454-通知状態遷移notification_logsdelivery_state">5.3 通知状態遷移(<code>notification_logs.delivery_state</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>From</th>
+<th>To</th>
+<th>トリガー</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>—</td>
+<td><code>queued</code></td>
+<td>Queue 投入</td>
+</tr>
+<tr>
+<td><code>queued</code></td>
+<td><code>sending</code></td>
+<td>Worker 起動</td>
+</tr>
+<tr>
+<td><code>sending</code></td>
+<td><code>sent</code></td>
+<td>Resend API 成功</td>
+</tr>
+<tr>
+<td><code>sending</code></td>
+<td><code>failed</code></td>
+<td>Resend API 失敗(恒久)── 当方再送対象(最大 3 回、NFR-506)</td>
+</tr>
+<tr>
+<td><code>sent</code></td>
+<td><code>delivered</code></td>
+<td><code>email.delivered</code> Webhook(終了状態)</td>
+</tr>
+<tr>
+<td><code>sent</code></td>
+<td><code>bounced</code></td>
+<td><code>email.bounced</code> Webhook(ハード / ソフト 5 連続)</td>
+</tr>
+<tr>
+<td><code>sent</code></td>
+<td><code>complained</code></td>
+<td><code>email.complained</code> Webhook</td>
+</tr>
+<tr>
+<td><code>sent</code></td>
+<td><code>delayed</code></td>
+<td><code>email.delivery_delayed</code> Webhook(Resend 再送中)</td>
+</tr>
+<tr>
+<td><code>delayed</code></td>
+<td><code>delivered</code> / <code>bounced</code></td>
+<td>後続結果</td>
+</tr>
+<tr>
+<td><code>bounced</code></td>
+<td><code>suppressed</code></td>
+<td>サプレスリスト追加</td>
+</tr>
+<tr>
+<td><code>complained</code></td>
+<td><code>suppressed</code></td>
+<td>即時永久サプレス(復帰不可)</td>
+</tr>
+<tr>
+<td><code>failed</code></td>
+<td><code>queued</code></td>
+<td>当方再送(最大 3 回、3 回失敗 + 24 時間経過で admin へ system 通知)</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="455-契約状態遷移contract_ownerscontract_status共有概念正本">5.4 契約状態遷移(<code>contract_owners.contract_status</code>、共有概念正本)</h3>
+<p>詳細は <a href="../10_課金・請求設計.html">10_課金・請求設計.html §4 / §5</a> を正本とする。本書では概要のみ:</p>
+<table>
+<thead>
+<tr>
+<th>From</th>
+<th>To</th>
+<th>トリガー</th>
+<th>reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>—</td>
+<td><code>active</code></td>
+<td>契約作成</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>active</code></td>
+<td><code>suspended</code></td>
+<td>IF #1(支払い失敗 7 日猶予経過)</td>
+<td><code>payment_failure_grace_expired</code></td>
+</tr>
+<tr>
+<td><code>active</code></td>
+<td><code>suspended</code></td>
+<td>IF #1(運営者手動)</td>
+<td><code>operator_manual</code> / <code>tos_violation</code></td>
+</tr>
+<tr>
+<td><code>suspended</code></td>
+<td><code>active</code></td>
+<td>IF #1(支払再開 / 解除)</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>active</code> / <code>suspended</code></td>
+<td><code>deleted_pending</code></td>
+<td>admin 退会申請(SCR-014)</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>deleted_pending</code></td>
+<td><code>active</code> / <code>suspended</code>(元の状態)</td>
+<td>admin 撤回(90 日以内)</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>deleted_pending</code></td>
+<td><code>deleted</code></td>
+<td>90 日経過 + 物理削除 Batch</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p><code>contract_status × valid</code> の整合(<code>contract_owners</code> 複合 CHECK で強制):</p>
+<table>
+<thead>
+<tr>
+<th><code>contract_status</code></th>
+<th><code>valid</code></th>
+<th>状態</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>active</code> / <code>suspended</code></td>
+<td>1</td>
+<td>オーナー稼働中</td>
+</tr>
+<tr>
+<td><code>deleted_pending</code></td>
+<td>1</td>
+<td>オーナー退会申請中(90 日猶予)</td>
+</tr>
+<tr>
+<td><code>deleted</code></td>
+<td>0</td>
+<td>オーナー退会完了(<code>valid=0</code> と必ず同時セット = CHECK)</td>
+</tr>
+</tbody>
+</table>
+<p>メンバーの論理削除は <code>users.valid=0</code> で表現する(<code>contract_owners</code> 行を持たないため)。</p>
+
+<h2 id="46-データ削除モード">6. データ削除モード</h2>
+<p class="section-lead">退会・削除時のデータ処理モード(物理削除 / 匿名化)と、対象テーブルごとの削除挙動を定義します。</p>
+<p><strong>設定</strong>: <code>contract_owners.data_deletion_mode</code>(<code>physical</code> / <code>anonymize</code>、初期値 <code>physical</code>)で保持する独立カラム。</p>
+<p><strong>論理削除</strong> は <code>UPDATE … SET valid=0</code> で行い、90 日経過後の物理削除バッチ(DD13)で物理削除モード(<code>physical</code> / <code>anonymize</code>)に従って実体を消去する。SCR-009-001 の「プロジェクトから外す」は対象 <code>project_users</code> 行だけを論理削除する。オーナーによるメンバーの契約からの削除は <code>users</code> と当該ユーザーの全 <code>project_users</code> を論理削除する。SCR-004-001(編集モード)のプロジェクト削除は <code>projects</code> と関連 <code>project_users</code> 行を論理削除する。</p>
+<h3 id="461-削除モード対応表">6.1 削除モード対応表</h3>
+<p class="section-lead">各テーブルの論理削除・物理削除・匿名化の挙動を一覧します。次の表は対象テーブルごとに 3 モードの処理内容を並べたものです。</p>
+<table>
+<thead>
+<tr>
+<th>対象テーブル</th>
+<th>論理削除</th>
+<th>物理削除(90 日後バッチ or 即時、<code>data_deletion_mode='physical'</code>)</th>
+<th>匿名化(<code>data_deletion_mode='anonymize'</code>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>users</code></td>
+<td><code>valid=0</code></td>
+<td>DELETE(ON DELETE CASCADE で関連行連鎖)</td>
+<td><code>email_encrypted</code> → <code>anon_&lt;sha256&gt;</code>, <code>name</code> → 「匿名」</td>
+</tr>
+<tr>
+<td><code>contract_owners</code></td>
+<td><code>valid=0</code>(<code>contract_status='deleted'</code> と必ず同時セット = CHECK)</td>
+<td>DELETE(<code>users</code> CASCADE 経由)</td>
+<td>(匿名化対象外、<code>users</code> 連鎖物理削除)</td>
+</tr>
+<tr>
+<td><code>project_users</code></td>
+<td><code>valid=0</code></td>
+<td>DELETE(<code>users</code> または <code>projects</code> CASCADE 経由)</td>
+<td>(匿名化対象外、CASCADE 連鎖物理削除)</td>
+</tr>
+<tr>
+<td><code>projects</code></td>
+<td><code>status='deleted', valid=0</code></td>
+<td>DELETE(関連 <code>faqs</code> / <code>inquiries</code> 等は CASCADE 経由)</td>
+<td><code>name</code> → 「削除済みプロジェクト」</td>
+</tr>
+<tr>
+<td><code>allowed_domains</code></td>
+<td><code>valid=0</code></td>
+<td>DELETE</td>
+<td>(匿名化対象外)</td>
+</tr>
+<tr>
+<td><code>project_quota_limits</code></td>
+<td><code>valid=0</code></td>
+<td>DELETE(<code>projects</code> / <code>contract_owners</code> 物理削除時に CASCADE 連鎖)</td>
+<td>(匿名化対象外)</td>
+</tr>
+<tr>
+<td><code>faqs</code></td>
+<td><code>status='deleted', valid=0</code></td>
+<td>DELETE</td>
+<td><code>title</code> / <code>body</code> 空字</td>
+</tr>
+<tr>
+<td><code>question_logs</code></td>
+<td><code>valid=0</code></td>
+<td>DELETE</td>
+<td><code>user_question</code> 空字, <code>ip_address</code> / <code>user_agent</code> NULL, 集計値維持</td>
+</tr>
+<tr>
+<td><code>question_log_faq_refs</code></td>
+<td>(<code>valid</code> なし、M:N 関係系)</td>
+<td><code>question_logs</code> / <code>faqs</code> 物理削除時に CASCADE 連鎖</td>
+<td>(匿名化対象外)</td>
+</tr>
+<tr>
+<td><code>inquiries</code></td>
+<td><code>valid=0</code></td>
+<td>DELETE</td>
+<td><code>user_question</code> 空字, <code>inquiry_code</code> 維持</td>
+</tr>
+<tr>
+<td><code>billing_subscriptions</code></td>
+<td><code>valid=0</code></td>
+<td>(物理削除バッチ対象外、永久保持)</td>
+<td>(匿名化対象外、電子帳簿保存法)</td>
+</tr>
+<tr>
+<td><code>usage_metering</code></td>
+<td>(<code>valid</code> なし、法定保管 7 年)</td>
+<td>(物理削除バッチ対象外、7 年保持)</td>
+<td>(匿名化対象外。プロジェクト単位計測値は契約退会後も 7 年保持)</td>
+</tr>
+<tr>
+<td><code>notification_logs</code></td>
+<td>(<code>valid</code> なし、ログ系で論理削除概念外)</td>
+<td>DELETE</td>
+<td><code>recipient_email_hmac</code> → SHA-256, vars → 空 JSON</td>
+</tr>
+<tr>
+<td><code>announcement_audiences</code></td>
+<td>(<code>valid</code> なし、配信関係 M:N)</td>
+<td><code>service_announcements</code> / <code>contract_owners</code> 物理削除時に CASCADE 連鎖</td>
+<td>(匿名化対象外)</td>
+</tr>
+<tr>
+<td><code>access_tokens</code></td>
+<td>(<code>valid</code> なし、<code>used_at</code> で代用)</td>
+<td>DELETE</td>
+<td>(常に物理削除、匿名化対象外)</td>
+</tr>
+<tr>
+<td><code>sessions</code></td>
+<td>(<code>valid</code> なし、<code>revoked_at</code> で代用)</td>
+<td>DELETE</td>
+<td>(匿名化対象外)</td>
+</tr>
+<tr>
+<td><code>audit_logs</code></td>
+<td>(<code>valid</code> なし、メイン側は API 操作ログ専用)</td>
+<td><code>created_at + retention 期間</code> 経過後に物理 DELETE(<code>general</code> 1y / <code>billing</code> 7y / <code>operator_high_priv</code> 5y)</td>
+<td>(匿名化対象外。ハッシュチェーン正本は運営者側)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="462-論理削除の物理削除バッチdd13-正本">6.2 論理削除の物理削除バッチ(DD13 正本)</h3>
+<ul>
+<li>日次バッチで <code>valid=0 AND updated_at &lt; now() - 90d</code> の行を物理削除モード(<code>contract_owners.data_deletion_mode</code> 準拠)に従って処理</li>
+<li><code>users</code> 行が物理 DELETE された時点で <code>ON DELETE CASCADE</code> で関連 <code>contract_owners</code> / <code>project_users</code> / <code>sessions</code> / <code>access_tokens</code> / <code>terms_agreements</code> 等が連鎖物理削除</li>
+<li><code>projects</code> 行が物理 DELETE された時点で <code>ON DELETE CASCADE</code> で関連 <code>faqs</code> / <code>inquiries</code> 等が連鎖物理削除</li>
+<li><code>billing_subscriptions</code> は物理削除バッチの対象外(永久保持)</li>
+</ul>
+
+<h2 id="47-データ保持の調整制約nfr-702">7. データ保持の調整制約(NFR-702)</h2>
+<p class="section-lead">データ保持期間の変更可否に関する制約を示します。保持期間はシステム固定値であり、UI からの変更はできません。</p>
+<ul>
+<li><strong>データ保持期間はシステム固定値とし、契約・管理者ユーザーによる UI 上の変更は不可</strong>(短縮・長期化いずれも不可)</li>
+<li>固定値は <a href="index.html#21-一覧">テーブル設計 §2.1</a> のテーブル一覧「保持期間」列および要件定義 NFR-701 / NFR-705 を正本とする</li>
+<li>短縮が必要な場合(法令・契約義務範囲内)はサポート窓口経由の運営者対応とする</li>
+<li>SCR-017 個人設定にデータ保持期間設定 UI を持たない(<a href="../01_画面設計/index.html">01_画面設計/index.html §5.24</a> 参照)</li>
+<li><code>usage_metering</code> / <code>billing_invoices</code> / <code>audit_logs(retention_class='billing')</code> は電子帳簿保存法・国税法の要請により最低 7 年保持(NFR-602b)、これを下回る短縮は不可</li>
+</ul>
+
+<h2 id="48-pii-取扱">8. PII 取扱</h2>
+<p class="section-lead">個人情報(PII)を含むカラムの取扱方針を示します。次の表は対象カラムと暗号化・ハッシュ等の保護方式を並べたものです。詳細は <a href="../09_セキュリティ設計.html">09_セキュリティ設計.html</a> が正本です。</p>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>仕様</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>暗号化方式</td>
+<td>AES-256-GCM 列単位、オーナー派生鍵(NFR-319)</td>
+</tr>
+<tr>
+<td>対象テーブル</td>
+<td><code>users.email_encrypted</code></td>
+</tr>
+<tr>
+<td>検索方式</td>
+<td>暗号化 + <code>*_hmac</code> カラム(HMAC-SHA256)で復号不要</td>
+</tr>
+<tr>
+<td>鍵ローテーション</td>
+<td>年次 Master Key ローテーション時に KDF 再実行。60 日 dual-decrypt 期間(NFR-321)</td>
+</tr>
+<tr>
+<td>鍵派生入力</td>
+<td><code>deriveOwnerKey(masterKey, contractOwnerUserId)</code>(<code>contractOwnerUserId</code> = <code>contract_owners.user_id</code>)</td>
+</tr>
+<tr>
+<td>カード情報</td>
+<td>Stripe に委譲(PCI-DSS 範囲外)</td>
+</tr>
+</tbody>
+</table>
+<p>詳細は <a href="../09_セキュリティ設計.html">09_セキュリティ設計.html §3 / §8</a> を正本とする。</p>
+
+<h2 id="49-インデックス方針">9. インデックス方針</h2>
+<p class="section-lead">インデックス設計の全テーブル共通方針を示します。次の表は方針の観点とその内容を並べたものです。</p>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>方針</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FAQ 検索(FTS5)</td>
+<td><code>faq_search_fts</code> 仮想テーブル、<code>(project_id, status='published')</code> 前段フィルタ</td>
+</tr>
+<tr>
+<td>未解決質問一覧</td>
+<td><code>(contract_owner_user_id, project_id, status, updated_at DESC)</code></td>
+</tr>
+<tr>
+<td>お知らせ一覧(NFR-106)</td>
+<td><code>(recipient_user_id, read_at)</code> / <code>(recipient_user_id, category, created_at DESC)</code></td>
+</tr>
+<tr>
+<td>未読件数(NFR-106)</td>
+<td>KV キャッシュ <code>inbox:unread:&lt;user_id&gt;</code>(TTL 60 秒) + DB フォールバック</td>
+</tr>
+<tr>
+<td>ユニーク</td>
+<td><code>inquiry_code</code>, <code>widget_public_key</code>, <code>access_tokens.token_hash</code>, <code>(contract_owner_user_id, billing_year_month)</code></td>
+</tr>
+<tr>
+<td>監査ログ</td>
+<td><code>(contract_owner_user_id, action, created_at)</code>, <code>(retention_class, created_at)</code>(保持期間バッチ用)</td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="10-er-図">10. ER 図</h2>
+<p class="section-lead">完全な ER 図は本書とは別の HTML ファイルで管理します(md に直接 Mermaid を埋め込むと PDF 出力時に縮小されすぎて可読性が落ちるため)。本ページ §1.1 の概観図は主要 FK の俯瞰用です。</p>
+<ul>
+<li>ER 図は <a href="../ER図.html">ER図.html</a> で管理する。HTML 上でブラウザサイドレンダリング + ズーム / パン / 全体表示ボタンを利用可能</li>
+<li><strong>掲載カラム</strong>: 主要キー(PK / FK)+ 業務キー(<code>inquiry_code</code> / <code>widget_public_key</code> 等)+ 状態カラム(<code>inquiries.status</code> / <code>contract_status</code> 等)+ 特徴的なカラム(<code>actor_user_id</code> 等)</li>
+<li><strong>省略カラム</strong>: <code>created_at</code> / <code>updated_at</code> / <code>valid</code> / <code>*_encrypted</code> / <code>*_key_version</code> / <code>metadata</code> 等の共通技術カラム(完全なカラム定義は <a href="index.html">テーブル設計</a>各テーブルファイルを参照)</li>
+<li><strong>FK 制約を持たないが論理的に紐づく参照</strong>(<code>error_logs.contract_owner_user_id</code> / <code>error_logs.user_id</code> / <code>announcement_recipients.contract_owner_user_id</code> / <code>announcement_recipients.user_id</code>)は ER 図上で「FK制約なし」注記付きカラムとして表現し、関係線は引かない</li>
+<li><strong>ER 図の編集ルール</strong>: 図を変更する場合は <a href="../ER図.html">ER図.html</a> の <code>&lt;pre id="mermaid-src"&gt;</code> ブロックを直接編集する(本書には Mermaid を二重保持しない)</li>
+</ul>
+
+<h2 id="更新履歴">更新履歴</h2>
+<table>
+<thead>
+<tr>
+<th>更新日</th>
+<th>版数</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2026-06-18</td>
+<td>v1.6</td>
+<td>新規作成。<a href="index.html">テーブル設計</a> から「設計意図・取り決め」セクション(旧 §2.3 主要関係性 / §2.4 3 表ユーザーモデル / §4 横断仕様一式)を移設・集約し、3 表ユーザーモデル図・テーブル関係概観図・データ分離概念図・状態遷移図(契約 / 未解決質問)の Mermaid 図を追加。外部参照アンカー(<code>43-saas-データ分離</code> / <code>48-pii-取扱</code> / <code>46-データ削除モード</code> / <code>452-…</code> / <code>455-…</code>)を温存。</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

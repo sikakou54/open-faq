@@ -36,14 +36,6 @@
 <td>保持期間 / 保持起点</td>
 <td>retention_class 別(<code>general</code> 1y / <code>billing</code> 7y / <code>operator_high_priv</code> 5y)/ 操作日時</td>
 </tr>
-<tr>
-<td><code>contract_owner_user_id</code></td>
-<td>あり</td>
-</tr>
-<tr>
-<td><code>retention_class</code></td>
-<td><code>general</code> / <code>billing</code> / <code>operator_high_priv</code>(本テーブルのカラム値で表現)</td>
-</tr>
 </tbody>
 </table>
 <h3 id="3182-カラム定義">カラム定義</h3>
@@ -362,21 +354,6 @@
 <td><code>actor_role</code></td>
 <td><code>service_operator</code></td>
 <td>運営者(IF 経由のメイン API 呼出)</td>
-</tr>
-<tr>
-<td><code>retention_class</code></td>
-<td><code>general</code></td>
-<td>業務監査 1 年(NFR-602a)</td>
-</tr>
-<tr>
-<td><code>retention_class</code></td>
-<td><code>billing</code></td>
-<td>課金・法定保管 7 年(NFR-602b)</td>
-</tr>
-<tr>
-<td><code>retention_class</code></td>
-<td><code>operator_high_priv</code></td>
-<td>運営者高権限 5 年(NFR-602d)</td>
 </tr>
 </tbody>
 </table>

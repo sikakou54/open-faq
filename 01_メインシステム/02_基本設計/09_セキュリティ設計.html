@@ -50,7 +50,7 @@
 <h2 id="3-データ保護">3. データ保護</h2>
 <p class="section-lead">機密データは「暗号化(復号が必要なもの)」と「ハッシュ保存(照合だけ必要なもの)」を使い分け、PII はオーナー派生鍵で暗号化する(FR-171)。PII 暗号化方式とオーナー派生鍵はメインを共有概念正本とする(<a href="../../共有/共有概念.html">共有概念.html</a> #9)。</p>
 <h3 id="31-pii-暗号化aes-256-gcm-オーナー派生鍵共有概念正本--メイン側">3.1 PII 暗号化(AES-256-GCM)+ オーナー派生鍵</h3>
-<p class="section-lead">利用者の PII は AES-256-GCM とオーナー派生鍵で暗号化し、トークンは原文を保存せず HMAC ハッシュのみを保持する。いずれもログ出力は不可とする。暗号化対象カラムの定義は <a href="03_テーブル設計/index.html#48-pii-取扱">03_テーブル設計/index.html §4.8</a> を正本とする。</p>
+<p class="section-lead">利用者の PII は AES-256-GCM とオーナー派生鍵で暗号化し、トークンは原文を保存せず HMAC ハッシュのみを保持する。いずれもログ出力は不可とする。暗号化対象カラムの定義は <a href="03_テーブル設計/テーブル構造設計.html#48-pii-取扱">03_テーブル設計/テーブル構造設計.html §8</a> を正本とする。</p>
 <table>
 <thead>
 <tr>
@@ -132,7 +132,7 @@
 </tbody>
 </table>
 <h3 id="33-データ削除モード物理削除--匿名化">3.3 データ削除モード(物理削除 / 匿名化)</h3>
-<p class="section-lead">退会時の契約データ削除(FR-163)は、物理削除と匿名化のいずれかをオーナー設定で選ぶ。匿名化は原文復元不可な置換のみとし、集計値は維持する。削除ポリシーと <code>data_deletion_mode</code> カラムは <a href="03_テーブル設計/index.html#46-データ削除モード">03_テーブル設計/index.html §4.6</a> を正本とし、本書は秘匿の担保事項を定める(共有概念 #17)。</p>
+<p class="section-lead">退会時の契約データ削除(FR-163)は、物理削除と匿名化のいずれかをオーナー設定で選ぶ。匿名化は原文復元不可な置換のみとし、集計値は維持する。削除ポリシーと <code>data_deletion_mode</code> カラムは <a href="03_テーブル設計/テーブル構造設計.html#46-データ削除モード">03_テーブル設計/テーブル構造設計.html §6</a> を正本とし、本書は秘匿の担保事項を定める(共有概念 #17)。</p>
 <p>オーナー設定 <code>data_deletion_mode</code>(<code>physical</code> / <code>anonymize</code>、初期値 <code>physical</code>)</p>
 <table>
 <thead>
@@ -676,7 +676,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 <tr>
 <td><strong>オーナー間データ漏洩防止</strong></td>
 <td>全テーブルに <code>contract_owner_user_id</code> + API 層でオーナー境界判定(<strong>404 偽装</strong>)+ 自動テスト(月次 50 ケース)(NFR-302)</td>
-<td><a href="03_テーブル設計/index.html#43-saas-データ分離">03_テーブル設計/index.html §4.3</a> / <a href="08_認証・認可設計.html#52-オーナー境界判定">08_認証・認可設計.html §5.2</a></td>
+<td><a href="03_テーブル設計/テーブル構造設計.html#43-saas-データ分離">03_テーブル設計/テーブル構造設計.html §4.2</a> / <a href="08_認証・認可設計.html#52-オーナー境界判定">08_認証・認可設計.html §5.2</a></td>
 </tr>
 <tr>
 <td><strong>管理者権限の濫用防止</strong></td>

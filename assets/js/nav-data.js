@@ -375,6 +375,7 @@ window.NAV = [
       "title": "テーブル設計(メイン)",
       "kind": "group",
       "children": [
+       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/テーブル構造設計.html", "title": "テーブル構造設計", "kind": "md" },
        { "url": "01_メインシステム/02_基本設計/03_テーブル設計/users.html", "title": "TBL-001 users", "kind": "md" },
        { "url": "01_メインシステム/02_基本設計/03_テーブル設計/contract_owners.html", "title": "TBL-002 contract_owners", "kind": "md" },
        { "url": "01_メインシステム/02_基本設計/03_テーブル設計/project_users.html", "title": "TBL-003 project_users", "kind": "md" },

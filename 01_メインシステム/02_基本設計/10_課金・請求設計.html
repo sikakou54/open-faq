@@ -266,7 +266,7 @@
 </tr>
 </tbody>
 </table>
-<div class="callout important"><i class="bi bi-pin-angle"></i><div><span class="c-title">contract_status は共有概念正本に従う</span>4 値の定義・<code>valid</code> との整合・テーブル CHECK 制約は <a href="../../共有/共有概念.html#3-共有概念の正本ルール">共有概念.html #1</a> および <a href="03_テーブル設計/index.html#455-契約状態遷移contract_ownerscontract_status共有概念正本">03_テーブル設計/index.html §4.5.5</a> を正本とする。本ページは課金 / 退会起因の遷移条件のみを扱う。</div></div>
+<div class="callout important"><i class="bi bi-pin-angle"></i><div><span class="c-title">contract_status は共有概念正本に従う</span>4 値の定義・<code>valid</code> との整合・テーブル CHECK 制約は <a href="../../共有/共有概念.html#3-共有概念の正本ルール">共有概念.html #1</a> および <a href="03_テーブル設計/テーブル構造設計.html#455-契約状態遷移contract_ownerscontract_status共有概念正本">03_テーブル設計/テーブル構造設計.html §5.4</a> を正本とする。本ページは課金 / 退会起因の遷移条件のみを扱う。</div></div>
 
 <h3 id="51-決済失敗からサスペンションへ">5.1 決済失敗からサスペンションへ(7 日猶予)</h3>
 <p class="section-lead">課金プロバイダから決済失敗確定の通知を受信した時刻を起点に 7 日間の猶予を計測する。次のシーケンス図は、猶予開始から猶予経過による <code>suspended</code> 移行までの流れと、猶予中 / サスペンション中いずれでも再決済成功・運営者解除の通知受信で即時 <code>active</code> へ復帰する分岐を示す。猶予中も管理画面ログインと支払方法更新は可能である。</p>
