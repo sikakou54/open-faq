@@ -48,6 +48,15 @@
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>最新版の利用規約を取得する</td></tr>
+<tr><td>P-02</td><td>本文・施行日・主な変更点を整形して返却する</td></tr>
+</tbody>
+</table>
 <h3>レスポンス(200)</h3>
 <pre><code>{ "docType": "terms_of_service", "version": "...", "effectiveDate": "...", "bodyHtml": "...", "diffSummary": "..." }</code></pre>
 <p>(最新版のみ。<code>diffSummary</code> は <code>terms_versions.diff_summary</code>。SCR-015 の「主な変更点」表示に用いる。NULL の場合は省略)</p>
@@ -75,6 +84,15 @@
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>最新版のプライバシーポリシーを取得する</td></tr>
+<tr><td>P-02</td><td>本文・施行日・主な変更点を整形して返却する</td></tr>
+</tbody>
+</table>
 <h3>レスポンス(200)</h3>
 <pre><code>{ "docType": "privacy_policy", "version": "...", "effectiveDate": "...", "bodyHtml": "...", "diffSummary": "..." }</code></pre>
 <p>(最新版のみ。<code>diffSummary</code> は <code>terms_versions.diff_summary</code>。SCR-015 の「主な変更点」表示に用いる。NULL の場合は省略)</p>
@@ -104,6 +122,16 @@
 <h4>Request Body</h4>
 <pre><code>{ "version": "..." }</code></pre>
 <p><code>terms_agreements</code> に <code>(user_id, doc_type='terms_of_service', terms_version)</code> で 1 行記録(冪等: 既存同意があれば 200)。</p>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>認証・認可(admin、CSRF)を検証する</td></tr>
+<tr><td>P-02</td><td>指定バージョンへの利用規約同意を記録する(既存同意があれば冪等)</td></tr>
+<tr><td>P-03</td><td>同意記録結果を返却する</td></tr>
+</tbody>
+</table>
 <h3>レスポンス(200)</h3>
 <p>同意記録結果。</p>
 
@@ -132,6 +160,16 @@
 <h4>Request Body</h4>
 <pre><code>{ "version": "..." }</code></pre>
 <p><code>terms_agreements</code> に <code>(user_id, doc_type='privacy_policy', terms_version)</code> で 1 行記録(冪等: 既存同意があれば 200)。SCR-015 / SCR-018 では利用規約・プライバシーポリシー双方の同意が必須条件であり、改定再同意では改定された文書の agree のみを呼び出す。</p>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>認証・認可(admin、CSRF)を検証する</td></tr>
+<tr><td>P-02</td><td>指定バージョンへのプライバシーポリシー同意を記録する(既存同意があれば冪等)</td></tr>
+<tr><td>P-03</td><td>同意記録結果を返却する</td></tr>
+</tbody>
+</table>
 <h3>レスポンス(200)</h3>
 <p>同意記録結果。</p>
 
@@ -159,6 +197,16 @@
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
 <pre><code>{ "reason": "退会申請内容(理由等)" }</code></pre>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>認証・認可(オーナー専有、再認証必須)を検証する</td></tr>
+<tr><td>P-02</td><td>退会申請を登録し受付状態とする</td></tr>
+<tr><td>P-03</td><td>受付結果を返却する</td></tr>
+</tbody>
+</table>
 <h3>レスポンス(2xx)</h3>
 <p>退会申請の受付結果。</p>
 <h3>エラー</h3>

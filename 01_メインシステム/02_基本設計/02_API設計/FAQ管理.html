@@ -57,6 +57,16 @@
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>認証・認可(オーナー / 当該プロジェクトの利用者)を検証する</td></tr>
+<tr><td>P-02</td><td>状態・プロジェクト・キーワードのフィルタ条件で FAQ を取得する</td></tr>
+<tr><td>P-03</td><td>ページング(カーソル)で整形して返す</td></tr>
+</tbody>
+</table>
 <h3>レスポンス(200)</h3>
 <p>FAQ の配列 + <code>nextCursor</code>(構造は API-025 のレスポンスに準ずる)。</p>
 <h3>エラー</h3>
@@ -94,6 +104,19 @@
   "version": 1
 }</code></pre>
 <p>Request Body は FAQ 内容(POST は新規)。</p>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>認証・認可(オーナー / 該当プロジェクトの編集権限)を検証する</td></tr>
+<tr><td>P-02</td><td>入力値(質問 500 字 / 回答 5,000 字ほか)を検証する</td></tr>
+<tr><td>P-03</td><td>更新 / 削除時は <code>version</code> による楽観ロックを判定する(不一致は 409)</td></tr>
+<tr><td>P-04</td><td>FAQ を作成 / 更新 / 論理削除し、指定状態へ遷移する</td></tr>
+<tr><td>P-05</td><td><code>published</code> へ変更した場合は <code>publishedAt</code> を記録する</td></tr>
+<tr><td>P-06</td><td>作成 / 更新後の FAQ を返す</td></tr>
+</tbody>
+</table>
 <h3>レスポンス(200 / 201)</h3>
 <p>作成 / 更新後の FAQ(<code>publishedAt</code> を含む)。</p>
 <h3>エラー</h3>
@@ -129,6 +152,18 @@
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
 <pre><code>{ "ids": ["faq_...", "faq_..."], "status": "published" }</code></pre>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>認証・認可(オーナー / 該当プロジェクトの編集権限)を検証する</td></tr>
+<tr><td>P-02</td><td>件数上限(50 件)と状態値を検証する(超過時は 400)</td></tr>
+<tr><td>P-03</td><td>各 ID を行単位で評価し、対象外(他契約 / 論理削除済み)は当該行のみ失敗として集計する</td></tr>
+<tr><td>P-04</td><td>対象 FAQ の状態を一括変更し、<code>published</code> 化した行は <code>publishedAt</code> を記録する</td></tr>
+<tr><td>P-05</td><td>成功件数と失敗明細を返す</td></tr>
+</tbody>
+</table>
 <h3>レスポンス(200)</h3>
 <pre><code>{ "succeeded": 48, "failed": [ { "id": "faq_...", "code": "NOT_FOUND" } ] }</code></pre>
 <h3>エラー</h3>
@@ -164,6 +199,18 @@
 <h4>Request Body</h4>
 <pre><code>multipart/form-data { file: &lt;CSV&gt; }</code></pre>
 <p>受理形式は <strong>CSV のみ</strong>(UTF-8、BOM 許容、ヘッダ行必須、1 ファイル最大 1000 件)。<strong>JSON 形式は受理しない</strong>(不正形式は 415 / 400、E-INPUT-CSV-INVALID)。CSV 列構成は <code>FAQ ID, 質問, 回答, カテゴリ</code>。各行の <code>FAQ ID</code> で <strong>空欄 = 新規(<code>status=draft</code>)/ 既存 ID 一致 = 上書き(状態維持・<code>faq_revisions</code> に改訂追記)/ 当該契約に存在しない ID = 当該行を失敗</strong>(行単位エラー、E-INPUT-CSV-FAQID-NOTFOUND)と判定する。<code>status</code> 列は受理しない。</p>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>認証・認可(オーナー / 該当プロジェクトの編集権限)を検証する</td></tr>
+<tr><td>P-02</td><td>受理形式(CSV・UTF-8・ヘッダ行・上限 1000 件)を検証する(不正は 415 / 400)</td></tr>
+<tr><td>P-03</td><td>取込ジョブを受け付け、非同期処理として開始する</td></tr>
+<tr><td>P-04</td><td>各行の <code>FAQ ID</code> で 新規 / 上書き / 当該契約に存在しない ID(行失敗)を判定し取り込む</td></tr>
+<tr><td>P-05</td><td>ジョブ ID と受付状態を返す</td></tr>
+</tbody>
+</table>
 <h3>レスポンス(202)</h3>
 <pre><code>{ "jobId": "job_...", "status": "processing" }</code></pre>
 <h3>エラー</h3>
@@ -198,6 +245,16 @@
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>認証・認可(オーナー / 該当プロジェクトの編集権限)を検証する</td></tr>
+<tr><td>P-02</td><td>ヘッダ行のみの CSV テンプレートを生成する</td></tr>
+<tr><td>P-03</td><td>ダウンロード用ヘッダを付与して <code>text/csv</code> で返す</td></tr>
+</tbody>
+</table>
 <h3>レスポンス(200)</h3>
 <p>ヘッダ行のみの CSV テンプレート(<code>FAQ ID,質問,回答,カテゴリ</code>)を <code>text/csv; charset=utf-8</code>(UTF-8 BOM 付与可)で返す。<code>Content-Disposition: attachment; filename="faq_import_template.csv"</code>。</p>
 
@@ -229,6 +286,16 @@
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
 <p>Query Parameters は一覧フィルタに準ずる。</p>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>認証・認可(オーナー / 該当プロジェクトの編集権限)を検証する</td></tr>
+<tr><td>P-02</td><td>一覧と同じフィルタ条件で対象 FAQ を取得する</td></tr>
+<tr><td>P-03</td><td>CSV(UTF-8)に整形しダウンロードとして返す</td></tr>
+</tbody>
+</table>
 <h3>レスポンス(200)</h3>
 <p>一覧フィルタ適用結果を <strong>CSV(UTF-8、<code>text/csv</code>)</strong> で返す(JSON 形式は提供しない)。</p>
 
@@ -263,6 +330,17 @@
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
 <p>全文検索方式・対象列は <a href="../03_テーブル設計.html">03_テーブル設計.html</a>(FTS インデックス)を正本とする。</p>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>認証・認可(オーナー / 当該プロジェクトの利用者)を検証する</td></tr>
+<tr><td>P-02</td><td>検索範囲を当該プロジェクトの FAQ に限定する(オーナー境界 + プロジェクト境界)</td></tr>
+<tr><td>P-03</td><td>キーワードで全文検索し、指定の並び順(関連度 / 更新日時)で並べる</td></tr>
+<tr><td>P-04</td><td>ページング(カーソル)で整形して返す</td></tr>
+</tbody>
+</table>
 <h3>レスポンス(200)</h3>
 <pre><code>{ "items": [ { "id": "faq_...", "question": "...", "answer": "...", "status": "published", "category": "...", "score": 0.82, "updatedAt": "..." } ], "nextCursor": null }</code></pre>
 
@@ -299,6 +377,17 @@
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
 <p>対象列・全文検索方式は <a href="../03_テーブル設計.html">03_テーブル設計.html</a> を正本とする。</p>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>認証・認可(オーナー / 当該プロジェクトの利用者)を検証する</td></tr>
+<tr><td>P-02</td><td>検索範囲を当該プロジェクトの質問ログに限定する</td></tr>
+<tr><td>P-03</td><td>キーワード・期間・回答有無のフィルタで検索し、作成日時降順で並べる</td></tr>
+<tr><td>P-04</td><td>ページング(カーソル)で整形して返す</td></tr>
+</tbody>
+</table>
 <h3>レスポンス(200)</h3>
 <pre><code>{ "items": [ { "id": "qlog_...", "question": "...", "answerType": "unanswered", "confidence": 0.42, "inquiryId": "inq_..." | null, "createdAt": "..." } ], "nextCursor": null }</code></pre>
 </article>

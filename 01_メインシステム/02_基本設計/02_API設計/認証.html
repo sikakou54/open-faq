@@ -60,6 +60,19 @@
   "agreedPrivacy": true,
   "turnstileToken": "..."
 }</code></pre>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>Turnstile トークンを検証する</td></tr>
+<tr><td>P-02</td><td>入力値(メール形式・パスワード強度・パスワード一致・規約 / プライバシー同意)を検証する</td></tr>
+<tr><td>P-03</td><td>オーナーアカウントを新規作成する</td></tr>
+<tr><td>P-04</td><td>利用規約・プライバシーポリシーへの同意を記録する</td></tr>
+<tr><td>P-05</td><td>メール確認トークンを発行し確認メールを送信する</td></tr>
+<tr><td>P-06</td><td>受付結果を返す</td></tr>
+</tbody>
+</table>
 <h3>レスポンス(202)</h3>
 <pre><code>{ "ok": true }</code></pre>
 <h3>エラー</h3>
@@ -99,6 +112,17 @@
   "password": "...",
   "turnstileToken": "..."
 }</code></pre>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>連続失敗時は Turnstile を要求し、提示があれば検証する</td></tr>
+<tr><td>P-02</td><td>メール / パスワードの資格情報を照合する(不一致は失敗試行として計上)</td></tr>
+<tr><td>P-03</td><td>アカウントロック状態・契約停止状態を判定する</td></tr>
+<tr><td>P-04</td><td>セッションを発行し、再規約同意要否と有効セッション一覧を返す</td></tr>
+</tbody>
+</table>
 <h3>レスポンス(200)</h3>
 <pre><code>{
   "userId": "01HZ...",
@@ -140,6 +164,16 @@
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>セッション Cookie と CSRF トークンを検証する</td></tr>
+<tr><td>P-02</td><td>現在のセッションを失効する</td></tr>
+<tr><td>P-03</td><td>完了結果を返す</td></tr>
+</tbody>
+</table>
 <h3>レスポンス(200)</h3>
 <pre><code>{ "ok": true }</code></pre>
 <h3>エラー</h3>
@@ -168,6 +202,16 @@
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
 <pre><code>{ "email": "admin@example.com", "turnstileToken": "..." }</code></pre>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>Turnstile トークンを検証する</td></tr>
+<tr><td>P-02</td><td>該当アカウントが存在する場合のみ再設定トークンを発行し再設定メールを送信する</td></tr>
+<tr><td>P-03</td><td>アカウントの存在有無を漏らさず一律の受付結果を返す</td></tr>
+</tbody>
+</table>
 <h3>レスポンス(202)</h3>
 <pre><code>{ "ok": true }</code></pre>
 <div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>列挙攻撃対策として、アカウントの存在有無は応答に含めない。</div></div>
@@ -195,6 +239,16 @@
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
 <pre><code>{ "password": "..." }</code></pre>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>セッションから認証済み利用者を特定する</td></tr>
+<tr><td>P-02</td><td>パスワードを再照合する(不一致は 401)</td></tr>
+<tr><td>P-03</td><td>機微操作に使う再認証トークンを発行して返す</td></tr>
+</tbody>
+</table>
 <h3>レスポンス(200)</h3>
 <pre><code>{ "ok": true, "token": "reauth_..." }</code></pre>
 <h3>エラー</h3>
@@ -229,6 +283,17 @@
 <pre><code>{ "token": "メール確認トークン" }</code></pre>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>メール確認トークンの有効性(期限)を検証する</td></tr>
+<tr><td>P-02</td><td>対象アカウントのメールアドレスを確認済みにする</td></tr>
+<tr><td>P-03</td><td>確認トークンを使用済みにする</td></tr>
+<tr><td>P-04</td><td>確認結果を返す</td></tr>
+</tbody>
+</table>
 <h3>レスポンス(200)</h3>
 <pre><code>{ "userId": "...", "verifiedAt": "..." }</code></pre>
 <h3>エラー</h3>
@@ -263,6 +328,16 @@
 <pre><code>{ "token": "招待トークン" }</code></pre>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>招待トークンの存在・有効性(期限・使用済み)を検証する</td></tr>
+<tr><td>P-02</td><td>トークンから招待先プロジェクト・付与ロール・招待元情報を取得する</td></tr>
+<tr><td>P-03</td><td>状態変更を行わず招待情報のプレビューを返す</td></tr>
+</tbody>
+</table>
 <h3>レスポンス(200)</h3>
 <pre><code>{
   "userId": "01HZ...",
@@ -299,20 +374,6 @@
 <tr><td>権限</td><td>—</td></tr>
 </tbody>
 </table>
-<h3>処理概要</h3>
-<p class="section-lead">以下を 1 つのトランザクションで実行する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
-<table>
-<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
-<tbody>
-<tr><td>P-01</td><td>招待トークンの有効性(期限・使用済み)を検証する</td></tr>
-<tr><td>P-02</td><td>トークンから招待先プロジェクトと付与ロールを取得する</td></tr>
-<tr><td>P-03</td><td>利用者の氏名・パスワードを設定し、アカウントを有効化する</td></tr>
-<tr><td>P-04</td><td>利用規約・プライバシーポリシーの最新版への同意を記録する(各文書種別に 1 件)</td></tr>
-<tr><td>P-05</td><td>対象プロジェクトへの割当を有効化する</td></tr>
-<tr><td>P-06</td><td>招待トークンを使用済みにする</td></tr>
-<tr><td>P-07</td><td>監査ログ(アカウント有効化完了)を記録する</td></tr>
-</tbody>
-</table>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{}</code></pre>
@@ -335,6 +396,20 @@
 <li><code>termsAgreed</code> / <code>privacyAgreed</code>: 両方 <code>true</code> 必須(FR-160 / FR-164)</li>
 <li><code>turnstileToken</code>: 検証成功(FR-177)</li>
 </ul>
+<h3>処理概要</h3>
+<p class="section-lead">以下を 1 つのトランザクションで実行する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>招待トークンの有効性(期限・使用済み)を検証する</td></tr>
+<tr><td>P-02</td><td>トークンから招待先プロジェクトと付与ロールを取得する</td></tr>
+<tr><td>P-03</td><td>利用者の氏名・パスワードを設定し、アカウントを有効化する</td></tr>
+<tr><td>P-04</td><td>利用規約・プライバシーポリシーの最新版への同意を記録する(各文書種別に 1 件)</td></tr>
+<tr><td>P-05</td><td>対象プロジェクトへの割当を有効化する</td></tr>
+<tr><td>P-06</td><td>招待トークンを使用済みにする</td></tr>
+<tr><td>P-07</td><td>監査ログ(アカウント有効化完了)を記録する</td></tr>
+</tbody>
+</table>
 <h3>レスポンス(200)</h3>
 <pre><code>{ "userId": "01HZ...", "redirectUrl": "/auth/login" }</code></pre>
 <h3>エラー</h3>
@@ -365,6 +440,13 @@
 </tbody>
 </table>
 <p>Turnstile は不要(入力フォームを持たない単純な確認専用エンドポイントで、トークン HMAC-SHA256 検証 + IP / トークン単位のレート制限で十分)。</p>
+<h3>リクエストパラメータ</h3>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{ "token": "連絡先確認トークン" }</code></pre>
+<h4>Request Body</h4>
+<pre><code>{}</code></pre>
 <h3>処理概要</h3>
 <p class="section-lead">以下を 1 つのトランザクションで実行する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
 <table>
@@ -377,13 +459,6 @@
 <tr><td>P-05</td><td>監査ログ(連絡先メール確認)を記録する</td></tr>
 </tbody>
 </table>
-<h3>リクエストパラメータ</h3>
-<h4>Query Parameters</h4>
-<pre><code>{}</code></pre>
-<h4>Path Parameters</h4>
-<pre><code>{ "token": "連絡先確認トークン" }</code></pre>
-<h4>Request Body</h4>
-<pre><code>{}</code></pre>
 <h3>レスポンス(200)</h3>
 <pre><code>{ "projectId": "proj_1", "projectName": "サポートサイト", "verifiedAt": "2026-05-21T..." }</code></pre>
 <h3>エラー</h3>

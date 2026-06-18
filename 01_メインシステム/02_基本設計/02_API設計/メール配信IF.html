@@ -38,6 +38,17 @@
   }&gt;;
 }</code></pre>
 <p>MVP は Resend 実装(<code>ResendEmailProvider</code>)。</p>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td><code>send</code> で宛先・件名・本文をプロバイダへ渡しメールを送信する(冪等キーで重複送信を排除)</td></tr>
+<tr><td>P-02</td><td>送信結果のメッセージ ID を返す</td></tr>
+<tr><td>P-03</td><td><code>verifyWebhook</code> で受信した Webhook の署名を検証する</td></tr>
+<tr><td>P-04</td><td>配信イベント種別・メッセージ ID・発生時刻を返す</td></tr>
+</tbody>
+</table>
 </article>
 </body>
 </html>

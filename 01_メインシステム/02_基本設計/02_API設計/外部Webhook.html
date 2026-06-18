@@ -53,12 +53,18 @@
     "timestamp": "..."
   }
 }</code></pre>
-<p>動作:</p>
-<ol type="1">
-<li>署名検証(失敗時は 401)</li>
-<li><code>notification_logs.delivery_state</code> を遷移</li>
-<li><code>bounced</code> / <code>complained</code> の場合は <code>email_suppression_list</code> に追加(全契約横断)</li>
-</ol>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>Resend 署名(HMAC-SHA256)を検証する(失敗時は 401)</td></tr>
+<tr><td>P-02</td><td>イベント種別を判定する</td></tr>
+<tr><td>P-03</td><td><code>notification_logs.delivery_state</code> を遷移する</td></tr>
+<tr><td>P-04</td><td><code>bounced</code> / <code>complained</code> の場合は <code>email_suppression_list</code> に追加する(全契約横断)</td></tr>
+<tr><td>P-05</td><td>受領応答を返す</td></tr>
+</tbody>
+</table>
 <h3>エラー</h3>
 <table>
 <thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>

@@ -50,6 +50,16 @@
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>認証・認可(対象プロジェクトへのアクセス権)を検証する</td></tr>
+<tr><td>P-02</td><td>状況・プロジェクトの条件で未解決質問を取得する</td></tr>
+<tr><td>P-03</td><td>カーソルページネーションで整形して返却する</td></tr>
+</tbody>
+</table>
 <h3>レスポンス(200)</h3>
 <p>未解決質問の配列 + <code>nextCursor</code>。</p>
 
@@ -80,6 +90,18 @@
   "status": "open" | "closed"
 }</code></pre>
 <p>Request Body は PATCH 時のもの。各フィールドはオプション(指定したものだけ更新)。状況は <code>open</code> ↔ <code>closed</code> の双方向遷移を許容(再オープン制限なし)。FAQ 下書き保存・FAQ 公開は本フィールドを変更しない(連動ロジックなし)。状態変更履歴の永続化は行わない。</p>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>認証・認可(PATCH は CSRF も)を検証する</td></tr>
+<tr><td>P-02</td><td>対象未解決質問を特定する</td></tr>
+<tr><td>P-03</td><td>GET は詳細を取得する</td></tr>
+<tr><td>P-04</td><td>PATCH は状況(<code>open</code> ↔ <code>closed</code>)を更新する(担当者概念・履歴永続化なし)</td></tr>
+<tr><td>P-05</td><td>結果を返却する</td></tr>
+</tbody>
+</table>
 <h3>レスポンス(200)</h3>
 <p>GET は未解決質問の詳細、PATCH は更新後の状況。</p>
 </article>

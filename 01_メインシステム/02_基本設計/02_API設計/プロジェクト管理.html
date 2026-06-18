@@ -50,6 +50,16 @@
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>認証・認可(オーナー専有)を検証する</td></tr>
+<tr><td>P-02</td><td>契約配下の有効なプロジェクトを取得する(FAQ 件数・許可ドメイン等を付帯)</td></tr>
+<tr><td>P-03</td><td>ページング(カーソル)で整形して返す</td></tr>
+</tbody>
+</table>
 <h3>レスポンス(200)</h3>
 <pre><code>{
   "items": [
@@ -103,6 +113,18 @@
 <li>サーバー側処理: プロジェクト作成と同一トランザクションで、オーナーを当該プロジェクトの管理者(<code>project_users.role='admin'</code>・<code>valid=1</code>)として 1 行自動付与する(オーナー自動 admin 行付与)。認可上は <code>isOwner=true</code> bypass を維持しつつ、本 admin 行は critical 通知の宛先解決(<code>role='admin'</code> かつ <code>valid=1</code> の利用者)と画面表示の事実情報として参照される。</li>
 <li>他者をプロジェクト管理者として招待する操作は、プロジェクト作成後に当該プロジェクトの SCR-009 / SCR-009-001(プロジェクト WS)から <code>POST /projects/{id}/members</code>(API-011)経由で行う。</li>
 </ul>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>認証・認可(オーナー専有)を検証する</td></tr>
+<tr><td>P-02</td><td>入力値(プロジェクト名・許可ドメイン)を検証し、名称重複を判定する</td></tr>
+<tr><td>P-03</td><td>プロジェクトを作成しウィジェット公開キーを発行する</td></tr>
+<tr><td>P-04</td><td>同一トランザクションでオーナーを当該プロジェクトの管理者として自動付与する</td></tr>
+<tr><td>P-05</td><td>作成結果(ID・公開キー)を返す</td></tr>
+</tbody>
+</table>
 <h3>レスポンス(201)</h3>
 <pre><code>{
   "id": "01HZ...",
@@ -194,6 +216,17 @@
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
 <p>公開キーは無期限のため有効期限指定パラメータは持たない。</p>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>認証・認可(オーナー専有)と再認証を検証する</td></tr>
+<tr><td>P-02</td><td>新しいウィジェット公開キーを発行して有効化する</td></tr>
+<tr><td>P-03</td><td>旧キーを 24 時間猶予で失効予約する</td></tr>
+<tr><td>P-04</td><td>新キーと失効予告を返す</td></tr>
+</tbody>
+</table>
 <h3>レスポンス(201)</h3>
 <pre><code>{ "newKey": "pk_live_xyz789...", "deprecationWarning": "..." }</code></pre>
 <p>(<code>deprecationWarning</code> は旧キーの 24 時間猶予失効予告)</p>

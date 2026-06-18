@@ -49,6 +49,18 @@
   "publicKey": "pk_live_abc123...",
   "origin": "https://example.com"
 }</code></pre>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>公開キーを検証し、対象プロジェクトを特定する</td></tr>
+<tr><td>P-02</td><td>リクエスト元オリジンが許可ドメインに含まれるか検証する</td></tr>
+<tr><td>P-03</td><td>契約状態(停止中か)を確認する</td></tr>
+<tr><td>P-04</td><td>ウィジェットセッショントークンを発行する</td></tr>
+<tr><td>P-05</td><td>プロジェクト表示設定を整形して返却する</td></tr>
+</tbody>
+</table>
 <h3>レスポンス(200)</h3>
 <pre><code>{
   "sessionToken": "wst_...",
@@ -93,6 +105,19 @@
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
 <pre><code>{ "question": "返品の手続きは?", "projectId": "proj_..." }</code></pre>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>セッショントークンとオリジンを検証する</td></tr>
+<tr><td>P-02</td><td>契約単位のレート制限とプロジェクト月次上限を判定する</td></tr>
+<tr><td>P-03</td><td>AI 推論 IF で候補 FAQ から回答を生成する</td></tr>
+<tr><td>P-04</td><td>質問ログを記録する</td></tr>
+<tr><td>P-05</td><td>未回答時は未解決質問を同一トランザクションで生成する</td></tr>
+<tr><td>P-06</td><td>回答または未回答理由・連絡先を返却する</td></tr>
+</tbody>
+</table>
 <h3>レスポンス(200)</h3>
 <p>answered:</p>
 <pre><code>{
@@ -150,6 +175,17 @@
   "questionId": "qlog_...",
   "idempotencyKey": "&lt;UUIDv4&gt;"
 }</code></pre>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>セッショントークンを検証する</td></tr>
+<tr><td>P-02</td><td>冪等キーで重複登録を排除する</td></tr>
+<tr><td>P-03</td><td>対象質問ログから未解決質問を登録する(チャット部屋は作成しない)</td></tr>
+<tr><td>P-04</td><td>登録結果(未解決質問 ID・状況)を返却する</td></tr>
+</tbody>
+</table>
 <h3>レスポンス(201)</h3>
 <pre><code>{ "inquiryId": "inq_...", "inquiryCode": "INQ-20260513-XYZ123", "status": "open" }</code></pre>
 <div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>未解決質問登録ではチャット部屋を作成しない。</div></div>

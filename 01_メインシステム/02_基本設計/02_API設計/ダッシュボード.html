@@ -45,6 +45,17 @@
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>認証・認可(対象プロジェクトへのアクセス権、メンバーは <code>projectId</code> 必須)を検証する</td></tr>
+<tr><td>P-02</td><td>期間・プロジェクトの質問数・未解決数・要対応状況を集計する</td></tr>
+<tr><td>P-03</td><td>オーナー向けに通知失敗・バウンス件数を集計する(メンバー指定時は <code>null</code>)</td></tr>
+<tr><td>P-04</td><td>整形して返却する</td></tr>
+</tbody>
+</table>
 <h3>レスポンス(200)</h3>
 <pre><code>{
   "period": { "from": "2026-06-01T00:00:00Z", "to": "2026-06-30T23:59:59Z" },

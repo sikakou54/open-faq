@@ -40,6 +40,17 @@ export interface AnswerProvider {
   healthcheck(): Promise&lt;{ ok: boolean; provider: string; model: string }&gt;;
 }</code></pre>
 <p>MVP は Cloudflare Workers AI 実装(<code>WorkersAIAnswerProvider</code>)。</p>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>質問と候補 FAQ をプロバイダへ渡し回答を生成する(FAQ 範囲限定・新規事実生成禁止)</td></tr>
+<tr><td>P-02</td><td>確信度・FAQ 一致状況から回答 / 回答不能 / エラーの種別を判定する</td></tr>
+<tr><td>P-03</td><td>タイムアウト・レート制限・プロバイダ障害をエラーとして返す</td></tr>
+<tr><td>P-04</td><td><code>healthcheck</code> でプロバイダ・モデルの稼働状態を返す</td></tr>
+</tbody>
+</table>
 </article>
 </body>
 </html>

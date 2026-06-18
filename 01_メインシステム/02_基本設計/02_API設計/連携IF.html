@@ -52,15 +52,20 @@
   "operatorAccountId": "..."
 }</code></pre>
 <p>ヘッダ: <code>Idempotency-Key: (operation_id, contract_owner_user_id, target_status)</code>。</p>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>JWT と Idempotency-Key を検証する</td></tr>
+<tr><td>P-02</td><td><code>contract_owners.contract_status</code> を更新する</td></tr>
+<tr><td>P-03</td><td>KV キャッシュ(セッション / KV / レート制限)を無効化する</td></tr>
+<tr><td>P-04</td><td>reason に応じてセッション処理(<code>operator_manual</code> / <code>tos_violation</code> は 5 秒以内に全セッション無効化)を行う</td></tr>
+<tr><td>P-05</td><td>受領応答を返す</td></tr>
+</tbody>
+</table>
 <h3>レスポンス(200)</h3>
 <pre><code>{ "ok": true, "newStatus": "suspended", "appliedAt": "..." }</code></pre>
-<p>動作:</p>
-<ol type="1">
-<li>JWT + Idempotency-Key 検証</li>
-<li><code>contract_owners.contract_status</code> 更新</li>
-<li>KV キャッシュ無効化(セッション/KV/レート制限)</li>
-<li>reason に応じてセッション処理(<code>operator_manual</code> / <code>tos_violation</code> は <strong>5 秒以内</strong> に全セッション無効化)</li>
-</ol>
 <h3>エラー</h3>
 <table>
 <thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>
@@ -88,7 +93,17 @@
   "userId": "...",
   "reason": "..."
 }</code></pre>
-<p>動作: <code>sessions.revoked_at</code> 設定 + KV キャッシュ強制 invalidate(5 秒以内)。</p>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>JWT を検証する</td></tr>
+<tr><td>P-02</td><td>対象範囲(全体 / 単一アカウント)のセッションを失効する(<code>sessions.revoked_at</code> 設定)</td></tr>
+<tr><td>P-03</td><td>KV キャッシュを 5 秒以内に強制無効化する</td></tr>
+<tr><td>P-04</td><td>受領応答を返す</td></tr>
+</tbody>
+</table>
 
 <h2 id="API-LNK-003">API-LNK-003 IF #4 復元実行受信</h2>
 <span id="5123-if-4-復元実行受信"></span>
@@ -103,6 +118,16 @@
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>JWT と再認証トークンを検証する</td></tr>
+<tr><td>P-02</td><td>運営者承認済みの復元指示として対象データの復元を実行する</td></tr>
+<tr><td>P-03</td><td>受領応答を返す</td></tr>
+</tbody>
+</table>
 
 <h2 id="API-LNK-004">API-LNK-004 IF #5 レート制限上書き受信</h2>
 <span id="5124-if-5-レート制限上書き受信"></span>
@@ -122,12 +147,17 @@
   "reason": "...",
   "operatorAccountId": "..."
 }</code></pre>
-<p>動作:</p>
-<ol type="1">
-<li>JWT + Idempotency-Key 検証</li>
-<li><code>owner_quota_overrides</code> テーブル更新(レート種別のみ。契約単位)</li>
-<li>KV キー <code>ratelimit:{contractOwnerUserId}:{kind}</code> 更新(即時反映)</li>
-</ol>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>JWT と Idempotency-Key を検証する</td></tr>
+<tr><td>P-02</td><td><code>owner_quota_overrides</code>(レート種別のみ・契約単位)を更新する</td></tr>
+<tr><td>P-03</td><td>KV キー <code>ratelimit:{contractOwnerUserId}:{kind}</code> を即時反映する</td></tr>
+<tr><td>P-04</td><td>受領応答を返す</td></tr>
+</tbody>
+</table>
 <div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>本 IF はレート制限(契約単位)専用です。月次上限件数の運営者上書きはプロジェクト単位のため API-055 を用います。</div></div>
 
 <h2 id="API-LNK-005">API-LNK-005 IF #5(月次上限件数上書き受信 / プロジェクト単位)</h2>
@@ -149,12 +179,17 @@
   "reason": "...",
   "operatorAccountId": "..."
 }</code></pre>
-<p>動作:</p>
-<ol type="1">
-<li>JWT + Idempotency-Key 検証(4-eyes 承認済みであること)</li>
-<li><code>project_quota_limits</code> テーブル更新(<code>source='operator'</code>、<code>project_id</code> で対象プロジェクトを特定、<code>reason</code> / <code>valid_until</code> / <code>created_by</code> を記録)</li>
-<li>KV キー <code>usage-limit:{contractOwnerUserId}:{projectId}</code> 更新(30s TTL、即時反映)</li>
-</ol>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>JWT と Idempotency-Key を検証する(4-eyes 承認済みであること)</td></tr>
+<tr><td>P-02</td><td><code>project_quota_limits</code>(<code>source='operator'</code>、対象プロジェクト単位)を更新する</td></tr>
+<tr><td>P-03</td><td>KV キー <code>usage-limit:{contractOwnerUserId}:{projectId}</code> を即時反映する(30s TTL)</td></tr>
+<tr><td>P-04</td><td>受領応答を返す</td></tr>
+</tbody>
+</table>
 <p><code>kind</code> は <code>question_monthly_limit</code> / <code>faq_monthly_limit</code>。質問数は <code>limit</code> と <code>freeQuota</code>、FAQ は運営者が管理する <code>freeQuota</code> だけを受け付ける。FAQ の <code>limit</code> は常に NULL とし、指定時は 422。質問数の優先順位は「プロジェクト設定 &gt; 運営者上書き &gt; デフォルト推奨値」、FAQ 無料枠は「運営者上書き &gt; デフォルト値」。</p>
 
 <h2 id="API-LNK-006">API-LNK-006 IF #6 AI しきい値上書き受信</h2>
@@ -177,13 +212,18 @@
   "scope": "owner|project",
   "operatorAccountId": "..."
 }</code></pre>
-<p>動作:</p>
-<ol type="1">
-<li>JWT + Idempotency-Key 検証</li>
-<li>KV <code>ai_threshold:{contractOwnerUserId}:{projectId}</code> 更新(60s TTL)</li>
-<li><code>ai_threshold_persistent_cache</code> に永続化</li>
-<li>IF #12 経由で管理者ユーザーに inbox 配信</li>
-</ol>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>JWT と Idempotency-Key を検証する</td></tr>
+<tr><td>P-02</td><td>KV <code>ai_threshold:{contractOwnerUserId}:{projectId}</code> を更新する(60s TTL)</td></tr>
+<tr><td>P-03</td><td><code>ai_threshold_persistent_cache</code> に永続化する</td></tr>
+<tr><td>P-04</td><td>IF #12 経由で管理者ユーザーに inbox 配信する</td></tr>
+<tr><td>P-05</td><td>受領応答を返す</td></tr>
+</tbody>
+</table>
 
 <h2 id="API-LNK-007">API-LNK-007 IF #7 お知らせ生成受信</h2>
 <span id="5126-if-7-お知らせ生成受信"></span>
@@ -213,14 +253,19 @@
 <li>配列 → 列挙された <code>contract_owner_user_id</code> への限定配信(各要素は ULID 形式)</li>
 </ul></li>
 </ul>
-<p>動作:</p>
-<ol type="1">
-<li>JWT + Idempotency-Key 検証</li>
-<li><code>service_announcements</code> レコード作成</li>
-<li><code>audienceContractOwnerUserIds</code> が配列の場合、各要素に対し <code>announcement_audiences(announcement_id, contract_owner_user_id)</code> 行を INSERT(配信先は中間テーブル化されており、<code>service_announcements</code> 側に JSON 列は持たない)</li>
-<li><code>announcement_recipients</code> を宛先範囲に応じて生成(<code>announcement_audiences</code> 行が 0 件なら全契約、1 件以上なら列挙された owner のみ)</li>
-<li>announcement-fanout-queue に投入、<code>inbox_messages</code> へ fan-out</li>
-</ol>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>JWT と Idempotency-Key を検証する</td></tr>
+<tr><td>P-02</td><td><code>service_announcements</code> レコードを作成する</td></tr>
+<tr><td>P-03</td><td>配信先指定がある場合は <code>announcement_audiences</code> 行を登録する(中間テーブル化)</td></tr>
+<tr><td>P-04</td><td>宛先範囲(全契約 / 列挙 owner)に応じて <code>announcement_recipients</code> を生成する</td></tr>
+<tr><td>P-05</td><td>fan-out queue 経由で <code>inbox_messages</code> へ配信する</td></tr>
+<tr><td>P-06</td><td>受領応答を返す</td></tr>
+</tbody>
+</table>
 
 <h2 id="API-LNK-008">API-LNK-008 IF #8 監視メトリクス取得(送信側、メ → 顧管)</h2>
 <span id="5127-if-8-監視メトリクス取得送信側メ--顧管"></span>
@@ -235,6 +280,16 @@
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
 <pre><code>{}</code></pre>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>顧客管理システムへ mTLS + JWT で接続する</td></tr>
+<tr><td>P-02</td><td>指定ウィンドウの監視メトリクス(契約別・グローバル)を取得する</td></tr>
+<tr><td>P-03</td><td>取得結果を整形して返す</td></tr>
+</tbody>
+</table>
 <h3>レスポンス(200)</h3>
 <pre><code>{
   "window": "5m",
@@ -267,6 +322,16 @@
 <pre><code>{}</code></pre>
 <h4>Request Body</h4>
 <pre><code>{ "detectionId": "...", "contractOwnerUserId": "...", "pattern": "...", "details": {...} }</code></pre>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>検知した不正利用パターンと対象契約を集約する</td></tr>
+<tr><td>P-02</td><td>顧客管理システムへ mTLS + JWT で通知を送信する(DLQ 上限 200/30 分)</td></tr>
+<tr><td>P-03</td><td>送信結果を受領する</td></tr>
+</tbody>
+</table>
 <p>DLQ 上限: 200/30 分。</p>
 
 <h2 id="API-LNK-010">API-LNK-010 IF #10 課金 Webhook 受信(顧管 → メ)</h2>
@@ -288,18 +353,17 @@
   "receivedAt": "...",
   "signatureVerifiedAt": "..."
 }</code></pre>
-<p>動作:</p>
-<ol type="1">
-<li>JWT 検証 + event_id 冪等性</li>
-<li>Stripe イベント種別に応じてハンドラ分岐:
-<ul>
-<li><code>invoice.paid</code>: <code>billing_invoices.status='paid'</code>、<code>suspended</code> → <code>active</code> 復帰</li>
-<li><code>invoice.payment_failed</code>: 通知、7 日猶予タイマー開始</li>
-<li><code>customer.subscription.created</code>: <code>billing_subscriptions</code> 作成</li>
-<li><code>charge.refunded</code>: 訂正請求行記録</li>
-</ul></li>
-<li>IF #1 経由で <code>contract_owners.contract_status</code> 反映</li>
-</ol>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>JWT を検証し event_id で冪等性を担保する</td></tr>
+<tr><td>P-02</td><td>Stripe イベント種別に応じてハンドラを分岐し請求 / 契約状態へ反映する(<code>invoice.paid</code> / <code>invoice.payment_failed</code> / <code>customer.subscription.created</code> / <code>charge.refunded</code> 等)</td></tr>
+<tr><td>P-03</td><td>IF #1 経由で <code>contract_owners.contract_status</code> へ反映する</td></tr>
+<tr><td>P-04</td><td>受領応答を返す</td></tr>
+</tbody>
+</table>
 <p>Idempotency-Key: event_id(Stripe <code>evt_*</code>)。DLQ 滞留上限: 1000/24h。</p>
 
 <h2 id="API-LNK-011">API-LNK-011 IF #12 運営者操作通知受信</h2>
@@ -322,12 +386,17 @@
   "ticketId": "...",
   "summary": "削除データを復元しました"
 }</code></pre>
-<p>動作:</p>
-<ol type="1">
-<li>JWT + Idempotency-Key 検証</li>
-<li><code>inbox_messages</code> に重要度 <code>high</code> で生成(管理者 inbox 表示)</li>
-<li>メール通知 Queue 投入(<code>critical</code> の場合はメール強制送信)</li>
-</ol>
+<h3>処理概要</h3>
+<p class="section-lead">サーバー側の処理を概観する(具体的なクエリ・関数仕様は詳細設計を正本とする)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>JWT と Idempotency-Key を検証する</td></tr>
+<tr><td>P-02</td><td><code>inbox_messages</code> に重要度 <code>high</code> で生成し管理者 inbox に表示する</td></tr>
+<tr><td>P-03</td><td>メール通知 Queue に投入する(<code>critical</code> はメール強制送信)</td></tr>
+<tr><td>P-04</td><td>受領応答を返す</td></tr>
+</tbody>
+</table>
 </article>
 </body>
 </html>
