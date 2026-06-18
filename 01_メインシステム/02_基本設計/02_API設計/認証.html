@@ -40,7 +40,6 @@
 <tr><td>API 名</td><td>新規登録(機能 ID: F-001)</td></tr>
 <tr><td>エンドポイント</td><td><code>/auth/signup</code></td></tr>
 <tr><td>HTTP メソッド</td><td>POST</td></tr>
-<tr><td>概要</td><td>オーナーアカウントを新規登録し、メール確認を要求する</td></tr>
 <tr><td>認証</td><td>不要</td></tr>
 <tr><td>権限</td><td>—(公開)</td></tr>
 </tbody>
@@ -120,7 +119,6 @@
 <tr><td>API 名</td><td>ログイン(機能 ID: F-002)</td></tr>
 <tr><td>エンドポイント</td><td><code>/auth/login</code></td></tr>
 <tr><td>HTTP メソッド</td><td>POST</td></tr>
-<tr><td>概要</td><td>メール / パスワードを認証しセッションを発行する</td></tr>
 <tr><td>認証</td><td>不要</td></tr>
 <tr><td>権限</td><td>—(公開)</td></tr>
 </tbody>
@@ -204,7 +202,6 @@
 <tr><td>API 名</td><td>ログアウト</td></tr>
 <tr><td>エンドポイント</td><td><code>/auth/logout</code></td></tr>
 <tr><td>HTTP メソッド</td><td>POST</td></tr>
-<tr><td>概要</td><td>現在のセッションを失効する</td></tr>
 <tr><td>認証</td><td>Cookie + CSRF</td></tr>
 <tr><td>権限</td><td>認証済み</td></tr>
 </tbody>
@@ -254,7 +251,6 @@
 <tr><td>API 名</td><td>パスワード再設定要求(機能 ID: F-004)</td></tr>
 <tr><td>エンドポイント</td><td><code>/auth/password-reset-request</code></td></tr>
 <tr><td>HTTP メソッド</td><td>POST</td></tr>
-<tr><td>概要</td><td>再設定メールの送信を要求する</td></tr>
 <tr><td>認証</td><td>不要</td></tr>
 <tr><td>権限</td><td>—(公開)</td></tr>
 </tbody>
@@ -311,7 +307,6 @@
 <tr><td>API 名</td><td>再認証(機能 ID: F-005)</td></tr>
 <tr><td>エンドポイント</td><td><code>/auth/re-auth</code></td></tr>
 <tr><td>HTTP メソッド</td><td>POST</td></tr>
-<tr><td>概要</td><td>機微操作の前にパスワードを再確認する</td></tr>
 <tr><td>認証</td><td>要(Cookie)</td></tr>
 <tr><td>権限</td><td>認証済み</td></tr>
 </tbody>
@@ -374,7 +369,6 @@
 <tr><td>API 名</td><td>メール確認(機能 ID: F-003)</td></tr>
 <tr><td>エンドポイント</td><td><code>/auth/email-verifications/{token}</code></td></tr>
 <tr><td>HTTP メソッド</td><td>POST</td></tr>
-<tr><td>概要</td><td>登録メールアドレスを確認する</td></tr>
 <tr><td>認証</td><td>トークン認証</td></tr>
 <tr><td>権限</td><td>—</td></tr>
 </tbody>
@@ -439,7 +433,6 @@
 <tr><td>API 名</td><td>招待トークン検証 + 招待情報プレビュー(機能 ID: F-016)</td></tr>
 <tr><td>エンドポイント</td><td><code>/auth/invitations/{token}/preview</code></td></tr>
 <tr><td>HTTP メソッド</td><td>POST</td></tr>
-<tr><td>概要</td><td>招待情報(プロジェクト名 / 付与ロール / 招待元オーナー名 / 招待者メール)をプレビュー取得する</td></tr>
 <tr><td>認証</td><td>未認証可(トークン認証のみ)</td></tr>
 <tr><td>権限</td><td>—</td></tr>
 </tbody>
@@ -520,7 +513,6 @@
 <tr><td>API 名</td><td>メンバーアカウント有効化(機能 ID: F-016)</td></tr>
 <tr><td>エンドポイント</td><td><code>/auth/invitations/{token}/activate</code></td></tr>
 <tr><td>HTTP メソッド</td><td>POST</td></tr>
-<tr><td>概要</td><td>招待されたメンバー本人が氏名・初回パスワード・規約同意を登録し有効化を完了する</td></tr>
 <tr><td>認証</td><td>未認証可(トークン認証のみ、Turnstile 必須)</td></tr>
 <tr><td>権限</td><td>—</td></tr>
 </tbody>
@@ -619,7 +611,6 @@
 <tr><td>API 名</td><td>プロジェクト連絡先メール確認(機能 ID: F-PRJ-001、プロジェクト管理派生)</td></tr>
 <tr><td>エンドポイント</td><td><code>/auth/contact-verifications/{token}</code></td></tr>
 <tr><td>HTTP メソッド</td><td>POST</td></tr>
-<tr><td>概要</td><td>プロジェクト連絡先メールを確認済みとし <code>projects.contact_email_verified_at</code> をセットする</td></tr>
 <tr><td>認証</td><td>未認証可(トークン認証のみ、Turnstile 不要)</td></tr>
 <tr><td>権限</td><td>—</td></tr>
 </tbody>

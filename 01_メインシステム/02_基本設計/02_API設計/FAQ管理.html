@@ -39,7 +39,6 @@
 <tr><td>API 名</td><td>FAQ 一覧</td></tr>
 <tr><td>エンドポイント</td><td><code>/faqs</code></td></tr>
 <tr><td>HTTP メソッド</td><td>GET</td></tr>
-<tr><td>概要</td><td>状態 / プロジェクト / キーワードで FAQ を一覧取得する</td></tr>
 <tr><td>認証</td><td>Cookie</td></tr>
 <tr><td>権限</td><td>編集系・参照: オーナー / 該当 PJ の <code>member</code>+(<code>admin</code> または <code>member</code>)</td></tr>
 </tbody>
@@ -106,7 +105,6 @@
 <tr><td>API 名</td><td>FAQ 作成・更新・削除</td></tr>
 <tr><td>エンドポイント</td><td><code>/faqs</code>, <code>/faqs/{id}</code></td></tr>
 <tr><td>HTTP メソッド</td><td>POST / PATCH / DELETE</td></tr>
-<tr><td>概要</td><td>FAQ の CRUD と状態(<code>draft</code> / <code>published</code> / <code>hidden</code>)の相互遷移</td></tr>
 <tr><td>認証</td><td>Cookie + CSRF</td></tr>
 <tr><td>権限</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
 </tbody>
@@ -197,7 +195,6 @@
 <tr><td>API 名</td><td>FAQ 一括状態変更</td></tr>
 <tr><td>エンドポイント</td><td><code>/faqs/bulk-status</code></td></tr>
 <tr><td>HTTP メソッド</td><td>POST</td></tr>
-<tr><td>概要</td><td>選択した複数 FAQ の状態を一括で変更する(1 リクエスト上限 50 件)</td></tr>
 <tr><td>認証</td><td>Cookie + CSRF</td></tr>
 <tr><td>権限</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
 </tbody>
@@ -266,7 +263,6 @@
 <tr><td>API 名</td><td>FAQ CSV インポート</td></tr>
 <tr><td>エンドポイント</td><td><code>/faqs/import</code></td></tr>
 <tr><td>HTTP メソッド</td><td>POST</td></tr>
-<tr><td>概要</td><td>CSV による FAQ の一括取込(新規 / 上書き)</td></tr>
 <tr><td>認証</td><td>Cookie + CSRF</td></tr>
 <tr><td>権限</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
 </tbody>
@@ -333,7 +329,6 @@
 <tr><td>API 名</td><td>FAQ インポートテンプレート</td></tr>
 <tr><td>エンドポイント</td><td><code>/faqs/import/template</code></td></tr>
 <tr><td>HTTP メソッド</td><td>GET</td></tr>
-<tr><td>概要</td><td>ヘッダ行のみの CSV テンプレートを返す</td></tr>
 <tr><td>認証</td><td>Cookie</td></tr>
 <tr><td>権限</td><td>オーナー / 該当 PJ の <code>member</code>+(API-022 と同一)</td></tr>
 </tbody>
@@ -381,7 +376,6 @@
 <tr><td>API 名</td><td>FAQ CSV エクスポート</td></tr>
 <tr><td>エンドポイント</td><td><code>/faqs/export</code></td></tr>
 <tr><td>HTTP メソッド</td><td>GET</td></tr>
-<tr><td>概要</td><td>一覧フィルタ適用結果を CSV で出力する</td></tr>
 <tr><td>認証</td><td>Cookie</td></tr>
 <tr><td>権限</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
 </tbody>
@@ -442,7 +436,6 @@
 <tr><td>API 名</td><td>FAQ 全文検索(機能 ID: F-300 / FR-300)</td></tr>
 <tr><td>エンドポイント</td><td><code>/projects/{id}/faqs/search</code></td></tr>
 <tr><td>HTTP メソッド</td><td>GET</td></tr>
-<tr><td>概要</td><td>当該プロジェクトの FAQ をキーワードで全文検索する</td></tr>
 <tr><td>認証</td><td>Cookie</td></tr>
 <tr><td>権限</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
 </tbody>
@@ -524,7 +517,6 @@
 <tr><td>API 名</td><td>質問ログ検索(機能 ID: F-300 / FR-300)</td></tr>
 <tr><td>エンドポイント</td><td><code>/projects/{id}/question-logs/search</code></td></tr>
 <tr><td>HTTP メソッド</td><td>GET</td></tr>
-<tr><td>概要</td><td>当該プロジェクトの質問ログをキーワード・期間で検索する</td></tr>
 <tr><td>認証</td><td>Cookie</td></tr>
 <tr><td>権限</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
 </tbody>
