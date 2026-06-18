@@ -307,6 +307,7 @@ table.req-table td:first-child{font-family:var(--mono);font-size:12.5px;white-sp
   position:absolute;left:-1.9em;width:1.7em;text-align:left;color:var(--text-soft);font-weight:600}
 /* ステークホルダ別に内容が異なる業務要件: 「役割：内容」のキー付きリスト */
 .content ul.role-req{list-style:none;padding-left:0;margin:.2em 0}
+.content ul.key-cols{list-style:none;padding-left:0;margin:0}
 .content ul.role-req > li{margin:.25em 0}
 .content ul.role-req > li > strong{color:var(--text-soft)}
 /* 入れ子: 親の (a) + 子の連番 = (a-1)(a-2)… 親の alpha カウンタは継承(リセットしない) */
