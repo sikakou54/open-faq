@@ -46,7 +46,18 @@
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
-<p>Query Parameters: <code>status=draft</code>(任意)、<code>projectId</code>、<code>keyword</code>(任意)、<code>cursor</code> / <code>limit</code>(共通仕様)。Path Parameters / Request Body: なし。</p>
+<h4>Query Parameters</h4>
+<pre><code>{
+  "status": "draft(任意)",
+  "projectId": "(必須)",
+  "keyword": "(任意)",
+  "cursor": "(共通仕様)",
+  "limit": "(共通仕様)"
+}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Request Body</h4>
+<pre><code>{}</code></pre>
 <h3>レスポンス</h3>
 <p>(200): FAQ の配列 + <code>nextCursor</code>(構造は API-025 のレスポンスに準ずる)。</p>
 <h3>エラー</h3>
@@ -72,7 +83,19 @@
 <p>楽観ロック: <code>version</code> 必須。<code>CONFLICT</code> 時 409。</p>
 <p>FAQ の状態(<code>draft</code> / <code>published</code> / <code>hidden</code>)は <code>status</code> フィールドで指定し、<code>PATCH /faqs/{id}</code> の保存操作で相互に自由遷移できる(専用の公開 API・状態遷移ガードは持たない)。SCR-006 の「保存」ボタンは「状態」ラジオで選択した値をそのまま本 API に渡す。<code>status='published'</code> への変更は管理者(admin)が編集画面で内容を確認したうえで明示選択する操作であり、これが FR-045「FAQ の公開前に管理者が内容を確認できること」を満たす。<code>published</code> 設定時は <code>publishedAt</code> をサーバ側で記録する。</p>
 <h3>リクエストパラメータ</h3>
-<p>Path Parameters は PATCH / DELETE で <code>{id}</code>(FAQ ID)。Request Body は FAQ 内容(<code>question</code> / <code>answer</code> / <code>category</code> / <code>status</code> / <code>version</code> 等。POST は新規)。</p>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{ "id": "FAQ ID(PATCH / DELETE 時)" }</code></pre>
+<h4>Request Body</h4>
+<pre><code>{
+  "question": "...",
+  "answer": "...",
+  "category": "...",
+  "status": "draft | published | hidden",
+  "version": 1
+}</code></pre>
+<p>Request Body は FAQ 内容(POST は新規)。</p>
 <h3>レスポンス</h3>
 <p>: 作成 / 更新後の FAQ(<code>publishedAt</code> を含む)。</p>
 <h3>エラー</h3>
@@ -103,6 +126,11 @@
 </table>
 <p>SCR-006 一覧の BulkActionBar(チェックボックス選択)から呼び出し、選択した複数 FAQ の状態を一括で <code>draft</code> / <code>published</code> / <code>hidden</code> に変更する。1 リクエストの上限は <strong>50 件</strong>(SCR-006 の BulkActionBar 上限、<a href="../01_画面設計/index.html">01_画面設計/index.html</a>)。超過時は 400 <code>VALIDATION_ERROR</code>。処理は行単位で評価し、対象外(他契約 / 論理削除済み)の ID は当該行のみ失敗として集計する(オーナー境界違反は §2.2 に従い結果から除外し成功扱いにしない)。<code>published</code> へ変更した行は <code>publishedAt</code> をサーバ側で記録する。</p>
 <h3>リクエストパラメータ</h3>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Request Body</h4>
 <pre><code>{ "ids": ["faq_...", "faq_..."], "status": "published" }</code></pre>
 <h3>レスポンス</h3>
 <p>(200):</p>
@@ -134,7 +162,13 @@
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
-<p><code>multipart/form-data { file: &lt;CSV&gt; }</code>。受理形式は <strong>CSV のみ</strong>(UTF-8、BOM 許容、ヘッダ行必須、1 ファイル最大 1000 件)。<strong>JSON 形式は受理しない</strong>(不正形式は 415 / 400、E-INPUT-CSV-INVALID)。CSV 列構成は <code>FAQ ID, 質問, 回答, カテゴリ</code>。各行の <code>FAQ ID</code> で <strong>空欄 = 新規(<code>status=draft</code>)/ 既存 ID 一致 = 上書き(状態維持・<code>faq_revisions</code> に改訂追記)/ 当該契約に存在しない ID = 当該行を失敗</strong>(行単位エラー、E-INPUT-CSV-FAQID-NOTFOUND)と判定する。<code>status</code> 列は受理しない。</p>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Request Body</h4>
+<pre><code>multipart/form-data { file: &lt;CSV&gt; }</code></pre>
+<p>受理形式は <strong>CSV のみ</strong>(UTF-8、BOM 許容、ヘッダ行必須、1 ファイル最大 1000 件)。<strong>JSON 形式は受理しない</strong>(不正形式は 415 / 400、E-INPUT-CSV-INVALID)。CSV 列構成は <code>FAQ ID, 質問, 回答, カテゴリ</code>。各行の <code>FAQ ID</code> で <strong>空欄 = 新規(<code>status=draft</code>)/ 既存 ID 一致 = 上書き(状態維持・<code>faq_revisions</code> に改訂追記)/ 当該契約に存在しない ID = 当該行を失敗</strong>(行単位エラー、E-INPUT-CSV-FAQID-NOTFOUND)と判定する。<code>status</code> 列は受理しない。</p>
 <h3>レスポンス</h3>
 <p>(202):</p>
 <pre><code>{ "jobId": "job_...", "status": "processing" }</code></pre>
@@ -165,7 +199,12 @@
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
-<p>なし。</p>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Request Body</h4>
+<pre><code>{}</code></pre>
 <h3>レスポンス</h3>
 <p>(200): ヘッダ行のみの CSV テンプレート(<code>FAQ ID,質問,回答,カテゴリ</code>)を <code>text/csv; charset=utf-8</code>(UTF-8 BOM 付与可)で返す。<code>Content-Disposition: attachment; filename="faq_import_template.csv"</code>。</p>
 
@@ -187,6 +226,16 @@
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
+<h4>Query Parameters</h4>
+<pre><code>{
+  "status": "(任意・一覧フィルタに準ずる)",
+  "projectId": "(一覧フィルタに準ずる)",
+  "keyword": "(任意・一覧フィルタに準ずる)"
+}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Request Body</h4>
+<pre><code>{}</code></pre>
 <p>Query Parameters は一覧フィルタに準ずる。</p>
 <h3>レスポンス</h3>
 <p>(200): 一覧フィルタ適用結果を <strong>CSV(UTF-8、<code>text/csv</code>)</strong> で返す(JSON 形式は提供しない)。</p>
@@ -210,7 +259,19 @@
 </table>
 <p>検索対象は現在開いているプロジェクトに属する FAQ に限る(§2.2 オーナー境界 + プロジェクト境界)。並び替え・ページングは共通仕様(§2.1)に従う。</p>
 <h3>リクエストパラメータ</h3>
-<p>Path Parameters: <code>{id}</code>(プロジェクト ID)。Query Parameters: <code>keyword</code>(必須)、<code>status</code>(任意 <code>draft</code> / <code>published</code> / <code>hidden</code>)、<code>sort</code>(<code>relevance</code>(既定)/ <code>updated_at</code>)、<code>cursor</code> / <code>limit</code>(50〜200)。全文検索方式・対象列は <a href="../03_テーブル設計.html">03_テーブル設計.html</a>(FTS インデックス)を正本とする。</p>
+<h4>Query Parameters</h4>
+<pre><code>{
+  "keyword": "(必須)",
+  "status": "(任意・draft / published / hidden)",
+  "sort": "relevance(既定) / updated_at",
+  "cursor": "(共通仕様)",
+  "limit": "(50〜200)"
+}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{ "id": "プロジェクト ID" }</code></pre>
+<h4>Request Body</h4>
+<pre><code>{}</code></pre>
+<p>全文検索方式・対象列は <a href="../03_テーブル設計.html">03_テーブル設計.html</a>(FTS インデックス)を正本とする。</p>
 <h3>レスポンス</h3>
 <p>(200):</p>
 <pre><code>{ "items": [ { "id": "faq_...", "question": "...", "answer": "...", "status": "published", "category": "...", "score": 0.82, "updatedAt": "..." } ], "nextCursor": null }</code></pre>
@@ -234,7 +295,21 @@
 </table>
 <p>検索対象は現在開いているプロジェクトに属する質問ログに限る。</p>
 <h3>リクエストパラメータ</h3>
-<p>Path Parameters: <code>{id}</code>(プロジェクト ID)。Query Parameters: <code>keyword</code>(任意)、<code>from</code> / <code>to</code>(任意 ISO 8601、期間)、<code>answerType</code>(任意 <code>answered</code> / <code>unanswered</code>)、<code>sort</code>(<code>created_at</code> 降順既定)、<code>cursor</code> / <code>limit</code>(50〜200)。対象列・全文検索方式は <a href="../03_テーブル設計.html">03_テーブル設計.html</a> を正本とする。</p>
+<h4>Query Parameters</h4>
+<pre><code>{
+  "keyword": "(任意)",
+  "from": "(任意・ISO 8601、期間)",
+  "to": "(任意・ISO 8601、期間)",
+  "answerType": "(任意・answered / unanswered)",
+  "sort": "created_at 降順(既定)",
+  "cursor": "(共通仕様)",
+  "limit": "(50〜200)"
+}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{ "id": "プロジェクト ID" }</code></pre>
+<h4>Request Body</h4>
+<pre><code>{}</code></pre>
+<p>対象列・全文検索方式は <a href="../03_テーブル設計.html">03_テーブル設計.html</a> を正本とする。</p>
 <h3>レスポンス</h3>
 <p>(200):</p>
 <pre><code>{ "items": [ { "id": "qlog_...", "question": "...", "answerType": "unanswered", "confidence": 0.42, "inquiryId": "inq_..." | null, "createdAt": "..." } ], "nextCursor": null }</code></pre>

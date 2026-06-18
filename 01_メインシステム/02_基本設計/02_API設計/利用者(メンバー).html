@@ -43,7 +43,15 @@
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
-<p>Path Parameters: <code>{id}</code>(プロジェクト ID)。Query Parameters: <code>cursor</code> / <code>limit</code>(共通仕様)。Request Body: なし。</p>
+<h4>Query Parameters</h4>
+<pre><code>{
+  "cursor": "(共通仕様)",
+  "limit": "(共通仕様)"
+}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{ "id": "プロジェクト ID" }</code></pre>
+<h4>Request Body</h4>
+<pre><code>{}</code></pre>
 <h3>レスポンス</h3>
 <p>(200):</p>
 <pre><code>{
@@ -81,7 +89,11 @@
 </table>
 <p>既存メンバーアカウントの場合は <code>project_users</code> 行のみ追加(指定ロール)。新規メールアドレスの場合は <code>users</code> を <strong><code>name=NULL</code> / <code>status='pending_activation'</code></strong> で作成 + <code>project_users</code> を <code>valid=0</code> で同時 INSERT + 招待メール送信(7 日有効、<code>access_tokens.purpose='activation'</code>、<code>meta={"invitedProjectId": "...", "invitedRole": "..."}</code> を JSON 保持)。<strong>氏名(<code>displayName</code>)は受け付けない</strong>(招待された本人が SCR-018 メンバーアカウント有効化ページで入力する。FR-016d / FR-016e)。</p>
 <h3>リクエストパラメータ</h3>
-<p>Path Parameters: <code>{id}</code>(プロジェクト ID)。Request Body:</p>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{ "id": "プロジェクト ID" }</code></pre>
+<h4>Request Body</h4>
 <pre><code>{
   "email": "newmember@...",
   "role": "admin"
@@ -117,7 +129,14 @@
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
-<p>Path Parameters: <code>{id}</code>(プロジェクト ID)、<code>{userId}</code>(対象ユーザー ID)。Request Body:</p>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{
+  "id": "プロジェクト ID",
+  "userId": "対象ユーザー ID"
+}</code></pre>
+<h4>Request Body</h4>
 <pre><code>{
   "role": "admin" | "member"
 }</code></pre>
@@ -165,7 +184,15 @@
 <li>他プロジェクトの有効割当が 0 件になる場合: 同一トランザクションで <code>users.valid=0</code>、全セッション失効、未使用招待トークン失効を実行する。</li>
 </ul>
 <h3>リクエストパラメータ</h3>
-<p>Path Parameters: <code>{id}</code>(プロジェクト ID)、<code>{userId}</code>(対象ユーザー ID)。Request Body: なし。</p>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{
+  "id": "プロジェクト ID",
+  "userId": "対象ユーザー ID"
+}</code></pre>
+<h4>Request Body</h4>
+<pre><code>{}</code></pre>
 <h3>レスポンス</h3>
 <p>(200):</p>
 <pre><code>{ "userId": "...", "projectId": "...", "accountDeactivated": true|false }</code></pre>
@@ -199,7 +226,13 @@
 </table>
 <p>旧 <code>access_tokens.purpose='activation'</code> を失効させ新規トークン(7 日有効、<code>meta</code> を同一の <code>invitedProjectId</code> / <code>invitedRole</code> で再発行)を発行。</p>
 <h3>リクエストパラメータ</h3>
-<p>Path Parameters: <code>{id}</code>(メンバーユーザー ID)。Request Body: なし(氏名 <code>displayName</code> を受け付けない。FR-016b / FR-016d)。</p>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{ "id": "メンバーユーザー ID" }</code></pre>
+<h4>Request Body</h4>
+<pre><code>{}</code></pre>
+<p>氏名 <code>displayName</code> を受け付けない(FR-016b / FR-016d)。</p>
 <h3>レスポンス</h3>
 <p>(200): 再発行結果(<code>{ "ok": true, "expiresAt": "..." }</code>)。</p>
 <h3>エラー</h3>

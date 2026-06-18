@@ -46,7 +46,12 @@
 </table>
 <p>契約全体の利用状況は API-033 <code>GET /owner/projects/usage</code> を使用する。</p>
 <h3>リクエストパラメータ</h3>
-<p>Query Parameters は <code>period=current_month</code>、<code>viewMode=project</code>、<code>projectId={id}</code>。</p>
+<h4>Query Parameters</h4>
+<pre><code>{ "period": "current_month", "viewMode": "project", "projectId": "{id}" }</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Request Body</h4>
+<pre><code>{}</code></pre>
 <h3>レスポンス</h3>
 <p>(200、<code>viewMode=project</code>):</p>
 <pre><code>{
@@ -75,7 +80,12 @@
 </table>
 <p>契約全体サマリーとプロジェクト別の質問数、質問数上限に対する利用率、公開 FAQ 件数、最終更新日時を返す。</p>
 <h3>リクエストパラメータ</h3>
-<p>Query Parameters は <code>period=current_month</code>。</p>
+<h4>Query Parameters</h4>
+<pre><code>{ "period": "current_month" }</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Request Body</h4>
+<pre><code>{}</code></pre>
 <h3>レスポンス</h3>
 <p>(200):</p>
 <pre><code>{
@@ -110,7 +120,12 @@
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
-<p>Query Parameters は <code>period=current_month</code>。</p>
+<h4>Query Parameters</h4>
+<pre><code>{ "period": "current_month" }</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Request Body</h4>
+<pre><code>{}</code></pre>
 <h3>レスポンス</h3>
 <p>(200):</p>
 <pre><code>{
@@ -148,7 +163,12 @@
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
-<p>Query Parameters は <code>limit=6</code> 等。</p>
+<h4>Query Parameters</h4>
+<pre><code>{ "limit": "6(等)" }</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Request Body</h4>
+<pre><code>{}</code></pre>
 <h3>レスポンス</h3>
 <p>(200):</p>
 <pre><code>{
@@ -184,9 +204,13 @@
 </table>
 <p>支払方法はクレジットカードのみ(FR-136)。カード番号等の生データはサーバで保持せず、課金プロバイダのトークンを受領して紐付ける(PCI スコープ最小化、正本: <a href="../09_セキュリティ設計.html">09_セキュリティ設計.html</a>)。サスペンション中もオーナーは本 API を実行できる(FR-138)。</p>
 <h3>リクエストパラメータ</h3>
-<p>GET: なし。PUT Request Body:</p>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Request Body</h4>
 <pre><code>{ "paymentToken": "tok_..." }</code></pre>
-<p>(課金プロバイダ発行トークン)</p>
+<p>(GET: なし。PUT のみ。<code>paymentToken</code> は課金プロバイダ発行トークン)</p>
 <h3>レスポンス</h3>
 <p>GET(200): <code>{ "registered": true, "brand": "visa", "last4": "4242", "expMonth": 12, "expYear": 2028 }</code>(未登録時は <code>{ "registered": false }</code>)。PUT(200): <code>{ "registered": true, "brand": "visa", "last4": "4242" }</code>。</p>
 <h3>エラー</h3>
@@ -218,7 +242,12 @@
 </table>
 <p>SCR-021 の表示には <code>used</code> / <code>limitEnabled</code> / <code>limit</code> / <code>percentage</code> / <code>yenEquivalent</code> だけを使用し、アラート設定・設定元は表示しない。SCR-021-001 は <code>limitEnabled</code> / <code>limit</code> / <code>alertThresholds</code> を使用する。FAQ 件数は扱わないためレスポンスに含めない。質問数の無料利用枠は課金判定用の内部データとして保持するが、本 API のレスポンスには含めない。</p>
 <h3>リクエストパラメータ</h3>
-<p>Path Parameters は <code>{id}</code>(プロジェクト ID)。</p>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{ "id": "プロジェクト ID" }</code></pre>
+<h4>Request Body</h4>
+<pre><code>{}</code></pre>
 <h3>レスポンス</h3>
 <p>(200):</p>
 <pre><code>{
@@ -247,7 +276,13 @@
 </table>
 <p><code>project_quota_limits.resource_kind='question_monthly_limit'</code> かつ <code>source='owner'</code> の 1 行だけを upsert する。質問数の <code>free_quota</code> と FAQ 件数の行は更新しない。</p>
 <h3>リクエストパラメータ</h3>
-<p>Path Parameters: <code>{id}</code>(プロジェクト ID)。Request Body 例(ON): <code>{ "limitEnabled": true, "limit": 5000, "alertThresholds": [25, 50, 80, 90, 100] }</code>。例(OFF): <code>{ "limitEnabled": false, "limit": null, "alertThresholds": [] }</code>。</p>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{ "id": "プロジェクト ID" }</code></pre>
+<h4>Request Body</h4>
+<pre><code>{ "limitEnabled": true, "limit": 5000, "alertThresholds": [25, 50, 80, 90, 100] }</code></pre>
+<p>例(ON)。例(OFF): <code>{ "limitEnabled": false, "limit": null, "alertThresholds": [] }</code>。</p>
 <p>バリデーション: <code>limitEnabled=true</code> の場合、<code>limit</code> は必須かつ 1 件刻みで最小件数・最大件数の範囲内。<code>alertThresholds</code> は <code>25</code> / <code>50</code> / <code>80</code> / <code>90</code> / <code>100</code> の重複しない配列とし、サーバ側で昇順へ正規化する。空配列はアラート通知なし。<code>limitEnabled=false</code> の場合は <code>limit=null</code>、<code>alertThresholds=[]</code> とする。<code>freeQuota</code> / <code>alertEnabled</code> / <code>alertFrequency</code> を指定した場合は未サポート項目として 422。</p>
 <h3>レスポンス</h3>
 <p>(200):</p>

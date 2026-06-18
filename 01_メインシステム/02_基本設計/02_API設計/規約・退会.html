@@ -43,7 +43,12 @@
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
-<p>なし。</p>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Request Body</h4>
+<pre><code>{}</code></pre>
 <h3>レスポンス</h3>
 <p>(200):</p>
 <pre><code>{ "docType": "terms_of_service", "version": "...", "effectiveDate": "...", "bodyHtml": "...", "diffSummary": "..." }</code></pre>
@@ -67,7 +72,12 @@
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
-<p>なし。</p>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Request Body</h4>
+<pre><code>{}</code></pre>
 <h3>レスポンス</h3>
 <p>(200):</p>
 <pre><code>{ "docType": "privacy_policy", "version": "...", "effectiveDate": "...", "bodyHtml": "...", "diffSummary": "..." }</code></pre>
@@ -92,6 +102,11 @@
 </table>
 <p>関連テーブル: <code>terms_agreements</code>(<code>doc_type='terms_of_service'</code>)。</p>
 <h3>リクエストパラメータ</h3>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Request Body</h4>
 <pre><code>{ "version": "..." }</code></pre>
 <p><code>terms_agreements</code> に <code>(user_id, doc_type='terms_of_service', terms_version)</code> で 1 行記録(冪等: 既存同意があれば 200)。</p>
 <h3>レスポンス</h3>
@@ -116,6 +131,11 @@
 </table>
 <p>関連テーブル: <code>terms_agreements</code>(<code>doc_type='privacy_policy'</code>)。</p>
 <h3>リクエストパラメータ</h3>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Request Body</h4>
 <pre><code>{ "version": "..." }</code></pre>
 <p><code>terms_agreements</code> に <code>(user_id, doc_type='privacy_policy', terms_version)</code> で 1 行記録(冪等: 既存同意があれば 200)。SCR-015 / SCR-018 では利用規約・プライバシーポリシー双方の同意が必須条件であり、改定再同意では改定された文書の agree のみを呼び出す。</p>
 <h3>レスポンス</h3>
@@ -140,7 +160,12 @@
 </table>
 <p>関連テーブル: <code>withdrawal_requests</code>, <code>contract_owners</code>。</p>
 <h3>リクエストパラメータ</h3>
-<p>退会申請内容(理由等)。</p>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Request Body</h4>
+<pre><code>{ "reason": "退会申請内容(理由等)" }</code></pre>
 <h3>レスポンス</h3>
 <p>(2xx): 退会申請の受付結果。</p>
 <h3>エラー</h3>

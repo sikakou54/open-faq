@@ -40,7 +40,17 @@
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
-<p>Query Parameters は <code>status</code>(<code>open</code> / <code>closed</code> のいずれか、または未指定で両方)、<code>projectId</code>、<code>cursor</code> / <code>limit</code>(共通仕様)。</p>
+<h4>Query Parameters</h4>
+<pre><code>{
+  "status": "(任意・open / closed のいずれか、未指定で両方)",
+  "projectId": "(任意)",
+  "cursor": "(共通仕様)",
+  "limit": "(共通仕様)"
+}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Request Body</h4>
+<pre><code>{}</code></pre>
 <h3>レスポンス</h3>
 <p>(200): 未解決質問の配列 + <code>nextCursor</code>。</p>
 
@@ -63,11 +73,15 @@
 </table>
 <p>PATCH は状況の手動切替のみを更新可能とし、担当者概念は持たない。</p>
 <h3>リクエストパラメータ</h3>
-<p>Path Parameters: <code>{id}</code>(未解決質問 ID)。Request Body(PATCH):</p>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{ "id": "未解決質問 ID" }</code></pre>
+<h4>Request Body</h4>
 <pre><code>{
   "status": "open" | "closed"
 }</code></pre>
-<p>各フィールドはオプション(指定したものだけ更新)。状況は <code>open</code> ↔ <code>closed</code> の双方向遷移を許容(再オープン制限なし)。FAQ 下書き保存・FAQ 公開は本フィールドを変更しない(連動ロジックなし)。状態変更履歴の永続化は行わない。</p>
+<p>Request Body は PATCH 時のもの。各フィールドはオプション(指定したものだけ更新)。状況は <code>open</code> ↔ <code>closed</code> の双方向遷移を許容(再オープン制限なし)。FAQ 下書き保存・FAQ 公開は本フィールドを変更しない(連動ロジックなし)。状態変更履歴の永続化は行わない。</p>
 <h3>レスポンス</h3>
 <p>(200): GET は未解決質問の詳細、PATCH は更新後の状況。</p>
 </article>

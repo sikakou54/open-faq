@@ -40,7 +40,12 @@
 </table>
 <p>質問数・未解決数(FR-130)、要対応状況の対応中 / 対応済み内訳(FR-132)、未解決傾向(FR-133)、期間絞り込み(FR-134)、通知失敗・バウンス件数(FR-135)をまとめて返す。<code>projectId</code> 未指定時はオーナーのみ契約全体を集約する(メンバーは <code>projectId</code> 必須)。期間は <code>period</code>(<code>current_month</code> / <code>last_30d</code>)または <code>from</code> / <code>to</code> で指定する。</p>
 <h3>リクエストパラメータ</h3>
-<p>Query Parameters は <code>period=current_month</code>、<code>projectId={id}</code>(メンバーは必須)、または <code>from</code> / <code>to</code>。</p>
+<h4>Query Parameters</h4>
+<pre><code>{ "period": "current_month", "projectId": "{id}(メンバーは必須)", "from": "任意(period の代わりに範囲指定)", "to": "任意(period の代わりに範囲指定)" }</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Request Body</h4>
+<pre><code>{}</code></pre>
 <h3>レスポンス</h3>
 <p>(200):</p>
 <pre><code>{

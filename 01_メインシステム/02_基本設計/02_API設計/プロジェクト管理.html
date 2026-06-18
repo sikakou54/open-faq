@@ -42,7 +42,15 @@
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
-<p>Query Parameters は共通仕様(<code>cursor</code> / <code>limit</code>)。Request Body: なし。</p>
+<h4>Query Parameters</h4>
+<pre><code>{
+  "cursor": "(共通仕様)",
+  "limit": "(共通仕様)"
+}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Request Body</h4>
+<pre><code>{}</code></pre>
 <h3>レスポンス</h3>
 <p>(200):</p>
 <pre><code>{
@@ -82,7 +90,11 @@
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
-<p>Request Body:</p>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Request Body</h4>
 <pre><code>{
   "name": "新規プロジェクト",
   "description": "説明文",
@@ -128,13 +140,17 @@
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
-<p>Path Parameters: <code>{id}</code>(プロジェクト ID)。Request Body(PATCH、部分更新):</p>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{ "id": "プロジェクト ID" }</code></pre>
+<h4>Request Body</h4>
 <pre><code>{
   "name": "...",
   "allowedDomains": ["..."],
   "contactEmail": "..."
 }</code></pre>
-<p>DELETE 時はボディなし。<code>DELETE /projects/{id}</code> 実行時の挙動(FR-030b、論理削除):</p>
+<p>上記 Request Body は PATCH(部分更新)時のもの。DELETE 時はボディなし。<code>DELETE /projects/{id}</code> 実行時の挙動(FR-030b、論理削除):</p>
 <ol type="1">
 <li><code>UPDATE project_users SET valid=0, updated_at=now() WHERE project_id=? AND valid=1</code>(オーナー自身の admin 行も含む全行を論理削除)</li>
 <li>UPDATE 後、他プロジェクト割当(<code>valid=1</code> 行)が 0 件かつ <code>contract_owners</code> 行を持たないメンバーの <code>users</code> を <code>UPDATE users SET valid=0, updated_at=now()</code> で論理削除 + 全セッション失効(<code>UPDATE sessions SET revoked_at=now() WHERE user_id IN (...)</code>)+ 未使用招待トークン失効(<code>UPDATE access_tokens SET used_at=now() WHERE user_id IN (...) AND used_at IS NULL</code>)</li>
@@ -172,7 +188,13 @@
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
-<p>Path Parameters: <code>{id}</code>(プロジェクト ID)。Request Body: <code>{}</code>(ボディなし。公開キーは無期限のため有効期限指定パラメータは持たない)。</p>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{ "id": "プロジェクト ID" }</code></pre>
+<h4>Request Body</h4>
+<pre><code>{}</code></pre>
+<p>公開キーは無期限のため有効期限指定パラメータは持たない。</p>
 <h3>レスポンス</h3>
 <p>(201):</p>
 <pre><code>{ "newKey": "pk_live_xyz789...", "deprecationWarning": "..." }</code></pre>

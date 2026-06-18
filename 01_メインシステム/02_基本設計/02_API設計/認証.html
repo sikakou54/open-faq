@@ -48,7 +48,11 @@
 </table>
 <p>関連テーブル: <code>accounts</code>, <code>terms_agreements</code>。</p>
 <h3>リクエストパラメータ</h3>
-<p>Query Parameters / Path Parameters: なし。Request Body:</p>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Request Body</h4>
 <pre><code>{
   "email": "admin@example.com",
   "password": "P@ssw0rd123!",
@@ -88,7 +92,11 @@
 </table>
 <p>関連テーブル: <code>accounts</code>, <code>sessions</code>。</p>
 <h3>リクエストパラメータ</h3>
-<p>Query Parameters / Path Parameters: なし。Request Body:</p>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Request Body</h4>
 <pre><code>{
   "email": "admin@example.com",
   "password": "...",
@@ -131,7 +139,12 @@
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
-<p>なし。</p>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Request Body</h4>
+<pre><code>{}</code></pre>
 <h3>レスポンス</h3>
 <p>(200):</p>
 <pre><code>{ "ok": true }</code></pre>
@@ -156,6 +169,11 @@
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Request Body</h4>
 <pre><code>{ "email": "admin@example.com", "turnstileToken": "..." }</code></pre>
 <h3>レスポンス</h3>
 <p>(202):</p>
@@ -180,6 +198,11 @@
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Request Body</h4>
 <pre><code>{ "password": "..." }</code></pre>
 <h3>レスポンス</h3>
 <p>(200):</p>
@@ -211,7 +234,12 @@
 </table>
 <p>トークン形式 = <code>email_verify</code> purpose の <code>access_tokens.token_hash</code> 検証。</p>
 <h3>リクエストパラメータ</h3>
-<p>Path Parameters: <code>{token}</code>(メール確認トークン)。Request Body: なし。</p>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{ "token": "メール確認トークン" }</code></pre>
+<h4>Request Body</h4>
+<pre><code>{}</code></pre>
 <h3>レスポンス</h3>
 <p>(200):</p>
 <pre><code>{ "userId": "...", "verifiedAt": "..." }</code></pre>
@@ -242,7 +270,12 @@
 </table>
 <p>トークン形式 = <code>activation</code> purpose の <code>access_tokens.token_hash</code> 検証。検証成功時は招待情報を返し、SCR-018 の招待情報パネル表示に使用する。Turnstile 不要(プレビューは情報取得のみで状態変更なし)。</p>
 <h3>リクエストパラメータ</h3>
-<p>Path Parameters: <code>{token}</code>(招待トークン)。Request Body: なし。</p>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{ "token": "招待トークン" }</code></pre>
+<h4>Request Body</h4>
+<pre><code>{}</code></pre>
 <h3>レスポンス</h3>
 <p>(200):</p>
 <pre><code>{
@@ -292,7 +325,11 @@
 <li><code>writeAudit('user.activation_completed', { user_id, project_id, role })</code></li>
 </ol>
 <h3>リクエストパラメータ</h3>
-<p>Path Parameters: <code>{token}</code>(招待トークン)。Request Body:</p>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{ "token": "招待トークン" }</code></pre>
+<h4>Request Body</h4>
 <pre><code>{
   "displayName": "山田 太郎",
   "password": "P@ssw0rd-strong",
@@ -349,7 +386,12 @@
 <li><code>writeAudit('project.contact_email_verified', { project_id, email_hmac })</code></li>
 </ol>
 <h3>リクエストパラメータ</h3>
-<p>Path Parameters: <code>{token}</code>(連絡先確認トークン)。Request Body: なし(URL のトークンのみ)。</p>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{ "token": "連絡先確認トークン" }</code></pre>
+<h4>Request Body</h4>
+<pre><code>{}</code></pre>
 <h3>レスポンス</h3>
 <p>(200):</p>
 <pre><code>{ "projectId": "proj_1", "projectName": "サポートサイト", "verifiedAt": "2026-05-21T..." }</code></pre>

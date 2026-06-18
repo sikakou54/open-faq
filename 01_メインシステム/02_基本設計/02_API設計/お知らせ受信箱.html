@@ -42,7 +42,12 @@
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
-<p>Query Parameters は <code>cursor</code> / <code>limit</code>(共通仕様)。</p>
+<h4>Query Parameters</h4>
+<pre><code>{ "cursor": "共通仕様", "limit": "共通仕様" }</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Request Body</h4>
+<pre><code>{}</code></pre>
 <h3>レスポンス</h3>
 <p>(200):</p>
 <pre><code>{
@@ -78,7 +83,12 @@
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
-<p>Path Parameters は <code>{id}</code>(お知らせ ID)。</p>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{ "id": "お知らせ ID" }</code></pre>
+<h4>Request Body</h4>
+<pre><code>{}</code></pre>
 <h3>レスポンス</h3>
 <p>(200):</p>
 <pre><code>{ "id": "...", "readAt": "..." }</code></pre>
@@ -102,6 +112,11 @@
 </table>
 <p>SCR-011 の一括既読化操作から呼び出し、選択した複数のお知らせを一括で既読にする。1 リクエストの上限は <strong>100 件</strong>。超過時は 400 <code>VALIDATION_ERROR</code>。冪等(既読済みは再記録しない)。一括既読操作は操作者・対象件数・実行日時を監査記録する(FR-152 相当、正本: <a href="../09_セキュリティ設計.html">09_セキュリティ設計.html</a>)。</p>
 <h3>リクエストパラメータ</h3>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Request Body</h4>
 <pre><code>{ "ids": ["ann_...", "ann_..."] }</code></pre>
 <p>(全件既読を指定する場合は <code>{ "all": true }</code>)</p>
 <h3>レスポンス</h3>
@@ -133,7 +148,12 @@
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
-<p>なし。</p>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Request Body</h4>
+<pre><code>{}</code></pre>
 <h3>レスポンス</h3>
 <p>(200):</p>
 <pre><code>{ "unreadsCount": 5, "recent": [...] }</code></pre>
