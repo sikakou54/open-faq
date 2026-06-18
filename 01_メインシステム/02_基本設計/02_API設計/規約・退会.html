@@ -133,7 +133,13 @@
 <tr><td>権限</td><td>admin</td></tr>
 </tbody>
 </table>
-<p>関連テーブル: <code>terms_agreements</code>(<code>doc_type='terms_of_service'</code>)。</p>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>terms_agreements</code>(<code>doc_type='terms_of_service'</code>)</td><td>◯</td><td>◯</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{}</code></pre>
@@ -177,7 +183,13 @@
 <tr><td>権限</td><td>admin</td></tr>
 </tbody>
 </table>
-<p>関連テーブル: <code>terms_agreements</code>(<code>doc_type='privacy_policy'</code>)。</p>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>terms_agreements</code>(<code>doc_type='privacy_policy'</code>)</td><td>◯</td><td>◯</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{}</code></pre>
@@ -221,7 +233,14 @@
 <tr><td>権限</td><td>オーナー専有</td></tr>
 </tbody>
 </table>
-<p>関連テーブル: <code>withdrawal_requests</code>, <code>contract_owners</code>。</p>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>withdrawal_requests</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td><code>contract_owners</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
+</tbody>
+</table>
 <h3>リクエストパラメータ</h3>
 <h4>Query Parameters</h4>
 <pre><code>{}</code></pre>
