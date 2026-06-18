@@ -41,22 +41,22 @@
 </tr>
 <tr>
 <td>無料枠 / 月次上限件数</td>
-<td><code>project_quota_limits</code> で保持(<a href="03_テーブル設計.html#324-project_quota_limits">03_テーブル設計.html §3.24</a> 正本)</td>
+<td><code>project_quota_limits</code> で保持(<a href="03_テーブル設計/project_quota_limits.html">03_テーブル設計/index.html §3.24</a> 正本)</td>
 <td>プロジェクト</td>
 </tr>
 <tr>
 <td>レート制限(DDoS / Bot / 暴走対策)</td>
-<td><code>owner_quota_overrides</code> で保持(<a href="03_テーブル設計.html#323-owner_quota_overrides">03_テーブル設計.html §3.23</a> 正本)。上限件数・無料枠とは別軸</td>
+<td><code>owner_quota_overrides</code> で保持(<a href="03_テーブル設計/owner_quota_overrides.html">03_テーブル設計/index.html §3.23</a> 正本)。上限件数・無料枠とは別軸</td>
 <td>契約</td>
 </tr>
 <tr>
 <td>利用量計測 / 請求集計</td>
-<td><code>usage_metering</code> をプロジェクト単位で計測し、契約単位で集計して請求(<a href="03_テーブル設計.html#322-usage_metering">03_テーブル設計.html §3.22</a> 正本)</td>
+<td><code>usage_metering</code> をプロジェクト単位で計測し、契約単位で集計して請求(<a href="03_テーブル設計/usage_metering.html">03_テーブル設計/index.html §3.22</a> 正本)</td>
 <td>計測=プロジェクト / 請求=契約</td>
 </tr>
 </tbody>
 </table>
-<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">テーブル定義は 03 が正本</span><code>billing_subscriptions</code> / <code>billing_invoices</code> / <code>usage_metering</code> / <code>owner_quota_overrides</code> / <code>project_quota_limits</code> のカラム・制約・コード値は <a href="03_テーブル設計.html#3-テーブル詳細">03_テーブル設計.html §3</a> を正本とする。本ページは判定ロジックと状態遷移のみを扱う。</div></div>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">テーブル定義は 03 が正本</span><code>billing_subscriptions</code> / <code>billing_invoices</code> / <code>usage_metering</code> / <code>owner_quota_overrides</code> / <code>project_quota_limits</code> のカラム・制約・コード値は <a href="03_テーブル設計/index.html#3-テーブル詳細">03_テーブル設計/index.html §3</a> を正本とする。本ページは判定ロジックと状態遷移のみを扱う。</div></div>
 
 <h3 id="11-課金対象と無料枠初期値">1.1 課金対象と無料枠初期値</h3>
 <p class="section-lead">課金対象は質問数・FAQ 件数・AI 利用コストの 3 種。質問数のみが月次上限件数による停止対象で、FAQ 件数は上限なしで従量課金を継続する。AI 利用コストは MVP ではサービス側が吸収する社内可視化指標とする。無料枠・単価の初期値は要件(BR-086)を正本とし、運営者が料金設定として管理する。</p>
@@ -266,7 +266,7 @@
 </tr>
 </tbody>
 </table>
-<div class="callout important"><i class="bi bi-pin-angle"></i><div><span class="c-title">contract_status は共有概念正本に従う</span>4 値の定義・<code>valid</code> との整合・テーブル CHECK 制約は <a href="../../共有/共有概念.html#3-共有概念の正本ルール">共有概念.html #1</a> および <a href="03_テーブル設計.html#455-契約状態遷移contract_ownerscontract_status共有概念正本">03_テーブル設計.html §4.5.5</a> を正本とする。本ページは課金 / 退会起因の遷移条件のみを扱う。</div></div>
+<div class="callout important"><i class="bi bi-pin-angle"></i><div><span class="c-title">contract_status は共有概念正本に従う</span>4 値の定義・<code>valid</code> との整合・テーブル CHECK 制約は <a href="../../共有/共有概念.html#3-共有概念の正本ルール">共有概念.html #1</a> および <a href="03_テーブル設計/index.html#455-契約状態遷移contract_ownerscontract_status共有概念正本">03_テーブル設計/index.html §4.5.5</a> を正本とする。本ページは課金 / 退会起因の遷移条件のみを扱う。</div></div>
 
 <h3 id="51-決済失敗からサスペンションへ">5.1 決済失敗からサスペンションへ(7 日猶予)</h3>
 <p class="section-lead">課金プロバイダから決済失敗確定の通知を受信した時刻を起点に 7 日間の猶予を計測する。次のシーケンス図は、猶予開始から猶予経過による <code>suspended</code> 移行までの流れと、猶予中 / サスペンション中いずれでも再決済成功・運営者解除の通知受信で即時 <code>active</code> へ復帰する分岐を示す。猶予中も管理画面ログインと支払方法更新は可能である。</p>

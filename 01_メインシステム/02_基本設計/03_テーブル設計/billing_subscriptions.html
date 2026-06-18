@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>billing_subscriptions(TBL-020) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/billing_subscriptions.html">
+<article class="content" id="content">
+<h1 id="TBL-020">TBL-020 <code>billing_subscriptions</code></h1>
+<span id="320-billing_subscriptions"></span>
+<p class="section-lead">Stripe Subscription と連動する課金サブスクリプション情報を保持します。主キーは <code>id</code>、契約境界キー <code>contract_owner_user_id</code> を持ちます。論理削除は <code>valid</code> カラムで表します(主管 FR-148、<code>retention_class</code>=<code>billing</code>)。</p>
+<h3 id="3201-概要">概要</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>テーブル名</td>
+<td><code>billing_subscriptions</code></td>
+</tr>
+<tr>
+<td>論理名</td>
+<td>課金サブスクリプション</td>
+</tr>
+<tr>
+<td>説明</td>
+<td>Stripe Subscription 連動</td>
+</tr>
+<tr>
+<td>主管 FR</td>
+<td>FR-148</td>
+</tr>
+<tr>
+<td>保持期間 / 保持起点</td>
+<td>永久(契約存続中) / 作成日時</td>
+</tr>
+<tr>
+<td><code>contract_owner_user_id</code></td>
+<td>あり</td>
+</tr>
+<tr>
+<td><code>retention_class</code></td>
+<td><code>billing</code></td>
+</tr>
+<tr>
+<td>設計判断</td>
+<td><strong>物理削除バッチ除外</strong>: <code>valid</code> カラムを持つが、電子帳簿保存法 / 法定保管要件との整合のため、90 日後の物理削除バッチ(<a href="../../03_詳細設計/DD13_バッチ・非同期処理.html">DD13</a>)の対象外。<code>valid=0</code> 行は永久に保持し、Stripe 連動の取消履歴として参照可能にする</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3202-カラム定義">カラム定義</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>論理名</th>
+<th>物理名</th>
+<th>データ型</th>
+<th style="text-align: right;">桁数</th>
+<th>NULL</th>
+<th>PK</th>
+<th>FK</th>
+<th>UNIQUE</th>
+<th>DEFAULT</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>ID</td>
+<td><code>id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td>○</td>
+<td></td>
+<td></td>
+<td></td>
+<td>ULID</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>契約 owner ID</td>
+<td><code>contract_owner_user_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td>○</td>
+<td></td>
+<td></td>
+<td><code>contract_owners(user_id)</code> 参照</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>Stripe サブスク ID</td>
+<td><code>stripe_subscription_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td>○</td>
+<td></td>
+<td>Stripe ID</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>状態</td>
+<td><code>status</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>§3.20.7</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td>プラン ID</td>
+<td><code>plan_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>-</td>
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td>当期開始</td>
+<td><code>current_period_start</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>-</td>
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td>当期終了</td>
+<td><code>current_period_end</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>-</td>
+</tr>
+<tr>
+<td style="text-align: right;">8</td>
+<td>解約予定日</td>
+<td><code>cancel_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>-</td>
+</tr>
+<tr>
+<td style="text-align: right;">9</td>
+<td>有効フラグ</td>
+<td><code>valid</code></td>
+<td>INTEGER</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>1</code></td>
+<td>論理削除フラグ(物理削除対象外)</td>
+</tr>
+<tr>
+<td style="text-align: right;">10</td>
+<td>作成日時</td>
+<td><code>created_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>ISO 8601 UTC</td>
+</tr>
+<tr>
+<td style="text-align: right;">11</td>
+<td>更新日時</td>
+<td><code>updated_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>ISO 8601 UTC</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3203-主キー">主キー</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>主キー名</td>
+<td>(暗黙、PRIMARY KEY 句で指定)</td>
+</tr>
+<tr>
+<td>対象カラム</td>
+<td><code>id</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="3204-外部キー">外部キー</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>外部キー名</th>
+<th>対象カラム</th>
+<th>参照先テーブル</th>
+<th>参照先カラム</th>
+<th>更新時</th>
+<th>削除時</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>(暗黙)</td>
+<td><code>contract_owner_user_id</code></td>
+<td><code>contract_owners</code></td>
+<td><code>user_id</code></td>
+<td>NO ACTION</td>
+<td>CASCADE</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3205-インデックス">インデックス</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>インデックス名</th>
+<th>対象カラム</th>
+<th>UNIQUE</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td><code>idx_billing_subs_owner</code></td>
+<td><code>contract_owner_user_id</code></td>
+<td></td>
+<td>オーナー検索</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td><code>idx_billing_subs_status</code></td>
+<td><code>status</code></td>
+<td></td>
+<td>状態別集計</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td><code>idx_billing_subs_valid</code></td>
+<td><code>valid</code> WHERE <code>valid = 0</code></td>
+<td></td>
+<td>論理削除済み参照(物理削除対象外)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3206-制約">制約</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>制約名</th>
+<th>種別</th>
+<th>対象カラム</th>
+<th>条件・内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>(暗黙)</td>
+<td>CHECK</td>
+<td><code>status</code></td>
+<td><code>status IN ('active','past_due','canceled','unpaid','incomplete')</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>(暗黙)</td>
+<td>CHECK</td>
+<td><code>valid</code></td>
+<td><code>valid IN (0,1)</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="3207-コード値区分値">コード値・区分値</h3>
+<table>
+<thead>
+<tr>
+<th>カラム名</th>
+<th>値</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>status</code></td>
+<td><code>active</code></td>
+<td>有効</td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td><code>past_due</code></td>
+<td>支払遅延</td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td><code>canceled</code></td>
+<td>解約済み</td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td><code>unpaid</code></td>
+<td>未払い</td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td><code>incomplete</code></td>
+<td>初回支払未完了</td>
+</tr>
+</tbody>
+</table>
+</article>
+</body>
+</html>

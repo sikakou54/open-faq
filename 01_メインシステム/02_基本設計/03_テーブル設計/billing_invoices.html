@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>billing_invoices(TBL-021) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/billing_invoices.html">
+<article class="content" id="content">
+<h1 id="TBL-021">TBL-021 <code>billing_invoices</code></h1>
+<span id="321-billing_invoices"></span>
+<p class="section-lead">月次請求書を保持します。主キーは <code>id</code>、契約境界キー <code>contract_owner_user_id</code> を持ち、電子帳簿保存法に基づき 7 年保持します(主管 FR-148 / NFR-602b、<code>retention_class</code>=<code>billing</code>)。</p>
+<h3 id="3211-概要">概要</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>テーブル名</td>
+<td><code>billing_invoices</code></td>
+</tr>
+<tr>
+<td>論理名</td>
+<td>請求書(電子帳簿保存法対応、7 年保持)</td>
+</tr>
+<tr>
+<td>説明</td>
+<td>月次請求書</td>
+</tr>
+<tr>
+<td>主管 FR</td>
+<td>FR-148, NFR-602b</td>
+</tr>
+<tr>
+<td>保持期間 / 保持起点</td>
+<td>7 年 / 発行日時</td>
+</tr>
+<tr>
+<td><code>contract_owner_user_id</code></td>
+<td>あり</td>
+</tr>
+<tr>
+<td><code>retention_class</code></td>
+<td><code>billing</code></td>
+</tr>
+<tr>
+<td>設計判断</td>
+<td><code>valid</code> 持たず(法定保管 7 年テーブル)。<code>(contract_owner_user_id, billing_year_month)</code> で月次一意</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3212-カラム定義">カラム定義</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>論理名</th>
+<th>物理名</th>
+<th>データ型</th>
+<th style="text-align: right;">桁数</th>
+<th>NULL</th>
+<th>PK</th>
+<th>FK</th>
+<th>UNIQUE</th>
+<th>DEFAULT</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>ID</td>
+<td><code>id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td>○</td>
+<td></td>
+<td></td>
+<td></td>
+<td>ULID</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>契約 owner ID</td>
+<td><code>contract_owner_user_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td>○</td>
+<td>①</td>
+<td></td>
+<td><code>contract_owners(user_id)</code> 参照</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>請求年月</td>
+<td><code>billing_year_month</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td>②</td>
+<td></td>
+<td>YYYY-MM</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>状態</td>
+<td><code>status</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>§3.21.7</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td>合計金額</td>
+<td><code>amount_total</code></td>
+<td>INTEGER</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>円(税込)</td>
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td>税額</td>
+<td><code>amount_tax</code></td>
+<td>INTEGER</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>0</code></td>
+<td>円</td>
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td>通貨</td>
+<td><code>currency</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>'JPY'</code></td>
+<td>ISO 4217</td>
+</tr>
+<tr>
+<td style="text-align: right;">8</td>
+<td>Stripe 請求書 ID</td>
+<td><code>stripe_invoice_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td>○</td>
+<td></td>
+<td>Stripe ID</td>
+</tr>
+<tr>
+<td style="text-align: right;">9</td>
+<td>PDF R2 キー</td>
+<td><code>pdf_r2_key</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>R2 オブジェクトキー</td>
+</tr>
+<tr>
+<td style="text-align: right;">10</td>
+<td>発行日時</td>
+<td><code>issued_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>-</td>
+</tr>
+<tr>
+<td style="text-align: right;">11</td>
+<td>支払日時</td>
+<td><code>paid_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>-</td>
+</tr>
+<tr>
+<td style="text-align: right;">12</td>
+<td>返金日時</td>
+<td><code>refunded_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>-</td>
+</tr>
+<tr>
+<td style="text-align: right;">13</td>
+<td>作成日時</td>
+<td><code>created_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>ISO 8601 UTC</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3213-主キー">主キー</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>主キー名</td>
+<td>(暗黙、PRIMARY KEY 句で指定)</td>
+</tr>
+<tr>
+<td>対象カラム</td>
+<td><code>id</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="3214-外部キー">外部キー</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>外部キー名</th>
+<th>対象カラム</th>
+<th>参照先テーブル</th>
+<th>参照先カラム</th>
+<th>更新時</th>
+<th>削除時</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>(暗黙)</td>
+<td><code>contract_owner_user_id</code></td>
+<td><code>contract_owners</code></td>
+<td><code>user_id</code></td>
+<td>NO ACTION</td>
+<td>NO ACTION</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3215-インデックス">インデックス</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>インデックス名</th>
+<th>対象カラム</th>
+<th>UNIQUE</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td><code>uq_billing_invoices_owner_month</code></td>
+<td><code>(contract_owner_user_id, billing_year_month)</code></td>
+<td>○</td>
+<td>月次一意</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td><code>idx_billing_invoices_status</code></td>
+<td><code>status</code></td>
+<td></td>
+<td>状態別集計</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3216-制約">制約</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>制約名</th>
+<th>種別</th>
+<th>対象カラム</th>
+<th>条件・内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>(暗黙)</td>
+<td>CHECK</td>
+<td><code>status</code></td>
+<td><code>status IN ('draft','issued','paid','past_due','refunded','void')</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="3217-コード値区分値">コード値・区分値</h3>
+<table>
+<thead>
+<tr>
+<th>カラム名</th>
+<th>値</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>status</code></td>
+<td><code>draft</code></td>
+<td>下書き</td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td><code>issued</code></td>
+<td>発行済み</td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td><code>paid</code></td>
+<td>支払完了</td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td><code>past_due</code></td>
+<td>支払遅延</td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td><code>refunded</code></td>
+<td>返金済み</td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td><code>void</code></td>
+<td>無効化</td>
+</tr>
+</tbody>
+</table>
+</article>
+</body>
+</html>

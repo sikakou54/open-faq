@@ -633,7 +633,7 @@
 </tbody>
 </table>
 <h2 id="5c-v111-ユーザーマスタ-3-表分割マイグレーションmvp-未リリースddl-切替のみ">5c. v1.11 ユーザーマスタ 3 表分割マイグレーション(MVP 未リリース、DDL 切替のみ)</h2>
-<p><strong>前提</strong>: MVP 未リリースのためデータ移行不要。新規 DDL のみ。旧 v1.10 の <code>accounts</code> / <code>account_project_grants</code> 単一表モデルを、関心分離の明示と DB 制約強化のために <strong>3 表分離型</strong>(<code>users</code> / <code>contract_owners</code> / <code>project_users</code>)へ切り替える。設計プランは <a href="file:///Users/sasakikouhei/.claude/plans/humble-yawning-beacon.html">/Users/sasakikouhei/.claude/plans/humble-yawning-beacon.md</a> を正本、新スキーマは <a href="../02_基本設計/03_テーブル設計.html">../02_基本設計/03_テーブル設計.html</a> §3.1 / §3.2 / §3.3 を正本とする。</p>
+<p><strong>前提</strong>: MVP 未リリースのためデータ移行不要。新規 DDL のみ。旧 v1.10 の <code>accounts</code> / <code>account_project_grants</code> 単一表モデルを、関心分離の明示と DB 制約強化のために <strong>3 表分離型</strong>(<code>users</code> / <code>contract_owners</code> / <code>project_users</code>)へ切り替える。設計プランは <a href="file:///Users/sasakikouhei/.claude/plans/humble-yawning-beacon.html">/Users/sasakikouhei/.claude/plans/humble-yawning-beacon.md</a> を正本、新スキーマは <a href="../02_基本設計/03_テーブル設計/index.html">../02_基本設計/03_テーブル設計/index.html</a> §3.1 / §3.2 / §3.3 を正本とする。</p>
 <h3 id="5c1-マイグレーション順序forward-onlystaging-で検証--prod-適用">5c.1 マイグレーション順序(forward-only、staging で検証 → prod 適用)</h3>
 <table>
 <thead>
@@ -653,7 +653,7 @@
 </tr>
 <tr>
 <td>M11-2</td>
-<td>新スキーマを適用(基本設計 03_テーブル設計.html §3.1 / §3.2 / §3.3 を正本):<br>・<code>users</code>(ユーザーマスタ、13 カラム。全ロール共通の認証情報)<br>・<code>contract_owners</code>(契約者ユーザー、<code>user_id PRIMARY KEY</code> で 1 契約 = 1 オーナー固定。<code>contract_status</code> / <code>data_deletion_mode</code> 専有)<br>・<code>project_users</code>(プロジェクトユーザー割当、<code>(user_id, project_id)</code> 複合 PK + <code>contract_owner_user_id</code> 冗長保持)</td>
+<td>新スキーマを適用(基本設計 03_テーブル設計/index.html §3.1 / §3.2 / §3.3 を正本):<br>・<code>users</code>(ユーザーマスタ、13 カラム。全ロール共通の認証情報)<br>・<code>contract_owners</code>(契約者ユーザー、<code>user_id PRIMARY KEY</code> で 1 契約 = 1 オーナー固定。<code>contract_status</code> / <code>data_deletion_mode</code> 専有)<br>・<code>project_users</code>(プロジェクトユーザー割当、<code>(user_id, project_id)</code> 複合 PK + <code>contract_owner_user_id</code> 冗長保持)</td>
 <td>CREATE TABLE</td>
 <td>低</td>
 </tr>
@@ -665,7 +665,7 @@
 </tr>
 <tr>
 <td>M11-4</td>
-<td>インデックス再作成(基本設計 03_テーブル設計.html 各テーブルの §N.5 インデックスを反映):<br>・<code>idx_users_email_hmac</code> / <code>idx_users_valid</code><br>・<code>idx_contract_owners_status</code> / <code>idx_contract_owners_valid</code><br>・<code>idx_project_users_project</code> / <code>idx_project_users_owner</code> / <code>idx_project_users_role_admin</code> / <code>idx_project_users_valid</code><br>・<code>uq_usage_metering_owner_month(contract_owner_user_id, billing_year_month)</code><br>・<code>uq_billing_invoices_owner_month(contract_owner_user_id, billing_year_month)</code><br>・<code>idx_faqs_owner_project</code> / <code>idx_inquiries_contract_status_created</code> / <code>idx_qlog_owner_created</code> 等の <code>contract_owner_user_id</code> 系インデックス</td>
+<td>インデックス再作成(基本設計 03_テーブル設計/index.html 各テーブルの §N.5 インデックスを反映):<br>・<code>idx_users_email_hmac</code> / <code>idx_users_valid</code><br>・<code>idx_contract_owners_status</code> / <code>idx_contract_owners_valid</code><br>・<code>idx_project_users_project</code> / <code>idx_project_users_owner</code> / <code>idx_project_users_role_admin</code> / <code>idx_project_users_valid</code><br>・<code>uq_usage_metering_owner_month(contract_owner_user_id, billing_year_month)</code><br>・<code>uq_billing_invoices_owner_month(contract_owner_user_id, billing_year_month)</code><br>・<code>idx_faqs_owner_project</code> / <code>idx_inquiries_contract_status_created</code> / <code>idx_qlog_owner_created</code> 等の <code>contract_owner_user_id</code> 系インデックス</td>
 <td>CREATE INDEX</td>
 <td>低</td>
 </tr>
@@ -703,7 +703,7 @@
 <tbody>
 <tr>
 <td>M12-1</td>
-<td><code>project_quota_limits</code> を新規作成(基本設計 03_テーブル設計.html §3.24)。FK <code>project_id</code>→<code>projects(id)</code> CASCADE / <code>contract_owner_user_id</code>→<code>contract_owners(user_id)</code> CASCADE</td>
+<td><code>project_quota_limits</code> を新規作成(基本設計 03_テーブル設計/index.html §3.24)。FK <code>project_id</code>→<code>projects(id)</code> CASCADE / <code>contract_owner_user_id</code>→<code>contract_owners(user_id)</code> CASCADE</td>
 <td>CREATE TABLE</td>
 <td>低</td>
 </tr>
@@ -752,7 +752,7 @@
 </tbody>
 </table>
 <h3 id="5c2-契約内メール一意アプリ層担保">5c.2 「契約内メール一意」アプリ層担保</h3>
-<p>旧 <code>uq_accounts_owner_email(owner_account_id, email_hmac) WHERE valid=1</code> は新スキーマ(<code>users</code> 単独)では表現不能。<strong>アプリ層トランザクション</strong>で担保する(<a href="../02_基本設計/03_テーブル設計.html">../02_基本設計/03_テーブル設計.html</a> §3.1 設計判断、§3.3 メンバー招待時手順を正本):</p>
+<p>旧 <code>uq_accounts_owner_email(owner_account_id, email_hmac) WHERE valid=1</code> は新スキーマ(<code>users</code> 単独)では表現不能。<strong>アプリ層トランザクション</strong>で担保する(<a href="../02_基本設計/03_テーブル設計/index.html">../02_基本設計/03_テーブル設計/index.html</a> §3.1 設計判断、§3.3 メンバー招待時手順を正本):</p>
 <ul>
 <li><strong>オーナー登録時</strong>: 単に新 <code>users</code> 行 INSERT(契約はまだ無いので重複なし)</li>
 <li><strong>メンバー招待時</strong>: <code>BEGIN IMMEDIATE</code> で「同一 <code>contract_owner_user_id</code> 配下の既存 <code>project_users.user_id</code> の <code>users.email_hmac</code> セット」+「<code>contract_owners</code> 行の <code>users.email_hmac</code>」を SELECT し重複検査 → 新 <code>users</code> 行 INSERT → <code>project_users</code> 行 INSERT</li>

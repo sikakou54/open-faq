@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>audit_logs(TBL-018) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/audit_logs.html">
+<article class="content" id="content">
+<h1 id="TBL-018">TBL-018 <code>audit_logs</code></h1>
+<span id="318-audit_logs"></span>
+<p class="section-lead">メイン管理者向けの API 操作ログを保持します。主キーは <code>id</code>、契約境界キー <code>contract_owner_user_id</code> を持ち、<code>retention_class</code>(<code>general</code> / <code>billing</code> / <code>operator_high_priv</code>)別に保持します。ハッシュチェーン正本は運営者側 <code>audit_logs</code>(IF #8 で片方向同期、主管 NFR-602a/b/d)です。</p>
+<h3 id="3181-概要">概要</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>テーブル名</td>
+<td><code>audit_logs</code></td>
+</tr>
+<tr>
+<td>論理名</td>
+<td>監査ログ(メイン側、API 操作ログ専用)</td>
+</tr>
+<tr>
+<td>説明</td>
+<td>メイン管理者向けの API 操作ログ。<strong>ハッシュチェーン正本は運営者側 <code>audit_logs</code></strong>(IF #8 で片方向同期)</td>
+</tr>
+<tr>
+<td>主管 FR</td>
+<td>NFR-602a / NFR-602b / NFR-602d</td>
+</tr>
+<tr>
+<td>保持期間 / 保持起点</td>
+<td>retention_class 別(<code>general</code> 1y / <code>billing</code> 7y / <code>operator_high_priv</code> 5y)/ 操作日時</td>
+</tr>
+<tr>
+<td><code>contract_owner_user_id</code></td>
+<td>あり</td>
+</tr>
+<tr>
+<td><code>retention_class</code></td>
+<td><code>general</code> / <code>billing</code> / <code>operator_high_priv</code>(本テーブルのカラム値で表現)</td>
+</tr>
+<tr>
+<td>設計判断</td>
+<td><code>valid</code> 持たず(API 操作ログ専用、<code>created_at + retention 期間</code> で物理 DELETE)。tombstone 方式は採らない(チェーン非対象のため)。<code>actor_role</code> の <code>service_operator</code> は運営者によるメイン API 呼出(IF 経由)を記録する用途で許容値として残す(<code>users</code> のロール概念とは独立)。<code>metadata</code> の JSON 構造例: <code>{"before":{...},"after":{...},"ticket_id":"OPS-1234"}</code>。SCR-019 操作ログ画面など、メイン管理者向けの即時参照クエリに低レイテンシで応える。MVPの操作者参照は <code>actor_user_id</code>(<code>users(id)</code>)のみとし、システム・運営者操作はNULLとする</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3182-カラム定義">カラム定義</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>論理名</th>
+<th>物理名</th>
+<th>データ型</th>
+<th style="text-align: right;">桁数</th>
+<th>NULL</th>
+<th>PK</th>
+<th>FK</th>
+<th>UNIQUE</th>
+<th>DEFAULT</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>ID</td>
+<td><code>id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td>○</td>
+<td></td>
+<td></td>
+<td></td>
+<td>ULID</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>契約 owner ID</td>
+<td><code>contract_owner_user_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td>○</td>
+<td></td>
+<td></td>
+<td><code>contract_owners(user_id)</code> 参照</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>操作者(管理者)</td>
+<td><code>actor_user_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td>○</td>
+<td></td>
+<td></td>
+<td><code>users(id)</code> 参照(<code>actor_role='admin'</code> 時)</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>操作者ロール</td>
+<td><code>actor_role</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>§3.18.7</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td>アクション</td>
+<td><code>action</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>アクションコード</td>
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td>対象種別</td>
+<td><code>target_type</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>-</td>
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td>対象 ID</td>
+<td><code>target_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>-</td>
+</tr>
+<tr>
+<td style="text-align: right;">8</td>
+<td>IP(マスク済)</td>
+<td><code>ip_address_masked</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>末尾オクテットマスク</td>
+</tr>
+<tr>
+<td style="text-align: right;">9</td>
+<td>ユーザーエージェント</td>
+<td><code>user_agent</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>-</td>
+</tr>
+<tr>
+<td style="text-align: right;">10</td>
+<td>メタデータ</td>
+<td><code>metadata</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>JSON 文字列(差分・補助情報)</td>
+</tr>
+<tr>
+<td style="text-align: right;">11</td>
+<td>保持クラス</td>
+<td><code>retention_class</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>'general'</code></td>
+<td><code>general</code> / <code>billing</code> / <code>operator_high_priv</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">12</td>
+<td>作成日時</td>
+<td><code>created_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>ISO 8601 UTC</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3183-主キー">主キー</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>主キー名</td>
+<td>(暗黙、PRIMARY KEY 句で指定)</td>
+</tr>
+<tr>
+<td>対象カラム</td>
+<td><code>id</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="3184-外部キー">外部キー</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>外部キー名</th>
+<th>対象カラム</th>
+<th>参照先テーブル</th>
+<th>参照先カラム</th>
+<th>更新時</th>
+<th>削除時</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>(暗黙)</td>
+<td><code>contract_owner_user_id</code></td>
+<td><code>contract_owners</code></td>
+<td><code>user_id</code></td>
+<td>NO ACTION</td>
+<td>SET NULL</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>(暗黙)</td>
+<td><code>actor_user_id</code></td>
+<td><code>users</code></td>
+<td><code>id</code></td>
+<td>NO ACTION</td>
+<td>SET NULL</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3185-インデックス">インデックス</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>インデックス名</th>
+<th>対象カラム</th>
+<th>UNIQUE</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td><code>idx_audit_owner_action_created</code></td>
+<td><code>(contract_owner_user_id, action, created_at DESC)</code></td>
+<td></td>
+<td>オーナー × アクション × 新着</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td><code>idx_audit_retention_created</code></td>
+<td><code>(retention_class, created_at)</code></td>
+<td></td>
+<td>保持期間バッチ用</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td><code>idx_audit_actor_created</code></td>
+<td><code>(actor_user_id, created_at DESC)</code></td>
+<td></td>
+<td>管理者操作の操作者別新着</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3186-制約">制約</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>制約名</th>
+<th>種別</th>
+<th>対象カラム</th>
+<th>条件・内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>(暗黙)</td>
+<td>CHECK</td>
+<td><code>actor_role</code></td>
+<td><code>actor_role IS NULL OR actor_role IN ('admin','system','service_operator')</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>(暗黙)</td>
+<td>CHECK</td>
+<td><code>retention_class</code></td>
+<td><code>retention_class IN ('general','billing','operator_high_priv')</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="3187-コード値区分値">コード値・区分値</h3>
+<table>
+<thead>
+<tr>
+<th>カラム名</th>
+<th>値</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>actor_role</code></td>
+<td><code>admin</code></td>
+<td>利用者管理者</td>
+</tr>
+<tr>
+<td><code>actor_role</code></td>
+<td><code>system</code></td>
+<td>システム(Cron / バッチ)</td>
+</tr>
+<tr>
+<td><code>actor_role</code></td>
+<td><code>service_operator</code></td>
+<td>運営者(IF 経由のメイン API 呼出)</td>
+</tr>
+<tr>
+<td><code>retention_class</code></td>
+<td><code>general</code></td>
+<td>業務監査 1 年(NFR-602a)</td>
+</tr>
+<tr>
+<td><code>retention_class</code></td>
+<td><code>billing</code></td>
+<td>課金・法定保管 7 年(NFR-602b)</td>
+</tr>
+<tr>
+<td><code>retention_class</code></td>
+<td><code>operator_high_priv</code></td>
+<td>運営者高権限 5 年(NFR-602d)</td>
+</tr>
+</tbody>
+</table>
+<p>ハッシュチェーン列(<code>prev_hash</code> / <code>current_hash</code> / <code>tombstone</code>)は持たない。チェーン正本は運営者側。詳細は §2.2 / <a href="../09_セキュリティ設計.html">09_セキュリティ設計.html §7</a> 参照。</p>
+</article>
+</body>
+</html>

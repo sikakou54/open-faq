@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>users(TBL-001) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/users.html">
+<article class="content" id="content">
+<h1 id="TBL-001">TBL-001 <code>users</code></h1>
+<span id="31-users"></span>
+<p class="section-lead">管理者(オーナー / プロジェクト管理者 / メンバー)の認証情報(メール / パスワード / 氏名 / セッション状態)を一元保持するユーザーマスタです。主キーは <code>id</code>。「オーナーかどうか」は本テーブル単独では判定せず <code>contract_owners</code> 行存在で判定し、論理削除は <code>valid</code> カラムで表します(主管 FR-001 / FR-015)。</p>
+<h3 id="311-概要">概要</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>テーブル名</td>
+<td><code>users</code></td>
+</tr>
+<tr>
+<td>論理名</td>
+<td>ユーザーマスタ(管理者専用)</td>
+</tr>
+<tr>
+<td>説明</td>
+<td><strong>管理者(オーナー / プロジェクト管理者 / メンバー)</strong> の認証情報(メール / パスワード / 氏名 / セッション状態など)を一元保持。MVPのウィジェット利用者はアカウント行を作成しない</td>
+</tr>
+<tr>
+<td>主管 FR</td>
+<td>FR-001, FR-015</td>
+</tr>
+<tr>
+<td>保持期間 / 保持起点</td>
+<td>永久(契約存続中)/ 作成日時</td>
+</tr>
+<tr>
+<td><code>contract_owner_user_id</code></td>
+<td>なし(<code>contract_owners.user_id</code> / <code>project_users.contract_owner_user_id</code> で表現)</td>
+</tr>
+<tr>
+<td><code>retention_class</code></td>
+<td><code>general</code></td>
+</tr>
+<tr>
+<td>設計判断</td>
+<td>本テーブルの行はすべて管理コンソール利用者。MVPのウィジェット利用者は本テーブルにも別テーブルにも永続アカウントを作成しない。<code>role</code> カラムは v1.13 で撤廃。「オーナーかどうか」は本テーブル単独では判定せず、<strong><code>contract_owners</code> 行存在で判定</strong> する(<code>is_owner</code> カラムも <code>owner_account_id</code> 自己参照も持たない)。「契約所属」は <code>contract_owners.user_id = users.id</code>(本人がオーナー)または <code>project_users.user_id = users.id</code> 経由で取得する <code>contract_owner_user_id</code> で表現する。論理削除は <code>valid</code> カラムで表現(<code>valid=0</code> = 論理削除済、<code>valid=1</code> = 有効)。<code>deleted_at</code> 列は持たず、論理削除日時は <code>updated_at</code> で代用する。<code>email_key_version</code> は鍵ローテーション dual-decrypt 期間中の鍵バージョン参照用。<strong>契約内メール一意 UNIQUE</strong> は <code>users</code> 単独では表現不可のため、アプリ層トランザクション(同一 <code>contract_owner_user_id</code> 配下の <code>project_users.user_id</code> の <code>users.email_hmac</code> セット + <code>contract_owners</code> 行の <code>users.email_hmac</code> での重複検査)で担保する</td>
+</tr>
+</tbody>
+</table>
+<h3 id="312-カラム定義">カラム定義</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>論理名</th>
+<th>物理名</th>
+<th>データ型</th>
+<th style="text-align: right;">桁数</th>
+<th>NULL</th>
+<th>PK</th>
+<th>FK</th>
+<th>UNIQUE</th>
+<th>DEFAULT</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>ID</td>
+<td><code>id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td>○</td>
+<td></td>
+<td></td>
+<td></td>
+<td>ULID 主キー</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>メール(暗号化)</td>
+<td><code>email_encrypted</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>AES-256-GCM、オーナー派生鍵</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>メール HMAC</td>
+<td><code>email_hmac</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>検索用 HMAC-SHA256</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>鍵バージョン</td>
+<td><code>email_key_version</code></td>
+<td>INTEGER</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>1</code></td>
+<td>dual-decrypt 期間中の鍵バージョン</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td>パスワードハッシュ</td>
+<td><code>password_hash</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>bcrypt / Argon2id</td>
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td>氏名</td>
+<td><code>name</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>表示名。<strong>招待時は <code>NULL</code></strong> で作成され、招待された本人が SCR-018 メンバーアカウント有効化ページで入力した時点で設定される(FR-016d / FR-016e、個人情報原則により管理者は他人の氏名を入力できない)。本人による変更は SCR-018 / SCR-017 個人設定で可能</td>
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td>状態</td>
+<td><code>status</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>'pending_verification'</code></td>
+<td><code>pending_verification</code> / <code>pending_activation</code> / <code>active</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">8</td>
+<td>有効フラグ</td>
+<td><code>valid</code></td>
+<td>INTEGER</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>1</code></td>
+<td>論理削除フラグ(0=削除済 / 1=有効)</td>
+</tr>
+<tr>
+<td style="text-align: right;">9</td>
+<td>最終ログイン日時</td>
+<td><code>last_login_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>ISO 8601 UTC</td>
+</tr>
+<tr>
+<td style="text-align: right;">10</td>
+<td>メール確認日時</td>
+<td><code>email_verified_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>ISO 8601 UTC</td>
+</tr>
+<tr>
+<td style="text-align: right;">11</td>
+<td>作成日時</td>
+<td><code>created_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>ISO 8601 UTC</td>
+</tr>
+<tr>
+<td style="text-align: right;">12</td>
+<td>更新日時</td>
+<td><code>updated_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>ISO 8601 UTC(論理削除日時を代用)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="313-主キー">主キー</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>主キー名</td>
+<td>(暗黙、PRIMARY KEY 句で指定)</td>
+</tr>
+<tr>
+<td>対象カラム</td>
+<td><code>id</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="314-外部キー">外部キー</h3>
+<p>(なし)</p>
+<h3 id="315-インデックス">インデックス</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>インデックス名</th>
+<th>対象カラム</th>
+<th>UNIQUE</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td><code>idx_users_email_hmac</code></td>
+<td><code>email_hmac</code></td>
+<td></td>
+<td>メール検索</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td><code>idx_users_valid</code></td>
+<td><code>valid</code> WHERE <code>valid = 0</code></td>
+<td></td>
+<td>論理削除対象抽出(物理削除バッチ)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="316-制約">制約</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>制約名</th>
+<th>種別</th>
+<th>対象カラム</th>
+<th>条件・内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>(暗黙)</td>
+<td>CHECK</td>
+<td><code>status</code></td>
+<td><code>status IN ('pending_verification','pending_activation','active')</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>(暗黙)</td>
+<td>CHECK</td>
+<td><code>valid</code></td>
+<td><code>valid IN (0,1)</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="317-コード値区分値">コード値・区分値</h3>
+<table>
+<thead>
+<tr>
+<th>カラム名</th>
+<th>値</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>status</code></td>
+<td><code>pending_verification</code></td>
+<td>メール未確認</td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td><code>pending_activation</code></td>
+<td>招待中(SCR-018 メンバーアカウント有効化ページで氏名 + 初回パスワード + 規約同意 未完了)。<code>users.name=NULL</code> で作成され、SCR-018 完了時に <code>users.name</code> 設定 + <code>status='active'</code> に遷移する(FR-016e)</td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td><code>active</code></td>
+<td>有効</td>
+</tr>
+<tr>
+<td><code>valid</code></td>
+<td><code>1</code></td>
+<td>有効</td>
+</tr>
+<tr>
+<td><code>valid</code></td>
+<td><code>0</code></td>
+<td>論理削除済み(論理削除日時は <code>updated_at</code> で判別。<code>updated_at &lt; now() - 90d AND valid=0</code> の行は物理削除バッチで物理削除される)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>ウィジェット利用者は本テーブルに含まれず、永続アカウントを作成しない。</p>
+</blockquote>
+
+</article>
+</body>
+</html>

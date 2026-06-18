@@ -47,14 +47,14 @@
 <tr>
 <td>1</td>
 <td><code>contract_owners.contract_status</code>(4 値: <code>active</code> / <code>suspended</code> / <code>deleted_pending</code> / <code>deleted</code>)</td>
-<td>メイン <a href="../01_メインシステム/02_基本設計/10_課金・請求設計.html">10_課金・請求設計.html</a> §4 + メイン <a href="../01_メインシステム/02_基本設計/03_テーブル設計.html">03_テーブル設計.html</a> <code>contract_owners</code></td>
-<td>運営者 <a href="../02_運営者システム/02_基本設計/10_課金・請求設計.html">10_課金・請求設計.html</a> / 運営者 <a href="../02_運営者システム/02_基本設計/03_テーブル設計.html">03_テーブル設計.html</a></td>
+<td>メイン <a href="../01_メインシステム/02_基本設計/10_課金・請求設計.html">10_課金・請求設計.html</a> §4 + メイン <a href="../01_メインシステム/02_基本設計/03_テーブル設計/index.html">03_テーブル設計/index.html</a> <code>contract_owners</code></td>
+<td>運営者 <a href="../02_運営者システム/02_基本設計/10_課金・請求設計.html">10_課金・請求設計.html</a> / 運営者 <a href="../02_運営者システム/02_基本設計/03_テーブル設計/index.html">03_テーブル設計/index.html</a></td>
 <td><code>contract_status</code>, <code>active</code>, <code>suspended</code>, <code>deleted_pending</code>, <code>deleted</code></td>
 </tr>
 <tr>
 <td>2</td>
 <td><code>inquiries.status</code>(<code>open</code> / <code>closed</code> の 2 値、SCR-005 詳細画面の手動操作のみで遷移 = FR-077)</td>
-<td>メイン <a href="../01_メインシステム/02_基本設計/03_テーブル設計.html">03_テーブル設計.html</a> <code>inquiries</code> §3.14 + メイン <a href="../01_メインシステム/02_基本設計/03_テーブル設計.html">03_テーブル設計.html</a> §4.5.2 状態遷移</td>
+<td>メイン <a href="../01_メインシステム/02_基本設計/03_テーブル設計/index.html">03_テーブル設計/index.html</a> <code>inquiries</code> §3.14 + メイン <a href="../01_メインシステム/02_基本設計/03_テーブル設計/index.html">03_テーブル設計/index.html</a> §4.5.2 状態遷移</td>
 <td>運営者側は参照のみ</td>
 <td><code>inquiries.status</code>, <code>FR-077</code>, <code>open</code>, <code>closed</code>, <code>manual</code></td>
 </tr>
@@ -82,21 +82,21 @@
 <tr>
 <td>6</td>
 <td>利用者側のユーザーモデル: <strong>管理者 3 ロール</strong>(オーナー / プロジェクト管理者 / メンバー = <code>users</code> マスタ + <code>contract_owners</code>(オーナー専有属性、行存在 = オーナー判定)+ <code>project_users</code>(プロジェクト割当、<code>role</code>='admin'/'member')、契約境界キー = <code>contract_owner_user_id</code>)+ <strong>エンドユーザー独立</strong>(<code>end_users</code> テーブル、プロジェクト単位スコープ、<code>users</code> とは完全分離)。<strong>v1.10 でオーナーもプロジェクト作成時に <code>project_users(role='admin', valid=1)</code> 行を自動取得</strong>(維持)。認可は <code>contract_owners</code> 行存在による <code>isOwner=true</code> bypass を最優先、<code>project_users.admin</code> 行は通知宛先解決と画面表示の事実情報として参照される。エンドユーザー認可は <code>end_users</code> 行存在 + 再入室トークン検証(<code>access_tokens.purpose='reentry'</code> + <code>end_user_id</code>)</td>
-<td>メイン <a href="../01_メインシステム/02_基本設計/03_テーブル設計.html">03_テーブル設計.html</a> + メイン <a href="../01_メインシステム/02_基本設計/04_権限設計.html">04_権限設計.html</a> + メイン <a href="../01_メインシステム/02_基本設計/08_認証・認可設計.html">08_認証・認可設計.html</a></td>
+<td>メイン <a href="../01_メインシステム/02_基本設計/03_テーブル設計/index.html">03_テーブル設計/index.html</a> + メイン <a href="../01_メインシステム/02_基本設計/04_権限設計.html">04_権限設計.html</a> + メイン <a href="../01_メインシステム/02_基本設計/08_認証・認可設計.html">08_認証・認可設計.html</a></td>
 <td>運営者 <a href="../02_運営者システム/02_基本設計/04_権限設計.html">04_権限設計.html</a> / 運営者 <a href="../02_運営者システム/02_基本設計/08_認証・認可設計.html">08_認証・認可設計.html</a>(参照のみ、再掲なし)</td>
 <td><code>users</code>, <code>contract_owners</code>, <code>project_users</code>, <code>end_users</code>, <code>contract_owner_user_id</code>, <code>role IN ('admin','member')</code></td>
 </tr>
 <tr>
 <td>7</td>
 <td>監査ログハッシュチェーン構造・3 区分保持(1y / 5y / 7y)</td>
-<td>運営者 <a href="../02_運営者システム/02_基本設計/09_セキュリティ設計.html">09_セキュリティ設計.html</a> §7 + 運営者 <a href="../02_運営者システム/02_基本設計/03_テーブル設計.html">03_テーブル設計.html</a> <code>audit_logs</code></td>
+<td>運営者 <a href="../02_運営者システム/02_基本設計/09_セキュリティ設計.html">09_セキュリティ設計.html</a> §7 + 運営者 <a href="../02_運営者システム/02_基本設計/03_テーブル設計/index.html">03_テーブル設計/index.html</a> <code>audit_logs</code></td>
 <td>メイン <a href="../01_メインシステム/02_基本設計/09_セキュリティ設計.html">09_セキュリティ設計.html</a></td>
 <td><code>retention_class</code>, <code>audit_logs</code>, ハッシュチェーン, <code>1y</code>/<code>5y</code>/<code>7y</code></td>
 </tr>
 <tr>
 <td>8</td>
 <td>IP allowlist(運営者ログイン向け = <code>operator_ip_allowlist</code>、運営者を正本)</td>
-<td>運営者 <a href="../02_運営者システム/02_基本設計/08_認証・認可設計.html">08_認証・認可設計.html</a> § IP allowlist + 運営者 <a href="../02_運営者システム/02_基本設計/03_テーブル設計.html">03_テーブル設計.html</a> <code>operator_ip_allowlist</code></td>
+<td>運営者 <a href="../02_運営者システム/02_基本設計/08_認証・認可設計.html">08_認証・認可設計.html</a> § IP allowlist + 運営者 <a href="../02_運営者システム/02_基本設計/03_テーブル設計/index.html">03_テーブル設計/index.html</a> <code>operator_ip_allowlist</code></td>
 <td>メイン側は本概念を参照しない</td>
 <td><code>IP allowlist</code>, <code>operator_ip_allowlist</code></td>
 </tr>
@@ -117,7 +117,7 @@
 <tr>
 <td>11</td>
 <td>4-eyes 承認基盤(<code>operator_approvals</code> 物理スキーマ + 判定ルール)</td>
-<td>運営者 <a href="../02_運営者システム/02_基本設計/08_認証・認可設計.html">08_認証・認可設計.html</a> §6 + 運営者 <a href="../02_運営者システム/02_基本設計/03_テーブル設計.html">03_テーブル設計.html</a> <code>operator_approvals</code></td>
+<td>運営者 <a href="../02_運営者システム/02_基本設計/08_認証・認可設計.html">08_認証・認可設計.html</a> §6 + 運営者 <a href="../02_運営者システム/02_基本設計/03_テーブル設計/index.html">03_テーブル設計/index.html</a> <code>operator_approvals</code></td>
 <td>運営者 <a href="../02_運営者システム/02_基本設計/04_権限設計.html">04_権限設計.html</a>(参照)</td>
 <td><code>operator_approvals</code>, <code>4-eyes</code>, ハードゲート</td>
 </tr>
@@ -145,7 +145,7 @@
 <tr>
 <td>15</td>
 <td>利用上限上書き(レート=契約単位 <code>owner_quota_overrides</code> / 月次上限件数・無料枠=プロジェクト単位 <code>project_quota_limits</code>)</td>
-<td>メイン <a href="../01_メインシステム/02_基本設計/10_課金・請求設計.html">10_課金・請求設計.html</a> §3(レート)/ §3a(プロジェクト上限)+ メイン <a href="../01_メインシステム/02_基本設計/04_権限設計.html">04_権限設計.html</a> §7 + メイン <a href="../01_メインシステム/02_基本設計/03_テーブル設計.html">03_テーブル設計.html</a> §3.24</td>
+<td>メイン <a href="../01_メインシステム/02_基本設計/10_課金・請求設計.html">10_課金・請求設計.html</a> §3(レート)/ §3a(プロジェクト上限)+ メイン <a href="../01_メインシステム/02_基本設計/04_権限設計.html">04_権限設計.html</a> §7 + メイン <a href="../01_メインシステム/02_基本設計/03_テーブル設計/index.html">03_テーブル設計/index.html</a> §3.24</td>
 <td>運営者 <a href="../02_運営者システム/02_基本設計/10_課金・請求設計.html">10_課金・請求設計.html</a> / 運営者 <a href="../02_運営者システム/02_基本設計/04_権限設計.html">04_権限設計.html</a></td>
 <td><code>owner_quota_overrides</code>, <code>project_quota_limits</code></td>
 </tr>
@@ -159,8 +159,8 @@
 <tr>
 <td>17</td>
 <td>アカウント削除モード(物理削除 / 匿名化、運営者側 <code>accounts_retired</code>(運営者スキーマ専有、契約証跡として永久保持))</td>
-<td>メイン <a href="../01_メインシステム/02_基本設計/03_テーブル設計.html">03_テーブル設計.html</a> § 削除ポリシー + メイン <a href="../01_メインシステム/02_基本設計/09_セキュリティ設計.html">09_セキュリティ設計.html</a> § データ保護</td>
-<td>運営者 <a href="../02_運営者システム/02_基本設計/03_テーブル設計.html">03_テーブル設計.html</a> <code>accounts_retired</code>(永久保持)/ 運営者 <a href="../02_運営者システム/02_基本設計/10_課金・請求設計.html">10_課金・請求設計.html</a> §5(退会フロー)</td>
+<td>メイン <a href="../01_メインシステム/02_基本設計/03_テーブル設計/index.html">03_テーブル設計/index.html</a> § 削除ポリシー + メイン <a href="../01_メインシステム/02_基本設計/09_セキュリティ設計.html">09_セキュリティ設計.html</a> § データ保護</td>
+<td>運営者 <a href="../02_運営者システム/02_基本設計/03_テーブル設計/index.html">03_テーブル設計/index.html</a> <code>accounts_retired</code>(永久保持)/ 運営者 <a href="../02_運営者システム/02_基本設計/10_課金・請求設計.html">10_課金・請求設計.html</a> §5(退会フロー)</td>
 <td><code>accounts_retired</code>, 物理削除, 匿名化, <code>deleted_pending</code></td>
 </tr>
 <tr>

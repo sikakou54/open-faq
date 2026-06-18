@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>faq_search_fts(TBL-011) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/faq_search_fts.html">
+<article class="content" id="content">
+<h1 id="TBL-011">TBL-011 <code>faq_search_fts</code></h1>
+<span id="311-faq_search_fts"></span>
+<p class="section-lead">FAQ 全文検索用の FTS5 仮想テーブル(trigram トークナイザ)です。<code>faqs</code> に連動し、行は <code>rowid</code> で識別します(主管 FR-300)。</p>
+<h3 id="3111-概要">概要</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>テーブル名</td>
+<td><code>faq_search_fts</code></td>
+</tr>
+<tr>
+<td>論理名</td>
+<td>FAQ 全文検索(FTS5 仮想テーブル)</td>
+</tr>
+<tr>
+<td>説明</td>
+<td>FTS5 contentless 仮想テーブル(trigram トークナイザ)</td>
+</tr>
+<tr>
+<td>主管 FR</td>
+<td>FR-300</td>
+</tr>
+<tr>
+<td>保持期間 / 保持起点</td>
+<td><code>faqs</code> に従属 / -</td>
+</tr>
+<tr>
+<td><code>contract_owner_user_id</code></td>
+<td>なし(<code>faqs</code> 連動)</td>
+</tr>
+<tr>
+<td><code>retention_class</code></td>
+<td>-</td>
+</tr>
+<tr>
+<td>設計判断</td>
+<td>通常テーブルと異なる FTS5 仮想テーブル。<code>content='faqs'</code> / <code>content_rowid='rowid'</code> / <code>tokenize='trigram'</code> で構成し、<code>faqs</code> への INSERT / UPDATE / DELETE をトリガで同期する。<code>(project_id, status='published')</code> 前段フィルタは §4.9 インデックス方針参照</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3112-カラム定義">カラム定義</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>論理名</th>
+<th>物理名</th>
+<th>データ型</th>
+<th style="text-align: right;">桁数</th>
+<th>NULL</th>
+<th>PK</th>
+<th>FK</th>
+<th>UNIQUE</th>
+<th>DEFAULT</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>タイトル</td>
+<td><code>title</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>-</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>FTS5 仮想列(<code>faqs.title</code> と同期)</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>本文</td>
+<td><code>body</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>-</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>FTS5 仮想列(<code>faqs.body</code> と同期)</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>カテゴリ</td>
+<td><code>category</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>-</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>FTS5 仮想列</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>タグ</td>
+<td><code>tags</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>-</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>FTS5 仮想列</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3113-主キー">主キー</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>主キー名</td>
+<td>(FTS5 仮想テーブル、rowid 暗黙)</td>
+</tr>
+<tr>
+<td>対象カラム</td>
+<td>rowid(<code>faqs.rowid</code> と一致)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3114-外部キー">外部キー</h3>
+<p>(なし、<code>content='faqs'</code> で論理連動)</p>
+<h3 id="3115-インデックス">インデックス</h3>
+<p>(FTS5 内部インデックス、明示作成なし)</p>
+<h3 id="3116-制約トリガ">制約・トリガ</h3>
+<p>FTS5 contentless 同期トリガ 3 個(基本設計が正本):</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>トリガ名</th>
+<th>種別</th>
+<th>対象</th>
+<th>条件・内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td><code>faq_search_fts_ai</code></td>
+<td>AFTER INSERT トリガ</td>
+<td><code>faqs</code></td>
+<td>新規行を <code>faq_search_fts</code> に INSERT</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td><code>faq_search_fts_ad</code></td>
+<td>AFTER DELETE トリガ</td>
+<td><code>faqs</code></td>
+<td><code>'delete'</code> コマンドで削除行を FTS から除去</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td><code>faq_search_fts_au</code></td>
+<td>AFTER UPDATE トリガ</td>
+<td><code>faqs</code></td>
+<td>旧行を <code>'delete'</code> コマンドで除去 → 新行を INSERT</td>
+</tr>
+</tbody>
+</table>
+<p>トリガ実装手順 / 動作確認は <a href="../../03_詳細設計/DD02_プロジェクト・FAQ管理.html">DD02_プロジェクト・FAQ管理.html</a> を参照。</p>
+<h3 id="3117-コード値区分値">コード値・区分値</h3>
+<p>(なし)</p>
+
+</article>
+</body>
+</html>

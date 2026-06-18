@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>question_logs(TBL-012) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/question_logs.html">
+<article class="content" id="content">
+<h1 id="TBL-012">TBL-012 <code>question_logs</code></h1>
+<span id="312-question_logs"></span>
+<p class="section-lead">ウィジェット利用者からの質問と AI 推論結果を記録する質問ログです。主キーは <code>id</code>、契約境界キー <code>contract_owner_user_id</code> を持ち、730 日経過後に自動匿名化します(主管 FR-003 / NFR-601)。</p>
+<h3 id="3121-概要">概要</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>テーブル名</td>
+<td><code>question_logs</code></td>
+</tr>
+<tr>
+<td>論理名</td>
+<td>質問ログ</td>
+</tr>
+<tr>
+<td>説明</td>
+<td>エンドユーザーからの質問 / AI 推論結果を記録</td>
+</tr>
+<tr>
+<td>主管 FR</td>
+<td>FR-003, NFR-601</td>
+</tr>
+<tr>
+<td>保持期間 / 保持起点</td>
+<td>730 日(自動匿名化) / 投稿日時</td>
+</tr>
+<tr>
+<td><code>contract_owner_user_id</code></td>
+<td>あり</td>
+</tr>
+<tr>
+<td><code>retention_class</code></td>
+<td><code>general</code></td>
+</tr>
+<tr>
+<td>設計判断</td>
+<td><code>metering_billable</code> は課金確定時点のイミュータブルなスナップショット値(派生値ではない。AI モデル / しきい値の事後変更で再評価しても値が変わらないことを保証)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3122-カラム定義">カラム定義</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>論理名</th>
+<th>物理名</th>
+<th>データ型</th>
+<th style="text-align: right;">桁数</th>
+<th>NULL</th>
+<th>PK</th>
+<th>FK</th>
+<th>UNIQUE</th>
+<th>DEFAULT</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>ID</td>
+<td><code>id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td>○</td>
+<td></td>
+<td></td>
+<td></td>
+<td>ULID</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>契約 owner ID</td>
+<td><code>contract_owner_user_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td>○</td>
+<td></td>
+<td></td>
+<td><code>contract_owners(user_id)</code> 参照</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>プロジェクト ID</td>
+<td><code>project_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td>○</td>
+<td></td>
+<td></td>
+<td><code>projects(id)</code> 参照</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>質問本文</td>
+<td><code>user_question</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>1〜2000 文字</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td>AI 応答</td>
+<td><code>ai_response</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>AI 生成本文</td>
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td>解決フラグ</td>
+<td><code>is_resolved</code></td>
+<td>INTEGER</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>0</code></td>
+<td>0 / 1</td>
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td>課金確定フラグ</td>
+<td><code>metering_billable</code></td>
+<td>INTEGER</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>0</code></td>
+<td>スナップショット値</td>
+</tr>
+<tr>
+<td style="text-align: right;">8</td>
+<td>信頼度スコア</td>
+<td><code>confidence_score</code></td>
+<td>REAL</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>0.0〜1.0</td>
+</tr>
+<tr>
+<td style="text-align: right;">9</td>
+<td>関連度スコア</td>
+<td><code>relevance_score</code></td>
+<td>REAL</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>0.0〜1.0</td>
+</tr>
+<tr>
+<td style="text-align: right;">10</td>
+<td>AI モデル</td>
+<td><code>ai_model</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>モデル名</td>
+</tr>
+<tr>
+<td style="text-align: right;">11</td>
+<td>入力トークン数</td>
+<td><code>ai_token_count_input</code></td>
+<td>INTEGER</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>-</td>
+</tr>
+<tr>
+<td style="text-align: right;">12</td>
+<td>出力トークン数</td>
+<td><code>ai_token_count_output</code></td>
+<td>INTEGER</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>-</td>
+</tr>
+<tr>
+<td style="text-align: right;">13</td>
+<td>結果種別</td>
+<td><code>result_type</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>answered</code> / <code>unanswered</code> / <code>error</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">14</td>
+<td>結果理由コード</td>
+<td><code>result_reason_code</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>-</td>
+</tr>
+<tr>
+<td style="text-align: right;">15</td>
+<td>PII マスク済</td>
+<td><code>pii_masked</code></td>
+<td>INTEGER</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>0</code></td>
+<td>0 / 1</td>
+</tr>
+<tr>
+<td style="text-align: right;">16</td>
+<td>セッション ID</td>
+<td><code>session_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>-</td>
+</tr>
+<tr>
+<td style="text-align: right;">17</td>
+<td>IP アドレス</td>
+<td><code>ip_address</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>-</td>
+</tr>
+<tr>
+<td style="text-align: right;">18</td>
+<td>有効フラグ</td>
+<td><code>valid</code></td>
+<td>INTEGER</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>1</code></td>
+<td>論理削除フラグ</td>
+</tr>
+<tr>
+<td style="text-align: right;">19</td>
+<td>作成日時</td>
+<td><code>created_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>ISO 8601 UTC</td>
+</tr>
+<tr>
+<td style="text-align: right;">20</td>
+<td>更新日時</td>
+<td><code>updated_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>datetime('now')</code></td>
+<td>ISO 8601 UTC</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3123-主キー">主キー</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>主キー名</td>
+<td>(暗黙、PRIMARY KEY 句で指定)</td>
+</tr>
+<tr>
+<td>対象カラム</td>
+<td><code>id</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="3124-外部キー">外部キー</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>外部キー名</th>
+<th>対象カラム</th>
+<th>参照先テーブル</th>
+<th>参照先カラム</th>
+<th>更新時</th>
+<th>削除時</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>(暗黙)</td>
+<td><code>contract_owner_user_id</code></td>
+<td><code>contract_owners</code></td>
+<td><code>user_id</code></td>
+<td>NO ACTION</td>
+<td>CASCADE</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>(暗黙)</td>
+<td><code>project_id</code></td>
+<td><code>projects</code></td>
+<td><code>id</code></td>
+<td>NO ACTION</td>
+<td>CASCADE</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3125-インデックス">インデックス</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>インデックス名</th>
+<th>対象カラム</th>
+<th>UNIQUE</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td><code>idx_qlog_owner_created</code></td>
+<td><code>(contract_owner_user_id, created_at DESC)</code></td>
+<td></td>
+<td>オーナー別新着</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td><code>idx_qlog_project_billable_created</code></td>
+<td><code>(project_id, metering_billable, created_at DESC)</code></td>
+<td></td>
+<td>プロジェクト × 課金確定</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td><code>idx_qlog_valid</code></td>
+<td><code>valid</code> WHERE <code>valid = 0</code></td>
+<td></td>
+<td>論理削除対象抽出</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3126-制約">制約</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>制約名</th>
+<th>種別</th>
+<th>対象カラム</th>
+<th>条件・内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>(暗黙)</td>
+<td>CHECK</td>
+<td><code>user_question</code></td>
+<td><code>length(user_question) BETWEEN 1 AND 2000</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>(暗黙)</td>
+<td>CHECK</td>
+<td><code>result_type</code></td>
+<td><code>result_type IN ('answered','unanswered','error')</code>(NULL 許容)</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>(暗黙)</td>
+<td>CHECK</td>
+<td><code>valid</code></td>
+<td><code>valid IN (0,1)</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="3127-コード値区分値">コード値・区分値</h3>
+<table>
+<thead>
+<tr>
+<th>カラム名</th>
+<th>値</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>result_type</code></td>
+<td><code>answered</code></td>
+<td>解答あり</td>
+</tr>
+<tr>
+<td><code>result_type</code></td>
+<td><code>unanswered</code></td>
+<td>該当なし</td>
+</tr>
+<tr>
+<td><code>result_type</code></td>
+<td><code>error</code></td>
+<td>AI エラー</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

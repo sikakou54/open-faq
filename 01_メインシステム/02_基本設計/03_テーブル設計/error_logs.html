@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>error_logs(TBL-019) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/error_logs.html">
+<article class="content" id="content">
+<h1 id="TBL-019">TBL-019 <code>error_logs</code></h1>
+<span id="319-error_logs"></span>
+<p class="section-lead">サーバーエラーを記録するエラーログです。主キーは <code>id</code>、契約境界キー <code>contract_owner_user_id</code> を任意で持ち、180 日保持します(主管 NFR-704)。</p>
+<h3 id="3191-概要">概要</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>テーブル名</td>
+<td><code>error_logs</code></td>
+</tr>
+<tr>
+<td>論理名</td>
+<td>エラーログ</td>
+</tr>
+<tr>
+<td>説明</td>
+<td>サーバーエラー記録</td>
+</tr>
+<tr>
+<td>主管 FR</td>
+<td>NFR-704</td>
+</tr>
+<tr>
+<td>保持期間 / 保持起点</td>
+<td>180 日 / 発生日時</td>
+</tr>
+<tr>
+<td><code>contract_owner_user_id</code></td>
+<td>あり(可、契約コンテキストで発生したエラー)</td>
+</tr>
+<tr>
+<td><code>retention_class</code></td>
+<td><code>general</code></td>
+</tr>
+<tr>
+<td>設計判断</td>
+<td><code>valid</code> 持たず(ログ系)。PII / トークン / カード情報を記録禁止(FR-114、エンドユーザー入力は先頭 100 文字 + ハッシュのみ)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3192-カラム定義">カラム定義</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>論理名</th>
+<th>物理名</th>
+<th>データ型</th>
+<th style="text-align: right;">桁数</th>
+<th>NULL</th>
+<th>PK</th>
+<th>FK</th>
+<th>UNIQUE</th>
+<th>DEFAULT</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>ID</td>
+<td><code>id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td>○</td>
+<td></td>
+<td></td>
+<td></td>
+<td>ULID</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>契約 owner ID</td>
+<td><code>contract_owner_user_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>(FK 制約なし、削除でも記録維持)</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>ユーザー ID</td>
+<td><code>user_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>(FK 制約なし、同上)</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>URL</td>
+<td><code>url</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>リクエスト URL</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td>エラー種別</td>
+<td><code>error_type</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>例外クラス名</td>
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td>スタック</td>
+<td><code>stack</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>スタックトレース</td>
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td>発生日時</td>
+<td><code>occurred_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>ISO 8601 UTC</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3193-主キー">主キー</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>主キー名</td>
+<td>(暗黙、PRIMARY KEY 句で指定)</td>
+</tr>
+<tr>
+<td>対象カラム</td>
+<td><code>id</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="3194-外部キー">外部キー</h3>
+<p>(なし。<code>contract_owner_user_id</code> / <code>user_id</code> は FK 制約を持たず、参照先削除でも記録を維持)</p>
+<h3 id="3195-インデックス">インデックス</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>インデックス名</th>
+<th>対象カラム</th>
+<th>UNIQUE</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td><code>idx_error_logs_owner_occurred</code></td>
+<td><code>(contract_owner_user_id, occurred_at DESC)</code></td>
+<td></td>
+<td>オーナー別新着</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3196-制約">制約</h3>
+<p>(なし)</p>
+<h3 id="3197-コード値区分値">コード値・区分値</h3>
+<p>(なし)</p>
+</article>
+</body>
+</html>

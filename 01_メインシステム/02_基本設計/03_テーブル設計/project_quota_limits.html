@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>project_quota_limits(TBL-024) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/project_quota_limits.html">
+<article class="content" id="content">
+<h1 id="TBL-024">TBL-024 <code>project_quota_limits</code></h1>
+<span id="324-project_quota_limits"></span>
+<p class="section-lead">質問数の月次上限件数・無料枠・アラート、および運営者が管理する FAQ 件数無料枠をプロジェクト単位で保持します。主キーは <code>id</code>、契約境界キー <code>contract_owner_user_id</code> を持ちます。論理削除は <code>valid</code> カラムで表します(主管 FR-121)。</p>
+<blockquote>
+<p>本テーブルは表番号 #24(§2 全テーブル一覧)。掲載位置は他テーブルとの差分を最小化するため §3.23 直後に置く。</p>
+</blockquote>
+<h3 id="3241-概要">概要</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>テーブル名</td>
+<td><code>project_quota_limits</code></td>
+</tr>
+<tr>
+<td>論理名</td>
+<td>プロジェクト別利用上限・無料枠</td>
+</tr>
+<tr>
+<td>説明</td>
+<td>質問数の月次上限件数・月次無料枠・アラート閾値と、FAQ件数の月次無料枠を課金対象別の行で保持する。管理者ユーザーが変更できるのは質問数行の上限件数とアラート閾値だけとし、無料枠とFAQ行は運営者設定専用とする。質問数の <code>threshold=NULL</code> は上限OFF、FAQの <code>threshold</code> はNULL固定で月次上限なしを表す</td>
+</tr>
+<tr>
+<td>主管 FR</td>
+<td>FR-121, FR-122, FR-125, FR-127</td>
+</tr>
+<tr>
+<td>保持期間 / 保持起点</td>
+<td>永久(プロジェクト存続中) / 設定日時</td>
+</tr>
+<tr>
+<td><code>contract_owner_user_id</code></td>
+<td>あり(オーナー境界判定用に非正規化保持。<code>projects</code> 経由でも到達可能だが認可ヘルパの一次判定に用いる)</td>
+</tr>
+<tr>
+<td><code>retention_class</code></td>
+<td><code>general</code></td>
+</tr>
+<tr>
+<td>設計判断</td>
+<td>質問数上限と課金対象別無料枠を同じ行モデルで扱う。SCR-021 / SCR-021-001 は質問数行の上限とアラートだけを参照・更新し、<code>free_quota</code> は変更しない。FAQは運営者設定専用で、上限・上限アラートを持たず、利用量による新規作成停止を行わない。未設定時は無料枠デフォルトへフォールバックし、質問数だけ上限デフォルトも解決する</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3242-カラム定義">カラム定義</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>論理名</th>
+<th>物理名</th>
+<th>データ型</th>
+<th style="text-align: right;">桁数</th>
+<th>NULL</th>
+<th>PK</th>
+<th>FK</th>
+<th>UNIQUE</th>
+<th>DEFAULT</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>ID</td>
+<td><code>id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td>○</td>
+<td></td>
+<td></td>
+<td></td>
+<td>ULID</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>プロジェクト ID</td>
+<td><code>project_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td>○</td>
+<td>①</td>
+<td></td>
+<td><code>projects(id)</code> 参照</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>契約 owner ID</td>
+<td><code>contract_owner_user_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td>○</td>
+<td></td>
+<td></td>
+<td><code>contract_owners(user_id)</code> 参照(オーナー境界判定用に非正規化)</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>リソース種別</td>
+<td><code>resource_kind</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td>①</td>
+<td></td>
+<td>§3.24.7</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td>月次上限件数</td>
+<td><code>threshold</code></td>
+<td>INTEGER</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>質問数は値あり=上限ON、NULL=上限OFF。FAQは NULL(上限なし)</td>
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td>月次無料枠</td>
+<td><code>free_quota</code></td>
+<td>INTEGER</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>NULL = デフォルト無料枠を適用</td>
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td>アラート閾値</td>
+<td><code>alert_thresholds</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>'[]'</code></td>
+<td>JSON配列。質問数は <code>25</code> / <code>50</code> / <code>80</code> / <code>90</code> / <code>100</code> を複数保持可能。空配列は通知なし。FAQは空配列固定</td>
+</tr>
+<tr>
+<td style="text-align: right;">8</td>
+<td>設定元</td>
+<td><code>source</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td>①</td>
+<td><code>'owner'</code></td>
+<td><code>owner</code>(オーナー / PJ 管理者設定)/ <code>operator</code>(運営者上書き)</td>
+</tr>
+<tr>
+<td style="text-align: right;">9</td>
+<td>理由</td>
+<td><code>reason</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>運営者上書き(<code>source='operator'</code>)時の理由・チケットID</td>
+</tr>
+<tr>
+<td style="text-align: right;">10</td>
+<td>有効期限</td>
+<td><code>valid_until</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>運営者上書きの有効期限(ISO 8601 UTC、NULL = 無期限)</td>
+</tr>
+<tr>
+<td style="text-align: right;">11</td>
+<td>有効フラグ</td>
+<td><code>valid</code></td>
+<td>INTEGER</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>1</code></td>
+<td>論理削除フラグ</td>
+</tr>
+<tr>
+<td style="text-align: right;">12</td>
+<td>設定者</td>
+<td><code>created_by</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>設定したユーザー ID(運営者上書き時は運営者 ID)</td>
+</tr>
+<tr>
+<td style="text-align: right;">13</td>
+<td>作成日時</td>
+<td><code>created_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>ISO 8601 UTC</td>
+</tr>
+<tr>
+<td style="text-align: right;">14</td>
+<td>更新日時</td>
+<td><code>updated_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>ISO 8601 UTC</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3243-主キー">主キー</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>主キー名</td>
+<td>(暗黙、PRIMARY KEY 句で指定)</td>
+</tr>
+<tr>
+<td>対象カラム</td>
+<td><code>id</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="3244-外部キー">外部キー</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>外部キー名</th>
+<th>対象カラム</th>
+<th>参照先テーブル</th>
+<th>参照先カラム</th>
+<th>更新時</th>
+<th>削除時</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>(暗黙)</td>
+<td><code>project_id</code></td>
+<td><code>projects</code></td>
+<td><code>id</code></td>
+<td>NO ACTION</td>
+<td>CASCADE</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>(暗黙)</td>
+<td><code>contract_owner_user_id</code></td>
+<td><code>contract_owners</code></td>
+<td><code>user_id</code></td>
+<td>NO ACTION</td>
+<td>CASCADE</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3245-インデックス">インデックス</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>インデックス名</th>
+<th>対象カラム</th>
+<th>UNIQUE</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td><code>uq_pql_project_kind_source</code></td>
+<td><code>(project_id, resource_kind, source)</code> WHERE <code>valid = 1</code></td>
+<td>○</td>
+<td>プロジェクト × 課金対象 × 設定元で一意(有効行のみ)</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td><code>idx_pql_project_kind</code></td>
+<td><code>(project_id, resource_kind)</code></td>
+<td></td>
+<td>プロジェクト別利用設定解決</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td><code>idx_pql_valid</code></td>
+<td><code>valid</code> WHERE <code>valid = 0</code></td>
+<td></td>
+<td>論理削除対象抽出</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3246-制約">制約</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>制約名</th>
+<th>種別</th>
+<th>対象カラム</th>
+<th>条件・内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>(暗黙)</td>
+<td>CHECK</td>
+<td><code>resource_kind</code></td>
+<td><code>resource_kind IN ('question_monthly_limit','faq_monthly_limit')</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>(暗黙)</td>
+<td>CHECK</td>
+<td><code>alert_thresholds</code></td>
+<td><code>json_valid(alert_thresholds) AND json_type(alert_thresholds) = 'array'</code>。要素の許可値・重複排除・昇順化はAPI層で保証</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>(暗黙)</td>
+<td>CHECK</td>
+<td><code>source</code></td>
+<td><code>source IN ('owner','operator')</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>(暗黙)</td>
+<td>CHECK</td>
+<td><code>valid</code></td>
+<td><code>valid IN (0,1)</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td>(暗黙)</td>
+<td>複合CHECK</td>
+<td>上限対象</td>
+<td><code>(resource_kind = 'question_monthly_limit' AND (threshold IS NOT NULL OR alert_thresholds = '[]')) OR (resource_kind = 'faq_monthly_limit' AND threshold IS NULL AND alert_thresholds = '[]')</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td>(暗黙)</td>
+<td>複合CHECK</td>
+<td>管理主体</td>
+<td><code>resource_kind = 'question_monthly_limit' OR source = 'operator'</code>。FAQに <code>source='owner'</code> の行を許可しない</td>
+</tr>
+</tbody>
+</table>
+<p>既存データ移行時は <code>alert_enabled=0</code> を <code>[]</code>、<code>alert_enabled=1 AND alert_frequency='first'</code> を <code>[80]</code>、<code>alert_enabled=1 AND alert_frequency='staged'</code> を <code>[80,100]</code> へ変換する。移行後は <code>alert_thresholds</code> のみを参照する。</p>
+<p>質問数の無料枠と月次上限は独立した境界として扱うため、<code>free_quota &lt;= threshold</code> は制約としない。これにより、利用者は非表示の無料枠値に依存せず、無料枠より低い月次上限も設定できる。</p>
+<h3 id="3247-コード値区分値">コード値・区分値</h3>
+<table>
+<thead>
+<tr>
+<th>カラム名</th>
+<th>値</th>
+<th>意味</th>
+<th>デフォルト推奨値(プロジェクト単位)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>resource_kind</code></td>
+<td><code>question_monthly_limit</code></td>
+<td>質問数の月次上限件数</td>
+<td>上限=KV <code>usage-limit:default:question</code> / 無料枠=KV <code>usage-limit:free-default:question</code>(初期 1,000)</td>
+</tr>
+<tr>
+<td><code>resource_kind</code></td>
+<td><code>faq_monthly_limit</code></td>
+<td>FAQ 件数の無料枠(コード値は互換性のため維持、月次上限なし)</td>
+<td>無料枠=KV <code>usage-limit:free-default:faq</code>(初期 100)</td>
+</tr>
+</tbody>
+</table>
+<p>質問数上限の最小 / 最大件数は KV <code>usage-limit:min</code> / <code>usage-limit:max</code> を入力ガードに用いる。FAQには上限値を保持しない。KV ミラーは <code>usage-limit:&lt;contract_owner_user_id&gt;:&lt;project_id&gt;</code>(30s TTL)。</p>
+</article>
+</body>
+</html>

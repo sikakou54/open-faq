@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>inquiries(TBL-014) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/inquiries.html">
+<article class="content" id="content">
+<h1 id="TBL-014">TBL-014 <code>inquiries</code></h1>
+<span id="314-inquiries"></span>
+<p class="section-lead">FAQ 登録前の未解決質問を保持します。主キーは <code>id</code>、契約境界キー <code>contract_owner_user_id</code> を持ち、<code>status</code> は <code>open</code> / <code>closed</code> の 2 値です。論理削除は <code>valid</code> カラムで表します(主管 FR-070〜077)。</p>
+<h3 id="3141-概要">概要</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>テーブル名</td>
+<td><code>inquiries</code></td>
+</tr>
+<tr>
+<td>論理名</td>
+<td>未解決質問</td>
+</tr>
+<tr>
+<td>説明</td>
+<td>FAQ 登録前の未解決質問</td>
+</tr>
+<tr>
+<td>主管 FR</td>
+<td>FR-070〜077</td>
+</tr>
+<tr>
+<td>保持期間 / 保持起点</td>
+<td>730 日 / 作成日時</td>
+</tr>
+<tr>
+<td><code>contract_owner_user_id</code></td>
+<td>あり</td>
+</tr>
+<tr>
+<td><code>retention_class</code></td>
+<td><code>general</code></td>
+</tr>
+<tr>
+<td>設計判断</td>
+<td>対応状況は <code>status</code> の単一カラムで保持する(2 値: <code>open</code> / <code>closed</code>)。状態変更は SCR-005 詳細画面からの手動操作のみで行い、FAQ 下書き保存・FAQ 公開は本カラムを変更しない</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3142-カラム定義">カラム定義</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>論理名</th>
+<th>物理名</th>
+<th>データ型</th>
+<th style="text-align: right;">桁数</th>
+<th>NULL</th>
+<th>PK</th>
+<th>FK</th>
+<th>UNIQUE</th>
+<th>DEFAULT</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>ID</td>
+<td><code>id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td>○</td>
+<td></td>
+<td></td>
+<td></td>
+<td>ULID</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>契約 owner ID</td>
+<td><code>contract_owner_user_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td>○</td>
+<td></td>
+<td></td>
+<td><code>contract_owners(user_id)</code> 参照</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>プロジェクト ID</td>
+<td><code>project_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td>○</td>
+<td></td>
+<td></td>
+<td><code>projects(id)</code> 参照</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>問い合わせコード</td>
+<td><code>inquiry_code</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td>○</td>
+<td></td>
+<td>管理画面表示コード</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td>元質問ログ ID</td>
+<td><code>question_log_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td>○</td>
+<td></td>
+<td></td>
+<td><code>question_logs(id)</code> 参照</td>
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td>質問本文</td>
+<td><code>user_question</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>質問内容</td>
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td>状況</td>
+<td><code>status</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>'open'</code></td>
+<td><code>open</code> / <code>closed</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">8</td>
+<td>有効フラグ</td>
+<td><code>valid</code></td>
+<td>INTEGER</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>1</code></td>
+<td>論理削除フラグ</td>
+</tr>
+<tr>
+<td style="text-align: right;">9</td>
+<td>作成日時</td>
+<td><code>created_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>ISO 8601 UTC</td>
+</tr>
+<tr>
+<td style="text-align: right;">10</td>
+<td>更新日時</td>
+<td><code>updated_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>ISO 8601 UTC</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3143-主キー">主キー</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>主キー名</td>
+<td>(暗黙、PRIMARY KEY 句で指定)</td>
+</tr>
+<tr>
+<td>対象カラム</td>
+<td><code>id</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="3144-外部キー">外部キー</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>外部キー名</th>
+<th>対象カラム</th>
+<th>参照先テーブル</th>
+<th>参照先カラム</th>
+<th>更新時</th>
+<th>削除時</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>(暗黙)</td>
+<td><code>contract_owner_user_id</code></td>
+<td><code>contract_owners</code></td>
+<td><code>user_id</code></td>
+<td>NO ACTION</td>
+<td>CASCADE</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>(暗黙)</td>
+<td><code>project_id</code></td>
+<td><code>projects</code></td>
+<td><code>id</code></td>
+<td>NO ACTION</td>
+<td>CASCADE</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>(暗黙)</td>
+<td><code>question_log_id</code></td>
+<td><code>question_logs</code></td>
+<td><code>id</code></td>
+<td>NO ACTION</td>
+<td>NO ACTION</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3145-インデックス">インデックス</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>インデックス名</th>
+<th>対象カラム</th>
+<th>UNIQUE</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td><code>idx_inquiries_contract_status_created</code></td>
+<td><code>(contract_owner_user_id, status, created_at DESC)</code></td>
+<td></td>
+<td>契約境界 + 状況別新着</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td><code>idx_inquiries_project_status</code></td>
+<td><code>(project_id, status)</code></td>
+<td></td>
+<td>プロジェクト × 状況</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td><code>uq_inquiries_code</code></td>
+<td><code>inquiry_code</code></td>
+<td>○</td>
+<td>問い合わせコード一意</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td><code>idx_inquiries_valid</code></td>
+<td><code>valid</code> WHERE <code>valid = 0</code></td>
+<td></td>
+<td>論理削除対象抽出</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3146-制約">制約</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>制約名</th>
+<th>種別</th>
+<th>対象カラム</th>
+<th>条件・内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>(暗黙)</td>
+<td>CHECK</td>
+<td><code>status</code></td>
+<td><code>status IN ('open','closed')</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>(暗黙)</td>
+<td>CHECK</td>
+<td><code>valid</code></td>
+<td><code>valid IN (0,1)</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="3147-コード値区分値">コード値・区分値</h3>
+<table>
+<thead>
+<tr>
+<th>カラム名</th>
+<th>値</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>status</code></td>
+<td><code>open</code></td>
+<td>対応必要(初期値、または <code>closed</code> から再オープン)</td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td><code>closed</code></td>
+<td>終了(SCR-005 詳細画面での手動操作のみ)</td>
+</tr>
+</tbody>
+</table>
+<p>状態遷移詳細は §4.5.2 参照(共有概念正本)。</p>
+
+</article>
+</body>
+</html>

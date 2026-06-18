@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>question_log_faq_refs(TBL-013) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/question_log_faq_refs.html">
+<article class="content" id="content">
+<h1 id="TBL-013">TBL-013 <code>question_log_faq_refs</code></h1>
+<span id="313-question_log_faq_refs"></span>
+<p class="section-lead">質問ログと参照 FAQ の M:N 関係を保持する中間テーブルです。主キーは <code>id</code>、<code>question_logs</code> に従属します。</p>
+<h3 id="3131-概要">概要</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>テーブル名</td>
+<td><code>question_log_faq_refs</code></td>
+</tr>
+<tr>
+<td>論理名</td>
+<td>参照 FAQ(M:N)</td>
+</tr>
+<tr>
+<td>説明</td>
+<td>質問と FAQ の M:N 関係(AI が参照した FAQ を記録)</td>
+</tr>
+<tr>
+<td>主管 FR</td>
+<td>-</td>
+</tr>
+<tr>
+<td>保持期間 / 保持起点</td>
+<td><code>question_logs</code> に従属 / -</td>
+</tr>
+<tr>
+<td><code>contract_owner_user_id</code></td>
+<td>なし(<code>question_logs</code> 経由)</td>
+</tr>
+<tr>
+<td><code>retention_class</code></td>
+<td><code>general</code></td>
+</tr>
+<tr>
+<td>設計判断</td>
+<td><code>valid</code> 持たず(M:N 関係系)。<code>question_logs</code> / <code>faqs</code> 物理削除時に ON DELETE CASCADE で連鎖物理削除</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3132-カラム定義">カラム定義</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>論理名</th>
+<th>物理名</th>
+<th>データ型</th>
+<th style="text-align: right;">桁数</th>
+<th>NULL</th>
+<th>PK</th>
+<th>FK</th>
+<th>UNIQUE</th>
+<th>DEFAULT</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>ID</td>
+<td><code>id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td>○</td>
+<td></td>
+<td></td>
+<td></td>
+<td>ULID</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>質問ログ ID</td>
+<td><code>question_log_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td>○</td>
+<td>①</td>
+<td></td>
+<td><code>question_logs(id)</code> 参照</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>FAQ ID</td>
+<td><code>faq_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td>○</td>
+<td>②</td>
+<td></td>
+<td><code>faqs(id)</code> 参照</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>関連度スコア</td>
+<td><code>relevance_score</code></td>
+<td>REAL</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>0.0〜1.0(参照時の判定スコア)</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td>作成日時</td>
+<td><code>created_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>ISO 8601 UTC</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3133-主キー">主キー</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>主キー名</td>
+<td>(暗黙、PRIMARY KEY 句で指定)</td>
+</tr>
+<tr>
+<td>対象カラム</td>
+<td><code>id</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="3134-外部キー">外部キー</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>外部キー名</th>
+<th>対象カラム</th>
+<th>参照先テーブル</th>
+<th>参照先カラム</th>
+<th>更新時</th>
+<th>削除時</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>(暗黙)</td>
+<td><code>question_log_id</code></td>
+<td><code>question_logs</code></td>
+<td><code>id</code></td>
+<td>NO ACTION</td>
+<td>CASCADE</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>(暗黙)</td>
+<td><code>faq_id</code></td>
+<td><code>faqs</code></td>
+<td><code>id</code></td>
+<td>NO ACTION</td>
+<td>CASCADE</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3135-インデックス">インデックス</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>インデックス名</th>
+<th>対象カラム</th>
+<th>UNIQUE</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td><code>uq_question_log_faq_refs_pair</code></td>
+<td><code>(question_log_id, faq_id)</code></td>
+<td>○</td>
+<td>M:N ペア一意</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td><code>idx_question_log_faq_refs_faq</code></td>
+<td><code>faq_id</code></td>
+<td></td>
+<td>FAQ 別逆引き</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3136-制約">制約</h3>
+<p>(なし)</p>
+<h3 id="3137-コード値区分値">コード値・区分値</h3>
+<p>(なし)</p>
+
+</article>
+</body>
+</html>

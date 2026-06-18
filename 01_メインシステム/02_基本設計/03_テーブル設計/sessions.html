@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>sessions(TBL-004) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/sessions.html">
+<article class="content" id="content">
+<h1 id="TBL-004">TBL-004 <code>sessions</code></h1>
+<span id="34-sessions"></span>
+<p class="section-lead">複数デバイス対応のログインセッションを管理します。主キーは <code>id</code>、<code>users</code> 経由で契約に紐づきます。論理削除は <code>revoked_at</code> で代用し、期限切れ後 90 日で物理削除します(主管 FR-022 / FR-332)。</p>
+<h3 id="341-概要">概要</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>テーブル名</td>
+<td><code>sessions</code></td>
+</tr>
+<tr>
+<td>論理名</td>
+<td>セッション</td>
+</tr>
+<tr>
+<td>説明</td>
+<td>セッション管理(複数デバイス対応)。<code>revoked_at</code> で論理失効を表現する</td>
+</tr>
+<tr>
+<td>主管 FR</td>
+<td>FR-022, FR-332</td>
+</tr>
+<tr>
+<td>保持期間 / 保持起点</td>
+<td>期限切れ後 90 日 / 最終アクティビティ</td>
+</tr>
+<tr>
+<td><code>contract_owner_user_id</code></td>
+<td>なし(<code>users</code> 経由)</td>
+</tr>
+<tr>
+<td><code>retention_class</code></td>
+<td><code>general</code></td>
+</tr>
+<tr>
+<td>設計判断</td>
+<td><code>valid</code> 持たず(<code>revoked_at IS NOT NULL</code> で論理失効を表現)。物理削除は <code>expires_at + 90 日</code> 経過後にバッチで実施</td>
+</tr>
+</tbody>
+</table>
+<h3 id="342-カラム定義">カラム定義</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>論理名</th>
+<th>物理名</th>
+<th>データ型</th>
+<th style="text-align: right;">桁数</th>
+<th>NULL</th>
+<th>PK</th>
+<th>FK</th>
+<th>UNIQUE</th>
+<th>DEFAULT</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>ID</td>
+<td><code>id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td>○</td>
+<td></td>
+<td></td>
+<td></td>
+<td>ULID</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>ユーザー ID</td>
+<td><code>user_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td>○</td>
+<td></td>
+<td></td>
+<td><code>users(id)</code> 参照</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>IP アドレス</td>
+<td><code>ip_address</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>クライアント IP</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>ユーザーエージェント</td>
+<td><code>user_agent</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>ブラウザ UA</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td>作成日時</td>
+<td><code>created_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>ISO 8601 UTC</td>
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td>最終アクセス日時</td>
+<td><code>last_accessed_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>ISO 8601 UTC</td>
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td>有効期限</td>
+<td><code>expires_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>ISO 8601 UTC</td>
+</tr>
+<tr>
+<td style="text-align: right;">8</td>
+<td>失効日時</td>
+<td><code>revoked_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>失効時のみセット</td>
+</tr>
+</tbody>
+</table>
+<h3 id="343-主キー">主キー</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>主キー名</td>
+<td>(暗黙、PRIMARY KEY 句で指定)</td>
+</tr>
+<tr>
+<td>対象カラム</td>
+<td><code>id</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="344-外部キー">外部キー</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>外部キー名</th>
+<th>対象カラム</th>
+<th>参照先テーブル</th>
+<th>参照先カラム</th>
+<th>更新時</th>
+<th>削除時</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>(暗黙)</td>
+<td><code>user_id</code></td>
+<td><code>users</code></td>
+<td><code>id</code></td>
+<td>NO ACTION</td>
+<td>CASCADE</td>
+</tr>
+</tbody>
+</table>
+<h3 id="345-インデックス">インデックス</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>インデックス名</th>
+<th>対象カラム</th>
+<th>UNIQUE</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td><code>idx_sessions_user</code></td>
+<td><code>user_id</code> WHERE <code>revoked_at IS NULL</code></td>
+<td></td>
+<td>ユーザーの有効セッション抽出</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td><code>idx_sessions_expires</code></td>
+<td><code>expires_at</code> WHERE <code>revoked_at IS NULL</code></td>
+<td></td>
+<td>期限切れ抽出</td>
+</tr>
+</tbody>
+</table>
+<h3 id="346-制約">制約</h3>
+<p>(なし。NOT NULL は §3.4.2 で表現済)</p>
+<h3 id="347-コード値区分値">コード値・区分値</h3>
+<p>(なし)</p>
+
+</article>
+</body>
+</html>

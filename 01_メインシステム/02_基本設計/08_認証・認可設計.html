@@ -37,7 +37,7 @@
 <td>パスワード再設定リンク</td>
 <td>採用</td>
 <td>メールに送る短期トークンで本人到達を確認し再設定させる</td>
-<td>有効期限 <strong>1 時間</strong> / 1 回限り(<a href="../01_要件定義/FR01_アカウント管理.html#FR-006">FR-006</a>)。トークン定義は <a href="03_テーブル設計.html#35-access_tokens">access_tokens</a></td>
+<td>有効期限 <strong>1 時間</strong> / 1 回限り(<a href="../01_要件定義/FR01_アカウント管理.html#FR-006">FR-006</a>)。トークン定義は <a href="03_テーブル設計/access_tokens.html">access_tokens</a></td>
 </tr>
 <tr>
 <td>招待トークン(メンバー有効化)</td>
@@ -176,7 +176,7 @@
     D--&gt;&gt;W:
     W--&gt;&gt;U: ログイン画面へ誘導
   end</code></pre>
-<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>トークン定義(有効期限 1 時間・1 回限り)は <a href="03_テーブル設計.html#35-access_tokens">access_tokens</a> が正本。新パスワードは §1.1 の要件を満たすこと。</div></div>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>トークン定義(有効期限 1 時間・1 回限り)は <a href="03_テーブル設計/access_tokens.html">access_tokens</a> が正本。新パスワードは §1.1 の要件を満たすこと。</div></div>
 
 <h3 id="34-招待受諾メンバー有効化">3.4 招待受諾(メンバー有効化)</h3>
 <p class="section-lead">招待されたメンバーが、招待リンクから氏名・初回パスワード・規約同意を入力してアカウントを有効化するまでを示します。標準フローは次のシーケンス図、複数プロジェクト参加や既存アカウント一致といった例外の扱いは続く表で示します(<a href="../01_要件定義/FR02_ユーザー管理.html#FR-015">FR-015</a> / <a href="../01_要件定義/FR02_ユーザー管理.html#FR-016d">FR-016d</a>)。</p>

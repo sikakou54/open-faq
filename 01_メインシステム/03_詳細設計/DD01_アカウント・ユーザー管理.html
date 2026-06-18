@@ -149,13 +149,13 @@
 <p>利用者側アカウントはオーナーとメンバーに分かれ、メンバーはプロジェクトごとに <code>admin</code> / <code>member</code> を持つ。SCR-009-001の「プロジェクトから外す」は対象 <code>project_users</code> 行を論理削除し、最後の有効割当だった場合は <code>users.valid=0</code> と全セッション・未使用招待を同一トランザクションで失効する。</p>
 <h3 id="32-状態詳細設計参照のみ">3.2 状態詳細設計（参照のみ）</h3>
 <p class="section-lead">契約状態の状態遷移はテーブル設計が正本です。本節はその所在のみを示します。</p>
-<p>契約状態（<code>contract_owners.contract_status</code>: <code>active</code> / <code>suspended</code> / <code>deleted_pending</code> / <code>deleted</code>）の全状態遷移は <a href="../02_基本設計/03_テーブル設計.html">../02_基本設計/03_テーブル設計.html</a> §4.5.5 を正本とする。</p>
+<p>契約状態（<code>contract_owners.contract_status</code>: <code>active</code> / <code>suspended</code> / <code>deleted_pending</code> / <code>deleted</code>）の全状態遷移は <a href="../02_基本設計/03_テーブル設計/index.html">../02_基本設計/03_テーブル設計/index.html</a> §4.5.5 を正本とする。</p>
 <h3 id="33-画面詳細設計参照のみ">3.3 画面詳細設計（参照のみ）</h3>
 <p class="section-lead">対象画面の表示・入力・操作・メッセージ ID は基本設計が正本です。本節はその所在のみを示します。</p>
 <p>SCR-001〜003 / SCR-009 / SCR-016 / SCR-017 / SCR-023 の表示・入力・操作・メッセージIDは基本設計を正本とする。</p>
 <h3 id="34-機能詳細設計参照のみ">3.4 機能詳細設計（参照のみ）</h3>
 <p class="section-lead">機能別のロジック・データ・API 連動は基本設計が正本です。本書では実装モジュール構成のみを扱います。</p>
-<p>機能別のロジック・データ・API 連動は <a href="../02_基本設計/02_API設計/index.html">../02_基本設計/02_API設計/index.html</a> および <a href="../02_基本設計/03_テーブル設計.html">../02_基本設計/03_テーブル設計.html</a> を正本とする。本書では実装モジュール構成のみを扱う。</p>
+<p>機能別のロジック・データ・API 連動は <a href="../02_基本設計/02_API設計/index.html">../02_基本設計/02_API設計/index.html</a> および <a href="../02_基本設計/03_テーブル設計/index.html">../02_基本設計/03_テーブル設計/index.html</a> を正本とする。本書では実装モジュール構成のみを扱う。</p>
 <h3 id="35-実装モジュール構成">3.5 実装モジュール構成</h3>
 <p class="section-lead"><code>worker-main-api</code> のソースツリー構成を示します。次のディレクトリ構成は、認証認可・管理者ユーザー・規約同意・招待のルートと、それを支えるリポジトリ・ミドルウェア・ライブラリの配置(実装の実体)です。</p>
 <p><code>app/workers/main-api/src/</code> 配下に以下のルート / ハンドラ / リポジトリを配置する。</p>

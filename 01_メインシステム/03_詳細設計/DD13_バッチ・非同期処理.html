@@ -250,7 +250,7 @@
 <p><strong>処理ステップ</strong>:</p>
 <ol type="1">
 <li>監査ログ <code>user.hard_delete_by_batch</code> / <code>project.hard_delete_by_batch</code> を物理 DELETE 前に発行(<code>retention_class='general'</code>、metadata に削除対象 ID と論理削除日時を含む)</li>
-<li><code>contract_owners.data_deletion_mode='anonymize'</code> の対象オーナーは物理 DELETE 前に匿名化処理(03_テーブル設計.html §4.6 削除モード表に従う)</li>
+<li><code>contract_owners.data_deletion_mode='anonymize'</code> の対象オーナーは物理 DELETE 前に匿名化処理(03_テーブル設計/index.html §4.6 削除モード表に従う)</li>
 <li><code>users</code> 行を物理 DELETE(<code>ON DELETE CASCADE</code> で関連 <code>contract_owners</code> / <code>project_users</code> / <code>sessions</code> / <code>access_tokens</code> / <code>terms_agreements</code> 等が連鎖物理削除)</li>
 <li><code>projects</code> 行を物理 DELETE(<code>ON DELETE CASCADE</code> で関連 <code>faqs</code> / <code>inquiries</code> 等が連鎖物理削除)</li>
 <li>中間テーブル / 履歴系の独立物理削除(<code>allowed_domains</code> / <code>question_logs</code> 等で親が既に物理削除されていない孤立行があれば独立 DELETE)</li>

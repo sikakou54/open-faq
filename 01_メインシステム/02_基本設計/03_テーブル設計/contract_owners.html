@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>contract_owners(TBL-002) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/contract_owners.html">
+<article class="content" id="content">
+<h1 id="TBL-002">TBL-002 <code>contract_owners</code></h1>
+<span id="32-contract_owners"></span>
+<p class="section-lead">オーナー専有属性(<code>contract_status</code> / <code>data_deletion_mode</code> 等)を保持する契約者テーブルです。<code>user_id</code> を主キーとし、行が存在すること自体がオーナー判定となります(1 契約 = 1 オーナーを DB 制約で担保)。<code>contract_status</code> は <code>active</code> / <code>suspended</code> / <code>deleted_pending</code> / <code>deleted</code> の 4 値です。</p>
+<h3 id="321-概要">概要</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>テーブル名</td>
+<td><code>contract_owners</code></td>
+</tr>
+<tr>
+<td>論理名</td>
+<td>契約者ユーザー(オーナー専有属性)</td>
+</tr>
+<tr>
+<td>説明</td>
+<td>オーナー専有属性(<code>contract_status</code> / <code>data_deletion_mode</code>)を分離。<strong>行存在 = オーナー判定</strong>(<code>is_owner</code> カラム不要)</td>
+</tr>
+<tr>
+<td>主管 FR</td>
+<td>FR-015a, FR-333</td>
+</tr>
+<tr>
+<td>保持期間 / 保持起点</td>
+<td>永久(契約存続中)/ 作成日時</td>
+</tr>
+<tr>
+<td><code>contract_owner_user_id</code></td>
+<td>本テーブル自身が契約境界(<code>user_id</code> = <code>contract_owner_user_id</code>)</td>
+</tr>
+<tr>
+<td><code>retention_class</code></td>
+<td><code>billing</code></td>
+</tr>
+<tr>
+<td>設計判断</td>
+<td><code>user_id PRIMARY KEY</code> により 1 契約 = 1 オーナー固定が DB 制約で担保される。「契約を持たないオーナー」のような不整合状態は表現不能。<code>contract_status='deleted'</code> ⇔ <code>valid=0</code> の同期は複合 CHECK で強制</td>
+</tr>
+</tbody>
+</table>
+<h3 id="322-カラム定義">カラム定義</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>論理名</th>
+<th>物理名</th>
+<th>データ型</th>
+<th style="text-align: right;">桁数</th>
+<th>NULL</th>
+<th>PK</th>
+<th>FK</th>
+<th>UNIQUE</th>
+<th>DEFAULT</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>ユーザー ID</td>
+<td><code>user_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td>○</td>
+<td>○</td>
+<td></td>
+<td></td>
+<td><code>users(id)</code> への 1:1 参照</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>契約状態</td>
+<td><code>contract_status</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>'active'</code></td>
+<td><code>active</code> / <code>suspended</code> / <code>deleted_pending</code> / <code>deleted</code>(共有概念正本)</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>データ削除モード</td>
+<td><code>data_deletion_mode</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>'physical'</code></td>
+<td><code>physical</code> / <code>anonymize</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>有効フラグ</td>
+<td><code>valid</code></td>
+<td>INTEGER</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>1</code></td>
+<td>論理削除フラグ</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td>作成日時</td>
+<td><code>created_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>ISO 8601 UTC</td>
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td>更新日時</td>
+<td><code>updated_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>ISO 8601 UTC</td>
+</tr>
+</tbody>
+</table>
+<h3 id="323-主キー">主キー</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>主キー名</td>
+<td>(暗黙、PRIMARY KEY 句で指定)</td>
+</tr>
+<tr>
+<td>対象カラム</td>
+<td><code>user_id</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="324-外部キー">外部キー</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>外部キー名</th>
+<th>対象カラム</th>
+<th>参照先テーブル</th>
+<th>参照先カラム</th>
+<th>更新時</th>
+<th>削除時</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>(暗黙)</td>
+<td><code>user_id</code></td>
+<td><code>users</code></td>
+<td><code>id</code></td>
+<td>NO ACTION</td>
+<td>CASCADE</td>
+</tr>
+</tbody>
+</table>
+<h3 id="325-インデックス">インデックス</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>インデックス名</th>
+<th>対象カラム</th>
+<th>UNIQUE</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td><code>idx_contract_owners_status</code></td>
+<td><code>contract_status</code></td>
+<td></td>
+<td>状態別オーナー抽出</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td><code>idx_contract_owners_valid</code></td>
+<td><code>valid</code> WHERE <code>valid = 0</code></td>
+<td></td>
+<td>論理削除対象抽出</td>
+</tr>
+</tbody>
+</table>
+<h3 id="326-制約">制約</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>制約名</th>
+<th>種別</th>
+<th>対象カラム</th>
+<th>条件・内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>(暗黙)</td>
+<td>CHECK</td>
+<td><code>contract_status</code></td>
+<td><code>contract_status IN ('active','suspended','deleted_pending','deleted')</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>(暗黙)</td>
+<td>CHECK</td>
+<td><code>data_deletion_mode</code></td>
+<td><code>data_deletion_mode IN ('physical','anonymize')</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>(暗黙)</td>
+<td>CHECK</td>
+<td><code>valid</code></td>
+<td><code>valid IN (0,1)</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>(暗黙)</td>
+<td>複合CHECK</td>
+<td><code>contract_status × valid</code></td>
+<td><code>contract_status='deleted'</code> のとき必ず <code>valid=0</code>(両者は同時セット)。<code>(contract_status &lt;&gt; 'deleted' AND valid = 1) OR (contract_status = 'deleted' AND valid = 0)</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="327-コード値区分値">コード値・区分値</h3>
+<table>
+<thead>
+<tr>
+<th>カラム名</th>
+<th>値</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>contract_status</code></td>
+<td><code>active</code></td>
+<td>有効(<strong>共有概念正本</strong>)</td>
+</tr>
+<tr>
+<td><code>contract_status</code></td>
+<td><code>suspended</code></td>
+<td>サスペンション中</td>
+</tr>
+<tr>
+<td><code>contract_status</code></td>
+<td><code>deleted_pending</code></td>
+<td>退会申請中(90 日猶予)</td>
+</tr>
+<tr>
+<td><code>contract_status</code></td>
+<td><code>deleted</code></td>
+<td>削除済み(オーナー退会完了。<code>valid=0</code> も同時セット = CHECK 制約で強制)</td>
+</tr>
+<tr>
+<td><code>data_deletion_mode</code></td>
+<td><code>physical</code></td>
+<td>物理削除(初期値)</td>
+</tr>
+<tr>
+<td><code>data_deletion_mode</code></td>
+<td><code>anonymize</code></td>
+<td>匿名化</td>
+</tr>
+</tbody>
+</table>
+<p>詳細状態遷移は <a href="../10_課金・請求設計.html">10_課金・請求設計.html §4</a> を正本とする。<code>contract_status × valid</code> の整合は §4.5.5 参照。</p>
+
+</article>
+</body>
+</html>

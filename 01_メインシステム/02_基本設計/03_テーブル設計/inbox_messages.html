@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>inbox_messages(TBL-028) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/inbox_messages.html">
+<article class="content" id="content">
+<h1 id="TBL-028">TBL-028 <code>inbox_messages</code></h1>
+<span id="328-inbox_messages"></span>
+<p class="section-lead">利用者のお知らせ・通知の既読管理(Tenant Plane の受信箱)を保持します。主キーは <code>id</code>、契約境界キー <code>contract_owner_user_id</code> を持ち、1 年保持します(主管 FR-182〜192)。</p>
+<h3 id="3281-概要">概要</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>テーブル名</td>
+<td><code>inbox_messages</code></td>
+</tr>
+<tr>
+<td>論理名</td>
+<td>受信箱(Tenant Plane)</td>
+</tr>
+<tr>
+<td>説明</td>
+<td>利用者管理者のお知らせ・通知の既読管理</td>
+</tr>
+<tr>
+<td>主管 FR</td>
+<td>FR-182-192</td>
+</tr>
+<tr>
+<td>保持期間 / 保持起点</td>
+<td>1 年 / 既読日時</td>
+</tr>
+<tr>
+<td><code>contract_owner_user_id</code></td>
+<td>あり</td>
+</tr>
+<tr>
+<td><code>retention_class</code></td>
+<td><code>general</code></td>
+</tr>
+<tr>
+<td>設計判断</td>
+<td><code>valid</code> 持たず(ログ系)。<strong>お知らせ二層構成</strong>: Control Plane(<code>service_announcements</code> / <code>announcement_recipients</code>)= 運営者作成お知らせ本体 + 配信集計・監査、Tenant Plane(<code>inbox_messages</code>)= 利用者管理者の受信箱(既読管理)。<code>announcement</code> カテゴリは Control → Tenant の二層経由、<code>billing</code> / <code>system</code> は <code>inbox_messages</code> 直接生成。重複生成対策: <code>(contract_owner_user_id, dedup_key)</code> で 60 分以内は 1 件に集約</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3282-カラム定義">カラム定義</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>論理名</th>
+<th>物理名</th>
+<th>データ型</th>
+<th style="text-align: right;">桁数</th>
+<th>NULL</th>
+<th>PK</th>
+<th>FK</th>
+<th>UNIQUE</th>
+<th>DEFAULT</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>ID</td>
+<td><code>id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td>○</td>
+<td></td>
+<td></td>
+<td></td>
+<td>ULID</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>契約 owner ID</td>
+<td><code>contract_owner_user_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td>○</td>
+<td></td>
+<td></td>
+<td><code>contract_owners(user_id)</code> 参照</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>受信者ユーザー ID</td>
+<td><code>recipient_user_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td>○</td>
+<td></td>
+<td></td>
+<td><code>users(id)</code> 参照</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>カテゴリ</td>
+<td><code>category</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>billing</code> / <code>announcement</code> / <code>system</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td>優先度</td>
+<td><code>priority</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>low</code> / <code>normal</code> / <code>high</code> / <code>critical</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td>タイトル</td>
+<td><code>title</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>1〜200 文字</td>
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td>本文(HTML)</td>
+<td><code>body_html</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>サニタイズ済</td>
+</tr>
+<tr>
+<td style="text-align: right;">8</td>
+<td>由来種別</td>
+<td><code>source_kind</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>-</td>
+</tr>
+<tr>
+<td style="text-align: right;">9</td>
+<td>由来 ID</td>
+<td><code>source_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>-</td>
+</tr>
+<tr>
+<td style="text-align: right;">10</td>
+<td>重複キー</td>
+<td><code>dedup_key</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>集約用キー</td>
+</tr>
+<tr>
+<td style="text-align: right;">11</td>
+<td>既読日時</td>
+<td><code>read_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>-</td>
+</tr>
+<tr>
+<td style="text-align: right;">12</td>
+<td>非表示日時</td>
+<td><code>hidden_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>-</td>
+</tr>
+<tr>
+<td style="text-align: right;">13</td>
+<td>作成日時</td>
+<td><code>created_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>ISO 8601 UTC</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3283-主キー">主キー</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>主キー名</td>
+<td>(暗黙、PRIMARY KEY 句で指定)</td>
+</tr>
+<tr>
+<td>対象カラム</td>
+<td><code>id</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="3284-外部キー">外部キー</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>外部キー名</th>
+<th>対象カラム</th>
+<th>参照先テーブル</th>
+<th>参照先カラム</th>
+<th>更新時</th>
+<th>削除時</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>(暗黙)</td>
+<td><code>contract_owner_user_id</code></td>
+<td><code>contract_owners</code></td>
+<td><code>user_id</code></td>
+<td>NO ACTION</td>
+<td>CASCADE</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>(暗黙)</td>
+<td><code>recipient_user_id</code></td>
+<td><code>users</code></td>
+<td><code>id</code></td>
+<td>NO ACTION</td>
+<td>CASCADE</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3285-インデックス">インデックス</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>インデックス名</th>
+<th>対象カラム</th>
+<th>UNIQUE</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td><code>idx_inbox_owner_user_unread</code></td>
+<td><code>(contract_owner_user_id, recipient_user_id, read_at, created_at DESC)</code></td>
+<td></td>
+<td>未読 + 新着</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td><code>idx_inbox_dedup</code></td>
+<td><code>(contract_owner_user_id, dedup_key, created_at)</code></td>
+<td></td>
+<td>60 分集約判定</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3286-制約">制約</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>制約名</th>
+<th>種別</th>
+<th>対象カラム</th>
+<th>条件・内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>(暗黙)</td>
+<td>CHECK</td>
+<td><code>category</code></td>
+<td><code>category IN ('billing','announcement','system')</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>(暗黙)</td>
+<td>CHECK</td>
+<td><code>priority</code></td>
+<td><code>priority IN ('low','normal','high','critical')</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>(暗黙)</td>
+<td>CHECK</td>
+<td><code>title</code></td>
+<td><code>length(title) BETWEEN 1 AND 200</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="3287-コード値区分値">コード値・区分値</h3>
+<table>
+<thead>
+<tr>
+<th>カラム名</th>
+<th>値</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>category</code></td>
+<td><code>billing</code></td>
+<td>課金</td>
+</tr>
+<tr>
+<td><code>category</code></td>
+<td><code>announcement</code></td>
+<td>お知らせ(Control → Tenant 経由)</td>
+</tr>
+<tr>
+<td><code>category</code></td>
+<td><code>system</code></td>
+<td>システム</td>
+</tr>
+<tr>
+<td><code>priority</code></td>
+<td><code>low</code></td>
+<td>低</td>
+</tr>
+<tr>
+<td><code>priority</code></td>
+<td><code>normal</code></td>
+<td>通常</td>
+</tr>
+<tr>
+<td><code>priority</code></td>
+<td><code>high</code></td>
+<td>高</td>
+</tr>
+<tr>
+<td><code>priority</code></td>
+<td><code>critical</code></td>
+<td>クリティカル(メール強制送信)</td>
+</tr>
+</tbody>
+</table>
+</article>
+</body>
+</html>

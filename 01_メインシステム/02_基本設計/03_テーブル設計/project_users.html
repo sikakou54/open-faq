@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>project_users(TBL-003) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/project_users.html">
+<article class="content" id="content">
+<h1 id="TBL-003">TBL-003 <code>project_users</code></h1>
+<span id="33-project_users"></span>
+<p class="section-lead">オーナー / メンバーのプロジェクトへの割当とプロジェクト別ロール(<code>admin</code> / <code>member</code>)を保持します。主キーは <code>(user_id, project_id)</code> の複合キーで、契約境界を <code>contract_owner_user_id</code> に冗長保持して認可境界クエリを高速化します(主管 FR-015 / FR-030〜035)。</p>
+<h3 id="331-概要">概要</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>テーブル名</td>
+<td><code>project_users</code></td>
+</tr>
+<tr>
+<td>論理名</td>
+<td>プロジェクトユーザー割当 + プロジェクト別ロール</td>
+</tr>
+<tr>
+<td>説明</td>
+<td>オーナー / プロジェクト管理者 / メンバーの全員に対し、プロジェクトごとに <code>admin</code>(プロジェクト管理者) / <code>member</code>(メンバー)のロールを付与する。<strong>オーナーも本テーブルに行を持つ</strong>(プロジェクト作成時に <code>(user_id=オーナー, project_id=新PJ, contract_owner_user_id=オーナー, role='admin', valid=1)</code> 行を自動 INSERT)</td>
+</tr>
+<tr>
+<td>主管 FR</td>
+<td>FR-015, FR-030-035</td>
+</tr>
+<tr>
+<td>保持期間 / 保持起点</td>
+<td>紐づくユーザーに従属 / -</td>
+</tr>
+<tr>
+<td><code>contract_owner_user_id</code></td>
+<td>あり(契約境界クエリ高速化と意図明示)</td>
+</tr>
+<tr>
+<td><code>retention_class</code></td>
+<td><code>general</code></td>
+</tr>
+<tr>
+<td>設計判断</td>
+<td>認可フロー先頭の <code>isOwner=true</code> bypass(<code>contract_owners</code> 行存在で判定)は維持し、本テーブルは critical 通知宛先解決と画面表示に使う。<strong>割当ゼロ状態の発生条件</strong>: メンバー削除はユーザー論理削除(<code>UPDATE users SET valid=0</code>)で行い、<code>project_users</code> 行のみの単独削除(離脱)操作は提供しない。論理削除に伴い <code>project_users</code> 行も <code>valid=0</code> に同時 UPDATE する。<strong>PK と再招待</strong>: <code>(user_id, project_id)</code> の物理 PK 維持。同じユーザー × 同じプロジェクトの再招待は既存行の <code>valid</code> を <code>0 → 1</code> に切り替える UPSERT(<code>INSERT … ON CONFLICT(user_id, project_id) DO UPDATE SET valid=1, role=?, granted_at=now(), granted_by=?, updated_at=now()</code>)で表現。これにより同一ペアで <code>valid=1</code> 行は最大 1 件、部分 UNIQUE インデックスは不要</td>
+</tr>
+</tbody>
+</table>
+<h3 id="332-カラム定義">カラム定義</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>論理名</th>
+<th>物理名</th>
+<th>データ型</th>
+<th style="text-align: right;">桁数</th>
+<th>NULL</th>
+<th>PK</th>
+<th>FK</th>
+<th>UNIQUE</th>
+<th>DEFAULT</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>ユーザー ID</td>
+<td><code>user_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td>①</td>
+<td>○</td>
+<td></td>
+<td></td>
+<td>複合 PK / <code>users(id)</code> 参照</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>プロジェクト ID</td>
+<td><code>project_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td>②</td>
+<td>○</td>
+<td></td>
+<td></td>
+<td>複合 PK / <code>projects(id)</code> 参照</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>契約境界 owner</td>
+<td><code>contract_owner_user_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td>○</td>
+<td></td>
+<td></td>
+<td>認可境界クエリ高速化(<code>projects.contract_owner_user_id</code> と必ず一致、アプリ層担保)</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>ロール</td>
+<td><code>role</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>admin</code> / <code>member</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td>有効フラグ</td>
+<td><code>valid</code></td>
+<td>INTEGER</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>1</code></td>
+<td>論理削除フラグ</td>
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td>付与日時</td>
+<td><code>granted_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>ISO 8601 UTC</td>
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td>付与者</td>
+<td><code>granted_by</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td>○</td>
+<td></td>
+<td></td>
+<td><code>users(id)</code> 参照(招待者削除でも整合維持)</td>
+</tr>
+<tr>
+<td style="text-align: right;">8</td>
+<td>更新日時</td>
+<td><code>updated_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>ISO 8601 UTC</td>
+</tr>
+</tbody>
+</table>
+<h3 id="333-主キー">主キー</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>主キー名</td>
+<td>(暗黙、PRIMARY KEY 句で指定)</td>
+</tr>
+<tr>
+<td>対象カラム</td>
+<td><code>(user_id, project_id)</code>(複合)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="334-外部キー">外部キー</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>外部キー名</th>
+<th>対象カラム</th>
+<th>参照先テーブル</th>
+<th>参照先カラム</th>
+<th>更新時</th>
+<th>削除時</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>(暗黙)</td>
+<td><code>user_id</code></td>
+<td><code>users</code></td>
+<td><code>id</code></td>
+<td>NO ACTION</td>
+<td>CASCADE</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>(暗黙)</td>
+<td><code>project_id</code></td>
+<td><code>projects</code></td>
+<td><code>id</code></td>
+<td>NO ACTION</td>
+<td>CASCADE</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>(暗黙)</td>
+<td><code>contract_owner_user_id</code></td>
+<td><code>contract_owners</code></td>
+<td><code>user_id</code></td>
+<td>NO ACTION</td>
+<td>CASCADE</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>(暗黙)</td>
+<td><code>granted_by</code></td>
+<td><code>users</code></td>
+<td><code>id</code></td>
+<td>NO ACTION</td>
+<td>SET NULL</td>
+</tr>
+</tbody>
+</table>
+<h3 id="335-インデックス">インデックス</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>インデックス名</th>
+<th>対象カラム</th>
+<th>UNIQUE</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td><code>idx_project_users_project</code></td>
+<td><code>project_id</code></td>
+<td></td>
+<td>プロジェクト割当一覧</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td><code>idx_project_users_owner</code></td>
+<td><code>contract_owner_user_id</code></td>
+<td></td>
+<td>契約境界クエリ</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td><code>idx_project_users_role_admin</code></td>
+<td><code>user_id</code> WHERE <code>role = 'admin' AND valid = 1</code></td>
+<td></td>
+<td>プロジェクト管理者の高速検索(critical 通知宛先解決)</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td><code>idx_project_users_valid</code></td>
+<td><code>valid</code> WHERE <code>valid = 0</code></td>
+<td></td>
+<td>論理削除対象抽出</td>
+</tr>
+</tbody>
+</table>
+<h3 id="336-制約">制約</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>制約名</th>
+<th>種別</th>
+<th>対象カラム</th>
+<th>条件・内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>(暗黙)</td>
+<td>CHECK</td>
+<td><code>role</code></td>
+<td><code>role IN ('admin','member')</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>(暗黙)</td>
+<td>CHECK</td>
+<td><code>valid</code></td>
+<td><code>valid IN (0,1)</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="337-コード値区分値">コード値・区分値</h3>
+<table>
+<thead>
+<tr>
+<th>カラム名</th>
+<th>値</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>role</code></td>
+<td><code>admin</code></td>
+<td>プロジェクト管理者(該当プロジェクトの FAQ 管理 / 要対応質問の状況管理 / ログ参照 / メンバー管理 = 招待・プロジェクト割当解除・ロール変更)</td>
+</tr>
+<tr>
+<td><code>role</code></td>
+<td><code>member</code></td>
+<td>メンバー(該当プロジェクトの FAQ 管理 / 要対応質問の状況管理 / ログ参照)</td>
+</tr>
+</tbody>
+</table>
+<p>詳細は <a href="../04_権限設計.html">04_権限設計.html §3</a> を正本とする。</p>
+
+</article>
+</body>
+</html>

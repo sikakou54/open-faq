@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ai_threshold_persistent_cache(TBL-016) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/ai_threshold_persistent_cache.html">
+<article class="content" id="content">
+<h1 id="TBL-016">TBL-016 <code>ai_threshold_persistent_cache</code></h1>
+<span id="316-ai_threshold_persistent_cache"></span>
+<p class="section-lead">3 階層 AI しきい値を永続キャッシュするテーブルです。主キーは <code>id</code>、<code>scope=owner</code> 時に契約境界キーを持ち、30 日保持します(主管 FR-348)。</p>
+<h3 id="3161-概要">概要</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>テーブル名</td>
+<td><code>ai_threshold_persistent_cache</code></td>
+</tr>
+<tr>
+<td>論理名</td>
+<td>AI しきい値キャッシュ</td>
+</tr>
+<tr>
+<td>説明</td>
+<td>3 階層しきい値(<code>global</code> / <code>owner</code> / <code>project</code>)の永続キャッシュ</td>
+</tr>
+<tr>
+<td>主管 FR</td>
+<td>FR-348</td>
+</tr>
+<tr>
+<td>保持期間 / 保持起点</td>
+<td>30 日 / 更新日時</td>
+</tr>
+<tr>
+<td><code>contract_owner_user_id</code></td>
+<td>あり(scope=<code>owner</code> または <code>project</code> 時のみ)</td>
+</tr>
+<tr>
+<td><code>retention_class</code></td>
+<td><code>general</code></td>
+</tr>
+<tr>
+<td>設計判断</td>
+<td>scope と owner / project の整合は複合 CHECK で強制。詳細は <a href="../02_API設計/index.html">02_API設計/index.html</a>(IF #6)参照</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3162-カラム定義">カラム定義</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>論理名</th>
+<th>物理名</th>
+<th>データ型</th>
+<th style="text-align: right;">桁数</th>
+<th>NULL</th>
+<th>PK</th>
+<th>FK</th>
+<th>UNIQUE</th>
+<th>DEFAULT</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>ID</td>
+<td><code>id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td>○</td>
+<td></td>
+<td></td>
+<td></td>
+<td>ULID</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>契約 owner ID</td>
+<td><code>contract_owner_user_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td>○</td>
+<td></td>
+<td></td>
+<td>scope=<code>global</code> 時 NULL</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>プロジェクト ID</td>
+<td><code>project_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td>○</td>
+<td></td>
+<td></td>
+<td>scope=<code>project</code> 時のみ NOT NULL</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>スコープ</td>
+<td><code>scope</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>global</code> / <code>owner</code> / <code>project</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td>信頼度しきい値</td>
+<td><code>confidence_threshold</code></td>
+<td>REAL</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>0.0〜1.0</td>
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td>関連度しきい値</td>
+<td><code>relevance_threshold</code></td>
+<td>REAL</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>0.0〜1.0</td>
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td>バージョン</td>
+<td><code>version</code></td>
+<td>INTEGER</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>配信バージョン</td>
+</tr>
+<tr>
+<td style="text-align: right;">8</td>
+<td>受信日時</td>
+<td><code>received_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>ISO 8601 UTC</td>
+</tr>
+<tr>
+<td style="text-align: right;">9</td>
+<td>更新日時</td>
+<td><code>updated_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>ISO 8601 UTC</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3163-主キー">主キー</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>主キー名</td>
+<td>(暗黙、PRIMARY KEY 句で指定)</td>
+</tr>
+<tr>
+<td>対象カラム</td>
+<td><code>id</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="3164-外部キー">外部キー</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>外部キー名</th>
+<th>対象カラム</th>
+<th>参照先テーブル</th>
+<th>参照先カラム</th>
+<th>更新時</th>
+<th>削除時</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>(暗黙)</td>
+<td><code>contract_owner_user_id</code></td>
+<td><code>contract_owners</code></td>
+<td><code>user_id</code></td>
+<td>NO ACTION</td>
+<td>CASCADE</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>(暗黙)</td>
+<td><code>project_id</code></td>
+<td><code>projects</code></td>
+<td><code>id</code></td>
+<td>NO ACTION</td>
+<td>CASCADE</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3165-インデックス">インデックス</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>インデックス名</th>
+<th>対象カラム</th>
+<th>UNIQUE</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td><code>uq_ai_threshold_scope</code></td>
+<td><code>(scope, COALESCE(contract_owner_user_id, ''), COALESCE(project_id, ''))</code></td>
+<td>○</td>
+<td>スコープ + キーで一意</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3166-制約">制約</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>制約名</th>
+<th>種別</th>
+<th>対象カラム</th>
+<th>条件・内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>(暗黙)</td>
+<td>CHECK</td>
+<td><code>scope</code></td>
+<td><code>scope IN ('global','owner','project')</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>(暗黙)</td>
+<td>CHECK</td>
+<td><code>confidence_threshold</code></td>
+<td><code>confidence_threshold BETWEEN 0.0 AND 1.0</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>(暗黙)</td>
+<td>CHECK</td>
+<td><code>relevance_threshold</code></td>
+<td><code>relevance_threshold BETWEEN 0.0 AND 1.0</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>(暗黙)</td>
+<td>複合CHECK</td>
+<td><code>scope × contract_owner_user_id × project_id</code></td>
+<td><code>(scope = 'global' AND contract_owner_user_id IS NULL AND project_id IS NULL) OR (scope = 'owner' AND contract_owner_user_id IS NOT NULL AND project_id IS NULL) OR (scope = 'project' AND contract_owner_user_id IS NOT NULL AND project_id IS NOT NULL)</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="3167-コード値区分値">コード値・区分値</h3>
+<table>
+<thead>
+<tr>
+<th>カラム名</th>
+<th>値</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>scope</code></td>
+<td><code>global</code></td>
+<td>全契約共通しきい値</td>
+</tr>
+<tr>
+<td><code>scope</code></td>
+<td><code>owner</code></td>
+<td>契約単位上書き</td>
+</tr>
+<tr>
+<td><code>scope</code></td>
+<td><code>project</code></td>
+<td>プロジェクト単位上書き</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

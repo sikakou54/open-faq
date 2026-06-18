@@ -200,7 +200,7 @@
 <div class="callout warning"><i class="bi bi-exclamation-triangle"></i><div><span class="c-title">注意</span>バリデーション: 上限件数は上限 ON 時のみ必須・1 件刻み・最小〜最大件数の範囲内(範囲外は <code>E-INPUT-*</code>、MSG-SCR-021-001-ERR-001)、OFF 時は <code>limit=null</code>。アラート閾値は <code>25</code> / <code>50</code> / <code>80</code> / <code>90</code> / <code>100</code> の配列として保存し、重複値・許可値以外は受け付けない(上限 OFF 時は <code>alertThresholds=[]</code>)。課金対象件数 = <code>max(0, 今月の利用上限 - 無料利用枠)</code>、最大課金額 = <code>課金対象件数 × 質問単価</code> をサーバ側で算出します。保存は再認証成功が前提(失敗時は <code>E-AUTH-REAUTH-FAILED</code> で保存中断)。</div></div>
 
 <h2 id="5-入出力一覧">5. 入出力一覧</h2>
-<p class="section-lead">本モーダルが読み書きするテーブルと、呼び出す API の一覧です。テーブルの正本は <a href="../03_テーブル設計.html">03_テーブル設計</a>、API の正本は <a href="../02_API設計/利用量・課金.html#API-BIL-007">02_API設計 §5.7.6</a> です。</p>
+<p class="section-lead">本モーダルが読み書きするテーブルと、呼び出す API の一覧です。テーブルの正本は <a href="../03_テーブル設計/index.html">03_テーブル設計</a>、API の正本は <a href="../02_API設計/利用量・課金.html#API-BIL-007">02_API設計 §5.7.6</a> です。</p>
 <table>
 <thead>
 <tr>
@@ -219,7 +219,7 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>プロジェクト上限</td><td>現値をロードし、月次上限件数 / アラート閾値を更新する</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>project_quota_limits</code>(<a href="../03_テーブル設計.html#324-project_quota_limits">テーブル設計 3.24</a>)</td></tr>
+<tr><td>プロジェクト上限</td><td>現値をロードし、月次上限件数 / アラート閾値を更新する</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>project_quota_limits</code>(<a href="../03_テーブル設計/project_quota_limits.html">テーブル設計 3.24</a>)</td></tr>
 <tr><td>上限取得</td><td>モーダル起動時に現在の上限設定を取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /projects/{id}/quota-limits</code>(<a href="../02_API設計/利用量・課金.html#API-BIL-006">API 設計 5.7.5</a>)</td></tr>
 <tr><td>上限更新</td><td>上限件数・アラート閾値を保存する(再認証必須)</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>PATCH /projects/{id}/quota-limits/questions</code>(<a href="../02_API設計/利用量・課金.html#API-BIL-007">API 設計 5.7.6</a>)</td></tr>
 </tbody>

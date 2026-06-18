@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>access_tokens(TBL-005) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/access_tokens.html">
+<article class="content" id="content">
+<h1 id="TBL-005">TBL-005 <code>access_tokens</code></h1>
+<span id="35-access_tokens"></span>
+<p class="section-lead">招待・パスワード再設定・メール確認などの短期トークンを保持します。主キーは <code>id</code>、<code>users</code> 経由で契約に紐づき、使用後 30 日で物理削除します(主管 FR-004 / FR-008)。</p>
+<h3 id="351-概要">概要</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>テーブル名</td>
+<td><code>access_tokens</code></td>
+</tr>
+<tr>
+<td>論理名</td>
+<td>アクセストークン</td>
+</tr>
+<tr>
+<td>説明</td>
+<td>招待 / パスワード再設定 / メール確認 / プロジェクト連絡先確認のトークン</td>
+</tr>
+<tr>
+<td>主管 FR</td>
+<td>FR-004, FR-008</td>
+</tr>
+<tr>
+<td>保持期間 / 保持起点</td>
+<td>使用後 30 日 / 発行日時</td>
+</tr>
+<tr>
+<td><code>contract_owner_user_id</code></td>
+<td>なし(<code>users</code> 経由)</td>
+</tr>
+<tr>
+<td><code>retention_class</code></td>
+<td><code>general</code></td>
+</tr>
+<tr>
+<td>設計判断</td>
+<td><code>valid</code> 持たず(<code>used_at</code> で代用)。トークン本体は HMAC ハッシュで保存(平文非保持)。常に物理削除(匿名化対象外)。主体は管理コンソール利用者(<code>user_id</code>)のみ</td>
+</tr>
+</tbody>
+</table>
+<h3 id="352-カラム定義">カラム定義</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>論理名</th>
+<th>物理名</th>
+<th>データ型</th>
+<th style="text-align: right;">桁数</th>
+<th>NULL</th>
+<th>PK</th>
+<th>FK</th>
+<th>UNIQUE</th>
+<th>DEFAULT</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>ID</td>
+<td><code>id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td>○</td>
+<td></td>
+<td></td>
+<td></td>
+<td>ULID</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>ユーザー ID</td>
+<td><code>user_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td>○</td>
+<td></td>
+<td></td>
+<td><code>users(id)</code> 参照</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>トークンハッシュ</td>
+<td><code>token_hash</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td>○</td>
+<td></td>
+<td>HMAC-SHA256</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>用途</td>
+<td><code>purpose</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>email_verify</code> / <code>password_reset</code> / <code>activation</code> / <code>contact_verify</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td>メタ情報</td>
+<td><code>meta</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>JSON 補助情報。<code>purpose='activation'</code> の場合は <code>{"invitedProjectId": "...", "invitedRole": "admin|member"}</code> を保持(SCR-018 有効化時に当該プロジェクトの予約行を特定、FR-016e)。<code>purpose='contact_verify'</code> の場合は <code>{"projectId": "..."}</code> を保持(SCR-019 着地時に <code>projects.contact_email_verified_at</code> を更新する対象プロジェクトを特定、FR-033a)</td>
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td>作成日時</td>
+<td><code>created_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>ISO 8601 UTC</td>
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td>有効期限</td>
+<td><code>expires_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>ISO 8601 UTC</td>
+</tr>
+<tr>
+<td style="text-align: right;">8</td>
+<td>使用日時</td>
+<td><code>used_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>使用済みのみセット</td>
+</tr>
+</tbody>
+</table>
+<h3 id="353-主キー">主キー</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>主キー名</td>
+<td>(暗黙、PRIMARY KEY 句で指定)</td>
+</tr>
+<tr>
+<td>対象カラム</td>
+<td><code>id</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="354-外部キー">外部キー</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>外部キー名</th>
+<th>対象カラム</th>
+<th>参照先テーブル</th>
+<th>参照先カラム</th>
+<th>更新時</th>
+<th>削除時</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>(暗黙)</td>
+<td><code>user_id</code></td>
+<td><code>users</code></td>
+<td><code>id</code></td>
+<td>NO ACTION</td>
+<td>CASCADE</td>
+</tr>
+</tbody>
+</table>
+<h3 id="355-インデックス">インデックス</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>インデックス名</th>
+<th>対象カラム</th>
+<th>UNIQUE</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td><code>uq_access_tokens_hash</code></td>
+<td><code>token_hash</code></td>
+<td>○</td>
+<td>トークン検索</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td><code>idx_access_tokens_expires</code></td>
+<td><code>expires_at</code> WHERE <code>used_at IS NULL</code></td>
+<td></td>
+<td>未使用トークン期限切れ抽出</td>
+</tr>
+</tbody>
+</table>
+<h3 id="356-制約">制約</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>制約名</th>
+<th>種別</th>
+<th>対象カラム</th>
+<th>条件・内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>(暗黙)</td>
+<td>CHECK</td>
+<td><code>purpose</code></td>
+<td><code>purpose IN ('email_verify','password_reset','activation','contact_verify')</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="357-コード値区分値">コード値・区分値</h3>
+<table>
+<thead>
+<tr>
+<th>カラム名</th>
+<th>値</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>purpose</code></td>
+<td><code>email_verify</code></td>
+<td>メール確認</td>
+</tr>
+<tr>
+<td><code>purpose</code></td>
+<td><code>password_reset</code></td>
+<td>パスワード再設定</td>
+</tr>
+<tr>
+<td><code>purpose</code></td>
+<td><code>activation</code></td>
+<td>メンバーアカウント有効化(招待受諾。SCR-018 で氏名 + 初回パスワード + 規約同意。<code>meta</code> に <code>invitedProjectId</code> / <code>invitedRole</code> を JSON 保持)</td>
+</tr>
+<tr>
+<td><code>purpose</code></td>
+<td><code>contact_verify</code></td>
+<td>プロジェクト連絡先メール確認(SCR-019 着地ページで <code>projects.contact_email_verified_at</code> セット。TTL 24 時間、<code>meta</code> に <code>projectId</code> を JSON 保持)</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

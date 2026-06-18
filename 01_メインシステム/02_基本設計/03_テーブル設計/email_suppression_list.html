@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>email_suppression_list(TBL-017) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/email_suppression_list.html">
+<article class="content" id="content">
+<h1 id="TBL-017">TBL-017 <code>email_suppression_list</code></h1>
+<span id="317-email_suppression_list"></span>
+<p class="section-lead">バウンス・苦情を起こしたメールアドレスを全契約横断で管理するサプレスリストです。主キーは <code>id</code>、契約境界キーは持たず(全契約横断)、永久保持します(主管 FR-149b)。</p>
+<h3 id="3171-概要">概要</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>テーブル名</td>
+<td><code>email_suppression_list</code></td>
+</tr>
+<tr>
+<td>論理名</td>
+<td>メールサプレスリスト(全契約横断)</td>
+</tr>
+<tr>
+<td>説明</td>
+<td>バウンス / 苦情の全契約横断管理(R-003 共通ドメインレピュテーション保護対策)</td>
+</tr>
+<tr>
+<td>主管 FR</td>
+<td>FR-149b</td>
+</tr>
+<tr>
+<td>保持期間 / 保持起点</td>
+<td>永久 / サプレス日時</td>
+</tr>
+<tr>
+<td><code>contract_owner_user_id</code></td>
+<td>なし(<strong>全契約横断</strong>)</td>
+</tr>
+<tr>
+<td><code>retention_class</code></td>
+<td><code>general</code></td>
+</tr>
+<tr>
+<td>設計判断</td>
+<td><code>valid</code> 持たず(全契約横断、<code>released_at</code> で解除を表現)。<a href="../09_セキュリティ設計.html">09_セキュリティ設計.html §11</a> 参照</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3172-カラム定義">カラム定義</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>論理名</th>
+<th>物理名</th>
+<th>データ型</th>
+<th style="text-align: right;">桁数</th>
+<th>NULL</th>
+<th>PK</th>
+<th>FK</th>
+<th>UNIQUE</th>
+<th>DEFAULT</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>ID</td>
+<td><code>id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td>○</td>
+<td></td>
+<td></td>
+<td></td>
+<td>ULID</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>メール HMAC</td>
+<td><code>email_hmac</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td>○</td>
+<td></td>
+<td>HMAC-SHA256</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>理由</td>
+<td><code>reason</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>§3.17.7</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>永久フラグ</td>
+<td><code>is_permanent</code></td>
+<td>INTEGER</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>1</code></td>
+<td>0 / 1</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td>作成日時</td>
+<td><code>created_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>ISO 8601 UTC</td>
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td>解除日時</td>
+<td><code>released_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>解除済みのみセット</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3173-主キー">主キー</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>主キー名</td>
+<td>(暗黙、PRIMARY KEY 句で指定)</td>
+</tr>
+<tr>
+<td>対象カラム</td>
+<td><code>id</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="3174-外部キー">外部キー</h3>
+<p>(なし、全契約横断)</p>
+<h3 id="3175-インデックス">インデックス</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>インデックス名</th>
+<th>対象カラム</th>
+<th>UNIQUE</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td><code>idx_suppression_permanent</code></td>
+<td><code>(is_permanent, email_hmac)</code></td>
+<td></td>
+<td>永久 / 一時別検索</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3176-制約">制約</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>制約名</th>
+<th>種別</th>
+<th>対象カラム</th>
+<th>条件・内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>(暗黙)</td>
+<td>CHECK</td>
+<td><code>reason</code></td>
+<td><code>reason IN ('bounced_hard','bounced_soft_5x','complained','manual')</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="3177-コード値区分値">コード値・区分値</h3>
+<table>
+<thead>
+<tr>
+<th>カラム名</th>
+<th>値</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>reason</code></td>
+<td><code>bounced_hard</code></td>
+<td>ハードバウンス</td>
+</tr>
+<tr>
+<td><code>reason</code></td>
+<td><code>bounced_soft_5x</code></td>
+<td>ソフトバウンス 5 連続</td>
+</tr>
+<tr>
+<td><code>reason</code></td>
+<td><code>complained</code></td>
+<td>スパム苦情(永久)</td>
+</tr>
+<tr>
+<td><code>reason</code></td>
+<td><code>manual</code></td>
+<td>手動追加</td>
+</tr>
+</tbody>
+</table>
+</article>
+</body>
+</html>

@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>faqs(TBL-009) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/faqs.html">
+<article class="content" id="content">
+<h1 id="TBL-009">TBL-009 <code>faqs</code></h1>
+<span id="39-faqs"></span>
+<p class="section-lead">FAQ 本体(質問・回答・公開状態)を保持します。主キーは <code>id</code>、契約境界キー <code>contract_owner_user_id</code> を持ちます。論理削除は <code>valid</code> カラムで表します(主管 FR-040〜048 / FR-322)。</p>
+<h3 id="391-概要">概要</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>テーブル名</td>
+<td><code>faqs</code></td>
+</tr>
+<tr>
+<td>論理名</td>
+<td>FAQ</td>
+</tr>
+<tr>
+<td>説明</td>
+<td>FAQ 本体</td>
+</tr>
+<tr>
+<td>主管 FR</td>
+<td>FR-040-048, FR-322</td>
+</tr>
+<tr>
+<td>保持期間 / 保持起点</td>
+<td>永久(FAQ 存続中) / 作成日時</td>
+</tr>
+<tr>
+<td><code>contract_owner_user_id</code></td>
+<td>あり</td>
+</tr>
+<tr>
+<td><code>retention_class</code></td>
+<td><code>general</code></td>
+</tr>
+<tr>
+<td>設計判断</td>
+<td><code>status='deleted'</code> ⇔ <code>valid=0</code>(プロジェクト削除に伴うカスケード論理削除では <code>status</code> を変えずに <code>valid=0</code> のみセットすることがある。UI / API では <code>valid=0</code> 行を常に除外)。復元は <strong>運営者のみ</strong>(IF #4)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="392-カラム定義">カラム定義</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>論理名</th>
+<th>物理名</th>
+<th>データ型</th>
+<th style="text-align: right;">桁数</th>
+<th>NULL</th>
+<th>PK</th>
+<th>FK</th>
+<th>UNIQUE</th>
+<th>DEFAULT</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>ID</td>
+<td><code>id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td>○</td>
+<td></td>
+<td></td>
+<td></td>
+<td>ULID</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>契約 owner ID</td>
+<td><code>contract_owner_user_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td>○</td>
+<td></td>
+<td></td>
+<td><code>contract_owners(user_id)</code> 参照</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>プロジェクト ID</td>
+<td><code>project_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td>○</td>
+<td></td>
+<td></td>
+<td><code>projects(id)</code> 参照</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>質問(タイトル)</td>
+<td><code>title</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>FAQ 質問。1〜500 文字(FR-040)</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td>回答(本文)</td>
+<td><code>body</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>FAQ 回答。1〜5000 文字(FR-040)</td>
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td>カテゴリ</td>
+<td><code>category</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>任意</td>
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td>状態</td>
+<td><code>status</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>'draft'</code></td>
+<td><code>draft</code> / <code>published</code> / <code>hidden</code> / <code>deleted</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">8</td>
+<td>バージョン</td>
+<td><code>version</code></td>
+<td>INTEGER</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>1</code></td>
+<td>改訂版数</td>
+</tr>
+<tr>
+<td style="text-align: right;">9</td>
+<td>タグ</td>
+<td><code>tags</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>JSON 配列(最大 10 要素、各 30 文字以下、API 層でバリデーション)</td>
+</tr>
+<tr>
+<td style="text-align: right;">10</td>
+<td>元未解決質問 ID</td>
+<td><code>source_unresolved_question_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td>○</td>
+<td></td>
+<td></td>
+<td><code>inquiries(id)</code> 参照</td>
+</tr>
+<tr>
+<td style="text-align: right;">11</td>
+<td>有効フラグ</td>
+<td><code>valid</code></td>
+<td>INTEGER</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>1</code></td>
+<td>論理削除フラグ</td>
+</tr>
+<tr>
+<td style="text-align: right;">12</td>
+<td>作成者</td>
+<td><code>created_by</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td>○</td>
+<td></td>
+<td></td>
+<td><code>users(id)</code> 参照(削除でも整合維持)</td>
+</tr>
+<tr>
+<td style="text-align: right;">13</td>
+<td>更新者</td>
+<td><code>updated_by</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td>○</td>
+<td></td>
+<td></td>
+<td><code>users(id)</code> 参照(同上)</td>
+</tr>
+<tr>
+<td style="text-align: right;">14</td>
+<td>作成日時</td>
+<td><code>created_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>ISO 8601 UTC</td>
+</tr>
+<tr>
+<td style="text-align: right;">15</td>
+<td>更新日時</td>
+<td><code>updated_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>ISO 8601 UTC</td>
+</tr>
+</tbody>
+</table>
+<h3 id="393-主キー">主キー</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>主キー名</td>
+<td>(暗黙、PRIMARY KEY 句で指定)</td>
+</tr>
+<tr>
+<td>対象カラム</td>
+<td><code>id</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="394-外部キー">外部キー</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>外部キー名</th>
+<th>対象カラム</th>
+<th>参照先テーブル</th>
+<th>参照先カラム</th>
+<th>更新時</th>
+<th>削除時</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>(暗黙)</td>
+<td><code>contract_owner_user_id</code></td>
+<td><code>contract_owners</code></td>
+<td><code>user_id</code></td>
+<td>NO ACTION</td>
+<td>CASCADE</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>(暗黙)</td>
+<td><code>project_id</code></td>
+<td><code>projects</code></td>
+<td><code>id</code></td>
+<td>NO ACTION</td>
+<td>CASCADE</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>(暗黙)</td>
+<td><code>source_unresolved_question_id</code></td>
+<td><code>inquiries</code></td>
+<td><code>id</code></td>
+<td>NO ACTION</td>
+<td>SET NULL</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>(暗黙)</td>
+<td><code>created_by</code></td>
+<td><code>users</code></td>
+<td><code>id</code></td>
+<td>NO ACTION</td>
+<td>SET NULL</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td>(暗黙)</td>
+<td><code>updated_by</code></td>
+<td><code>users</code></td>
+<td><code>id</code></td>
+<td>NO ACTION</td>
+<td>SET NULL</td>
+</tr>
+</tbody>
+</table>
+<h3 id="395-インデックス">インデックス</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>インデックス名</th>
+<th>対象カラム</th>
+<th>UNIQUE</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td><code>idx_faqs_owner_project</code></td>
+<td><code>(contract_owner_user_id, project_id)</code></td>
+<td></td>
+<td>契約境界 + プロジェクト</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td><code>idx_faqs_project_status</code></td>
+<td><code>(project_id, status)</code></td>
+<td></td>
+<td>プロジェクト × 状態</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td><code>idx_faqs_source_inquiry</code></td>
+<td><code>source_unresolved_question_id</code></td>
+<td></td>
+<td>元未解決質問逆引き</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td><code>idx_faqs_category</code></td>
+<td><code>(project_id, category)</code> WHERE <code>category IS NOT NULL</code></td>
+<td></td>
+<td>カテゴリ別</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td><code>idx_faqs_valid</code></td>
+<td><code>valid</code> WHERE <code>valid = 0</code></td>
+<td></td>
+<td>論理削除対象抽出</td>
+</tr>
+</tbody>
+</table>
+<h3 id="396-制約">制約</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>制約名</th>
+<th>種別</th>
+<th>対象カラム</th>
+<th>条件・内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>(暗黙)</td>
+<td>CHECK</td>
+<td><code>title</code></td>
+<td><code>length(title) BETWEEN 1 AND 500</code>(FAQ 質問、FR-040)</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>(暗黙)</td>
+<td>CHECK</td>
+<td><code>body</code></td>
+<td><code>length(body) BETWEEN 1 AND 5000</code>(FAQ 回答、FR-040)</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>(暗黙)</td>
+<td>CHECK</td>
+<td><code>status</code></td>
+<td><code>status IN ('draft','published','hidden','deleted')</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>(暗黙)</td>
+<td>CHECK</td>
+<td><code>valid</code></td>
+<td><code>valid IN (0,1)</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="397-コード値区分値">コード値・区分値</h3>
+<table>
+<thead>
+<tr>
+<th>カラム名</th>
+<th>値</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>status</code></td>
+<td><code>draft</code></td>
+<td>下書き</td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td><code>published</code></td>
+<td>公開中</td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td><code>hidden</code></td>
+<td>非公開</td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td><code>deleted</code></td>
+<td>論理削除(<code>valid=0</code> と同時セット。復元は <strong>運営者のみ</strong> = IF #4)</td>
+</tr>
+</tbody>
+</table>
+<p>状態遷移詳細は §4.5.1 参照。</p>
+
+</article>
+</body>
+</html>
