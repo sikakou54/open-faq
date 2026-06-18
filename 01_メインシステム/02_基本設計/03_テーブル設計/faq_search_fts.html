@@ -32,6 +32,14 @@
 <td>論理名</td>
 <td>FAQ 全文検索(FTS5 仮想テーブル)</td>
 </tr>
+<tr>
+<td>主キー</td>
+<td>rowid(<code>faqs.rowid</code> と一致)</td>
+</tr>
+<tr>
+<td>外部キー</td>
+<td>—</td>
+</tr>
 </tbody>
 </table>
 <h3 id="3112-カラム定義">カラム定義</h3>
@@ -111,27 +119,6 @@
 </tr>
 </tbody>
 </table>
-<h3 id="3113-主キー">主キー</h3>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>内容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>主キー名</td>
-<td>(FTS5 仮想テーブル、rowid 暗黙)</td>
-</tr>
-<tr>
-<td>対象カラム</td>
-<td>rowid(<code>faqs.rowid</code> と一致)</td>
-</tr>
-</tbody>
-</table>
-<h3 id="3114-外部キー">外部キー</h3>
-<p>(なし、<code>content='faqs'</code> で論理連動)</p>
 <h3 id="3115-インデックス">インデックス</h3>
 <p>(FTS5 内部インデックス、明示作成なし)</p>
 <h3 id="3116-制約トリガ">制約・トリガ</h3>

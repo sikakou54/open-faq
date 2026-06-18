@@ -32,6 +32,14 @@
 <td>論理名</td>
 <td>通知ログ</td>
 </tr>
+<tr>
+<td>主キー</td>
+<td><code>id</code></td>
+</tr>
+<tr>
+<td>外部キー</td>
+<td><code>contract_owner_user_id</code>, <code>inquiry_id</code></td>
+</tr>
 </tbody>
 </table>
 <h3 id="3152-カラム定義">カラム定義</h3>
@@ -234,59 +242,6 @@
 <td></td>
 <td></td>
 
-</tr>
-</tbody>
-</table>
-<h3 id="3153-主キー">主キー</h3>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>内容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>主キー名</td>
-<td>(暗黙、PRIMARY KEY 句で指定)</td>
-</tr>
-<tr>
-<td>対象カラム</td>
-<td><code>id</code></td>
-</tr>
-</tbody>
-</table>
-<h3 id="3154-外部キー">外部キー</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: right;">No</th>
-<th>外部キー名</th>
-<th>対象カラム</th>
-<th>参照先テーブル</th>
-<th>参照先カラム</th>
-<th>更新時</th>
-<th>削除時</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: right;">1</td>
-<td>(暗黙)</td>
-<td><code>contract_owner_user_id</code></td>
-<td><code>contract_owners</code></td>
-<td><code>user_id</code></td>
-<td>NO ACTION</td>
-<td>CASCADE</td>
-</tr>
-<tr>
-<td style="text-align: right;">2</td>
-<td>(暗黙)</td>
-<td><code>inquiry_id</code></td>
-<td><code>inquiries</code></td>
-<td><code>id</code></td>
-<td>NO ACTION</td>
-<td>SET NULL</td>
 </tr>
 </tbody>
 </table>

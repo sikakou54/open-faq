@@ -32,6 +32,14 @@
 <td>論理名</td>
 <td>規約版数(全契約横断)</td>
 </tr>
+<tr>
+<td>主キー</td>
+<td><code>(doc_type, version)</code></td>
+</tr>
+<tr>
+<td>外部キー</td>
+<td>—</td>
+</tr>
 </tbody>
 </table>
 <h3 id="3302-カラム定義">カラム定義</h3>
@@ -167,27 +175,6 @@
 </tr>
 </tbody>
 </table>
-<h3 id="3303-主キー">主キー</h3>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>内容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>主キー名</td>
-<td>(暗黙、PRIMARY KEY 句で指定)</td>
-</tr>
-<tr>
-<td>対象カラム</td>
-<td><code>(doc_type, version)</code>(複合主キー。文書 × 版で一意)</td>
-</tr>
-</tbody>
-</table>
-<h3 id="3304-外部キー">外部キー</h3>
-<p>(なし、全契約横断)</p>
 <h3 id="3305-インデックス">インデックス</h3>
 <p>(なし、PK 検索のみ)</p>
 <h3 id="3307-コード値区分値">コード値・区分値</h3>
