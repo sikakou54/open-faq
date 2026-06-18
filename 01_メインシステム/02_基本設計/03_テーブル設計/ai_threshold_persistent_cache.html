@@ -38,7 +38,7 @@
 </tr>
 <tr>
 <td>外部キー</td>
-<td><code>contract_owner_user_id</code>, <code>project_id</code></td>
+<td><code>contract_owner_user_id</code> → <code>contract_owners(user_id)</code>, <code>project_id</code> → <code>projects(id)</code></td>
 </tr>
 </tbody>
 </table>
@@ -83,7 +83,7 @@
 <td style="text-align: right;">-</td>
 <td>YES</td>
 <td></td>
-<td>○</td>
+<td><code>contract_owners(user_id)</code></td>
 <td></td>
 <td></td>
 <td></td>
@@ -97,7 +97,7 @@
 <td style="text-align: right;">-</td>
 <td>YES</td>
 <td></td>
-<td>○</td>
+<td><code>projects(id)</code></td>
 <td></td>
 <td></td>
 <td></td>
