@@ -174,9 +174,9 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>契約サブスクリプション</td><td>請求見込み・請求状態・支払方法を取得し、支払方法を更新する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>T_billing_subscriptions</code>(<a href="../03_テーブル設計/T_billing_subscriptions.html">テーブル設計 3.20</a>)</td></tr>
-<tr><td>請求書</td><td>請求履歴・請求書 PDF を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>T_billing_invoices</code>(<a href="../03_テーブル設計/T_billing_invoices.html">テーブル設計 3.21</a>)</td></tr>
-<tr><td>利用量計測</td><td>プロジェクト別の課金内訳を集計する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>T_usage_metering</code>(<a href="../03_テーブル設計/T_usage_metering.html">テーブル設計 3.22</a>)</td></tr>
+<tr><td>契約サブスクリプション</td><td>請求見込み・請求状態・支払方法を取得し、支払方法を更新する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>T_billing_subscriptions</code>(<a href="../03_テーブル設計/TBL-T-006_t_billing_subscriptions.html">テーブル設計 3.20</a>)</td></tr>
+<tr><td>請求書</td><td>請求履歴・請求書 PDF を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>T_billing_invoices</code>(<a href="../03_テーブル設計/TBL-T-007_t_billing_invoices.html">テーブル設計 3.21</a>)</td></tr>
+<tr><td>利用量計測</td><td>プロジェクト別の課金内訳を集計する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>T_usage_metering</code>(<a href="../03_テーブル設計/TBL-T-008_t_usage_metering.html">テーブル設計 3.22</a>)</td></tr>
 <tr><td>請求サマリ取得</td><td>請求見込み・次回請求日・請求状態・内訳を取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /billing/summary</code>(<code>period</code>)(<a href="../02_API設計/利用量・課金.html#API-BIL-003_month">API 設計 5.7.3</a>)</td></tr>
 <tr><td>請求履歴取得</td><td>過去の請求履歴を取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /billing/invoices</code>(<code>limit</code>)(<a href="../02_API設計/利用量・課金.html#API-BIL-004">API 設計 5.7.4</a>)</td></tr>
 <tr><td>支払方法取得・更新</td><td>支払方法を取得し、登録・更新する</td><td>API</td><td>入出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET / PUT /billing/payment-method</code>(<a href="../02_API設計/index.html">API 設計 5.7.4a</a>)</td></tr>

@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>T_billing_subscriptions(TBL-020) | FAQ 設計ポータル</title>
+<title>M_owner_quota_overrides(TBL-M-008) | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../../../assets/css/style.css">
 <script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script src="../../../assets/js/nav-data.js" defer></script>
 <script src="../../../assets/js/search-index.js" defer></script>
 <script src="../../../assets/js/portal.js" defer></script>
 </head>
-<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/T_billing_subscriptions.html">
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-008_m_owner_quota_overrides.html">
 <article class="content" id="content">
-<h1 id="TBL-020">TBL-020 <code>T_billing_subscriptions</code></h1>
-<span id="320-T_billing_subscriptions"></span>
-<p class="section-lead">Stripe のサブスクリプションと連動する、課金サブスクリプション情報を保持します。</p>
-<h3 id="3201-概要">概要</h3>
+<h1 id="TBL-M-008">TBL-M-008 <code>M_owner_quota_overrides</code></h1>
+<span id="323-M_owner_quota_overrides"></span>
+<p class="section-lead">契約単位のレート制限上書きを保持します。</p>
+<h3 id="3231-概要">概要</h3>
 <table>
 <thead>
 <tr>
@@ -26,11 +26,11 @@
 <tbody>
 <tr>
 <td>テーブル名</td>
-<td><code>T_billing_subscriptions</code></td>
+<td><code>M_owner_quota_overrides</code></td>
 </tr>
 <tr>
 <td>論理名</td>
-<td>課金サブスクリプション</td>
+<td>契約別レート制限上書き</td>
 </tr>
 <tr>
 <td>主キー</td>
@@ -44,7 +44,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="3202-カラム定義">カラム定義</h3>
+<h3 id="3232-カラム定義">カラム定義</h3>
 <table>
 <thead>
 <tr>
@@ -93,39 +93,39 @@
 </tr>
 <tr>
 <td style="text-align: right;">3</td>
-<td>Stripe サブスク ID</td>
-<td><code>stripe_subscription_id</code></td>
+<td>リソース種別</td>
+<td><code>resource_kind</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
-<td>YES</td>
+<td>NO</td>
 <td></td>
 <td></td>
-<td>○</td>
 <td></td>
 <td></td>
+<td><code>resource_kind IN ('widget_ask_per_min','widget_inquiry_per_min','email_per_hour','admin_api_per_min')</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">4</td>
-<td>状態</td>
-<td><code>status</code></td>
-<td>TEXT</td>
+<td>しきい値</td>
+<td><code>threshold</code></td>
+<td>INTEGER</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-<td><code>status IN ('active','past_due','canceled','unpaid','incomplete')</code></td>
+<td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">5</td>
-<td>プラン ID</td>
-<td><code>plan_id</code></td>
-<td>TEXT</td>
+<td>窓秒</td>
+<td><code>window_sec</code></td>
+<td>INTEGER</td>
 <td style="text-align: right;">-</td>
-<td>NO</td>
+<td>YES</td>
 <td></td>
 <td></td>
 <td></td>
@@ -135,11 +135,11 @@
 </tr>
 <tr>
 <td style="text-align: right;">6</td>
-<td>当期開始</td>
-<td><code>current_period_start</code></td>
+<td>有効期限</td>
+<td><code>valid_until</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
-<td>YES</td>
+<td>NO</td>
 <td></td>
 <td></td>
 <td></td>
@@ -149,8 +149,8 @@
 </tr>
 <tr>
 <td style="text-align: right;">7</td>
-<td>当期終了</td>
-<td><code>current_period_end</code></td>
+<td>理由</td>
+<td><code>reason</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
@@ -163,8 +163,8 @@
 </tr>
 <tr>
 <td style="text-align: right;">8</td>
-<td>解約予定日</td>
-<td><code>cancel_at</code></td>
+<td>作成者種別</td>
+<td><code>created_by_type</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
@@ -172,21 +172,21 @@
 <td></td>
 <td></td>
 <td></td>
-<td></td>
+<td><code>created_by_type IN ('owner','project_user')</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">9</td>
-<td>有効フラグ</td>
-<td><code>valid</code></td>
-<td>INTEGER</td>
+<td>作成者 ID</td>
+<td><code>created_by_id</code></td>
+<td>TEXT</td>
 <td style="text-align: right;">-</td>
-<td>NO</td>
+<td>YES</td>
 <td></td>
 <td></td>
 <td></td>
-<td><code>1</code></td>
-<td><code>valid IN (0,1)</code></td>
+<td></td>
+<td><code>created_by_type</code> に応じ <code>M_owners(id)</code> / <code>M_project_users(id)</code> を指す(論理参照)</td>
 
 </tr>
 <tr>
@@ -203,23 +203,9 @@
 <td></td>
 
 </tr>
-<tr>
-<td style="text-align: right;">11</td>
-<td>更新日時</td>
-<td><code>updated_at</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>NO</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-
-</tr>
 </tbody>
 </table>
-<h3 id="3205-インデックス">インデックス</h3>
+<h3 id="3235-インデックス">インデックス</h3>
 <table>
 <thead>
 <tr>
@@ -233,28 +219,14 @@
 <tbody>
 <tr>
 <td style="text-align: right;">1</td>
-<td><code>idx_billing_subs_owner</code></td>
-<td><code>contract_owner_user_id</code></td>
+<td><code>idx_tqo_owner_kind</code></td>
+<td><code>(contract_owner_user_id, resource_kind, valid_until)</code></td>
 <td></td>
-<td>オーナー検索</td>
-</tr>
-<tr>
-<td style="text-align: right;">2</td>
-<td><code>idx_billing_subs_status</code></td>
-<td><code>status</code></td>
-<td></td>
-<td>状態別集計</td>
-</tr>
-<tr>
-<td style="text-align: right;">3</td>
-<td><code>idx_billing_subs_valid</code></td>
-<td><code>valid</code> WHERE <code>valid = 0</code></td>
-<td></td>
-<td>論理削除済み参照(物理削除対象外)</td>
+<td>オーナー × リソース × 有効期限</td>
 </tr>
 </tbody>
 </table>
-<h3 id="3207-コード値区分値">コード値・区分値</h3>
+<h3 id="3237-コード値区分値">コード値・区分値</h3>
 <table>
 <thead>
 <tr>
@@ -265,32 +237,30 @@
 </thead>
 <tbody>
 <tr>
-<td><code>status</code></td>
-<td><code>active</code></td>
-<td>有効</td>
+<td><code>resource_kind</code></td>
+<td><code>widget_ask_per_min</code></td>
+<td>ウィジェット質問レート</td>
 </tr>
 <tr>
-<td><code>status</code></td>
-<td><code>past_due</code></td>
-<td>支払遅延</td>
+<td><code>resource_kind</code></td>
+<td><code>widget_inquiry_per_min</code></td>
+<td>ウィジェット未解決質問送信レート</td>
 </tr>
 <tr>
-<td><code>status</code></td>
-<td><code>canceled</code></td>
-<td>解約済み</td>
+<td><code>resource_kind</code></td>
+<td><code>email_per_hour</code></td>
+<td>メール送信レート</td>
 </tr>
 <tr>
-<td><code>status</code></td>
-<td><code>unpaid</code></td>
-<td>未払い</td>
-</tr>
-<tr>
-<td><code>status</code></td>
-<td><code>incomplete</code></td>
-<td>初回支払未完了</td>
+<td><code>resource_kind</code></td>
+<td><code>admin_api_per_min</code></td>
+<td>管理 API レート</td>
 </tr>
 </tbody>
 </table>
+<blockquote>
+<p><code>*_monthly_limit</code> 系コードは <code>M_project_quota_limits</code>(§3.24)へ移管したため、本テーブルには含めない。質問数だけが月次上限を持ち、FAQは無料枠行の識別子として使用する。</p>
+</blockquote>
 </article>
 </body>
 </html>

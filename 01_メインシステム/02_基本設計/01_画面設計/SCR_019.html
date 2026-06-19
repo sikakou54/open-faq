@@ -137,8 +137,8 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>プロジェクト</td><td>連絡先メール確認日時を設定する(<code>contact_email_verified_at</code>)</td><td>テーブル</td><td>出力</td><td>—</td><td>—</td><td>◯</td><td>—</td><td><code>M_projects</code>(<a href="../03_テーブル設計/M_projects.html">テーブル設計 3.6</a>)</td></tr>
-<tr><td>アクセストークン</td><td>確認トークンを検証・消費する(<code>purpose='contact_verify'</code>、<code>used_at</code> セット)</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>T_access_tokens</code>(<a href="../03_テーブル設計/T_access_tokens.html">テーブル設計 3.5</a>)</td></tr>
+<tr><td>プロジェクト</td><td>連絡先メール確認日時を設定する(<code>contact_email_verified_at</code>)</td><td>テーブル</td><td>出力</td><td>—</td><td>—</td><td>◯</td><td>—</td><td><code>M_projects</code>(<a href="../03_テーブル設計/TBL-M-004_m_projects.html">テーブル設計 3.6</a>)</td></tr>
+<tr><td>アクセストークン</td><td>確認トークンを検証・消費する(<code>purpose='contact_verify'</code>、<code>used_at</code> セット)</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>T_access_tokens</code>(<a href="../03_テーブル設計/TBL-T-002_t_access_tokens.html">テーブル設計 3.5</a>)</td></tr>
 <tr><td>連絡先メール確認</td><td>トークンを検証して連絡先メール確認日時をセットする</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /auth/contact-verifications/{token}</code>(<a href="../02_API設計/index.html">API 設計 5.1.9</a>)</td></tr>
 </tbody>
 </table>

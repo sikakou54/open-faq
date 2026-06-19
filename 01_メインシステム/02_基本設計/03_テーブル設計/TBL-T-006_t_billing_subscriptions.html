@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TP_ai_threshold_persistent_cache(TBL-016) | FAQ 設計ポータル</title>
+<title>T_billing_subscriptions(TBL-T-006) | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../../../assets/css/style.css">
 <script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script src="../../../assets/js/nav-data.js" defer></script>
 <script src="../../../assets/js/search-index.js" defer></script>
 <script src="../../../assets/js/portal.js" defer></script>
 </head>
-<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/TP_ai_threshold_persistent_cache.html">
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-006_t_billing_subscriptions.html">
 <article class="content" id="content">
-<h1 id="TBL-016">TBL-016 <code>TP_ai_threshold_persistent_cache</code></h1>
-<span id="316-TP_ai_threshold_persistent_cache"></span>
-<p class="section-lead">3 階層 AI しきい値を永続キャッシュするテーブルです。</p>
-<h3 id="3161-概要">概要</h3>
+<h1 id="TBL-T-006">TBL-T-006 <code>T_billing_subscriptions</code></h1>
+<span id="320-T_billing_subscriptions"></span>
+<p class="section-lead">Stripe のサブスクリプションと連動する、課金サブスクリプション情報を保持します。</p>
+<h3 id="3201-概要">概要</h3>
 <table>
 <thead>
 <tr>
@@ -26,11 +26,11 @@
 <tbody>
 <tr>
 <td>テーブル名</td>
-<td><code>TP_ai_threshold_persistent_cache</code></td>
+<td><code>T_billing_subscriptions</code></td>
 </tr>
 <tr>
 <td>論理名</td>
-<td>AI しきい値キャッシュ</td>
+<td>課金サブスクリプション</td>
 </tr>
 <tr>
 <td>主キー</td>
@@ -40,12 +40,11 @@
 <td>外部キー</td>
 <td><ul class="key-cols">
 <li><code>contract_owner_user_id</code> → <code>M_owners(id)</code></li>
-<li><code>project_id</code> → <code>M_projects(id)</code></li>
 </ul></td>
 </tr>
 </tbody>
 </table>
-<h3 id="3162-カラム定義">カラム定義</h3>
+<h3 id="3202-カラム定義">カラム定義</h3>
 <table>
 <thead>
 <tr>
@@ -84,7 +83,7 @@
 <td><code>contract_owner_user_id</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
-<td>YES</td>
+<td>NO</td>
 <td></td>
 <td><code>M_owners(id)</code></td>
 <td></td>
@@ -94,22 +93,22 @@
 </tr>
 <tr>
 <td style="text-align: right;">3</td>
-<td>プロジェクト ID</td>
-<td><code>project_id</code></td>
+<td>Stripe サブスク ID</td>
+<td><code>stripe_subscription_id</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
 <td></td>
-<td><code>M_projects(id)</code></td>
 <td></td>
+<td>○</td>
 <td></td>
 <td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">4</td>
-<td>スコープ</td>
-<td><code>scope</code></td>
+<td>状態</td>
+<td><code>status</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
@@ -117,44 +116,44 @@
 <td></td>
 <td></td>
 <td></td>
-<td><code>scope IN ('global','owner','project')</code><br>（複合）<code>(scope = 'global' AND contract_owner_user_id IS NULL AND project_id IS NULL) OR (scope = 'owner' AND contract_owner_user_id IS NOT NULL AND project_id IS NULL) OR (scope = 'project' AND contract_owner_user_id IS NOT NULL AND project_id IS NOT NULL)</code></td>
+<td><code>status IN ('active','past_due','canceled','unpaid','incomplete')</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">5</td>
-<td>信頼度しきい値</td>
-<td><code>confidence_threshold</code></td>
-<td>REAL</td>
+<td>プラン ID</td>
+<td><code>plan_id</code></td>
+<td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-<td><code>confidence_threshold BETWEEN 0.0 AND 1.0</code></td>
+<td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">6</td>
-<td>関連度しきい値</td>
-<td><code>relevance_threshold</code></td>
-<td>REAL</td>
+<td>当期開始</td>
+<td><code>current_period_start</code></td>
+<td>TEXT</td>
 <td style="text-align: right;">-</td>
-<td>NO</td>
+<td>YES</td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-<td><code>relevance_threshold BETWEEN 0.0 AND 1.0</code></td>
+<td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">7</td>
-<td>バージョン</td>
-<td><code>version</code></td>
-<td>INTEGER</td>
+<td>当期終了</td>
+<td><code>current_period_end</code></td>
+<td>TEXT</td>
 <td style="text-align: right;">-</td>
-<td>NO</td>
+<td>YES</td>
 <td></td>
 <td></td>
 <td></td>
@@ -164,8 +163,36 @@
 </tr>
 <tr>
 <td style="text-align: right;">8</td>
-<td>受信日時</td>
-<td><code>received_at</code></td>
+<td>解約予定日</td>
+<td><code>cancel_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">9</td>
+<td>有効フラグ</td>
+<td><code>valid</code></td>
+<td>INTEGER</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>1</code></td>
+<td><code>valid IN (0,1)</code></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">10</td>
+<td>作成日時</td>
+<td><code>created_at</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
@@ -177,7 +204,7 @@
 
 </tr>
 <tr>
-<td style="text-align: right;">9</td>
+<td style="text-align: right;">11</td>
 <td>更新日時</td>
 <td><code>updated_at</code></td>
 <td>TEXT</td>
@@ -192,7 +219,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="3165-インデックス">インデックス</h3>
+<h3 id="3205-インデックス">インデックス</h3>
 <table>
 <thead>
 <tr>
@@ -206,14 +233,28 @@
 <tbody>
 <tr>
 <td style="text-align: right;">1</td>
-<td><code>uq_ai_threshold_scope</code></td>
-<td><code>(scope, COALESCE(contract_owner_user_id, ''), COALESCE(project_id, ''))</code></td>
-<td>○</td>
-<td>スコープ + キーで一意</td>
+<td><code>idx_billing_subs_owner</code></td>
+<td><code>contract_owner_user_id</code></td>
+<td></td>
+<td>オーナー検索</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td><code>idx_billing_subs_status</code></td>
+<td><code>status</code></td>
+<td></td>
+<td>状態別集計</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td><code>idx_billing_subs_valid</code></td>
+<td><code>valid</code> WHERE <code>valid = 0</code></td>
+<td></td>
+<td>論理削除済み参照(物理削除対象外)</td>
 </tr>
 </tbody>
 </table>
-<h3 id="3167-コード値区分値">コード値・区分値</h3>
+<h3 id="3207-コード値区分値">コード値・区分値</h3>
 <table>
 <thead>
 <tr>
@@ -224,23 +265,32 @@
 </thead>
 <tbody>
 <tr>
-<td><code>scope</code></td>
-<td><code>global</code></td>
-<td>全契約共通しきい値</td>
+<td><code>status</code></td>
+<td><code>active</code></td>
+<td>有効</td>
 </tr>
 <tr>
-<td><code>scope</code></td>
-<td><code>owner</code></td>
-<td>契約単位上書き</td>
+<td><code>status</code></td>
+<td><code>past_due</code></td>
+<td>支払遅延</td>
 </tr>
 <tr>
-<td><code>scope</code></td>
-<td><code>project</code></td>
-<td>プロジェクト単位上書き</td>
+<td><code>status</code></td>
+<td><code>canceled</code></td>
+<td>解約済み</td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td><code>unpaid</code></td>
+<td>未払い</td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td><code>incomplete</code></td>
+<td>初回支払未完了</td>
 </tr>
 </tbody>
 </table>
-
 </article>
 </body>
 </html>

@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>M_owners(TBL-001) | FAQ 設計ポータル</title>
+<title>M_owners(TBL-M-001) | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../../../assets/css/style.css">
 <script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script src="../../../assets/js/nav-data.js" defer></script>
 <script src="../../../assets/js/search-index.js" defer></script>
 <script src="../../../assets/js/portal.js" defer></script>
 </head>
-<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/M_owners.html">
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-001_m_owners.html">
 <article class="content" id="content">
-<h1 id="TBL-001">TBL-001 <code>M_owners</code></h1>
+<h1 id="TBL-M-001">TBL-M-001 <code>M_owners</code></h1>
 <span id="31-M_owners"></span>
 <p class="section-lead">オーナー(契約あたり 1 ユーザー)の認証情報(メール / パスワード / 氏名 / セッション状態)と、契約状態・データ削除モードなどの契約属性を一元保持するオーナーマスタです。<code>id</code> が契約境界キー本体であり、外部キーを持ちません。</p>
 <h3 id="311-概要">概要</h3>
@@ -362,7 +362,7 @@
 </tbody>
 </table>
 <blockquote>
-<p>ウィジェット利用者は本テーブルに含まれず、永続アカウントを作成しない。プロジェクト管理者・メンバーは <a href="M_project_users.html"><code>M_project_users</code></a> マスタに保持し、本テーブルには含まれない。</p>
+<p>ウィジェット利用者は本テーブルに含まれず、永続アカウントを作成しない。プロジェクト管理者・メンバーは <a href="TBL-M-002_m_project_users.html"><code>M_project_users</code></a> マスタに保持し、本テーブルには含まれない。</p>
 </blockquote>
 
 </article>

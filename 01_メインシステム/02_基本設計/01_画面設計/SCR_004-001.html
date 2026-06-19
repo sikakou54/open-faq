@@ -135,9 +135,9 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>プロジェクト</td><td>新規作成・現値ロード・更新・論理削除を行う</td><td>テーブル</td><td>入力 / 出力</td><td>◯</td><td>◯</td><td>◯</td><td>◯</td><td>論理削除は <code>valid=0</code>。<code>M_projects</code>(<a href="../03_テーブル設計/M_projects.html">テーブル設計 3.6</a>)</td></tr>
-<tr><td>許可ドメイン</td><td>許可ドメインの登録・更新・削除を行う</td><td>テーブル</td><td>入力 / 出力</td><td>◯</td><td>◯</td><td>◯</td><td>◯</td><td><code>M_allowed_domains</code>(<a href="../03_テーブル設計/M_allowed_domains.html">テーブル設計 3.8</a>)</td></tr>
-<tr><td>プロジェクト割当</td><td>プロジェクト削除時に当該プロジェクトの割当を論理削除する(オーナーは isOwner で全権のため作成時に割当行は作成しない)</td><td>テーブル</td><td>出力</td><td>—</td><td>—</td><td>◯</td><td>—</td><td>削除時 <code>valid=0</code>。<code>M_project_user_assignments</code>(<a href="../03_テーブル設計/M_project_user_assignments.html">テーブル設計 3.3</a>)</td></tr>
+<tr><td>プロジェクト</td><td>新規作成・現値ロード・更新・論理削除を行う</td><td>テーブル</td><td>入力 / 出力</td><td>◯</td><td>◯</td><td>◯</td><td>◯</td><td>論理削除は <code>valid=0</code>。<code>M_projects</code>(<a href="../03_テーブル設計/TBL-M-004_m_projects.html">テーブル設計 3.6</a>)</td></tr>
+<tr><td>許可ドメイン</td><td>許可ドメインの登録・更新・削除を行う</td><td>テーブル</td><td>入力 / 出力</td><td>◯</td><td>◯</td><td>◯</td><td>◯</td><td><code>M_allowed_domains</code>(<a href="../03_テーブル設計/TBL-M-005_m_allowed_domains.html">テーブル設計 3.8</a>)</td></tr>
+<tr><td>プロジェクト割当</td><td>プロジェクト削除時に当該プロジェクトの割当を論理削除する(オーナーは isOwner で全権のため作成時に割当行は作成しない)</td><td>テーブル</td><td>出力</td><td>—</td><td>—</td><td>◯</td><td>—</td><td>削除時 <code>valid=0</code>。<code>M_project_user_assignments</code>(<a href="../03_テーブル設計/TBL-M-003_m_project_user_assignments.html">テーブル設計 3.3</a>)</td></tr>
 <tr><td>プロジェクト作成</td><td>新規プロジェクトを作成する API を呼び出す</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /M_projects</code>(<a href="../02_API設計/index.html">API 設計 5.3.2</a>)</td></tr>
 <tr><td>プロジェクト更新・削除</td><td>編集での現値ロード・更新・削除 API を呼び出す</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>編集 <code>PATCH /M_projects/{id}</code> / 削除 <code>DELETE /M_projects/{id}</code> / 現値ロード <code>GET /M_projects/{id}</code>(<a href="../02_API設計/プロジェクト管理.html#API-PRJ-003">API 設計 5.3.3</a>)</td></tr>
 <tr><td>連絡先メール確認</td><td>連絡先メールの確認トークンを検証する API を呼び出す</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /auth/contact-verifications/{token}</code>(<a href="../02_API設計/index.html">API 設計 5.1.9</a>)</td></tr>

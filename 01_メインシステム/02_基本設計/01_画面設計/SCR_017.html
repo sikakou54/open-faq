@@ -133,8 +133,8 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>オーナー / プロジェクトユーザー</td><td>自身の表示名・メールアドレス・パスワードを参照・更新する(対象マスタはログイン中の actor 種別で特定。両マスタは完全分離)</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>M_owners</code>(<a href="../03_テーブル設計/M_owners.html">テーブル設計 3.2</a>)/ <code>M_project_users</code>(<a href="../03_テーブル設計/M_project_users.html">テーブル設計 3.1</a>)</td></tr>
-<tr><td>プロジェクト割当</td><td>参加プロジェクト一覧・適用ロールを取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>M_project_user_assignments</code>(<a href="../03_テーブル設計/M_project_user_assignments.html">テーブル設計 3.3</a>)</td></tr>
+<tr><td>オーナー / プロジェクトユーザー</td><td>自身の表示名・メールアドレス・パスワードを参照・更新する(対象マスタはログイン中の actor 種別で特定。両マスタは完全分離)</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>M_owners</code>(<a href="../03_テーブル設計/TBL-M-001_m_owners.html">テーブル設計 3.2</a>)/ <code>M_project_users</code>(<a href="../03_テーブル設計/TBL-M-002_m_project_users.html">テーブル設計 3.1</a>)</td></tr>
+<tr><td>プロジェクト割当</td><td>参加プロジェクト一覧・適用ロールを取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>M_project_user_assignments</code>(<a href="../03_テーブル設計/TBL-M-003_m_project_user_assignments.html">テーブル設計 3.3</a>)</td></tr>
 <tr><td>メールアドレス変更確認</td><td>確認トークンを検証してメールアドレス変更を確定する</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /auth/email-verifications/{token}</code>(<a href="../02_API設計/index.html">API 設計 5.1.6</a>)</td></tr>
 </tbody>
 </table>

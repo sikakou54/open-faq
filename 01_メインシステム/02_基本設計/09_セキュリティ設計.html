@@ -500,7 +500,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 <h3 id="73-改ざん検知方式nfr-306">7.3 改ざん検知方式(NFR-306)</h3>
 <p class="section-lead">監査ログの改ざん検知はハッシュチェーンで行う(NFR-306)。チェーン構造・ダイジェスト保管・完全性検証バッチにより <code>H_audit_logs</code> の完全性検証を行う。</p>
 <h3 id="74-エラーログerror_logs">7.4 エラーログ(<code>H_error_logs</code>)</h3>
-<p class="section-lead">サーバー内部起因のエラーは運用確認用に記録するが、PII・トークン・カード情報は一切残さない(FR-113 / FR-114)。テーブル定義は <a href="03_テーブル設計/H_error_logs.html">03_テーブル設計/index.html §3.19</a> を正本とする。</p>
+<p class="section-lead">サーバー内部起因のエラーは運用確認用に記録するが、PII・トークン・カード情報は一切残さない(FR-113 / FR-114)。テーブル定義は <a href="03_テーブル設計/TBL-H-005_h_error_logs.html">03_テーブル設計/index.html §3.19</a> を正本とする。</p>
 <ul>
 <li>180 日保持(JST 05:00 Cron で自動物理削除、UC-140)</li>
 <li>スタックトレース / リクエスト ID を記録</li>
@@ -640,7 +640,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 <p><strong>ローテーション完了の判定</strong>:<code>SELECT COUNT(*) FROM M_owners WHERE email_key_version &lt; N</code> + <code>SELECT COUNT(*) FROM M_project_users WHERE email_key_version &lt; N</code> がいずれも 0 件であること。</p>
 <p><strong>例外</strong>:<code>M_owners.contract_status='deleted'</code>・<code>M_owners.valid=0</code> または <code>M_project_users.valid=0</code> の論理削除済み行は、90 日経過後の物理削除バッチに任せ、再暗号化対象外とする(復元時の dual-decrypt 整合性を維持するため、ローテーション期間は 60 日 + 物理削除遅延 90 日を考慮した運用窓設計とする)。</p>
 <h3 id="83-ウィジェット-api-キーprojects--project_legacy_keys834-から移管">8.3 ウィジェット API キー(<code>M_projects</code> / <code>T_project_legacy_keys</code>)</h3>
-<p class="section-lead">ウィジェット公開キーは無期限で、失効は再発行(ローテーション)でのみ行う(FR-194)。再発行時は旧キーを 24 時間併存させ猶予後に完全失効する(FR-193)。キーと旧キーのテーブル定義は <a href="03_テーブル設計/T_project_legacy_keys.html">03_テーブル設計/index.html §3.7</a> を正本とする。</p>
+<p class="section-lead">ウィジェット公開キーは無期限で、失効は再発行(ローテーション)でのみ行う(FR-194)。再発行時は旧キーを 24 時間併存させ猶予後に完全失効する(FR-193)。キーと旧キーのテーブル定義は <a href="03_テーブル設計/TBL-T-003_t_project_legacy_keys.html">03_テーブル設計/index.html §3.7</a> を正本とする。</p>
 <ul>
 <li>形式: <code>pk_live_&lt;32-char base62&gt;</code></li>
 <li>有効期限: なし(無期限)。失効は再発行(ローテーション)でのみ行う</li>
@@ -844,7 +844,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </tbody>
 </table>
 <h3 id="112-共通ドメインレピュテーション保護r-003--fr-149b--nfr-504">11.2 共通ドメインレピュテーション保護(FR-149b / NFR-504)</h3>
-<p class="section-lead">サービス共通ドメインの送信レピュテーションを守るため、契約別送信レート・バウンス率・苦情率を監視し、超過時に送信を抑制する(FR-144、NFR-504)。送信停止リスト <code>M_email_suppression_list</code>(<a href="03_テーブル設計/M_email_suppression_list.html">03_テーブル設計/index.html §3.17</a>)は全契約横断で共有する(FR-149b)。</p>
+<p class="section-lead">サービス共通ドメインの送信レピュテーションを守るため、契約別送信レート・バウンス率・苦情率を監視し、超過時に送信を抑制する(FR-144、NFR-504)。送信停止リスト <code>M_email_suppression_list</code>(<a href="03_テーブル設計/TBL-M-007_m_email_suppression_list.html">03_テーブル設計/index.html §3.17</a>)は全契約横断で共有する(FR-149b)。</p>
 <table>
 <thead>
 <tr>
@@ -888,7 +888,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </tbody>
 </table>
 <h3 id="113-resend-webhook-処理">11.3 Resend Webhook 処理</h3>
-<p class="section-lead">送信プロバイダ(Resend)からの配信状態 Webhook を受信し、<code>H_notification_logs</code>(<a href="03_テーブル設計/H_notification_logs.html">03_テーブル設計/index.html §3.15</a>)の配信状態を更新する。署名検証に失敗した受信は即時破棄し通知する(NFR-310)。</p>
+<p class="section-lead">送信プロバイダ(Resend)からの配信状態 Webhook を受信し、<code>H_notification_logs</code>(<a href="03_テーブル設計/TBL-H-003_h_notification_logs.html">03_テーブル設計/index.html §3.15</a>)の配信状態を更新する。署名検証に失敗した受信は即時破棄し通知する(NFR-310)。</p>
 <table>
 <thead>
 <tr>
@@ -999,7 +999,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </tbody>
 </table>
 <h2 id="12-ウィジェット保護102-から移管">12. ウィジェット保護</h2>
-<p class="section-lead">ウィジェットは顧客サイトに埋め込まれるため、埋め込み元ドメイン検証(<code>Origin</code> / <code>Referer</code>)で許可ドメイン以外からの読み込みを拒否し(FR-173、NFR-312)、公開キー署名・CORS・iframe sandbox・レート制限・Bot 対策で多層に保護する(FR-172 / FR-177)。許可ドメインの定義は <a href="03_テーブル設計/M_allowed_domains.html">03_テーブル設計/index.html §3.8</a>(<code>M_allowed_domains</code>)を正本とする。</p>
+<p class="section-lead">ウィジェットは顧客サイトに埋め込まれるため、埋め込み元ドメイン検証(<code>Origin</code> / <code>Referer</code>)で許可ドメイン以外からの読み込みを拒否し(FR-173、NFR-312)、公開キー署名・CORS・iframe sandbox・レート制限・Bot 対策で多層に保護する(FR-172 / FR-177)。許可ドメインの定義は <a href="03_テーブル設計/TBL-M-005_m_allowed_domains.html">03_テーブル設計/index.html §3.8</a>(<code>M_allowed_domains</code>)を正本とする。</p>
 <table>
 <thead>
 <tr>

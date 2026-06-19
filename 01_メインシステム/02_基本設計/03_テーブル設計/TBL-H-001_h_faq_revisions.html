@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>T_access_tokens(TBL-005) | FAQ 設計ポータル</title>
+<title>H_faq_revisions(TBL-H-001) | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../../../assets/css/style.css">
 <script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script src="../../../assets/js/nav-data.js" defer></script>
 <script src="../../../assets/js/search-index.js" defer></script>
 <script src="../../../assets/js/portal.js" defer></script>
 </head>
-<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/T_access_tokens.html">
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/TBL-H-001_h_faq_revisions.html">
 <article class="content" id="content">
-<h1 id="TBL-005">TBL-005 <code>T_access_tokens</code></h1>
-<span id="35-T_access_tokens"></span>
-<p class="section-lead">招待・パスワード再設定・メール確認などの短期トークンを保持します。</p>
-<h3 id="351-概要">概要</h3>
+<h1 id="TBL-H-001">TBL-H-001 <code>H_faq_revisions</code></h1>
+<span id="310-H_faq_revisions"></span>
+<p class="section-lead">FAQ の改訂履歴を全文スナップショットで最大 50 件保持します。</p>
+<h3 id="3101-概要">概要</h3>
 <table>
 <thead>
 <tr>
@@ -26,11 +26,11 @@
 <tbody>
 <tr>
 <td>テーブル名</td>
-<td><code>T_access_tokens</code></td>
+<td><code>H_faq_revisions</code></td>
 </tr>
 <tr>
 <td>論理名</td>
-<td>アクセストークン</td>
+<td>FAQ 改訂履歴</td>
 </tr>
 <tr>
 <td>主キー</td>
@@ -39,12 +39,13 @@
 <tr>
 <td>外部キー</td>
 <td><ul class="key-cols">
-<li><code>actor_type</code> + <code>actor_id</code> → <code>M_owners(id)</code> / <code>M_project_users(id)</code>(論理参照)</li>
+<li><code>faq_id</code> → <code>M_faqs(id)</code></li>
+<li><code>created_by_type</code> + <code>created_by_id</code> → <code>M_owners(id)</code> / <code>M_project_users(id)</code>(論理参照)</li>
 </ul></td>
 </tr>
 </tbody>
 </table>
-<h3 id="352-カラム定義">カラム定義</h3>
+<h3 id="3102-カラム定義-1">カラム定義</h3>
 <table>
 <thead>
 <tr>
@@ -79,50 +80,50 @@
 </tr>
 <tr>
 <td style="text-align: right;">2</td>
-<td>操作者種別</td>
-<td><code>actor_type</code></td>
+<td>FAQ ID</td>
+<td><code>faq_id</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
+<td><code>M_faqs(id)</code></td>
 <td></td>
 <td></td>
 <td></td>
-<td><code>actor_type IN ('owner','project_user')</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">3</td>
-<td>操作者 ID</td>
-<td><code>actor_id</code></td>
-<td>TEXT</td>
+<td>バージョン</td>
+<td><code>version</code></td>
+<td>INTEGER</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-<td><code>actor_type</code> に応じ <code>M_owners(id)</code> / <code>M_project_users(id)</code> を指す(論理参照)</td>
+<td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">4</td>
-<td>トークンハッシュ</td>
-<td><code>token_hash</code></td>
+<td>タイトル</td>
+<td><code>title</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
 <td></td>
-<td>○</td>
+<td></td>
 <td></td>
 <td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">5</td>
-<td>用途</td>
-<td><code>purpose</code></td>
+<td>本文</td>
+<td><code>body</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
@@ -130,13 +131,13 @@
 <td></td>
 <td></td>
 <td></td>
-<td><code>purpose IN ('email_verify','password_reset','activation','contact_verify')</code></td>
+<td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">6</td>
-<td>メタ情報</td>
-<td><code>meta</code></td>
+<td>カテゴリ</td>
+<td><code>category</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
@@ -149,6 +150,48 @@
 </tr>
 <tr>
 <td style="text-align: right;">7</td>
+<td>タグ</td>
+<td><code>tags</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">8</td>
+<td>状態スナップショット</td>
+<td><code>status_snapshot</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>status_snapshot IN ('draft','published','hidden','deleted')</code></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">9</td>
+<td>由来</td>
+<td><code>source</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>'manual'</code></td>
+<td><code>source IN ('manual','import')</code></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">10</td>
 <td>作成日時</td>
 <td><code>created_at</code></td>
 <td>TEXT</td>
@@ -162,9 +205,9 @@
 
 </tr>
 <tr>
-<td style="text-align: right;">8</td>
-<td>有効期限</td>
-<td><code>expires_at</code></td>
+<td style="text-align: right;">11</td>
+<td>作成者種別</td>
+<td><code>created_by_type</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
@@ -172,26 +215,26 @@
 <td></td>
 <td></td>
 <td></td>
-<td></td>
+<td><code>created_by_type IN ('owner','project_user')</code></td>
 
 </tr>
 <tr>
-<td style="text-align: right;">9</td>
-<td>使用日時</td>
-<td><code>used_at</code></td>
+<td style="text-align: right;">12</td>
+<td>作成者 ID</td>
+<td><code>created_by_id</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
-<td>YES</td>
+<td>NO</td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
+<td><code>created_by_type</code> に応じ <code>M_owners(id)</code> / <code>M_project_users(id)</code> を指す(論理参照)</td>
 
 </tr>
 </tbody>
 </table>
-<h3 id="355-インデックス">インデックス</h3>
+<h3 id="3105-インデックス-1">インデックス</h3>
 <table>
 <thead>
 <tr>
@@ -205,21 +248,21 @@
 <tbody>
 <tr>
 <td style="text-align: right;">1</td>
-<td><code>uq_access_tokens_hash</code></td>
-<td><code>token_hash</code></td>
-<td>○</td>
-<td>トークン検索</td>
+<td><code>idx_faq_revisions_faq</code></td>
+<td><code>(faq_id, version DESC)</code></td>
+<td></td>
+<td>版数降順抽出</td>
 </tr>
 <tr>
 <td style="text-align: right;">2</td>
-<td><code>idx_access_tokens_expires</code></td>
-<td><code>expires_at</code> WHERE <code>used_at IS NULL</code></td>
+<td><code>idx_faq_revisions_source</code></td>
+<td><code>source</code></td>
 <td></td>
-<td>未使用トークン期限切れ抽出</td>
+<td>由来別集計</td>
 </tr>
 </tbody>
 </table>
-<h3 id="357-コード値区分値">コード値・区分値</h3>
+<h3 id="3107-コード値区分値-1">コード値・区分値</h3>
 <table>
 <thead>
 <tr>
@@ -230,24 +273,14 @@
 </thead>
 <tbody>
 <tr>
-<td><code>purpose</code></td>
-<td><code>email_verify</code></td>
-<td>メール確認</td>
+<td><code>source</code></td>
+<td><code>manual</code></td>
+<td>手動編集</td>
 </tr>
 <tr>
-<td><code>purpose</code></td>
-<td><code>password_reset</code></td>
-<td>パスワード再設定</td>
-</tr>
-<tr>
-<td><code>purpose</code></td>
-<td><code>activation</code></td>
-<td>メンバーアカウント有効化</td>
-</tr>
-<tr>
-<td><code>purpose</code></td>
-<td><code>contact_verify</code></td>
-<td>プロジェクト連絡先メール確認</td>
+<td><code>source</code></td>
+<td><code>import</code></td>
+<td>インポートによる作成</td>
 </tr>
 </tbody>
 </table>

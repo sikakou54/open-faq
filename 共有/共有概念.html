@@ -42,13 +42,13 @@
 <tr>
 <td>1</td>
 <td><code>M_owners.contract_status</code>(4 値: <code>active</code> / <code>suspended</code> / <code>deleted_pending</code> / <code>deleted</code>)</td>
-<td><a href="../01_メインシステム/02_基本設計/10_課金・請求設計.html">10_課金・請求設計.html</a> §4 + <a href="../01_メインシステム/02_基本設計/03_テーブル設計/M_owners.html">03_テーブル設計/M_owners.html</a></td>
+<td><a href="../01_メインシステム/02_基本設計/10_課金・請求設計.html">10_課金・請求設計.html</a> §4 + <a href="../01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-001_m_owners.html">03_テーブル設計/TBL-M-001_m_owners.html</a></td>
 <td><code>contract_status</code>, <code>active</code>, <code>suspended</code>, <code>deleted_pending</code>, <code>deleted</code></td>
 </tr>
 <tr>
 <td>2</td>
 <td><code>T_inquiries.status</code>(<code>open</code> / <code>closed</code> の 2 値、SCR-005 詳細画面の手動操作のみで遷移 = FR-077)</td>
-<td><a href="../01_メインシステム/02_基本設計/03_テーブル設計/T_inquiries.html">03_テーブル設計/T_inquiries.html</a> + <a href="../01_メインシステム/02_基本設計/03_テーブル設計/テーブル構造設計.html#45-状態遷移">テーブル構造設計.html §5 状態遷移</a></td>
+<td><a href="../01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-005_t_inquiries.html">03_テーブル設計/TBL-T-005_t_inquiries.html</a> + <a href="../01_メインシステム/02_基本設計/03_テーブル設計/テーブル構造設計.html#45-状態遷移">テーブル構造設計.html §5 状態遷移</a></td>
 <td><code>T_inquiries.status</code>, <code>FR-077</code>, <code>open</code>, <code>closed</code>, <code>manual</code></td>
 </tr>
 <tr>
@@ -72,7 +72,7 @@
 <tr>
 <td>6</td>
 <td>監査ログ(ハッシュチェーン完全性検証・保持クラス <code>general</code> / <code>billing</code>)</td>
-<td><a href="../01_メインシステム/02_基本設計/09_セキュリティ設計.html">09_セキュリティ設計.html</a> §7 + <a href="../01_メインシステム/02_基本設計/03_テーブル設計/H_audit_logs.html">03_テーブル設計/H_audit_logs.html</a></td>
+<td><a href="../01_メインシステム/02_基本設計/09_セキュリティ設計.html">09_セキュリティ設計.html</a> §7 + <a href="../01_メインシステム/02_基本設計/03_テーブル設計/TBL-H-004_h_audit_logs.html">03_テーブル設計/TBL-H-004_h_audit_logs.html</a></td>
 <td><code>retention_class</code>, <code>H_audit_logs</code>, ハッシュチェーン, <code>general</code>, <code>billing</code></td>
 </tr>
 <tr>
@@ -102,7 +102,7 @@
 <tr>
 <td>11</td>
 <td>利用上限(月次上限件数・無料枠 = プロジェクト単位 <code>M_project_quota_limits</code> / レート制限 = 契約単位 <code>M_owner_quota_overrides</code>)</td>
-<td><a href="../01_メインシステム/02_基本設計/10_課金・請求設計.html">10_課金・請求設計.html</a> §1〜§3 + <a href="../01_メインシステム/02_基本設計/04_権限設計.html">04_権限設計.html</a> + <a href="../01_メインシステム/02_基本設計/03_テーブル設計/M_project_quota_limits.html">03_テーブル設計/M_project_quota_limits.html</a></td>
+<td><a href="../01_メインシステム/02_基本設計/10_課金・請求設計.html">10_課金・請求設計.html</a> §1〜§3 + <a href="../01_メインシステム/02_基本設計/04_権限設計.html">04_権限設計.html</a> + <a href="../01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-009_m_project_quota_limits.html">03_テーブル設計/TBL-M-009_m_project_quota_limits.html</a></td>
 <td><code>M_owner_quota_overrides</code>, <code>M_project_quota_limits</code></td>
 </tr>
 <tr>

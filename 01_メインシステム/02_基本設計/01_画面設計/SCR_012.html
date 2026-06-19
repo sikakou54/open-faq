@@ -129,8 +129,8 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>お知らせ</td><td>お知らせ本文・メタ情報を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>M_service_announcements</code>(<a href="../03_テーブル設計/M_service_announcements.html">テーブル設計 3.25</a>)</td></tr>
-<tr><td>お知らせ受信状態</td><td>既読日時を取得し、表示時に自動既読化する(<code>read_at</code>)</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>T_announcement_recipients</code>(<a href="../03_テーブル設計/T_announcement_recipients.html">テーブル設計 3.27</a>)</td></tr>
+<tr><td>お知らせ</td><td>お知らせ本文・メタ情報を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>M_service_announcements</code>(<a href="../03_テーブル設計/TBL-M-010_m_service_announcements.html">テーブル設計 3.25</a>)</td></tr>
+<tr><td>お知らせ受信状態</td><td>既読日時を取得し、表示時に自動既読化する(<code>read_at</code>)</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>T_announcement_recipients</code>(<a href="../03_テーブル設計/TBL-T-009_t_announcement_recipients.html">テーブル設計 3.27</a>)</td></tr>
 <tr><td>お知らせ一覧取得</td><td>前後ナビ用にお知らせの並びを取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /me/announcements</code>(<a href="../02_API設計/お知らせ受信箱.html#API-ANN-001">API 設計 5.8.1</a>)</td></tr>
 <tr><td>お知らせ個別既読化</td><td>表示時に当該お知らせを自動既読化する</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /me/announcements/{id}/read</code>(<a href="../02_API設計/お知らせ受信箱.html#API-ANN-002">API 設計 5.8.2</a>)</td></tr>
 </tbody>

@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>M_announcement_audiences(TBL-026) | FAQ 設計ポータル</title>
+<title>T_question_log_faq_refs(TBL-T-004) | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../../../assets/css/style.css">
 <script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script src="../../../assets/js/nav-data.js" defer></script>
 <script src="../../../assets/js/search-index.js" defer></script>
 <script src="../../../assets/js/portal.js" defer></script>
 </head>
-<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/M_announcement_audiences.html">
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-004_t_question_log_faq_refs.html">
 <article class="content" id="content">
-<h1 id="TBL-026">TBL-026 <code>M_announcement_audiences</code></h1>
-<span id="326-M_announcement_audiences"></span>
-<p class="section-lead">お知らせの配信先オーナーを限定指定する M:N テーブルです。</p>
-<h3 id="3261-概要">概要</h3>
+<h1 id="TBL-T-004">TBL-T-004 <code>T_question_log_faq_refs</code></h1>
+<span id="313-T_question_log_faq_refs"></span>
+<p class="section-lead">質問ログと参照 FAQ の M:N 関係を保持する中間テーブルです。</p>
+<h3 id="3131-概要">概要</h3>
 <table>
 <thead>
 <tr>
@@ -26,29 +26,26 @@
 <tbody>
 <tr>
 <td>テーブル名</td>
-<td><code>M_announcement_audiences</code></td>
+<td><code>T_question_log_faq_refs</code></td>
 </tr>
 <tr>
 <td>論理名</td>
-<td>お知らせ配信対象(M:N)</td>
+<td>参照 FAQ(M:N)</td>
 </tr>
 <tr>
 <td>主キー</td>
-<td><ul class="key-cols">
-<li><code>announcement_id</code></li>
-<li><code>contract_owner_user_id</code></li>
-</ul></td>
+<td><code>id</code></td>
 </tr>
 <tr>
 <td>外部キー</td>
 <td><ul class="key-cols">
-<li><code>announcement_id</code> → <code>M_service_announcements(id)</code></li>
-<li><code>contract_owner_user_id</code> → <code>M_owners(id)</code></li>
+<li><code>question_log_id</code> → <code>H_question_logs(id)</code></li>
+<li><code>faq_id</code> → <code>M_faqs(id)</code></li>
 </ul></td>
 </tr>
 </tbody>
 </table>
-<h3 id="3262-カラム定義">カラム定義</h3>
+<h3 id="3132-カラム定義">カラム定義</h3>
 <table>
 <thead>
 <tr>
@@ -69,13 +66,13 @@
 <tbody>
 <tr>
 <td style="text-align: right;">1</td>
-<td>お知らせ ID</td>
-<td><code>announcement_id</code></td>
+<td>ID</td>
+<td><code>id</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
-<td>①</td>
-<td><code>M_service_announcements(id)</code></td>
+<td>○</td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -83,20 +80,48 @@
 </tr>
 <tr>
 <td style="text-align: right;">2</td>
-<td>契約 owner ID</td>
-<td><code>contract_owner_user_id</code></td>
+<td>質問ログ ID</td>
+<td><code>question_log_id</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
-<td>②</td>
-<td><code>M_owners(id)</code></td>
 <td></td>
+<td><code>H_question_logs(id)</code></td>
+<td>①</td>
 <td></td>
 <td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">3</td>
+<td>FAQ ID</td>
+<td><code>faq_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td><code>M_faqs(id)</code></td>
+<td>②</td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>関連度スコア</td>
+<td><code>relevance_score</code></td>
+<td>REAL</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
 <td>作成日時</td>
 <td><code>created_at</code></td>
 <td>TEXT</td>
@@ -111,7 +136,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="3265-インデックス">インデックス</h3>
+<h3 id="3135-インデックス">インデックス</h3>
 <table>
 <thead>
 <tr>
@@ -125,15 +150,23 @@
 <tbody>
 <tr>
 <td style="text-align: right;">1</td>
-<td><code>idx_announcement_audiences_owner</code></td>
-<td><code>(contract_owner_user_id, announcement_id)</code></td>
+<td><code>uq_question_log_faq_refs_pair</code></td>
+<td><code>(question_log_id, faq_id)</code></td>
+<td>○</td>
+<td>M:N ペア一意</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td><code>idx_question_log_faq_refs_faq</code></td>
+<td><code>faq_id</code></td>
 <td></td>
-<td>契約別逆引き</td>
+<td>FAQ 別逆引き</td>
 </tr>
 </tbody>
 </table>
-<h3 id="3267-コード値区分値">コード値・区分値</h3>
+<h3 id="3137-コード値区分値">コード値・区分値</h3>
 <p>(なし)</p>
+
 </article>
 </body>
 </html>

@@ -15,7 +15,7 @@
 <h1 id="テーブル構造設計">テーブル構造設計</h1>
 
 <aside class="page-summary">
-<p class="ps-lead"><strong>このページは、メインシステムの各テーブルを横断する設計意図と取り決め(テーブル間関係・ユーザーマスタ分離モデル・契約境界キーによるデータ分離・状態遷移・削除モード・PII 取扱・インデックス方針)を、図解付きで集約します。</strong> 個々のテーブルのスキーマ定義は <a href="index.html">テーブル設計(一覧)</a>と各テーブルファイル(<code>M_owners.html</code> 等)が正本です。</p>
+<p class="ps-lead"><strong>このページは、メインシステムの各テーブルを横断する設計意図と取り決め(テーブル間関係・ユーザーマスタ分離モデル・契約境界キーによるデータ分離・状態遷移・削除モード・PII 取扱・インデックス方針)を、図解付きで集約します。</strong> 個々のテーブルのスキーマ定義は <a href="index.html">テーブル設計(一覧)</a>と各テーブルファイル(<code>TBL-M-001_m_owners.html</code> 等)が正本です。</p>
 <ul>
 <li>主要テーブルがどのような関係(カーディナリティ)で結ばれるか</li>
 <li>ユーザーを 2 マスタ完全分離(<code>M_owners</code> / <code>M_project_users</code>) + 割当(<code>M_project_user_assignments</code>)で保持するモデルの役割分担</li>

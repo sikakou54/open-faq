@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>M_terms_versions(TBL-030) | FAQ 設計ポータル</title>
+<title>H_error_logs(TBL-H-005) | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../../../assets/css/style.css">
 <script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script src="../../../assets/js/nav-data.js" defer></script>
 <script src="../../../assets/js/search-index.js" defer></script>
 <script src="../../../assets/js/portal.js" defer></script>
 </head>
-<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/M_terms_versions.html">
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/TBL-H-005_h_error_logs.html">
 <article class="content" id="content">
-<h1 id="TBL-030">TBL-030 <code>M_terms_versions</code></h1>
-<span id="330-M_terms_versions"></span>
-<p class="section-lead">利用規約・プライバシーポリシーの版を保持します。</p>
-<h3 id="3301-概要">概要</h3>
+<h1 id="TBL-H-005">TBL-H-005 <code>H_error_logs</code></h1>
+<span id="319-H_error_logs"></span>
+<p class="section-lead">サーバーエラーを記録するエラーログです。</p>
+<h3 id="3191-概要">概要</h3>
 <table>
 <thead>
 <tr>
@@ -26,18 +26,15 @@
 <tbody>
 <tr>
 <td>テーブル名</td>
-<td><code>M_terms_versions</code></td>
+<td><code>H_error_logs</code></td>
 </tr>
 <tr>
 <td>論理名</td>
-<td>規約版数(全契約横断)</td>
+<td>エラーログ</td>
 </tr>
 <tr>
 <td>主キー</td>
-<td><ul class="key-cols">
-<li><code>doc_type</code></li>
-<li><code>version</code></li>
-</ul></td>
+<td><code>id</code></td>
 </tr>
 <tr>
 <td>外部キー</td>
@@ -45,7 +42,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="3302-カラム定義">カラム定義</h3>
+<h3 id="3192-カラム定義">カラム定義</h3>
 <table>
 <thead>
 <tr>
@@ -66,8 +63,8 @@
 <tbody>
 <tr>
 <td style="text-align: right;">1</td>
-<td>文書種別</td>
-<td><code>doc_type</code></td>
+<td>ID</td>
+<td><code>id</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
@@ -80,12 +77,12 @@
 </tr>
 <tr>
 <td style="text-align: right;">2</td>
-<td>版</td>
-<td><code>version</code></td>
+<td>契約 owner ID</td>
+<td><code>contract_owner_user_id</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
-<td>NO</td>
-<td>○</td>
+<td>YES</td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -94,36 +91,36 @@
 </tr>
 <tr>
 <td style="text-align: right;">3</td>
-<td>発効日</td>
-<td><code>effective_date</code></td>
+<td>操作者種別</td>
+<td><code>actor_type</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
-<td>NO</td>
+<td>YES</td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
+<td><code>actor_type IN ('owner','project_user')</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">4</td>
-<td>本文(HTML)</td>
-<td><code>body_html</code></td>
+<td>操作者 ID</td>
+<td><code>actor_id</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
-<td>NO</td>
+<td>YES</td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
+<td><code>actor_type</code> に応じ <code>M_owners(id)</code> / <code>M_project_users(id)</code> を指す(論理参照)</td>
 
 </tr>
 <tr>
 <td style="text-align: right;">5</td>
-<td>差分サマリ</td>
-<td><code>diff_summary</code></td>
+<td>URL</td>
+<td><code>url</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
@@ -136,8 +133,8 @@
 </tr>
 <tr>
 <td style="text-align: right;">6</td>
-<td>通知送信日時</td>
-<td><code>notification_sent_at</code></td>
+<td>エラー種別</td>
+<td><code>error_type</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
@@ -150,22 +147,22 @@
 </tr>
 <tr>
 <td style="text-align: right;">7</td>
-<td>同意期限日数</td>
-<td><code>consent_deadline_days</code></td>
-<td>INTEGER</td>
+<td>スタック</td>
+<td><code>stack</code></td>
+<td>TEXT</td>
 <td style="text-align: right;">-</td>
-<td>NO</td>
+<td>YES</td>
 <td></td>
 <td></td>
 <td></td>
-<td><code>14</code></td>
+<td></td>
 <td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">8</td>
-<td>作成日時</td>
-<td><code>created_at</code></td>
+<td>発生日時</td>
+<td><code>occurred_at</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
@@ -178,30 +175,29 @@
 </tr>
 </tbody>
 </table>
-<h3 id="3305-インデックス">インデックス</h3>
-<p>(なし、PK 検索のみ)</p>
-<h3 id="3307-コード値区分値">コード値・区分値</h3>
+<h3 id="3195-インデックス">インデックス</h3>
 <table>
 <thead>
 <tr>
-<th>カラム</th>
-<th>値</th>
-<th>意味</th>
+<th style="text-align: right;">No</th>
+<th>インデックス名</th>
+<th>対象カラム</th>
+<th>UNIQUE</th>
+<th>用途</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>doc_type</code></td>
-<td><code>terms_of_service</code></td>
-<td>利用規約</td>
-</tr>
-<tr>
-<td><code>doc_type</code></td>
-<td><code>privacy_policy</code></td>
-<td>プライバシーポリシー</td>
+<td style="text-align: right;">1</td>
+<td><code>idx_error_logs_owner_occurred</code></td>
+<td><code>(contract_owner_user_id, occurred_at DESC)</code></td>
+<td></td>
+<td>オーナー別新着</td>
 </tr>
 </tbody>
 </table>
+<h3 id="3197-コード値区分値">コード値・区分値</h3>
+<p>(なし)</p>
 </article>
 </body>
 </html>

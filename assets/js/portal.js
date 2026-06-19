@@ -60,7 +60,7 @@
       h.push('<summary>'+esc(sys.label)+'</summary>');
       var flat = sys.cats.length === 1 && sys.cats[0].key === "__root__";
       function pageHit(p){
-        return p.url===pageId || (p.children && p.children.some(function(c){return c.url===pageId;}));
+        return p.url===pageId || (p.children && p.children.some(pageHit));
       }
       function pushPage(p){
         if(p.children && p.children.length){
@@ -68,7 +68,7 @@
           h.push('<li><details class="nav-subcat"'+(grpOpen?' open':'')+'>');
           h.push('<summary>'+esc(p.title)+'</summary><ul>');
           if(p.url){ h.push('<li>'+link({url:p.url,title:'概要',kind:p.kind})+'</li>'); }
-          p.children.forEach(function(c){ h.push('<li>'+link(c)+'</li>'); });
+          p.children.forEach(function(c){ pushPage(c); });
           h.push('</ul></details></li>');
         } else {
           h.push('<li>'+link(p)+'</li>');

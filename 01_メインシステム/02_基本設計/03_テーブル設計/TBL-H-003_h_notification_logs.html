@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>M_project_users(TBL-002) | FAQ 設計ポータル</title>
+<title>H_notification_logs(TBL-H-003) | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../../../assets/css/style.css">
 <script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script src="../../../assets/js/nav-data.js" defer></script>
 <script src="../../../assets/js/search-index.js" defer></script>
 <script src="../../../assets/js/portal.js" defer></script>
 </head>
-<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/M_project_users.html">
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/TBL-H-003_h_notification_logs.html">
 <article class="content" id="content">
-<h1 id="TBL-002">TBL-002 <code>M_project_users</code></h1>
-<span id="32-M_project_users"></span>
-<p class="section-lead">プロジェクト管理者・メンバー(オーナー以外のログインユーザー)の認証情報(メール / パスワード / 氏名 / セッション状態)を保持するプロジェクトユーザーマスタです。オーナーは含まず、所属契約を <code>contract_owner_user_id</code>(<code>M_owners(id)</code> 参照)で保持します。</p>
-<h3 id="321-概要">概要</h3>
+<h1 id="TBL-H-003">TBL-H-003 <code>H_notification_logs</code></h1>
+<span id="315-H_notification_logs"></span>
+<p class="section-lead">メール通知の送信履歴を保持します。</p>
+<h3 id="3151-概要">概要</h3>
 <table>
 <thead>
 <tr>
@@ -26,11 +26,11 @@
 <tbody>
 <tr>
 <td>テーブル名</td>
-<td><code>M_project_users</code></td>
+<td><code>H_notification_logs</code></td>
 </tr>
 <tr>
 <td>論理名</td>
-<td>プロジェクトユーザーマスタ</td>
+<td>通知ログ</td>
 </tr>
 <tr>
 <td>主キー</td>
@@ -40,11 +40,12 @@
 <td>外部キー</td>
 <td><ul class="key-cols">
 <li><code>contract_owner_user_id</code> → <code>M_owners(id)</code></li>
+<li><code>inquiry_id</code> → <code>T_inquiries(id)</code></li>
 </ul></td>
 </tr>
 </tbody>
 </table>
-<h3 id="322-カラム定義">カラム定義</h3>
+<h3 id="3152-カラム定義">カラム定義</h3>
 <table>
 <thead>
 <tr>
@@ -79,7 +80,7 @@
 </tr>
 <tr>
 <td style="text-align: right;">2</td>
-<td>契約境界 owner ID</td>
+<td>契約 owner ID</td>
 <td><code>contract_owner_user_id</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
@@ -93,13 +94,13 @@
 </tr>
 <tr>
 <td style="text-align: right;">3</td>
-<td>メール(暗号化)</td>
-<td><code>email_encrypted</code></td>
+<td>案件 ID</td>
+<td><code>inquiry_id</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
-<td>NO</td>
+<td>YES</td>
 <td></td>
-<td></td>
+<td><code>T_inquiries(id)</code></td>
 <td></td>
 <td></td>
 <td></td>
@@ -107,36 +108,8 @@
 </tr>
 <tr>
 <td style="text-align: right;">4</td>
-<td>メール HMAC</td>
-<td><code>email_hmac</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>NO</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">5</td>
-<td>鍵バージョン</td>
-<td><code>email_key_version</code></td>
-<td>INTEGER</td>
-<td style="text-align: right;">-</td>
-<td>NO</td>
-<td></td>
-<td></td>
-<td></td>
-<td><code>1</code></td>
-<td></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">6</td>
-<td>パスワードハッシュ</td>
-<td><code>password_hash</code></td>
+<td>受信者メール HMAC</td>
+<td><code>recipient_email_hmac</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
@@ -148,9 +121,37 @@
 
 </tr>
 <tr>
+<td style="text-align: right;">5</td>
+<td>通知種別</td>
+<td><code>notification_type</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td>配信状態</td>
+<td><code>delivery_state</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>delivery_state IN ('queued','sending','sent','delivered','failed','bounced','complained','suppressed')</code></td>
+
+</tr>
+<tr>
 <td style="text-align: right;">7</td>
-<td>氏名</td>
-<td><code>name</code></td>
+<td>メッセージ ID</td>
+<td><code>message_id</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
@@ -163,36 +164,36 @@
 </tr>
 <tr>
 <td style="text-align: right;">8</td>
-<td>状態</td>
-<td><code>status</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>NO</td>
-<td></td>
-<td></td>
-<td></td>
-<td><code>'pending_verification'</code></td>
-<td><code>status IN ('pending_verification','pending_activation','active')</code></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">9</td>
-<td>有効フラグ</td>
-<td><code>valid</code></td>
+<td>試行回数</td>
+<td><code>attempt_count</code></td>
 <td>INTEGER</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
 <td></td>
 <td></td>
-<td><code>1</code></td>
-<td><code>valid IN (0,1)</code></td>
+<td><code>0</code></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">9</td>
+<td>送信日時</td>
+<td><code>sent_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">10</td>
-<td>最終ログイン日時</td>
-<td><code>last_login_at</code></td>
+<td>配信日時</td>
+<td><code>delivered_at</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
@@ -205,8 +206,8 @@
 </tr>
 <tr>
 <td style="text-align: right;">11</td>
-<td>メール確認日時</td>
-<td><code>email_verified_at</code></td>
+<td>失敗日時</td>
+<td><code>failed_at</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
@@ -219,6 +220,20 @@
 </tr>
 <tr>
 <td style="text-align: right;">12</td>
+<td>失敗理由</td>
+<td><code>fail_reason</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">13</td>
 <td>作成日時</td>
 <td><code>created_at</code></td>
 <td>TEXT</td>
@@ -231,23 +246,9 @@
 <td></td>
 
 </tr>
-<tr>
-<td style="text-align: right;">13</td>
-<td>更新日時</td>
-<td><code>updated_at</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>NO</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-
-</tr>
 </tbody>
 </table>
-<h3 id="325-インデックス">インデックス</h3>
+<h3 id="3155-インデックス">インデックス</h3>
 <table>
 <thead>
 <tr>
@@ -261,28 +262,28 @@
 <tbody>
 <tr>
 <td style="text-align: right;">1</td>
-<td><code>idx_project_users_email_hmac</code></td>
-<td><code>email_hmac</code></td>
+<td><code>idx_nlog_owner_created</code></td>
+<td><code>(contract_owner_user_id, created_at DESC)</code></td>
 <td></td>
-<td>メール検索</td>
+<td>オーナー別新着</td>
 </tr>
 <tr>
 <td style="text-align: right;">2</td>
-<td><code>idx_project_users_owner</code></td>
-<td><code>contract_owner_user_id</code></td>
+<td><code>idx_nlog_message_id</code></td>
+<td><code>message_id</code></td>
 <td></td>
-<td>契約境界クエリ</td>
+<td>Webhook 紐付け</td>
 </tr>
 <tr>
 <td style="text-align: right;">3</td>
-<td><code>idx_project_users_valid</code></td>
-<td><code>valid</code> WHERE <code>valid = 0</code></td>
+<td><code>idx_nlog_state</code></td>
+<td><code>delivery_state</code></td>
 <td></td>
-<td>論理削除対象抽出(物理削除バッチ)</td>
+<td>状態別集計</td>
 </tr>
 </tbody>
 </table>
-<h3 id="327-コード値区分値">コード値・区分値</h3>
+<h3 id="3157-コード値区分値">コード値・区分値</h3>
 <table>
 <thead>
 <tr>
@@ -293,35 +294,47 @@
 </thead>
 <tbody>
 <tr>
-<td><code>status</code></td>
-<td><code>pending_verification</code></td>
-<td>メール未確認</td>
+<td><code>delivery_state</code></td>
+<td><code>queued</code></td>
+<td>Queue 投入済み</td>
 </tr>
 <tr>
-<td><code>status</code></td>
-<td><code>pending_activation</code></td>
-<td>招待中。<code>name=NULL</code> で作成され、有効化完了時に <code>name</code> 設定 + <code>status='active'</code> に遷移する</td>
+<td><code>delivery_state</code></td>
+<td><code>sending</code></td>
+<td>送信中</td>
 </tr>
 <tr>
-<td><code>status</code></td>
-<td><code>active</code></td>
-<td>有効</td>
+<td><code>delivery_state</code></td>
+<td><code>sent</code></td>
+<td>送信成功</td>
 </tr>
 <tr>
-<td><code>valid</code></td>
-<td><code>1</code></td>
-<td>有効</td>
+<td><code>delivery_state</code></td>
+<td><code>delivered</code></td>
+<td>配信成功</td>
 </tr>
 <tr>
-<td><code>valid</code></td>
-<td><code>0</code></td>
-<td>論理削除済み</td>
+<td><code>delivery_state</code></td>
+<td><code>failed</code></td>
+<td>失敗</td>
+</tr>
+<tr>
+<td><code>delivery_state</code></td>
+<td><code>bounced</code></td>
+<td>バウンス</td>
+</tr>
+<tr>
+<td><code>delivery_state</code></td>
+<td><code>complained</code></td>
+<td>スパム報告</td>
+</tr>
+<tr>
+<td><code>delivery_state</code></td>
+<td><code>suppressed</code></td>
+<td>サプレスリスト追加済み</td>
 </tr>
 </tbody>
 </table>
-<blockquote>
-<p>オーナーは本テーブルに含まれず、<a href="M_owners.html"><code>M_owners</code></a> マスタで管理する。プロジェクトへの割当とロール(プロジェクト管理者 / メンバー)は <a href="M_project_user_assignments.html"><code>M_project_user_assignments</code></a> で保持する。</p>
-</blockquote>
 
 </article>
 </body>

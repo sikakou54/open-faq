@@ -48,15 +48,19 @@ def main():
     index = []
     missing = []
     def iter_pages(cat):
-        # pages とその children(グループ)を平坦化して列挙する
-        for p in cat["pages"]:
+        # pages とその children(グループ)を再帰的に平坦化して列挙する(入れ子グループ対応)
+        def rec(p):
             yield p
             for c in p.get("children", []):
-                yield c
+                yield from rec(c)
+        for p in cat["pages"]:
+            yield from rec(p)
 
     for sysd in nav:
         for cat in sysd["cats"]:
             for p in iter_pages(cat):
+                if not p.get("url"):  # url を持たない見出し専用グループはスキップ
+                    continue
                 path = os.path.join(ROOT, p["url"])
                 if not os.path.exists(path):
                     missing.append(p["url"])
@@ -70,7 +74,7 @@ def main():
                 })
 
     # nav 未登録の本文ページを検出(警告のみ)
-    listed = {p["url"] for s in nav for c in s["cats"] for p in iter_pages(c)}
+    listed = {p["url"] for s in nav for c in s["cats"] for p in iter_pages(c) if p.get("url")}
     orphans = []
     for dp, dns, fns in os.walk(ROOT):
         dns[:] = [d for d in dns if d not in (".git", ".claude", "PDF出力", "node_modules", "assets")]

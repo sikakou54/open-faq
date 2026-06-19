@@ -178,10 +178,10 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>アクセストークン</td><td>招待トークンを検証・消費し、<code>meta</code> から招待プロジェクト / ロールを取得する(<code>used_at</code> セット、<code>invitedProjectId</code> / <code>invitedRole</code> 取得)</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>T_access_tokens</code>(<a href="../03_テーブル設計/T_access_tokens.html">テーブル設計 3.5</a>)</td></tr>
-<tr><td>プロジェクトユーザー</td><td>氏名・パスワードハッシュを設定し <code>status='active'</code> 化する(招待されるのはプロジェクトユーザー。オーナーマスタとは完全分離)</td><td>テーブル</td><td>出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>M_project_users</code>(<a href="../03_テーブル設計/M_project_users.html">テーブル設計 3.1</a>)</td></tr>
-<tr><td>プロジェクト割当</td><td>招待時の予約割当を <code>valid=1</code> 化する</td><td>テーブル</td><td>出力</td><td>—</td><td>—</td><td>◯</td><td>—</td><td><code>M_project_user_assignments</code>(<a href="../03_テーブル設計/M_project_user_assignments.html">テーブル設計 3.3</a>)</td></tr>
-<tr><td>規約同意記録</td><td>利用規約・プライバシーポリシーの各最新版に対し <code>doc_type</code> 別の 2 行を記録する</td><td>テーブル</td><td>出力</td><td>◯</td><td>—</td><td>—</td><td>—</td><td><code>T_terms_agreements</code>(<a href="../03_テーブル設計/T_terms_agreements.html">テーブル設計 3.31</a>)</td></tr>
+<tr><td>アクセストークン</td><td>招待トークンを検証・消費し、<code>meta</code> から招待プロジェクト / ロールを取得する(<code>used_at</code> セット、<code>invitedProjectId</code> / <code>invitedRole</code> 取得)</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>T_access_tokens</code>(<a href="../03_テーブル設計/TBL-T-002_t_access_tokens.html">テーブル設計 3.5</a>)</td></tr>
+<tr><td>プロジェクトユーザー</td><td>氏名・パスワードハッシュを設定し <code>status='active'</code> 化する(招待されるのはプロジェクトユーザー。オーナーマスタとは完全分離)</td><td>テーブル</td><td>出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>M_project_users</code>(<a href="../03_テーブル設計/TBL-M-002_m_project_users.html">テーブル設計 3.1</a>)</td></tr>
+<tr><td>プロジェクト割当</td><td>招待時の予約割当を <code>valid=1</code> 化する</td><td>テーブル</td><td>出力</td><td>—</td><td>—</td><td>◯</td><td>—</td><td><code>M_project_user_assignments</code>(<a href="../03_テーブル設計/TBL-M-003_m_project_user_assignments.html">テーブル設計 3.3</a>)</td></tr>
+<tr><td>規約同意記録</td><td>利用規約・プライバシーポリシーの各最新版に対し <code>doc_type</code> 別の 2 行を記録する</td><td>テーブル</td><td>出力</td><td>◯</td><td>—</td><td>—</td><td>—</td><td><code>T_terms_agreements</code>(<a href="../03_テーブル設計/TBL-T-012_t_terms_agreements.html">テーブル設計 3.31</a>)</td></tr>
 <tr><td>招待トークン検証</td><td>招待トークンを検証し招待情報をプレビューする</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /auth/invitations/{token}/preview</code>(<a href="../02_API設計/index.html">API 設計 5.1.7</a>)</td></tr>
 <tr><td>アカウント有効化</td><td>入力内容を送信してアカウントを有効化する(同一トランザクション)</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /auth/invitations/{token}/activate</code>(<a href="../02_API設計/index.html">API 設計 5.1.8</a>)</td></tr>
 </tbody>

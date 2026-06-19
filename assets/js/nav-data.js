@@ -370,38 +370,190 @@ window.NAV = [
       "title": "テーブル設計(メイン)",
       "kind": "group",
       "children": [
-       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/テーブル構造設計.html", "title": "テーブル構造設計", "kind": "md" },
-       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/M_owners.html", "title": "TBL-001 M_owners", "kind": "md" },
-       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/M_project_users.html", "title": "TBL-002 M_project_users", "kind": "md" },
-       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/M_project_user_assignments.html", "title": "TBL-003 M_project_user_assignments", "kind": "md" },
-       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/T_sessions.html", "title": "TBL-004 T_sessions", "kind": "md" },
-       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/T_access_tokens.html", "title": "TBL-005 T_access_tokens", "kind": "md" },
-       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/M_projects.html", "title": "TBL-006 M_projects", "kind": "md" },
-       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/T_project_legacy_keys.html", "title": "TBL-007 T_project_legacy_keys", "kind": "md" },
-       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/M_allowed_domains.html", "title": "TBL-008 M_allowed_domains", "kind": "md" },
-       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/M_faqs.html", "title": "TBL-009 M_faqs", "kind": "md" },
-       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/H_faq_revisions.html", "title": "TBL-010 H_faq_revisions", "kind": "md" },
-       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/TP_faq_search_fts.html", "title": "TBL-011 TP_faq_search_fts", "kind": "md" },
-       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/H_question_logs.html", "title": "TBL-012 H_question_logs", "kind": "md" },
-       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/T_question_log_faq_refs.html", "title": "TBL-013 T_question_log_faq_refs", "kind": "md" },
-       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/T_inquiries.html", "title": "TBL-014 T_inquiries", "kind": "md" },
-       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/H_notification_logs.html", "title": "TBL-015 H_notification_logs", "kind": "md" },
-       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/TP_ai_threshold_persistent_cache.html", "title": "TBL-016 TP_ai_threshold_persistent_cache", "kind": "md" },
-       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/M_email_suppression_list.html", "title": "TBL-017 M_email_suppression_list", "kind": "md" },
-       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/H_audit_logs.html", "title": "TBL-018 H_audit_logs", "kind": "md" },
-       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/H_error_logs.html", "title": "TBL-019 H_error_logs", "kind": "md" },
-       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/T_billing_subscriptions.html", "title": "TBL-020 T_billing_subscriptions", "kind": "md" },
-       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/T_billing_invoices.html", "title": "TBL-021 T_billing_invoices", "kind": "md" },
-       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/T_usage_metering.html", "title": "TBL-022 T_usage_metering", "kind": "md" },
-       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/M_owner_quota_overrides.html", "title": "TBL-023 M_owner_quota_overrides", "kind": "md" },
-       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/M_project_quota_limits.html", "title": "TBL-024 M_project_quota_limits", "kind": "md" },
-       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/M_service_announcements.html", "title": "TBL-025 M_service_announcements", "kind": "md" },
-       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/M_announcement_audiences.html", "title": "TBL-026 M_announcement_audiences", "kind": "md" },
-       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/T_announcement_recipients.html", "title": "TBL-027 T_announcement_recipients", "kind": "md" },
-       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/T_inbox_messages.html", "title": "TBL-028 T_inbox_messages", "kind": "md" },
-       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/T_withdrawal_requests.html", "title": "TBL-029 T_withdrawal_requests", "kind": "md" },
-       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/M_terms_versions.html", "title": "TBL-030 M_terms_versions", "kind": "md" },
-       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/T_terms_agreements.html", "title": "TBL-031 T_terms_agreements", "kind": "md" }
+       {
+        "url": "01_メインシステム/02_基本設計/03_テーブル設計/テーブル構造設計.html",
+        "title": "テーブル構造設計",
+        "kind": "md"
+       },
+       {
+        "title": "テーブル設計 — マスタテーブル",
+        "kind": "group",
+        "children": [
+         {
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-001_m_owners.html",
+          "title": "TBL-M-001 M_owners",
+          "kind": "md"
+         },
+         {
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-002_m_project_users.html",
+          "title": "TBL-M-002 M_project_users",
+          "kind": "md"
+         },
+         {
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-003_m_project_user_assignments.html",
+          "title": "TBL-M-003 M_project_user_assignments",
+          "kind": "md"
+         },
+         {
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-004_m_projects.html",
+          "title": "TBL-M-004 M_projects",
+          "kind": "md"
+         },
+         {
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-005_m_allowed_domains.html",
+          "title": "TBL-M-005 M_allowed_domains",
+          "kind": "md"
+         },
+         {
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-006_m_faqs.html",
+          "title": "TBL-M-006 M_faqs",
+          "kind": "md"
+         },
+         {
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-007_m_email_suppression_list.html",
+          "title": "TBL-M-007 M_email_suppression_list",
+          "kind": "md"
+         },
+         {
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-008_m_owner_quota_overrides.html",
+          "title": "TBL-M-008 M_owner_quota_overrides",
+          "kind": "md"
+         },
+         {
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-009_m_project_quota_limits.html",
+          "title": "TBL-M-009 M_project_quota_limits",
+          "kind": "md"
+         },
+         {
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-010_m_service_announcements.html",
+          "title": "TBL-M-010 M_service_announcements",
+          "kind": "md"
+         },
+         {
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-011_m_announcement_audiences.html",
+          "title": "TBL-M-011 M_announcement_audiences",
+          "kind": "md"
+         },
+         {
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-012_m_terms_versions.html",
+          "title": "TBL-M-012 M_terms_versions",
+          "kind": "md"
+         }
+        ]
+       },
+       {
+        "title": "テーブル設計 — トランザクションテーブル",
+        "kind": "group",
+        "children": [
+         {
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-001_t_sessions.html",
+          "title": "TBL-T-001 T_sessions",
+          "kind": "md"
+         },
+         {
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-002_t_access_tokens.html",
+          "title": "TBL-T-002 T_access_tokens",
+          "kind": "md"
+         },
+         {
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-003_t_project_legacy_keys.html",
+          "title": "TBL-T-003 T_project_legacy_keys",
+          "kind": "md"
+         },
+         {
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-004_t_question_log_faq_refs.html",
+          "title": "TBL-T-004 T_question_log_faq_refs",
+          "kind": "md"
+         },
+         {
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-005_t_inquiries.html",
+          "title": "TBL-T-005 T_inquiries",
+          "kind": "md"
+         },
+         {
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-006_t_billing_subscriptions.html",
+          "title": "TBL-T-006 T_billing_subscriptions",
+          "kind": "md"
+         },
+         {
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-007_t_billing_invoices.html",
+          "title": "TBL-T-007 T_billing_invoices",
+          "kind": "md"
+         },
+         {
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-008_t_usage_metering.html",
+          "title": "TBL-T-008 T_usage_metering",
+          "kind": "md"
+         },
+         {
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-009_t_announcement_recipients.html",
+          "title": "TBL-T-009 T_announcement_recipients",
+          "kind": "md"
+         },
+         {
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-010_t_inbox_messages.html",
+          "title": "TBL-T-010 T_inbox_messages",
+          "kind": "md"
+         },
+         {
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-011_t_withdrawal_requests.html",
+          "title": "TBL-T-011 T_withdrawal_requests",
+          "kind": "md"
+         },
+         {
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-012_t_terms_agreements.html",
+          "title": "TBL-T-012 T_terms_agreements",
+          "kind": "md"
+         }
+        ]
+       },
+       {
+        "title": "テーブル設計 — 履歴テーブル",
+        "kind": "group",
+        "children": [
+         {
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-H-001_h_faq_revisions.html",
+          "title": "TBL-H-001 H_faq_revisions",
+          "kind": "md"
+         },
+         {
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-H-002_h_question_logs.html",
+          "title": "TBL-H-002 H_question_logs",
+          "kind": "md"
+         },
+         {
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-H-003_h_notification_logs.html",
+          "title": "TBL-H-003 H_notification_logs",
+          "kind": "md"
+         },
+         {
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-H-004_h_audit_logs.html",
+          "title": "TBL-H-004 H_audit_logs",
+          "kind": "md"
+         },
+         {
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-H-005_h_error_logs.html",
+          "title": "TBL-H-005 H_error_logs",
+          "kind": "md"
+         }
+        ]
+       },
+       {
+        "title": "テーブル設計 — ワークテーブル",
+        "kind": "group",
+        "children": [
+         {
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-TP-001_tp_faq_search_fts.html",
+          "title": "TBL-TP-001 TP_faq_search_fts",
+          "kind": "md"
+         },
+         {
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-TP-002_tp_ai_threshold_persistent_cache.html",
+          "title": "TBL-TP-002 TP_ai_threshold_persistent_cache",
+          "kind": "md"
+         }
+        ]
+       }
       ]
      },
      {

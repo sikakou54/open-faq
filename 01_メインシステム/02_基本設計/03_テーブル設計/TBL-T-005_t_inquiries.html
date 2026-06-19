@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>M_owner_quota_overrides(TBL-023) | FAQ 設計ポータル</title>
+<title>T_inquiries(TBL-T-005) | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../../../assets/css/style.css">
 <script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script src="../../../assets/js/nav-data.js" defer></script>
 <script src="../../../assets/js/search-index.js" defer></script>
 <script src="../../../assets/js/portal.js" defer></script>
 </head>
-<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/M_owner_quota_overrides.html">
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-005_t_inquiries.html">
 <article class="content" id="content">
-<h1 id="TBL-023">TBL-023 <code>M_owner_quota_overrides</code></h1>
-<span id="323-M_owner_quota_overrides"></span>
-<p class="section-lead">契約単位のレート制限上書きを保持します。</p>
-<h3 id="3231-概要">概要</h3>
+<h1 id="TBL-T-005">TBL-T-005 <code>T_inquiries</code></h1>
+<span id="314-T_inquiries"></span>
+<p class="section-lead">FAQ 登録前の未解決質問を保持します。</p>
+<h3 id="3141-概要">概要</h3>
 <table>
 <thead>
 <tr>
@@ -26,11 +26,11 @@
 <tbody>
 <tr>
 <td>テーブル名</td>
-<td><code>M_owner_quota_overrides</code></td>
+<td><code>T_inquiries</code></td>
 </tr>
 <tr>
 <td>論理名</td>
-<td>契約別レート制限上書き</td>
+<td>未解決質問</td>
 </tr>
 <tr>
 <td>主キー</td>
@@ -40,11 +40,13 @@
 <td>外部キー</td>
 <td><ul class="key-cols">
 <li><code>contract_owner_user_id</code> → <code>M_owners(id)</code></li>
+<li><code>project_id</code> → <code>M_projects(id)</code></li>
+<li><code>question_log_id</code> → <code>H_question_logs(id)</code></li>
 </ul></td>
 </tr>
 </tbody>
 </table>
-<h3 id="3232-カラム定義">カラム定義</h3>
+<h3 id="3142-カラム定義">カラム定義</h3>
 <table>
 <thead>
 <tr>
@@ -93,41 +95,41 @@
 </tr>
 <tr>
 <td style="text-align: right;">3</td>
-<td>リソース種別</td>
-<td><code>resource_kind</code></td>
+<td>プロジェクト ID</td>
+<td><code>project_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td><code>M_projects(id)</code></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>問い合わせコード</td>
+<td><code>inquiry_code</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
-<td><code>resource_kind IN ('widget_ask_per_min','widget_inquiry_per_min','email_per_hour','admin_api_per_min')</code></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">4</td>
-<td>しきい値</td>
-<td><code>threshold</code></td>
-<td>INTEGER</td>
-<td style="text-align: right;">-</td>
-<td>NO</td>
-<td></td>
-<td></td>
-<td></td>
+<td>○</td>
 <td></td>
 <td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">5</td>
-<td>窓秒</td>
-<td><code>window_sec</code></td>
-<td>INTEGER</td>
+<td>元質問ログ ID</td>
+<td><code>question_log_id</code></td>
+<td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
 <td></td>
-<td></td>
+<td><code>H_question_logs(id)</code></td>
 <td></td>
 <td></td>
 <td></td>
@@ -135,8 +137,8 @@
 </tr>
 <tr>
 <td style="text-align: right;">6</td>
-<td>有効期限</td>
-<td><code>valid_until</code></td>
+<td>質問本文</td>
+<td><code>user_question</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
@@ -149,48 +151,34 @@
 </tr>
 <tr>
 <td style="text-align: right;">7</td>
-<td>理由</td>
-<td><code>reason</code></td>
+<td>状況</td>
+<td><code>status</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
-<td>YES</td>
+<td>NO</td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
+<td><code>'open'</code></td>
+<td><code>status IN ('open','closed')</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">8</td>
-<td>作成者種別</td>
-<td><code>created_by_type</code></td>
-<td>TEXT</td>
+<td>有効フラグ</td>
+<td><code>valid</code></td>
+<td>INTEGER</td>
 <td style="text-align: right;">-</td>
-<td>YES</td>
+<td>NO</td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
-<td><code>created_by_type IN ('owner','project_user')</code></td>
+<td><code>1</code></td>
+<td><code>valid IN (0,1)</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">9</td>
-<td>作成者 ID</td>
-<td><code>created_by_id</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>YES</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td><code>created_by_type</code> に応じ <code>M_owners(id)</code> / <code>M_project_users(id)</code> を指す(論理参照)</td>
-
-</tr>
-<tr>
-<td style="text-align: right;">10</td>
 <td>作成日時</td>
 <td><code>created_at</code></td>
 <td>TEXT</td>
@@ -203,9 +191,23 @@
 <td></td>
 
 </tr>
+<tr>
+<td style="text-align: right;">10</td>
+<td>更新日時</td>
+<td><code>updated_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
 </tbody>
 </table>
-<h3 id="3235-インデックス">インデックス</h3>
+<h3 id="3145-インデックス">インデックス</h3>
 <table>
 <thead>
 <tr>
@@ -219,14 +221,35 @@
 <tbody>
 <tr>
 <td style="text-align: right;">1</td>
-<td><code>idx_tqo_owner_kind</code></td>
-<td><code>(contract_owner_user_id, resource_kind, valid_until)</code></td>
+<td><code>idx_inquiries_contract_status_created</code></td>
+<td><code>(contract_owner_user_id, status, created_at DESC)</code></td>
 <td></td>
-<td>オーナー × リソース × 有効期限</td>
+<td>契約境界 + 状況別新着</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td><code>idx_inquiries_project_status</code></td>
+<td><code>(project_id, status)</code></td>
+<td></td>
+<td>プロジェクト × 状況</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td><code>uq_inquiries_code</code></td>
+<td><code>inquiry_code</code></td>
+<td>○</td>
+<td>問い合わせコード一意</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td><code>idx_inquiries_valid</code></td>
+<td><code>valid</code> WHERE <code>valid = 0</code></td>
+<td></td>
+<td>論理削除対象抽出</td>
 </tr>
 </tbody>
 </table>
-<h3 id="3237-コード値区分値">コード値・区分値</h3>
+<h3 id="3147-コード値区分値">コード値・区分値</h3>
 <table>
 <thead>
 <tr>
@@ -237,30 +260,19 @@
 </thead>
 <tbody>
 <tr>
-<td><code>resource_kind</code></td>
-<td><code>widget_ask_per_min</code></td>
-<td>ウィジェット質問レート</td>
+<td><code>status</code></td>
+<td><code>open</code></td>
+<td>対応必要</td>
 </tr>
 <tr>
-<td><code>resource_kind</code></td>
-<td><code>widget_inquiry_per_min</code></td>
-<td>ウィジェット未解決質問送信レート</td>
-</tr>
-<tr>
-<td><code>resource_kind</code></td>
-<td><code>email_per_hour</code></td>
-<td>メール送信レート</td>
-</tr>
-<tr>
-<td><code>resource_kind</code></td>
-<td><code>admin_api_per_min</code></td>
-<td>管理 API レート</td>
+<td><code>status</code></td>
+<td><code>closed</code></td>
+<td>終了</td>
 </tr>
 </tbody>
 </table>
-<blockquote>
-<p><code>*_monthly_limit</code> 系コードは <code>M_project_quota_limits</code>(§3.24)へ移管したため、本テーブルには含めない。質問数だけが月次上限を持ち、FAQは無料枠行の識別子として使用する。</p>
-</blockquote>
+<p>状態遷移詳細は §4.5.2 参照(共有概念正本)。</p>
+
 </article>
 </body>
 </html>

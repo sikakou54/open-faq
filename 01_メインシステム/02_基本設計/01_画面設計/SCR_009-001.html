@@ -143,9 +143,9 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>プロジェクト割当</td><td>招待時の予約割当作成・ロール更新・割当解除(論理削除 <code>valid=0</code>)を行う</td><td>テーブル</td><td>入力 / 出力</td><td>◯</td><td>◯</td><td>◯</td><td>—</td><td><code>M_project_user_assignments</code>(<a href="../03_テーブル設計/M_project_user_assignments.html">テーブル設計 3.3</a>)</td></tr>
-<tr><td>プロジェクトユーザー</td><td>招待時の予約ユーザー作成・現値読込・最後の割当解除時の論理削除(<code>valid=0</code>)を行う</td><td>テーブル</td><td>入力 / 出力</td><td>◯</td><td>◯</td><td>◯</td><td>—</td><td><code>M_project_users</code>(<a href="../03_テーブル設計/M_project_users.html">テーブル設計 3.1</a>)</td></tr>
-<tr><td>アクセストークン</td><td>招待・再送時に有効化トークンを発行し旧リンクを失効する</td><td>テーブル</td><td>出力</td><td>◯</td><td>—</td><td>◯</td><td>—</td><td><code>purpose='activation'</code>(7 日)。<code>T_access_tokens</code>(<a href="../03_テーブル設計/T_access_tokens.html">テーブル設計 3.5</a>)</td></tr>
+<tr><td>プロジェクト割当</td><td>招待時の予約割当作成・ロール更新・割当解除(論理削除 <code>valid=0</code>)を行う</td><td>テーブル</td><td>入力 / 出力</td><td>◯</td><td>◯</td><td>◯</td><td>—</td><td><code>M_project_user_assignments</code>(<a href="../03_テーブル設計/TBL-M-003_m_project_user_assignments.html">テーブル設計 3.3</a>)</td></tr>
+<tr><td>プロジェクトユーザー</td><td>招待時の予約ユーザー作成・現値読込・最後の割当解除時の論理削除(<code>valid=0</code>)を行う</td><td>テーブル</td><td>入力 / 出力</td><td>◯</td><td>◯</td><td>◯</td><td>—</td><td><code>M_project_users</code>(<a href="../03_テーブル設計/TBL-M-002_m_project_users.html">テーブル設計 3.1</a>)</td></tr>
+<tr><td>アクセストークン</td><td>招待・再送時に有効化トークンを発行し旧リンクを失効する</td><td>テーブル</td><td>出力</td><td>◯</td><td>—</td><td>◯</td><td>—</td><td><code>purpose='activation'</code>(7 日)。<code>T_access_tokens</code>(<a href="../03_テーブル設計/TBL-T-002_t_access_tokens.html">テーブル設計 3.5</a>)</td></tr>
 <tr><td>メンバー招待</td><td>当該プロジェクトへメンバーを招待する</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /M_projects/{id}/members</code>(<a href="../02_API設計/index.html">API 設計 5.2.2</a>)</td></tr>
 <tr><td>ロール変更・割当解除</td><td>当該 PJ のロール変更・割当解除を行う</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>ロール変更 <code>PATCH /M_projects/{id}/members/{userId}</code> / 割当解除 <code>DELETE /M_projects/{id}/members/{userId}</code>(<a href="../02_API設計/index.html">API 設計 5.2.3</a> / <a href="../02_API設計/index.html">5.2.4</a>)</td></tr>
 <tr><td>招待メール再送</td><td>招待中メンバーへ招待メールを再送する</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /members/{id}/resend-invitation</code>(<a href="../02_API設計/index.html">API 設計 5.2.5</a>)</td></tr>

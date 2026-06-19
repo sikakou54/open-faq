@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>T_usage_metering(TBL-022) | FAQ 設計ポータル</title>
+<title>T_withdrawal_requests(TBL-T-011) | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../../../assets/css/style.css">
 <script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script src="../../../assets/js/nav-data.js" defer></script>
 <script src="../../../assets/js/search-index.js" defer></script>
 <script src="../../../assets/js/portal.js" defer></script>
 </head>
-<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/T_usage_metering.html">
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-011_t_withdrawal_requests.html">
 <article class="content" id="content">
-<h1 id="TBL-022">TBL-022 <code>T_usage_metering</code></h1>
-<span id="322-T_usage_metering"></span>
-<p class="section-lead">質問数・FAQ 件数をプロジェクト単位で計測し、請求はオーナーで SUM 集計します。</p>
-<h3 id="3221-概要">概要</h3>
+<h1 id="TBL-T-011">TBL-T-011 <code>T_withdrawal_requests</code></h1>
+<span id="329-T_withdrawal_requests"></span>
+<p class="section-lead">退会申請レコード(90 日猶予)を保持します。</p>
+<h3 id="3291-概要">概要</h3>
 <table>
 <thead>
 <tr>
@@ -26,11 +26,11 @@
 <tbody>
 <tr>
 <td>テーブル名</td>
-<td><code>T_usage_metering</code></td>
+<td><code>T_withdrawal_requests</code></td>
 </tr>
 <tr>
 <td>論理名</td>
-<td>利用量計測(プロジェクト単位)</td>
+<td>退会申請</td>
 </tr>
 <tr>
 <td>主キー</td>
@@ -40,12 +40,12 @@
 <td>外部キー</td>
 <td><ul class="key-cols">
 <li><code>contract_owner_user_id</code> → <code>M_owners(id)</code></li>
-<li><code>project_id</code> → <code>M_projects(id)</code></li>
+<li><code>applied_by_type</code> + <code>applied_by_id</code> → <code>M_owners(id)</code> / <code>M_project_users(id)</code>(論理参照)</li>
 </ul></td>
 </tr>
 </tbody>
 </table>
-<h3 id="3222-カラム定義">カラム定義</h3>
+<h3 id="3292-カラム定義">カラム定義</h3>
 <table>
 <thead>
 <tr>
@@ -87,113 +87,57 @@
 <td>NO</td>
 <td></td>
 <td><code>M_owners(id)</code></td>
-<td>①</td>
+<td></td>
 <td></td>
 <td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">3</td>
-<td>プロジェクト ID</td>
-<td><code>project_id</code></td>
+<td>申請日時</td>
+<td><code>applied_at</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
-<td><code>M_projects(id)</code></td>
-<td>②</td>
+<td></td>
+<td></td>
 <td></td>
 <td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">4</td>
-<td>請求年月</td>
-<td><code>billing_year_month</code></td>
+<td>申請者種別</td>
+<td><code>applied_by_type</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
 <td></td>
-<td>②</td>
 <td></td>
 <td></td>
+<td><code>applied_by_type IN ('owner','project_user')</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">5</td>
-<td>質問数</td>
-<td><code>question_count</code></td>
-<td>INTEGER</td>
+<td>申請者 ID</td>
+<td><code>applied_by_id</code></td>
+<td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
 <td></td>
 <td></td>
-<td><code>0</code></td>
 <td></td>
+<td><code>applied_by_type</code> に応じ <code>M_owners(id)</code> / <code>M_project_users(id)</code> を指す(論理参照)</td>
 
 </tr>
 <tr>
 <td style="text-align: right;">6</td>
-<td>FAQ 数(スナップショット)</td>
-<td><code>faq_count_snapshot</code></td>
-<td>INTEGER</td>
-<td style="text-align: right;">-</td>
-<td>NO</td>
-<td></td>
-<td></td>
-<td></td>
-<td><code>0</code></td>
-<td></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">7</td>
-<td>AI 入力トークン</td>
-<td><code>ai_token_input</code></td>
-<td>INTEGER</td>
-<td style="text-align: right;">-</td>
-<td>NO</td>
-<td></td>
-<td></td>
-<td></td>
-<td><code>0</code></td>
-<td></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">8</td>
-<td>AI 出力トークン</td>
-<td><code>ai_token_output</code></td>
-<td>INTEGER</td>
-<td style="text-align: right;">-</td>
-<td>NO</td>
-<td></td>
-<td></td>
-<td></td>
-<td><code>0</code></td>
-<td></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">9</td>
-<td>AI コスト(円)</td>
-<td><code>ai_cost_yen</code></td>
-<td>INTEGER</td>
-<td style="text-align: right;">-</td>
-<td>NO</td>
-<td></td>
-<td></td>
-<td></td>
-<td><code>0</code></td>
-<td></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">10</td>
-<td>確定日時</td>
-<td><code>finalized_at</code></td>
+<td>理由</td>
+<td><code>reason</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
@@ -205,9 +149,9 @@
 
 </tr>
 <tr>
-<td style="text-align: right;">11</td>
-<td>更新日時</td>
-<td><code>updated_at</code></td>
+<td style="text-align: right;">7</td>
+<td>削除予定日</td>
+<td><code>scheduled_deletion_at</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
@@ -220,7 +164,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="3225-インデックス">インデックス</h3>
+<h3 id="3295-インデックス">インデックス</h3>
 <table>
 <thead>
 <tr>
@@ -234,21 +178,14 @@
 <tbody>
 <tr>
 <td style="text-align: right;">1</td>
-<td><code>uq_usage_metering_owner_project_month</code></td>
-<td><code>(contract_owner_user_id, project_id, billing_year_month)</code></td>
-<td>○</td>
-<td>プロジェクト × 月次一意</td>
-</tr>
-<tr>
-<td style="text-align: right;">2</td>
-<td><code>idx_usage_metering_owner_month</code></td>
-<td><code>(contract_owner_user_id, billing_year_month)</code></td>
+<td><code>idx_withdrawal_owner_scheduled</code></td>
+<td><code>(contract_owner_user_id, scheduled_deletion_at)</code></td>
 <td></td>
-<td>契約集計(請求 SUM)用</td>
+<td>削除予定日順</td>
 </tr>
 </tbody>
 </table>
-<h3 id="3227-コード値区分値">コード値・区分値</h3>
+<h3 id="3297-コード値区分値">コード値・区分値</h3>
 <p>(なし)</p>
 </article>
 </body>

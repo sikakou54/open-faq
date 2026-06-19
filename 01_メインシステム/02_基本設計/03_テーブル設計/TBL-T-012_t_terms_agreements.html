@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>M_email_suppression_list(TBL-017) | FAQ 設計ポータル</title>
+<title>T_terms_agreements(TBL-T-012) | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../../../assets/css/style.css">
 <script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script src="../../../assets/js/nav-data.js" defer></script>
 <script src="../../../assets/js/search-index.js" defer></script>
 <script src="../../../assets/js/portal.js" defer></script>
 </head>
-<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/M_email_suppression_list.html">
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-012_t_terms_agreements.html">
 <article class="content" id="content">
-<h1 id="TBL-017">TBL-017 <code>M_email_suppression_list</code></h1>
-<span id="317-M_email_suppression_list"></span>
-<p class="section-lead">バウンス・苦情を起こしたメールアドレスを全契約横断で管理するサプレスリストです。</p>
-<h3 id="3171-概要">概要</h3>
+<h1 id="TBL-T-012">TBL-T-012 <code>T_terms_agreements</code></h1>
+<span id="331-T_terms_agreements"></span>
+<p class="section-lead">利用者ごとの規約同意履歴を保持します。</p>
+<h3 id="3311-概要">概要</h3>
 <table>
 <thead>
 <tr>
@@ -26,11 +26,11 @@
 <tbody>
 <tr>
 <td>テーブル名</td>
-<td><code>M_email_suppression_list</code></td>
+<td><code>T_terms_agreements</code></td>
 </tr>
 <tr>
 <td>論理名</td>
-<td>メールサプレスリスト(全契約横断)</td>
+<td>規約同意</td>
 </tr>
 <tr>
 <td>主キー</td>
@@ -38,11 +38,14 @@
 </tr>
 <tr>
 <td>外部キー</td>
-<td>—</td>
+<td><ul class="key-cols">
+<li><code>actor_type</code> + <code>actor_id</code> → <code>M_owners(id)</code> / <code>M_project_users(id)</code>(論理参照)</li>
+<li><code>(doc_type, terms_version)</code> → <code>M_terms_versions(doc_type, version)</code></li>
+</ul></td>
 </tr>
 </tbody>
 </table>
-<h3 id="3172-カラム定義">カラム定義</h3>
+<h3 id="3312-カラム定義">カラム定義</h3>
 <table>
 <thead>
 <tr>
@@ -77,64 +80,78 @@
 </tr>
 <tr>
 <td style="text-align: right;">2</td>
-<td>メール HMAC</td>
-<td><code>email_hmac</code></td>
+<td>操作者種別</td>
+<td><code>actor_type</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
 <td></td>
-<td>○</td>
+<td>①</td>
 <td></td>
-<td></td>
+<td><code>actor_type IN ('owner','project_user')</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">3</td>
-<td>理由</td>
-<td><code>reason</code></td>
+<td>操作者 ID</td>
+<td><code>actor_id</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
 <td></td>
+<td>①</td>
 <td></td>
-<td></td>
-<td><code>reason IN ('bounced_hard','bounced_soft_5x','complained','manual')</code></td>
+<td><code>actor_type</code> に応じ <code>M_owners(id)</code> / <code>M_project_users(id)</code> を指す(論理参照)</td>
 
 </tr>
 <tr>
 <td style="text-align: right;">4</td>
-<td>永久フラグ</td>
-<td><code>is_permanent</code></td>
-<td>INTEGER</td>
+<td>文書種別</td>
+<td><code>doc_type</code></td>
+<td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
+<td><code>M_terms_versions(doc_type)</code></td>
+<td>①</td>
 <td></td>
-<td></td>
-<td><code>1</code></td>
 <td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">5</td>
-<td>作成日時</td>
-<td><code>created_at</code></td>
+<td>規約版</td>
+<td><code>terms_version</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
-<td></td>
-<td></td>
+<td><code>M_terms_versions(version)</code></td>
+<td>①</td>
 <td></td>
 <td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">6</td>
-<td>解除日時</td>
-<td><code>released_at</code></td>
+<td>同意日時</td>
+<td><code>agreed_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td>同意 IP(マスク済)</td>
+<td><code>agreed_ip_masked</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
@@ -147,7 +164,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="3175-インデックス">インデックス</h3>
+<h3 id="3315-インデックス">インデックス</h3>
 <table>
 <thead>
 <tr>
@@ -161,45 +178,15 @@
 <tbody>
 <tr>
 <td style="text-align: right;">1</td>
-<td><code>idx_suppression_permanent</code></td>
-<td><code>(is_permanent, email_hmac)</code></td>
-<td></td>
-<td>永久 / 一時別検索</td>
+<td><code>uq_terms_actor_doc_version</code></td>
+<td><code>(actor_type, actor_id, doc_type, terms_version)</code></td>
+<td>○</td>
+<td>操作者 × 文書 × 版で一意</td>
 </tr>
 </tbody>
 </table>
-<h3 id="3177-コード値区分値">コード値・区分値</h3>
-<table>
-<thead>
-<tr>
-<th>カラム名</th>
-<th>値</th>
-<th>意味</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>reason</code></td>
-<td><code>bounced_hard</code></td>
-<td>ハードバウンス</td>
-</tr>
-<tr>
-<td><code>reason</code></td>
-<td><code>bounced_soft_5x</code></td>
-<td>ソフトバウンス 5 連続</td>
-</tr>
-<tr>
-<td><code>reason</code></td>
-<td><code>complained</code></td>
-<td>スパム苦情</td>
-</tr>
-<tr>
-<td><code>reason</code></td>
-<td><code>manual</code></td>
-<td>手動追加</td>
-</tr>
-</tbody>
-</table>
+<h3 id="3317-コード値区分値">コード値・区分値</h3>
+<p>(なし)</p>
 </article>
 </body>
 </html>

@@ -373,8 +373,8 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>利用量計測</td><td>当月の質問数(当月利用)を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>T_usage_metering</code>(<a href="../03_テーブル設計/T_usage_metering.html">テーブル設計 3.22</a>)</td></tr>
-<tr><td>プロジェクト上限</td><td>月次上限件数・無料枠を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>M_project_quota_limits</code>(<a href="../03_テーブル設計/M_project_quota_limits.html">テーブル設計 3.24</a>)</td></tr>
+<tr><td>利用量計測</td><td>当月の質問数(当月利用)を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>T_usage_metering</code>(<a href="../03_テーブル設計/TBL-T-008_t_usage_metering.html">テーブル設計 3.22</a>)</td></tr>
+<tr><td>プロジェクト上限</td><td>月次上限件数・無料枠を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>M_project_quota_limits</code>(<a href="../03_テーブル設計/TBL-M-009_m_project_quota_limits.html">テーブル設計 3.24</a>)</td></tr>
 <tr><td>利用量取得</td><td>当該プロジェクトの当月利用量を取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /usage?period=current_month&amp;viewMode=project&amp;projectId={id}</code>(<a href="../02_API設計/利用量・課金.html#API-BIL-001_monthviewmodeprojectprojectidid">API 設計 5.7.1</a>)</td></tr>
 <tr><td>上限取得</td><td>当該プロジェクトの上限設定を取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /M_projects/{id}/quota-limits</code>(<a href="../02_API設計/利用量・課金.html#API-BIL-006">API 設計 5.7.5</a>)</td></tr>
 </tbody>

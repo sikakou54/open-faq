@@ -181,7 +181,7 @@
     end
   end</code></pre>
 <div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">課金計上の境界</span>AI 推論に到達せず未解決に落ちる経路(<code>no_faq_match</code> / <code>POST_CHECK_FAILED</code> / <code>PII_BLOCKED</code>)は <code>metering_billable=0</code>、推論を実行した経路(<code>LOW_CONFIDENCE</code> / <code>answered</code>)は <code>metering_billable=1</code> で <code>H_question_logs</code> に記録します。しきい値 3 階層の詳細は <a href="DD04_AIしきい値3階層適用.html">DD04_AIしきい値3階層適用.html</a> が正本です。</div></div>
-<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">参照 FAQ の記録</span><code>answered</code> 経路では、回答生成時に参照した FAQ を <code>T_question_log_faq_refs</code> に <code>relevance_score</code>(§3.2 関連度計算で算出するコサイン類似度。§3.4 第 3 層の参照 FAQ 整合性判定と同じ尺度)付きで記録します。同一質問ログ内の重複は <code>UNIQUE(question_log_id, faq_id)</code> で抑止します。テーブルスキーマの正本は <a href="../02_基本設計/03_テーブル設計/T_question_log_faq_refs.html">テーブル設計 TBL-013 <code>T_question_log_faq_refs</code></a> です。</div></div>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">参照 FAQ の記録</span><code>answered</code> 経路では、回答生成時に参照した FAQ を <code>T_question_log_faq_refs</code> に <code>relevance_score</code>(§3.2 関連度計算で算出するコサイン類似度。§3.4 第 3 層の参照 FAQ 整合性判定と同じ尺度)付きで記録します。同一質問ログ内の重複は <code>UNIQUE(question_log_id, faq_id)</code> で抑止します。テーブルスキーマの正本は <a href="../02_基本設計/03_テーブル設計/TBL-T-004_t_question_log_faq_refs.html">テーブル設計 TBL-T-004 <code>T_question_log_faq_refs</code></a> です。</div></div>
 
 <h3 id="32-関連度計算">3.2 関連度計算</h3>
 <p class="section-lead">質問に対する関連 FAQ を、FTS5 による全文候補抽出と埋め込みベクトルによるリランキングの 2 段で求めます。次の擬似コードは上位 20 件を FTS5 で抽出し、コサイン類似度で並べ替えて上位 5 件を返す <code>findRelatedFaqs</code> の実装です。</p>

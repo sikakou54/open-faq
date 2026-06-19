@@ -134,8 +134,8 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>プロジェクト</td><td>公開キー・ウィジェット設定 JSON を取得・更新する</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>M_projects</code>(<code>widget_public_key</code> / ウィジェット設定 JSON)(<a href="../03_テーブル設計/M_projects.html">テーブル設計 3.6</a>)</td></tr>
-<tr><td>レガシー公開キー</td><td>ローテーション時に旧キーを 24 時間保持する</td><td>テーブル</td><td>出力</td><td>◯</td><td>—</td><td>—</td><td>—</td><td><code>T_project_legacy_keys</code>(<a href="../03_テーブル設計/T_project_legacy_keys.html">テーブル設計 3.7</a>)</td></tr>
+<tr><td>プロジェクト</td><td>公開キー・ウィジェット設定 JSON を取得・更新する</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>M_projects</code>(<code>widget_public_key</code> / ウィジェット設定 JSON)(<a href="../03_テーブル設計/TBL-M-004_m_projects.html">テーブル設計 3.6</a>)</td></tr>
+<tr><td>レガシー公開キー</td><td>ローテーション時に旧キーを 24 時間保持する</td><td>テーブル</td><td>出力</td><td>◯</td><td>—</td><td>—</td><td>—</td><td><code>T_project_legacy_keys</code>(<a href="../03_テーブル設計/TBL-T-003_t_project_legacy_keys.html">テーブル設計 3.7</a>)</td></tr>
 <tr><td>プロジェクト更新</td><td>ウィジェット設定(主色等)を取得・保存する</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>PATCH /M_projects/{id}</code>(<a href="../02_API設計/プロジェクト管理.html#API-PRJ-003">API 設計 5.3.3</a>)</td></tr>
 <tr><td>ウィジェット鍵ローテーション</td><td>公開キーを再発行する(旧キー 24h 猶予)</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /M_projects/{id}/widget-key/rotate</code>(<a href="../02_API設計/index.html">API 設計 5.3.4</a>)</td></tr>
 </tbody>
