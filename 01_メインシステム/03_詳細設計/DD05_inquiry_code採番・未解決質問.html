@@ -15,7 +15,7 @@
 <h1 id="dd05-inquiry_code-採番未解決質問">DD05: inquiry_code 採番・未解決質問</h1>
 
 <aside class="page-summary">
-<p class="ps-lead"><strong>このページは、未解決質問の識別子 <code>inquiry_code</code> の採番ロジックと、未解決質問(<code>inquiries</code>)の状況管理(open / closed)・保持期間処理の実装方針を定義します。</strong></p>
+<p class="ps-lead"><strong>このページは、未解決質問の識別子 <code>inquiry_code</code> の採番ロジックと、未解決質問(<code>T_inquiries</code>)の状況管理(open / closed)・保持期間処理の実装方針を定義します。</strong></p>
 </aside>
 
 <p class="doc-meta"><span><b>版数</b> v1.0</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
@@ -48,12 +48,12 @@
 </tr>
 <tr>
 <td>API</td>
-<td><code>/inquiries/*</code></td>
+<td><code>/T_inquiries/*</code></td>
 <td>未解決質問操作</td>
 </tr>
 <tr>
 <td>テーブル</td>
-<td><code>inquiries</code></td>
+<td><code>T_inquiries</code></td>
 <td>未解決質問</td>
 </tr>
 </tbody>
@@ -100,13 +100,13 @@
   participant U as ブラウザ(利用者)
   participant W as worker-main-api
   participant L as inquiry-code.ts
-  participant D as D1 (inquiries)
+  participant D as D1 (T_inquiries)
 
   U-&gt;&gt;W: 未解決質問の登録要求
   loop 最大 3 回
     W-&gt;&gt;L: inquiry_code を採番(crypto 乱数 + Base32)
     L--&gt;&gt;W: INQ-YYYYMMDD-XXXXXXXX
-    W-&gt;&gt;D: inquiries へ INSERT(uq_inquiries_code)
+    W-&gt;&gt;D: T_inquiries へ INSERT(uq_inquiries_code)
     D--&gt;&gt;W: INSERT 結果(成功 / UNIQUE 違反)
     alt 成功
       W--&gt;&gt;U: 登録完了(inquiry_code 返却)
@@ -135,7 +135,7 @@
 </thead>
 <tbody>
 <tr><td>未解決質問一覧 / 詳細 / 状況管理</td><td><a href="../02_基本設計/01_画面設計/index.html">01_画面設計/index.html</a></td><td>SCR-005 の派生表示。画面項目・操作は基本設計が正本</td></tr>
-<tr><td><code>inquiries.status</code> の 2 値(<code>open</code> / <code>closed</code>)</td><td><a href="../02_基本設計/03_テーブル設計/index.html">03_テーブル設計/index.html</a> §4.5.2</td><td>SCR-005 詳細画面からの手動操作のみで更新(連動ロジックなし)</td></tr>
+<tr><td><code>T_inquiries.status</code> の 2 値(<code>open</code> / <code>closed</code>)</td><td><a href="../02_基本設計/03_テーブル設計/index.html">03_テーブル設計/index.html</a> §4.5.2</td><td>SCR-005 詳細画面からの手動操作のみで更新(連動ロジックなし)</td></tr>
 </tbody>
 </table>
 
@@ -148,7 +148,7 @@
 <tbody>
 <tr><td>対象</td><td><code>status=open</code> かつ保持期間に近づいた未解決質問。<code>closed</code> は対象外</td><td>—</td></tr>
 <tr><td>通知先</td><td>管理者ユーザーへ滞留通知を送信する</td><td><a href="DD06_通知ロジック.html">DD06_通知ロジック.html</a></td></tr>
-<tr><td>状況の変更</td><td>本処理では <code>inquiries.status</code> を変更しない</td><td>—</td></tr>
+<tr><td>状況の変更</td><td>本処理では <code>T_inquiries.status</code> を変更しない</td><td>—</td></tr>
 <tr><td>実装の正本</td><td>cron(JST 09:00)の実装詳細</td><td><a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html</a> §14.1.4</td></tr>
 </tbody>
 </table>
@@ -158,7 +158,7 @@
 <div class="sourceCode" id="cb2"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fu">processOpenInquiryRetention</span>(env<span class="op">:</span> Env) {</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> cutoff <span class="op">=</span> <span class="kw">new</span> <span class="bu">Date</span>(<span class="bu">Date</span><span class="op">.</span><span class="fu">now</span>() <span class="op">-</span> <span class="dv">730</span> <span class="op">*</span> <span class="dv">86400000</span>)<span class="op">.</span><span class="fu">toISOString</span>()<span class="op">;</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> stuck <span class="op">=</span> <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="vs">    SELECT id, contract_owner_user_id, status FROM inquiries</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="vs">    SELECT id, contract_owner_user_id, status FROM T_inquiries</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="vs">    WHERE status = &#39;open&#39;</span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="vs">      AND created_at &lt;= ?1</span></span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="vs">      AND deleted_at IS NULL</span></span>
@@ -175,22 +175,22 @@
 <span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <blockquote>
-<p><strong>注</strong>: retention 処理と FAQ 操作は <code>inquiries.status</code> を変更しない。</p>
+<p><strong>注</strong>: retention 処理と FAQ 操作は <code>T_inquiries.status</code> を変更しない。</p>
 </blockquote>
 <h3 id="35-実装モジュール構成">3.5 実装モジュール構成</h3>
 <p class="section-lead">本機能のソース配置を示します。次のツリーは、ルーティング・状況遷移ガード・リポジトリ・採番ライブラリの配置で、状況遷移ガードは手動操作のみを許す 2 値の遷移を担います。</p>
 <pre><code>src/
 ├── routes/
-│   └── inquiries.ts          # /inquiries/* 参照 + 状況 open/closed 手動操作(担当者概念なし)
+│   └── T_inquiries.ts          # /T_inquiries/* 参照 + 状況 open/closed 手動操作(担当者概念なし)
 ├── handlers/
 ├── domain/
 │   └── inquiry-status.ts     # 状況 2 値(open / closed)の遷移ガード(手動操作のみ)
 ├── repository/
-│   └── inquiries.ts
+│   └── T_inquiries.ts
 └── lib/
     └── inquiry-code.ts       # generateInquiryCode（@faq-saas/shared 経由）</code></pre>
 <h2 id="4-関連設計">4. 関連設計</h2>
-<p class="section-lead">本 DD の前提・正本は基本設計の <a href="../02_基本設計/01_画面設計/index.html">01_画面設計/index.html</a>(SCR-005)・<a href="../02_基本設計/02_API設計/index.html">02_API設計/index.html</a>(<code>/inquiries/*</code>)・<a href="../02_基本設計/03_テーブル設計/index.html">03_テーブル設計/index.html</a>(<code>inquiries</code>)にあり、保持期間処理・通知は <a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html</a> / <a href="DD06_通知ロジック.html">DD06_通知ロジック.html</a> を参照します。</p>
+<p class="section-lead">本 DD の前提・正本は基本設計の <a href="../02_基本設計/01_画面設計/index.html">01_画面設計/index.html</a>(SCR-005)・<a href="../02_基本設計/02_API設計/index.html">02_API設計/index.html</a>(<code>/T_inquiries/*</code>)・<a href="../02_基本設計/03_テーブル設計/index.html">03_テーブル設計/index.html</a>(<code>T_inquiries</code>)にあり、保持期間処理・通知は <a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html</a> / <a href="DD06_通知ロジック.html">DD06_通知ロジック.html</a> を参照します。</p>
 
 <h2 id="5-テスト観点">5. テスト観点</h2>
 <p class="section-lead">本機能の受入条件に対応するテスト方式とファイルを示します。次の表は AC-010 / AC-012 / AC-013 のテスト ID・方式・配置をまとめたもので、続く小節で状況遷移の単体テスト例とその他観点を補います。</p>
@@ -208,7 +208,7 @@
 <td>AC-010</td>
 <td><code>e2e-inquiry-flow-001</code></td>
 <td>E2E</td>
-<td><code>apps/admin/e2e/inquiries/flow.spec.ts</code></td>
+<td><code>apps/admin/e2e/T_inquiries/flow.spec.ts</code></td>
 </tr>
 <tr>
 <td>AC-012</td>
@@ -225,7 +225,7 @@
 </tbody>
 </table>
 <h3 id="51-単体テスト例">5.1 単体テスト例</h3>
-<p class="section-lead"><code>inquiries.status</code> の 2 値遷移(手動のみ)を検証する単体テストの例を示します。次の擬似コードは、open ↔ closed の許可と不正値の拒否(<code>INVALID_STATE</code>)を確認するものです。</p>
+<p class="section-lead"><code>T_inquiries.status</code> の 2 値遷移(手動のみ)を検証する単体テストの例を示します。次の擬似コードは、open ↔ closed の許可と不正値の拒否(<code>INVALID_STATE</code>)を確認するものです。</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">// tests/unit/domain/inquiry-status-transition.test.ts</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { describe<span class="op">,</span> it<span class="op">,</span> expect } <span class="im">from</span> <span class="st">&#39;vitest&#39;</span><span class="op">;</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { canTransition<span class="op">,</span> assertTransition } <span class="im">from</span> <span class="st">&#39;@faq-saas/shared&#39;</span><span class="op">;</span></span>
@@ -254,7 +254,7 @@
 <tbody>
 <tr>
 <td>単体</td>
-<td><code>generateInquiryCode</code> 衝突リトライ最大 3 回 / <code>inquiries.status</code> 全 2 値遷移(<code>open</code> ↔︎ <code>closed</code>)</td>
+<td><code>generateInquiryCode</code> 衝突リトライ最大 3 回 / <code>T_inquiries.status</code> 全 2 値遷移(<code>open</code> ↔︎ <code>closed</code>)</td>
 </tr>
 <tr>
 <td>結合</td>
@@ -262,7 +262,7 @@
 </tr>
 <tr>
 <td>異常系</td>
-<td>不正値(<code>open</code> / <code>closed</code> 以外)は 400 <code>INVALID_STATE</code> / FAQ 保存(状態を <code>published</code> 等に変更)後に <code>inquiries.status</code> が変化しないこと(連動ロジックなし)</td>
+<td>不正値(<code>open</code> / <code>closed</code> 以外)は 400 <code>INVALID_STATE</code> / FAQ 保存(状態を <code>published</code> 等に変更)後に <code>T_inquiries.status</code> が変化しないこと(連動ロジックなし)</td>
 </tr>
 <tr>
 <td>境界値</td>
@@ -270,7 +270,7 @@
 </tr>
 <tr>
 <td>性能</td>
-<td><code>GET /api/v1/inquiries</code> p95 &lt; 500ms（<code>idx_inquiries_contract_status_created</code> 利用）</td>
+<td><code>GET /api/v1/T_inquiries</code> p95 &lt; 500ms（<code>idx_inquiries_contract_status_created</code> 利用）</td>
 </tr>
 </tbody>
 </table>
@@ -287,7 +287,7 @@
 <tr>
 <td>v1.0</td>
 <td>2026-06-17</td>
-<td>設計書シンプルテンプレ v2 へ移行。「0. 文書情報」表を撤去し要約ブロック(ps-lead)+ doc-meta へ集約。各見出しに section-lead を付与。inquiry_code 採番フローを Mermaid シーケンス図化(リクエストに応答線を対で記述、UNIQUE 違反リトライを alt 分岐)。「4. 関連設計」の大きなリンク表をインライン参照へ置換。未確定事項を callout 化。採番規則・<code>inquiries.status</code> 2 値・FR / AC・テーブル / 列名・擬似コードは不変。</td>
+<td>設計書シンプルテンプレ v2 へ移行。「0. 文書情報」表を撤去し要約ブロック(ps-lead)+ doc-meta へ集約。各見出しに section-lead を付与。inquiry_code 採番フローを Mermaid シーケンス図化(リクエストに応答線を対で記述、UNIQUE 違反リトライを alt 分岐)。「4. 関連設計」の大きなリンク表をインライン参照へ置換。未確定事項を callout 化。採番規則・<code>T_inquiries.status</code> 2 値・FR / AC・テーブル / 列名・擬似コードは不変。</td>
 </tr>
 <tr>
 <td>v1.0</td>

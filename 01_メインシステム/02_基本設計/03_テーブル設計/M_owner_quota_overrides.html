@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M_owner_quota_overrides(TBL-023) | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/M_owner_quota_overrides.html">
+<article class="content" id="content">
+<h1 id="TBL-023">TBL-023 <code>M_owner_quota_overrides</code></h1>
+<span id="323-M_owner_quota_overrides"></span>
+<p class="section-lead">契約単位のレート制限上書きを保持します。</p>
+<h3 id="3231-概要">概要</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>テーブル名</td>
+<td><code>M_owner_quota_overrides</code></td>
+</tr>
+<tr>
+<td>論理名</td>
+<td>契約別レート制限上書き</td>
+</tr>
+<tr>
+<td>主キー</td>
+<td><code>id</code></td>
+</tr>
+<tr>
+<td>外部キー</td>
+<td><ul class="key-cols">
+<li><code>contract_owner_user_id</code> → <code>M_owners(id)</code></li>
+</ul></td>
+</tr>
+</tbody>
+</table>
+<h3 id="3232-カラム定義">カラム定義</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>論理名</th>
+<th>物理名</th>
+<th>データ型</th>
+<th style="text-align: right;">桁数</th>
+<th>NULL</th>
+<th>PK</th>
+<th>FK</th>
+<th>UNIQUE</th>
+<th>DEFAULT</th>
+<th>制約</th>
+
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>ID</td>
+<td><code>id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td>○</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>契約 owner ID</td>
+<td><code>contract_owner_user_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td><code>M_owners(id)</code></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>リソース種別</td>
+<td><code>resource_kind</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>resource_kind IN ('widget_ask_per_min','widget_inquiry_per_min','email_per_hour','admin_api_per_min')</code></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>しきい値</td>
+<td><code>threshold</code></td>
+<td>INTEGER</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td>窓秒</td>
+<td><code>window_sec</code></td>
+<td>INTEGER</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td>有効期限</td>
+<td><code>valid_until</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td>理由</td>
+<td><code>reason</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">8</td>
+<td>作成者種別</td>
+<td><code>created_by_type</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>created_by_type IN ('owner','project_user')</code></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">9</td>
+<td>作成者 ID</td>
+<td><code>created_by_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>created_by_type</code> に応じ <code>M_owners(id)</code> / <code>M_project_users(id)</code> を指す(論理参照)</td>
+
+</tr>
+<tr>
+<td style="text-align: right;">10</td>
+<td>作成日時</td>
+<td><code>created_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+</tbody>
+</table>
+<h3 id="3235-インデックス">インデックス</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>インデックス名</th>
+<th>対象カラム</th>
+<th>UNIQUE</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td><code>idx_tqo_owner_kind</code></td>
+<td><code>(contract_owner_user_id, resource_kind, valid_until)</code></td>
+<td></td>
+<td>オーナー × リソース × 有効期限</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3237-コード値区分値">コード値・区分値</h3>
+<table>
+<thead>
+<tr>
+<th>カラム名</th>
+<th>値</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>resource_kind</code></td>
+<td><code>widget_ask_per_min</code></td>
+<td>ウィジェット質問レート</td>
+</tr>
+<tr>
+<td><code>resource_kind</code></td>
+<td><code>widget_inquiry_per_min</code></td>
+<td>ウィジェット未解決質問送信レート</td>
+</tr>
+<tr>
+<td><code>resource_kind</code></td>
+<td><code>email_per_hour</code></td>
+<td>メール送信レート</td>
+</tr>
+<tr>
+<td><code>resource_kind</code></td>
+<td><code>admin_api_per_min</code></td>
+<td>管理 API レート</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><code>*_monthly_limit</code> 系コードは <code>M_project_quota_limits</code>(§3.24)へ移管したため、本テーブルには含めない。質問数だけが月次上限を持ち、FAQは無料枠行の識別子として使用する。</p>
+</blockquote>
+</article>
+</body>
+</html>

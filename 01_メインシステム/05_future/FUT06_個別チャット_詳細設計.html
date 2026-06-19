@@ -81,7 +81,7 @@
 <tr>
 <td>機能</td>
 <td>FR-086c</td>
-<td>プロジェクト単位デフォルト担当者設定（SCR-034 / <code>projects.default_assignee_user_id</code>）</td>
+<td>プロジェクト単位デフォルト担当者設定（SCR-034 / <code>M_projects.default_assignee_user_id</code>）</td>
 </tr>
 <tr>
 <td>機能</td>
@@ -110,12 +110,12 @@
 </tr>
 <tr>
 <td>API</td>
-<td><code>/chat-rooms/*</code> <code>/widget/v1/chat-rooms/*</code> <code>PATCH /projects/{id}</code></td>
+<td><code>/chat-rooms/*</code> <code>/widget/v1/chat-rooms/*</code> <code>PATCH /M_projects/{id}</code></td>
 <td>チャット部屋操作（管理画面 + ウィジェット）+ デフォルト担当者設定</td>
 </tr>
 <tr>
 <td>テーブル</td>
-<td><code>chat_rooms</code>（<code>assignee_user_id</code> NOT NULL）<code>chat_messages</code> <code>projects</code>（<code>default_assignee_user_id</code>）<code>access_tokens (purpose=reentry)</code></td>
+<td><code>chat_rooms</code>（<code>assignee_user_id</code> NOT NULL）<code>chat_messages</code> <code>M_projects</code>（<code>default_assignee_user_id</code>）<code>T_access_tokens (purpose=reentry)</code></td>
 <td>チャット基盤</td>
 </tr>
 </tbody>
@@ -153,7 +153,7 @@
 <tr>
 <td>§10.5.4</td>
 <td>再入室トークン</td>
-<td>30 日 access_tokens、ブラウザへ直接返却</td>
+<td>30 日 T_access_tokens、ブラウザへ直接返却</td>
 </tr>
 </tbody>
 </table>
@@ -246,7 +246,7 @@
 <td>対象プロジェクトへの有効割当</td>
 </tr>
 <tr>
-<td><code>PATCH /projects/{id}</code></td>
+<td><code>PATCH /M_projects/{id}</code></td>
 <td>デフォルト担当者変更</td>
 <td>オーナー / 対象プロジェクト管理者</td>
 </tr>
@@ -273,11 +273,11 @@
 <td>投稿者種別、本文、既読、投稿日時を保持</td>
 </tr>
 <tr>
-<td><code>access_tokens(purpose='reentry')</code></td>
+<td><code>T_access_tokens(purpose='reentry')</code></td>
 <td>30日有効の再入室トークンをHMACで保持</td>
 </tr>
 <tr>
-<td><code>projects.default_assignee_user_id</code></td>
+<td><code>M_projects.default_assignee_user_id</code></td>
 <td>新規部屋のデフォルト担当者</td>
 </tr>
 </tbody>
@@ -304,7 +304,7 @@ worker-widget-api/src/
 └── middleware/
     └── widget-session.ts</code></pre>
 <h3 id="34-再入室トークン">3.4 再入室トークン</h3>
-<div class="sourceCode" id="cb2"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 再入室トークンは長寿命のため、access_tokens テーブルに meta.chatRoomId を内包</span></span>
+<div class="sourceCode" id="cb2"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 再入室トークンは長寿命のため、T_access_tokens テーブルに meta.chatRoomId を内包</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">// 失効・ローテーション運用:</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">// - 匿名チャット部屋作成時に発行し、API レスポンスでブラウザへ直接返す</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">// - チャット ID は照会用であり、再入室認証には使用しない</span></span>
@@ -316,9 +316,9 @@ worker-widget-api/src/
 <div class="sourceCode" id="cb3"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">// domain/chat-assignee.ts</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">// 新規チャット部屋作成時の担当者を解決する(FR-086b)。</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">// 優先順位:</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">//   1. projects.default_assignee_user_id が設定され、かつ当該ユーザーが</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">//      当該プロジェクトに有効割当(project_user_assignments.valid=1)を持つ → その管理者</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">//   2. 上記以外(未設定 / 無効化済 / 当該PJ未割当) → オーナー(owners.id)</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">//   1. M_projects.default_assignee_user_id が設定され、かつ当該ユーザーが</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">//      当該プロジェクトに有効割当(M_project_user_assignments.valid=1)を持つ → その管理者</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">//   2. 上記以外(未設定 / 無効化済 / 当該PJ未割当) → オーナー(M_owners.id)</span></span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">// オーナーは契約あたり常に 1 名存在し全プロジェクトの暗黙 admin のため、</span></span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">// 必ず担当者を確定でき、未割当の部屋は生成されない(FR-086a)。</span></span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">resolveInitialAssignee</span>(project<span class="op">,</span> defaultAssigneeValid)<span class="op">:</span> <span class="dt">string</span> {</span>
@@ -329,8 +329,8 @@ worker-widget-api/src/
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <ul>
 <li><strong>担当者変更(SCR-033, <code>PATCH /chat-rooms/{id}</code>)</strong>: <code>assigneeUserId</code> は必須・<code>null</code> 不可。当該プロジェクトに有効割当を持つ管理者(オーナー / <code>admin</code> / <code>member</code>)のみ受理。それ以外は 400 <code>E-INPUT-ASSIGNEE</code>。変更操作自体は <code>member</code>+ の誰でも可。</li>
-<li><strong>自動割り当て設定(SCR-034, <code>PATCH /projects/{id}</code> <code>defaultAssigneeUserId</code>)</strong>: SCR-013チャット配下の「自動割り当て」タブから操作する。オーナー / 該当PJの<code>admin</code>のみ。<code>null</code>を許容し、未設定時はオーナーへフォールバックする。</li>
-<li><strong>担当管理者の論理削除時の付け替え</strong>: 担当者であった管理者ユーザーがアカウント論理削除(<code>users.valid=0</code>)される場合、当該管理者が担当する全部屋の <code>assignee_user_id</code> を <code>resolveInitialAssignee</code> と同じ優先順位(デフォルト担当者→オーナー)で付け替えてから <code>valid=0</code> に更新する。これにより NOT NULL 制約と「未割当を作らない」不変条件を維持する。デフォルト担当者(<code>projects.default_assignee_user_id</code>)が当該削除ユーザーを指していた場合も同フローで <code>NULL</code> 化(以後オーナーへフォールバック)する。</li>
+<li><strong>自動割り当て設定(SCR-034, <code>PATCH /M_projects/{id}</code> <code>defaultAssigneeUserId</code>)</strong>: SCR-013チャット配下の「自動割り当て」タブから操作する。オーナー / 該当PJの<code>admin</code>のみ。<code>null</code>を許容し、未設定時はオーナーへフォールバックする。</li>
+<li><strong>担当管理者の論理削除時の付け替え</strong>: 担当者であった管理者ユーザーがアカウント論理削除(<code>users.valid=0</code>)される場合、当該管理者が担当する全部屋の <code>assignee_user_id</code> を <code>resolveInitialAssignee</code> と同じ優先順位(デフォルト担当者→オーナー)で付け替えてから <code>valid=0</code> に更新する。これにより NOT NULL 制約と「未割当を作らない」不変条件を維持する。デフォルト担当者(<code>M_projects.default_assignee_user_id</code>)が当該削除ユーザーを指していた場合も同フローで <code>NULL</code> 化(以後オーナーへフォールバック)する。</li>
 </ul>
 <h3 id="35-機能境界">3.5 機能境界</h3>
 <p>チャット部屋は未解決質問と独立して作成する。同じ質問ログを起点とする場合も <code>source_question_log_id</code> を個別に保持するだけとし、チャットの投稿・既読・通知・再入室から未解決質問の FAQ 登録状況を更新しない。</p>

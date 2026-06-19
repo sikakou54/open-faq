@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>email_suppression_list(TBL-017) | FAQ 設計ポータル</title>
+<title>H_error_logs(TBL-019) | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../../../assets/css/style.css">
 <script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script src="../../../assets/js/nav-data.js" defer></script>
 <script src="../../../assets/js/search-index.js" defer></script>
 <script src="../../../assets/js/portal.js" defer></script>
 </head>
-<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/email_suppression_list.html">
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/H_error_logs.html">
 <article class="content" id="content">
-<h1 id="TBL-017">TBL-017 <code>email_suppression_list</code></h1>
-<span id="317-email_suppression_list"></span>
-<p class="section-lead">バウンス・苦情を起こしたメールアドレスを全契約横断で管理するサプレスリストです。</p>
-<h3 id="3171-概要">概要</h3>
+<h1 id="TBL-019">TBL-019 <code>H_error_logs</code></h1>
+<span id="319-H_error_logs"></span>
+<p class="section-lead">サーバーエラーを記録するエラーログです。</p>
+<h3 id="3191-概要">概要</h3>
 <table>
 <thead>
 <tr>
@@ -26,11 +26,11 @@
 <tbody>
 <tr>
 <td>テーブル名</td>
-<td><code>email_suppression_list</code></td>
+<td><code>H_error_logs</code></td>
 </tr>
 <tr>
 <td>論理名</td>
-<td>メールサプレスリスト(全契約横断)</td>
+<td>エラーログ</td>
 </tr>
 <tr>
 <td>主キー</td>
@@ -42,7 +42,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="3172-カラム定義">カラム定義</h3>
+<h3 id="3192-カラム定義">カラム定義</h3>
 <table>
 <thead>
 <tr>
@@ -77,64 +77,8 @@
 </tr>
 <tr>
 <td style="text-align: right;">2</td>
-<td>メール HMAC</td>
-<td><code>email_hmac</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>NO</td>
-<td></td>
-<td></td>
-<td>○</td>
-<td></td>
-<td></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">3</td>
-<td>理由</td>
-<td><code>reason</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>NO</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td><code>reason IN ('bounced_hard','bounced_soft_5x','complained','manual')</code></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">4</td>
-<td>永久フラグ</td>
-<td><code>is_permanent</code></td>
-<td>INTEGER</td>
-<td style="text-align: right;">-</td>
-<td>NO</td>
-<td></td>
-<td></td>
-<td></td>
-<td><code>1</code></td>
-<td></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">5</td>
-<td>作成日時</td>
-<td><code>created_at</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>NO</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">6</td>
-<td>解除日時</td>
-<td><code>released_at</code></td>
+<td>契約 owner ID</td>
+<td><code>contract_owner_user_id</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
@@ -145,9 +89,93 @@
 <td></td>
 
 </tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>操作者種別</td>
+<td><code>actor_type</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>actor_type IN ('owner','project_user')</code></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>操作者 ID</td>
+<td><code>actor_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>actor_type</code> に応じ <code>M_owners(id)</code> / <code>M_project_users(id)</code> を指す(論理参照)</td>
+
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td>URL</td>
+<td><code>url</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td>エラー種別</td>
+<td><code>error_type</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td>スタック</td>
+<td><code>stack</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">8</td>
+<td>発生日時</td>
+<td><code>occurred_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
 </tbody>
 </table>
-<h3 id="3175-インデックス">インデックス</h3>
+<h3 id="3195-インデックス">インデックス</h3>
 <table>
 <thead>
 <tr>
@@ -161,45 +189,15 @@
 <tbody>
 <tr>
 <td style="text-align: right;">1</td>
-<td><code>idx_suppression_permanent</code></td>
-<td><code>(is_permanent, email_hmac)</code></td>
+<td><code>idx_error_logs_owner_occurred</code></td>
+<td><code>(contract_owner_user_id, occurred_at DESC)</code></td>
 <td></td>
-<td>永久 / 一時別検索</td>
+<td>オーナー別新着</td>
 </tr>
 </tbody>
 </table>
-<h3 id="3177-コード値区分値">コード値・区分値</h3>
-<table>
-<thead>
-<tr>
-<th>カラム名</th>
-<th>値</th>
-<th>意味</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>reason</code></td>
-<td><code>bounced_hard</code></td>
-<td>ハードバウンス</td>
-</tr>
-<tr>
-<td><code>reason</code></td>
-<td><code>bounced_soft_5x</code></td>
-<td>ソフトバウンス 5 連続</td>
-</tr>
-<tr>
-<td><code>reason</code></td>
-<td><code>complained</code></td>
-<td>スパム苦情</td>
-</tr>
-<tr>
-<td><code>reason</code></td>
-<td><code>manual</code></td>
-<td>手動追加</td>
-</tr>
-</tbody>
-</table>
+<h3 id="3197-コード値区分値">コード値・区分値</h3>
+<p>(なし)</p>
 </article>
 </body>
 </html>

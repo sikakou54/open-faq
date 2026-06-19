@@ -140,7 +140,7 @@
 <tr>
 <td>FUT-REQ-PLAN-007</td>
 <td>カスタムロール / プロジェクト管理者サブロール分割</td>
-<td>MVP では 3 ロール固定(オーナー / プロジェクト管理者 / メンバー)。<code>project_user_assignments.role</code> は <code>admin</code> / <code>member</code> の 2 値のみ。契約横断カスタムロール定義やプロジェクト管理者の権限細分化は提供しない</td>
+<td>MVP では 3 ロール固定(オーナー / プロジェクト管理者 / メンバー)。<code>M_project_user_assignments.role</code> は <code>admin</code> / <code>member</code> の 2 値のみ。契約横断カスタムロール定義やプロジェクト管理者の権限細分化は提供しない</td>
 <td>GA</td>
 <td>利用者側からのカスタムロール要望件数、プロジェクト管理者の権限細分化ニーズ、ロール定義の運用責務が確定すること</td>
 </tr>
@@ -288,7 +288,7 @@
 </tr>
 <tr>
 <td>依存関係</td>
-<td>課金フロー(Stripe Webhook 受信 / DLQ 30 日リプレイ / 月次請求確定)との整合、共有概念の 3 ロールユーザーモデル(2 マスタ完全分離: <code>owners</code> マスタ + <code>project_users</code> マスタ + 割当 <code>project_user_assignments.role</code>)拡張</td>
+<td>課金フロー(Stripe Webhook 受信 / DLQ 30 日リプレイ / 月次請求確定)との整合、共有概念の 3 ロールユーザーモデル(2 マスタ完全分離: <code>M_owners</code> マスタ + <code>M_project_users</code> マスタ + 割当 <code>M_project_user_assignments.role</code>)拡張</td>
 </tr>
 </tbody>
 </table>

@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>audit_logs(TBL-018) | FAQ 設計ポータル</title>
+<title>M_projects(TBL-006) | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../../../assets/css/style.css">
 <script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script src="../../../assets/js/nav-data.js" defer></script>
 <script src="../../../assets/js/search-index.js" defer></script>
 <script src="../../../assets/js/portal.js" defer></script>
 </head>
-<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/audit_logs.html">
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/M_projects.html">
 <article class="content" id="content">
-<h1 id="TBL-018">TBL-018 <code>audit_logs</code></h1>
-<span id="318-audit_logs"></span>
-<p class="section-lead">メイン管理者向けの API 操作ログを保持します。</p>
-<h3 id="3181-概要">概要</h3>
+<h1 id="TBL-006">TBL-006 <code>M_projects</code></h1>
+<span id="36-M_projects"></span>
+<p class="section-lead">FAQ プロジェクトとウィジェット設定を保持します。</p>
+<h3 id="361-概要">概要</h3>
 <table>
 <thead>
 <tr>
@@ -26,11 +26,11 @@
 <tbody>
 <tr>
 <td>テーブル名</td>
-<td><code>audit_logs</code></td>
+<td><code>M_projects</code></td>
 </tr>
 <tr>
 <td>論理名</td>
-<td>監査ログ(メイン側、API 操作ログ専用)</td>
+<td>プロジェクト</td>
 </tr>
 <tr>
 <td>主キー</td>
@@ -39,13 +39,12 @@
 <tr>
 <td>外部キー</td>
 <td><ul class="key-cols">
-<li><code>contract_owner_user_id</code> → <code>owners(id)</code></li>
-<li><code>actor_type</code> + <code>actor_id</code> → <code>owners(id)</code> / <code>project_users(id)</code>(論理参照)</li>
+<li><code>contract_owner_user_id</code> → <code>M_owners(id)</code></li>
 </ul></td>
 </tr>
 </tbody>
 </table>
-<h3 id="3182-カラム定義">カラム定義</h3>
+<h3 id="362-カラム定義">カラム定義</h3>
 <table>
 <thead>
 <tr>
@@ -84,9 +83,9 @@
 <td><code>contract_owner_user_id</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
-<td>YES</td>
+<td>NO</td>
 <td></td>
-<td><code>owners(id)</code></td>
+<td><code>M_owners(id)</code></td>
 <td></td>
 <td></td>
 <td></td>
@@ -94,50 +93,8 @@
 </tr>
 <tr>
 <td style="text-align: right;">3</td>
-<td>操作者種別</td>
-<td><code>actor_type</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>YES</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td><code>actor_type IN ('owner','project_user')</code></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">4</td>
-<td>操作者 ID</td>
-<td><code>actor_id</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>YES</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td><code>actor_type</code> に応じ <code>owners(id)</code> / <code>project_users(id)</code> を指す(論理参照)</td>
-
-</tr>
-<tr>
-<td style="text-align: right;">5</td>
-<td>操作者ロール</td>
-<td><code>actor_role</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>YES</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td><code>actor_role IS NULL OR actor_role IN ('admin','system')</code></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">6</td>
-<td>アクション</td>
-<td><code>action</code></td>
+<td>プロジェクト名</td>
+<td><code>name</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
@@ -145,13 +102,13 @@
 <td></td>
 <td></td>
 <td></td>
-<td></td>
+<td><code>length(name) BETWEEN 1 AND 100</code></td>
 
 </tr>
 <tr>
-<td style="text-align: right;">7</td>
-<td>対象種別</td>
-<td><code>target_type</code></td>
+<td style="text-align: right;">4</td>
+<td>説明</td>
+<td><code>description</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
@@ -163,9 +120,51 @@
 
 </tr>
 <tr>
+<td style="text-align: right;">5</td>
+<td>状態</td>
+<td><code>status</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>'active'</code></td>
+<td><code>status IN ('active','deleted')</code></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td>ウィジェット公開鍵</td>
+<td><code>widget_public_key</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td>○</td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td>連絡先メール</td>
+<td><code>contact_email</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>（複合）<code>contact_email_verified_at IS NULL OR contact_email IS NOT NULL</code></td>
+
+</tr>
+<tr>
 <td style="text-align: right;">8</td>
-<td>対象 ID</td>
-<td><code>target_id</code></td>
+<td>連絡先確認日時</td>
+<td><code>contact_email_verified_at</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
@@ -178,62 +177,34 @@
 </tr>
 <tr>
 <td style="text-align: right;">9</td>
-<td>IP(マスク済)</td>
-<td><code>ip_address_masked</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>YES</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">10</td>
-<td>ユーザーエージェント</td>
-<td><code>user_agent</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>YES</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">11</td>
-<td>メタデータ</td>
-<td><code>metadata</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>YES</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">12</td>
-<td>保持クラス</td>
-<td><code>retention_class</code></td>
+<td>設定 JSON</td>
+<td><code>settings</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
 <td></td>
 <td></td>
-<td><code>'general'</code></td>
-<td><code>retention_class IN ('general','billing')</code></td>
+<td><code>'{}'</code></td>
+<td></td>
 
 </tr>
 <tr>
-<td style="text-align: right;">13</td>
+<td style="text-align: right;">10</td>
+<td>有効フラグ</td>
+<td><code>valid</code></td>
+<td>INTEGER</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>1</code></td>
+<td><code>valid IN (0,1)</code></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">11</td>
 <td>作成日時</td>
 <td><code>created_at</code></td>
 <td>TEXT</td>
@@ -246,9 +217,23 @@
 <td></td>
 
 </tr>
+<tr>
+<td style="text-align: right;">12</td>
+<td>更新日時</td>
+<td><code>updated_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
 </tbody>
 </table>
-<h3 id="3185-インデックス">インデックス</h3>
+<h3 id="365-インデックス">インデックス</h3>
 <table>
 <thead>
 <tr>
@@ -262,28 +247,28 @@
 <tbody>
 <tr>
 <td style="text-align: right;">1</td>
-<td><code>idx_audit_owner_action_created</code></td>
-<td><code>(contract_owner_user_id, action, created_at DESC)</code></td>
+<td><code>idx_projects_owner_status</code></td>
+<td><code>(contract_owner_user_id, status)</code></td>
 <td></td>
-<td>オーナー × アクション × 新着</td>
+<td>オーナー別プロジェクト一覧</td>
 </tr>
 <tr>
 <td style="text-align: right;">2</td>
-<td><code>idx_audit_retention_created</code></td>
-<td><code>(retention_class, created_at)</code></td>
+<td><code>idx_projects_widget_key</code></td>
+<td><code>widget_public_key</code></td>
 <td></td>
-<td>保持期間バッチ用</td>
+<td>ウィジェット鍵検索</td>
 </tr>
 <tr>
 <td style="text-align: right;">3</td>
-<td><code>idx_audit_actor_created</code></td>
-<td><code>(actor_type, actor_id, created_at DESC)</code></td>
+<td><code>idx_projects_valid</code></td>
+<td><code>valid</code> WHERE <code>valid = 0</code></td>
 <td></td>
-<td>管理者操作の操作者別新着</td>
+<td>論理削除対象抽出</td>
 </tr>
 </tbody>
 </table>
-<h3 id="3187-コード値区分値">コード値・区分値</h3>
+<h3 id="367-コード値区分値">コード値・区分値</h3>
 <table>
 <thead>
 <tr>
@@ -294,17 +279,18 @@
 </thead>
 <tbody>
 <tr>
-<td><code>actor_role</code></td>
-<td><code>admin</code></td>
-<td>利用者管理者</td>
+<td><code>status</code></td>
+<td><code>active</code></td>
+<td>有効</td>
 </tr>
 <tr>
-<td><code>actor_role</code></td>
-<td><code>system</code></td>
-<td>システム</td>
+<td><code>status</code></td>
+<td><code>deleted</code></td>
+<td>論理削除</td>
 </tr>
 </tbody>
 </table>
+
 </article>
 </body>
 </html>

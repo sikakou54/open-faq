@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>access_tokens(TBL-005) | FAQ 設計ポータル</title>
+<title>T_terms_agreements(TBL-031) | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../../../assets/css/style.css">
 <script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script src="../../../assets/js/nav-data.js" defer></script>
 <script src="../../../assets/js/search-index.js" defer></script>
 <script src="../../../assets/js/portal.js" defer></script>
 </head>
-<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/access_tokens.html">
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/T_terms_agreements.html">
 <article class="content" id="content">
-<h1 id="TBL-005">TBL-005 <code>access_tokens</code></h1>
-<span id="35-access_tokens"></span>
-<p class="section-lead">招待・パスワード再設定・メール確認などの短期トークンを保持します。</p>
-<h3 id="351-概要">概要</h3>
+<h1 id="TBL-031">TBL-031 <code>T_terms_agreements</code></h1>
+<span id="331-T_terms_agreements"></span>
+<p class="section-lead">利用者ごとの規約同意履歴を保持します。</p>
+<h3 id="3311-概要">概要</h3>
 <table>
 <thead>
 <tr>
@@ -26,11 +26,11 @@
 <tbody>
 <tr>
 <td>テーブル名</td>
-<td><code>access_tokens</code></td>
+<td><code>T_terms_agreements</code></td>
 </tr>
 <tr>
 <td>論理名</td>
-<td>アクセストークン</td>
+<td>規約同意</td>
 </tr>
 <tr>
 <td>主キー</td>
@@ -39,12 +39,13 @@
 <tr>
 <td>外部キー</td>
 <td><ul class="key-cols">
-<li><code>actor_type</code> + <code>actor_id</code> → <code>owners(id)</code> / <code>project_users(id)</code>(論理参照)</li>
+<li><code>actor_type</code> + <code>actor_id</code> → <code>M_owners(id)</code> / <code>M_project_users(id)</code>(論理参照)</li>
+<li><code>(doc_type, terms_version)</code> → <code>M_terms_versions(doc_type, version)</code></li>
 </ul></td>
 </tr>
 </tbody>
 </table>
-<h3 id="352-カラム定義">カラム定義</h3>
+<h3 id="3312-カラム定義">カラム定義</h3>
 <table>
 <thead>
 <tr>
@@ -86,7 +87,7 @@
 <td>NO</td>
 <td></td>
 <td></td>
-<td></td>
+<td>①</td>
 <td></td>
 <td><code>actor_type IN ('owner','project_user')</code></td>
 
@@ -100,46 +101,46 @@
 <td>NO</td>
 <td></td>
 <td></td>
+<td>①</td>
 <td></td>
-<td></td>
-<td><code>actor_type</code> に応じ <code>owners(id)</code> / <code>project_users(id)</code> を指す(論理参照)</td>
+<td><code>actor_type</code> に応じ <code>M_owners(id)</code> / <code>M_project_users(id)</code> を指す(論理参照)</td>
 
 </tr>
 <tr>
 <td style="text-align: right;">4</td>
-<td>トークンハッシュ</td>
-<td><code>token_hash</code></td>
+<td>文書種別</td>
+<td><code>doc_type</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
-<td></td>
-<td>○</td>
+<td><code>M_terms_versions(doc_type)</code></td>
+<td>①</td>
 <td></td>
 <td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">5</td>
-<td>用途</td>
-<td><code>purpose</code></td>
+<td>規約版</td>
+<td><code>terms_version</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
+<td><code>M_terms_versions(version)</code></td>
+<td>①</td>
 <td></td>
 <td></td>
-<td></td>
-<td><code>purpose IN ('email_verify','password_reset','activation','contact_verify')</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">6</td>
-<td>メタ情報</td>
-<td><code>meta</code></td>
+<td>同意日時</td>
+<td><code>agreed_at</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
-<td>YES</td>
+<td>NO</td>
 <td></td>
 <td></td>
 <td></td>
@@ -149,36 +150,8 @@
 </tr>
 <tr>
 <td style="text-align: right;">7</td>
-<td>作成日時</td>
-<td><code>created_at</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>NO</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">8</td>
-<td>有効期限</td>
-<td><code>expires_at</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>NO</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">9</td>
-<td>使用日時</td>
-<td><code>used_at</code></td>
+<td>同意 IP(マスク済)</td>
+<td><code>agreed_ip_masked</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
@@ -191,7 +164,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="355-インデックス">インデックス</h3>
+<h3 id="3315-インデックス">インデックス</h3>
 <table>
 <thead>
 <tr>
@@ -205,53 +178,15 @@
 <tbody>
 <tr>
 <td style="text-align: right;">1</td>
-<td><code>uq_access_tokens_hash</code></td>
-<td><code>token_hash</code></td>
+<td><code>uq_terms_actor_doc_version</code></td>
+<td><code>(actor_type, actor_id, doc_type, terms_version)</code></td>
 <td>○</td>
-<td>トークン検索</td>
-</tr>
-<tr>
-<td style="text-align: right;">2</td>
-<td><code>idx_access_tokens_expires</code></td>
-<td><code>expires_at</code> WHERE <code>used_at IS NULL</code></td>
-<td></td>
-<td>未使用トークン期限切れ抽出</td>
+<td>操作者 × 文書 × 版で一意</td>
 </tr>
 </tbody>
 </table>
-<h3 id="357-コード値区分値">コード値・区分値</h3>
-<table>
-<thead>
-<tr>
-<th>カラム名</th>
-<th>値</th>
-<th>意味</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>purpose</code></td>
-<td><code>email_verify</code></td>
-<td>メール確認</td>
-</tr>
-<tr>
-<td><code>purpose</code></td>
-<td><code>password_reset</code></td>
-<td>パスワード再設定</td>
-</tr>
-<tr>
-<td><code>purpose</code></td>
-<td><code>activation</code></td>
-<td>メンバーアカウント有効化</td>
-</tr>
-<tr>
-<td><code>purpose</code></td>
-<td><code>contact_verify</code></td>
-<td>プロジェクト連絡先メール確認</td>
-</tr>
-</tbody>
-</table>
-
+<h3 id="3317-コード値区分値">コード値・区分値</h3>
+<p>(なし)</p>
 </article>
 </body>
 </html>

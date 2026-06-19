@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>allowed_domains(TBL-008) | FAQ 設計ポータル</title>
+<title>M_email_suppression_list(TBL-017) | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../../../assets/css/style.css">
 <script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script src="../../../assets/js/nav-data.js" defer></script>
 <script src="../../../assets/js/search-index.js" defer></script>
 <script src="../../../assets/js/portal.js" defer></script>
 </head>
-<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/allowed_domains.html">
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/M_email_suppression_list.html">
 <article class="content" id="content">
-<h1 id="TBL-008">TBL-008 <code>allowed_domains</code></h1>
-<span id="38-allowed_domains"></span>
-<p class="section-lead">ウィジェット埋め込みを許可するドメインを保持します。</p>
-<h3 id="381-概要">概要</h3>
+<h1 id="TBL-017">TBL-017 <code>M_email_suppression_list</code></h1>
+<span id="317-M_email_suppression_list"></span>
+<p class="section-lead">バウンス・苦情を起こしたメールアドレスを全契約横断で管理するサプレスリストです。</p>
+<h3 id="3171-概要">概要</h3>
 <table>
 <thead>
 <tr>
@@ -26,11 +26,11 @@
 <tbody>
 <tr>
 <td>テーブル名</td>
-<td><code>allowed_domains</code></td>
+<td><code>M_email_suppression_list</code></td>
 </tr>
 <tr>
 <td>論理名</td>
-<td>許可ドメイン</td>
+<td>メールサプレスリスト(全契約横断)</td>
 </tr>
 <tr>
 <td>主キー</td>
@@ -38,13 +38,11 @@
 </tr>
 <tr>
 <td>外部キー</td>
-<td><ul class="key-cols">
-<li><code>project_id</code> → <code>projects(id)</code></li>
-</ul></td>
+<td>—</td>
 </tr>
 </tbody>
 </table>
-<h3 id="382-カラム定義">カラム定義</h3>
+<h3 id="3172-カラム定義">カラム定義</h3>
 <table>
 <thead>
 <tr>
@@ -79,22 +77,22 @@
 </tr>
 <tr>
 <td style="text-align: right;">2</td>
-<td>プロジェクト ID</td>
-<td><code>project_id</code></td>
+<td>メール HMAC</td>
+<td><code>email_hmac</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
-<td><code>projects(id)</code></td>
 <td></td>
+<td>○</td>
 <td></td>
 <td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">3</td>
-<td>ドメイン</td>
-<td><code>domain</code></td>
+<td>理由</td>
+<td><code>reason</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
@@ -102,13 +100,13 @@
 <td></td>
 <td></td>
 <td></td>
-<td></td>
+<td><code>reason IN ('bounced_hard','bounced_soft_5x','complained','manual')</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">4</td>
-<td>有効フラグ</td>
-<td><code>valid</code></td>
+<td>永久フラグ</td>
+<td><code>is_permanent</code></td>
 <td>INTEGER</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
@@ -116,7 +114,7 @@
 <td></td>
 <td></td>
 <td><code>1</code></td>
-<td><code>valid IN (0,1)</code></td>
+<td></td>
 
 </tr>
 <tr>
@@ -135,21 +133,21 @@
 </tr>
 <tr>
 <td style="text-align: right;">6</td>
-<td>更新日時</td>
-<td><code>updated_at</code></td>
+<td>解除日時</td>
+<td><code>released_at</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
-<td>NO</td>
+<td>YES</td>
 <td></td>
 <td></td>
 <td></td>
-<td><code>datetime('now')</code></td>
+<td></td>
 <td></td>
 
 </tr>
 </tbody>
 </table>
-<h3 id="385-インデックス">インデックス</h3>
+<h3 id="3175-インデックス">インデックス</h3>
 <table>
 <thead>
 <tr>
@@ -163,23 +161,45 @@
 <tbody>
 <tr>
 <td style="text-align: right;">1</td>
-<td><code>uq_allowed_domains_project_domain</code></td>
-<td><code>(project_id, domain)</code> WHERE <code>valid = 1</code></td>
-<td>○</td>
-<td>プロジェクト内ドメイン一意(部分 UNIQUE)</td>
-</tr>
-<tr>
-<td style="text-align: right;">2</td>
-<td><code>idx_allowed_domains_valid</code></td>
-<td><code>valid</code> WHERE <code>valid = 0</code></td>
+<td><code>idx_suppression_permanent</code></td>
+<td><code>(is_permanent, email_hmac)</code></td>
 <td></td>
-<td>論理削除対象抽出</td>
+<td>永久 / 一時別検索</td>
 </tr>
 </tbody>
 </table>
-<h3 id="387-コード値区分値">コード値・区分値</h3>
-<p>(なし)</p>
-
+<h3 id="3177-コード値区分値">コード値・区分値</h3>
+<table>
+<thead>
+<tr>
+<th>カラム名</th>
+<th>値</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>reason</code></td>
+<td><code>bounced_hard</code></td>
+<td>ハードバウンス</td>
+</tr>
+<tr>
+<td><code>reason</code></td>
+<td><code>bounced_soft_5x</code></td>
+<td>ソフトバウンス 5 連続</td>
+</tr>
+<tr>
+<td><code>reason</code></td>
+<td><code>complained</code></td>
+<td>スパム苦情</td>
+</tr>
+<tr>
+<td><code>reason</code></td>
+<td><code>manual</code></td>
+<td>手動追加</td>
+</tr>
+</tbody>
+</table>
 </article>
 </body>
 </html>

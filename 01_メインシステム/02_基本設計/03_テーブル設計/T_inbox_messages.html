@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>projects(TBL-006) | FAQ 設計ポータル</title>
+<title>T_inbox_messages(TBL-028) | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../../../assets/css/style.css">
 <script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script src="../../../assets/js/nav-data.js" defer></script>
 <script src="../../../assets/js/search-index.js" defer></script>
 <script src="../../../assets/js/portal.js" defer></script>
 </head>
-<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/projects.html">
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/T_inbox_messages.html">
 <article class="content" id="content">
-<h1 id="TBL-006">TBL-006 <code>projects</code></h1>
-<span id="36-projects"></span>
-<p class="section-lead">FAQ プロジェクトとウィジェット設定を保持します。</p>
-<h3 id="361-概要">概要</h3>
+<h1 id="TBL-028">TBL-028 <code>T_inbox_messages</code></h1>
+<span id="328-T_inbox_messages"></span>
+<p class="section-lead">利用者(テナント側)が受け取るお知らせ・通知の既読状態を管理する受信箱です。</p>
+<h3 id="3281-概要">概要</h3>
 <table>
 <thead>
 <tr>
@@ -26,11 +26,11 @@
 <tbody>
 <tr>
 <td>テーブル名</td>
-<td><code>projects</code></td>
+<td><code>T_inbox_messages</code></td>
 </tr>
 <tr>
 <td>論理名</td>
-<td>プロジェクト</td>
+<td>受信箱(Tenant Plane)</td>
 </tr>
 <tr>
 <td>主キー</td>
@@ -39,12 +39,13 @@
 <tr>
 <td>外部キー</td>
 <td><ul class="key-cols">
-<li><code>contract_owner_user_id</code> → <code>owners(id)</code></li>
+<li><code>contract_owner_user_id</code> → <code>M_owners(id)</code></li>
+<li><code>recipient_type</code> + <code>recipient_id</code> → <code>M_owners(id)</code> / <code>M_project_users(id)</code>(論理参照)</li>
 </ul></td>
 </tr>
 </tbody>
 </table>
-<h3 id="362-カラム定義">カラム定義</h3>
+<h3 id="3282-カラム定義">カラム定義</h3>
 <table>
 <thead>
 <tr>
@@ -85,7 +86,7 @@
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
-<td><code>owners(id)</code></td>
+<td><code>M_owners(id)</code></td>
 <td></td>
 <td></td>
 <td></td>
@@ -93,8 +94,8 @@
 </tr>
 <tr>
 <td style="text-align: right;">3</td>
-<td>プロジェクト名</td>
-<td><code>name</code></td>
+<td>受信者種別</td>
+<td><code>recipient_type</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
@@ -102,72 +103,72 @@
 <td></td>
 <td></td>
 <td></td>
-<td><code>length(name) BETWEEN 1 AND 100</code></td>
+<td><code>recipient_type IN ('owner','project_user')</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">4</td>
-<td>説明</td>
-<td><code>description</code></td>
+<td>受信者 ID</td>
+<td><code>recipient_id</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
-<td>YES</td>
+<td>NO</td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
+<td><code>recipient_type</code> に応じ <code>M_owners(id)</code> / <code>M_project_users(id)</code> を指す(論理参照)</td>
 
 </tr>
 <tr>
 <td style="text-align: right;">5</td>
-<td>状態</td>
-<td><code>status</code></td>
+<td>カテゴリ</td>
+<td><code>category</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
 <td></td>
 <td></td>
-<td><code>'active'</code></td>
-<td><code>status IN ('active','deleted')</code></td>
+<td></td>
+<td><code>category IN ('billing','announcement','system')</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">6</td>
-<td>ウィジェット公開鍵</td>
-<td><code>widget_public_key</code></td>
+<td>優先度</td>
+<td><code>priority</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
 <td></td>
-<td>○</td>
 <td></td>
 <td></td>
+<td><code>priority IN ('low','normal','high','critical')</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">7</td>
-<td>連絡先メール</td>
-<td><code>contact_email</code></td>
+<td>タイトル</td>
+<td><code>title</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
-<td>YES</td>
+<td>NO</td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-<td>（複合）<code>contact_email_verified_at IS NULL OR contact_email IS NOT NULL</code></td>
+<td><code>length(title) BETWEEN 1 AND 200</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">8</td>
-<td>連絡先確認日時</td>
-<td><code>contact_email_verified_at</code></td>
+<td>本文(HTML)</td>
+<td><code>body_html</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
-<td>YES</td>
+<td>NO</td>
 <td></td>
 <td></td>
 <td></td>
@@ -177,36 +178,36 @@
 </tr>
 <tr>
 <td style="text-align: right;">9</td>
-<td>設定 JSON</td>
-<td><code>settings</code></td>
+<td>由来種別</td>
+<td><code>source_kind</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
-<td>NO</td>
+<td>YES</td>
 <td></td>
 <td></td>
 <td></td>
-<td><code>'{}'</code></td>
+<td></td>
 <td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">10</td>
-<td>有効フラグ</td>
-<td><code>valid</code></td>
-<td>INTEGER</td>
+<td>由来 ID</td>
+<td><code>source_id</code></td>
+<td>TEXT</td>
 <td style="text-align: right;">-</td>
-<td>NO</td>
+<td>YES</td>
 <td></td>
 <td></td>
 <td></td>
-<td><code>1</code></td>
-<td><code>valid IN (0,1)</code></td>
+<td></td>
+<td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">11</td>
-<td>作成日時</td>
-<td><code>created_at</code></td>
+<td>重複キー</td>
+<td><code>dedup_key</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
@@ -219,8 +220,36 @@
 </tr>
 <tr>
 <td style="text-align: right;">12</td>
-<td>更新日時</td>
-<td><code>updated_at</code></td>
+<td>既読日時</td>
+<td><code>read_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">13</td>
+<td>非表示日時</td>
+<td><code>hidden_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">14</td>
+<td>作成日時</td>
+<td><code>created_at</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
@@ -233,7 +262,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="365-インデックス">インデックス</h3>
+<h3 id="3285-インデックス">インデックス</h3>
 <table>
 <thead>
 <tr>
@@ -247,28 +276,21 @@
 <tbody>
 <tr>
 <td style="text-align: right;">1</td>
-<td><code>idx_projects_owner_status</code></td>
-<td><code>(contract_owner_user_id, status)</code></td>
+<td><code>idx_inbox_owner_user_unread</code></td>
+<td><code>(contract_owner_user_id, recipient_type, recipient_id, read_at, created_at DESC)</code></td>
 <td></td>
-<td>オーナー別プロジェクト一覧</td>
+<td>未読 + 新着</td>
 </tr>
 <tr>
 <td style="text-align: right;">2</td>
-<td><code>idx_projects_widget_key</code></td>
-<td><code>widget_public_key</code></td>
+<td><code>idx_inbox_dedup</code></td>
+<td><code>(contract_owner_user_id, dedup_key, created_at)</code></td>
 <td></td>
-<td>ウィジェット鍵検索</td>
-</tr>
-<tr>
-<td style="text-align: right;">3</td>
-<td><code>idx_projects_valid</code></td>
-<td><code>valid</code> WHERE <code>valid = 0</code></td>
-<td></td>
-<td>論理削除対象抽出</td>
+<td>60 分集約判定</td>
 </tr>
 </tbody>
 </table>
-<h3 id="367-コード値区分値">コード値・区分値</h3>
+<h3 id="3287-コード値区分値">コード値・区分値</h3>
 <table>
 <thead>
 <tr>
@@ -279,18 +301,42 @@
 </thead>
 <tbody>
 <tr>
-<td><code>status</code></td>
-<td><code>active</code></td>
-<td>有効</td>
+<td><code>category</code></td>
+<td><code>billing</code></td>
+<td>課金</td>
 </tr>
 <tr>
-<td><code>status</code></td>
-<td><code>deleted</code></td>
-<td>論理削除</td>
+<td><code>category</code></td>
+<td><code>announcement</code></td>
+<td>お知らせ</td>
+</tr>
+<tr>
+<td><code>category</code></td>
+<td><code>system</code></td>
+<td>システム</td>
+</tr>
+<tr>
+<td><code>priority</code></td>
+<td><code>low</code></td>
+<td>低</td>
+</tr>
+<tr>
+<td><code>priority</code></td>
+<td><code>normal</code></td>
+<td>通常</td>
+</tr>
+<tr>
+<td><code>priority</code></td>
+<td><code>high</code></td>
+<td>高</td>
+</tr>
+<tr>
+<td><code>priority</code></td>
+<td><code>critical</code></td>
+<td>クリティカル</td>
 </tr>
 </tbody>
 </table>
-
 </article>
 </body>
 </html>

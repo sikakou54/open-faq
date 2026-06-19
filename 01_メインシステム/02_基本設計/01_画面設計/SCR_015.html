@@ -131,8 +131,8 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>規約バージョン</td><td>差分サマリ・最新版を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>terms_versions</code>(<a href="../03_テーブル設計/terms_versions.html">テーブル設計 3.30</a>)</td></tr>
-<tr><td>規約同意</td><td><code>doc_type</code> 別で同意を記録する</td><td>テーブル</td><td>出力</td><td>◯</td><td>—</td><td>—</td><td>—</td><td><code>terms_agreements</code>(<a href="../03_テーブル設計/terms_agreements.html">テーブル設計 3.31</a>)</td></tr>
+<tr><td>規約バージョン</td><td>差分サマリ・最新版を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>M_terms_versions</code>(<a href="../03_テーブル設計/M_terms_versions.html">テーブル設計 3.30</a>)</td></tr>
+<tr><td>規約同意</td><td><code>doc_type</code> 別で同意を記録する</td><td>テーブル</td><td>出力</td><td>◯</td><td>—</td><td>—</td><td>—</td><td><code>T_terms_agreements</code>(<a href="../03_テーブル設計/T_terms_agreements.html">テーブル設計 3.31</a>)</td></tr>
 <tr><td>利用規約 最新版取得</td><td>利用規約の最新版・差分サマリを取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /terms/current</code>(<a href="../02_API設計/index.html">API 設計 5.9.1</a>)</td></tr>
 <tr><td>プライバシーポリシー 最新版取得</td><td>プライバシーポリシーの最新版・差分サマリを取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /privacy/current</code>(<a href="../02_API設計/index.html">API 設計 5.9.1a</a>)</td></tr>
 <tr><td>利用規約 同意</td><td>利用規約最新版への同意を送信する</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /terms/agree</code>(<a href="../02_API設計/index.html">API 設計 5.9.2</a>)</td></tr>
@@ -155,7 +155,7 @@
 <tbody>
 <tr><td><code>EV-01</code></td><td>割込み表示</td><td>ログイン後・未同意の改定がある場合</td><td><ul><li><code>GET /terms/current</code> / <code>GET /privacy/current</code> で差分サマリを取得</li><li>主な変更点を全画面モーダルで表示</li></ul></td><td><a href="#IT-01">IT-01</a></td></tr>
 <tr><td><code>EV-02</code></td><td>同意チェック</td><td>各同意チェックボックス操作時</td><td>両チェックの充足状態を判定し「同意して続行する」の活性 / 非活性を切替</td><td><a href="#IT-02">IT-02</a>, <a href="#IT-03">IT-03</a>, <a href="#IT-04">IT-04</a></td></tr>
-<tr><td><code>EV-03</code></td><td>同意して続行</td><td>「同意して続行する」押下時</td><td><ul><li><code>POST /terms/agree</code> と <code>POST /privacy/agree</code>(改定文書のみ)を実行し <code>terms_agreements</code> に記録</li><li>完了後は元の操作へ戻る</li></ul></td><td><a href="#IT-04">IT-04</a></td></tr>
+<tr><td><code>EV-03</code></td><td>同意して続行</td><td>「同意して続行する」押下時</td><td><ul><li><code>POST /terms/agree</code> と <code>POST /privacy/agree</code>(改定文書のみ)を実行し <code>T_terms_agreements</code> に記録</li><li>完了後は元の操作へ戻る</li></ul></td><td><a href="#IT-04">IT-04</a></td></tr>
 <tr><td><code>EV-04</code></td><td>規約 / ポリシー閲覧</td><td>文書リンク押下時</td><td>SCR-010 利用規約 / SCR-020 プライバシーポリシーを別タブで開く</td><td><a href="#IT-02">IT-02</a>, <a href="#IT-03">IT-03</a></td></tr>
 </tbody>
 </table>

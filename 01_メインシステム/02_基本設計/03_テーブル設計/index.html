@@ -18,7 +18,7 @@
 <p class="ps-lead"><strong>このページは、メインシステムのデータベース(Cloudflare D1 / SQLite)に存在する全テーブルのスキーマ(カラム定義 / 主キー / 外部キー / インデックス / 制約 / コード値)を定義します。</strong></p>
 </aside>
 
-<p class="doc-meta"><span><b>版数</b> v2.6</span><span><b>更新</b> 2026-06-18</span><span class="dm-status">承認済</span></p>
+<p class="doc-meta"><span><b>版数</b> v2.7</span><span><b>更新</b> 2026-06-18</span><span class="dm-status">承認済</span></p>
 
 <h2 id="1-テーブル一覧">1. テーブル一覧</h2>
 <table>
@@ -41,7 +41,7 @@
 <tr>
 <td>1</td>
 <td>TBL-001</td>
-<td><a href="owners.html"><code>owners</code></a><br>オーナーマスタ</td>
+<td><a href="M_owners.html"><code>M_owners</code></a><br>オーナーマスタ</td>
 <td>オーナー(契約あたり 1 ユーザー)の認証情報(メール / パスワード / 氏名 / セッション状態)と契約状態・データ削除モードを一元保持するオーナーマスタです。<code>id</code> が契約境界キー本体です。</td>
 <td>通常</td>
 <td>M_(マスタ)</td>
@@ -49,7 +49,7 @@
 <tr>
 <td>2</td>
 <td>TBL-002</td>
-<td><a href="project_users.html"><code>project_users</code></a><br>プロジェクトユーザーマスタ</td>
+<td><a href="M_project_users.html"><code>M_project_users</code></a><br>プロジェクトユーザーマスタ</td>
 <td>プロジェクト管理者・メンバー(オーナー以外のログインユーザー)の認証情報を保持するプロジェクトユーザーマスタです。オーナーは含みません。</td>
 <td>通常</td>
 <td>M_(マスタ)</td>
@@ -57,7 +57,7 @@
 <tr>
 <td>3</td>
 <td>TBL-003</td>
-<td><a href="project_user_assignments.html"><code>project_user_assignments</code></a><br>プロジェクト割当 + プロジェクト別ロール</td>
+<td><a href="M_project_user_assignments.html"><code>M_project_user_assignments</code></a><br>プロジェクト割当 + プロジェクト別ロール</td>
 <td>プロジェクトユーザーのプロジェクトへの割当と、プロジェクトごとのロール(プロジェクト管理者 / メンバー)を保持します。</td>
 <td>通常</td>
 <td>M_(マスタ)</td>
@@ -65,7 +65,7 @@
 <tr>
 <td>4</td>
 <td>TBL-004</td>
-<td><a href="sessions.html"><code>sessions</code></a><br>セッション</td>
+<td><a href="T_sessions.html"><code>T_sessions</code></a><br>セッション</td>
 <td>複数デバイス対応のログインセッションを管理します。</td>
 <td>通常</td>
 <td>T_(トランザクション)</td>
@@ -73,7 +73,7 @@
 <tr>
 <td>5</td>
 <td>TBL-005</td>
-<td><a href="access_tokens.html"><code>access_tokens</code></a><br>アクセストークン</td>
+<td><a href="T_access_tokens.html"><code>T_access_tokens</code></a><br>アクセストークン</td>
 <td>招待・パスワード再設定・メール確認などの短期トークンを保持します。</td>
 <td>通常</td>
 <td>T_(トランザクション)</td>
@@ -81,7 +81,7 @@
 <tr>
 <td>6</td>
 <td>TBL-006</td>
-<td><a href="projects.html"><code>projects</code></a><br>プロジェクト</td>
+<td><a href="M_projects.html"><code>M_projects</code></a><br>プロジェクト</td>
 <td>FAQ プロジェクトとウィジェット設定を保持します。</td>
 <td>通常</td>
 <td>M_(マスタ)</td>
@@ -89,7 +89,7 @@
 <tr>
 <td>7</td>
 <td>TBL-007</td>
-<td><a href="project_legacy_keys.html"><code>project_legacy_keys</code></a><br>レガシー API キー</td>
+<td><a href="T_project_legacy_keys.html"><code>T_project_legacy_keys</code></a><br>レガシー API キー</td>
 <td>ウィジェット鍵ローテーション時に旧キーを 24 時間だけ有効にするためのレガシー API キーを保持します。</td>
 <td>通常</td>
 <td>T_(トランザクション)</td>
@@ -97,7 +97,7 @@
 <tr>
 <td>8</td>
 <td>TBL-008</td>
-<td><a href="allowed_domains.html"><code>allowed_domains</code></a><br>許可ドメイン</td>
+<td><a href="M_allowed_domains.html"><code>M_allowed_domains</code></a><br>許可ドメイン</td>
 <td>ウィジェット埋め込みを許可するドメインを保持します。</td>
 <td>通常</td>
 <td>M_(マスタ)</td>
@@ -105,7 +105,7 @@
 <tr>
 <td>9</td>
 <td>TBL-009</td>
-<td><a href="faqs.html"><code>faqs</code></a><br>FAQ</td>
+<td><a href="M_faqs.html"><code>M_faqs</code></a><br>FAQ</td>
 <td>FAQ 本体(質問・回答・公開状態)を保持します。</td>
 <td>通常</td>
 <td>M_(マスタ)</td>
@@ -113,7 +113,7 @@
 <tr>
 <td>10</td>
 <td>TBL-010</td>
-<td><a href="faq_revisions.html"><code>faq_revisions</code></a><br>FAQ 改訂履歴</td>
+<td><a href="H_faq_revisions.html"><code>H_faq_revisions</code></a><br>FAQ 改訂履歴</td>
 <td>FAQ の改訂履歴を全文スナップショットで最大 50 件保持します。</td>
 <td>通常</td>
 <td>H_(履歴)</td>
@@ -121,7 +121,7 @@
 <tr>
 <td>11</td>
 <td>TBL-011</td>
-<td><a href="faq_search_fts.html"><code>faq_search_fts</code></a><br>FAQ 全文検索</td>
+<td><a href="TP_faq_search_fts.html"><code>TP_faq_search_fts</code></a><br>FAQ 全文検索</td>
 <td>FAQ 全文検索用の FTS5 仮想テーブル(trigram トークナイザ)です。</td>
 <td>通常</td>
 <td>TP_(ワーク)</td>
@@ -129,7 +129,7 @@
 <tr>
 <td>12</td>
 <td>TBL-012</td>
-<td><a href="question_logs.html"><code>question_logs</code></a><br>質問ログ</td>
+<td><a href="H_question_logs.html"><code>H_question_logs</code></a><br>質問ログ</td>
 <td>ウィジェット利用者からの質問と AI 推論結果を記録する質問ログです。</td>
 <td>通常</td>
 <td>H_(履歴)</td>
@@ -137,7 +137,7 @@
 <tr>
 <td>13</td>
 <td>TBL-013</td>
-<td><a href="question_log_faq_refs.html"><code>question_log_faq_refs</code></a><br>参照 FAQ</td>
+<td><a href="T_question_log_faq_refs.html"><code>T_question_log_faq_refs</code></a><br>参照 FAQ</td>
 <td>質問ログと参照 FAQ の M:N 関係を保持する中間テーブルです。</td>
 <td>通常</td>
 <td>T_(トランザクション)</td>
@@ -145,7 +145,7 @@
 <tr>
 <td>14</td>
 <td>TBL-014</td>
-<td><a href="inquiries.html"><code>inquiries</code></a><br>未解決質問</td>
+<td><a href="T_inquiries.html"><code>T_inquiries</code></a><br>未解決質問</td>
 <td>FAQ 登録前の未解決質問を保持します。</td>
 <td>通常</td>
 <td>T_(トランザクション)</td>
@@ -153,7 +153,7 @@
 <tr>
 <td>15</td>
 <td>TBL-015</td>
-<td><a href="notification_logs.html"><code>notification_logs</code></a><br>通知ログ</td>
+<td><a href="H_notification_logs.html"><code>H_notification_logs</code></a><br>通知ログ</td>
 <td>メール通知の送信履歴を保持します。</td>
 <td>通常</td>
 <td>H_(履歴)</td>
@@ -161,7 +161,7 @@
 <tr>
 <td>16</td>
 <td>TBL-016</td>
-<td><a href="ai_threshold_persistent_cache.html"><code>ai_threshold_persistent_cache</code></a><br>AI しきい値キャッシュ</td>
+<td><a href="TP_ai_threshold_persistent_cache.html"><code>TP_ai_threshold_persistent_cache</code></a><br>AI しきい値キャッシュ</td>
 <td>3 階層 AI しきい値を永続キャッシュするテーブルです。</td>
 <td>通常</td>
 <td>TP_(ワーク)</td>
@@ -169,7 +169,7 @@
 <tr>
 <td>17</td>
 <td>TBL-017</td>
-<td><a href="email_suppression_list.html"><code>email_suppression_list</code></a><br>メールサプレスリスト</td>
+<td><a href="M_email_suppression_list.html"><code>M_email_suppression_list</code></a><br>メールサプレスリスト</td>
 <td>バウンス・苦情を起こしたメールアドレスを全契約横断で管理するサプレスリストです。</td>
 <td>通常</td>
 <td>M_(マスタ)</td>
@@ -177,7 +177,7 @@
 <tr>
 <td>18</td>
 <td>TBL-018</td>
-<td><a href="audit_logs.html"><code>audit_logs</code></a><br>監査ログ(メイン側、API 操作ログ専用)</td>
+<td><a href="H_audit_logs.html"><code>H_audit_logs</code></a><br>監査ログ(メイン側、API 操作ログ専用)</td>
 <td>メイン管理者向けの API 操作ログを保持します。</td>
 <td>通常 / 課金</td>
 <td>H_(履歴)</td>
@@ -185,7 +185,7 @@
 <tr>
 <td>19</td>
 <td>TBL-019</td>
-<td><a href="error_logs.html"><code>error_logs</code></a><br>エラーログ</td>
+<td><a href="H_error_logs.html"><code>H_error_logs</code></a><br>エラーログ</td>
 <td>サーバーエラーを記録するエラーログです。</td>
 <td>通常</td>
 <td>H_(履歴)</td>
@@ -193,7 +193,7 @@
 <tr>
 <td>20</td>
 <td>TBL-020</td>
-<td><a href="billing_subscriptions.html"><code>billing_subscriptions</code></a><br>課金サブスクリプション</td>
+<td><a href="T_billing_subscriptions.html"><code>T_billing_subscriptions</code></a><br>課金サブスクリプション</td>
 <td>Stripe のサブスクリプションと連動する、課金サブスクリプション情報を保持します。</td>
 <td>課金</td>
 <td>T_(トランザクション)</td>
@@ -201,7 +201,7 @@
 <tr>
 <td>21</td>
 <td>TBL-021</td>
-<td><a href="billing_invoices.html"><code>billing_invoices</code></a><br>請求書</td>
+<td><a href="T_billing_invoices.html"><code>T_billing_invoices</code></a><br>請求書</td>
 <td>月次請求書を保持します。</td>
 <td>課金</td>
 <td>T_(トランザクション)</td>
@@ -209,7 +209,7 @@
 <tr>
 <td>22</td>
 <td>TBL-022</td>
-<td><a href="usage_metering.html"><code>usage_metering</code></a><br>利用量計測(プロジェクト単位)</td>
+<td><a href="T_usage_metering.html"><code>T_usage_metering</code></a><br>利用量計測(プロジェクト単位)</td>
 <td>質問数・FAQ 件数をプロジェクト単位で計測し、請求はオーナーで SUM 集計します。</td>
 <td>課金</td>
 <td>T_(トランザクション)</td>
@@ -217,7 +217,7 @@
 <tr>
 <td>23</td>
 <td>TBL-023</td>
-<td><a href="owner_quota_overrides.html"><code>owner_quota_overrides</code></a><br>契約別レート上書き</td>
+<td><a href="M_owner_quota_overrides.html"><code>M_owner_quota_overrides</code></a><br>契約別レート上書き</td>
 <td>契約単位のレート制限上書きを保持します。</td>
 <td>通常</td>
 <td>M_(マスタ)</td>
@@ -225,7 +225,7 @@
 <tr>
 <td>24</td>
 <td>TBL-024</td>
-<td><a href="project_quota_limits.html"><code>project_quota_limits</code></a><br>プロジェクト別利用設定</td>
+<td><a href="M_project_quota_limits.html"><code>M_project_quota_limits</code></a><br>プロジェクト別利用設定</td>
 <td>質問数の月次上限件数・無料枠・アラート、および FAQ 件数無料枠をプロジェクト単位で保持します。</td>
 <td>通常</td>
 <td>M_(マスタ)</td>
@@ -233,7 +233,7 @@
 <tr>
 <td>25</td>
 <td>TBL-025</td>
-<td><a href="service_announcements.html"><code>service_announcements</code></a><br>お知らせ(Control Plane)</td>
+<td><a href="M_service_announcements.html"><code>M_service_announcements</code></a><br>お知らせ(Control Plane)</td>
 <td>お知らせの本体を保持します。</td>
 <td>通常</td>
 <td>M_(マスタ)</td>
@@ -241,7 +241,7 @@
 <tr>
 <td>26</td>
 <td>TBL-026</td>
-<td><a href="announcement_audiences.html"><code>announcement_audiences</code></a><br>お知らせ配信対象 M:N</td>
+<td><a href="M_announcement_audiences.html"><code>M_announcement_audiences</code></a><br>お知らせ配信対象 M:N</td>
 <td>お知らせの配信先オーナーを限定指定する M:N テーブルです。</td>
 <td>通常</td>
 <td>M_(マスタ)</td>
@@ -249,7 +249,7 @@
 <tr>
 <td>27</td>
 <td>TBL-027</td>
-<td><a href="announcement_recipients.html"><code>announcement_recipients</code></a><br>お知らせ受信者</td>
+<td><a href="T_announcement_recipients.html"><code>T_announcement_recipients</code></a><br>お知らせ受信者</td>
 <td>お知らせの実配信先・配信集計・監査情報を保持します。</td>
 <td>通常</td>
 <td>T_(トランザクション)</td>
@@ -257,7 +257,7 @@
 <tr>
 <td>28</td>
 <td>TBL-028</td>
-<td><a href="inbox_messages.html"><code>inbox_messages</code></a><br>受信箱(Tenant Plane)</td>
+<td><a href="T_inbox_messages.html"><code>T_inbox_messages</code></a><br>受信箱(Tenant Plane)</td>
 <td>利用者(テナント側)が受け取るお知らせ・通知の既読状態を管理する受信箱です。</td>
 <td>通常</td>
 <td>T_(トランザクション)</td>
@@ -265,7 +265,7 @@
 <tr>
 <td>29</td>
 <td>TBL-029</td>
-<td><a href="withdrawal_requests.html"><code>withdrawal_requests</code></a><br>退会申請</td>
+<td><a href="T_withdrawal_requests.html"><code>T_withdrawal_requests</code></a><br>退会申請</td>
 <td>退会申請レコード(90 日猶予)を保持します。</td>
 <td>通常</td>
 <td>T_(トランザクション)</td>
@@ -273,7 +273,7 @@
 <tr>
 <td>30</td>
 <td>TBL-030</td>
-<td><a href="terms_versions.html"><code>terms_versions</code></a><br>規約版数</td>
+<td><a href="M_terms_versions.html"><code>M_terms_versions</code></a><br>規約版数</td>
 <td>利用規約・プライバシーポリシーの版を保持します。</td>
 <td>通常</td>
 <td>M_(マスタ)</td>
@@ -281,7 +281,7 @@
 <tr>
 <td>31</td>
 <td>TBL-031</td>
-<td><a href="terms_agreements.html"><code>terms_agreements</code></a><br>規約同意</td>
+<td><a href="T_terms_agreements.html"><code>T_terms_agreements</code></a><br>規約同意</td>
 <td>利用者ごとの規約同意履歴を保持します。</td>
 <td>通常</td>
 <td>T_(トランザクション)</td>
@@ -329,18 +329,23 @@
 <tbody>
 <tr>
 <td>2026-06-18</td>
+<td>v2.7</td>
+<td>命名規約を物理適用。全 31 テーブルの物理名・設計ファイル名・FK 参照・全層相互参照・<code>nav-data.js</code>・検索インデックスへ分類接頭辞(<code>M_</code> / <code>T_</code> / <code>H_</code> / <code>TP_</code>)を一括付与(例 <code>owners</code>→<code>M_owners</code>、<code>audit_logs</code>→<code>H_audit_logs</code>)。列名・<code>contract_owner_user_id</code>・<code>actor_type</code> 等の非テーブル識別子は不変。</td>
+</tr>
+<tr>
+<td>2026-06-18</td>
 <td>v2.6</td>
 <td>テーブル名の分類接頭辞規約(<code>M_</code> マスタ / <code>T_</code> トランザクション / <code>H_</code> 履歴・ログ / <code>TP_</code> ワーク)を制定。§1 テーブル一覧に「分類」列を追加(M 12 / T 12 / H 5 / TP 2)。物理名は変更せず分類のみ文書化(規約は <code>CLAUDE.md</code> + テーブル構造設計 §4.1)。</td>
 </tr>
 <tr>
 <td>2026-06-18</td>
 <td>v2.5</td>
-<td>未決事項を解消し §2 未決事項セクションを削除。#1(利用上限テーブル構成)は既決。#2(<code>question_log_faq_refs</code> スキーマ)は DD03 と整合確認済み(DD03 §3.1 に参照 FAQ を <code>relevance_score</code> 付きで記録する旨を明記)。</td>
+<td>未決事項を解消し §2 未決事項セクションを削除。#1(利用上限テーブル構成)は既決。#2(<code>T_question_log_faq_refs</code> スキーマ)は DD03 と整合確認済み(DD03 §3.1 に参照 FAQ を <code>relevance_score</code> 付きで記録する旨を明記)。</td>
 </tr>
 <tr>
 <td>2026-06-18</td>
 <td>v2.4</td>
-<td>§1 テーブル一覧に「保持クラス」列を追加し、各テーブルを 通常 / 課金 に分類(課金 = <code>billing_subscriptions</code> / <code>billing_invoices</code> / <code>usage_metering</code>、<code>audit_logs</code> は action 別の混在)。§1.1 見出しを「retention_class 値の正本定義」から和名「保持クラスの定義」に変更し、値テーブルに和名(通常 / 課金)列を追加。</td>
+<td>§1 テーブル一覧に「保持クラス」列を追加し、各テーブルを 通常 / 課金 に分類(課金 = <code>T_billing_subscriptions</code> / <code>T_billing_invoices</code> / <code>T_usage_metering</code>、<code>H_audit_logs</code> は action 別の混在)。§1.1 見出しを「retention_class 値の正本定義」から和名「保持クラスの定義」に変更し、値テーブルに和名(通常 / 課金)列を追加。</td>
 </tr>
 <tr>
 <td>2026-06-18</td>

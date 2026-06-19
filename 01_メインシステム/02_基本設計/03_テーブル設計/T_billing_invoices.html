@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>billing_subscriptions(TBL-020) | FAQ 設計ポータル</title>
+<title>T_billing_invoices(TBL-021) | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../../../assets/css/style.css">
 <script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script src="../../../assets/js/nav-data.js" defer></script>
 <script src="../../../assets/js/search-index.js" defer></script>
 <script src="../../../assets/js/portal.js" defer></script>
 </head>
-<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/billing_subscriptions.html">
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/T_billing_invoices.html">
 <article class="content" id="content">
-<h1 id="TBL-020">TBL-020 <code>billing_subscriptions</code></h1>
-<span id="320-billing_subscriptions"></span>
-<p class="section-lead">Stripe のサブスクリプションと連動する、課金サブスクリプション情報を保持します。</p>
-<h3 id="3201-概要">概要</h3>
+<h1 id="TBL-021">TBL-021 <code>T_billing_invoices</code></h1>
+<span id="321-T_billing_invoices"></span>
+<p class="section-lead">月次請求書を保持します。</p>
+<h3 id="3211-概要">概要</h3>
 <table>
 <thead>
 <tr>
@@ -26,11 +26,11 @@
 <tbody>
 <tr>
 <td>テーブル名</td>
-<td><code>billing_subscriptions</code></td>
+<td><code>T_billing_invoices</code></td>
 </tr>
 <tr>
 <td>論理名</td>
-<td>課金サブスクリプション</td>
+<td>請求書(電子帳簿保存法対応、7 年保持)</td>
 </tr>
 <tr>
 <td>主キー</td>
@@ -39,12 +39,12 @@
 <tr>
 <td>外部キー</td>
 <td><ul class="key-cols">
-<li><code>contract_owner_user_id</code> → <code>owners(id)</code></li>
+<li><code>contract_owner_user_id</code> → <code>M_owners(id)</code></li>
 </ul></td>
 </tr>
 </tbody>
 </table>
-<h3 id="3202-カラム定義">カラム定義</h3>
+<h3 id="3212-カラム定義">カラム定義</h3>
 <table>
 <thead>
 <tr>
@@ -85,22 +85,22 @@
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
-<td><code>owners(id)</code></td>
-<td></td>
+<td><code>M_owners(id)</code></td>
+<td>①</td>
 <td></td>
 <td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">3</td>
-<td>Stripe サブスク ID</td>
-<td><code>stripe_subscription_id</code></td>
+<td>請求年月</td>
+<td><code>billing_year_month</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
-<td>YES</td>
+<td>NO</td>
 <td></td>
 <td></td>
-<td>○</td>
+<td>②</td>
 <td></td>
 <td></td>
 
@@ -116,14 +116,14 @@
 <td></td>
 <td></td>
 <td></td>
-<td><code>status IN ('active','past_due','canceled','unpaid','incomplete')</code></td>
+<td><code>status IN ('draft','issued','paid','past_due','refunded','void')</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">5</td>
-<td>プラン ID</td>
-<td><code>plan_id</code></td>
-<td>TEXT</td>
+<td>合計金額</td>
+<td><code>amount_total</code></td>
+<td>INTEGER</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
@@ -135,62 +135,104 @@
 </tr>
 <tr>
 <td style="text-align: right;">6</td>
-<td>当期開始</td>
-<td><code>current_period_start</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>YES</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">7</td>
-<td>当期終了</td>
-<td><code>current_period_end</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>YES</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">8</td>
-<td>解約予定日</td>
-<td><code>cancel_at</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>YES</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">9</td>
-<td>有効フラグ</td>
-<td><code>valid</code></td>
+<td>税額</td>
+<td><code>amount_tax</code></td>
 <td>INTEGER</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
 <td></td>
 <td></td>
-<td><code>1</code></td>
-<td><code>valid IN (0,1)</code></td>
+<td><code>0</code></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td>通貨</td>
+<td><code>currency</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>'JPY'</code></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">8</td>
+<td>Stripe 請求書 ID</td>
+<td><code>stripe_invoice_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td>○</td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">9</td>
+<td>PDF R2 キー</td>
+<td><code>pdf_r2_key</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">10</td>
+<td>発行日時</td>
+<td><code>issued_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">11</td>
+<td>支払日時</td>
+<td><code>paid_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">12</td>
+<td>返金日時</td>
+<td><code>refunded_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">13</td>
 <td>作成日時</td>
 <td><code>created_at</code></td>
 <td>TEXT</td>
@@ -203,23 +245,9 @@
 <td></td>
 
 </tr>
-<tr>
-<td style="text-align: right;">11</td>
-<td>更新日時</td>
-<td><code>updated_at</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>NO</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-
-</tr>
 </tbody>
 </table>
-<h3 id="3205-インデックス">インデックス</h3>
+<h3 id="3215-インデックス">インデックス</h3>
 <table>
 <thead>
 <tr>
@@ -233,28 +261,21 @@
 <tbody>
 <tr>
 <td style="text-align: right;">1</td>
-<td><code>idx_billing_subs_owner</code></td>
-<td><code>contract_owner_user_id</code></td>
-<td></td>
-<td>オーナー検索</td>
+<td><code>uq_billing_invoices_owner_month</code></td>
+<td><code>(contract_owner_user_id, billing_year_month)</code></td>
+<td>○</td>
+<td>月次一意</td>
 </tr>
 <tr>
 <td style="text-align: right;">2</td>
-<td><code>idx_billing_subs_status</code></td>
+<td><code>idx_billing_invoices_status</code></td>
 <td><code>status</code></td>
 <td></td>
 <td>状態別集計</td>
 </tr>
-<tr>
-<td style="text-align: right;">3</td>
-<td><code>idx_billing_subs_valid</code></td>
-<td><code>valid</code> WHERE <code>valid = 0</code></td>
-<td></td>
-<td>論理削除済み参照(物理削除対象外)</td>
-</tr>
 </tbody>
 </table>
-<h3 id="3207-コード値区分値">コード値・区分値</h3>
+<h3 id="3217-コード値区分値">コード値・区分値</h3>
 <table>
 <thead>
 <tr>
@@ -266,8 +287,18 @@
 <tbody>
 <tr>
 <td><code>status</code></td>
-<td><code>active</code></td>
-<td>有効</td>
+<td><code>draft</code></td>
+<td>下書き</td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td><code>issued</code></td>
+<td>発行済み</td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td><code>paid</code></td>
+<td>支払完了</td>
 </tr>
 <tr>
 <td><code>status</code></td>
@@ -276,18 +307,13 @@
 </tr>
 <tr>
 <td><code>status</code></td>
-<td><code>canceled</code></td>
-<td>解約済み</td>
+<td><code>refunded</code></td>
+<td>返金済み</td>
 </tr>
 <tr>
 <td><code>status</code></td>
-<td><code>unpaid</code></td>
-<td>未払い</td>
-</tr>
-<tr>
-<td><code>status</code></td>
-<td><code>incomplete</code></td>
-<td>初回支払未完了</td>
+<td><code>void</code></td>
+<td>無効化</td>
 </tr>
 </tbody>
 </table>

@@ -219,9 +219,9 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>プロジェクト上限</td><td>現値をロードし、月次上限件数 / アラート閾値を更新する</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>project_quota_limits</code>(<a href="../03_テーブル設計/project_quota_limits.html">テーブル設計 3.24</a>)</td></tr>
-<tr><td>上限取得</td><td>モーダル起動時に現在の上限設定を取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /projects/{id}/quota-limits</code>(<a href="../02_API設計/利用量・課金.html#API-BIL-006">API 設計 5.7.5</a>)</td></tr>
-<tr><td>上限更新</td><td>上限件数・アラート閾値を保存する(再認証必須)</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>PATCH /projects/{id}/quota-limits/questions</code>(<a href="../02_API設計/利用量・課金.html#API-BIL-007">API 設計 5.7.6</a>)</td></tr>
+<tr><td>プロジェクト上限</td><td>現値をロードし、月次上限件数 / アラート閾値を更新する</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>M_project_quota_limits</code>(<a href="../03_テーブル設計/M_project_quota_limits.html">テーブル設計 3.24</a>)</td></tr>
+<tr><td>上限取得</td><td>モーダル起動時に現在の上限設定を取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /M_projects/{id}/quota-limits</code>(<a href="../02_API設計/利用量・課金.html#API-BIL-006">API 設計 5.7.5</a>)</td></tr>
+<tr><td>上限更新</td><td>上限件数・アラート閾値を保存する(再認証必須)</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>PATCH /M_projects/{id}/quota-limits/questions</code>(<a href="../02_API設計/利用量・課金.html#API-BIL-007">API 設計 5.7.6</a>)</td></tr>
 </tbody>
 </table>
 
@@ -238,10 +238,10 @@
 </tr>
 </thead>
 <tbody>
-<tr><td><code>EV-01</code></td><td>現値ロード</td><td>モーダル起動時</td><td><code>GET /projects/{id}/quota-limits</code> で現在の上限 ON/OFF・件数・アラート閾値を取得し初期表示</td><td><a href="#IT-01">IT-01</a>, <a href="#IT-02">IT-02</a>, <a href="#IT-04">IT-04</a></td></tr>
+<tr><td><code>EV-01</code></td><td>現値ロード</td><td>モーダル起動時</td><td><code>GET /M_projects/{id}/quota-limits</code> で現在の上限 ON/OFF・件数・アラート閾値を取得し初期表示</td><td><a href="#IT-01">IT-01</a>, <a href="#IT-02">IT-02</a>, <a href="#IT-04">IT-04</a></td></tr>
 <tr><td><code>EV-02</code></td><td>上限トグル切替</td><td>「上限設定」トグル操作時</td><td><ul><li>OFF で件数入力・アラート設定を非活性化</li><li>ON で活性化し計算式を再描画</li></ul></td><td><a href="#IT-01">IT-01</a>, <a href="#IT-02">IT-02</a>, <a href="#IT-04">IT-04</a></td></tr>
 <tr><td><code>EV-03</code></td><td>件数入力・計算式更新</td><td>「今月の利用上限」入力時</td><td><ul><li>入力に応じて課金対象件数・最大課金額をリアルタイム併記</li><li>範囲外はエラー表示</li></ul></td><td><a href="#IT-02">IT-02</a></td></tr>
-<tr><td><code>EV-04</code></td><td>保存</td><td>「保存」押下時(L3)</td><td><ul><li>バリデーション通過後に再認証 → <code>PATCH /projects/{id}/quota-limits/questions</code></li><li>成功で TOAST 表示し閉じる</li></ul></td><td><a href="#IT-02">IT-02</a>, <a href="#IT-04">IT-04</a>, <a href="#IT-07">IT-07</a></td></tr>
+<tr><td><code>EV-04</code></td><td>保存</td><td>「保存」押下時(L3)</td><td><ul><li>バリデーション通過後に再認証 → <code>PATCH /M_projects/{id}/quota-limits/questions</code></li><li>成功で TOAST 表示し閉じる</li></ul></td><td><a href="#IT-02">IT-02</a>, <a href="#IT-04">IT-04</a>, <a href="#IT-07">IT-07</a></td></tr>
 <tr><td><code>EV-05</code></td><td>キャンセル</td><td>「キャンセル」押下時</td><td><ul><li>変更を破棄して閉じる</li><li>未保存変更があれば UnsavedChangesGuard で警告</li></ul></td><td><a href="#IT-06">IT-06</a></td></tr>
 </tbody>
 </table>

@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>error_logs(TBL-019) | FAQ 設計ポータル</title>
+<title>M_service_announcements(TBL-025) | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../../../assets/css/style.css">
 <script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script src="../../../assets/js/nav-data.js" defer></script>
 <script src="../../../assets/js/search-index.js" defer></script>
 <script src="../../../assets/js/portal.js" defer></script>
 </head>
-<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/error_logs.html">
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/M_service_announcements.html">
 <article class="content" id="content">
-<h1 id="TBL-019">TBL-019 <code>error_logs</code></h1>
-<span id="319-error_logs"></span>
-<p class="section-lead">サーバーエラーを記録するエラーログです。</p>
-<h3 id="3191-概要">概要</h3>
+<h1 id="TBL-025">TBL-025 <code>M_service_announcements</code></h1>
+<span id="325-M_service_announcements"></span>
+<p class="section-lead">お知らせの本体を保持します。</p>
+<h3 id="3251-概要">概要</h3>
 <table>
 <thead>
 <tr>
@@ -26,11 +26,11 @@
 <tbody>
 <tr>
 <td>テーブル名</td>
-<td><code>error_logs</code></td>
+<td><code>M_service_announcements</code></td>
 </tr>
 <tr>
 <td>論理名</td>
-<td>エラーログ</td>
+<td>お知らせ(Control Plane)</td>
 </tr>
 <tr>
 <td>主キー</td>
@@ -38,11 +38,13 @@
 </tr>
 <tr>
 <td>外部キー</td>
-<td>—</td>
+<td><ul class="key-cols">
+<li><code>created_by_type</code> + <code>created_by_id</code> → <code>M_owners(id)</code> / <code>M_project_users(id)</code>(論理参照)</li>
+</ul></td>
 </tr>
 </tbody>
 </table>
-<h3 id="3192-カラム定義">カラム定義</h3>
+<h3 id="3252-カラム定義">カラム定義</h3>
 <table>
 <thead>
 <tr>
@@ -77,53 +79,53 @@
 </tr>
 <tr>
 <td style="text-align: right;">2</td>
-<td>契約 owner ID</td>
-<td><code>contract_owner_user_id</code></td>
+<td>タイトル</td>
+<td><code>title</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
-<td>YES</td>
+<td>NO</td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
+<td><code>length(title) BETWEEN 1 AND 200</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">3</td>
-<td>操作者種別</td>
-<td><code>actor_type</code></td>
+<td>本文(HTML)</td>
+<td><code>body_html</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
-<td>YES</td>
+<td>NO</td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-<td><code>actor_type IN ('owner','project_user')</code></td>
+<td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">4</td>
-<td>操作者 ID</td>
-<td><code>actor_id</code></td>
+<td>重要度</td>
+<td><code>importance</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
-<td>YES</td>
+<td>NO</td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-<td><code>actor_type</code> に応じ <code>owners(id)</code> / <code>project_users(id)</code> を指す(論理参照)</td>
+<td><code>importance IN ('low','normal','high','critical')</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">5</td>
-<td>URL</td>
-<td><code>url</code></td>
+<td>公開日時</td>
+<td><code>published_at</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
-<td>YES</td>
+<td>NO</td>
 <td></td>
 <td></td>
 <td></td>
@@ -133,8 +135,8 @@
 </tr>
 <tr>
 <td style="text-align: right;">6</td>
-<td>エラー種別</td>
-<td><code>error_type</code></td>
+<td>取り下げ日時</td>
+<td><code>retracted_at</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
@@ -147,8 +149,8 @@
 </tr>
 <tr>
 <td style="text-align: right;">7</td>
-<td>スタック</td>
-<td><code>stack</code></td>
+<td>作成者種別</td>
+<td><code>created_by_type</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
@@ -156,13 +158,27 @@
 <td></td>
 <td></td>
 <td></td>
-<td></td>
+<td><code>created_by_type IN ('owner','project_user')</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">8</td>
-<td>発生日時</td>
-<td><code>occurred_at</code></td>
+<td>作成者 ID</td>
+<td><code>created_by_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>created_by_type</code> に応じ <code>M_owners(id)</code> / <code>M_project_users(id)</code> を指す(論理参照)</td>
+
+</tr>
+<tr>
+<td style="text-align: right;">9</td>
+<td>作成日時</td>
+<td><code>created_at</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
@@ -175,7 +191,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="3195-インデックス">インデックス</h3>
+<h3 id="3255-インデックス">インデックス</h3>
 <table>
 <thead>
 <tr>
@@ -189,15 +205,45 @@
 <tbody>
 <tr>
 <td style="text-align: right;">1</td>
-<td><code>idx_error_logs_owner_occurred</code></td>
-<td><code>(contract_owner_user_id, occurred_at DESC)</code></td>
+<td><code>idx_announcements_published</code></td>
+<td><code>published_at DESC</code> WHERE <code>retracted_at IS NULL</code></td>
 <td></td>
-<td>オーナー別新着</td>
+<td>公開中の新着</td>
 </tr>
 </tbody>
 </table>
-<h3 id="3197-コード値区分値">コード値・区分値</h3>
-<p>(なし)</p>
+<h3 id="3257-コード値区分値">コード値・区分値</h3>
+<table>
+<thead>
+<tr>
+<th>カラム名</th>
+<th>値</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>importance</code></td>
+<td><code>low</code></td>
+<td>低</td>
+</tr>
+<tr>
+<td><code>importance</code></td>
+<td><code>normal</code></td>
+<td>通常</td>
+</tr>
+<tr>
+<td><code>importance</code></td>
+<td><code>high</code></td>
+<td>高</td>
+</tr>
+<tr>
+<td><code>importance</code></td>
+<td><code>critical</code></td>
+<td>クリティカル</td>
+</tr>
+</tbody>
+</table>
 </article>
 </body>
 </html>

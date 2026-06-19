@@ -48,7 +48,7 @@
 </tr>
 <tr>
 <td>API</td>
-<td><code>PATCH /projects/{id}/ai-threshold</code></td>
+<td><code>PATCH /M_projects/{id}/ai-threshold</code></td>
 <td>しきい値更新</td>
 </tr>
 <tr>
@@ -58,7 +58,7 @@
 </tr>
 <tr>
 <td>テーブル</td>
-<td><code>ai_threshold_persistent_cache</code></td>
+<td><code>TP_ai_threshold_persistent_cache</code></td>
 <td>永続キャッシュ</td>
 </tr>
 <tr>
@@ -120,7 +120,7 @@
   participant A as /widget/v1/ask
   participant T as getThreshold
   participant K as KV (ai_threshold)
-  participant D as D1 (ai_threshold_persistent_cache)
+  participant D as D1 (TP_ai_threshold_persistent_cache)
   participant AL as サービスアラート
 
   A-&gt;&gt;T: しきい値取得(owner / project)
@@ -156,7 +156,7 @@
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 2) しきい値更新が KV 反映されている前提。</span></span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="co">//    KV miss なら D1 永続キャッシュへフォールバック</span></span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> persistent <span class="op">=</span> <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="vs">    SELECT confidence_threshold, relevance_threshold FROM ai_threshold_persistent_cache</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="vs">    SELECT confidence_threshold, relevance_threshold FROM TP_ai_threshold_persistent_cache</span></span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="vs">    WHERE (scope=&#39;project&#39; AND project_id=?1)</span></span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="vs">       OR (scope=&#39;owner&#39; AND contract_owner_user_id=?2)</span></span>
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="vs">       OR (scope=&#39;global&#39;)</span></span>
@@ -181,7 +181,7 @@
 <tr><th>契機</th><th>更新対象</th><th>内容</th></tr>
 </thead>
 <tbody>
-<tr><td>しきい値更新</td><td>KV + D1 両方</td><td>D1 (<code>ai_threshold_persistent_cache</code>) を更新し、KV (<code>expirationTtl: 60</code>) も同時に更新する</td></tr>
+<tr><td>しきい値更新</td><td>KV + D1 両方</td><td>D1 (<code>TP_ai_threshold_persistent_cache</code>) を更新し、KV (<code>expirationTtl: 60</code>) も同時に更新する</td></tr>
 <tr><td>KV ミス</td><td>KV(書き戻し)</td><td>D1 から再ロードし、KV へ TTL 60 秒で書き戻す(§3.1 取得フロー)</td></tr>
 </tbody>
 </table>
@@ -210,7 +210,7 @@
 </tbody>
 </table>
 <h2 id="4-関連設計">4. 関連設計</h2>
-<p class="section-lead">本 DD に関連する正本ドキュメントを示します。AI しきい値の要件は <a href="../01_要件定義/index.html">要件定義</a>(FR-347 / FR-348)、しきい値更新・取得 API は <a href="../02_基本設計/02_API設計/index.html">API 設計</a>、<code>ai_threshold_persistent_cache</code> のスキーマは <a href="../02_基本設計/03_テーブル設計/index.html">テーブル設計</a>、フォールバック監視は <a href="../04_運用設計/index.html">運用設計</a> を参照します。関連 DD は <a href="DD03_AI回答パイプライン.html">DD03_AI回答パイプライン.html</a> / <a href="DD12_ウィジェット配信.html">DD12_ウィジェット配信.html</a> を参照します。</p>
+<p class="section-lead">本 DD に関連する正本ドキュメントを示します。AI しきい値の要件は <a href="../01_要件定義/index.html">要件定義</a>(FR-347 / FR-348)、しきい値更新・取得 API は <a href="../02_基本設計/02_API設計/index.html">API 設計</a>、<code>TP_ai_threshold_persistent_cache</code> のスキーマは <a href="../02_基本設計/03_テーブル設計/index.html">テーブル設計</a>、フォールバック監視は <a href="../04_運用設計/index.html">運用設計</a> を参照します。関連 DD は <a href="DD03_AI回答パイプライン.html">DD03_AI回答パイプライン.html</a> / <a href="DD12_ウィジェット配信.html">DD12_ウィジェット配信.html</a> を参照します。</p>
 <h2 id="5-テスト観点">5. テスト観点</h2>
 <p class="section-lead">AC-038 を担保するテストの方式とファイル、および補完する単体・異常系・境界・性能観点を定めます。次の表は受入条件と結合テストの対応を示し、続く §5.1 でその他観点を補います。実装連携は <a href="DD03_AI回答パイプライン.html">DD03_AI回答パイプライン.html</a> / <a href="DD12_ウィジェット配信.html">DD12_ウィジェット配信.html</a> を参照します。</p>
 <table>

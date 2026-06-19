@@ -29,28 +29,28 @@
 <tr>
 <td>オーナー</td>
 <td>契約オーナー</td>
-<td><code>owners</code> 行が存在する(主体が owners 由来 / <code>actor_type='owner'</code>)</td>
+<td><code>M_owners</code> 行が存在する(主体が M_owners 由来 / <code>actor_type='owner'</code>)</td>
 <td>自契約配下の全プロジェクトへの全権 + オーナー専有操作(§2)。割当の有無に関わらず全プロジェクトを操作できる。役割変更・降格・譲渡なし</td>
 <td><a href="../01_要件定義/FR02_ユーザー管理.html#FR-015a">FR-015a</a> / <a href="../01_要件定義/FR02_ユーザー管理.html#FR-015d">FR-015d</a></td>
 </tr>
 <tr>
 <td>プロジェクト管理者</td>
 <td>プロジェクト管理者</td>
-<td><code>owners</code> 由来でなく(<code>actor_type='project_user'</code>)、当該プロジェクトの <code>project_user_assignments.role='admin'</code></td>
+<td><code>M_owners</code> 由来でなく(<code>actor_type='project_user'</code>)、当該プロジェクトの <code>M_project_user_assignments.role='admin'</code></td>
 <td>当該プロジェクトの FAQ 管理・未解決質問管理・ログ参照に加え、当該プロジェクト範囲のメンバー招待・役割変更・離脱</td>
 <td><a href="../01_要件定義/FR02_ユーザー管理.html#FR-015b">FR-015b</a></td>
 </tr>
 <tr>
 <td>メンバー</td>
 <td>プロジェクトメンバー</td>
-<td><code>owners</code> 由来でなく(<code>actor_type='project_user'</code>)、当該プロジェクトの <code>project_user_assignments.role='member'</code></td>
+<td><code>M_owners</code> 由来でなく(<code>actor_type='project_user'</code>)、当該プロジェクトの <code>M_project_user_assignments.role='member'</code></td>
 <td>当該プロジェクトの FAQ 管理・未解決質問管理・ログ参照のみ。メンバー管理はできない</td>
 <td><a href="../01_要件定義/FR02_ユーザー管理.html#FR-015b">FR-015b</a></td>
 </tr>
 <tr>
 <td>(未割当)</td>
 <td>—</td>
-<td>主体が <code>owners</code> 由来でなく、有効な <code>project_user_assignments</code> 割当も持たない <code>project_user</code></td>
+<td>主体が <code>M_owners</code> 由来でなく、有効な <code>M_project_user_assignments</code> 割当も持たない <code>project_user</code></td>
 <td>ダッシュボード(自分の通知・お知らせ受信箱)のみ。他画面はプロジェクト境界不充足で拒否</td>
 <td><a href="../01_要件定義/FR19_アクセス制御細部.html#FR-337">FR-337</a></td>
 </tr>
@@ -64,7 +64,7 @@
 </tbody>
 </table>
 </div>
-<div class="callout important"><i class="bi bi-pin-angle"></i><div><span class="c-title">オーナーは project_user_assignments の admin 割当を持たない</span>オーナーは <code>owners</code> マスタ由来の独立した主体であり、<code>project_users</code> / <code>project_user_assignments</code> の行は <strong>一切持ちません</strong>(2 マスタ完全分離)。認可は <code>owners</code> 行存在(主体が owners 由来 / <code>actor_type='owner'</code>)による <code>isOwner=true</code> bypass を最優先とします(判定フローの正本は <a href="08_認証・認可設計.html#51-ユーザー種別とオーナー判定">08_認証・認可設計.html §5.1</a>)。プロジェクト管理者の権限は <code>project_user_assignments.role='admin'</code> 割当によってのみ付与され、オーナーへの自動付与は行いません。最後の管理者保護の件数判定では <code>project_user_assignments.role='admin'</code> 割当のみを数え、オーナーは割当を持たないため本質的に件数に含まれません(オーナーは割当ではなく常に isOwner で全権を保持します)。</div></div>
+<div class="callout important"><i class="bi bi-pin-angle"></i><div><span class="c-title">オーナーは M_project_user_assignments の admin 割当を持たない</span>オーナーは <code>M_owners</code> マスタ由来の独立した主体であり、<code>M_project_users</code> / <code>M_project_user_assignments</code> の行は <strong>一切持ちません</strong>(2 マスタ完全分離)。認可は <code>M_owners</code> 行存在(主体が M_owners 由来 / <code>actor_type='owner'</code>)による <code>isOwner=true</code> bypass を最優先とします(判定フローの正本は <a href="08_認証・認可設計.html#51-ユーザー種別とオーナー判定">08_認証・認可設計.html §5.1</a>)。プロジェクト管理者の権限は <code>M_project_user_assignments.role='admin'</code> 割当によってのみ付与され、オーナーへの自動付与は行いません。最後の管理者保護の件数判定では <code>M_project_user_assignments.role='admin'</code> 割当のみを数え、オーナーは割当を持たないため本質的に件数に含まれません(オーナーは割当ではなく常に isOwner で全権を保持します)。</div></div>
 <div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">役割・割当変更の反映タイミング(D-03)</span>役割やプロジェクト割当の追加・剥奪は既存セッションを即時失効させず、次回の認可チェック時点で反映されます(<a href="../01_要件定義/FR19_アクセス制御細部.html#FR-338">FR-338</a>)。本ページは「変更後に成立する権限状態」を表し、反映上限時間(TTL)とキャッシュ方式の正本は <a href="08_認証・認可設計.html#53-認可判定の順序">08_認証・認可設計.html §5.3</a> です。</div></div>
 
 <h2 id="2-オーナー専有操作">2. オーナー専有操作</h2>
@@ -150,12 +150,12 @@
 <tbody>
 <tr>
 <td>SCR-018 メンバーアカウント有効化</td>
-<td>招待トークン(<code>access_tokens.purpose='activation'</code>)が期限内かつ未使用</td>
+<td>招待トークン(<code>T_access_tokens.purpose='activation'</code>)が期限内かつ未使用</td>
 <td>氏名入力・初回パスワード設定・規約同意による有効化のみ。完了後は SCR-001 へ遷移し通常 Principal を構築(<a href="../01_要件定義/FR02_ユーザー管理.html#FR-016">FR-016</a>)</td>
 </tr>
 <tr>
 <td>SCR-019 プロジェクト連絡先メール確認完了</td>
-<td>連絡先確認トークン(<code>access_tokens.purpose='contact_verify'</code>)が有効</td>
+<td>連絡先確認トークン(<code>T_access_tokens.purpose='contact_verify'</code>)が有効</td>
 <td>連絡先メールの確認完了のみ。アカウント保有は不要で、第三者の共有メールアドレスでも進められる(<a href="../01_要件定義/FR03_プロジェクト管理.html#FR-033a">FR-033a</a>)</td>
 </tr>
 </tbody>
@@ -163,7 +163,7 @@
 </div>
 
 <h2 id="4-利用上限の変更権限">4. 利用上限の変更権限</h2>
-<p class="section-lead">月次の質問数上限・無料枠は<strong>プロジェクト単位</strong>でオーナーまたは当該プロジェクト管理者が変更できます。値・判定ロジックの正本は <a href="10_課金・請求設計.html">10_課金・請求設計.html</a>、テーブルの正本は <a href="03_テーブル設計/project_quota_limits.html">03_テーブル設計/index.html §3.24</a> です。本節は「誰が変更できるか」のみを定めます。</p>
+<p class="section-lead">月次の質問数上限・無料枠は<strong>プロジェクト単位</strong>でオーナーまたは当該プロジェクト管理者が変更できます。値・判定ロジックの正本は <a href="10_課金・請求設計.html">10_課金・請求設計.html</a>、テーブルの正本は <a href="03_テーブル設計/M_project_quota_limits.html">03_テーブル設計/index.html §3.24</a> です。本節は「誰が変更できるか」のみを定めます。</p>
 <div class="table-scroll">
 <table>
 <thead>
@@ -208,7 +208,7 @@
 </tr>
 <tr>
 <td>最後の管理者保護</td>
-<td>他者を当該プロジェクトの最後の管理者から外す(降格・割当解除)。件数判定は <code>project_user_assignments.role='admin'</code> 割当のみを数え、オーナーは <code>project_user_assignments</code> に行を持たないため本質的に件数に含まれない</td>
+<td>他者を当該プロジェクトの最後の管理者から外す(降格・割当解除)。件数判定は <code>M_project_user_assignments.role='admin'</code> 割当のみを数え、オーナーは <code>M_project_user_assignments</code> に行を持たないため本質的に件数に含まれない</td>
 <td><code>E-AUTHZ-LAST-ADMIN-PROTECTED</code></td>
 <td><a href="../01_要件定義/FR02_ユーザー管理.html#FR-018a">FR-018a</a></td>
 </tr>

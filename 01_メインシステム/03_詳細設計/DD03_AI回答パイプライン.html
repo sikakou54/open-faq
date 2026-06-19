@@ -63,7 +63,7 @@
 </tr>
 <tr>
 <td>テーブル</td>
-<td><code>question_logs</code> <code>faqs</code> <code>faq_embeddings</code> <code>ai_models</code></td>
+<td><code>H_question_logs</code> <code>M_faqs</code> <code>faq_embeddings</code> <code>ai_models</code></td>
 <td>AI 回答基盤</td>
 </tr>
 </tbody>
@@ -135,13 +135,13 @@
 <p class="section-lead">AI 回答パイプラインの全体フローと、それを構成する各実装(関連度計算・回答生成・出力検査・PII スクラブ・矛盾検知・プロンプト注入対策・リージョン強制・モデル回帰)を順に定義します。以降の各小節は、フローはシーケンス図で、ロジックの実体は擬似コード(TypeScript / SQL)で示します。</p>
 
 <h3 id="31-全体フロー">3.1 全体フロー</h3>
-<p class="section-lead">ウィジェット質問送信を受けてから回答 / 未解決を返すまでの処理順を定義します。次のシーケンス図は、Zod 検証・レート制限・FTS5 検索・しきい値 3 階層適用・AI 推論・PostCheck 3 層・PII スクラブ・信頼度判定の各段で発生する分岐(関連 FAQ の有無、PostCheck 合否、PII ブロック、信頼度しきい値の超過 / 未満)と、いずれの分岐でも最後に <code>question_logs</code> へ記録する流れを示します。</p>
+<p class="section-lead">ウィジェット質問送信を受けてから回答 / 未解決を返すまでの処理順を定義します。次のシーケンス図は、Zod 検証・レート制限・FTS5 検索・しきい値 3 階層適用・AI 推論・PostCheck 3 層・PII スクラブ・信頼度判定の各段で発生する分岐(関連 FAQ の有無、PostCheck 合否、PII ブロック、信頼度しきい値の超過 / 未満)と、いずれの分岐でも最後に <code>H_question_logs</code> へ記録する流れを示します。</p>
 <pre class="mermaid"><code>sequenceDiagram
   participant U as ウィジェット利用者
   participant W as worker-widget-api
-  participant D as D1 (faqs / faq_embeddings)
+  participant D as D1 (M_faqs / faq_embeddings)
   participant AI as Workers AI (apac)
-  participant L as question_logs
+  participant L as H_question_logs
 
   U-&gt;&gt;W: POST /widget/v1/ask(質問)
   W-&gt;&gt;W: Zod 検証 + レート制限チェック
@@ -180,8 +180,8 @@
       end
     end
   end</code></pre>
-<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">課金計上の境界</span>AI 推論に到達せず未解決に落ちる経路(<code>no_faq_match</code> / <code>POST_CHECK_FAILED</code> / <code>PII_BLOCKED</code>)は <code>metering_billable=0</code>、推論を実行した経路(<code>LOW_CONFIDENCE</code> / <code>answered</code>)は <code>metering_billable=1</code> で <code>question_logs</code> に記録します。しきい値 3 階層の詳細は <a href="DD04_AIしきい値3階層適用.html">DD04_AIしきい値3階層適用.html</a> が正本です。</div></div>
-<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">参照 FAQ の記録</span><code>answered</code> 経路では、回答生成時に参照した FAQ を <code>question_log_faq_refs</code> に <code>relevance_score</code>(§3.2 関連度計算で算出するコサイン類似度。§3.4 第 3 層の参照 FAQ 整合性判定と同じ尺度)付きで記録します。同一質問ログ内の重複は <code>UNIQUE(question_log_id, faq_id)</code> で抑止します。テーブルスキーマの正本は <a href="../02_基本設計/03_テーブル設計/question_log_faq_refs.html">テーブル設計 TBL-013 <code>question_log_faq_refs</code></a> です。</div></div>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">課金計上の境界</span>AI 推論に到達せず未解決に落ちる経路(<code>no_faq_match</code> / <code>POST_CHECK_FAILED</code> / <code>PII_BLOCKED</code>)は <code>metering_billable=0</code>、推論を実行した経路(<code>LOW_CONFIDENCE</code> / <code>answered</code>)は <code>metering_billable=1</code> で <code>H_question_logs</code> に記録します。しきい値 3 階層の詳細は <a href="DD04_AIしきい値3階層適用.html">DD04_AIしきい値3階層適用.html</a> が正本です。</div></div>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">参照 FAQ の記録</span><code>answered</code> 経路では、回答生成時に参照した FAQ を <code>T_question_log_faq_refs</code> に <code>relevance_score</code>(§3.2 関連度計算で算出するコサイン類似度。§3.4 第 3 層の参照 FAQ 整合性判定と同じ尺度)付きで記録します。同一質問ログ内の重複は <code>UNIQUE(question_log_id, faq_id)</code> で抑止します。テーブルスキーマの正本は <a href="../02_基本設計/03_テーブル設計/T_question_log_faq_refs.html">テーブル設計 TBL-013 <code>T_question_log_faq_refs</code></a> です。</div></div>
 
 <h3 id="32-関連度計算">3.2 関連度計算</h3>
 <p class="section-lead">質問に対する関連 FAQ を、FTS5 による全文候補抽出と埋め込みベクトルによるリランキングの 2 段で求めます。次の擬似コードは上位 20 件を FTS5 で抽出し、コサイン類似度で並べ替えて上位 5 件を返す <code>findRelatedFaqs</code> の実装です。</p>
@@ -191,9 +191,9 @@
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">:</span> <span class="bu">Promise</span><span class="op">&lt;</span>{ faq<span class="op">:</span> Faq<span class="op">;</span> relevance<span class="op">:</span> <span class="dt">number</span> }[]<span class="op">&gt;</span> {</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 1) FTS5 で候補抽出 (上位 20 件)</span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> candidates <span class="op">=</span> <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="vs">    SELECT f.*, bm25(faq_search_fts) AS rank</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="vs">    FROM faq_search_fts JOIN faqs f ON f.rowid = faq_search_fts.rowid</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="vs">    WHERE faq_search_fts MATCH ?1 AND f.project_id = ?2 AND f.status = &#39;published&#39;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="vs">    SELECT f.*, bm25(TP_faq_search_fts) AS rank</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="vs">    FROM TP_faq_search_fts JOIN M_faqs f ON f.rowid = TP_faq_search_fts.rowid</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="vs">    WHERE TP_faq_search_fts MATCH ?1 AND f.project_id = ?2 AND f.status = &#39;published&#39;</span></span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="vs">    ORDER BY rank LIMIT 20</span></span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="vs">  `</span>)<span class="op">.</span><span class="fu">bind</span>(<span class="fu">toFts5Query</span>(question)<span class="op">,</span> projectId)<span class="op">.</span><span class="fu">all</span><span class="op">&lt;</span>FaqRow<span class="op">&gt;</span>()<span class="op">;</span></span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
@@ -221,7 +221,7 @@
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="im">export type</span> AnswerInput <span class="op">=</span> {</span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  question<span class="op">:</span> <span class="dt">string</span><span class="op">;</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  faqs<span class="op">:</span> { id<span class="op">:</span> <span class="dt">string</span><span class="op">;</span> title<span class="op">:</span> <span class="dt">string</span><span class="op">;</span> body<span class="op">:</span> <span class="dt">string</span><span class="op">;</span> relevance<span class="op">:</span> <span class="dt">number</span> }[]<span class="op">;</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  M_faqs<span class="op">:</span> { id<span class="op">:</span> <span class="dt">string</span><span class="op">;</span> title<span class="op">:</span> <span class="dt">string</span><span class="op">;</span> body<span class="op">:</span> <span class="dt">string</span><span class="op">;</span> relevance<span class="op">:</span> <span class="dt">number</span> }[]<span class="op">;</span></span>
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  contractOwnerUserId<span class="op">:</span> <span class="dt">string</span><span class="op">;</span></span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  projectId<span class="op">:</span> <span class="dt">string</span><span class="op">;</span></span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>}<span class="op">;</span></span>
@@ -255,7 +255,7 @@
 <span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  <span class="kw">async</span> <span class="fu">answer</span>(input<span class="op">:</span> AnswerInput)<span class="op">:</span> <span class="bu">Promise</span><span class="op">&lt;</span>AnswerOutput<span class="op">&gt;</span> {</span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> systemPrompt <span class="op">=</span> <span class="kw">this</span><span class="op">.</span><span class="fu">buildSystemPrompt</span>(input<span class="op">.</span><span class="at">faqs</span>)<span class="op">;</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> systemPrompt <span class="op">=</span> <span class="kw">this</span><span class="op">.</span><span class="fu">buildSystemPrompt</span>(input<span class="op">.</span><span class="at">M_faqs</span>)<span class="op">;</span></span>
 <span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> userPrompt <span class="op">=</span> input<span class="op">.</span><span class="at">question</span><span class="op">;</span></span>
 <span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> start <span class="op">=</span> <span class="bu">Date</span><span class="op">.</span><span class="fu">now</span>()<span class="op">;</span></span>
@@ -271,9 +271,9 @@
 <span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> { text<span class="op">,</span> confidenceSelfReport<span class="op">,</span> referencedFaqIds } <span class="op">=</span> <span class="kw">this</span><span class="op">.</span><span class="fu">parseStructuredOutput</span>(result<span class="op">.</span><span class="at">response</span>)<span class="op">;</span></span>
 <span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 信頼度計算: 関連度 × 自己申告 × 複数候補差分ボーナス</span></span>
-<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> topRelevance <span class="op">=</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">max</span>(<span class="op">...</span>input<span class="op">.</span><span class="at">faqs</span><span class="op">.</span><span class="fu">map</span>(f <span class="kw">=&gt;</span> f<span class="op">.</span><span class="at">relevance</span>))<span class="op">;</span></span>
-<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> diffBonus <span class="op">=</span> input<span class="op">.</span><span class="at">faqs</span><span class="op">.</span><span class="at">length</span> <span class="op">&gt;=</span> <span class="dv">2</span></span>
-<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>      <span class="op">?</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">min</span>(<span class="fl">0.1</span><span class="op">,</span> input<span class="op">.</span><span class="at">faqs</span>[<span class="dv">0</span>]<span class="op">.</span><span class="at">relevance</span> <span class="op">-</span> input<span class="op">.</span><span class="at">faqs</span>[<span class="dv">1</span>]<span class="op">.</span><span class="at">relevance</span>)</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> topRelevance <span class="op">=</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">max</span>(<span class="op">...</span>input<span class="op">.</span><span class="at">M_faqs</span><span class="op">.</span><span class="fu">map</span>(f <span class="kw">=&gt;</span> f<span class="op">.</span><span class="at">relevance</span>))<span class="op">;</span></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> diffBonus <span class="op">=</span> input<span class="op">.</span><span class="at">M_faqs</span><span class="op">.</span><span class="at">length</span> <span class="op">&gt;=</span> <span class="dv">2</span></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>      <span class="op">?</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">min</span>(<span class="fl">0.1</span><span class="op">,</span> input<span class="op">.</span><span class="at">M_faqs</span>[<span class="dv">0</span>]<span class="op">.</span><span class="at">relevance</span> <span class="op">-</span> input<span class="op">.</span><span class="at">M_faqs</span>[<span class="dv">1</span>]<span class="op">.</span><span class="at">relevance</span>)</span>
 <span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>      <span class="op">:</span> <span class="dv">0</span><span class="op">;</span></span>
 <span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> confidence <span class="op">=</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">min</span>(<span class="fl">1.0</span><span class="op">,</span> topRelevance <span class="op">*</span> <span class="fl">0.6</span> <span class="op">+</span> confidenceSelfReport <span class="op">*</span> <span class="fl">0.3</span> <span class="op">+</span> diffBonus <span class="op">+</span> <span class="fl">0.1</span>)<span class="op">;</span></span>
 <span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a></span>
@@ -285,7 +285,7 @@
 <span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>    }<span class="op">;</span></span>
 <span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>  <span class="kw">private</span> <span class="fu">buildSystemPrompt</span>(faqs<span class="op">:</span> AnswerInput[<span class="st">&#39;faqs&#39;</span>])<span class="op">:</span> <span class="dt">string</span> {</span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>  <span class="kw">private</span> <span class="fu">buildSystemPrompt</span>(M_faqs<span class="op">:</span> AnswerInput[<span class="st">&#39;M_faqs&#39;</span>])<span class="op">:</span> <span class="dt">string</span> {</span>
 <span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>    <span class="co">// FAQ 限定回答方針のサーバ側固定（プロンプト注入対策）</span></span>
 <span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="vs">`あなたは FAQ ベースの回答アシスタントである。</span></span>
 <span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a><span class="vs">以下の FAQ にのみ基づいて回答すること。FAQ に含まれない情報は推測しない。</span></span>
@@ -293,7 +293,7 @@
 <span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a><span class="vs">出力は JSON 形式のみ: { &quot;answer&quot;: &quot;回答本文&quot;, &quot;confidence&quot;: 0.0-1.0, &quot;refs&quot;: [&quot;faq-id&quot;] }</span></span>
 <span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a><span class="vs">&lt;FAQ_BEGIN&gt;</span></span>
-<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a><span class="sc">${</span>faqs<span class="op">.</span><span class="fu">map</span>(f <span class="kw">=&gt;</span> <span class="vs">`[ID: </span><span class="sc">${</span>f<span class="op">.</span><span class="at">id</span><span class="sc">}</span><span class="vs">]</span><span class="sc">\n</span><span class="vs">タイトル: </span><span class="sc">${</span>f<span class="op">.</span><span class="at">title</span><span class="sc">}\n</span><span class="vs">本文: </span><span class="sc">${</span>f<span class="op">.</span><span class="at">body</span><span class="sc">}</span><span class="vs">`</span>)<span class="op">.</span><span class="fu">join</span>(<span class="st">&#39;</span><span class="sc">\n\n</span><span class="st">&#39;</span>)<span class="sc">}</span></span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a><span class="sc">${</span>M_faqs<span class="op">.</span><span class="fu">map</span>(f <span class="kw">=&gt;</span> <span class="vs">`[ID: </span><span class="sc">${</span>f<span class="op">.</span><span class="at">id</span><span class="sc">}</span><span class="vs">]</span><span class="sc">\n</span><span class="vs">タイトル: </span><span class="sc">${</span>f<span class="op">.</span><span class="at">title</span><span class="sc">}\n</span><span class="vs">本文: </span><span class="sc">${</span>f<span class="op">.</span><span class="at">body</span><span class="sc">}</span><span class="vs">`</span>)<span class="op">.</span><span class="fu">join</span>(<span class="st">&#39;</span><span class="sc">\n\n</span><span class="st">&#39;</span>)<span class="sc">}</span></span>
 <span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a><span class="vs">&lt;FAQ_END&gt;`</span><span class="op">;</span></span>
 <span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a></span>
@@ -320,10 +320,10 @@
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> { ok<span class="op">:</span> <span class="kw">false</span><span class="op">;</span> layer<span class="op">:</span> <span class="dv">1</span> <span class="op">|</span> <span class="dv">2</span> <span class="op">|</span> <span class="dv">3</span><span class="op">;</span> reason<span class="op">:</span> <span class="dt">string</span> }<span class="op">;</span></span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fu">postCheck</span>(</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  output<span class="op">:</span> AnswerOutput<span class="op">,</span> faqs<span class="op">:</span> AnswerInput[<span class="st">&#39;faqs&#39;</span>]<span class="op">,</span> env<span class="op">:</span> Env<span class="op">,</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  output<span class="op">:</span> AnswerOutput<span class="op">,</span> M_faqs<span class="op">:</span> AnswerInput[<span class="st">&#39;M_faqs&#39;</span>]<span class="op">,</span> env<span class="op">:</span> Env<span class="op">,</span></span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>)<span class="op">:</span> <span class="bu">Promise</span><span class="op">&lt;</span>PostCheckResult<span class="op">&gt;</span> {</span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 第 1 層: 正規表現 (URL / 数値 / 日時 / 個人情報)</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> layer1 <span class="op">=</span> <span class="cf">await</span> <span class="fu">regexCheck</span>(output<span class="op">.</span><span class="at">text</span><span class="op">,</span> faqs)<span class="op">;</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> layer1 <span class="op">=</span> <span class="cf">await</span> <span class="fu">regexCheck</span>(output<span class="op">.</span><span class="at">text</span><span class="op">,</span> M_faqs)<span class="op">;</span></span>
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="op">!</span>layer1<span class="op">.</span><span class="at">ok</span>) <span class="cf">return</span> { ok<span class="op">:</span> <span class="kw">false</span><span class="op">,</span> layer<span class="op">:</span> <span class="dv">1</span><span class="op">,</span> reason<span class="op">:</span> layer1<span class="op">.</span><span class="at">reason</span> }<span class="op">;</span></span>
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 第 2 層: NER (Named Entity Recognition、PII 候補抽出)</span></span>
@@ -331,16 +331,16 @@
 <span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="op">!</span>layer2<span class="op">.</span><span class="at">ok</span>) <span class="cf">return</span> { ok<span class="op">:</span> <span class="kw">false</span><span class="op">,</span> layer<span class="op">:</span> <span class="dv">2</span><span class="op">,</span> reason<span class="op">:</span> layer2<span class="op">.</span><span class="at">reason</span> }<span class="op">;</span></span>
 <span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 第 3 層: 参照 FAQ 整合性 (回答が FAQ 範囲内か)</span></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> layer3 <span class="op">=</span> <span class="cf">await</span> <span class="fu">faqConsistencyCheck</span>(output<span class="op">,</span> faqs<span class="op">,</span> env)<span class="op">;</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> layer3 <span class="op">=</span> <span class="cf">await</span> <span class="fu">faqConsistencyCheck</span>(output<span class="op">,</span> M_faqs<span class="op">,</span> env)<span class="op">;</span></span>
 <span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="op">!</span>layer3<span class="op">.</span><span class="at">ok</span>) <span class="cf">return</span> { ok<span class="op">:</span> <span class="kw">false</span><span class="op">,</span> layer<span class="op">:</span> <span class="dv">3</span><span class="op">,</span> reason<span class="op">:</span> layer3<span class="op">.</span><span class="at">reason</span> }<span class="op">;</span></span>
 <span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> { ok<span class="op">:</span> <span class="kw">true</span> }<span class="op">;</span></span>
 <span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">function</span> <span class="fu">regexCheck</span>(text<span class="op">:</span> <span class="dt">string</span><span class="op">,</span> faqs<span class="op">:</span> AnswerInput[<span class="st">&#39;faqs&#39;</span>])<span class="op">:</span> <span class="bu">Promise</span><span class="op">&lt;</span>{ ok<span class="op">:</span> <span class="dt">boolean</span><span class="op">;</span> reason<span class="op">?:</span> <span class="dt">string</span> }<span class="op">&gt;</span> {</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">function</span> <span class="fu">regexCheck</span>(text<span class="op">:</span> <span class="dt">string</span><span class="op">,</span> M_faqs<span class="op">:</span> AnswerInput[<span class="st">&#39;M_faqs&#39;</span>])<span class="op">:</span> <span class="bu">Promise</span><span class="op">&lt;</span>{ ok<span class="op">:</span> <span class="dt">boolean</span><span class="op">;</span> reason<span class="op">?:</span> <span class="dt">string</span> }<span class="op">&gt;</span> {</span>
 <span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  <span class="co">// URL: FAQ に含まれない URL は禁止</span></span>
 <span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> urlsInText <span class="op">=</span> text<span class="op">.</span><span class="fu">match</span>(<span class="ss">/https</span><span class="sc">?</span><span class="ss">:</span><span class="sc">\/\/[^\s]+</span><span class="ss">/g</span>) <span class="op">??</span> []<span class="op">;</span></span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> allowedUrls <span class="op">=</span> <span class="kw">new</span> <span class="bu">Set</span>(faqs<span class="op">.</span><span class="fu">flatMap</span>(f <span class="kw">=&gt;</span> f<span class="op">.</span><span class="at">body</span><span class="op">.</span><span class="fu">match</span>(<span class="ss">/https</span><span class="sc">?</span><span class="ss">:</span><span class="sc">\/\/[^\s]+</span><span class="ss">/g</span>) <span class="op">??</span> []))<span class="op">;</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> allowedUrls <span class="op">=</span> <span class="kw">new</span> <span class="bu">Set</span>(M_faqs<span class="op">.</span><span class="fu">flatMap</span>(f <span class="kw">=&gt;</span> f<span class="op">.</span><span class="at">body</span><span class="op">.</span><span class="fu">match</span>(<span class="ss">/https</span><span class="sc">?</span><span class="ss">:</span><span class="sc">\/\/[^\s]+</span><span class="ss">/g</span>) <span class="op">??</span> []))<span class="op">;</span></span>
 <span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (<span class="kw">const</span> url <span class="kw">of</span> urlsInText) {</span>
 <span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="op">!</span>allowedUrls<span class="op">.</span><span class="fu">has</span>(url)) <span class="cf">return</span> { ok<span class="op">:</span> <span class="kw">false</span><span class="op">,</span> reason<span class="op">:</span> <span class="vs">`unknown_url:</span><span class="sc">${</span>url<span class="sc">}</span><span class="vs">`</span> }<span class="op">;</span></span>
 <span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>  }</span>
@@ -354,10 +354,10 @@
 <span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> { ok<span class="op">:</span> <span class="kw">true</span> }<span class="op">;</span></span>
 <span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">function</span> <span class="fu">faqConsistencyCheck</span>(output<span class="op">:</span> AnswerOutput<span class="op">,</span> faqs<span class="op">:</span> AnswerInput[<span class="st">&#39;faqs&#39;</span>]<span class="op">,</span> env<span class="op">:</span> Env) {</span>
-<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>  <span class="co">// FAQ 外要素率を判定。output.text を埋め込みベクトル化 → faqs と類似度測定</span></span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">function</span> <span class="fu">faqConsistencyCheck</span>(output<span class="op">:</span> AnswerOutput<span class="op">,</span> M_faqs<span class="op">:</span> AnswerInput[<span class="st">&#39;M_faqs&#39;</span>]<span class="op">,</span> env<span class="op">:</span> Env) {</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>  <span class="co">// FAQ 外要素率を判定。output.text を埋め込みベクトル化 → M_faqs と類似度測定</span></span>
 <span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> oVec <span class="op">=</span> <span class="cf">await</span> env<span class="op">.</span><span class="at">AI</span><span class="op">.</span><span class="fu">run</span>(<span class="st">&#39;@cf/baai/bge-base-en-v1.5&#39;</span><span class="op">,</span> { text<span class="op">:</span> output<span class="op">.</span><span class="at">text</span> })<span class="op">;</span></span>
-<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> maxSim <span class="op">=</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">max</span>(<span class="op">...</span>faqs<span class="op">.</span><span class="fu">map</span>(f <span class="kw">=&gt;</span> <span class="fu">cosineSimilarity</span>(oVec<span class="op">.</span><span class="at">data</span>[<span class="dv">0</span>]<span class="op">,</span> f<span class="op">.</span><span class="at">cachedVec</span> <span class="op">??</span> [])))<span class="op">;</span></span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> maxSim <span class="op">=</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">max</span>(<span class="op">...</span>M_faqs<span class="op">.</span><span class="fu">map</span>(f <span class="kw">=&gt;</span> <span class="fu">cosineSimilarity</span>(oVec<span class="op">.</span><span class="at">data</span>[<span class="dv">0</span>]<span class="op">,</span> f<span class="op">.</span><span class="at">cachedVec</span> <span class="op">??</span> [])))<span class="op">;</span></span>
 <span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 閾値 0.3 は §10.1.4.X の根拠表に従う。</span></span>
 <span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (maxSim <span class="op">&lt;</span> <span class="fl">0.3</span>) <span class="cf">return</span> { ok<span class="op">:</span> <span class="kw">false</span><span class="op">,</span> reason<span class="op">:</span> <span class="st">&#39;low_faq_relevance&#39;</span> }<span class="op">;</span></span>
 <span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> { ok<span class="op">:</span> <span class="kw">true</span> }<span class="op">;</span></span>
@@ -390,7 +390,7 @@
 </tr>
 <tr>
 <td><strong>チューニング手順</strong></td>
-<td>(a) <code>question_logs</code> から週次サンプリング (信頼度層別 100 件)、(b) AI 判定結果を確認・ラベル付け、(c) 月次集計で FP/FN 率を更新、(d) 閾値変更は監査記録のうえ反映（緊急一時無効化として KV <code>feature:post-check-threshold:override</code> を許容）。</td>
+<td>(a) <code>H_question_logs</code> から週次サンプリング (信頼度層別 100 件)、(b) AI 判定結果を確認・ラベル付け、(c) 月次集計で FP/FN 率を更新、(d) 閾値変更は監査記録のうえ反映（緊急一時無効化として KV <code>feature:post-check-threshold:override</code> を許容）。</td>
 </tr>
 <tr>
 <td><strong>緊急時上書き</strong></td>
@@ -445,7 +445,7 @@
 <h3 id="36-矛盾検知">3.6 矛盾検知</h3>
 <p class="section-lead">FAQ が否定的に書いているのに肯定で答える等の矛盾を、MVP ではキーワード辞書のルールベースで簡易検出します。次の擬似コードは否定 / 肯定キーワードを用いた <code>detectContradiction</code> の骨子です(FR-060)。</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">// MVP: ルールベース (キーワード辞書による)</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">function</span> <span class="fu">detectContradiction</span>(answer<span class="op">:</span> <span class="dt">string</span><span class="op">,</span> faqs<span class="op">:</span> Faq[])<span class="op">:</span> <span class="dt">boolean</span> {</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">function</span> <span class="fu">detectContradiction</span>(answer<span class="op">:</span> <span class="dt">string</span><span class="op">,</span> M_faqs<span class="op">:</span> Faq[])<span class="op">:</span> <span class="dt">boolean</span> {</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> negativeKeywords <span class="op">=</span> [<span class="st">&#39;不可&#39;</span><span class="op">,</span> <span class="st">&#39;できません&#39;</span><span class="op">,</span> <span class="st">&#39;対応していません&#39;</span>]<span class="op">;</span></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> positiveKeywords <span class="op">=</span> [<span class="st">&#39;可能&#39;</span><span class="op">,</span> <span class="st">&#39;できます&#39;</span><span class="op">,</span> <span class="st">&#39;対応しています&#39;</span>]<span class="op">;</span></span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">// FAQ で否定的に書かれているのに肯定で答える等を簡易検出</span></span>
@@ -469,9 +469,9 @@
 <ol type="1">
 <li>Cloudflare ダッシュボードの Data Localization 設定スクリーンショットを <code>docs/operations/region-audit/YYYY-Q.png</code> に保存。</li>
 <li>Workers AI 推論のリージョン確認ログを記録し、<code>apac</code> 以外を検出した場合は即時 high alert + AC-064 違反として停止判断。</li>
-<li><code>audit_logs</code> への記録: <code>action=ai.region.verify</code> を四半期で記録 (<code>general</code>, 1 年保持)、エビデンスへの参照を含める。</li>
+<li><code>H_audit_logs</code> への記録: <code>action=ai.region.verify</code> を四半期で記録 (<code>general</code>, 1 年保持)、エビデンスへの参照を含める。</li>
 </ol></li>
-<li><strong>逸脱時の対応</strong>: リージョン外推論を検出した場合は (a) サーキットブレーカ即時 open、(b) 当該 question_logs にフラグ立て、(c) 該当管理者ユーザーへ in-app 通知 + メール (NFR-906)。</li>
+<li><strong>逸脱時の対応</strong>: リージョン外推論を検出した場合は (a) サーキットブレーカ即時 open、(b) 当該 H_question_logs にフラグ立て、(c) 該当管理者ユーザーへ in-app 通知 + メール (NFR-906)。</li>
 </ul>
 <h3 id="39-ai-モデル切替時の回帰テスト">3.9 AI モデル切替時の回帰テスト</h3>
 <p class="section-lead">AI モデルを切り替える前に、テストペアで旧モデルとの精度を比較し、劣化があれば自動ロールバックします。次の擬似コードは Queue コンシューマが合格率を算出し、5pt 低下で自動無効化 + high アラート、2pt 低下で normal アラートを出す <code>consume</code> の実装です(FR-059 / FR-349 / AC-042)。</p>
@@ -483,7 +483,7 @@
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> results <span class="op">=</span> []<span class="op">;</span></span>
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (<span class="kw">const</span> tc <span class="kw">of</span> testSet) {</span>
 <span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>      <span class="kw">const</span> provider <span class="op">=</span> <span class="kw">new</span> <span class="fu">WorkersAIAnswerProvider</span>(env)<span class="op">;</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>      <span class="kw">const</span> out <span class="op">=</span> <span class="cf">await</span> provider<span class="op">.</span><span class="fu">answer</span>({ question<span class="op">:</span> tc<span class="op">.</span><span class="at">question</span><span class="op">,</span> faqs<span class="op">:</span> tc<span class="op">.</span><span class="at">faqs</span><span class="op">,</span> <span class="op">...</span> })<span class="op">;</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>      <span class="kw">const</span> out <span class="op">=</span> <span class="cf">await</span> provider<span class="op">.</span><span class="fu">answer</span>({ question<span class="op">:</span> tc<span class="op">.</span><span class="at">question</span><span class="op">,</span> M_faqs<span class="op">:</span> tc<span class="op">.</span><span class="at">M_faqs</span><span class="op">,</span> <span class="op">...</span> })<span class="op">;</span></span>
 <span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>      <span class="kw">const</span> passed <span class="op">=</span> <span class="fu">evaluateExpected</span>(out<span class="op">,</span> tc<span class="op">.</span><span class="at">expected</span>)<span class="op">;</span></span>
 <span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>      results<span class="op">.</span><span class="fu">push</span>({ tcId<span class="op">:</span> tc<span class="op">.</span><span class="at">id</span><span class="op">,</span> passed<span class="op">,</span> confidence<span class="op">:</span> out<span class="op">.</span><span class="at">confidence</span> })<span class="op">;</span></span>
 <span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    }</span>
@@ -576,11 +576,11 @@
 <p class="section-lead">回帰テストに用いるテストペアの規模・更新頻度・棄却基準を定めます。次の箇条書きは 50 ペア / カテゴリ網羅、四半期 10% 入れ替え、過剰冗長ペアの棄却基準を示します。</p>
 <ul>
 <li><strong>テストペア数</strong>: 50 ペア / 主要 FAQ カテゴリ網羅 (<code>testSet_v1</code>)</li>
-<li><strong>更新頻度</strong>: <strong>四半期 10% (5 ペア) 入れ替え</strong>。新規ペアは過去 90 日の実 question_logs から抽出 (PII マスク済)。古いペアは「実利用と乖離」を観測指標で判定して棄却</li>
+<li><strong>更新頻度</strong>: <strong>四半期 10% (5 ペア) 入れ替え</strong>。新規ペアは過去 90 日の実 H_question_logs から抽出 (PII マスク済)。古いペアは「実利用と乖離」を観測指標で判定して棄却</li>
 <li><strong>棄却基準</strong>: 同ペアでの旧モデル合格率が <strong>過去 3 か月連続で 100%</strong> → 過剰冗長として棄却候補、<code>testSet_archive</code> に退避</li>
 </ul>
 <h2 id="4-関連設計">4. 関連設計</h2>
-<p class="section-lead">本 DD に関連する正本ドキュメントを示します。AI 回答の要件は <a href="../01_要件定義/FR05_AI回答.html">FR05_AI回答</a>、API は <a href="../02_基本設計/02_API設計/index.html">API 設計</a>(<code>/widget/v1/ask</code>)、<code>question_logs</code> / <code>faqs</code> 等のスキーマは <a href="../02_基本設計/03_テーブル設計/index.html">テーブル設計</a>、PII スクラブ・プロンプト注入対策は <a href="../02_基本設計/09_セキュリティ設計.html">セキュリティ設計</a> を正本とします。関連 DD は <a href="DD04_AIしきい値3階層適用.html">DD04_AIしきい値3階層適用.html</a> / <a href="DD12_ウィジェット配信.html">DD12_ウィジェット配信.html</a> を参照します。</p>
+<p class="section-lead">本 DD に関連する正本ドキュメントを示します。AI 回答の要件は <a href="../01_要件定義/FR05_AI回答.html">FR05_AI回答</a>、API は <a href="../02_基本設計/02_API設計/index.html">API 設計</a>(<code>/widget/v1/ask</code>)、<code>H_question_logs</code> / <code>M_faqs</code> 等のスキーマは <a href="../02_基本設計/03_テーブル設計/index.html">テーブル設計</a>、PII スクラブ・プロンプト注入対策は <a href="../02_基本設計/09_セキュリティ設計.html">セキュリティ設計</a> を正本とします。関連 DD は <a href="DD04_AIしきい値3階層適用.html">DD04_AIしきい値3階層適用.html</a> / <a href="DD12_ウィジェット配信.html">DD12_ウィジェット配信.html</a> を参照します。</p>
 <h2 id="5-テスト観点">5. テスト観点</h2>
 <p class="section-lead">本 DD が満たすべき受入条件(AC)と、それを検証するテストの方式・配置を示します。次の表はプロンプト注入(AC-019 / AC-035)・AI 品質回帰(AC-042)の各 AC をテスト ID・実行方式・テストファイルに対応付けたものです。</p>
 <table>
@@ -635,11 +635,11 @@
 </tr>
 <tr>
 <td>新規ペア抽出元</td>
-<td>過去 90 日の <code>question_logs</code> からランダムサンプリング (PII マスク後)、信頼度層別 (<code>&lt; 0.5</code> / <code>0.5〜0.8</code> / <code>≥ 0.8</code>) でビン詰めし各層 1/3 ずつ採用</td>
+<td>過去 90 日の <code>H_question_logs</code> からランダムサンプリング (PII マスク後)、信頼度層別 (<code>&lt; 0.5</code> / <code>0.5〜0.8</code> / <code>≥ 0.8</code>) でビン詰めし各層 1/3 ずつ採用</td>
 </tr>
 <tr>
 <td><strong>棄却基準 (個別ペア)</strong></td>
-<td>(a) 旧モデルでの合格率が <strong>過去 3 か月連続で 100%</strong> (過剰冗長) → <code>testSet_archive</code> に退避 / (b) 同一質問が実 question_logs で <strong>過去 180 日に 0 件</strong> (出現せず陳腐化) → 同上 / (c) ペアの question が現行 FAQ に直接ヒット (<code>relevanceScore ≥ 0.95</code>) で「AI 回答ではなく FAQ 直返」になっている → 同上</td>
+<td>(a) 旧モデルでの合格率が <strong>過去 3 か月連続で 100%</strong> (過剰冗長) → <code>testSet_archive</code> に退避 / (b) 同一質問が実 H_question_logs で <strong>過去 180 日に 0 件</strong> (出現せず陳腐化) → 同上 / (c) ペアの question が現行 FAQ に直接ヒット (<code>relevanceScore ≥ 0.95</code>) で「AI 回答ではなく FAQ 直返」になっている → 同上</td>
 </tr>
 <tr>
 <td><strong>復元基準</strong></td>
@@ -655,7 +655,7 @@
 </tr>
 <tr>
 <td>監査ログ</td>
-<td>入れ替え PR マージ時に <code>dataset.test_pair.update</code> (<code>general = 1y</code>) を audit_logs に記録、<code>{added: [...ids], removed: [...ids], reason}</code></td>
+<td>入れ替え PR マージ時に <code>dataset.test_pair.update</code> (<code>general = 1y</code>) を H_audit_logs に記録、<code>{added: [...ids], removed: [...ids], reason}</code></td>
 </tr>
 <tr>
 <td>精度劣化 5pt 以上発生時の復元手順</td>

@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>question_log_faq_refs(TBL-013) | FAQ 設計ポータル</title>
+<title>T_question_log_faq_refs(TBL-013) | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../../../assets/css/style.css">
 <script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script src="../../../assets/js/nav-data.js" defer></script>
 <script src="../../../assets/js/search-index.js" defer></script>
 <script src="../../../assets/js/portal.js" defer></script>
 </head>
-<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/question_log_faq_refs.html">
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/T_question_log_faq_refs.html">
 <article class="content" id="content">
-<h1 id="TBL-013">TBL-013 <code>question_log_faq_refs</code></h1>
-<span id="313-question_log_faq_refs"></span>
+<h1 id="TBL-013">TBL-013 <code>T_question_log_faq_refs</code></h1>
+<span id="313-T_question_log_faq_refs"></span>
 <p class="section-lead">質問ログと参照 FAQ の M:N 関係を保持する中間テーブルです。</p>
 <h3 id="3131-概要">概要</h3>
 <table>
@@ -26,7 +26,7 @@
 <tbody>
 <tr>
 <td>テーブル名</td>
-<td><code>question_log_faq_refs</code></td>
+<td><code>T_question_log_faq_refs</code></td>
 </tr>
 <tr>
 <td>論理名</td>
@@ -39,8 +39,8 @@
 <tr>
 <td>外部キー</td>
 <td><ul class="key-cols">
-<li><code>question_log_id</code> → <code>question_logs(id)</code></li>
-<li><code>faq_id</code> → <code>faqs(id)</code></li>
+<li><code>question_log_id</code> → <code>H_question_logs(id)</code></li>
+<li><code>faq_id</code> → <code>M_faqs(id)</code></li>
 </ul></td>
 </tr>
 </tbody>
@@ -86,7 +86,7 @@
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
-<td><code>question_logs(id)</code></td>
+<td><code>H_question_logs(id)</code></td>
 <td>①</td>
 <td></td>
 <td></td>
@@ -100,7 +100,7 @@
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
-<td><code>faqs(id)</code></td>
+<td><code>M_faqs(id)</code></td>
 <td>②</td>
 <td></td>
 <td></td>

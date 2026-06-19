@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ai_threshold_persistent_cache(TBL-016) | FAQ 設計ポータル</title>
+<title>T_announcement_recipients(TBL-027) | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../../../assets/css/style.css">
 <script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script src="../../../assets/js/nav-data.js" defer></script>
 <script src="../../../assets/js/search-index.js" defer></script>
 <script src="../../../assets/js/portal.js" defer></script>
 </head>
-<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/ai_threshold_persistent_cache.html">
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/T_announcement_recipients.html">
 <article class="content" id="content">
-<h1 id="TBL-016">TBL-016 <code>ai_threshold_persistent_cache</code></h1>
-<span id="316-ai_threshold_persistent_cache"></span>
-<p class="section-lead">3 階層 AI しきい値を永続キャッシュするテーブルです。</p>
-<h3 id="3161-概要">概要</h3>
+<h1 id="TBL-027">TBL-027 <code>T_announcement_recipients</code></h1>
+<span id="327-T_announcement_recipients"></span>
+<p class="section-lead">お知らせの実配信先・配信集計・監査情報を保持します。</p>
+<h3 id="3271-概要">概要</h3>
 <table>
 <thead>
 <tr>
@@ -26,11 +26,11 @@
 <tbody>
 <tr>
 <td>テーブル名</td>
-<td><code>ai_threshold_persistent_cache</code></td>
+<td><code>T_announcement_recipients</code></td>
 </tr>
 <tr>
 <td>論理名</td>
-<td>AI しきい値キャッシュ</td>
+<td>お知らせ受信者</td>
 </tr>
 <tr>
 <td>主キー</td>
@@ -39,13 +39,12 @@
 <tr>
 <td>外部キー</td>
 <td><ul class="key-cols">
-<li><code>contract_owner_user_id</code> → <code>owners(id)</code></li>
-<li><code>project_id</code> → <code>projects(id)</code></li>
+<li><code>announcement_id</code> → <code>M_service_announcements(id)</code></li>
 </ul></td>
 </tr>
 </tbody>
 </table>
-<h3 id="3162-カラム定義">カラム定義</h3>
+<h3 id="3272-カラム定義">カラム定義</h3>
 <table>
 <thead>
 <tr>
@@ -80,13 +79,13 @@
 </tr>
 <tr>
 <td style="text-align: right;">2</td>
-<td>契約 owner ID</td>
-<td><code>contract_owner_user_id</code></td>
+<td>お知らせ ID</td>
+<td><code>announcement_id</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
-<td>YES</td>
+<td>NO</td>
 <td></td>
-<td><code>owners(id)</code></td>
+<td><code>M_service_announcements(id)</code></td>
 <td></td>
 <td></td>
 <td></td>
@@ -94,13 +93,13 @@
 </tr>
 <tr>
 <td style="text-align: right;">3</td>
-<td>プロジェクト ID</td>
-<td><code>project_id</code></td>
+<td>契約 owner ID</td>
+<td><code>contract_owner_user_id</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
-<td>YES</td>
+<td>NO</td>
 <td></td>
-<td><code>projects(id)</code></td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -108,8 +107,8 @@
 </tr>
 <tr>
 <td style="text-align: right;">4</td>
-<td>スコープ</td>
-<td><code>scope</code></td>
+<td>受信者種別</td>
+<td><code>recipient_type</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
@@ -117,72 +116,58 @@
 <td></td>
 <td></td>
 <td></td>
-<td><code>scope IN ('global','owner','project')</code><br>（複合）<code>(scope = 'global' AND contract_owner_user_id IS NULL AND project_id IS NULL) OR (scope = 'owner' AND contract_owner_user_id IS NOT NULL AND project_id IS NULL) OR (scope = 'project' AND contract_owner_user_id IS NOT NULL AND project_id IS NOT NULL)</code></td>
+<td><code>recipient_type IN ('owner','project_user')</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">5</td>
-<td>信頼度しきい値</td>
-<td><code>confidence_threshold</code></td>
-<td>REAL</td>
+<td>受信者 ID</td>
+<td><code>recipient_id</code></td>
+<td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-<td><code>confidence_threshold BETWEEN 0.0 AND 1.0</code></td>
+<td><code>recipient_type</code> に応じ <code>M_owners(id)</code> / <code>M_project_users(id)</code> を指す(論理参照)</td>
 
 </tr>
 <tr>
 <td style="text-align: right;">6</td>
-<td>関連度しきい値</td>
-<td><code>relevance_threshold</code></td>
-<td>REAL</td>
+<td>送信日時</td>
+<td><code>sent_at</code></td>
+<td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-<td><code>relevance_threshold BETWEEN 0.0 AND 1.0</code></td>
+<td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">7</td>
-<td>バージョン</td>
-<td><code>version</code></td>
-<td>INTEGER</td>
+<td>配信状態</td>
+<td><code>delivery_status</code></td>
+<td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
+<td><code>delivery_status IN ('pending','delivered','failed')</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">8</td>
-<td>受信日時</td>
-<td><code>received_at</code></td>
+<td>既読日時</td>
+<td><code>read_at</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
-<td>NO</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">9</td>
-<td>更新日時</td>
-<td><code>updated_at</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>NO</td>
+<td>YES</td>
 <td></td>
 <td></td>
 <td></td>
@@ -192,7 +177,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="3165-インデックス">インデックス</h3>
+<h3 id="3275-インデックス">インデックス</h3>
 <table>
 <thead>
 <tr>
@@ -206,14 +191,21 @@
 <tbody>
 <tr>
 <td style="text-align: right;">1</td>
-<td><code>uq_ai_threshold_scope</code></td>
-<td><code>(scope, COALESCE(contract_owner_user_id, ''), COALESCE(project_id, ''))</code></td>
-<td>○</td>
-<td>スコープ + キーで一意</td>
+<td><code>idx_ar_announcement</code></td>
+<td><code>announcement_id</code></td>
+<td></td>
+<td>お知らせ別</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td><code>idx_ar_owner_user</code></td>
+<td><code>(contract_owner_user_id, recipient_type, recipient_id)</code></td>
+<td></td>
+<td>ユーザー別逆引き</td>
 </tr>
 </tbody>
 </table>
-<h3 id="3167-コード値区分値">コード値・区分値</h3>
+<h3 id="3277-コード値区分値">コード値・区分値</h3>
 <table>
 <thead>
 <tr>
@@ -224,23 +216,22 @@
 </thead>
 <tbody>
 <tr>
-<td><code>scope</code></td>
-<td><code>global</code></td>
-<td>全契約共通しきい値</td>
+<td><code>delivery_status</code></td>
+<td><code>pending</code></td>
+<td>配信待ち</td>
 </tr>
 <tr>
-<td><code>scope</code></td>
-<td><code>owner</code></td>
-<td>契約単位上書き</td>
+<td><code>delivery_status</code></td>
+<td><code>delivered</code></td>
+<td>配信完了</td>
 </tr>
 <tr>
-<td><code>scope</code></td>
-<td><code>project</code></td>
-<td>プロジェクト単位上書き</td>
+<td><code>delivery_status</code></td>
+<td><code>failed</code></td>
+<td>配信失敗</td>
 </tr>
 </tbody>
 </table>
-
 </article>
 </body>
 </html>

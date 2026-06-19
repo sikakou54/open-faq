@@ -43,7 +43,7 @@
 <p class="section-lead">脅威に共通して適用する基本姿勢を 4 本柱で定める。個別の節はこの方針を具体化したものとして読む。</p>
 <ul>
 <li><strong>多層防御</strong>(認証 → 認可 → 入力検証 → 出力検査 → 監査)</li>
-<li><strong>最小権限原則</strong>(オーナー専有 / プロジェクト別ロール <code>admin</code> / <code>member</code>(<code>project_user_assignments.role</code>)の二段階)</li>
+<li><strong>最小権限原則</strong>(オーナー専有 / プロジェクト別ロール <code>admin</code> / <code>member</code>(<code>M_project_user_assignments.role</code>)の二段階)</li>
 <li><strong>監査の網羅性</strong>(変更系操作は全て監査、参照系は高権限操作のみ)</li>
 <li><strong>改ざん検知</strong>(ハッシュチェーン + 完全性検証バッチによる完全性検証を行う)</li>
 </ul>
@@ -66,7 +66,7 @@
 <td>利用者メール</td>
 <td>AES-256-GCM</td>
 <td>オーナー派生鍵</td>
-<td><code>users.email_encrypted</code> + <code>email_hmac</code></td>
+<td><code>M_owners</code> / <code>M_project_users</code> の <code>email_encrypted</code> + <code>email_hmac</code></td>
 <td>不可</td>
 </tr>
 <tr>
@@ -144,27 +144,27 @@
 </thead>
 <tbody>
 <tr>
-<td><code>question_logs</code></td>
+<td><code>H_question_logs</code></td>
 <td>DELETE</td>
 <td><code>user_question</code> 空字、<code>ip_address</code> / <code>user_agent</code> NULL、集計値維持</td>
 </tr>
 <tr>
-<td><code>inquiries</code></td>
+<td><code>T_inquiries</code></td>
 <td>DELETE</td>
 <td><code>user_question</code> 空字、<code>inquiry_code</code> 維持、<code>closed_reason</code> 空字</td>
 </tr>
 <tr>
-<td><code>notification_logs</code></td>
+<td><code>H_notification_logs</code></td>
 <td>DELETE</td>
 <td><code>recipient_email_hmac</code> → SHA-256、vars → 空 JSON</td>
 </tr>
 <tr>
-<td><code>access_tokens</code></td>
+<td><code>T_access_tokens</code></td>
 <td>DELETE</td>
 <td>(常に物理削除、匿名化対象外)</td>
 </tr>
 <tr>
-<td><code>audit_logs</code></td>
+<td><code>H_audit_logs</code></td>
 <td>削除しない</td>
 <td>(<strong>tombstone 方式</strong>、匿名化対象外)</td>
 </tr>
@@ -173,16 +173,16 @@
 <p>担保事項:</p>
 <ul>
 <li><strong>不可逆性</strong>: メールアドレスハッシュ化など、原文復元不可な置換のみ</li>
-<li>設定管理: <code>owners.data_deletion_mode</code> は契約締結時に既定 <code>physical</code>。MVP では UI 上の変更操作を提供せず、変更が必要な場合はサポート窓口経由の対応とする(SCR-017 個人設定にデータ保持・削除モード設定 UI は持たない)</li>
-<li>監査: <code>audit_logs.action='owner.data_deletion_mode.change'</code>(<code>retention_class=general</code>)</li>
+<li>設定管理: <code>M_owners.data_deletion_mode</code> は契約締結時に既定 <code>physical</code>。MVP では UI 上の変更操作を提供せず、変更が必要な場合はサポート窓口経由の対応とする(SCR-017 個人設定にデータ保持・削除モード設定 UI は持たない)</li>
+<li>監査: <code>H_audit_logs.action='owner.data_deletion_mode.change'</code>(<code>retention_class=general</code>)</li>
 </ul>
 <h3 id="34-お知らせ二層構成">3.4 お知らせ二層構成</h3>
 <p class="section-lead">運営お知らせ等の通知は、配信元・配信宛先・受信箱の三層に分けて記録する。重複生成を抑止しつつ配信集計と監査を両立させるための分離方針を示す。各テーブルの定義は <a href="03_テーブル設計/index.html#1-テーブル一覧">03_テーブル設計/index.html §1</a> を正本とする。</p>
 <p>三層構造:</p>
 <ul>
-<li><strong>配信元層(Control Plane)</strong>: <code>service_announcements</code> テーブル</li>
-<li><strong>配信宛先層</strong>: <code>announcement_recipients</code>(送信日時・配信失敗フラグ等、監査用)</li>
-<li><strong>受信箱層(Tenant)</strong>: <code>inbox_messages</code>(管理者のアプリ内閲覧用)</li>
+<li><strong>配信元層(Control Plane)</strong>: <code>M_service_announcements</code> テーブル</li>
+<li><strong>配信宛先層</strong>: <code>T_announcement_recipients</code>(送信日時・配信失敗フラグ等、監査用)</li>
+<li><strong>受信箱層(Tenant)</strong>: <code>T_inbox_messages</code>(管理者のアプリ内閲覧用)</li>
 </ul>
 <table>
 <thead>
@@ -197,19 +197,19 @@
 <tr>
 <td><code>announcement</code></td>
 <td>お知らせを公開</td>
-<td>service_announcements → announcement_recipients → inbox_messages</td>
+<td>M_service_announcements → T_announcement_recipients → T_inbox_messages</td>
 <td>配信集計が必要</td>
 </tr>
 <tr>
 <td><code>billing</code></td>
 <td>月次請求確定</td>
-<td>直接 inbox_messages</td>
+<td>直接 T_inbox_messages</td>
 <td>契約内で完結</td>
 </tr>
 <tr>
 <td><code>system</code></td>
 <td>上限接近・超過等</td>
-<td>直接 inbox_messages</td>
+<td>直接 T_inbox_messages</td>
 <td>ヘッダベル + メール(<code>high</code>/<code>critical</code>)</td>
 </tr>
 </tbody>
@@ -323,7 +323,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </tr>
 <tr>
 <td>クリックジャッキング(ウィジェット)</td>
-<td><code>frame-ancestors</code> を <code>allowed_domains</code> で制限</td>
+<td><code>frame-ancestors</code> を <code>M_allowed_domains</code> で制限</td>
 <td>ウィジェット iframe</td>
 </tr>
 <tr>
@@ -360,12 +360,12 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 <tbody>
 <tr>
 <td>利用者管理画面</td>
-<td>セッション + プロジェクト別ロール(<code>project_user_assignments.role</code>)+ オーナー境界</td>
+<td>セッション + プロジェクト別ロール(<code>M_project_user_assignments.role</code>)+ オーナー境界</td>
 <td><a href="08_認証・認可設計.html">08_認証・認可設計.html</a></td>
 </tr>
 <tr>
 <td>ウィジェット API</td>
-<td>API キー + 署名 + <code>allowed_domains</code> 検証</td>
+<td>API キー + 署名 + <code>M_allowed_domains</code> 検証</td>
 <td>§12 / <a href="02_API設計/index.html">02_API設計/index.html</a></td>
 </tr>
 <tr>
@@ -464,7 +464,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </tbody>
 </table>
 <h4 id="721-メンバー管理操作の監査記録項目">7.2.1 メンバー管理操作の監査記録項目(FR-178a)</h4>
-<p>メンバー管理操作(招待・招待再送・プロジェクト別ロール割当変更・プロジェクトからの離脱・メンバー削除)では、<code>audit_logs</code> の <code>payload</code> に次の項目を記録する。<code>retention_class=general</code>。</p>
+<p>メンバー管理操作(招待・招待再送・プロジェクト別ロール割当変更・プロジェクトからの離脱・メンバー削除)では、<code>H_audit_logs</code> の <code>payload</code> に次の項目を記録する。<code>retention_class=general</code>。</p>
 <div class="table-scroll">
 <table>
 <thead>
@@ -484,7 +484,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </tr>
 <tr>
 <td>変更前後のプロジェクト × ロール差分</td>
-<td>ロール割当の追加・変更・剥奪時に、対象プロジェクトと変更前後の <code>project_user_assignments.role</code>(<code>admin</code> / <code>member</code>)を before/after で記録(該当時のみ)</td>
+<td>ロール割当の追加・変更・剥奪時に、対象プロジェクトと変更前後の <code>M_project_user_assignments.role</code>(<code>admin</code> / <code>member</code>)を before/after で記録(該当時のみ)</td>
 </tr>
 <tr>
 <td>対応理由</td>
@@ -498,9 +498,9 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </table>
 </div>
 <h3 id="73-改ざん検知方式nfr-306">7.3 改ざん検知方式(NFR-306)</h3>
-<p class="section-lead">監査ログの改ざん検知はハッシュチェーンで行う(NFR-306)。チェーン構造・ダイジェスト保管・完全性検証バッチにより <code>audit_logs</code> の完全性検証を行う。</p>
-<h3 id="74-エラーログerror_logs">7.4 エラーログ(<code>error_logs</code>)</h3>
-<p class="section-lead">サーバー内部起因のエラーは運用確認用に記録するが、PII・トークン・カード情報は一切残さない(FR-113 / FR-114)。テーブル定義は <a href="03_テーブル設計/error_logs.html">03_テーブル設計/index.html §3.19</a> を正本とする。</p>
+<p class="section-lead">監査ログの改ざん検知はハッシュチェーンで行う(NFR-306)。チェーン構造・ダイジェスト保管・完全性検証バッチにより <code>H_audit_logs</code> の完全性検証を行う。</p>
+<h3 id="74-エラーログerror_logs">7.4 エラーログ(<code>H_error_logs</code>)</h3>
+<p class="section-lead">サーバー内部起因のエラーは運用確認用に記録するが、PII・トークン・カード情報は一切残さない(FR-113 / FR-114)。テーブル定義は <a href="03_テーブル設計/H_error_logs.html">03_テーブル設計/index.html §3.19</a> を正本とする。</p>
 <ul>
 <li>180 日保持(JST 05:00 Cron で自動物理削除、UC-140)</li>
 <li>スタックトレース / リクエスト ID を記録</li>
@@ -594,7 +594,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </thead>
 <tbody>
 <tr>
-<td><code>owners</code> / <code>project_users</code></td>
+<td><code>M_owners</code> / <code>M_project_users</code></td>
 <td><code>email_key_version</code></td>
 <td>管理者(オーナー / プロジェクト管理者 / メンバー)のメールアドレス暗号化バージョン</td>
 </tr>
@@ -604,7 +604,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 <pre class="mermaid"><code>sequenceDiagram
   participant A as worker-main-api
   participant S as Secrets Store
-  participant D as D1 (owners / project_users)
+  participant D as D1 (M_owners / M_project_users)
 
   rect rgb(240,240,240)
     Note over A,D: INSERT / UPDATE 時
@@ -637,10 +637,10 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
       S--&gt;&gt;A:
     end
   end</code></pre>
-<p><strong>ローテーション完了の判定</strong>:<code>SELECT COUNT(*) FROM owners WHERE email_key_version &lt; N</code> + <code>SELECT COUNT(*) FROM project_users WHERE email_key_version &lt; N</code> がいずれも 0 件であること。</p>
-<p><strong>例外</strong>:<code>owners.contract_status='deleted'</code>・<code>owners.valid=0</code> または <code>project_users.valid=0</code> の論理削除済み行は、90 日経過後の物理削除バッチに任せ、再暗号化対象外とする(復元時の dual-decrypt 整合性を維持するため、ローテーション期間は 60 日 + 物理削除遅延 90 日を考慮した運用窓設計とする)。</p>
-<h3 id="83-ウィジェット-api-キーprojects--project_legacy_keys834-から移管">8.3 ウィジェット API キー(<code>projects</code> / <code>project_legacy_keys</code>)</h3>
-<p class="section-lead">ウィジェット公開キーは無期限で、失効は再発行(ローテーション)でのみ行う(FR-194)。再発行時は旧キーを 24 時間併存させ猶予後に完全失効する(FR-193)。キーと旧キーのテーブル定義は <a href="03_テーブル設計/project_legacy_keys.html">03_テーブル設計/index.html §3.7</a> を正本とする。</p>
+<p><strong>ローテーション完了の判定</strong>:<code>SELECT COUNT(*) FROM M_owners WHERE email_key_version &lt; N</code> + <code>SELECT COUNT(*) FROM M_project_users WHERE email_key_version &lt; N</code> がいずれも 0 件であること。</p>
+<p><strong>例外</strong>:<code>M_owners.contract_status='deleted'</code>・<code>M_owners.valid=0</code> または <code>M_project_users.valid=0</code> の論理削除済み行は、90 日経過後の物理削除バッチに任せ、再暗号化対象外とする(復元時の dual-decrypt 整合性を維持するため、ローテーション期間は 60 日 + 物理削除遅延 90 日を考慮した運用窓設計とする)。</p>
+<h3 id="83-ウィジェット-api-キーprojects--project_legacy_keys834-から移管">8.3 ウィジェット API キー(<code>M_projects</code> / <code>T_project_legacy_keys</code>)</h3>
+<p class="section-lead">ウィジェット公開キーは無期限で、失効は再発行(ローテーション)でのみ行う(FR-194)。再発行時は旧キーを 24 時間併存させ猶予後に完全失効する(FR-193)。キーと旧キーのテーブル定義は <a href="03_テーブル設計/T_project_legacy_keys.html">03_テーブル設計/index.html §3.7</a> を正本とする。</p>
 <ul>
 <li>形式: <code>pk_live_&lt;32-char base62&gt;</code></li>
 <li>有効期限: なし(無期限)。失効は再発行(ローテーション)でのみ行う</li>
@@ -665,7 +665,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </tr>
 <tr>
 <td><strong>管理者権限の濫用防止</strong></td>
-<td>監査ログ全件 + プロジェクト別ロール(<code>admin</code> / <code>member</code>)の最小化 + オーナー専有機能の <code>project_user_assignments.role</code> 付与不可(プロジェクト作成・編集・削除・課金・退会・規約再同意はオーナー専有。メンバーアカウント物理削除はオーナーおよび当該プロジェクト管理者だが、プロジェクト管理者は member 在籍中は他 admin を削除不可)</td>
+<td>監査ログ全件 + プロジェクト別ロール(<code>admin</code> / <code>member</code>)の最小化 + オーナー専有機能の <code>M_project_user_assignments.role</code> 付与不可(プロジェクト作成・編集・削除・課金・退会・規約再同意はオーナー専有。メンバーアカウント物理削除はオーナーおよび当該プロジェクト管理者だが、プロジェクト管理者は member 在籍中は他 admin を削除不可)</td>
 <td><a href="04_権限設計.html">04_権限設計.html</a> / §7</td>
 </tr>
 <tr>
@@ -687,7 +687,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 <pre class="mermaid"><code>sequenceDiagram
   participant E as ウィジェット利用者
   participant W as worker-main-api
-  participant D as D1 (audit_logs)
+  participant D as D1 (H_audit_logs)
   participant M as 管理者ユーザー
 
   E-&gt;&gt;W: 大量送信 / Bot 疑い / 規約違反となる挙動
@@ -726,7 +726,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </tr>
 <tr>
 <td>監査</td>
-<td><code>audit_logs.action='abuse.detection_fired'</code>(<code>retention_class='general'</code>)</td>
+<td><code>H_audit_logs.action='abuse.detection_fired'</code>(<code>retention_class='general'</code>)</td>
 </tr>
 </tbody>
 </table>
@@ -770,7 +770,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
   participant A as worker-main-api
   participant Q as Cloudflare Queues
   participant R as Resend
-  participant N as D1 (notification_logs)
+  participant N as D1 (H_notification_logs)
   participant DLQ as DLQ
   participant AL as アラート通知
 
@@ -791,7 +791,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
   end
   opt バウンス / 苦情 Webhook
     R-&gt;&gt;A: email.bounced / complained
-    A-&gt;&gt;N: サプレス(email_suppression_list 追加・全契約横断)
+    A-&gt;&gt;N: サプレス(M_email_suppression_list 追加・全契約横断)
     N--&gt;&gt;A:
     A-&gt;&gt;AL: 苦情・署名検証失敗時は high 通知
   end</code></pre>
@@ -819,7 +819,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </tr>
 <tr>
 <td>バウンス</td>
-<td>Resend Webhook 検知、対象アドレスを通知停止(<code>email_suppression_list</code> 追加)(NFR-503)</td>
+<td>Resend Webhook 検知、対象アドレスを通知停止(<code>M_email_suppression_list</code> 追加)(NFR-503)</td>
 </tr>
 <tr>
 <td>苦情</td>
@@ -844,7 +844,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </tbody>
 </table>
 <h3 id="112-共通ドメインレピュテーション保護r-003--fr-149b--nfr-504">11.2 共通ドメインレピュテーション保護(FR-149b / NFR-504)</h3>
-<p class="section-lead">サービス共通ドメインの送信レピュテーションを守るため、契約別送信レート・バウンス率・苦情率を監視し、超過時に送信を抑制する(FR-144、NFR-504)。送信停止リスト <code>email_suppression_list</code>(<a href="03_テーブル設計/email_suppression_list.html">03_テーブル設計/index.html §3.17</a>)は全契約横断で共有する(FR-149b)。</p>
+<p class="section-lead">サービス共通ドメインの送信レピュテーションを守るため、契約別送信レート・バウンス率・苦情率を監視し、超過時に送信を抑制する(FR-144、NFR-504)。送信停止リスト <code>M_email_suppression_list</code>(<a href="03_テーブル設計/M_email_suppression_list.html">03_テーブル設計/index.html §3.17</a>)は全契約横断で共有する(FR-149b)。</p>
 <table>
 <thead>
 <tr>
@@ -879,7 +879,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </tr>
 <tr>
 <td><strong>全契約横断サプレス</strong></td>
-<td><code>email_suppression_list</code> を全契約横断で共有(FR-149b)</td>
+<td><code>M_email_suppression_list</code> を全契約横断で共有(FR-149b)</td>
 </tr>
 <tr>
 <td>復帰承認</td>
@@ -888,7 +888,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </tbody>
 </table>
 <h3 id="113-resend-webhook-処理">11.3 Resend Webhook 処理</h3>
-<p class="section-lead">送信プロバイダ(Resend)からの配信状態 Webhook を受信し、<code>notification_logs</code>(<a href="03_テーブル設計/notification_logs.html">03_テーブル設計/index.html §3.15</a>)の配信状態を更新する。署名検証に失敗した受信は即時破棄し通知する(NFR-310)。</p>
+<p class="section-lead">送信プロバイダ(Resend)からの配信状態 Webhook を受信し、<code>H_notification_logs</code>(<a href="03_テーブル設計/H_notification_logs.html">03_テーブル設計/index.html §3.15</a>)の配信状態を更新する。署名検証に失敗した受信は即時破棄し通知する(NFR-310)。</p>
 <table>
 <thead>
 <tr>
@@ -899,7 +899,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 <tbody>
 <tr>
 <td><code>email.sent</code></td>
-<td><code>notification_logs.delivery_state='sent'</code></td>
+<td><code>H_notification_logs.delivery_state='sent'</code></td>
 </tr>
 <tr>
 <td><code>email.delivered</code></td>
@@ -999,7 +999,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </tbody>
 </table>
 <h2 id="12-ウィジェット保護102-から移管">12. ウィジェット保護</h2>
-<p class="section-lead">ウィジェットは顧客サイトに埋め込まれるため、埋め込み元ドメイン検証(<code>Origin</code> / <code>Referer</code>)で許可ドメイン以外からの読み込みを拒否し(FR-173、NFR-312)、公開キー署名・CORS・iframe sandbox・レート制限・Bot 対策で多層に保護する(FR-172 / FR-177)。許可ドメインの定義は <a href="03_テーブル設計/allowed_domains.html">03_テーブル設計/index.html §3.8</a>(<code>allowed_domains</code>)を正本とする。</p>
+<p class="section-lead">ウィジェットは顧客サイトに埋め込まれるため、埋め込み元ドメイン検証(<code>Origin</code> / <code>Referer</code>)で許可ドメイン以外からの読み込みを拒否し(FR-173、NFR-312)、公開キー署名・CORS・iframe sandbox・レート制限・Bot 対策で多層に保護する(FR-172 / FR-177)。許可ドメインの定義は <a href="03_テーブル設計/M_allowed_domains.html">03_テーブル設計/index.html §3.8</a>(<code>M_allowed_domains</code>)を正本とする。</p>
 <table>
 <thead>
 <tr>
@@ -1064,7 +1064,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </tr>
 <tr>
 <td>監査記録</td>
-<td>マスキング発動: <code>audit_logs.action='ai.pii_masked'</code>、検査 NG: <code>ai.output_inspection_failed</code>(マスク前データ非記録)</td>
+<td>マスキング発動: <code>H_audit_logs.action='ai.pii_masked'</code>、検査 NG: <code>ai.output_inspection_failed</code>(マスク前データ非記録)</td>
 </tr>
 <tr>
 <td>誤検出改善ループ</td>
@@ -1096,7 +1096,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </tr>
 <tr>
 <td>不審入力検知</td>
-<td>命令上書き等を検知・記録(<code>audit_logs.action='ai.prompt_injection_detected'</code>)</td>
+<td>命令上書き等を検知・記録(<code>H_audit_logs.action='ai.prompt_injection_detected'</code>)</td>
 </tr>
 <tr>
 <td>失敗時</td>
@@ -1145,7 +1145,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 <tr>
 <td>v1.2</td>
 <td>2026-06-17</td>
-<td>設計書シンプルテンプレ v2 へ移行。冒頭の文書概要 2 列グリッド(ps-grid)・関連ドキュメントリンク集を撤去し、page-summary を目的 1 文の ps-lead + doc-meta(版数 / 更新 / ステータス)に最小化。各 <code>&lt;h2&gt;</code> / <code>&lt;h3&gt;</code> 直後に section-lead(結論先出しの説明)を補完。処理の流れを説明する節をシーケンス図(Mermaid)化 ── §8.2.1 鍵バージョン参照の dual-decrypt 運用フロー(暗号化 / 復号 / 再暗号化)、§10.1 不正利用検知の判定 → 自動ブロック → 通知フロー、§11 メール配信信頼性の Queue 送信 → 再送 → サプレス → DLQ フロー。識別子(NFR / FR / R / IF / テーブル名・カラム名・<code>audit_logs.action</code> コード・暗号方式名)と値は不変。</td>
+<td>設計書シンプルテンプレ v2 へ移行。冒頭の文書概要 2 列グリッド(ps-grid)・関連ドキュメントリンク集を撤去し、page-summary を目的 1 文の ps-lead + doc-meta(版数 / 更新 / ステータス)に最小化。各 <code>&lt;h2&gt;</code> / <code>&lt;h3&gt;</code> 直後に section-lead(結論先出しの説明)を補完。処理の流れを説明する節をシーケンス図(Mermaid)化 ── §8.2.1 鍵バージョン参照の dual-decrypt 運用フロー(暗号化 / 復号 / 再暗号化)、§10.1 不正利用検知の判定 → 自動ブロック → 通知フロー、§11 メール配信信頼性の Queue 送信 → 再送 → サプレス → DLQ フロー。識別子(NFR / FR / R / IF / テーブル名・カラム名・<code>H_audit_logs.action</code> コード・暗号方式名)と値は不変。</td>
 </tr>
 <tr>
 <td>v1.1</td>

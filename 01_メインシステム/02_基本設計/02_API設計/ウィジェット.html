@@ -54,10 +54,10 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>projects</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
-<tr><td><code>allowed_domains</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
-<tr><td><code>owners</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
-<tr><td><code>sessions</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td><code>M_projects</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>M_allowed_domains</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>M_owners</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>T_sessions</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -141,10 +141,10 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>question_logs</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
-<tr><td><code>faqs</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
-<tr><td><code>usage_metering</code></td><td>◯</td><td>—</td><td>◯</td><td>—</td></tr>
-<tr><td><code>inquiries</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td><code>H_question_logs</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td><code>M_faqs</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>T_usage_metering</code></td><td>◯</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>T_inquiries</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -224,7 +224,7 @@
 <tbody>
 <tr><td>API ID</td><td>API-WGT-003</td></tr>
 <tr><td>API 名</td><td>未解決質問登録</td></tr>
-<tr><td>エンドポイント</td><td><code>/widget/v1/inquiries</code></td></tr>
+<tr><td>エンドポイント</td><td><code>/widget/v1/T_inquiries</code></td></tr>
 <tr><td>HTTP メソッド</td><td>POST</td></tr>
 <tr><td>認証</td><td>Bearer session_token</td></tr>
 <tr><td>権限</td><td>end_user(セッション)</td></tr>
@@ -245,8 +245,8 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>inquiries</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
-<tr><td><code>question_logs</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>T_inquiries</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td><code>H_question_logs</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>

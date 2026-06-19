@@ -56,12 +56,12 @@
 </tr>
 <tr>
 <td>API</td>
-<td><code>/projects/*</code> <code>/faqs/*</code></td>
+<td><code>/M_projects/*</code> <code>/M_faqs/*</code></td>
 <td>プロジェクト・FAQ 操作</td>
 </tr>
 <tr>
 <td>テーブル</td>
-<td><code>projects</code> <code>faqs</code> <code>faq_embeddings</code> <code>faq_search_fts</code></td>
+<td><code>M_projects</code> <code>M_faqs</code> <code>faq_embeddings</code> <code>TP_faq_search_fts</code></td>
 <td>FAQ 基盤</td>
 </tr>
 </tbody>
@@ -92,12 +92,12 @@
 <tr>
 <td>§9</td>
 <td>データベース詳細設計</td>
-<td><code>projects</code> / <code>faqs</code> テーブル詳細（正本は基本設計）</td>
+<td><code>M_projects</code> / <code>M_faqs</code> テーブル詳細（正本は基本設計）</td>
 </tr>
 <tr>
 <td>§3.3.1</td>
 <td><code>worker-main-api</code> モジュール構成</td>
-<td><code>routes/projects.ts</code> <code>routes/faqs.ts</code></td>
+<td><code>routes/M_projects.ts</code> <code>routes/M_faqs.ts</code></td>
 </tr>
 </tbody>
 </table>
@@ -112,31 +112,31 @@
 <p>FAQ CRUD / 状態保存 / 一括インポートの全項目は <a href="../02_基本設計/02_API設計/index.html">../02_基本設計/02_API設計/index.html</a> を正本とする。</p>
 <h3 id="33-データベース詳細設計参照のみ">3.3 データベース詳細設計（参照のみ）</h3>
 <p class="section-lead">DDL・制約・インデックスは基本設計が正本のため、本ページでは正本へのリンクのみを示します。</p>
-<p><code>projects</code> / <code>faqs</code> / <code>faq_embeddings</code> / <code>faq_search_fts</code> の DDL、CHECK 制約、インデックス、外部キー、コード値、SaaS データ分離観点（<code>contract_owner_user_id</code>）、保持期間は <a href="../02_基本設計/03_テーブル設計/index.html">../02_基本設計/03_テーブル設計/index.html</a> を正本とする。</p>
+<p><code>M_projects</code> / <code>M_faqs</code> / <code>faq_embeddings</code> / <code>TP_faq_search_fts</code> の DDL、CHECK 制約、インデックス、外部キー、コード値、SaaS データ分離観点（<code>contract_owner_user_id</code>）、保持期間は <a href="../02_基本設計/03_テーブル設計/index.html">../02_基本設計/03_テーブル設計/index.html</a> を正本とする。</p>
 <h3 id="34-実装モジュール構成">3.4 実装モジュール構成</h3>
 <p class="section-lead">本機能を構成する <code>worker-main-api</code> 内のソースファイル配置と各ファイルの責務を示します。</p>
 <pre><code>src/
 ├── routes/
-│   ├── projects.ts           # /projects/* CRUD + メンバー割当
-│   └── faqs.ts               # /faqs/* CRUD（状態は PATCH の status で保存）+ 一括インポート
+│   ├── M_projects.ts           # /M_projects/* CRUD + メンバー割当
+│   └── M_faqs.ts               # /M_faqs/* CRUD（状態は PATCH の status で保存）+ 一括インポート
 ├── handlers/
 ├── domain/
 │   └── faq-status.ts         # FAQ 状態の値域検証（draft / published / hidden / deleted）
 ├── repository/
-│   ├── projects.ts
-│   ├── faqs.ts
+│   ├── M_projects.ts
+│   ├── M_faqs.ts
 │   └── faq-embeddings.ts
 └── middleware/
     └── authorize.ts          # requireProject / requireRole 連動</code></pre>
 <h3 id="35-faq-状態の保存">3.5 FAQ 状態の保存</h3>
 <p class="section-lead">FAQ の状態を専用 API ではなく <code>PATCH</code> の <code>status</code> フィールドで保存する方針と、その値域・遷移ルールを定めます。</p>
-<p><code>faqs.status</code> は CHECK 制約（<code>draft</code> / <code>published</code> / <code>hidden</code> / <code>deleted</code>）で値域固定。状態は SCR-006 編集画面の「状態」ラジオで選択した値を <code>PATCH /api/v1/faqs/{id}</code> の <code>status</code> フィールドで保存する。<code>draft</code> / <code>published</code> / <code>hidden</code> は相互に自由遷移でき、専用の公開 API・状態遷移ガードは持たない。<code>domain/faq-status.ts</code> の責務は <code>status</code> 値域の妥当性検証のみ（<code>deleted</code> への直接遷移は <code>DELETE /faqs/{id}</code> 経由に限定）。<code>status='published'</code> を選択して保存する操作が管理者(admin)・メンバー(member)による公開前の内容確認（FR-045）を兼ね、UI 上は保存前に確認ダイアログを表示する。<code>published</code> 設定時は <code>published_at</code> をサーバ側で記録する。</p>
+<p><code>M_faqs.status</code> は CHECK 制約（<code>draft</code> / <code>published</code> / <code>hidden</code> / <code>deleted</code>）で値域固定。状態は SCR-006 編集画面の「状態」ラジオで選択した値を <code>PATCH /api/v1/M_faqs/{id}</code> の <code>status</code> フィールドで保存する。<code>draft</code> / <code>published</code> / <code>hidden</code> は相互に自由遷移でき、専用の公開 API・状態遷移ガードは持たない。<code>domain/faq-status.ts</code> の責務は <code>status</code> 値域の妥当性検証のみ（<code>deleted</code> への直接遷移は <code>DELETE /M_faqs/{id}</code> 経由に限定）。<code>status='published'</code> を選択して保存する操作が管理者(admin)・メンバー(member)による公開前の内容確認（FR-045）を兼ね、UI 上は保存前に確認ダイアログを表示する。<code>published</code> 設定時は <code>published_at</code> をサーバ側で記録する。</p>
 <h3 id="36-fts5-検索">3.6 FTS5 検索</h3>
 <p class="section-lead">公開 FAQ の全文検索を FTS5 virtual table + BM25 ランキングで実現する構成と検索クエリを示します。</p>
-<p><code>faq_search_fts</code> は SQLite の FTS5 virtual table で構築し、<code>faqs.title || faqs.body</code> をインデックス対象とする。FAQ 公開・更新時に同期更新。検索クエリは BM25 ランキングを利用：</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> f.<span class="op">*</span>, bm25(faq_search_fts) <span class="kw">AS</span> <span class="fu">rank</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> faq_search_fts <span class="kw">JOIN</span> faqs f <span class="kw">ON</span> f.<span class="dt">rowid</span> <span class="op">=</span> faq_search_fts.<span class="dt">rowid</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> faq_search_fts MATCH ?<span class="dv">1</span> <span class="kw">AND</span> f.project_id <span class="op">=</span> ?<span class="dv">2</span> <span class="kw">AND</span> f.status <span class="op">=</span> <span class="st">&#39;published&#39;</span></span>
+<p><code>TP_faq_search_fts</code> は SQLite の FTS5 virtual table で構築し、<code>M_faqs.title || M_faqs.body</code> をインデックス対象とする。FAQ 公開・更新時に同期更新。検索クエリは BM25 ランキングを利用：</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> f.<span class="op">*</span>, bm25(TP_faq_search_fts) <span class="kw">AS</span> <span class="fu">rank</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> TP_faq_search_fts <span class="kw">JOIN</span> M_faqs f <span class="kw">ON</span> f.<span class="dt">rowid</span> <span class="op">=</span> TP_faq_search_fts.<span class="dt">rowid</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> TP_faq_search_fts MATCH ?<span class="dv">1</span> <span class="kw">AND</span> f.project_id <span class="op">=</span> ?<span class="dv">2</span> <span class="kw">AND</span> f.status <span class="op">=</span> <span class="st">&#39;published&#39;</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> <span class="fu">rank</span> <span class="kw">LIMIT</span> <span class="dv">20</span></span></code></pre></div>
 <p>詳細は <a href="DD03_AI回答パイプライン.html">DD03_AI回答パイプライン.html</a> §3.2 関連度計算を参照。</p>
 <h3 id="37-埋め込みベクトル事前計算">3.7 埋め込みベクトル事前計算</h3>
@@ -144,14 +144,14 @@
 <p>FAQ 公開時に <code>@cf/baai/bge-base-en-v1.5</code> で埋め込みベクトルを計算し、<code>faq_embeddings</code> テーブル（または KV <code>embedding:{faqId}</code>）に保存。AI 推論時のリランキング用。</p>
 <h3 id="38-一括インポートfaqbulk_import">3.8 一括インポート（<code>faq.bulk_import</code>）</h3>
 <p class="section-lead">CSV を R2 へステージングし Queue 経由で consumer が分割取込する一括インポートの判定ロジックと、失敗行の扱いを定めます。文字コード事前検証・列定義・テンプレート生成・行単位の INSERT/UPDATE 判定が要点です。</p>
-<p>CSV ファイル（UTF-8、BOM 許容）→ R2 ステージング → Queue 投入 → consumer が分割 INSERT。1 リクエスト最大 1000 件。<strong>JSON 形式は受理しない</strong>（不正形式は E-INPUT-CSV-INVALID）。UI は SCR-006-002 FAQ CSV インポートモーダル（<code>POST /faqs/import</code>）。詳細は <a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html</a> を参照。</p>
+<p>CSV ファイル（UTF-8、BOM 許容）→ R2 ステージング → Queue 投入 → consumer が分割 INSERT。1 リクエスト最大 1000 件。<strong>JSON 形式は受理しない</strong>（不正形式は E-INPUT-CSV-INVALID）。UI は SCR-006-002 FAQ CSV インポートモーダル（<code>POST /M_faqs/import</code>）。詳細は <a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html</a> を参照。</p>
 <p><strong>文字コード事前検証</strong>（クライアント側）: SCR-006-002 のドラッグ&amp;ドロップ / ファイル選択の時点で、ファイル先頭バイト（BOM）および本文のバイト列から文字コードを判定し、<strong>UTF-8（BOM 許容）以外はアップロードせず即エラー</strong>（E-INPUT-CSV-INVALID / MSG-SCR-006-002-ERR-005、検出した文字コード名を併記）。これによりサーバ側の文字化け INSERT を未然に防ぐ。</p>
 <p><strong>CSV 列定義</strong>（ヘッダ行必須）: <code>FAQ ID, 質問, 回答, カテゴリ</code>。<code>status</code>（状態）列は受理しない。</p>
-<p><strong>テンプレート生成</strong>（<code>GET /faqs/import/template</code>）: ヘッダ行のみ（<code>FAQ ID,質問,回答,カテゴリ</code>）を <code>text/csv; charset=utf-8</code>（BOM 付与）でストリーム返却。動的データなし（静的文字列）、Queue 不経由の同期レスポンス。</p>
+<p><strong>テンプレート生成</strong>（<code>GET /M_faqs/import/template</code>）: ヘッダ行のみ（<code>FAQ ID,質問,回答,カテゴリ</code>）を <code>text/csv; charset=utf-8</code>（BOM 付与）でストリーム返却。動的データなし（静的文字列）、Queue 不経由の同期レスポンス。</p>
 <p><strong>FAQ ID 行判定ロジック</strong>（consumer 側、行単位）。consumer は CSV 各行について <code>FAQ ID</code> の有無と当該契約境界（<code>contract_owner_user_id</code>）での突合結果に応じて INSERT / UPDATE / 失敗を分岐する。質問・回答の欠落 / 文字数超過はいずれの分岐でも当該行を失敗させる（カテゴリは任意）。</p>
 <pre class="mermaid"><code>sequenceDiagram
   participant Q as Queue consumer
-  participant D as D1 (faqs)
+  participant D as D1 (M_faqs)
 
   Q-&gt;&gt;Q: 行をパース(FAQ ID / 質問 / 回答 / カテゴリ)
   alt 質問・回答が欠落 / 文字数超過
@@ -160,17 +160,17 @@
     Q-&gt;&gt;D: 新規 INSERT(status='draft', version=1)
     D--&gt;&gt;Q:
   else FAQ ID あり
-    Q-&gt;&gt;D: 当該契約境界内の faqs.id を突合
+    Q-&gt;&gt;D: 当該契約境界内の M_faqs.id を突合
     D--&gt;&gt;Q: 突合結果(一致 / 不存在)
     alt 一致
-      Q-&gt;&gt;D: UPDATE(status 維持・faq_revisions 追記・version++)
+      Q-&gt;&gt;D: UPDATE(status 維持・H_faq_revisions 追記・version++)
       D--&gt;&gt;Q:
     else 不存在
       Q-&gt;&gt;Q: 当該行を失敗(E-INPUT-CSV-FAQID-NOTFOUND)
     end
   end</code></pre>
-<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">部分成功</span>失敗行があっても他行の取込は継続する（部分成功）。<code>UPDATE</code> 分岐では <code>status</code> を維持し、<code>faq_revisions</code> に改訂行を追記して <code>version</code> をインクリメントする。</div></div>
-<p>失敗行は「行番号 + エラー理由」の構造化リストとしてジョブ結果（<code>GET /faqs/import/jobs/{jobId}</code> 等のポーリング応答）に含め、SCR-006-002 進捗パネル内のスクロール領域に画面表示する（エラー CSV のダウンロードは行わない）。</p>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">部分成功</span>失敗行があっても他行の取込は継続する（部分成功）。<code>UPDATE</code> 分岐では <code>status</code> を維持し、<code>H_faq_revisions</code> に改訂行を追記して <code>version</code> をインクリメントする。</div></div>
+<p>失敗行は「行番号 + エラー理由」の構造化リストとしてジョブ結果（<code>GET /M_faqs/import/jobs/{jobId}</code> 等のポーリング応答）に含め、SCR-006-002 進捗パネル内のスクロール領域に画面表示する（エラー CSV のダウンロードは行わない）。</p>
 <h3 id="39-リミット">3.9 リミット</h3>
 <p class="section-lead">FAQ 件数・プロジェクト数の契約単位上限と、警告しきい値・拒否しきい値を定めます。</p>
 <table>
@@ -195,19 +195,19 @@
 </tbody>
 </table>
 <h3 id="310-プロジェクト作成fr-015e--fr-030a">3.10 プロジェクト作成(FR-015e / FR-030a)</h3>
-<p class="section-lead">プロジェクト作成処理を定めます。オーナーは <code>owners</code> 行存在(isOwner)による全権でプロジェクトを管理するため、作成時に自身の割当行(<code>project_user_assignments</code>)を作る必要はありません。1 トランザクション内で <code>projects</code> INSERT と監査ログ記録を行う流れを示します。</p>
-<p><code>POST /projects</code> 実行時は SCR-004-001(新規作成モード)から <code>name</code> / <code>allowedDomains</code> 等の基本情報のみを受け取る(<code>initialAdmins</code> フィールドは受け取らない)。オーナーは <code>isOwner</code> 全権で当該プロジェクトを管理でき、プロジェクトへの自動 admin 割当行(旧 v1.10)は作成しない。他者をプロジェクト管理者として割り当てる操作は、プロジェクト作成後に SCR-009-001 経由(<code>POST /projects/{id}/members</code> + <code>role='admin'</code>)で <code>project_user_assignments</code> に行う。</p>
+<p class="section-lead">プロジェクト作成処理を定めます。オーナーは <code>M_owners</code> 行存在(isOwner)による全権でプロジェクトを管理するため、作成時に自身の割当行(<code>M_project_user_assignments</code>)を作る必要はありません。1 トランザクション内で <code>M_projects</code> INSERT と監査ログ記録を行う流れを示します。</p>
+<p><code>POST /M_projects</code> 実行時は SCR-004-001(新規作成モード)から <code>name</code> / <code>allowedDomains</code> 等の基本情報のみを受け取る(<code>initialAdmins</code> フィールドは受け取らない)。オーナーは <code>isOwner</code> 全権で当該プロジェクトを管理でき、プロジェクトへの自動 admin 割当行(旧 v1.10)は作成しない。他者をプロジェクト管理者として割り当てる操作は、プロジェクト作成後に SCR-009-001 経由(<code>POST /M_projects/{id}/members</code> + <code>role='admin'</code>)で <code>M_project_user_assignments</code> に行う。</p>
 <pre class="mermaid"><code>sequenceDiagram
   participant U as オーナー
   participant W as worker-main-api
   participant D as D1
 
-  U-&gt;&gt;W: POST /projects(name / allowedDomains)
+  U-&gt;&gt;W: POST /M_projects(name / allowedDomains)
   W-&gt;&gt;W: requireOwner + リクエスト検証
   alt 検証 NG
     W--&gt;&gt;U: 400 VALIDATION_ERROR
   else 検証 OK
-    W-&gt;&gt;D: projects INSERT(公開鍵発行・valid=1)
+    W-&gt;&gt;D: M_projects INSERT(公開鍵発行・valid=1)
     D--&gt;&gt;W: projectId
     W-&gt;&gt;D: 監査ログ project.create(retention_class=general)
     D--&gt;&gt;W:
@@ -215,15 +215,15 @@
   end</code></pre>
 <p>擬似コード(上記トランザクションの実体、INSERT 各列値を含む):</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">function</span> <span class="fu">createProject</span>(actor<span class="op">:</span> Principal<span class="op">,</span> req<span class="op">:</span> CreateProjectRequest) {</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">requireOwner</span>(actor)<span class="op">;</span> <span class="co">// E-AUTHZ-OWNER-ONLY(owners 行存在 = isOwner)</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">requireOwner</span>(actor)<span class="op">;</span> <span class="co">// E-AUTHZ-OWNER-ONLY(M_owners 行存在 = isOwner)</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">validateCreateProjectRequest</span>(req)<span class="op">;</span> <span class="co">// 400</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="cf">await</span> db<span class="op">.</span><span class="fu">transaction</span>(<span class="kw">async</span> (tx) <span class="kw">=&gt;</span> {</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> project <span class="op">=</span> <span class="cf">await</span> tx<span class="op">.</span><span class="fu">insert</span>(<span class="st">&#39;projects&#39;</span><span class="op">,</span> {</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> project <span class="op">=</span> <span class="cf">await</span> tx<span class="op">.</span><span class="fu">insert</span>(<span class="st">&#39;M_projects&#39;</span><span class="op">,</span> {</span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>      <span class="op">...</span>req<span class="op">,</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>      contract_owner_user_id<span class="op">:</span> actor<span class="op">.</span><span class="at">contractOwnerUserId</span><span class="op">,</span>  <span class="co">// → owners.id</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>      contract_owner_user_id<span class="op">:</span> actor<span class="op">.</span><span class="at">contractOwnerUserId</span><span class="op">,</span>  <span class="co">// → M_owners.id</span></span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>      valid<span class="op">:</span> <span class="dv">1</span><span class="op">,</span></span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">// オーナーは isOwner 全権で管理するため、自身の割当行(project_user_assignments)は作成しない</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">// オーナーは isOwner 全権で管理するため、自身の割当行(M_project_user_assignments)は作成しない</span></span>
 <span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> tx<span class="op">.</span><span class="fu">insertAudit</span>({</span>
 <span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>      action<span class="op">:</span> <span class="st">&#39;project.create&#39;</span><span class="op">,</span></span>
 <span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>      actor_type<span class="op">:</span> <span class="st">&#39;owner&#39;</span><span class="op">,</span> actor_id<span class="op">:</span> actor<span class="op">.</span><span class="at">actorId</span><span class="op">,</span></span>
@@ -236,33 +236,33 @@
 <span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
 <span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h3 id="311-プロジェクト削除時の論理削除カスケード--孤立メンバー-cleanupfr-030b">3.11 プロジェクト削除時の論理削除カスケード + 孤立メンバー cleanup(FR-030b)</h3>
-<p class="section-lead">プロジェクト削除時に、関連行を論理削除へ伝播させ、他に割当の無くなった孤立メンバーを併せて無効化する 1 トランザクションの流れを定めます。<code>DELETE /projects/{id}</code> は <strong>SCR-004-001 プロジェクト作成・編集モーダル(編集モード)のオーナー専有 DangerSection のみ</strong> から起動可能です。</p>
+<p class="section-lead">プロジェクト削除時に、関連行を論理削除へ伝播させ、他に割当の無くなった孤立メンバーを併せて無効化する 1 トランザクションの流れを定めます。<code>DELETE /M_projects/{id}</code> は <strong>SCR-004-001 プロジェクト作成・編集モーダル(編集モード)のオーナー専有 DangerSection のみ</strong> から起動可能です。</p>
 <pre class="mermaid"><code>sequenceDiagram
   participant U as オーナー
   participant W as worker-main-api
   participant D as D1
 
-  U-&gt;&gt;W: DELETE /projects/{id}
+  U-&gt;&gt;W: DELETE /M_projects/{id}
   W-&gt;&gt;D: 割当プロジェクトユーザー一覧を取得(valid=1)
   D--&gt;&gt;W: 割当一覧
-  W-&gt;&gt;D: project_user_assignments を valid=0 へ(当該プロジェクトの全割当行)
+  W-&gt;&gt;D: M_project_user_assignments を valid=0 へ(当該プロジェクトの全割当行)
   D--&gt;&gt;W:
   W-&gt;&gt;D: 孤立プロジェクトユーザーを抽出(他 valid=1 割当 0 件)
   D--&gt;&gt;W: 孤立ユーザー一覧
   opt 孤立プロジェクトユーザーあり
-    W-&gt;&gt;D: 孤立ユーザーの sessions 失効・未使用 access_tokens 失効・project_users を valid=0
+    W-&gt;&gt;D: 孤立ユーザーの T_sessions 失効・未使用 T_access_tokens 失効・M_project_users を valid=0
     D--&gt;&gt;W:
   end
-  W-&gt;&gt;D: projects を status='deleted', valid=0, deleted_at へ + 関連テーブルへ valid=0 伝播
+  W-&gt;&gt;D: M_projects を status='deleted', valid=0, deleted_at へ + 関連テーブルへ valid=0 伝播
   D--&gt;&gt;W:
   W-&gt;&gt;D: 監査ログ project.logical_delete(retention_class=general)
   D--&gt;&gt;W:
   W--&gt;&gt;U: 削除完了</code></pre>
-<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">論理削除の伝播先と除外</span>関連テーブル(<code>allowed_domains</code> / <code>faqs</code> / <code>inquiries</code> / <code>question_logs</code> / <code>project_quota_limits</code>)へ <code>valid=0, updated_at=now()</code> を伝播する。<code>usage_metering</code> は法定保管 7 年のため論理削除せず保持する。孤立プロジェクトユーザーの抽出条件は「当該プロジェクトに割り当たっていたプロジェクトユーザーのうち、他プロジェクト割当(<code>valid=1</code> の <code>project_user_assignments</code>)が 0 件のもの」。<code>project_users</code> はオーナーを含まない完全分離マスタのため、抽出対象は常にプロジェクトユーザーのみとなる。監査ログ <code>metadata</code> には <code>{ projectId, logicallyDeletedProjectUserIds: [...] }</code> を含める。</div></div>
-<p>オーナー(<code>owners</code> 行)は <code>project_users</code> マスタの外にあり、本処理の論理削除対象に含まれない(<code>owners</code> は常に <code>valid=1</code> 維持)。オーナーは <code>isOwner</code> 全権でプロジェクトを管理し自身の割当行を持たないため、削除されるのは当該プロジェクトの <code>project_user_assignments</code> 行のみである。論理削除データは <code>updated_at &lt; now() - 90d AND valid=0</code> の物理削除バッチ(<a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html §3.12</a>)で 90 日後に物理削除される。</p>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">論理削除の伝播先と除外</span>関連テーブル(<code>M_allowed_domains</code> / <code>M_faqs</code> / <code>T_inquiries</code> / <code>H_question_logs</code> / <code>M_project_quota_limits</code>)へ <code>valid=0, updated_at=now()</code> を伝播する。<code>T_usage_metering</code> は法定保管 7 年のため論理削除せず保持する。孤立プロジェクトユーザーの抽出条件は「当該プロジェクトに割り当たっていたプロジェクトユーザーのうち、他プロジェクト割当(<code>valid=1</code> の <code>M_project_user_assignments</code>)が 0 件のもの」。<code>M_project_users</code> はオーナーを含まない完全分離マスタのため、抽出対象は常にプロジェクトユーザーのみとなる。監査ログ <code>metadata</code> には <code>{ projectId, logicallyDeletedProjectUserIds: [...] }</code> を含める。</div></div>
+<p>オーナー(<code>M_owners</code> 行)は <code>M_project_users</code> マスタの外にあり、本処理の論理削除対象に含まれない(<code>M_owners</code> は常に <code>valid=1</code> 維持)。オーナーは <code>isOwner</code> 全権でプロジェクトを管理し自身の割当行を持たないため、削除されるのは当該プロジェクトの <code>M_project_user_assignments</code> 行のみである。論理削除データは <code>updated_at &lt; now() - 90d AND valid=0</code> の物理削除バッチ(<a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html §3.12</a>)で 90 日後に物理削除される。</p>
 <h3 id="311a-プロジェクト連絡先メール確認フローfr-033a--scr-019">3.11a プロジェクト連絡先メール確認フロー(FR-033a / SCR-019)</h3>
 <p class="section-lead">プロジェクト連絡先メールを変更したときに、確認メールのトークンで到達確認を行い <code>contact_email_verified_at</code> をセットするまでの流れを定めます。</p>
-<p>SCR-004-001(新規モードで初期入力、または編集モードで <code>projects.contact_email</code> を変更)した時に、TPL-PROJECT_CONTACT_VERIFY確認メールを送信する。受信者はSCR-019へ着地し、<code>POST /auth/contact-verifications/{token}</code> で確認完了する。</p>
+<p>SCR-004-001(新規モードで初期入力、または編集モードで <code>M_projects.contact_email</code> を変更)した時に、TPL-PROJECT_CONTACT_VERIFY確認メールを送信する。受信者はSCR-019へ着地し、<code>POST /auth/contact-verifications/{token}</code> で確認完了する。</p>
 <pre class="mermaid"><code>sequenceDiagram
   participant U as オーナー / 管理者
   participant W as worker-main-api
@@ -270,7 +270,7 @@
   participant M as メール送信
   participant R as 連絡先メール受信者
 
-  U-&gt;&gt;W: POST/PATCH /projects(contact_email 変更)
+  U-&gt;&gt;W: POST/PATCH /M_projects(contact_email 変更)
   W-&gt;&gt;D: contact_email 更新 + contact_email_verified_at=NULL
   D--&gt;&gt;W:
   W-&gt;&gt;W: contact_verify トークン発行(有効 24h)
@@ -287,9 +287,9 @@
     W--&gt;&gt;R: 確認完了
   end</code></pre>
 <p>下記の擬似コードは上記フローの実体(SQL バインドとトークン操作の詳細):</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">// (1) 連絡先メール変更時(POST/PATCH /projects 内)</span></span>
+<div class="sourceCode" id="cb4"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">// (1) 連絡先メール変更時(POST/PATCH /M_projects 内)</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="vs">`UPDATE projects SET contact_email = ?1, contact_email_verified_at = NULL, updated_at = ?2 WHERE id = ?3`</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="vs">`UPDATE M_projects SET contact_email = ?1, contact_email_verified_at = NULL, updated_at = ?2 WHERE id = ?3`</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">.</span><span class="fu">bind</span>(newContactEmail<span class="op">,</span> now<span class="op">,</span> projectId)<span class="op">.</span><span class="fu">run</span>()<span class="op">;</span></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> rawToken <span class="op">=</span> <span class="cf">await</span> <span class="fu">generateToken</span>(<span class="st">&#39;contact_verify&#39;</span><span class="op">,</span> { projectId }<span class="op">,</span> env<span class="op">,</span> <span class="dv">24</span> <span class="op">*</span> <span class="dv">3600</span>)<span class="op">;</span></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> <span class="fu">enqueueEmail</span>({</span>
@@ -302,7 +302,7 @@
 <span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> { payload } <span class="op">=</span> <span class="cf">await</span> <span class="fu">verifyToken</span>(rawToken<span class="op">,</span> <span class="st">&#39;contact_verify&#39;</span><span class="op">,</span> env)<span class="op">;</span>  <span class="co">// 410 if expired/used</span></span>
 <span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> { projectId } <span class="op">=</span> payload<span class="op">;</span></span>
 <span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">batch</span>([</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`UPDATE projects SET contact_email_verified_at = ?1, updated_at = ?1 WHERE id = ?2`</span>)<span class="op">.</span><span class="fu">bind</span>(now<span class="op">,</span> projectId)<span class="op">,</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`UPDATE M_projects SET contact_email_verified_at = ?1, updated_at = ?1 WHERE id = ?2`</span>)<span class="op">.</span><span class="fu">bind</span>(now<span class="op">,</span> projectId)<span class="op">,</span></span>
 <span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>])<span class="op">;</span></span>
 <span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> <span class="fu">consumeToken</span>(rawToken<span class="op">,</span> <span class="st">&#39;contact_verify&#39;</span><span class="op">,</span> env)<span class="op">;</span></span>
 <span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> <span class="fu">writeAudit</span>({ action<span class="op">:</span> <span class="st">&#39;project.contact_email_verified&#39;</span><span class="op">,</span> target_project_id<span class="op">:</span> projectId })<span class="op">;</span></span></code></pre></div>
@@ -316,7 +316,7 @@
 </ul>
 <h3 id="312-90-日後物理削除バッチ概要">3.12 90 日後物理削除バッチ(概要)</h3>
 <p class="section-lead">論理削除済みデータを 90 日後に物理削除する日次バッチの概要を示します。詳細ロジックは DD13 が正本のため、本節は対象と CASCADE の範囲のみを述べます。</p>
-<p>詳細は <a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html §3.12</a> を正本とする。日次バッチで <code>valid=0 AND updated_at &lt; now() - 90d</code> の行を物理削除する。<code>owners</code> 行が物理 DELETE されると <code>ON DELETE CASCADE</code> で関連 <code>project_users</code> / <code>project_user_assignments</code> / <code>sessions</code> / <code>access_tokens</code> / <code>terms_agreements</code>(<code>actor_type='owner'</code> 分)等が連鎖物理削除される。<code>project_users</code> 行が物理 DELETE されると <code>project_user_assignments</code> / 当該ユーザーの <code>sessions</code> / <code>access_tokens</code> 等が連鎖物理削除される。<code>projects</code> 行が物理 DELETE されると <code>ON DELETE CASCADE</code> で関連 <code>faqs</code> / <code>inquiries</code> / <code>chat_*</code> / <code>project_quota_limits</code> 等が連鎖物理削除される。<code>billing_subscriptions</code> / <code>usage_metering</code> は物理削除バッチの対象外(電子帳簿保存法 7 年保持、永久維持。<code>usage_metering</code> はプロジェクト単位行も含め 7 年保持)。匿名化モード(<code>owners.data_deletion_mode='anonymize'</code>)は物理削除前に匿名化処理を実施する。</p>
+<p>詳細は <a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html §3.12</a> を正本とする。日次バッチで <code>valid=0 AND updated_at &lt; now() - 90d</code> の行を物理削除する。<code>M_owners</code> 行が物理 DELETE されると <code>ON DELETE CASCADE</code> で関連 <code>M_project_users</code> / <code>M_project_user_assignments</code> / <code>T_sessions</code> / <code>T_access_tokens</code> / <code>T_terms_agreements</code>(<code>actor_type='owner'</code> 分)等が連鎖物理削除される。<code>M_project_users</code> 行が物理 DELETE されると <code>M_project_user_assignments</code> / 当該ユーザーの <code>T_sessions</code> / <code>T_access_tokens</code> 等が連鎖物理削除される。<code>M_projects</code> 行が物理 DELETE されると <code>ON DELETE CASCADE</code> で関連 <code>M_faqs</code> / <code>T_inquiries</code> / <code>chat_*</code> / <code>M_project_quota_limits</code> 等が連鎖物理削除される。<code>T_billing_subscriptions</code> / <code>T_usage_metering</code> は物理削除バッチの対象外(電子帳簿保存法 7 年保持、永久維持。<code>T_usage_metering</code> はプロジェクト単位行も含め 7 年保持)。匿名化モード(<code>M_owners.data_deletion_mode='anonymize'</code>)は物理削除前に匿名化処理を実施する。</p>
 <h3 id="313-関連する横断設計">3.13 関連する横断設計</h3>
 <p class="section-lead">本ページのロジックが依存する認可・監査ログ・キャッシュ反映・論理削除フィルタの横断的な取り決めを示します。</p>
 <ul>
@@ -326,7 +326,7 @@
 <li>論理削除フィルタ: 全 GET 系クエリで <code>WHERE valid=1</code> を必須付与(漏れは IDOR 類似の脆弱性、09_セキュリティ設計参照)</li>
 </ul>
 <h2 id="4-関連設計">4. 関連設計</h2>
-<p class="section-lead">本 DD に関連する正本ドキュメントを示します。画面・メッセージは <a href="../02_基本設計/01_画面設計/index.html">画面設計</a> / <a href="../02_基本設計/06_メッセージ一覧.html">メッセージ一覧</a>、API は <a href="../02_基本設計/02_API設計/index.html">API 設計</a>、<code>projects</code> / <code>faqs</code> 等のスキーマは <a href="../02_基本設計/03_テーブル設計/index.html">テーブル設計</a> を正本とします。関連 DD は <a href="DD03_AI回答パイプライン.html">DD03_AI回答パイプライン.html</a> / <a href="DD07_トークン発行・検証.html">DD07_トークン発行・検証.html</a> / <a href="DD08_認可ヘルパ.html">DD08_認可ヘルパ.html</a> / <a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html</a> を参照します。</p>
+<p class="section-lead">本 DD に関連する正本ドキュメントを示します。画面・メッセージは <a href="../02_基本設計/01_画面設計/index.html">画面設計</a> / <a href="../02_基本設計/06_メッセージ一覧.html">メッセージ一覧</a>、API は <a href="../02_基本設計/02_API設計/index.html">API 設計</a>、<code>M_projects</code> / <code>M_faqs</code> 等のスキーマは <a href="../02_基本設計/03_テーブル設計/index.html">テーブル設計</a> を正本とします。関連 DD は <a href="DD03_AI回答パイプライン.html">DD03_AI回答パイプライン.html</a> / <a href="DD07_トークン発行・検証.html">DD07_トークン発行・検証.html</a> / <a href="DD08_認可ヘルパ.html">DD08_認可ヘルパ.html</a> / <a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html</a> を参照します。</p>
 <h2 id="5-テスト観点">5. テスト観点</h2>
 <p class="section-lead">本ページのロジックに対する代表的なテスト対応です。受入条件(AC)・要件 ID とテスト実装を紐付けます。</p>
 <div class="table-scroll">
@@ -383,11 +383,11 @@
 </tr>
 <tr>
 <td>権限</td>
-<td>該当プロジェクトに割当のないプロジェクトユーザー(<code>project_user_assignments</code> 行なし)による FAQ 編集試行で 404 偽装 / 該当 PJ の <code>member</code>+ ロールを持つプロジェクトユーザーは編集可</td>
+<td>該当プロジェクトに割当のないプロジェクトユーザー(<code>M_project_user_assignments</code> 行なし)による FAQ 編集試行で 404 偽装 / 該当 PJ の <code>member</code>+ ロールを持つプロジェクトユーザーは編集可</td>
 </tr>
 <tr>
 <td>性能</td>
-<td><code>PATCH /api/v1/faqs/{id}</code>(状態変更含む) p95 &lt; 300ms（UPDATE 1 行 + KV invalidate）</td>
+<td><code>PATCH /api/v1/M_faqs/{id}</code>(状態変更含む) p95 &lt; 300ms（UPDATE 1 行 + KV invalidate）</td>
 </tr>
 </tbody>
 </table>

@@ -37,7 +37,7 @@
 <tbody>
 <tr><td>API ID</td><td>API-FAQ-001</td></tr>
 <tr><td>API 名</td><td>FAQ 一覧</td></tr>
-<tr><td>エンドポイント</td><td><code>/faqs</code></td></tr>
+<tr><td>エンドポイント</td><td><code>/M_faqs</code></td></tr>
 <tr><td>HTTP メソッド</td><td>GET</td></tr>
 <tr><td>認証</td><td>Cookie</td></tr>
 <tr><td>権限</td><td>編集系・参照: オーナー / 該当 PJ の <code>member</code>+(<code>admin</code> または <code>member</code>)</td></tr>
@@ -57,7 +57,7 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>faqs</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>M_faqs</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -95,7 +95,7 @@
 <p>403 <code>PROJECT_ACCESS_DENIED</code> ほか(<a href="../05_エラー設計.html">05_エラー設計.html</a> 正本)。</p>
 
 <h2 id="API-FAQ-002">API-FAQ-002 FAQ 作成・更新・削除</h2>
-<span id="542-post-faqs--patch-faqsid--delete-faqsid"></span>
+<span id="542-post-M_faqs--patch-faqsid--delete-faqsid"></span>
 
 <h3>基本情報</h3>
 <table>
@@ -103,14 +103,14 @@
 <tbody>
 <tr><td>API ID</td><td>API-FAQ-002</td></tr>
 <tr><td>API 名</td><td>FAQ 作成・更新・削除</td></tr>
-<tr><td>エンドポイント</td><td><code>/faqs</code>, <code>/faqs/{id}</code></td></tr>
+<tr><td>エンドポイント</td><td><code>/M_faqs</code>, <code>/M_faqs/{id}</code></td></tr>
 <tr><td>HTTP メソッド</td><td>POST / PATCH / DELETE</td></tr>
 <tr><td>認証</td><td>Cookie + CSRF</td></tr>
 <tr><td>権限</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
 </tbody>
 </table>
 <p>楽観ロック: <code>version</code> 必須。<code>CONFLICT</code> 時 409。</p>
-<p>FAQ の状態(<code>draft</code> / <code>published</code> / <code>hidden</code>)は <code>status</code> フィールドで指定し、<code>PATCH /faqs/{id}</code> の保存操作で相互に自由遷移できる(専用の公開 API・状態遷移ガードは持たない)。SCR-006 の「保存」ボタンは「状態」ラジオで選択した値をそのまま本 API に渡す。<code>status='published'</code> への変更は管理者(admin)が編集画面で内容を確認したうえで明示選択する操作であり、これが FR-045「FAQ の公開前に管理者が内容を確認できること」を満たす。<code>published</code> 設定時は <code>publishedAt</code> をサーバ側で記録する。</p>
+<p>FAQ の状態(<code>draft</code> / <code>published</code> / <code>hidden</code>)は <code>status</code> フィールドで指定し、<code>PATCH /M_faqs/{id}</code> の保存操作で相互に自由遷移できる(専用の公開 API・状態遷移ガードは持たない)。SCR-006 の「保存」ボタンは「状態」ラジオで選択した値をそのまま本 API に渡す。<code>status='published'</code> への変更は管理者(admin)が編集画面で内容を確認したうえで明示選択する操作であり、これが FR-045「FAQ の公開前に管理者が内容を確認できること」を満たす。<code>published</code> 設定時は <code>publishedAt</code> をサーバ側で記録する。</p>
 <h3>処理概要</h3>
 <p class="section-lead">FAQ の CRUD と状態(<code>draft</code> / <code>published</code> / <code>hidden</code>)の相互遷移。</p>
 <table>
@@ -128,8 +128,8 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>faqs</code></td><td>◯</td><td>◯</td><td>◯</td><td>—</td></tr>
-<tr><td><code>faq_revisions</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td><code>M_faqs</code></td><td>◯</td><td>◯</td><td>◯</td><td>—</td></tr>
+<tr><td><code>H_faq_revisions</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -193,7 +193,7 @@
 <tbody>
 <tr><td>API ID</td><td>API-FAQ-003</td></tr>
 <tr><td>API 名</td><td>FAQ 一括状態変更</td></tr>
-<tr><td>エンドポイント</td><td><code>/faqs/bulk-status</code></td></tr>
+<tr><td>エンドポイント</td><td><code>/M_faqs/bulk-status</code></td></tr>
 <tr><td>HTTP メソッド</td><td>POST</td></tr>
 <tr><td>認証</td><td>Cookie + CSRF</td></tr>
 <tr><td>権限</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
@@ -216,7 +216,7 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>faqs</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
+<tr><td><code>M_faqs</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -261,7 +261,7 @@
 <tbody>
 <tr><td>API ID</td><td>API-FAQ-004</td></tr>
 <tr><td>API 名</td><td>FAQ CSV インポート</td></tr>
-<tr><td>エンドポイント</td><td><code>/faqs/import</code></td></tr>
+<tr><td>エンドポイント</td><td><code>/M_faqs/import</code></td></tr>
 <tr><td>HTTP メソッド</td><td>POST</td></tr>
 <tr><td>認証</td><td>Cookie + CSRF</td></tr>
 <tr><td>権限</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
@@ -283,8 +283,8 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>faqs</code></td><td>◯</td><td>◯</td><td>◯</td><td>—</td></tr>
-<tr><td><code>faq_revisions</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td><code>M_faqs</code></td><td>◯</td><td>◯</td><td>◯</td><td>—</td></tr>
+<tr><td><code>H_faq_revisions</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -300,7 +300,7 @@
 <tr><td><code>file</code></td><td>string</td><td>取込対象の CSV ファイル(必須・<code>multipart/form-data</code>、UTF-8、ヘッダ行必須、1 ファイル最大 1000 件)</td></tr>
 </tbody>
 </table>
-<p>受理形式は <strong>CSV のみ</strong>(UTF-8、BOM 許容、ヘッダ行必須、1 ファイル最大 1000 件)。<strong>JSON 形式は受理しない</strong>(不正形式は 415 / 400、E-INPUT-CSV-INVALID)。CSV 列構成は <code>FAQ ID, 質問, 回答, カテゴリ</code>。各行の <code>FAQ ID</code> で <strong>空欄 = 新規(<code>status=draft</code>)/ 既存 ID 一致 = 上書き(状態維持・<code>faq_revisions</code> に改訂追記)/ 当該契約に存在しない ID = 当該行を失敗</strong>(行単位エラー、E-INPUT-CSV-FAQID-NOTFOUND)と判定する。<code>status</code> 列は受理しない。</p><h3>レスポンス(202)</h3>
+<p>受理形式は <strong>CSV のみ</strong>(UTF-8、BOM 許容、ヘッダ行必須、1 ファイル最大 1000 件)。<strong>JSON 形式は受理しない</strong>(不正形式は 415 / 400、E-INPUT-CSV-INVALID)。CSV 列構成は <code>FAQ ID, 質問, 回答, カテゴリ</code>。各行の <code>FAQ ID</code> で <strong>空欄 = 新規(<code>status=draft</code>)/ 既存 ID 一致 = 上書き(状態維持・<code>H_faq_revisions</code> に改訂追記)/ 当該契約に存在しない ID = 当該行を失敗</strong>(行単位エラー、E-INPUT-CSV-FAQID-NOTFOUND)と判定する。<code>status</code> 列は受理しない。</p><h3>レスポンス(202)</h3>
 <pre><code>{ "jobId": "job_...", "status": "processing" }</code></pre>
 <table>
 <thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
@@ -327,7 +327,7 @@
 <tbody>
 <tr><td>API ID</td><td>API-FAQ-005</td></tr>
 <tr><td>API 名</td><td>FAQ インポートテンプレート</td></tr>
-<tr><td>エンドポイント</td><td><code>/faqs/import/template</code></td></tr>
+<tr><td>エンドポイント</td><td><code>/M_faqs/import/template</code></td></tr>
 <tr><td>HTTP メソッド</td><td>GET</td></tr>
 <tr><td>認証</td><td>Cookie</td></tr>
 <tr><td>権限</td><td>オーナー / 該当 PJ の <code>member</code>+(API-022 と同一)</td></tr>
@@ -374,7 +374,7 @@
 <tbody>
 <tr><td>API ID</td><td>API-FAQ-006</td></tr>
 <tr><td>API 名</td><td>FAQ CSV エクスポート</td></tr>
-<tr><td>エンドポイント</td><td><code>/faqs/export</code></td></tr>
+<tr><td>エンドポイント</td><td><code>/M_faqs/export</code></td></tr>
 <tr><td>HTTP メソッド</td><td>GET</td></tr>
 <tr><td>認証</td><td>Cookie</td></tr>
 <tr><td>権限</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
@@ -394,7 +394,7 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>faqs</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>M_faqs</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -434,7 +434,7 @@
 <tbody>
 <tr><td>API ID</td><td>API-FAQ-007</td></tr>
 <tr><td>API 名</td><td>FAQ 全文検索</td></tr>
-<tr><td>エンドポイント</td><td><code>/projects/{id}/faqs/search</code></td></tr>
+<tr><td>エンドポイント</td><td><code>/M_projects/{id}/M_faqs/search</code></td></tr>
 <tr><td>HTTP メソッド</td><td>GET</td></tr>
 <tr><td>認証</td><td>Cookie</td></tr>
 <tr><td>権限</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
@@ -456,8 +456,8 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>faqs</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
-<tr><td><code>faq_search_fts</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>M_faqs</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>TP_faq_search_fts</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -515,7 +515,7 @@
 <tbody>
 <tr><td>API ID</td><td>API-FAQ-008</td></tr>
 <tr><td>API 名</td><td>質問ログ検索</td></tr>
-<tr><td>エンドポイント</td><td><code>/projects/{id}/question-logs/search</code></td></tr>
+<tr><td>エンドポイント</td><td><code>/M_projects/{id}/question-logs/search</code></td></tr>
 <tr><td>HTTP メソッド</td><td>GET</td></tr>
 <tr><td>認証</td><td>Cookie</td></tr>
 <tr><td>権限</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
@@ -537,7 +537,7 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>question_logs</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>H_question_logs</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>

@@ -43,8 +43,8 @@
 <tbody>
 <tr><td>P-01</td><td>Resend 署名(HMAC-SHA256)を検証する(失敗時は 401)</td></tr>
 <tr><td>P-02</td><td>イベント種別を判定する</td></tr>
-<tr><td>P-03</td><td><code>notification_logs.delivery_state</code> を遷移する</td></tr>
-<tr><td>P-04</td><td><code>bounced</code> / <code>complained</code> の場合は <code>email_suppression_list</code> に追加する(全契約横断)</td></tr>
+<tr><td>P-03</td><td><code>H_notification_logs.delivery_state</code> を遷移する</td></tr>
+<tr><td>P-04</td><td><code>bounced</code> / <code>complained</code> の場合は <code>M_email_suppression_list</code> に追加する(全契約横断)</td></tr>
 <tr><td>P-05</td><td>受領応答を返す</td></tr>
 </tbody>
 </table>
@@ -52,9 +52,9 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>notification_logs</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
-<tr><td><code>email_suppression_list</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
-<tr><td><code>audit_logs</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td><code>H_notification_logs</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>M_email_suppression_list</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td><code>H_audit_logs</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>

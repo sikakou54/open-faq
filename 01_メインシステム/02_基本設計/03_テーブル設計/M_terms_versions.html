@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>terms_agreements(TBL-031) | FAQ 設計ポータル</title>
+<title>M_terms_versions(TBL-030) | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../../../assets/css/style.css">
 <script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script src="../../../assets/js/nav-data.js" defer></script>
 <script src="../../../assets/js/search-index.js" defer></script>
 <script src="../../../assets/js/portal.js" defer></script>
 </head>
-<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/terms_agreements.html">
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/M_terms_versions.html">
 <article class="content" id="content">
-<h1 id="TBL-031">TBL-031 <code>terms_agreements</code></h1>
-<span id="331-terms_agreements"></span>
-<p class="section-lead">利用者ごとの規約同意履歴を保持します。</p>
-<h3 id="3311-概要">概要</h3>
+<h1 id="TBL-030">TBL-030 <code>M_terms_versions</code></h1>
+<span id="330-M_terms_versions"></span>
+<p class="section-lead">利用規約・プライバシーポリシーの版を保持します。</p>
+<h3 id="3301-概要">概要</h3>
 <table>
 <thead>
 <tr>
@@ -26,26 +26,26 @@
 <tbody>
 <tr>
 <td>テーブル名</td>
-<td><code>terms_agreements</code></td>
+<td><code>M_terms_versions</code></td>
 </tr>
 <tr>
 <td>論理名</td>
-<td>規約同意</td>
+<td>規約版数(全契約横断)</td>
 </tr>
 <tr>
 <td>主キー</td>
-<td><code>id</code></td>
+<td><ul class="key-cols">
+<li><code>doc_type</code></li>
+<li><code>version</code></li>
+</ul></td>
 </tr>
 <tr>
 <td>外部キー</td>
-<td><ul class="key-cols">
-<li><code>actor_type</code> + <code>actor_id</code> → <code>owners(id)</code> / <code>project_users(id)</code>(論理参照)</li>
-<li><code>(doc_type, terms_version)</code> → <code>terms_versions(doc_type, version)</code></li>
-</ul></td>
+<td>—</td>
 </tr>
 </tbody>
 </table>
-<h3 id="3312-カラム定義">カラム定義</h3>
+<h3 id="3302-カラム定義">カラム定義</h3>
 <table>
 <thead>
 <tr>
@@ -66,8 +66,8 @@
 <tbody>
 <tr>
 <td style="text-align: right;">1</td>
-<td>ID</td>
-<td><code>id</code></td>
+<td>文書種別</td>
+<td><code>doc_type</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
@@ -80,78 +80,50 @@
 </tr>
 <tr>
 <td style="text-align: right;">2</td>
-<td>操作者種別</td>
-<td><code>actor_type</code></td>
+<td>版</td>
+<td><code>version</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
+<td>○</td>
 <td></td>
 <td></td>
-<td>①</td>
 <td></td>
-<td><code>actor_type IN ('owner','project_user')</code></td>
+<td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">3</td>
-<td>操作者 ID</td>
-<td><code>actor_id</code></td>
+<td>発効日</td>
+<td><code>effective_date</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
 <td></td>
-<td>①</td>
 <td></td>
-<td><code>actor_type</code> に応じ <code>owners(id)</code> / <code>project_users(id)</code> を指す(論理参照)</td>
+<td></td>
+<td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">4</td>
-<td>文書種別</td>
-<td><code>doc_type</code></td>
+<td>本文(HTML)</td>
+<td><code>body_html</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
-<td><code>terms_versions(doc_type)</code></td>
-<td>①</td>
+<td></td>
+<td></td>
 <td></td>
 <td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">5</td>
-<td>規約版</td>
-<td><code>terms_version</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>NO</td>
-<td></td>
-<td><code>terms_versions(version)</code></td>
-<td>①</td>
-<td></td>
-<td></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">6</td>
-<td>同意日時</td>
-<td><code>agreed_at</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>NO</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">7</td>
-<td>同意 IP(マスク済)</td>
-<td><code>agreed_ip_masked</code></td>
+<td>差分サマリ</td>
+<td><code>diff_summary</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
@@ -162,31 +134,74 @@
 <td></td>
 
 </tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td>通知送信日時</td>
+<td><code>notification_sent_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td>同意期限日数</td>
+<td><code>consent_deadline_days</code></td>
+<td>INTEGER</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>14</code></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">8</td>
+<td>作成日時</td>
+<td><code>created_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
 </tbody>
 </table>
-<h3 id="3315-インデックス">インデックス</h3>
+<h3 id="3305-インデックス">インデックス</h3>
+<p>(なし、PK 検索のみ)</p>
+<h3 id="3307-コード値区分値">コード値・区分値</h3>
 <table>
 <thead>
 <tr>
-<th style="text-align: right;">No</th>
-<th>インデックス名</th>
-<th>対象カラム</th>
-<th>UNIQUE</th>
-<th>用途</th>
+<th>カラム</th>
+<th>値</th>
+<th>意味</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: right;">1</td>
-<td><code>uq_terms_actor_doc_version</code></td>
-<td><code>(actor_type, actor_id, doc_type, terms_version)</code></td>
-<td>○</td>
-<td>操作者 × 文書 × 版で一意</td>
+<td><code>doc_type</code></td>
+<td><code>terms_of_service</code></td>
+<td>利用規約</td>
+</tr>
+<tr>
+<td><code>doc_type</code></td>
+<td><code>privacy_policy</code></td>
+<td>プライバシーポリシー</td>
 </tr>
 </tbody>
 </table>
-<h3 id="3317-コード値区分値">コード値・区分値</h3>
-<p>(なし)</p>
 </article>
 </body>
 </html>

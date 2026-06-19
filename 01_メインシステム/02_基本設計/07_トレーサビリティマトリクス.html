@@ -66,7 +66,7 @@
 <tr><td>BR-013b</td><td>オーナー固定・譲渡不可</td><td>FR-015a, FR-333</td><td>—</td><td>AC-018a, AC-018e, AC-018g</td><td>メイン</td></tr>
 <tr><td>BR-013c</td><td>ロール割当変更の通知・監査</td><td>FR-018b, FR-145a, FR-178a, FR-338</td><td>NFR-602 系列</td><td>AC-018d, AC-018h</td><td>メイン</td></tr>
 <tr><td>BR-013d</td><td>プロジェクト割当解除と契約アカウント削除の分離</td><td>FR-015, FR-018a, FR-019, FR-019a, FR-019b, FR-339</td><td>—</td><td>AC-018i</td><td>メイン</td></tr>
-<tr><td>BR-013e</td><td>プロジェクト作成時、オーナーは isOwner bypass で当該プロジェクトの全権を持つ(<code>project_user_assignments</code> への自動 admin 付与は行わない。プロジェクト管理者は明示的な <code>role='admin'</code> 割当で付与する)</td><td>FR-015e, FR-030a</td><td>—</td><td>—</td><td>メイン</td></tr>
+<tr><td>BR-013e</td><td>プロジェクト作成時、オーナーは isOwner bypass で当該プロジェクトの全権を持つ(<code>M_project_user_assignments</code> への自動 admin 付与は行わない。プロジェクト管理者は明示的な <code>role='admin'</code> 割当で付与する)</td><td>FR-015e, FR-030a</td><td>—</td><td>—</td><td>メイン</td></tr>
 <tr><td>BR-013f</td><td>管理範囲の二軸分離 + スイッチャー表示</td><td>FR-135a, FR-135b, FR-328, FR-340, FR-341</td><td>—</td><td>—</td><td>メイン</td></tr>
 <tr><td>BR-013g</td><td>資産配置の正規化(プロジェクト単位 / 契約単位の分離)</td><td>FR-031</td><td>—</td><td>—</td><td>メイン</td></tr>
 <tr><td>BR-015</td><td>退会削除(契約データエクスポートは将来対応)</td><td>FR-009, FR-163, FR-167</td><td>NFR-703, NFR-704</td><td>AC-022</td><td>メイン</td></tr>
@@ -111,7 +111,7 @@
 <td>F-AUTH-002</td>
 <td>SCR-002</td>
 <td><code>POST /auth/signup</code></td>
-<td><code>owners</code>, <code>terms_agreements</code></td>
+<td><code>M_owners</code>, <code>T_terms_agreements</code></td>
 <td>—</td>
 <td>E-INPUT-*</td>
 <td>MSG-SCR-002-*</td>
@@ -123,7 +123,7 @@
 <td>F-AUTH-001</td>
 <td>SCR-001</td>
 <td><code>POST /auth/login</code></td>
-<td><code>owners</code>, <code>project_users</code>, <code>sessions</code></td>
+<td><code>M_owners</code>, <code>M_project_users</code>, <code>T_sessions</code></td>
 <td>—</td>
 <td>E-AUTH-CREDENTIAL / E-AUTH-LOCKED</td>
 <td>MSG-SCR-001-*</td>
@@ -135,7 +135,7 @@
 <td>F-AUTH-004</td>
 <td>SCR-013</td>
 <td><code>POST /auth/email-verifications/{token}</code></td>
-<td><code>owners</code>, <code>access_tokens</code></td>
+<td><code>M_owners</code>, <code>T_access_tokens</code></td>
 <td>—</td>
 <td>E-AUTH-TOKEN-EXPIRED</td>
 <td>MSG-SCR-013-*</td>
@@ -147,7 +147,7 @@
 <td>F-AUTH-001</td>
 <td>(グローバル)</td>
 <td><code>POST /auth/logout</code></td>
-<td><code>sessions</code></td>
+<td><code>T_sessions</code></td>
 <td>—</td>
 <td>E-AUTH-SESSION-EXPIRED</td>
 <td>—</td>
@@ -159,7 +159,7 @@
 <td>F-AUTH-005</td>
 <td>(モーダル)</td>
 <td><code>POST /auth/re-auth</code></td>
-<td><code>sessions</code></td>
+<td><code>T_sessions</code></td>
 <td>—</td>
 <td>E-AUTH-REAUTH-REQUIRED</td>
 <td>—</td>
@@ -171,7 +171,7 @@
 <td>F-AUTH-003</td>
 <td>SCR-003</td>
 <td><code>POST /auth/password-reset-request</code>, <code>POST /auth/password/reset</code></td>
-<td><code>owners</code>, <code>project_users</code>, <code>access_tokens</code></td>
+<td><code>M_owners</code>, <code>M_project_users</code>, <code>T_access_tokens</code></td>
 <td>—</td>
 <td>E-AUTH-TOKEN-EXPIRED</td>
 <td>MSG-SCR-003-*</td>
@@ -183,7 +183,7 @@
 <td>F-AUTH-001</td>
 <td>SCR-001</td>
 <td>(グローバル)</td>
-<td><code>owners</code>, <code>project_users</code></td>
+<td><code>M_owners</code>, <code>M_project_users</code></td>
 <td>—</td>
 <td>E-AUTH-LOCKED</td>
 <td>MSG-SCR-001-ERROR-003</td>
@@ -195,7 +195,7 @@
 <td>F-AUTH-001</td>
 <td>(グローバル)</td>
 <td>(セッション middleware)</td>
-<td><code>sessions</code></td>
+<td><code>T_sessions</code></td>
 <td>—</td>
 <td>E-AUTH-SESSION-EXPIRED</td>
 <td>—</td>
@@ -207,7 +207,7 @@
 <td>F-ACC-002</td>
 <td>SCR-014</td>
 <td><code>POST /withdrawal-requests</code></td>
-<td><code>withdrawal_requests</code>, <code>owners</code></td>
+<td><code>T_withdrawal_requests</code>, <code>M_owners</code></td>
 <td>オーナー専有</td>
 <td>E-BILL-*</td>
 <td>MSG-SCR-014-*</td>
@@ -219,7 +219,7 @@
 <td>F-LEGAL-002</td>
 <td>SCR-015</td>
 <td><code>GET /terms/current</code> / <code>GET /privacy/current</code>(主な変更点表示)/ <code>POST /terms/agree</code> / <code>POST /privacy/agree</code>(同意)</td>
-<td><code>terms_versions</code>, <code>terms_agreements</code></td>
+<td><code>M_terms_versions</code>, <code>T_terms_agreements</code></td>
 <td>オーナー専有</td>
 <td>E-LEGAL-*</td>
 <td>MSG-SCR-015-*</td>
@@ -230,8 +230,8 @@
 <td>メンバー権限管理(プロジェクト単位)</td>
 <td>F-USER-001</td>
 <td>SCR-009, SCR-009-001</td>
-<td><code>POST /projects/{id}/members</code>, <code>PATCH /projects/{id}/members/{userId}</code>, <code>DELETE /projects/{id}/members/{userId}</code></td>
-<td><code>project_users</code>, <code>project_user_assignments</code></td>
+<td><code>POST /M_projects/{id}/members</code>, <code>PATCH /M_projects/{id}/members/{userId}</code>, <code>DELETE /M_projects/{id}/members/{userId}</code></td>
+<td><code>M_project_users</code>, <code>M_project_user_assignments</code></td>
 <td>オーナー / <code>admin</code>(該当PJ)</td>
 <td>E-AUTHZ-FORBIDDEN / E-AUTHZ-LAST-ADMIN-PROTECTED</td>
 <td>MSG-SCR-009-*</td>
@@ -243,20 +243,20 @@
 <td>F-USER-001 / F-AUTH-004</td>
 <td><strong>SCR-018</strong></td>
 <td><code>POST /auth/invitations/{token}/preview</code>(プレビュー), <code>POST /auth/invitations/{token}/activate</code>(有効化)</td>
-<td><code>project_users.name</code>(NULL→ 設定), <code>project_users.status</code>(<code>pending_activation</code>→<code>active</code>), <code>project_user_assignments.valid</code>(0→1), <code>terms_agreements</code>(INSERT), <code>access_tokens.used_at</code>(セット、<code>meta</code> から <code>invitedProjectId</code> / <code>invitedRole</code> 取得)</td>
-<td>招待トークン保有者(未認証、<code>access_tokens.purpose='activation'</code>)</td>
+<td><code>M_project_users.name</code>(NULL→ 設定), <code>M_project_users.status</code>(<code>pending_activation</code>→<code>active</code>), <code>M_project_user_assignments.valid</code>(0→1), <code>T_terms_agreements</code>(INSERT), <code>T_access_tokens.used_at</code>(セット、<code>meta</code> から <code>invitedProjectId</code> / <code>invitedRole</code> 取得)</td>
+<td>招待トークン保有者(未認証、<code>T_access_tokens.purpose='activation'</code>)</td>
 <td>E-AUTH-TOKEN-EXPIRED / E-AUTH-TOKEN-USED / E-INPUT-REQUIRED / E-INPUT-LENGTH / E-INPUT-TURNSTILE</td>
 <td>MSG-SCR-018-*</td>
 <td>—</td>
 </tr>
 <tr>
 <td>FR-033a</td>
-<td>プロジェクト連絡先メール確認(TPL-PROJECT_CONTACT_VERIFY 着地ページで <code>projects.contact_email_verified_at</code> セット)</td>
+<td>プロジェクト連絡先メール確認(TPL-PROJECT_CONTACT_VERIFY 着地ページで <code>M_projects.contact_email_verified_at</code> セット)</td>
 <td>F-PRJ-001</td>
 <td><strong>SCR-019</strong></td>
 <td><code>POST /auth/contact-verifications/{token}</code></td>
-<td><code>projects.contact_email_verified_at</code>(NULL→ 設定), <code>access_tokens.used_at</code>(セット、<code>meta.projectId</code> 取得)</td>
-<td>連絡先確認トークン保有者(未認証、<code>access_tokens.purpose='contact_verify'</code>)</td>
+<td><code>M_projects.contact_email_verified_at</code>(NULL→ 設定), <code>T_access_tokens.used_at</code>(セット、<code>meta.projectId</code> 取得)</td>
+<td>連絡先確認トークン保有者(未認証、<code>T_access_tokens.purpose='contact_verify'</code>)</td>
 <td>E-AUTH-TOKEN-EXPIRED / E-AUTH-TOKEN-USED</td>
 <td>MSG-SCR-019-*</td>
 <td>—</td>
@@ -267,7 +267,7 @@
 <td>F-USER-001</td>
 <td>SCR-009-001</td>
 <td><code>POST /members/{id}/resend-invitation</code></td>
-<td><code>access_tokens</code>(<code>purpose='activation'</code>, <code>meta</code> 再発行)</td>
+<td><code>T_access_tokens</code>(<code>purpose='activation'</code>, <code>meta</code> 再発行)</td>
 <td>オーナー / <code>admin</code>(該当 PJ)</td>
 <td>E-AUTHZ-*</td>
 <td>MSG-SCR-009-001-TOAST-002</td>
@@ -278,20 +278,20 @@
 <td>プロジェクト割当解除と孤立アカウント停止</td>
 <td>F-USER-001</td>
 <td>SCR-009-001「プロジェクトから外す」</td>
-<td><code>DELETE /projects/{id}/members/{userId}</code></td>
-<td>対象<code>project_user_assignments.valid=0</code>、最後の割当時は<code>project_users.valid=0</code>, <code>sessions.revoked_at</code>, <code>access_tokens.used_at</code></td>
+<td><code>DELETE /M_projects/{id}/members/{userId}</code></td>
+<td>対象<code>M_project_user_assignments.valid=0</code>、最後の割当時は<code>M_project_users.valid=0</code>, <code>T_sessions.revoked_at</code>, <code>T_access_tokens.used_at</code></td>
 <td>オーナー / 該当PJ管理者</td>
 <td>E-AUTHZ-OWNER-PROTECTED / E-AUTHZ-SELF-MUTATION</td>
 <td>MSG-SCR-009-001-*</td>
-<td>他PJ割当があれば<code>project_users</code>は維持</td>
+<td>他PJ割当があれば<code>M_project_users</code>は維持</td>
 </tr>
 <tr>
 <td>FR-030〜036, FR-030a, FR-030b</td>
 <td>プロジェクト管理(一覧 SCR-004 + 作成・編集・削除モーダル SCR-004-001)</td>
 <td>F-PRJ-001</td>
 <td>SCR-004 / SCR-004-001(作成・編集・削除)</td>
-<td><code>POST /projects</code>, <code>PATCH /projects/{id}</code>, <code>DELETE /projects/{id}</code></td>
-<td><code>projects</code>, <code>allowed_domains</code>, 関連論理削除</td>
+<td><code>POST /M_projects</code>, <code>PATCH /M_projects/{id}</code>, <code>DELETE /M_projects/{id}</code></td>
+<td><code>M_projects</code>, <code>M_allowed_domains</code>, 関連論理削除</td>
 <td>オーナー専有(参照はPJ管理者可)</td>
 <td>E-AUTHZ-OWNER-ONLY / E-BIZ-PROJECT-INACTIVE</td>
 <td>MSG-SCR-004-* / MSG-SCR-004-001-*</td>
@@ -302,8 +302,8 @@
 <td>FAQ 管理</td>
 <td>F-FAQ-001</td>
 <td>SCR-006</td>
-<td><code>POST/PATCH/DELETE /faqs</code></td>
-<td><code>faqs</code>, <code>faq_revisions</code>, <code>faq_search_fts</code></td>
+<td><code>POST/PATCH/DELETE /M_faqs</code></td>
+<td><code>M_faqs</code>, <code>H_faq_revisions</code>, <code>TP_faq_search_fts</code></td>
 <td>オーナー / 該当 PJ の <code>member</code>+</td>
 <td>E-BIZ-NOT-FOUND</td>
 <td>MSG-SCR-006-*</td>
@@ -314,8 +314,8 @@
 <td>FAQ CSV インポート(FAQ ID 判定で新規/上書き / 部分失敗確認 / 改訂履歴)</td>
 <td>F-FAQ-001</td>
 <td>SCR-006 / SCR-006-002</td>
-<td><code>POST /faqs/import</code>(CSV のみ), <code>GET /faqs/import/template</code></td>
-<td><code>faqs</code>, <code>faq_revisions</code></td>
+<td><code>POST /M_faqs/import</code>(CSV のみ), <code>GET /M_faqs/import/template</code></td>
+<td><code>M_faqs</code>, <code>H_faq_revisions</code></td>
 <td>オーナー / 該当 PJ の <code>member</code>+</td>
 <td>E-INPUT-CSV-INVALID, E-INPUT-CSV-FAQID-NOTFOUND</td>
 <td>MSG-SCR-006-002-*</td>
@@ -326,8 +326,8 @@
 <td>FAQ・質問ログの全文検索(プロジェクト内スコープ・並び替え・ページング)</td>
 <td>F-FAQ-001 / F-INQ-001</td>
 <td>SCR-006 / SCR-005</td>
-<td><code>GET /projects/{id}/faqs/search</code>, <code>GET /projects/{id}/question-logs/search</code></td>
-<td><code>faq_search_fts</code>, <code>faqs</code>, <code>question_logs</code></td>
+<td><code>GET /M_projects/{id}/M_faqs/search</code>, <code>GET /M_projects/{id}/question-logs/search</code></td>
+<td><code>TP_faq_search_fts</code>, <code>M_faqs</code>, <code>H_question_logs</code></td>
 <td>該当 PJ の <code>member</code>+</td>
 <td>E-AUTHZ-PROJECT-DENIED</td>
 <td>MSG-SCR-006-* / MSG-SCR-005-*</td>
@@ -338,8 +338,8 @@
 <td>FAQ の CSV エクスポート</td>
 <td>F-FAQ-001</td>
 <td>SCR-006</td>
-<td><code>GET /faqs/export</code></td>
-<td><code>faqs</code></td>
+<td><code>GET /M_faqs/export</code></td>
+<td><code>M_faqs</code></td>
 <td>オーナー / 該当 PJ の <code>member</code>+</td>
 <td>—</td>
 <td>MSG-SCR-006-*</td>
@@ -351,7 +351,7 @@
 <td>F-AI-001</td>
 <td>(ウィジェット)</td>
 <td><code>POST /widget/v1/ask</code></td>
-<td><code>question_logs</code>, <code>ai_threshold_persistent_cache</code></td>
+<td><code>H_question_logs</code>, <code>TP_ai_threshold_persistent_cache</code></td>
 <td>—</td>
 <td>E-BIZ-AI-* / E-EXT-AI-FAILED</td>
 <td>—</td>
@@ -362,8 +362,8 @@
 <td>未解決質問登録</td>
 <td>F-INQ-001</td>
 <td>(ウィジェット)</td>
-<td><code>POST /widget/v1/inquiries</code></td>
-<td><code>inquiries</code></td>
+<td><code>POST /widget/v1/T_inquiries</code></td>
+<td><code>T_inquiries</code></td>
 <td>—</td>
 <td>—</td>
 <td>—</td>
@@ -374,8 +374,8 @@
 <td>未解決質問の状況管理(2 値: <code>open</code> / <code>closed</code>)</td>
 <td>F-INQ-001</td>
 <td>SCR-005</td>
-<td><code>GET/PATCH /inquiries/*</code></td>
-<td><code>inquiries</code></td>
+<td><code>GET/PATCH /T_inquiries/*</code></td>
+<td><code>T_inquiries</code></td>
 <td>オーナー / 該当 PJ の <code>member</code>+</td>
 <td>—</td>
 <td>MSG-SCR-005-*</td>
@@ -386,8 +386,8 @@
 <td>状況変更は SCR-005 詳細画面の手動操作のみ(FAQ 操作からは連動しない)</td>
 <td>F-INQ-001</td>
 <td>SCR-005 詳細</td>
-<td><code>PATCH /inquiries/{id}</code>(<code>status</code> フィールド受付)</td>
-<td><code>inquiries.status</code></td>
+<td><code>PATCH /T_inquiries/{id}</code>(<code>status</code> フィールド受付)</td>
+<td><code>T_inquiries.status</code></td>
 <td>—</td>
 <td>—</td>
 <td>MSG-SCR-005-BADGE-* / LBL-STATUS-001 / OPT-OPEN-001 / OPT-CLOSED-001 / CONFIRM-CLOSE-001 / TOAST-STATUS-001</td>
@@ -399,7 +399,7 @@
 <td>F-AUDIT-002</td>
 <td>—</td>
 <td>(全 API)</td>
-<td><code>error_logs</code></td>
+<td><code>H_error_logs</code></td>
 <td>—</td>
 <td>—</td>
 <td>—</td>
@@ -410,8 +410,8 @@
 <td>利用量・課金</td>
 <td>F-BILL-001</td>
 <td>SCR-016 / SCR-021 / SCR-022</td>
-<td><code>GET /usage</code>, <code>GET /owner/projects/usage</code>, <code>GET /billing/summary</code>, <code>GET /billing/invoices</code></td>
-<td><code>usage_metering</code>, <code>billing_invoices</code></td>
+<td><code>GET /usage</code>, <code>GET /owner/M_projects/usage</code>, <code>GET /billing/summary</code>, <code>GET /billing/invoices</code></td>
+<td><code>T_usage_metering</code>, <code>T_billing_invoices</code></td>
 <td>契約利用量・課金はオーナー、PJ利用量は該当PJ</td>
 <td>E-QUOTA-*</td>
 <td>MSG-SCR-016 / MSG-SCR-021 / MSG-SCR-022</td>
@@ -422,8 +422,8 @@
 <td>プロジェクトの質問数上限・アラート</td>
 <td>F-LIMIT-001</td>
 <td>SCR-021 / SCR-021-001</td>
-<td><code>GET /projects/{id}/quota-limits</code>, <code>PATCH /projects/{id}/quota-limits/questions</code></td>
-<td><code>project_quota_limits</code>, <code>usage_metering</code></td>
+<td><code>GET /M_projects/{id}/quota-limits</code>, <code>PATCH /M_projects/{id}/quota-limits/questions</code></td>
+<td><code>M_project_quota_limits</code>, <code>T_usage_metering</code></td>
 <td>閲覧: オーナー / 該当 PJ の <code>member</code>+、変更: オーナー / 該当 PJ の <code>admin</code>(再認証)</td>
 <td>E-AUTHZ-FORBIDDEN / E-INPUT-*</td>
 <td>MSG-SCR-021-* / MSG-SCR-021-001-*</td>
@@ -434,8 +434,8 @@
 <td>利用状況 / プロジェクト概要</td>
 <td>F-DASH-001</td>
 <td>SCR-008 / SCR-016</td>
-<td><code>GET /usage?viewMode=project</code>, <code>GET /owner/projects/usage</code>, <code>GET /dashboard/summary</code></td>
-<td><code>usage_metering</code>, <code>question_logs</code>, <code>faqs</code></td>
+<td><code>GET /usage?viewMode=project</code>, <code>GET /owner/M_projects/usage</code>, <code>GET /dashboard/summary</code></td>
+<td><code>T_usage_metering</code>, <code>H_question_logs</code>, <code>M_faqs</code></td>
 <td>オーナーは契約と全PJ、他ロールは参加PJを「管理範囲を切り替え」で選択</td>
 <td>—</td>
 <td>MSG-SCR-008-* / MSG-SCR-016-*</td>
@@ -447,7 +447,7 @@
 <td>F-DASH-001</td>
 <td>SCR-008 / SCR-016</td>
 <td><code>GET /dashboard/summary?period=...&amp;projectId={id}</code></td>
-<td><code>usage_metering</code>, <code>question_logs</code>, <code>inquiries</code>, <code>faqs</code></td>
+<td><code>T_usage_metering</code>, <code>H_question_logs</code>, <code>T_inquiries</code>, <code>M_faqs</code></td>
 <td>オーナー(契約) / 該当 PJ の <code>member</code>+(プロジェクト)</td>
 <td>E-AUTHZ-PROJECT-DENIED</td>
 <td>MSG-SCR-008-* / MSG-SCR-016-*</td>
@@ -458,8 +458,8 @@
 <td>一括操作の 1 操作上限(お知らせ一括既読 最大 100 件 / FAQ 一括状態変更 最大 50 件)</td>
 <td>F-FAQ-001 / F-NOTIF-002</td>
 <td>SCR-006 / SCR-011</td>
-<td><code>POST /faqs/bulk-status</code>, <code>POST /me/announcements/read</code></td>
-<td><code>faqs</code>, <code>faq_revisions</code>, <code>inbox_messages</code></td>
+<td><code>POST /M_faqs/bulk-status</code>, <code>POST /me/announcements/read</code></td>
+<td><code>M_faqs</code>, <code>H_faq_revisions</code>, <code>T_inbox_messages</code></td>
 <td>FAQ = 該当 PJ の <code>member</code>+ / お知らせ = 本人</td>
 <td>E-INPUT-*</td>
 <td>MSG-SCR-006-* / MSG-SCR-011-*</td>
@@ -483,7 +483,7 @@
 <td>F-DASH-001</td>
 <td>SCR-008 / SCR-016</td>
 <td><code>GET /usage</code> レスポンスメタ <code>last_aggregated_at</code></td>
-<td><code>usage_metering</code> 等のバッチ最終実行時刻</td>
+<td><code>T_usage_metering</code> 等のバッチ最終実行時刻</td>
 <td>全ロール</td>
 <td>—</td>
 <td>MSG-SCR-008-LBL-001/002 / MSG-SCR-016-LBL-007/008</td>
@@ -530,8 +530,8 @@
 <td>プロジェクト0件時の単一CTA</td>
 <td>F-DASH-001</td>
 <td>SCR-016</td>
-<td><code>GET /owner/projects/usage</code></td>
-<td><code>projects</code></td>
+<td><code>GET /owner/M_projects/usage</code></td>
+<td><code>M_projects</code></td>
 <td>オーナー専有</td>
 <td>—</td>
 <td>MSG-SCR-016-EMPTY-001 / MSG-SCR-016-BTN-001</td>
@@ -543,7 +543,7 @@
 <td>F-LIMIT-001</td>
 <td>SCR-021</td>
 <td>(各 API で上限判定)</td>
-<td><code>usage_metering</code>, <code>project_quota_limits</code></td>
+<td><code>T_usage_metering</code>, <code>M_project_quota_limits</code></td>
 <td>—</td>
 <td>E-QUOTA-*</td>
 <td>MSG-QUOTA-*</td>
@@ -555,7 +555,7 @@
 <td>F-BILL-001</td>
 <td>SCR-008</td>
 <td>—</td>
-<td><code>owners.contract_status</code></td>
+<td><code>M_owners.contract_status</code></td>
 <td>—</td>
 <td>E-BILL-PAYMENT-FAILED</td>
 <td>MSG-BILL-PAYMENT-FAILED</td>
@@ -567,7 +567,7 @@
 <td>F-WIDGET-001</td>
 <td>—</td>
 <td>(全 API)</td>
-<td><code>owner_quota_overrides</code></td>
+<td><code>M_owner_quota_overrides</code></td>
 <td>—</td>
 <td>E-QUOTA-*</td>
 <td>—</td>
@@ -579,7 +579,7 @@
 <td>F-BILL-001</td>
 <td>SCR-008</td>
 <td>(同期判定 / 日次バックストップ)</td>
-<td><code>project_quota_limits</code> / <code>usage_metering</code> / <code>billing_subscriptions</code></td>
+<td><code>M_project_quota_limits</code> / <code>T_usage_metering</code> / <code>T_billing_subscriptions</code></td>
 <td>オーナー専有(支払方法)</td>
 <td>E-BILL-PAYMENT-METHOD-REQUIRED</td>
 <td>MSG-BILL-PAYMENT-METHOD-REQUIRED / MSG-WIDGET-QUESTION-LIMIT</td>
@@ -591,7 +591,7 @@
 <td>F-WIDGET-001</td>
 <td>(ウィジェット)</td>
 <td><code>POST /widget/v1/*</code></td>
-<td><code>owners.contract_status</code></td>
+<td><code>M_owners.contract_status</code></td>
 <td>—</td>
 <td>E-BIZ-WIDGET-SUSPENDED</td>
 <td>—</td>
@@ -603,7 +603,7 @@
 <td>F-NOTIF-001</td>
 <td>—</td>
 <td>(メール配信 worker)</td>
-<td><code>notification_logs</code></td>
+<td><code>H_notification_logs</code></td>
 <td>—</td>
 <td>—</td>
 <td>—</td>
@@ -615,7 +615,7 @@
 <td>F-NOTIF-001</td>
 <td>SCR-011, SCR-012</td>
 <td><code>GET /me/announcements</code></td>
-<td><code>service_announcements</code>, <code>inbox_messages</code>, <code>email_suppression_list</code></td>
+<td><code>M_service_announcements</code>, <code>T_inbox_messages</code>, <code>M_email_suppression_list</code></td>
 <td>—</td>
 <td>—</td>
 <td>MSG-SCR-011-<em>, MSG-SCR-012-</em></td>
@@ -626,8 +626,8 @@
 <td>ウィジェット設定・エンドユーザー向けFAQチャット UI(プロジェクト単位)</td>
 <td>F-WIDGET-001</td>
 <td>SCR-007(プロジェクト WS 配置)/ ウィジェット</td>
-<td><code>POST /projects/{id}/widget-key/rotate</code>, <code>POST /widget/v1/ask</code>, <code>POST /widget/v1/inquiries</code></td>
-<td><code>projects</code>, <code>project_legacy_keys</code>, <code>allowed_domains</code>, <code>question_logs</code>, <code>inquiries</code></td>
+<td><code>POST /M_projects/{id}/widget-key/rotate</code>, <code>POST /widget/v1/ask</code>, <code>POST /widget/v1/T_inquiries</code></td>
+<td><code>M_projects</code>, <code>T_project_legacy_keys</code>, <code>M_allowed_domains</code>, <code>H_question_logs</code>, <code>T_inquiries</code></td>
 <td>設定は当該 PJ の <code>admin</code> 以上(<code>member</code> は閲覧 + 埋め込みコードのコピーのみ)。エンドユーザーは許可ドメイン上のウィジェットセッション</td>
 <td>E-INPUT-DOMAIN / E-QUOTA-QUESTIONS-LIMIT</td>
 <td>MSG-SCR-007-* / MSG-WIDGET-*</td>
@@ -651,7 +651,7 @@
 <td>F-AUDIT-003</td>
 <td>—</td>
 <td>—</td>
-<td><code>audit_logs</code></td>
+<td><code>H_audit_logs</code></td>
 <td>—</td>
 <td>—</td>
 <td>—</td>
@@ -663,7 +663,7 @@
 <td>F-NOTIF-002</td>
 <td>SCR-011, SCR-012</td>
 <td><code>GET/POST /me/announcements/*</code></td>
-<td><code>inbox_messages</code>, <code>announcement_recipients</code></td>
+<td><code>T_inbox_messages</code>, <code>T_announcement_recipients</code></td>
 <td>—</td>
 <td>—</td>
 <td>MSG-SCR-011-*</td>
@@ -675,7 +675,7 @@
 <td>F-SEC-001</td>
 <td>—</td>
 <td>—</td>
-<td><code>audit_logs</code></td>
+<td><code>H_audit_logs</code></td>
 <td>—</td>
 <td>E-BIZ-*</td>
 <td>—</td>
@@ -687,7 +687,7 @@
 <td>F-USER-001</td>
 <td>SCR-009-001</td>
 <td><code>POST /members/*</code></td>
-<td><code>owners</code>(行存在 = オーナー判定)</td>
+<td><code>M_owners</code>(行存在 = オーナー判定)</td>
 <td>—</td>
 <td>E-AUTHZ-OWNER-PROTECTED</td>
 <td>—</td>
@@ -712,7 +712,7 @@
 <td>全 SCR</td>
 <td>(フロント router)</td>
 <td>—</td>
-<td>スコープ別の到達制御:<code>/owner/*</code> = オーナー専有 / <code>/projects/:projectId/*</code> = 当該 PJ 割当保持者 / <code>/auth/*</code> = 未認証 / <code>/account/*</code> = 全認証</td>
+<td>スコープ別の到達制御:<code>/owner/*</code> = オーナー専有 / <code>/M_projects/:projectId/*</code> = 当該 PJ 割当保持者 / <code>/auth/*</code> = 未認証 / <code>/account/*</code> = 全認証</td>
 <td>E-AUTHZ-OWNER-ONLY / E-AUTHZ-FORBIDDEN</td>
 <td>—</td>
 <td>—</td>
@@ -722,8 +722,8 @@
 <td>SCR-016 プロジェクト0件の空状態</td>
 <td>F-DASH-001</td>
 <td>SCR-016</td>
-<td><code>GET /owner/projects/usage</code></td>
-<td><code>projects</code></td>
+<td><code>GET /owner/M_projects/usage</code></td>
+<td><code>M_projects</code></td>
 <td>オーナー専有</td>
 <td>E-AUTHZ-OWNER-ONLY</td>
 <td>MSG-SCR-016-EMPTY-001 / MSG-SCR-016-BTN-001</td>
@@ -734,8 +734,8 @@
 <td>利用中プロジェクト数の表示</td>
 <td>F-DASH-001</td>
 <td>SCR-016</td>
-<td><code>GET /owner/projects/usage</code></td>
-<td><code>projects</code>, <code>usage_metering</code></td>
+<td><code>GET /owner/M_projects/usage</code></td>
+<td><code>M_projects</code>, <code>T_usage_metering</code></td>
 <td>オーナー専有</td>
 <td>—</td>
 <td>MSG-SCR-016-LBL-001</td>
@@ -759,7 +759,7 @@
 <td>F-DASH-001</td>
 <td>SCR-017 / 全 SCR(共通ヘッダー)</td>
 <td>—</td>
-<td><code>project_user_assignments</code>, <code>owners</code></td>
+<td><code>M_project_user_assignments</code>, <code>M_owners</code></td>
 <td>全認証ユーザー</td>
 <td>—</td>
 <td>(共通ヘッダーラベル)</td>
@@ -783,7 +783,7 @@
 <td>F-AI-001</td>
 <td>(ウィジェット)</td>
 <td><code>POST /widget/v1/ask</code></td>
-<td><code>question_logs</code></td>
+<td><code>H_question_logs</code></td>
 <td>—</td>
 <td>E-SYS-WORKERS-AI-TIMEOUT / E-EXT-AI-FAILED</td>
 <td>—</td>
@@ -795,7 +795,7 @@
 <td>F-AI-001</td>
 <td>(ウィジェット)</td>
 <td><code>POST /widget/v1/ask</code>(内部しきい値解決)</td>
-<td><code>ai_threshold_persistent_cache</code></td>
+<td><code>TP_ai_threshold_persistent_cache</code></td>
 <td>—</td>
 <td>—</td>
 <td>—</td>
@@ -822,161 +822,161 @@
 <td>ログイン / セッション / 強制ログアウト</td>
 <td>SCR-001</td>
 <td><code>POST /auth/login</code>, <code>POST /auth/logout</code>, <code>POST /auth/re-auth</code></td>
-<td><code>owners</code>, <code>project_users</code>, <code>sessions</code></td>
+<td><code>M_owners</code>, <code>M_project_users</code>, <code>T_sessions</code></td>
 </tr>
 <tr>
 <td>F-AUTH-002</td>
 <td>アカウント登録</td>
 <td>SCR-002</td>
 <td><code>POST /auth/signup</code></td>
-<td><code>owners</code>, <code>terms_agreements</code></td>
+<td><code>M_owners</code>, <code>T_terms_agreements</code></td>
 </tr>
 <tr>
 <td>F-AUTH-003</td>
 <td>パスワード再設定</td>
 <td>SCR-003</td>
 <td><code>POST /auth/password-reset-request</code>, <code>POST /auth/password/reset</code></td>
-<td><code>owners</code>, <code>project_users</code>, <code>access_tokens</code></td>
+<td><code>M_owners</code>, <code>M_project_users</code>, <code>T_access_tokens</code></td>
 </tr>
 <tr>
 <td>F-AUTH-004</td>
 <td>メール確認 / メンバーアカウント有効化</td>
 <td>SCR-013, <strong>SCR-018</strong></td>
 <td><code>POST /auth/email-verifications/{token}</code>, <code>POST /auth/invitations/{token}/preview</code>, <code>POST /auth/invitations/{token}/activate</code></td>
-<td><code>owners</code>(メール確認), <code>project_users</code>, <code>project_user_assignments</code>, <code>access_tokens</code>, <code>terms_agreements</code></td>
+<td><code>M_owners</code>(メール確認), <code>M_project_users</code>, <code>M_project_user_assignments</code>, <code>T_access_tokens</code>, <code>T_terms_agreements</code></td>
 </tr>
 <tr>
 <td>F-PRJ-001</td>
 <td>プロジェクト管理</td>
 <td>SCR-004, SCR-004-001, <strong>SCR-019</strong>(連絡先メール確認完了)</td>
-<td><code>GET/POST/PATCH/DELETE /projects</code>, <code>POST /auth/contact-verifications/{token}</code></td>
-<td><code>projects</code>, <code>allowed_domains</code>, <code>access_tokens</code>(<code>purpose='contact_verify'</code>)</td>
+<td><code>GET/POST/PATCH/DELETE /M_projects</code>, <code>POST /auth/contact-verifications/{token}</code></td>
+<td><code>M_projects</code>, <code>M_allowed_domains</code>, <code>T_access_tokens</code>(<code>purpose='contact_verify'</code>)</td>
 </tr>
 <tr>
 <td>F-INQ-001</td>
 <td>未解決質問</td>
 <td>SCR-005</td>
-<td><code>GET/PATCH /inquiries</code></td>
-<td><code>inquiries</code>, <code>question_logs</code></td>
+<td><code>GET/PATCH /T_inquiries</code></td>
+<td><code>T_inquiries</code>, <code>H_question_logs</code></td>
 </tr>
 <tr>
 <td>F-FAQ-001</td>
 <td>FAQ 管理</td>
 <td>SCR-006, SCR-006-002</td>
-<td><code>GET/POST/PATCH/DELETE /faqs</code>, <code>POST /faqs/bulk-status</code>(一括状態変更 最大 50 件), <code>GET /projects/{id}/faqs/search</code>, <code>POST /faqs/import</code>(CSV のみ), <code>GET /faqs/import/template</code>, <code>GET /faqs/export</code></td>
-<td><code>faqs</code>, <code>faq_revisions</code>, <code>faq_search_fts</code></td>
+<td><code>GET/POST/PATCH/DELETE /M_faqs</code>, <code>POST /M_faqs/bulk-status</code>(一括状態変更 最大 50 件), <code>GET /M_projects/{id}/M_faqs/search</code>, <code>POST /M_faqs/import</code>(CSV のみ), <code>GET /M_faqs/import/template</code>, <code>GET /M_faqs/export</code></td>
+<td><code>M_faqs</code>, <code>H_faq_revisions</code>, <code>TP_faq_search_fts</code></td>
 </tr>
 <tr>
 <td>F-WIDGET-001</td>
 <td>ウィジェット設定</td>
 <td>SCR-007</td>
-<td><code>POST /projects/{id}/widget-key/rotate</code></td>
-<td><code>projects</code>, <code>project_legacy_keys</code>, <code>allowed_domains</code></td>
+<td><code>POST /M_projects/{id}/widget-key/rotate</code></td>
+<td><code>M_projects</code>, <code>T_project_legacy_keys</code>, <code>M_allowed_domains</code></td>
 </tr>
 <tr>
 <td>F-WIDGET-002</td>
 <td>ウィジェット動作</td>
 <td>(ウィジェット)</td>
-<td><code>POST /widget/v1/bootstrap</code>, <code>POST /widget/v1/ask</code>, <code>POST /widget/v1/inquiries</code></td>
-<td><code>question_logs</code>, <code>inquiries</code></td>
+<td><code>POST /widget/v1/bootstrap</code>, <code>POST /widget/v1/ask</code>, <code>POST /widget/v1/T_inquiries</code></td>
+<td><code>H_question_logs</code>, <code>T_inquiries</code></td>
 </tr>
 <tr>
 <td>F-BILL-001</td>
 <td>利用量・課金</td>
 <td>SCR-016 / SCR-021 / SCR-022</td>
-<td><code>GET /usage</code>, <code>GET /owner/projects/usage</code>, <code>GET /dashboard/summary</code>, <code>GET /billing/summary</code>, <code>GET /billing/invoices</code>, <code>GET/PUT /billing/payment-method</code></td>
-<td><code>usage_metering</code>, <code>billing_invoices</code>, <code>billing_subscriptions</code></td>
+<td><code>GET /usage</code>, <code>GET /owner/M_projects/usage</code>, <code>GET /dashboard/summary</code>, <code>GET /billing/summary</code>, <code>GET /billing/invoices</code>, <code>GET/PUT /billing/payment-method</code></td>
+<td><code>T_usage_metering</code>, <code>T_billing_invoices</code>, <code>T_billing_subscriptions</code></td>
 </tr>
 <tr>
 <td>F-LIMIT-001</td>
 <td>プロジェクトの質問数上限・アラート</td>
 <td>SCR-021 / SCR-021-001</td>
-<td><code>GET /projects/{id}/quota-limits</code>, <code>PATCH /projects/{id}/quota-limits/questions</code></td>
-<td><code>project_quota_limits</code>, <code>usage_metering</code></td>
+<td><code>GET /M_projects/{id}/quota-limits</code>, <code>PATCH /M_projects/{id}/quota-limits/questions</code></td>
+<td><code>M_project_quota_limits</code>, <code>T_usage_metering</code></td>
 </tr>
 <tr>
 <td>F-ACC-001</td>
 <td>アカウント設定</td>
 <td>SCR-017</td>
 <td><code>PATCH /v1/me</code>, <code>POST /v1/me/password</code>, <code>PATCH /v1/me/contact-email</code>(オーナーのみ)</td>
-<td><code>owners</code>, <code>project_users</code>, <code>sessions</code></td>
+<td><code>M_owners</code>, <code>M_project_users</code>, <code>T_sessions</code></td>
 </tr>
 <tr>
 <td>F-ACC-002</td>
 <td>退会申請</td>
 <td>SCR-014</td>
 <td><code>POST /withdrawal-requests</code></td>
-<td><code>withdrawal_requests</code>, <code>owners</code></td>
+<td><code>T_withdrawal_requests</code>, <code>M_owners</code></td>
 </tr>
 <tr>
 <td>F-USER-001</td>
 <td>メンバー管理(プロジェクト単位)</td>
 <td>SCR-009, SCR-009-001</td>
 <td>招待、ロール変更、当該PJ割当解除、招待再送</td>
-<td><code>project_users</code>, <code>project_user_assignments</code></td>
+<td><code>M_project_users</code>, <code>M_project_user_assignments</code></td>
 </tr>
 <tr>
 <td>F-LEGAL-001</td>
 <td>利用規約閲覧</td>
 <td>SCR-010</td>
 <td><code>GET /terms/current</code></td>
-<td><code>terms_versions</code>(<code>doc_type='terms_of_service'</code>)</td>
+<td><code>M_terms_versions</code>(<code>doc_type='terms_of_service'</code>)</td>
 </tr>
 <tr>
 <td>F-LEGAL-001b</td>
 <td>プライバシーポリシー閲覧</td>
 <td>SCR-020</td>
 <td><code>GET /privacy/current</code></td>
-<td><code>terms_versions</code>(<code>doc_type='privacy_policy'</code>)</td>
+<td><code>M_terms_versions</code>(<code>doc_type='privacy_policy'</code>)</td>
 </tr>
 <tr>
 <td>F-LEGAL-002</td>
 <td>規約再同意(利用規約・プライバシーポリシー個別)</td>
 <td>SCR-015</td>
 <td><code>POST /terms/agree</code> / <code>POST /privacy/agree</code></td>
-<td><code>terms_agreements</code></td>
+<td><code>T_terms_agreements</code></td>
 </tr>
 <tr>
 <td>F-NOTIF-001</td>
 <td>通知配信</td>
 <td>(各画面)</td>
 <td>(Queue 経由)</td>
-<td><code>notification_logs</code>, <code>email_suppression_list</code></td>
+<td><code>H_notification_logs</code>, <code>M_email_suppression_list</code></td>
 </tr>
 <tr>
 <td>F-NOTIF-002</td>
 <td>お知らせ受信箱</td>
 <td>SCR-011, SCR-012</td>
 <td><code>GET /me/announcements</code>, <code>GET /me/announcements/unread-summary</code>, <code>POST /me/announcements/{id}/read</code>, <code>POST /me/announcements/read</code>(一括既読 最大 100 件)</td>
-<td><code>inbox_messages</code>, <code>service_announcements</code>, <code>announcement_recipients</code></td>
+<td><code>T_inbox_messages</code>, <code>M_service_announcements</code>, <code>T_announcement_recipients</code></td>
 </tr>
 <tr>
 <td>F-AI-001</td>
 <td>AI 推論</td>
 <td>(ウィジェット)</td>
 <td><code>POST /widget/v1/ask</code>(内部 AnswerProvider IF)</td>
-<td><code>question_logs</code>, <code>ai_threshold_persistent_cache</code></td>
+<td><code>H_question_logs</code>, <code>TP_ai_threshold_persistent_cache</code></td>
 </tr>
 <tr>
 <td>F-AUDIT-001</td>
 <td>監査ログ</td>
 <td>(グローバル)</td>
 <td>—</td>
-<td><code>audit_logs</code></td>
+<td><code>H_audit_logs</code></td>
 </tr>
 <tr>
 <td>F-AUDIT-002</td>
 <td>エラーログ</td>
 <td>(グローバル)</td>
 <td>—</td>
-<td><code>error_logs</code></td>
+<td><code>H_error_logs</code></td>
 </tr>
 <tr>
 <td>F-SEC-001</td>
 <td>不正利用検知</td>
 <td>(グローバル)</td>
 <td><code>POST /internal/main-integration/v1/fraud/detected</code></td>
-<td><code>audit_logs</code></td>
+<td><code>H_audit_logs</code></td>
 </tr>
 </tbody>
 </table>
@@ -1291,7 +1291,7 @@
 <td>200(業務分岐 D)</td>
 </tr>
 <tr>
-<td><code>POST /widget/v1/inquiries</code></td>
+<td><code>POST /widget/v1/T_inquiries</code></td>
 <td>E-INPUT-*</td>
 <td>—</td>
 <td>400</td>
@@ -1303,19 +1303,19 @@
 <td>403</td>
 </tr>
 <tr>
-<td><code>POST /projects/{id}/members</code></td>
+<td><code>POST /M_projects/{id}/members</code></td>
 <td>E-AUTHZ-FORBIDDEN / ALREADY_EXISTS_IN_PROJECT</td>
 <td>MSG-COMMON-AUTHZ-403</td>
 <td>403 / 409</td>
 </tr>
 <tr>
-<td><code>PATCH /projects/{id}/members/{userId}</code></td>
+<td><code>PATCH /M_projects/{id}/members/{userId}</code></td>
 <td>E-AUTHZ-LAST-ADMIN-PROTECTED / E-AUTHZ-SELF-MUTATION</td>
 <td>MSG-COMMON-LAST-ADMIN / MSG-COMMON-SELF-MUTATION</td>
 <td>403</td>
 </tr>
 <tr>
-<td><code>DELETE /projects/{id}/members/{userId}</code></td>
+<td><code>DELETE /M_projects/{id}/members/{userId}</code></td>
 <td>E-AUTHZ-OWNER-PROTECTED / E-AUTHZ-SELF-MUTATION</td>
 <td>MSG-COMMON-OWNER-PROTECTED / MSG-COMMON-SELF-MUTATION</td>
 <td>403</td>
@@ -1345,25 +1345,25 @@
 <td>401 + 監査 + <code>high</code> alert</td>
 </tr>
 <tr>
-<td><code>POST /faqs</code> / <code>PATCH /faqs/{id}</code> / <code>POST /faqs/import</code></td>
+<td><code>POST /M_faqs</code> / <code>PATCH /M_faqs/{id}</code> / <code>POST /M_faqs/import</code></td>
 <td>E-INPUT-FAQ-LENGTH</td>
 <td>MSG-SCR-006-*</td>
 <td>400</td>
 </tr>
 <tr>
-<td><code>POST /faqs</code> / <code>POST /faqs/import</code></td>
+<td><code>POST /M_faqs</code> / <code>POST /M_faqs/import</code></td>
 <td>E-BIZ-FAQ-COUNT-LIMIT</td>
 <td>MSG-SCR-006-*</td>
 <td>409</td>
 </tr>
 <tr>
-<td><code>POST /faqs/bulk-status</code></td>
+<td><code>POST /M_faqs/bulk-status</code></td>
 <td>E-INPUT-* / E-BIZ-NOT-FOUND</td>
 <td>MSG-SCR-006-*</td>
 <td>400 / 404(1 操作最大 50 件)</td>
 </tr>
 <tr>
-<td><code>GET /projects/{id}/faqs/search</code> / <code>GET /projects/{id}/question-logs/search</code></td>
+<td><code>GET /M_projects/{id}/M_faqs/search</code> / <code>GET /M_projects/{id}/question-logs/search</code></td>
 <td>E-AUTHZ-PROJECT-DENIED</td>
 <td>MSG-COMMON-AUTHZ-403</td>
 <td>403</td>
@@ -1414,14 +1414,14 @@
 <td>MEMBER(メンバー)</td>
 <td>該当プロジェクト(プロジェクト WS のみ。契約 WS は非可視)</td>
 <td>プロジェクト WS = SCR-008, SCR-005, SCR-006, SCR-006-002, SCR-007(閲覧 + コピーのみ), SCR-021(閲覧のみ)+ 共通 = SCR-010, SCR-020, SCR-011, SCR-012, SCR-017</td>
-<td><code>POST/PATCH/DELETE /faqs</code>, <code>POST/PATCH /inquiries/*</code>, <code>GET /projects/{id}/quota-limits</code>(閲覧)</td>
+<td><code>POST/PATCH/DELETE /M_faqs</code>, <code>POST/PATCH /T_inquiries/*</code>, <code>GET /M_projects/{id}/quota-limits</code>(閲覧)</td>
 <td>FAQ 管理 / 要対応質問の状況管理 / ログ参照 + 質問数の当月利用・上限・消化率の閲覧のみ。無料利用枠はSCR-021に表示しない。質問数設定変更(SCR-021-001)は不可。ウィジェット公開キー再発行・見た目編集は不可。アカウント削除はオーナー専有</td>
 </tr>
 <tr>
 <td>END_USER</td>
 <td>許可ドメイン上のウィジェットセッション</td>
 <td>ウィジェット</td>
-<td><code>POST /widget/v1/ask</code>, <code>POST /widget/v1/inquiries</code></td>
+<td><code>POST /widget/v1/ask</code>, <code>POST /widget/v1/T_inquiries</code></td>
 <td>FAQ質問、AI回答、未解決時の確認済み連絡先表示を利用する。管理用の問い合わせIDは表示しない</td>
 </tr>
 <tr>
@@ -1429,24 +1429,24 @@
 <td>トークン認証</td>
 <td>SCR-018</td>
 <td><code>POST /auth/invitations/{token}/preview</code>, <code>POST /auth/invitations/{token}/activate</code></td>
-<td>メンバーアカウント有効化(氏名 + 初回パスワード + 規約同意)。<code>access_tokens.purpose='activation'</code> の有効トークン保持が唯一の認可条件。完了後は SCR-001 へ遷移して通常 Principal を構築</td>
+<td>メンバーアカウント有効化(氏名 + 初回パスワード + 規約同意)。<code>T_access_tokens.purpose='activation'</code> の有効トークン保持が唯一の認可条件。完了後は SCR-001 へ遷移して通常 Principal を構築</td>
 </tr>
 <tr>
 <td>CONTACT_VERIFY_TOKEN_HOLDER(連絡先確認トークン保有者、未認証)</td>
 <td>トークン認証</td>
 <td>SCR-019</td>
 <td><code>POST /auth/contact-verifications/{token}</code></td>
-<td>プロジェクト連絡先メール確認(<code>projects.contact_email_verified_at</code> セット)。<code>access_tokens.purpose='contact_verify'</code> の有効トークン保持が唯一の認可条件。アカウント不要、確認完了後は静的ランディングに留まる</td>
+<td>プロジェクト連絡先メール確認(<code>M_projects.contact_email_verified_at</code> セット)。<code>T_access_tokens.purpose='contact_verify'</code> の有効トークン保持が唯一の認可条件。アカウント不要、確認完了後は静的ランディングに留まる</td>
 </tr>
 </tbody>
 </table>
 <p>詳細は <a href="04_権限設計.html">04_権限設計.html §4-6</a> を正本とする。</p>
 <h2 id="8-利用上限--機能対応表レート契約単位--月次上限件数無料枠プロジェクト単位">8. 利用上限 × 機能対応表(レート=契約単位 / 月次上限件数・無料枠=プロジェクト単位)</h2>
-<p class="section-lead">MVP は単一プランのため、プラン階層対応表ではなく利用上限 × 機能対応表とする。レート制限は契約単位(<code>owner_quota_overrides</code>)、月次上限件数・無料枠はプロジェクト単位(<code>project_quota_limits</code>)で管理する。上限値とリミット設計の正本は <a href="10_課金・請求設計.html">10_課金・請求設計.html</a> である。</p>
+<p class="section-lead">MVP は単一プランのため、プラン階層対応表ではなく利用上限 × 機能対応表とする。レート制限は契約単位(<code>M_owner_quota_overrides</code>)、月次上限件数・無料枠はプロジェクト単位(<code>M_project_quota_limits</code>)で管理する。上限値とリミット設計の正本は <a href="10_課金・請求設計.html">10_課金・請求設計.html</a> である。</p>
 <table>
 <thead>
 <tr>
-<th>上限テーブル(<code>owner_quota_overrides.resource_kind</code>、契約単位)</th>
+<th>上限テーブル(<code>M_owner_quota_overrides.resource_kind</code>、契約単位)</th>
 <th>機能ID</th>
 <th>影響対象</th>
 <th>上書き可能項目</th>
@@ -1487,7 +1487,7 @@
 <table>
 <thead>
 <tr>
-<th>上限テーブル(<code>project_quota_limits.resource_kind</code>、プロジェクト単位)</th>
+<th>上限テーブル(<code>M_project_quota_limits.resource_kind</code>、プロジェクト単位)</th>
 <th>機能ID</th>
 <th>影響対象</th>
 <th>上書き可能項目</th>
@@ -1666,8 +1666,8 @@
 <tr>
 <td>FR-015e / FR-030a(プロジェクト作成時オーナーは isOwner で全権・自動 admin 付与なし)</td>
 <td>F-PRJ-001</td>
-<td>プロジェクト作成成功時、オーナーは isOwner bypass で当該プロジェクトの全権を持つ(<code>project_user_assignments</code> への自動 admin INSERT は行わない)</td>
-<td>(オーナーへの自動付与は行わないため、<code>project_user_assignments</code> にオーナー行が生成されないこと)</td>
+<td>プロジェクト作成成功時、オーナーは isOwner bypass で当該プロジェクトの全権を持つ(<code>M_project_user_assignments</code> への自動 admin INSERT は行わない)</td>
+<td>(オーナーへの自動付与は行わないため、<code>M_project_user_assignments</code> にオーナー行が生成されないこと)</td>
 <td>—</td>
 <td>オーナー専有</td>
 <td>—</td>
@@ -1676,8 +1676,8 @@
 <tr>
 <td>FR-030b(プロジェクト削除時の孤立メンバー論理削除)</td>
 <td>F-PRJ-001</td>
-<td>プロジェクト削除で当該 PJ のみ割当のメンバーが <code>project_users.valid=0</code> で論理削除</td>
-<td>他 PJ 割当(<code>valid=1</code>)ありメンバーは <code>project_users.valid=1</code> 維持 + 当該 PJ の <code>project_user_assignments</code> のみ valid=0</td>
+<td>プロジェクト削除で当該 PJ のみ割当のメンバーが <code>M_project_users.valid=0</code> で論理削除</td>
+<td>他 PJ 割当(<code>valid=1</code>)ありメンバーは <code>M_project_users.valid=1</code> 維持 + 当該 PJ の <code>M_project_user_assignments</code> のみ valid=0</td>
 <td>—</td>
 <td>オーナー専有</td>
 <td>—</td>
@@ -1686,8 +1686,8 @@
 <tr>
 <td><code>E-AUTHZ-LAST-ADMIN-PROTECTED</code>(最後の管理者保護)</td>
 <td>F-USER-001</td>
-<td>別のプロジェクトユーザー由来の <code>admin</code>(<code>owners</code> 行を持たない <code>project_user</code>)がいる前提で降格</td>
-<td>最後の <code>project_user</code> 由来の <code>admin</code>(<code>project_user_assignments.role='admin'</code>)を降格する試行で 403。オーナーは <code>project_user_assignments</code> に含まれず isOwner で全権のため判定対象外</td>
+<td>別のプロジェクトユーザー由来の <code>admin</code>(<code>M_owners</code> 行を持たない <code>project_user</code>)がいる前提で降格</td>
+<td>最後の <code>project_user</code> 由来の <code>admin</code>(<code>M_project_user_assignments.role='admin'</code>)を降格する試行で 403。オーナーは <code>M_project_user_assignments</code> に含まれず isOwner で全権のため判定対象外</td>
 <td>—</td>
 <td>—</td>
 <td>—</td>

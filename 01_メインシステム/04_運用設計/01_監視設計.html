@@ -199,7 +199,7 @@
 </tr>
 <tr>
 <td>(i) ダッシュボード KPI 集計バッチ遅延(FR-135d 連動)</td>
-<td><code>usage_metering.updated_at</code> 最大値が現在時刻から 5 分以上前</td>
+<td><code>T_usage_metering.updated_at</code> 最大値が現在時刻から 5 分以上前</td>
 <td>Slack <code>#ops-warn</code></td>
 <td>normal</td>
 </tr>
@@ -251,7 +251,7 @@
 </tr>
 <tr>
 <td>プロジェクト上限・無料枠状況(プロジェクト単位)</td>
-<td><code>project_quota_limits</code> の行数推移、KV <code>usage-limit:&lt;owner&gt;:&lt;projectId&gt;</code> ミラー鮮度(≤ 30s)、プロジェクト別の選択閾値/100%/125%到達件数、プロジェクト別アラートメール送信成功率</td>
+<td><code>M_project_quota_limits</code> の行数推移、KV <code>usage-limit:&lt;owner&gt;:&lt;projectId&gt;</code> ミラー鮮度(≤ 30s)、プロジェクト別の選択閾値/100%/125%到達件数、プロジェクト別アラートメール送信成功率</td>
 </tr>
 <tr>
 <td>AI 品質メトリクス</td>
@@ -346,16 +346,16 @@ high 検知
 <li><strong>回復通知</strong>: 解決時は同一チャネルに <code>RESOLVED:</code> プレフィクス付きで告知、<code>incident-id</code> で紐付け</li>
 </ul>
 <h2 id="6-ログ-retention-整合性検証">6. ログ retention 整合性検証</h2>
-<p>ログ種別ごとに retention が異なるため(<code>question_logs</code> 1 年 / <code>error_logs</code> 180 日 / <code>audit_logs</code> 1y/5y/7y 区分)、削除タイミング不整合が検知できるよう <strong>retention purge cron が両者を同期削除</strong> し、不整合検知時にアラート発火する。</p>
+<p>ログ種別ごとに retention が異なるため(<code>H_question_logs</code> 1 年 / <code>H_error_logs</code> 180 日 / <code>H_audit_logs</code> 1y/5y/7y 区分)、削除タイミング不整合が検知できるよう <strong>retention purge cron が両者を同期削除</strong> し、不整合検知時にアラート発火する。</p>
 <ul>
-<li><strong>同期削除</strong>: §14.1.9 <code>retentionCleanup</code> で <code>question_logs</code> / <code>notification_logs</code> / <code>error_logs</code> / <code>access_tokens</code> を同一ジョブ内で削除(1 transaction)</li>
+<li><strong>同期削除</strong>: §14.1.9 <code>retentionCleanup</code> で <code>H_question_logs</code> / <code>H_notification_logs</code> / <code>H_error_logs</code> / <code>T_access_tokens</code> を同一ジョブ内で削除(1 transaction)</li>
 <li><strong>不整合検知バッチ</strong>: 日次 JST 04:30 <code>RetentionConsistencyChecker</code>(新設):
 <ul>
-<li><code>question_logs</code> 中で 365 日超過の行が残っていないか</li>
-<li><code>error_logs</code> 中で 180 日超過の行が残っていないか</li>
-<li><code>audit_logs</code> の <code>retention_class='1y'</code> で 1 年超過行が残っていないか</li>
+<li><code>H_question_logs</code> 中で 365 日超過の行が残っていないか</li>
+<li><code>H_error_logs</code> 中で 180 日超過の行が残っていないか</li>
+<li><code>H_audit_logs</code> の <code>retention_class='1y'</code> で 1 年超過行が残っていないか</li>
 </ul></li>
-<li><strong>検知時のアクション</strong>: <code>audit_logs</code> に <code>retention.inconsistency.detected</code>(5y)を記録、<code>#ops-warn</code> に normal 重要度で通知</li>
+<li><strong>検知時のアクション</strong>: <code>H_audit_logs</code> に <code>retention.inconsistency.detected</code>(5y)を記録、<code>#ops-warn</code> に normal 重要度で通知</li>
 <li><strong>テスト</strong>: Integration テストで <code>it-retention-consistency-001</code> を整備し、意図的な不整合を検知できることを確認</li>
 </ul>
 <h2 id="7-アラートルール定義">7. アラートルール定義</h2>

@@ -41,22 +41,22 @@
 </tr>
 <tr>
 <td>無料枠 / 月次上限件数</td>
-<td><code>project_quota_limits</code> で保持(<a href="03_テーブル設計/project_quota_limits.html">03_テーブル設計/index.html §3.24</a> 正本)</td>
+<td><code>M_project_quota_limits</code> で保持(<a href="03_テーブル設計/M_project_quota_limits.html">03_テーブル設計/index.html §3.24</a> 正本)</td>
 <td>プロジェクト</td>
 </tr>
 <tr>
 <td>レート制限(DDoS / Bot / 暴走対策)</td>
-<td><code>owner_quota_overrides</code> で保持(<a href="03_テーブル設計/owner_quota_overrides.html">03_テーブル設計/index.html §3.23</a> 正本)。上限件数・無料枠とは別軸</td>
+<td><code>M_owner_quota_overrides</code> で保持(<a href="03_テーブル設計/M_owner_quota_overrides.html">03_テーブル設計/index.html §3.23</a> 正本)。上限件数・無料枠とは別軸</td>
 <td>契約</td>
 </tr>
 <tr>
 <td>利用量計測 / 請求集計</td>
-<td><code>usage_metering</code> をプロジェクト単位で計測し、契約単位で集計して請求(<a href="03_テーブル設計/usage_metering.html">03_テーブル設計/index.html §3.22</a> 正本)</td>
+<td><code>T_usage_metering</code> をプロジェクト単位で計測し、契約単位で集計して請求(<a href="03_テーブル設計/T_usage_metering.html">03_テーブル設計/index.html §3.22</a> 正本)</td>
 <td>計測=プロジェクト / 請求=契約</td>
 </tr>
 </tbody>
 </table>
-<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">テーブル定義は 03 が正本</span><code>billing_subscriptions</code> / <code>billing_invoices</code> / <code>usage_metering</code> / <code>owner_quota_overrides</code> / <code>project_quota_limits</code> のカラム・制約・コード値は <a href="03_テーブル設計/index.html#1-テーブル一覧">03_テーブル設計/index.html §1 テーブル一覧</a>(各テーブルファイル)を正本とする。本ページは判定ロジックと状態遷移のみを扱う。</div></div>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">テーブル定義は 03 が正本</span><code>T_billing_subscriptions</code> / <code>T_billing_invoices</code> / <code>T_usage_metering</code> / <code>M_owner_quota_overrides</code> / <code>M_project_quota_limits</code> のカラム・制約・コード値は <a href="03_テーブル設計/index.html#1-テーブル一覧">03_テーブル設計/index.html §1 テーブル一覧</a>(各テーブルファイル)を正本とする。本ページは判定ロジックと状態遷移のみを扱う。</div></div>
 
 <h3 id="11-課金対象と無料枠初期値">1.1 課金対象と無料枠初期値</h3>
 <p class="section-lead">課金対象は質問数・FAQ 件数・AI 利用コストの 3 種。質問数のみが月次上限件数による停止対象で、FAQ 件数は上限なしで従量課金を継続する。AI 利用コストは MVP ではサービス側が吸収する社内可視化指標とする。無料枠・単価の初期値は要件(BR-086)を正本とし、サービス側が料金設定として管理する。</p>
@@ -161,7 +161,7 @@
 <div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">支払方法ゲートとは別経路</span>支払方法未登録の契約でプロジェクトが無料枠を超過した場合も同様にウィジェット受付を停止するが、これは上限件数 100% 停止ではなく支払方法ゲート(§4)による。両者ともウィジェット受付のみを止め、契約はサスペンションしない。ウィジェット応答 HTTP ステータス・エラー ID(<code>E-QUOTA-*</code> / <code>E-BILL-*</code>)は <a href="05_エラー設計.html#45-利用上限エラーe-quota-プロジェクト上限件数--全体キャパシティ">05_エラー設計.html §4.5 / §4.6</a> を正本とする。</div></div>
 
 <h2 id="3-上限アラート通知方針">3. 上限アラート通知方針</h2>
-<p class="section-lead">プロジェクトごとに選択した質問数上限アラート閾値へ当月初回到達した時点で、宛先へメールを送信する。宛先はオーナー + 当該プロジェクトの有効な管理者(<code>project_user_assignments.role='admin' AND valid=1</code>)とし、同一メールアドレスは重複排除する。全閾値未選択時はアラート通知を行わない。</p>
+<p class="section-lead">プロジェクトごとに選択した質問数上限アラート閾値へ当月初回到達した時点で、宛先へメールを送信する。宛先はオーナー + 当該プロジェクトの有効な管理者(<code>M_project_user_assignments.role='admin' AND valid=1</code>)とし、同一メールアドレスは重複排除する。全閾値未選択時はアラート通知を行わない。</p>
 <table>
 <thead>
 <tr>
@@ -229,7 +229,7 @@
 <div class="callout warning"><i class="bi bi-exclamation-triangle"></i><div><span class="c-title">支払方法ゲート ≠ サスペンション</span>支払方法ゲートはウィジェット受付のみを止める措置で、契約 <code>contract_status</code> は <code>active</code> のままである。決済失敗起因のサスペンション(§5)とは別経路であり、混同しないこと。支払方法登録済の契約は全課金対象の無料枠超過分を事後課金とし、受付は止めない(質問数上限件数 100% 停止は別途適用)。</div></div>
 
 <h2 id="5-契約状態ライフサイクル">5. 契約状態ライフサイクル</h2>
-<p class="section-lead"><code>owners.contract_status</code> は <code>active</code> / <code>suspended</code> / <code>deleted_pending</code> / <code>deleted</code> の 4 値。状態定義そのものは共有概念(メイン正本)に従い、本ページは課金起因のサスペンション遷移と退会起因の削除遷移を記述する。決済失敗の猶予は <strong>7 日</strong>、退会の猶予は <strong>90 日</strong>で、両者は別の期間である。</p>
+<p class="section-lead"><code>M_owners.contract_status</code> は <code>active</code> / <code>suspended</code> / <code>deleted_pending</code> / <code>deleted</code> の 4 値。状態定義そのものは共有概念(メイン正本)に従い、本ページは課金起因のサスペンション遷移と退会起因の削除遷移を記述する。決済失敗の猶予は <strong>7 日</strong>、退会の猶予は <strong>90 日</strong>で、両者は別の期間である。</p>
 <table>
 <thead>
 <tr>
@@ -262,7 +262,7 @@
 <td><code>deleted</code></td>
 <td>削除済み</td>
 <td>×</td>
-<td>停止。<code>contract_status='deleted'</code> 設定時は <code>owners.valid=0</code> を同時セット</td>
+<td>停止。<code>contract_status='deleted'</code> 設定時は <code>M_owners.valid=0</code> を同時セット</td>
 </tr>
 </tbody>
 </table>
@@ -273,7 +273,7 @@
 <pre class="mermaid"><code>sequenceDiagram
   participant P as 課金プロバイダ
   participant W as worker-main-api
-  participant D as D1 (owners)
+  participant D as D1 (M_owners)
   participant O as オーナー
 
   P-&gt;&gt;W: 決済失敗確定の通知
@@ -319,7 +319,7 @@
 <tr>
 <td><code>deleted_pending</code> → <code>deleted</code></td>
 <td>90 日経過後の物理削除バッチ</td>
-<td><code>owners.contract_status='deleted'</code> と <code>owners.valid=0</code>(必要に応じ配下 <code>project_users.valid=0</code>)を同一トランザクションでセットし、全データを物理削除</td>
+<td><code>M_owners.contract_status='deleted'</code> と <code>M_owners.valid=0</code>(必要に応じ配下 <code>M_project_users.valid=0</code>)を同一トランザクションでセットし、全データを物理削除</td>
 </tr>
 </tbody>
 </table>
@@ -337,7 +337,7 @@
 <tbody>
 <tr>
 <td>リアルタイム集計</td>
-<td>質問発生時に <code>usage_metering</code> へ計測。選択アラート閾値到達・100% 停止・125% 通知の判定に用いる</td>
+<td>質問発生時に <code>T_usage_metering</code> へ計測。選択アラート閾値到達・100% 停止・125% 通知の判定に用いる</td>
 </tr>
 <tr>
 <td>サマリ反映遅延</td>

@@ -129,12 +129,12 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>FAQ</td><td>FAQ を取得・新規作成・更新・論理削除する</td><td>テーブル</td><td>入力 / 出力</td><td>◯</td><td>◯</td><td>◯</td><td>◯</td><td><code>faqs</code>(<a href="../03_テーブル設計/faqs.html">テーブル設計 3.9</a>)</td></tr>
-<tr><td>未解決質問</td><td>登録元の未解決質問を参照する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>inquiries</code>(<a href="../03_テーブル設計/inquiries.html">テーブル設計 3.14</a>)</td></tr>
-<tr><td>FAQ 作成</td><td>新規 FAQ を作成する</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /faqs</code>(<a href="../02_API設計/FAQ管理.html#API-FAQ-002">API 設計 5.4.2</a>)</td></tr>
-<tr><td>FAQ 取得</td><td>編集対象 FAQ の現値をロードする</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /faqs/{id}</code>(<a href="../02_API設計/FAQ管理.html#API-FAQ-002">API 設計 5.4.2</a>)</td></tr>
-<tr><td>FAQ 更新</td><td>FAQ を更新する(状態保存・自動保存を含む)</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>PATCH /faqs/{id}</code>(<a href="../02_API設計/FAQ管理.html#API-FAQ-002">API 設計 5.4.2</a>)</td></tr>
-<tr><td>FAQ 削除</td><td>FAQ を論理削除する</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>DELETE /faqs/{id}</code>(<a href="../02_API設計/FAQ管理.html#API-FAQ-002">API 設計 5.4.2</a>)</td></tr>
+<tr><td>FAQ</td><td>FAQ を取得・新規作成・更新・論理削除する</td><td>テーブル</td><td>入力 / 出力</td><td>◯</td><td>◯</td><td>◯</td><td>◯</td><td><code>M_faqs</code>(<a href="../03_テーブル設計/M_faqs.html">テーブル設計 3.9</a>)</td></tr>
+<tr><td>未解決質問</td><td>登録元の未解決質問を参照する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>T_inquiries</code>(<a href="../03_テーブル設計/T_inquiries.html">テーブル設計 3.14</a>)</td></tr>
+<tr><td>FAQ 作成</td><td>新規 FAQ を作成する</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /M_faqs</code>(<a href="../02_API設計/FAQ管理.html#API-FAQ-002">API 設計 5.4.2</a>)</td></tr>
+<tr><td>FAQ 取得</td><td>編集対象 FAQ の現値をロードする</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /M_faqs/{id}</code>(<a href="../02_API設計/FAQ管理.html#API-FAQ-002">API 設計 5.4.2</a>)</td></tr>
+<tr><td>FAQ 更新</td><td>FAQ を更新する(状態保存・自動保存を含む)</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>PATCH /M_faqs/{id}</code>(<a href="../02_API設計/FAQ管理.html#API-FAQ-002">API 設計 5.4.2</a>)</td></tr>
+<tr><td>FAQ 削除</td><td>FAQ を論理削除する</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>DELETE /M_faqs/{id}</code>(<a href="../02_API設計/FAQ管理.html#API-FAQ-002">API 設計 5.4.2</a>)</td></tr>
 <tr><td>FAQ 改訂履歴取得</td><td>改訂履歴(直近 50 件)を取得し差分表示・ロールバックに用いる</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>正本は <a href="../02_API設計/index.html">API 設計 §5.4</a>(IT-08 / EV-06 対応)</td></tr>
 <tr><td>FAQ 改訂履歴</td><td>FAQ の版を管理する(改訂履歴・ロールバック)</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td>物理名・スキーマの正本は <a href="../03_テーブル設計/index.html">テーブル設計</a>(IT-08 / EV-06 対応)</td></tr>
 </tbody>
@@ -153,11 +153,11 @@
 </tr>
 </thead>
 <tbody>
-<tr><td><code>EV-01</code></td><td>編集初期表示</td><td>画面遷移・リロード時</td><td><ul><li>既存編集は <code>GET /faqs/{id}</code> で現値をロードし各欄へ展開</li><li>新規は空フォーム</li></ul></td><td><a href="#IT-01">IT-01</a>, <a href="#IT-03">IT-03</a>, <a href="#IT-04">IT-04</a>, <a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a>, <a href="#IT-07">IT-07</a></td></tr>
+<tr><td><code>EV-01</code></td><td>編集初期表示</td><td>画面遷移・リロード時</td><td><ul><li>既存編集は <code>GET /M_faqs/{id}</code> で現値をロードし各欄へ展開</li><li>新規は空フォーム</li></ul></td><td><a href="#IT-01">IT-01</a>, <a href="#IT-03">IT-03</a>, <a href="#IT-04">IT-04</a>, <a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a>, <a href="#IT-07">IT-07</a></td></tr>
 <tr><td><code>EV-02</code></td><td>入力バリデーション</td><td>各入力欄のフォーカスアウト時</td><td>質問 1〜500 文字・回答 1〜5,000 文字・カテゴリ 100 文字以内を検証しエラーを表示</td><td><a href="#IT-03">IT-03</a>, <a href="#IT-04">IT-04</a>, <a href="#IT-05">IT-05</a></td></tr>
 <tr><td><code>EV-03</code></td><td>自動保存</td><td>編集中 30 秒ごと</td><td>下書きを自動保存しインジケータを更新</td><td><a href="#IT-02">IT-02</a></td></tr>
-<tr><td><code>EV-04</code></td><td>保存</td><td>「保存」押下時</td><td><ul><li>「状態」ラジオの値で <code>POST /faqs</code>(新規)/ <code>PATCH /faqs/{id}</code>(更新)</li><li><code>published</code> 選択時は公開確認ダイアログ</li><li><code>faqs.version</code> 不一致時は楽観ロックエラー</li></ul></td><td><a href="#IT-06">IT-06</a>, <a href="#IT-10">IT-10</a>, <a href="#IT-12">IT-12</a></td></tr>
-<tr><td><code>EV-05</code></td><td>削除</td><td>「削除」押下時</td><td><ul><li>確認ダイアログ後 <code>DELETE /faqs/{id}</code> で論理削除</li><li>一覧へ戻る</li></ul></td><td><a href="#IT-11">IT-11</a></td></tr>
+<tr><td><code>EV-04</code></td><td>保存</td><td>「保存」押下時</td><td><ul><li>「状態」ラジオの値で <code>POST /M_faqs</code>(新規)/ <code>PATCH /M_faqs/{id}</code>(更新)</li><li><code>published</code> 選択時は公開確認ダイアログ</li><li><code>M_faqs.version</code> 不一致時は楽観ロックエラー</li></ul></td><td><a href="#IT-06">IT-06</a>, <a href="#IT-10">IT-10</a>, <a href="#IT-12">IT-12</a></td></tr>
+<tr><td><code>EV-05</code></td><td>削除</td><td>「削除」押下時</td><td><ul><li>確認ダイアログ後 <code>DELETE /M_faqs/{id}</code> で論理削除</li><li>一覧へ戻る</li></ul></td><td><a href="#IT-11">IT-11</a></td></tr>
 <tr><td><code>EV-06</code></td><td>改訂履歴表示</td><td>「改訂履歴」押下時</td><td>直近 50 件の差分モーダルを表示。任意版へロールバック</td><td><a href="#IT-08">IT-08</a></td></tr>
 <tr><td><code>EV-07</code></td><td>キャンセル</td><td>「キャンセル」押下時</td><td><ul><li>編集を破棄して一覧へ戻る</li><li>未保存変更時は確認ダイアログ</li></ul></td><td><a href="#IT-09">IT-09</a></td></tr>
 </tbody>

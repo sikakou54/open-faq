@@ -136,10 +136,10 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>FAQ</td><td>一覧を取得し、一括の状態変更・論理削除を行う</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>◯</td><td><code>faqs</code>(<a href="../03_テーブル設計/faqs.html">テーブル設計 3.9</a>)</td></tr>
-<tr><td>FAQ 一覧取得</td><td>条件付きで FAQ 一覧を取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /faqs</code>(<code>status</code> / <code>projectId</code> / <code>keyword</code> / <code>cursor</code>)(<a href="../02_API設計/FAQ管理.html#API-FAQ-001">API 設計 5.4.1</a>)</td></tr>
-<tr><td>FAQ 一括状態変更</td><td>選択中の FAQ を一括で公開 / 非公開化する</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /faqs/bulk-status</code>(<a href="../02_API設計/index.html">API 設計 5.4.2a</a>)</td></tr>
-<tr><td>FAQ エクスポート</td><td>フィルタ適用結果を CSV として取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /faqs/export</code>(<a href="../02_API設計/FAQ管理.html#API-FAQ-006">API 設計 5.4.5</a>)</td></tr>
+<tr><td>FAQ</td><td>一覧を取得し、一括の状態変更・論理削除を行う</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>◯</td><td><code>M_faqs</code>(<a href="../03_テーブル設計/M_faqs.html">テーブル設計 3.9</a>)</td></tr>
+<tr><td>FAQ 一覧取得</td><td>条件付きで FAQ 一覧を取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /M_faqs</code>(<code>status</code> / <code>projectId</code> / <code>keyword</code> / <code>cursor</code>)(<a href="../02_API設計/FAQ管理.html#API-FAQ-001">API 設計 5.4.1</a>)</td></tr>
+<tr><td>FAQ 一括状態変更</td><td>選択中の FAQ を一括で公開 / 非公開化する</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /M_faqs/bulk-status</code>(<a href="../02_API設計/index.html">API 設計 5.4.2a</a>)</td></tr>
+<tr><td>FAQ エクスポート</td><td>フィルタ適用結果を CSV として取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /M_faqs/export</code>(<a href="../02_API設計/FAQ管理.html#API-FAQ-006">API 設計 5.4.5</a>)</td></tr>
 <tr><td>FAQ CSV</td><td>エクスポート結果をダウンロードする</td><td>ファイル</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>CSV UTF-8 / ダウンロード</td></tr>
 </tbody>
 </table>
@@ -157,15 +157,15 @@
 </tr>
 </thead>
 <tbody>
-<tr><td><code>EV-01</code></td><td>一覧初期表示</td><td>画面遷移・リロード時</td><td><ul><li><code>GET /faqs</code> で一覧を取得し表示</li><li>0 件時は EmptyState</li></ul></td><td><a href="#IT-04">IT-04</a>, <a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a>, <a href="#IT-07">IT-07</a>, <a href="#IT-08">IT-08</a>, <a href="#IT-09">IT-09</a>, <a href="#IT-15">IT-15</a></td></tr>
-<tr><td><code>EV-02</code></td><td>検索</td><td>キーワード検索の入力時</td><td>キーワードを付与して <code>GET /faqs</code> を再取得し一覧を更新</td><td><a href="#IT-01">IT-01</a>, <a href="#IT-09">IT-09</a></td></tr>
-<tr><td><code>EV-03</code></td><td>絞り込み</td><td>カテゴリフィルタの変更時</td><td>カテゴリ条件を付与して <code>GET /faqs</code> を再取得し一覧を更新</td><td><a href="#IT-02">IT-02</a>, <a href="#IT-09">IT-09</a></td></tr>
-<tr><td><code>EV-04</code></td><td>並び替え</td><td>並び順の変更時</td><td>指定した並び順で <code>GET /faqs</code> を再取得し一覧を更新</td><td><a href="#IT-03">IT-03</a>, <a href="#IT-09">IT-09</a></td></tr>
+<tr><td><code>EV-01</code></td><td>一覧初期表示</td><td>画面遷移・リロード時</td><td><ul><li><code>GET /M_faqs</code> で一覧を取得し表示</li><li>0 件時は EmptyState</li></ul></td><td><a href="#IT-04">IT-04</a>, <a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a>, <a href="#IT-07">IT-07</a>, <a href="#IT-08">IT-08</a>, <a href="#IT-09">IT-09</a>, <a href="#IT-15">IT-15</a></td></tr>
+<tr><td><code>EV-02</code></td><td>検索</td><td>キーワード検索の入力時</td><td>キーワードを付与して <code>GET /M_faqs</code> を再取得し一覧を更新</td><td><a href="#IT-01">IT-01</a>, <a href="#IT-09">IT-09</a></td></tr>
+<tr><td><code>EV-03</code></td><td>絞り込み</td><td>カテゴリフィルタの変更時</td><td>カテゴリ条件を付与して <code>GET /M_faqs</code> を再取得し一覧を更新</td><td><a href="#IT-02">IT-02</a>, <a href="#IT-09">IT-09</a></td></tr>
+<tr><td><code>EV-04</code></td><td>並び替え</td><td>並び順の変更時</td><td>指定した並び順で <code>GET /M_faqs</code> を再取得し一覧を更新</td><td><a href="#IT-03">IT-03</a>, <a href="#IT-09">IT-09</a></td></tr>
 <tr><td><code>EV-05</code></td><td>新規作成へ遷移</td><td>「+ 新規作成」押下時</td><td>編集画面(SCR-006-001)を新規モードで開く</td><td><a href="#IT-11">IT-11</a></td></tr>
 <tr><td><code>EV-06</code></td><td>編集へ遷移</td><td>FAQ ID リンク押下時</td><td>編集画面(SCR-006-001)へ遷移</td><td><a href="#IT-04">IT-04</a></td></tr>
-<tr><td><code>EV-07</code></td><td>一括操作</td><td>1 件以上選択 → 一括操作バーのボタン押下時</td><td><ul><li>選択中 FAQ を <code>POST /faqs/bulk-status</code> で一括公開 / 非公開化</li><li>または一括削除(確認ダイアログ)</li></ul></td><td><a href="#IT-10">IT-10</a>, <a href="#IT-12">IT-12</a></td></tr>
+<tr><td><code>EV-07</code></td><td>一括操作</td><td>1 件以上選択 → 一括操作バーのボタン押下時</td><td><ul><li>選択中 FAQ を <code>POST /M_faqs/bulk-status</code> で一括公開 / 非公開化</li><li>または一括削除(確認ダイアログ)</li></ul></td><td><a href="#IT-10">IT-10</a>, <a href="#IT-12">IT-12</a></td></tr>
 <tr><td><code>EV-08</code></td><td>CSV インポート起動</td><td>「CSV をインポート」押下時</td><td>SCR-006-002 モーダルを開く</td><td><a href="#IT-13">IT-13</a></td></tr>
-<tr><td><code>EV-09</code></td><td>CSV エクスポート</td><td>「CSV をエクスポート」押下時</td><td>フィルタ適用結果を <code>GET /faqs/export</code> で CSV ダウンロード</td><td><a href="#IT-14">IT-14</a></td></tr>
+<tr><td><code>EV-09</code></td><td>CSV エクスポート</td><td>「CSV をエクスポート」押下時</td><td>フィルタ適用結果を <code>GET /M_faqs/export</code> で CSV ダウンロード</td><td><a href="#IT-14">IT-14</a></td></tr>
 </tbody>
 </table>
 

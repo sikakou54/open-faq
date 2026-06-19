@@ -243,41 +243,41 @@
   participant W as worker-main-api
   participant K as KV (session)
   participant D as D1
-  participant A as audit_logs
+  participant A as H_audit_logs
 
   U-&gt;&gt;P: GET /
   P--&gt;&gt;U: SPA + HTML/JS/CSS
   U-&gt;&gt;W: POST /api/v1/auth/login (Cookie 未保持)
-  W-&gt;&gt;D: SELECT owners / project_users WHERE email_hmac=? (2 マスタ別系統で照合)
+  W-&gt;&gt;D: SELECT M_owners / M_project_users WHERE email_hmac=? (2 マスタ別系統で照合)
   W-&gt;&gt;D: Argon2id verify(actor_type を確定)
   W-&gt;&gt;K: SET session:{sid} (TTL 12h)
   W--&gt;&gt;U: Set-Cookie: session=...; CSRF Cookie
-  U-&gt;&gt;W: GET /api/v1/inquiries (Cookie + X-CSRF-Token)
+  U-&gt;&gt;W: GET /api/v1/T_inquiries (Cookie + X-CSRF-Token)
   W-&gt;&gt;K: GET session:{sid}
-  W-&gt;&gt;D: SELECT inquiries WHERE contract_owner_user_id=? AND ...
-  W-&gt;&gt;A: INSERT audit_logs (read 操作は省略可)
+  W-&gt;&gt;D: SELECT T_inquiries WHERE contract_owner_user_id=? AND ...
+  W-&gt;&gt;A: INSERT H_audit_logs (read 操作は省略可)
   W--&gt;&gt;U: 200 OK + JSON</code></pre>
 <h4 id="232-ウィジェット-apiend_user">2.3.2 ウィジェット API（end_user）</h4>
 <pre class="mermaid"><code>sequenceDiagram
   participant E as エンドユーザー
   participant W as widget.js (iframe 内)
   participant API as worker-widget-api
-  participant K as KV (allowed_domains / threshold / session)
+  participant K as KV (M_allowed_domains / threshold / session)
   participant D as D1
   participant AI as Workers AI
 
   E-&gt;&gt;W: ページ表示時にロード
   W-&gt;&gt;API: POST /widget/v1/bootstrap (pk_live_xxx, Origin)
-  API-&gt;&gt;K: GET allowed_domains:{project_id}
-  API-&gt;&gt;D: SELECT projects (キャッシュミス時)
+  API-&gt;&gt;K: GET M_allowed_domains:{project_id}
+  API-&gt;&gt;D: SELECT M_projects (キャッシュミス時)
   API-&gt;&gt;K: SET widget-session:{sid} (TTL 1h)
   API--&gt;&gt;W: { session_token, project_config }
   E-&gt;&gt;W: 質問入力 → 送信
   W-&gt;&gt;API: POST /widget/v1/ask { question, session_token }
-  API-&gt;&gt;D: FTS5 検索 (faq_search_fts)
+  API-&gt;&gt;D: FTS5 検索 (TP_faq_search_fts)
   API-&gt;&gt;AI: 推論（質問 + FAQ 抜粋）
   API-&gt;&gt;K: GET ai_threshold:{contract_owner_user_id}:{project_id}
-  API-&gt;&gt;D: INSERT question_logs (metering_billable=...)
+  API-&gt;&gt;D: INSERT H_question_logs (metering_billable=...)
   API--&gt;&gt;W: { type: &quot;answered&quot; | &quot;unanswered&quot; | &quot;error&quot;, ... }</code></pre>
 <h3 id="24-環境構成">2.4 環境構成</h3>
 <table>
@@ -552,9 +552,9 @@
 ├── routes/
 │   ├── auth.ts               # /auth/*
 │   ├── admin-users.ts         # /admin-users/*
-│   ├── projects.ts           # /projects/*
-│   ├── faqs.ts               # /faqs/*
-│   ├── inquiries.ts          # /inquiries/*
+│   ├── M_projects.ts           # /M_projects/*
+│   ├── M_faqs.ts               # /M_faqs/*
+│   ├── T_inquiries.ts          # /T_inquiries/*
 │   ├── usage.ts              # /usage
 │   ├── billing.ts            # /billing/*
 │   ├── data.ts               # /data/*
@@ -611,7 +611,7 @@
 ├── routes/
 │   ├── bootstrap.ts
 │   ├── ask.ts
-│   └── inquiries.ts
+│   └── T_inquiries.ts
 ├── handlers/
 ├── repository/
 ├── adapter/
@@ -834,19 +834,19 @@
 <tbody>
 <tr>
 <td>監査ログ</td>
-<td><code>audit_logs</code> (D1)</td>
+<td><code>H_audit_logs</code> (D1)</td>
 <td>1/5/7 年</td>
 <td>マスク済み</td>
 </tr>
 <tr>
 <td>エラーログ</td>
-<td><code>error_logs</code> (D1)</td>
+<td><code>H_error_logs</code> (D1)</td>
 <td>180 日</td>
 <td>マスク済み</td>
 </tr>
 <tr>
 <td>通知ログ</td>
-<td><code>notification_logs</code> (D1)</td>
+<td><code>H_notification_logs</code> (D1)</td>
 <td>1 年</td>
 <td>HMAC のみ</td>
 </tr>
@@ -923,7 +923,7 @@
 <tr>
 <td>API パス</td>
 <td>kebab-case</td>
-<td><code>/inquiries/{id}</code></td>
+<td><code>/T_inquiries/{id}</code></td>
 </tr>
 </tbody>
 </table>
@@ -1217,7 +1217,7 @@
 <td>-</td>
 </tr>
 <tr>
-<td>question_logs / inquiries / 通知 / inbox</td>
+<td>H_question_logs / T_inquiries / 通知 / inbox</td>
 <td>1 年</td>
 <td>created_at / closed_at</td>
 </tr>

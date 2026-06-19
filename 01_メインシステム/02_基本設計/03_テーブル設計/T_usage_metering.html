@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>announcement_recipients(TBL-027) | FAQ 設計ポータル</title>
+<title>T_usage_metering(TBL-022) | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../../../assets/css/style.css">
 <script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script src="../../../assets/js/nav-data.js" defer></script>
 <script src="../../../assets/js/search-index.js" defer></script>
 <script src="../../../assets/js/portal.js" defer></script>
 </head>
-<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/announcement_recipients.html">
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/T_usage_metering.html">
 <article class="content" id="content">
-<h1 id="TBL-027">TBL-027 <code>announcement_recipients</code></h1>
-<span id="327-announcement_recipients"></span>
-<p class="section-lead">お知らせの実配信先・配信集計・監査情報を保持します。</p>
-<h3 id="3271-概要">概要</h3>
+<h1 id="TBL-022">TBL-022 <code>T_usage_metering</code></h1>
+<span id="322-T_usage_metering"></span>
+<p class="section-lead">質問数・FAQ 件数をプロジェクト単位で計測し、請求はオーナーで SUM 集計します。</p>
+<h3 id="3221-概要">概要</h3>
 <table>
 <thead>
 <tr>
@@ -26,11 +26,11 @@
 <tbody>
 <tr>
 <td>テーブル名</td>
-<td><code>announcement_recipients</code></td>
+<td><code>T_usage_metering</code></td>
 </tr>
 <tr>
 <td>論理名</td>
-<td>お知らせ受信者</td>
+<td>利用量計測(プロジェクト単位)</td>
 </tr>
 <tr>
 <td>主キー</td>
@@ -39,12 +39,13 @@
 <tr>
 <td>外部キー</td>
 <td><ul class="key-cols">
-<li><code>announcement_id</code> → <code>service_announcements(id)</code></li>
+<li><code>contract_owner_user_id</code> → <code>M_owners(id)</code></li>
+<li><code>project_id</code> → <code>M_projects(id)</code></li>
 </ul></td>
 </tr>
 </tbody>
 </table>
-<h3 id="3272-カラム定義">カラム定義</h3>
+<h3 id="3222-カラム定義">カラム定義</h3>
 <table>
 <thead>
 <tr>
@@ -79,92 +80,120 @@
 </tr>
 <tr>
 <td style="text-align: right;">2</td>
-<td>お知らせ ID</td>
-<td><code>announcement_id</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>NO</td>
-<td></td>
-<td><code>service_announcements(id)</code></td>
-<td></td>
-<td></td>
-<td></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">3</td>
 <td>契約 owner ID</td>
 <td><code>contract_owner_user_id</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
+<td><code>M_owners(id)</code></td>
+<td>①</td>
 <td></td>
 <td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>プロジェクト ID</td>
+<td><code>project_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td><code>M_projects(id)</code></td>
+<td>②</td>
 <td></td>
 <td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">4</td>
-<td>受信者種別</td>
-<td><code>recipient_type</code></td>
+<td>請求年月</td>
+<td><code>billing_year_month</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
 <td></td>
+<td>②</td>
 <td></td>
 <td></td>
-<td><code>recipient_type IN ('owner','project_user')</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">5</td>
-<td>受信者 ID</td>
-<td><code>recipient_id</code></td>
-<td>TEXT</td>
+<td>質問数</td>
+<td><code>question_count</code></td>
+<td>INTEGER</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
 <td></td>
 <td></td>
+<td><code>0</code></td>
 <td></td>
-<td><code>recipient_type</code> に応じ <code>owners(id)</code> / <code>project_users(id)</code> を指す(論理参照)</td>
 
 </tr>
 <tr>
 <td style="text-align: right;">6</td>
-<td>送信日時</td>
-<td><code>sent_at</code></td>
-<td>TEXT</td>
+<td>FAQ 数(スナップショット)</td>
+<td><code>faq_count_snapshot</code></td>
+<td>INTEGER</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
+<td><code>0</code></td>
 <td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">7</td>
-<td>配信状態</td>
-<td><code>delivery_status</code></td>
-<td>TEXT</td>
+<td>AI 入力トークン</td>
+<td><code>ai_token_input</code></td>
+<td>INTEGER</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
 <td></td>
 <td></td>
+<td><code>0</code></td>
 <td></td>
-<td><code>delivery_status IN ('pending','delivered','failed')</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">8</td>
-<td>既読日時</td>
-<td><code>read_at</code></td>
+<td>AI 出力トークン</td>
+<td><code>ai_token_output</code></td>
+<td>INTEGER</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>0</code></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">9</td>
+<td>AI コスト(円)</td>
+<td><code>ai_cost_yen</code></td>
+<td>INTEGER</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>0</code></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">10</td>
+<td>確定日時</td>
+<td><code>finalized_at</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
@@ -175,9 +204,23 @@
 <td></td>
 
 </tr>
+<tr>
+<td style="text-align: right;">11</td>
+<td>更新日時</td>
+<td><code>updated_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
 </tbody>
 </table>
-<h3 id="3275-インデックス">インデックス</h3>
+<h3 id="3225-インデックス">インデックス</h3>
 <table>
 <thead>
 <tr>
@@ -191,47 +234,22 @@
 <tbody>
 <tr>
 <td style="text-align: right;">1</td>
-<td><code>idx_ar_announcement</code></td>
-<td><code>announcement_id</code></td>
-<td></td>
-<td>お知らせ別</td>
+<td><code>uq_usage_metering_owner_project_month</code></td>
+<td><code>(contract_owner_user_id, project_id, billing_year_month)</code></td>
+<td>○</td>
+<td>プロジェクト × 月次一意</td>
 </tr>
 <tr>
 <td style="text-align: right;">2</td>
-<td><code>idx_ar_owner_user</code></td>
-<td><code>(contract_owner_user_id, recipient_type, recipient_id)</code></td>
+<td><code>idx_usage_metering_owner_month</code></td>
+<td><code>(contract_owner_user_id, billing_year_month)</code></td>
 <td></td>
-<td>ユーザー別逆引き</td>
+<td>契約集計(請求 SUM)用</td>
 </tr>
 </tbody>
 </table>
-<h3 id="3277-コード値区分値">コード値・区分値</h3>
-<table>
-<thead>
-<tr>
-<th>カラム名</th>
-<th>値</th>
-<th>意味</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>delivery_status</code></td>
-<td><code>pending</code></td>
-<td>配信待ち</td>
-</tr>
-<tr>
-<td><code>delivery_status</code></td>
-<td><code>delivered</code></td>
-<td>配信完了</td>
-</tr>
-<tr>
-<td><code>delivery_status</code></td>
-<td><code>failed</code></td>
-<td>配信失敗</td>
-</tr>
-</tbody>
-</table>
+<h3 id="3227-コード値区分値">コード値・区分値</h3>
+<p>(なし)</p>
 </article>
 </body>
 </html>

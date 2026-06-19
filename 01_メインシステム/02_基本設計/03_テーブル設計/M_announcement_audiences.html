@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>project_legacy_keys(TBL-007) | FAQ 設計ポータル</title>
+<title>M_announcement_audiences(TBL-026) | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../../../assets/css/style.css">
 <script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script src="../../../assets/js/nav-data.js" defer></script>
 <script src="../../../assets/js/search-index.js" defer></script>
 <script src="../../../assets/js/portal.js" defer></script>
 </head>
-<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/project_legacy_keys.html">
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/M_announcement_audiences.html">
 <article class="content" id="content">
-<h1 id="TBL-007">TBL-007 <code>project_legacy_keys</code></h1>
-<span id="37-project_legacy_keys"></span>
-<p class="section-lead">ウィジェット鍵ローテーション時に旧キーを 24 時間だけ有効にするためのレガシー API キーを保持します。</p>
-<h3 id="371-概要">概要</h3>
+<h1 id="TBL-026">TBL-026 <code>M_announcement_audiences</code></h1>
+<span id="326-M_announcement_audiences"></span>
+<p class="section-lead">お知らせの配信先オーナーを限定指定する M:N テーブルです。</p>
+<h3 id="3261-概要">概要</h3>
 <table>
 <thead>
 <tr>
@@ -26,25 +26,29 @@
 <tbody>
 <tr>
 <td>テーブル名</td>
-<td><code>project_legacy_keys</code></td>
+<td><code>M_announcement_audiences</code></td>
 </tr>
 <tr>
 <td>論理名</td>
-<td>レガシー API キー</td>
+<td>お知らせ配信対象(M:N)</td>
 </tr>
 <tr>
 <td>主キー</td>
-<td><code>id</code></td>
+<td><ul class="key-cols">
+<li><code>announcement_id</code></li>
+<li><code>contract_owner_user_id</code></li>
+</ul></td>
 </tr>
 <tr>
 <td>外部キー</td>
 <td><ul class="key-cols">
-<li><code>project_id</code> → <code>projects(id)</code></li>
+<li><code>announcement_id</code> → <code>M_service_announcements(id)</code></li>
+<li><code>contract_owner_user_id</code> → <code>M_owners(id)</code></li>
 </ul></td>
 </tr>
 </tbody>
 </table>
-<h3 id="372-カラム定義">カラム定義</h3>
+<h3 id="3262-カラム定義">カラム定義</h3>
 <table>
 <thead>
 <tr>
@@ -65,13 +69,13 @@
 <tbody>
 <tr>
 <td style="text-align: right;">1</td>
-<td>ID</td>
-<td><code>id</code></td>
+<td>お知らせ ID</td>
+<td><code>announcement_id</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
-<td>○</td>
-<td></td>
+<td>①</td>
+<td><code>M_service_announcements(id)</code></td>
 <td></td>
 <td></td>
 <td></td>
@@ -79,13 +83,13 @@
 </tr>
 <tr>
 <td style="text-align: right;">2</td>
-<td>プロジェクト ID</td>
-<td><code>project_id</code></td>
+<td>契約 owner ID</td>
+<td><code>contract_owner_user_id</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
-<td></td>
-<td><code>projects(id)</code></td>
+<td>②</td>
+<td><code>M_owners(id)</code></td>
 <td></td>
 <td></td>
 <td></td>
@@ -93,34 +97,6 @@
 </tr>
 <tr>
 <td style="text-align: right;">3</td>
-<td>公開鍵</td>
-<td><code>public_key</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>NO</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">4</td>
-<td>猶予期限</td>
-<td><code>grace_until</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>NO</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">5</td>
 <td>作成日時</td>
 <td><code>created_at</code></td>
 <td>TEXT</td>
@@ -129,13 +105,13 @@
 <td></td>
 <td></td>
 <td></td>
-<td><code>datetime('now')</code></td>
+<td></td>
 <td></td>
 
 </tr>
 </tbody>
 </table>
-<h3 id="375-インデックス">インデックス</h3>
+<h3 id="3265-インデックス">インデックス</h3>
 <table>
 <thead>
 <tr>
@@ -149,16 +125,15 @@
 <tbody>
 <tr>
 <td style="text-align: right;">1</td>
-<td><code>idx_legacy_keys_key</code></td>
-<td><code>public_key</code></td>
+<td><code>idx_announcement_audiences_owner</code></td>
+<td><code>(contract_owner_user_id, announcement_id)</code></td>
 <td></td>
-<td>旧鍵検索</td>
+<td>契約別逆引き</td>
 </tr>
 </tbody>
 </table>
-<h3 id="377-コード値区分値">コード値・区分値</h3>
+<h3 id="3267-コード値区分値">コード値・区分値</h3>
 <p>(なし)</p>
-
 </article>
 </body>
 </html>

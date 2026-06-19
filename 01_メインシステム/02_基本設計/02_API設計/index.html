@@ -49,10 +49,10 @@
 <table>
 <thead><tr><th>API ID</th><th>API 名</th><th>エンドポイント</th><th>HTTP メソッド</th><th>概要</th><th>認証</th></tr></thead>
 <tbody>
-<tr><td><a href="利用者(メンバー).html#API-MBR-001">API-MBR-001</a></td><td>メンバー一覧</td><td><code>/projects/{id}/members</code></td><td>GET</td><td>プロジェクトのメンバー割当一覧</td><td>オーナー / 該当 PJ 管理者</td></tr>
-<tr><td><a href="利用者(メンバー).html#API-MBR-002">API-MBR-002</a></td><td>メンバー招待</td><td><code>/projects/{id}/members</code></td><td>POST</td><td>プロジェクトへの単発招待</td><td>オーナー / 該当 PJ 管理者(再認証)</td></tr>
-<tr><td><a href="利用者(メンバー).html#API-MBR-003">API-MBR-003</a></td><td>メンバーロール変更</td><td><code>/projects/{id}/members/{userId}</code></td><td>PATCH</td><td>プロジェクト単位のロール変更</td><td>オーナー / 該当 PJ 管理者(再認証)</td></tr>
-<tr><td><a href="利用者(メンバー).html#API-MBR-004">API-MBR-004</a></td><td>プロジェクト割当解除</td><td><code>/projects/{id}/members/{userId}</code></td><td>DELETE</td><td>プロジェクトからのメンバー外し</td><td>オーナー / 該当 PJ 管理者(再認証)</td></tr>
+<tr><td><a href="利用者(メンバー).html#API-MBR-001">API-MBR-001</a></td><td>メンバー一覧</td><td><code>/M_projects/{id}/members</code></td><td>GET</td><td>プロジェクトのメンバー割当一覧</td><td>オーナー / 該当 PJ 管理者</td></tr>
+<tr><td><a href="利用者(メンバー).html#API-MBR-002">API-MBR-002</a></td><td>メンバー招待</td><td><code>/M_projects/{id}/members</code></td><td>POST</td><td>プロジェクトへの単発招待</td><td>オーナー / 該当 PJ 管理者(再認証)</td></tr>
+<tr><td><a href="利用者(メンバー).html#API-MBR-003">API-MBR-003</a></td><td>メンバーロール変更</td><td><code>/M_projects/{id}/members/{userId}</code></td><td>PATCH</td><td>プロジェクト単位のロール変更</td><td>オーナー / 該当 PJ 管理者(再認証)</td></tr>
+<tr><td><a href="利用者(メンバー).html#API-MBR-004">API-MBR-004</a></td><td>プロジェクト割当解除</td><td><code>/M_projects/{id}/members/{userId}</code></td><td>DELETE</td><td>プロジェクトからのメンバー外し</td><td>オーナー / 該当 PJ 管理者(再認証)</td></tr>
 <tr><td><a href="利用者(メンバー).html#API-MBR-005">API-MBR-005</a></td><td>招待メール再送</td><td><code>/members/{id}/resend-invitation</code></td><td>POST</td><td>有効化前メンバーへの招待再送</td><td>オーナー / 該当 PJ 管理者(再認証)</td></tr>
 </tbody>
 </table>
@@ -60,24 +60,24 @@
 <table>
 <thead><tr><th>API ID</th><th>API 名</th><th>エンドポイント</th><th>HTTP メソッド</th><th>概要</th><th>認証</th></tr></thead>
 <tbody>
-<tr><td><a href="プロジェクト管理.html#API-PRJ-001">API-PRJ-001</a></td><td>プロジェクト一覧</td><td><code>/projects</code></td><td>GET</td><td>契約配下のプロジェクト一覧</td><td>オーナー専有</td></tr>
-<tr><td><a href="プロジェクト管理.html#API-PRJ-002">API-PRJ-002</a></td><td>プロジェクト新規作成</td><td><code>/projects</code></td><td>POST</td><td>プロジェクト作成 + 公開キー発行</td><td>オーナー専有</td></tr>
-<tr><td><a href="プロジェクト管理.html#API-PRJ-003">API-PRJ-003</a></td><td>プロジェクト更新・削除</td><td><code>/projects/{id}</code></td><td>PATCH / DELETE</td><td>プロジェクトの更新 / 論理削除</td><td>オーナー専有(削除は再認証)</td></tr>
-<tr><td><a href="プロジェクト管理.html#API-PRJ-004">API-PRJ-004</a></td><td>ウィジェット鍵ローテーション</td><td><code>/projects/{id}/widget-key/rotate</code></td><td>POST</td><td>公開キーの再発行</td><td>オーナー専有(再認証)</td></tr>
+<tr><td><a href="プロジェクト管理.html#API-PRJ-001">API-PRJ-001</a></td><td>プロジェクト一覧</td><td><code>/M_projects</code></td><td>GET</td><td>契約配下のプロジェクト一覧</td><td>オーナー専有</td></tr>
+<tr><td><a href="プロジェクト管理.html#API-PRJ-002">API-PRJ-002</a></td><td>プロジェクト新規作成</td><td><code>/M_projects</code></td><td>POST</td><td>プロジェクト作成 + 公開キー発行</td><td>オーナー専有</td></tr>
+<tr><td><a href="プロジェクト管理.html#API-PRJ-003">API-PRJ-003</a></td><td>プロジェクト更新・削除</td><td><code>/M_projects/{id}</code></td><td>PATCH / DELETE</td><td>プロジェクトの更新 / 論理削除</td><td>オーナー専有(削除は再認証)</td></tr>
+<tr><td><a href="プロジェクト管理.html#API-PRJ-004">API-PRJ-004</a></td><td>ウィジェット鍵ローテーション</td><td><code>/M_projects/{id}/widget-key/rotate</code></td><td>POST</td><td>公開キーの再発行</td><td>オーナー専有(再認証)</td></tr>
 </tbody>
 </table>
 <h3>FAQ 管理 API</h3>
 <table>
 <thead><tr><th>API ID</th><th>API 名</th><th>エンドポイント</th><th>HTTP メソッド</th><th>概要</th><th>認証</th></tr></thead>
 <tbody>
-<tr><td><a href="FAQ管理.html#API-FAQ-001">API-FAQ-001</a></td><td>FAQ 一覧</td><td><code>/faqs</code></td><td>GET</td><td>FAQ の検索 / 一覧取得</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
-<tr><td><a href="FAQ管理.html#API-FAQ-002">API-FAQ-002</a></td><td>FAQ 作成・更新・削除</td><td><code>/faqs</code>, <code>/faqs/{id}</code></td><td>POST / PATCH / DELETE</td><td>FAQ の CRUD と状態変更</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
-<tr><td><a href="FAQ管理.html#API-FAQ-003">API-FAQ-003</a></td><td>FAQ 一括状態変更</td><td><code>/faqs/bulk-status</code></td><td>POST</td><td>複数 FAQ の状態を一括変更</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
-<tr><td><a href="FAQ管理.html#API-FAQ-004">API-FAQ-004</a></td><td>FAQ CSV インポート</td><td><code>/faqs/import</code></td><td>POST</td><td>CSV による FAQ 一括取込</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
-<tr><td><a href="FAQ管理.html#API-FAQ-005">API-FAQ-005</a></td><td>FAQ インポートテンプレート</td><td><code>/faqs/import/template</code></td><td>GET</td><td>取込用 CSV テンプレートの取得</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
-<tr><td><a href="FAQ管理.html#API-FAQ-006">API-FAQ-006</a></td><td>FAQ CSV エクスポート</td><td><code>/faqs/export</code></td><td>GET</td><td>FAQ 一覧の CSV 出力</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
-<tr><td><a href="FAQ管理.html#API-FAQ-007">API-FAQ-007</a></td><td>FAQ 全文検索</td><td><code>/projects/{id}/faqs/search</code></td><td>GET</td><td>プロジェクト FAQ の全文検索</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
-<tr><td><a href="FAQ管理.html#API-FAQ-008">API-FAQ-008</a></td><td>質問ログ検索</td><td><code>/projects/{id}/question-logs/search</code></td><td>GET</td><td>質問ログの全文 / 期間検索</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
+<tr><td><a href="FAQ管理.html#API-FAQ-001">API-FAQ-001</a></td><td>FAQ 一覧</td><td><code>/M_faqs</code></td><td>GET</td><td>FAQ の検索 / 一覧取得</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
+<tr><td><a href="FAQ管理.html#API-FAQ-002">API-FAQ-002</a></td><td>FAQ 作成・更新・削除</td><td><code>/M_faqs</code>, <code>/M_faqs/{id}</code></td><td>POST / PATCH / DELETE</td><td>FAQ の CRUD と状態変更</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
+<tr><td><a href="FAQ管理.html#API-FAQ-003">API-FAQ-003</a></td><td>FAQ 一括状態変更</td><td><code>/M_faqs/bulk-status</code></td><td>POST</td><td>複数 FAQ の状態を一括変更</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
+<tr><td><a href="FAQ管理.html#API-FAQ-004">API-FAQ-004</a></td><td>FAQ CSV インポート</td><td><code>/M_faqs/import</code></td><td>POST</td><td>CSV による FAQ 一括取込</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
+<tr><td><a href="FAQ管理.html#API-FAQ-005">API-FAQ-005</a></td><td>FAQ インポートテンプレート</td><td><code>/M_faqs/import/template</code></td><td>GET</td><td>取込用 CSV テンプレートの取得</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
+<tr><td><a href="FAQ管理.html#API-FAQ-006">API-FAQ-006</a></td><td>FAQ CSV エクスポート</td><td><code>/M_faqs/export</code></td><td>GET</td><td>FAQ 一覧の CSV 出力</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
+<tr><td><a href="FAQ管理.html#API-FAQ-007">API-FAQ-007</a></td><td>FAQ 全文検索</td><td><code>/M_projects/{id}/M_faqs/search</code></td><td>GET</td><td>プロジェクト FAQ の全文検索</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
+<tr><td><a href="FAQ管理.html#API-FAQ-008">API-FAQ-008</a></td><td>質問ログ検索</td><td><code>/M_projects/{id}/question-logs/search</code></td><td>GET</td><td>質問ログの全文 / 期間検索</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
 </tbody>
 </table>
 <h3>ウィジェット API</h3>
@@ -86,15 +86,15 @@
 <tbody>
 <tr><td><a href="ウィジェット.html#API-WGT-001">API-WGT-001</a></td><td>ウィジェット起動</td><td><code>/widget/v1/bootstrap</code></td><td>POST</td><td>公開キー検証とセッション発行</td><td>不要(ドメイン検証)</td></tr>
 <tr><td><a href="ウィジェット.html#API-WGT-002">API-WGT-002</a></td><td>ウィジェット質問送信</td><td><code>/widget/v1/ask</code></td><td>POST</td><td>AI 回答生成と質問ログ記録</td><td>Bearer(ウィジェットセッション)</td></tr>
-<tr><td><a href="ウィジェット.html#API-WGT-003">API-WGT-003</a></td><td>ウィジェット未解決質問登録</td><td><code>/widget/v1/inquiries</code></td><td>POST</td><td>未解決質問の登録</td><td>Bearer(ウィジェットセッション)</td></tr>
+<tr><td><a href="ウィジェット.html#API-WGT-003">API-WGT-003</a></td><td>ウィジェット未解決質問登録</td><td><code>/widget/v1/T_inquiries</code></td><td>POST</td><td>未解決質問の登録</td><td>Bearer(ウィジェットセッション)</td></tr>
 </tbody>
 </table>
 <h3>未解決質問 API</h3>
 <table>
 <thead><tr><th>API ID</th><th>API 名</th><th>エンドポイント</th><th>HTTP メソッド</th><th>概要</th><th>認証</th></tr></thead>
 <tbody>
-<tr><td><a href="未解決質問.html#API-INQ-001">API-INQ-001</a></td><td>未解決質問一覧</td><td><code>/inquiries</code></td><td>GET</td><td>未解決質問の一覧取得</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
-<tr><td><a href="未解決質問.html#API-INQ-002">API-INQ-002</a></td><td>未解決質問詳細・状況切替</td><td><code>/inquiries/{id}</code></td><td>GET / PATCH</td><td>未解決質問の詳細取得と状況切替</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
+<tr><td><a href="未解決質問.html#API-INQ-001">API-INQ-001</a></td><td>未解決質問一覧</td><td><code>/T_inquiries</code></td><td>GET</td><td>未解決質問の一覧取得</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
+<tr><td><a href="未解決質問.html#API-INQ-002">API-INQ-002</a></td><td>未解決質問詳細・状況切替</td><td><code>/T_inquiries/{id}</code></td><td>GET / PATCH</td><td>未解決質問の詳細取得と状況切替</td><td>オーナー / 該当 PJ の <code>member</code>+</td></tr>
 </tbody>
 </table>
 <h3>利用量・課金 API</h3>
@@ -102,12 +102,12 @@
 <thead><tr><th>API ID</th><th>API 名</th><th>エンドポイント</th><th>HTTP メソッド</th><th>概要</th><th>認証</th></tr></thead>
 <tbody>
 <tr><td><a href="利用量・課金.html#API-BIL-001">API-BIL-001</a></td><td>利用量サマリ(プロジェクト)</td><td><code>/usage</code></td><td>GET</td><td>プロジェクト単位の利用量</td><td>オーナー / 該当 PJ の <code>admin</code> / <code>member</code></td></tr>
-<tr><td><a href="利用量・課金.html#API-BIL-002">API-BIL-002</a></td><td>利用量サマリ(契約)</td><td><code>/owner/projects/usage</code></td><td>GET</td><td>契約全体 + プロジェクト別利用量</td><td>オーナー専有</td></tr>
+<tr><td><a href="利用量・課金.html#API-BIL-002">API-BIL-002</a></td><td>利用量サマリ(契約)</td><td><code>/owner/M_projects/usage</code></td><td>GET</td><td>契約全体 + プロジェクト別利用量</td><td>オーナー専有</td></tr>
 <tr><td><a href="利用量・課金.html#API-BIL-003">API-BIL-003</a></td><td>請求サマリ</td><td><code>/billing/summary</code></td><td>GET</td><td>当月請求見込みと支払状態</td><td>オーナー専有</td></tr>
 <tr><td><a href="利用量・課金.html#API-BIL-004">API-BIL-004</a></td><td>請求書一覧</td><td><code>/billing/invoices</code></td><td>GET</td><td>過去請求書の一覧取得</td><td>オーナー専有</td></tr>
 <tr><td><a href="利用量・課金.html#API-BIL-005">API-BIL-005</a></td><td>支払方法 取得・登録・更新</td><td><code>/billing/payment-method</code></td><td>GET / PUT</td><td>支払方法の取得と登録 / 更新</td><td>オーナー専有(PUT は再認証)</td></tr>
-<tr><td><a href="利用量・課金.html#API-BIL-006">API-BIL-006</a></td><td>プロジェクト上限・アラート取得</td><td><code>/projects/{id}/quota-limits</code></td><td>GET</td><td>質問数の利用状況 / 上限 / アラート</td><td>オーナー / 該当 PJ の <code>admin</code> / <code>member</code></td></tr>
-<tr><td><a href="利用量・課金.html#API-BIL-007">API-BIL-007</a></td><td>プロジェクト上限・アラート更新</td><td><code>/projects/{id}/quota-limits/questions</code></td><td>PATCH</td><td>月次上限 ON/OFF・件数・閾値の更新</td><td>オーナー / 該当 PJ の <code>admin</code>(再認証)</td></tr>
+<tr><td><a href="利用量・課金.html#API-BIL-006">API-BIL-006</a></td><td>プロジェクト上限・アラート取得</td><td><code>/M_projects/{id}/quota-limits</code></td><td>GET</td><td>質問数の利用状況 / 上限 / アラート</td><td>オーナー / 該当 PJ の <code>admin</code> / <code>member</code></td></tr>
+<tr><td><a href="利用量・課金.html#API-BIL-007">API-BIL-007</a></td><td>プロジェクト上限・アラート更新</td><td><code>/M_projects/{id}/quota-limits/questions</code></td><td>PATCH</td><td>月次上限 ON/OFF・件数・閾値の更新</td><td>オーナー / 該当 PJ の <code>admin</code>(再認証)</td></tr>
 </tbody>
 </table>
 <h3>お知らせ受信箱 API</h3>

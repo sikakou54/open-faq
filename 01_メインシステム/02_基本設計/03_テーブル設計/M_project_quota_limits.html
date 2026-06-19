@@ -3,19 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>faqs(TBL-009) | FAQ 設計ポータル</title>
+<title>M_project_quota_limits(TBL-024) | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../../../assets/css/style.css">
 <script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script src="../../../assets/js/nav-data.js" defer></script>
 <script src="../../../assets/js/search-index.js" defer></script>
 <script src="../../../assets/js/portal.js" defer></script>
 </head>
-<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/faqs.html">
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/M_project_quota_limits.html">
 <article class="content" id="content">
-<h1 id="TBL-009">TBL-009 <code>faqs</code></h1>
-<span id="39-faqs"></span>
-<p class="section-lead">FAQ 本体(質問・回答・公開状態)を保持します。</p>
-<h3 id="391-概要">概要</h3>
+<h1 id="TBL-024">TBL-024 <code>M_project_quota_limits</code></h1>
+<span id="324-M_project_quota_limits"></span>
+<p class="section-lead">質問数の月次上限件数・無料枠・アラート、および FAQ 件数無料枠をプロジェクト単位で保持します。</p>
+<blockquote>
+<p>本テーブルは表番号 #24(§2 全テーブル一覧)。掲載位置は他テーブルとの差分を最小化するため §3.23 直後に置く。</p>
+</blockquote>
+<h3 id="3241-概要">概要</h3>
 <table>
 <thead>
 <tr>
@@ -26,11 +29,11 @@
 <tbody>
 <tr>
 <td>テーブル名</td>
-<td><code>faqs</code></td>
+<td><code>M_project_quota_limits</code></td>
 </tr>
 <tr>
 <td>論理名</td>
-<td>FAQ</td>
+<td>プロジェクト別利用上限・無料枠</td>
 </tr>
 <tr>
 <td>主キー</td>
@@ -39,16 +42,13 @@
 <tr>
 <td>外部キー</td>
 <td><ul class="key-cols">
-<li><code>contract_owner_user_id</code> → <code>owners(id)</code></li>
-<li><code>project_id</code> → <code>projects(id)</code></li>
-<li><code>source_unresolved_question_id</code> → <code>inquiries(id)</code></li>
-<li><code>created_by_type</code> + <code>created_by_id</code> → <code>owners(id)</code> / <code>project_users(id)</code>(論理参照)</li>
-<li><code>updated_by_type</code> + <code>updated_by_id</code> → <code>owners(id)</code> / <code>project_users(id)</code>(論理参照)</li>
+<li><code>project_id</code> → <code>M_projects(id)</code></li>
+<li><code>contract_owner_user_id</code> → <code>M_owners(id)</code></li>
 </ul></td>
 </tr>
 </tbody>
 </table>
-<h3 id="392-カラム定義">カラム定義</h3>
+<h3 id="3242-カラム定義">カラム定義</h3>
 <table>
 <thead>
 <tr>
@@ -78,32 +78,32 @@
 <td></td>
 <td></td>
 <td></td>
-<td></td>
+<td>（複合）<code>(resource_kind = 'question_monthly_limit' AND (threshold IS NOT NULL OR alert_thresholds = '[]')) OR (resource_kind = 'faq_monthly_limit' AND threshold IS NULL AND alert_thresholds = '[]')</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">2</td>
-<td>契約 owner ID</td>
-<td><code>contract_owner_user_id</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>NO</td>
-<td></td>
-<td><code>owners(id)</code></td>
-<td></td>
-<td></td>
-<td></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">3</td>
 <td>プロジェクト ID</td>
 <td><code>project_id</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
-<td><code>projects(id)</code></td>
+<td><code>M_projects(id)</code></td>
+<td>①</td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>契約 owner ID</td>
+<td><code>contract_owner_user_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td><code>M_owners(id)</code></td>
 <td></td>
 <td></td>
 <td></td>
@@ -111,37 +111,37 @@
 </tr>
 <tr>
 <td style="text-align: right;">4</td>
-<td>質問(タイトル)</td>
-<td><code>title</code></td>
+<td>リソース種別</td>
+<td><code>resource_kind</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
 <td></td>
+<td>①</td>
 <td></td>
-<td></td>
-<td><code>length(title) BETWEEN 1 AND 500</code>(FAQ 質問、FR-040)</td>
+<td><code>resource_kind IN ('question_monthly_limit','faq_monthly_limit')</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">5</td>
-<td>回答(本文)</td>
-<td><code>body</code></td>
-<td>TEXT</td>
+<td>月次上限件数</td>
+<td><code>threshold</code></td>
+<td>INTEGER</td>
 <td style="text-align: right;">-</td>
-<td>NO</td>
+<td>YES</td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-<td><code>length(body) BETWEEN 1 AND 5000</code>(FAQ 回答、FR-040)</td>
+<td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">6</td>
-<td>カテゴリ</td>
-<td><code>category</code></td>
-<td>TEXT</td>
+<td>月次無料枠</td>
+<td><code>free_quota</code></td>
+<td>INTEGER</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
 <td></td>
@@ -153,36 +153,36 @@
 </tr>
 <tr>
 <td style="text-align: right;">7</td>
-<td>状態</td>
-<td><code>status</code></td>
+<td>アラート閾値</td>
+<td><code>alert_thresholds</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
 <td></td>
 <td></td>
-<td><code>'draft'</code></td>
-<td><code>status IN ('draft','published','hidden','deleted')</code></td>
+<td><code>'[]'</code></td>
+<td><code>json_valid(alert_thresholds) AND json_type(alert_thresholds) = 'array'</code>。要素の許可値・重複排除・昇順化はAPI層で保証</td>
 
 </tr>
 <tr>
 <td style="text-align: right;">8</td>
-<td>バージョン</td>
-<td><code>version</code></td>
-<td>INTEGER</td>
+<td>設定元</td>
+<td><code>source</code></td>
+<td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
 <td></td>
-<td></td>
-<td><code>1</code></td>
-<td></td>
+<td>①</td>
+<td><code>'owner'</code></td>
+<td><code>source IN ('owner')</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">9</td>
-<td>タグ</td>
-<td><code>tags</code></td>
+<td>理由</td>
+<td><code>reason</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
@@ -195,13 +195,13 @@
 </tr>
 <tr>
 <td style="text-align: right;">10</td>
-<td>元未解決質問 ID</td>
-<td><code>source_unresolved_question_id</code></td>
+<td>有効期限</td>
+<td><code>valid_until</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
 <td></td>
-<td><code>inquiries(id)</code></td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -223,7 +223,7 @@
 </tr>
 <tr>
 <td style="text-align: right;">12</td>
-<td>作成者種別</td>
+<td>設定者種別</td>
 <td><code>created_by_type</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
@@ -237,7 +237,7 @@
 </tr>
 <tr>
 <td style="text-align: right;">13</td>
-<td>作成者 ID</td>
+<td>設定者 ID</td>
 <td><code>created_by_id</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
@@ -246,39 +246,11 @@
 <td></td>
 <td></td>
 <td></td>
-<td><code>created_by_type</code> に応じ <code>owners(id)</code> / <code>project_users(id)</code> を指す(論理参照)</td>
+<td><code>created_by_type</code> に応じ <code>M_owners(id)</code> / <code>M_project_users(id)</code> を指す(論理参照)</td>
 
 </tr>
 <tr>
 <td style="text-align: right;">14</td>
-<td>更新者種別</td>
-<td><code>updated_by_type</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>YES</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td><code>updated_by_type IN ('owner','project_user')</code></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">15</td>
-<td>更新者 ID</td>
-<td><code>updated_by_id</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>YES</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td><code>updated_by_type</code> に応じ <code>owners(id)</code> / <code>project_users(id)</code> を指す(論理参照)</td>
-
-</tr>
-<tr>
-<td style="text-align: right;">16</td>
 <td>作成日時</td>
 <td><code>created_at</code></td>
 <td>TEXT</td>
@@ -292,7 +264,7 @@
 
 </tr>
 <tr>
-<td style="text-align: right;">17</td>
+<td style="text-align: right;">15</td>
 <td>更新日時</td>
 <td><code>updated_at</code></td>
 <td>TEXT</td>
@@ -307,7 +279,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="395-インデックス">インデックス</h3>
+<h3 id="3245-インデックス">インデックス</h3>
 <table>
 <thead>
 <tr>
@@ -321,74 +293,53 @@
 <tbody>
 <tr>
 <td style="text-align: right;">1</td>
-<td><code>idx_faqs_owner_project</code></td>
-<td><code>(contract_owner_user_id, project_id)</code></td>
-<td></td>
-<td>契約境界 + プロジェクト</td>
+<td><code>uq_pql_project_kind_source</code></td>
+<td><code>(project_id, resource_kind, source)</code> WHERE <code>valid = 1</code></td>
+<td>○</td>
+<td>プロジェクト × 課金対象 × 設定元で一意(有効行のみ)</td>
 </tr>
 <tr>
 <td style="text-align: right;">2</td>
-<td><code>idx_faqs_project_status</code></td>
-<td><code>(project_id, status)</code></td>
+<td><code>idx_pql_project_kind</code></td>
+<td><code>(project_id, resource_kind)</code></td>
 <td></td>
-<td>プロジェクト × 状態</td>
+<td>プロジェクト別利用設定解決</td>
 </tr>
 <tr>
 <td style="text-align: right;">3</td>
-<td><code>idx_faqs_source_inquiry</code></td>
-<td><code>source_unresolved_question_id</code></td>
-<td></td>
-<td>元未解決質問逆引き</td>
-</tr>
-<tr>
-<td style="text-align: right;">4</td>
-<td><code>idx_faqs_category</code></td>
-<td><code>(project_id, category)</code> WHERE <code>category IS NOT NULL</code></td>
-<td></td>
-<td>カテゴリ別</td>
-</tr>
-<tr>
-<td style="text-align: right;">5</td>
-<td><code>idx_faqs_valid</code></td>
+<td><code>idx_pql_valid</code></td>
 <td><code>valid</code> WHERE <code>valid = 0</code></td>
 <td></td>
 <td>論理削除対象抽出</td>
 </tr>
 </tbody>
 </table>
-<h3 id="397-コード値区分値">コード値・区分値</h3>
+<h3 id="3247-コード値区分値">コード値・区分値</h3>
 <table>
 <thead>
 <tr>
 <th>カラム名</th>
 <th>値</th>
 <th>意味</th>
+<th>デフォルト推奨値(プロジェクト単位)</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>status</code></td>
-<td><code>draft</code></td>
-<td>下書き</td>
+<td><code>resource_kind</code></td>
+<td><code>question_monthly_limit</code></td>
+<td>質問数の月次上限件数</td>
+<td>上限=KV <code>usage-limit:default:question</code> / 無料枠=KV <code>usage-limit:free-default:question</code>(初期 1,000)</td>
 </tr>
 <tr>
-<td><code>status</code></td>
-<td><code>published</code></td>
-<td>公開中</td>
-</tr>
-<tr>
-<td><code>status</code></td>
-<td><code>hidden</code></td>
-<td>非公開</td>
-</tr>
-<tr>
-<td><code>status</code></td>
-<td><code>deleted</code></td>
-<td>論理削除</td>
+<td><code>resource_kind</code></td>
+<td><code>faq_monthly_limit</code></td>
+<td>FAQ 件数の無料枠</td>
+<td>無料枠=KV <code>usage-limit:free-default:faq</code>(初期 100)</td>
 </tr>
 </tbody>
 </table>
-
+<p>質問数上限の最小 / 最大件数は KV <code>usage-limit:min</code> / <code>usage-limit:max</code> を入力ガードに用いる。FAQには上限値を保持しない。KV ミラーは <code>usage-limit:&lt;contract_owner_user_id&gt;:&lt;project_id&gt;</code>(30s TTL)。</p>
 </article>
 </body>
 </html>

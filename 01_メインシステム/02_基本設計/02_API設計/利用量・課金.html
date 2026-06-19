@@ -42,7 +42,7 @@
 <tr><td>権限</td><td>オーナー / 該当プロジェクトの <code>admin</code> または <code>member</code></td></tr>
 </tbody>
 </table>
-<p>契約全体の利用状況は API-033 <code>GET /owner/projects/usage</code> を使用する。</p>
+<p>契約全体の利用状況は API-033 <code>GET /owner/M_projects/usage</code> を使用する。</p>
 <h3>処理概要</h3>
 <p class="section-lead">プロジェクト単位の利用量を返す。</p>
 <table>
@@ -57,8 +57,8 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>usage_metering</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
-<tr><td><code>faqs</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>T_usage_metering</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>M_faqs</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -81,7 +81,7 @@
   "period": "2026-05-01T00:00:00Z",
   "projectId": "prj_...",
   "questions": { "used": 750, "limit": 1000, "freeQuota": 1000, "percentage": 75, "resetAt": "2026-06-01T..." },
-  "faqs": { "used": 85, "freeQuota": 100 }
+  "M_faqs": { "used": 85, "freeQuota": 100 }
 }</code></pre>
 <table>
 <thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
@@ -94,7 +94,7 @@
 <tr><td><code>　└ freeQuota</code></td><td>integer</td><td>質問数の無料利用枠</td></tr>
 <tr><td><code>　└ percentage</code></td><td>integer</td><td>上限に対する利用率(%)</td></tr>
 <tr><td><code>　└ resetAt</code></td><td>string (ISO 8601)</td><td>利用量がリセットされる日時</td></tr>
-<tr><td><code>faqs</code></td><td>object</td><td>FAQ 件数の利用状況</td></tr>
+<tr><td><code>M_faqs</code></td><td>object</td><td>FAQ 件数の利用状況</td></tr>
 <tr><td><code>　└ used</code></td><td>integer</td><td>公開 FAQ 件数</td></tr>
 <tr><td><code>　└ freeQuota</code></td><td>integer</td><td>FAQ 件数の無料利用枠</td></tr>
 </tbody>
@@ -109,7 +109,7 @@
 <tbody>
 <tr><td>API ID</td><td>API-BIL-002</td></tr>
 <tr><td>API 名</td><td>利用量サマリ(契約)</td></tr>
-<tr><td>エンドポイント</td><td><code>/owner/projects/usage</code></td></tr>
+<tr><td>エンドポイント</td><td><code>/owner/M_projects/usage</code></td></tr>
 <tr><td>HTTP メソッド</td><td>GET</td></tr>
 <tr><td>認証</td><td>Cookie</td></tr>
 <tr><td>権限</td><td>オーナー専有</td></tr>
@@ -130,8 +130,8 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>usage_metering</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
-<tr><td><code>faqs</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>T_usage_metering</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>M_faqs</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -150,7 +150,7 @@
 <pre><code>{
   "period": { "from": "2026-06-01T00:00:00Z", "to": "2026-06-30T23:59:59Z" },
   "summary": { "projectCount": 3, "questionCount": 2450, "publishedFaqCount": 184 },
-  "projects": [
+  "M_projects": [
     {
       "projectId": "prj_...",
       "projectName": "サポートサイト",
@@ -170,7 +170,7 @@
 <tr><td><code>　└ projectCount</code></td><td>integer</td><td>契約配下のプロジェクト数</td></tr>
 <tr><td><code>　└ questionCount</code></td><td>integer</td><td>契約全体の質問数</td></tr>
 <tr><td><code>　└ publishedFaqCount</code></td><td>integer</td><td>契約全体の公開 FAQ 件数</td></tr>
-<tr><td><code>projects</code></td><td>array&lt;object&gt;</td><td>プロジェクト別の利用量内訳</td></tr>
+<tr><td><code>M_projects</code></td><td>array&lt;object&gt;</td><td>プロジェクト別の利用量内訳</td></tr>
 <tr><td><code>　└ projectId</code></td><td>string</td><td>プロジェクトの ID</td></tr>
 <tr><td><code>　└ projectName</code></td><td>string</td><td>プロジェクト名</td></tr>
 <tr><td><code>　└ questions</code></td><td>object</td><td>プロジェクトの質問数利用状況</td></tr>
@@ -213,8 +213,8 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>billing_subscriptions</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
-<tr><td><code>usage_metering</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>T_billing_subscriptions</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>T_usage_metering</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -236,7 +236,7 @@
   "nextBillingDate": "2026-07-01",
   "billingStatus": "normal|payment_method_required|payment_failed",
   "paymentMethod": { "registered": true, "brand": "visa", "last4": "4242" },
-  "projects": [
+  "M_projects": [
     {
       "projectId": "prj_...",
       "projectName": "サポートサイト",
@@ -257,7 +257,7 @@
 <tr><td><code>　└ registered</code></td><td>boolean</td><td>支払方法が登録済みか</td></tr>
 <tr><td><code>　└ brand</code></td><td>string</td><td>カードブランド</td></tr>
 <tr><td><code>　└ last4</code></td><td>string</td><td>カード番号下 4 桁</td></tr>
-<tr><td><code>projects</code></td><td>array&lt;object&gt;</td><td>プロジェクト別の請求内訳</td></tr>
+<tr><td><code>M_projects</code></td><td>array&lt;object&gt;</td><td>プロジェクト別の請求内訳</td></tr>
 <tr><td><code>　└ projectId</code></td><td>string</td><td>プロジェクトの ID</td></tr>
 <tr><td><code>　└ projectName</code></td><td>string</td><td>プロジェクト名</td></tr>
 <tr><td><code>　└ questionCharge</code></td><td>integer</td><td>質問数に対する課金額</td></tr>
@@ -295,7 +295,7 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>billing_invoices</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>T_billing_invoices</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -368,7 +368,7 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>billing_subscriptions</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
+<tr><td><code>T_billing_subscriptions</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -425,7 +425,7 @@
 <tbody>
 <tr><td>API ID</td><td>API-BIL-006</td></tr>
 <tr><td>API 名</td><td>プロジェクト上限・アラート取得</td></tr>
-<tr><td>エンドポイント</td><td><code>/projects/{id}/quota-limits</code></td></tr>
+<tr><td>エンドポイント</td><td><code>/M_projects/{id}/quota-limits</code></td></tr>
 <tr><td>HTTP メソッド</td><td>GET</td></tr>
 <tr><td>認証</td><td>Cookie</td></tr>
 <tr><td>権限</td><td>オーナー / 該当プロジェクトの <code>admin</code> または <code>member</code>(閲覧)</td></tr>
@@ -446,8 +446,8 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>project_quota_limits</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
-<tr><td><code>usage_metering</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>M_project_quota_limits</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>T_usage_metering</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -494,13 +494,13 @@
 <tbody>
 <tr><td>API ID</td><td>API-BIL-007</td></tr>
 <tr><td>API 名</td><td>プロジェクト上限・アラート更新</td></tr>
-<tr><td>エンドポイント</td><td><code>/projects/{id}/quota-limits/questions</code></td></tr>
+<tr><td>エンドポイント</td><td><code>/M_projects/{id}/quota-limits/questions</code></td></tr>
 <tr><td>HTTP メソッド</td><td>PATCH</td></tr>
 <tr><td>認証</td><td>再認証必須</td></tr>
 <tr><td>権限</td><td>オーナー / 該当プロジェクトの <code>admin</code>(member は <code>E-AUTHZ-FORBIDDEN</code>)</td></tr>
 </tbody>
 </table>
-<p><code>project_quota_limits.resource_kind='question_monthly_limit'</code> かつ <code>source='owner'</code> の 1 行だけを upsert する。質問数の <code>free_quota</code> と FAQ 件数の行は更新しない。</p>
+<p><code>M_project_quota_limits.resource_kind='question_monthly_limit'</code> かつ <code>source='owner'</code> の 1 行だけを upsert する。質問数の <code>free_quota</code> と FAQ 件数の行は更新しない。</p>
 <h3>処理概要</h3>
 <p class="section-lead">質問数の月次上限 ON/OFF・件数・アラート閾値を更新する。</p>
 <table>
@@ -516,7 +516,7 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>project_quota_limits</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>M_project_quota_limits</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>

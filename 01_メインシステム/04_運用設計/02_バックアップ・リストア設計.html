@@ -155,7 +155,7 @@
 </tr>
 <tr>
 <td>(b) 行件数 ±5% 範囲内</td>
-<td>主要テーブル(<code>owners</code>、<code>project_users</code>、<code>project_user_assignments</code>、<code>faqs</code>、<code>inquiries</code>、<code>question_logs</code>、<code>audit_logs</code>)の行件数比較</td>
+<td>主要テーブル(<code>M_owners</code>、<code>M_project_users</code>、<code>M_project_user_assignments</code>、<code>M_faqs</code>、<code>T_inquiries</code>、<code>H_question_logs</code>、<code>H_audit_logs</code>)の行件数比較</td>
 </tr>
 <tr>
 <td>(c) チェックサム比較</td>
@@ -274,11 +274,11 @@
 </tr>
 <tr>
 <td>論理削除データのリストア(v1.10)</td>
-<td>90 日経過前なら <code>UPDATE … SET valid=1</code> で復元可能。関連 <code>project_users</code> / 子テーブル(<code>faqs</code> / <code>inquiries</code> 等)も同時復元する。90 日経過後は物理削除バッチで物理 DELETE 済みのため、R2 月次バックアップからのリストアが必要</td>
+<td>90 日経過前なら <code>UPDATE … SET valid=1</code> で復元可能。関連 <code>M_project_users</code> / 子テーブル(<code>M_faqs</code> / <code>T_inquiries</code> 等)も同時復元する。90 日経過後は物理削除バッチで物理 DELETE 済みのため、R2 月次バックアップからのリストアが必要</td>
 </tr>
 <tr>
 <td>90 日後物理削除バッチ実行記録</td>
-<td><code>audit_logs.action='account.hard_delete_by_batch'</code> / <code>project.hard_delete_by_batch</code> で各物理削除を記録(retention_class='general')。誤削除疑いの調査時に参照</td>
+<td><code>H_audit_logs.action='account.hard_delete_by_batch'</code> / <code>project.hard_delete_by_batch</code> で各物理削除を記録(retention_class='general')。誤削除疑いの調査時に参照</td>
 </tr>
 </tbody>
 </table>

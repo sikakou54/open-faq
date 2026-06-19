@@ -133,11 +133,11 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>未解決質問</td><td>詳細を取得し対応状況(<code>status</code>)を更新する</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>inquiries</code>(<a href="../03_テーブル設計/inquiries.html">テーブル設計 3.14</a>)</td></tr>
-<tr><td>質問ログ</td><td>未解決理由(<code>result_reason_code</code>)を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>question_logs</code>(<a href="../03_テーブル設計/index.html">テーブル設計</a>)</td></tr>
-<tr><td>FAQ</td><td>登録先 FAQ・候補 FAQ を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>faqs</code>(<a href="../03_テーブル設計/index.html">テーブル設計</a>)</td></tr>
-<tr><td>未解決質問詳細取得</td><td>質問・未解決理由・候補 FAQ・状況を取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /inquiries/{id}</code>(<a href="../02_API設計/未解決質問.html#API-INQ-002">API 設計 5.6.2</a>)</td></tr>
-<tr><td>未解決質問状況更新</td><td>対応状況を <code>open</code> ↔ <code>closed</code> で更新する</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>PATCH /inquiries/{id}</code>(<a href="../02_API設計/未解決質問.html#API-INQ-002">API 設計 5.6.2</a>)</td></tr>
+<tr><td>未解決質問</td><td>詳細を取得し対応状況(<code>status</code>)を更新する</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>T_inquiries</code>(<a href="../03_テーブル設計/T_inquiries.html">テーブル設計 3.14</a>)</td></tr>
+<tr><td>質問ログ</td><td>未解決理由(<code>result_reason_code</code>)を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>H_question_logs</code>(<a href="../03_テーブル設計/index.html">テーブル設計</a>)</td></tr>
+<tr><td>FAQ</td><td>登録先 FAQ・候補 FAQ を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>M_faqs</code>(<a href="../03_テーブル設計/index.html">テーブル設計</a>)</td></tr>
+<tr><td>未解決質問詳細取得</td><td>質問・未解決理由・候補 FAQ・状況を取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /T_inquiries/{id}</code>(<a href="../02_API設計/未解決質問.html#API-INQ-002">API 設計 5.6.2</a>)</td></tr>
+<tr><td>未解決質問状況更新</td><td>対応状況を <code>open</code> ↔ <code>closed</code> で更新する</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>PATCH /T_inquiries/{id}</code>(<a href="../02_API設計/未解決質問.html#API-INQ-002">API 設計 5.6.2</a>)</td></tr>
 </tbody>
 </table>
 
@@ -154,13 +154,13 @@
 </tr>
 </thead>
 <tbody>
-<tr><td><code>EV-01</code></td><td>詳細初期表示</td><td>画面遷移・リロード時</td><td><code>GET /inquiries/{id}</code> で質問・未解決理由・候補 FAQ・状況を取得し表示</td><td><a href="#IT-01">IT-01</a>, <a href="#IT-02">IT-02</a>, <a href="#IT-03">IT-03</a>, <a href="#IT-04">IT-04</a>, <a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a></td></tr>
-<tr><td><code>EV-02</code></td><td>状況変更</td><td>状況プルダウン変更時</td><td><ul><li><code>PATCH /inquiries/{id}</code> を即時呼び出し保存</li><li><code>open</code>→<code>closed</code> は確認ダイアログ</li></ul></td><td><a href="#IT-07">IT-07</a></td></tr>
+<tr><td><code>EV-01</code></td><td>詳細初期表示</td><td>画面遷移・リロード時</td><td><code>GET /T_inquiries/{id}</code> で質問・未解決理由・候補 FAQ・状況を取得し表示</td><td><a href="#IT-01">IT-01</a>, <a href="#IT-02">IT-02</a>, <a href="#IT-03">IT-03</a>, <a href="#IT-04">IT-04</a>, <a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a></td></tr>
+<tr><td><code>EV-02</code></td><td>状況変更</td><td>状況プルダウン変更時</td><td><ul><li><code>PATCH /T_inquiries/{id}</code> を即時呼び出し保存</li><li><code>open</code>→<code>closed</code> は確認ダイアログ</li></ul></td><td><a href="#IT-07">IT-07</a></td></tr>
 <tr><td><code>EV-03</code></td><td>FAQ 登録へ遷移</td><td>「FAQ 登録へ」押下時(<code>admin</code> 以上(オーナーを含む))</td><td>SCR-006 へ遷移</td><td><a href="#IT-08">IT-08</a></td></tr>
 </tbody>
 </table>
 
-<div class="callout important"><i class="bi bi-pin-angle"></i><div><span class="c-title">状況遷移の正本</span>状況は本詳細画面のプルダウン(変更時即時保存)のみで <code>open</code> ↔ <code>closed</code> を切り替えます。FAQ 下書き保存・FAQ 公開・個別チャット操作は <code>inquiries.status</code> を変更しません(連動ロジックなし、<a href="../../01_要件定義/FR06_未解決質問登録.html#FR-077">FR-077</a>)。状態遷移の正本は <a href="../03_テーブル設計/テーブル構造設計.html#452-未解決質問の状況遷移inquiriesstatus共有概念正本">テーブル構造設計 §5.2</a>。</div></div>
+<div class="callout important"><i class="bi bi-pin-angle"></i><div><span class="c-title">状況遷移の正本</span>状況は本詳細画面のプルダウン(変更時即時保存)のみで <code>open</code> ↔ <code>closed</code> を切り替えます。FAQ 下書き保存・FAQ 公開・個別チャット操作は <code>T_inquiries.status</code> を変更しません(連動ロジックなし、<a href="../../01_要件定義/FR06_未解決質問登録.html#FR-077">FR-077</a>)。状態遷移の正本は <a href="../03_テーブル設計/テーブル構造設計.html#452-未解決質問の状況遷移inquiriesstatus共有概念正本">テーブル構造設計 §5.2</a>。</div></div>
 
 </article>
 <script>(function(){function r(){try{window.lucide&&lucide.createIcons({attrs:{'aria-hidden':'true',focusable:'false'}});}catch(e){}}if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',r);}else{r();}window.addEventListener('load',r);})();</script>

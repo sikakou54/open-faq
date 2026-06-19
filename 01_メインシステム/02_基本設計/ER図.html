@@ -65,189 +65,189 @@
 <section class="notes">
   <h2>ER 図の見方</h2>
   <ul>
-    <li><b>掲載カラム</b>: MVPの主要キー(PK / FK)+ 業務キー(<code>inquiry_code</code> / <code>widget_public_key</code> 等)+ 状態カラム(<code>inquiries.status</code> / <code>contract_status</code> 等)+ 特徴的なカラム(<code>actor_user_id</code> 等)。</li>
+    <li><b>掲載カラム</b>: MVPの主要キー(PK / FK)+ 業務キー(<code>inquiry_code</code> / <code>widget_public_key</code> 等)+ 状態カラム(<code>T_inquiries.status</code> / <code>contract_status</code> 等)+ 特徴的なカラム(<code>actor_user_id</code> 等)。</li>
     <li><b>省略カラム</b>: <code>created_at</code> / <code>updated_at</code> / <code>valid</code> / <code>*_encrypted</code> / <code>*_key_version</code> / <code>metadata</code> 等の共通技術カラム。完全なカラム定義は <a href="03_テーブル設計/index.html">03_テーブル設計/index.html §3</a> を参照。</li>
-    <li><b>関係性</b>: 実線 = FK 制約あり / 注記 <code>FK制約なし</code> = 論理参照のみ。本図は FK 制約に基づく関係のみを線で描く。アクター横断参照(作成者 / 更新者 / 監査アクター / セッション主体 / 受信者)は <code>owners</code> と <code>project_users</code> の 2 マスタに分かれるため物理 FK を張らず、<strong><code>actor_type</code>(<code>owner</code> / <code>project_user</code>)+ <code>actor_id</code> の論理参照</strong>で表現する(線を引かない)。<code>announcement_recipients</code> → <code>inbox_messages</code> の受信箱 fan-out と <code>billing_subscriptions</code> → <code>billing_invoices</code> の請求書生成も <strong>FK 制約を持たないアプリ層の論理 fan-out</strong> のため線を引かない(<code>inbox_messages</code> / <code>billing_invoices</code> はいずれも <code>owners</code> に FK で帰属)。</li>
-    <li><b>主体モデル(2 マスタ完全分離)</b>: <code>owners</code>(オーナーの認証属性 + 契約属性〔<code>contract_status</code> / <code>data_deletion_mode</code>〕を統合した契約マスタ。<code>owners.id</code> 自体が契約境界キー本体)+ <code>project_users</code>(プロジェクトユーザーの認証マスタ。オーナーを含まず、メール一意空間もオーナーと完全分離)。プロジェクトへの割当・ロールは <code>project_user_assignments</code>(<code>role</code> = <code>admin</code> / <code>member</code>)で表現する。ウィジェット利用者(<code>end_users</code>)は永続アカウントを持つ別マスタ。</li>
-    <li><b>SaaS 境界キー</b>: <code>contract_owner_user_id</code>(全契約スコープのテーブルに冗長保持し <code>owners.id</code> を参照、認可境界クエリ高速化)。</li>
+    <li><b>関係性</b>: 実線 = FK 制約あり / 注記 <code>FK制約なし</code> = 論理参照のみ。本図は FK 制約に基づく関係のみを線で描く。アクター横断参照(作成者 / 更新者 / 監査アクター / セッション主体 / 受信者)は <code>M_owners</code> と <code>M_project_users</code> の 2 マスタに分かれるため物理 FK を張らず、<strong><code>actor_type</code>(<code>owner</code> / <code>project_user</code>)+ <code>actor_id</code> の論理参照</strong>で表現する(線を引かない)。<code>T_announcement_recipients</code> → <code>T_inbox_messages</code> の受信箱 fan-out と <code>T_billing_subscriptions</code> → <code>T_billing_invoices</code> の請求書生成も <strong>FK 制約を持たないアプリ層の論理 fan-out</strong> のため線を引かない(<code>T_inbox_messages</code> / <code>T_billing_invoices</code> はいずれも <code>M_owners</code> に FK で帰属)。</li>
+    <li><b>主体モデル(2 マスタ完全分離)</b>: <code>M_owners</code>(オーナーの認証属性 + 契約属性〔<code>contract_status</code> / <code>data_deletion_mode</code>〕を統合した契約マスタ。<code>M_owners.id</code> 自体が契約境界キー本体)+ <code>M_project_users</code>(プロジェクトユーザーの認証マスタ。オーナーを含まず、メール一意空間もオーナーと完全分離)。プロジェクトへの割当・ロールは <code>M_project_user_assignments</code>(<code>role</code> = <code>admin</code> / <code>member</code>)で表現する。ウィジェット利用者(<code>end_users</code>)は永続アカウントを持つ別マスタ。</li>
+    <li><b>SaaS 境界キー</b>: <code>contract_owner_user_id</code>(全契約スコープのテーブルに冗長保持し <code>M_owners.id</code> を参照、認可境界クエリ高速化)。</li>
   </ul>
 </section>
 
 <pre id="mermaid-src" style="display:none;">
 erDiagram
-  owners {
+  M_owners {
     TEXT id PK "契約境界キー本体"
     TEXT email_hmac "検索用HMAC"
     TEXT status "pending_verification/pending_activation/active"
     TEXT contract_status "active/suspended/deleted_pending/deleted"
     TEXT data_deletion_mode "physical/anonymize"
   }
-  project_users {
+  M_project_users {
     TEXT id PK
-    TEXT contract_owner_user_id FK "owners(id)"
+    TEXT contract_owner_user_id FK "M_owners(id)"
     TEXT email_hmac "検索用HMAC(オーナーと別空間)"
     TEXT status "pending_verification/pending_activation/active"
   }
-  project_user_assignments {
+  M_project_user_assignments {
     TEXT id PK
-    TEXT project_user_id FK "project_users(id)"
-    TEXT project_id FK "projects(id)"
-    TEXT contract_owner_user_id FK "owners(id)"
+    TEXT project_user_id FK "M_project_users(id)"
+    TEXT project_id FK "M_projects(id)"
+    TEXT contract_owner_user_id FK "M_owners(id)"
     TEXT role "admin/member"
   }
-  sessions {
+  T_sessions {
     TEXT id PK
     TEXT actor_type "owner/project_user"
     TEXT actor_id "論理参照(FK制約なし)"
     TEXT expires_at
     TEXT revoked_at
   }
-  access_tokens {
+  T_access_tokens {
     TEXT id PK
     TEXT actor_type "owner/project_user"
     TEXT actor_id "論理参照(FK制約なし)"
     TEXT token_hash "UNIQUE"
     TEXT purpose "email_verify/password_reset/activation/contact_verify"
   }
-  projects {
+  M_projects {
     TEXT id PK
-    TEXT contract_owner_user_id FK "owners(id)"
+    TEXT contract_owner_user_id FK "M_owners(id)"
     TEXT name
     TEXT status "active/deleted"
     TEXT widget_public_key "UNIQUE"
   }
-  project_legacy_keys {
+  T_project_legacy_keys {
     TEXT id PK
-    TEXT project_id FK "projects(id)"
+    TEXT project_id FK "M_projects(id)"
     TEXT public_key
     TEXT grace_until
   }
-  allowed_domains {
+  M_allowed_domains {
     TEXT id PK
-    TEXT project_id FK "projects(id)"
+    TEXT project_id FK "M_projects(id)"
     TEXT domain "(project_id,domain) UNIQUE"
   }
-  faqs {
+  M_faqs {
     TEXT id PK
-    TEXT contract_owner_user_id FK "owners(id)"
-    TEXT project_id FK "projects(id)"
-    TEXT source_unresolved_question_id FK "inquiries(id) opt"
+    TEXT contract_owner_user_id FK "M_owners(id)"
+    TEXT project_id FK "M_projects(id)"
+    TEXT source_unresolved_question_id FK "T_inquiries(id) opt"
     TEXT created_by_actor_type "owner/project_user"
     TEXT created_by "論理参照(FK制約なし)"
     TEXT updated_by "論理参照(FK制約なし)"
     TEXT status "draft/published/hidden/deleted"
     INTEGER version
   }
-  faq_revisions {
+  H_faq_revisions {
     TEXT id PK
-    TEXT faq_id FK "faqs(id)"
+    TEXT faq_id FK "M_faqs(id)"
     TEXT created_by_actor_type "owner/project_user"
     TEXT created_by "論理参照(FK制約なし)"
     INTEGER version
     TEXT status_snapshot
     TEXT source "manual/import"
   }
-  faq_search_fts {
+  TP_faq_search_fts {
     TEXT title "FTS5仮想列"
     TEXT body "FTS5仮想列"
     TEXT category
     TEXT tags
   }
-  question_logs {
+  H_question_logs {
     TEXT id PK
-    TEXT contract_owner_user_id FK "owners(id)"
-    TEXT project_id FK "projects(id)"
+    TEXT contract_owner_user_id FK "M_owners(id)"
+    TEXT project_id FK "M_projects(id)"
     INTEGER metering_billable "課金確定スナップショット"
     TEXT result_type "answered/unanswered/error"
   }
-  question_log_faq_refs {
+  T_question_log_faq_refs {
     TEXT id PK
-    TEXT question_log_id FK "question_logs(id)"
-    TEXT faq_id FK "faqs(id)"
+    TEXT question_log_id FK "H_question_logs(id)"
+    TEXT faq_id FK "M_faqs(id)"
     REAL relevance_score
   }
-  inquiries {
+  T_inquiries {
     TEXT id PK
-    TEXT contract_owner_user_id FK "owners(id)"
-    TEXT project_id FK "projects(id)"
-    TEXT question_log_id FK "question_logs(id) opt"
+    TEXT contract_owner_user_id FK "M_owners(id)"
+    TEXT project_id FK "M_projects(id)"
+    TEXT question_log_id FK "H_question_logs(id) opt"
     TEXT inquiry_code "UNIQUE"
     TEXT status "open/closed"
   }
-  notification_logs {
+  H_notification_logs {
     TEXT id PK
-    TEXT contract_owner_user_id FK "owners(id)"
-    TEXT inquiry_id FK "inquiries(id) opt"
+    TEXT contract_owner_user_id FK "M_owners(id)"
+    TEXT inquiry_id FK "T_inquiries(id) opt"
     TEXT notification_type "TPL-*"
     TEXT delivery_state "queued/sending/sent/delivered/failed/bounced/complained/suppressed"
   }
-  ai_threshold_persistent_cache {
+  TP_ai_threshold_persistent_cache {
     TEXT id PK
-    TEXT contract_owner_user_id FK "owners(id) opt"
-    TEXT project_id FK "projects(id) opt"
+    TEXT contract_owner_user_id FK "M_owners(id) opt"
+    TEXT project_id FK "M_projects(id) opt"
     TEXT scope "global/owner/project"
     INTEGER version
   }
-  email_suppression_list {
+  M_email_suppression_list {
     TEXT id PK
     TEXT email_hmac "UNIQUE / 全契約横断"
     TEXT reason "bounced_hard/bounced_soft_5x/complained/manual"
     INTEGER is_permanent
   }
-  audit_logs {
+  H_audit_logs {
     TEXT id PK
-    TEXT contract_owner_user_id FK "owners(id) opt"
+    TEXT contract_owner_user_id FK "M_owners(id) opt"
     TEXT actor_type "owner/project_user/system"
     TEXT actor_id "論理参照(FK制約なし) opt"
     TEXT actor_role "admin/system"
     TEXT action
     TEXT retention_class "general/billing"
   }
-  error_logs {
+  H_error_logs {
     TEXT id PK
     TEXT contract_owner_user_id "FK制約なし"
     TEXT actor_type "owner/project_user"
     TEXT actor_id "FK制約なし"
     TEXT error_type
   }
-  billing_subscriptions {
+  T_billing_subscriptions {
     TEXT id PK
-    TEXT contract_owner_user_id FK "owners(id)"
+    TEXT contract_owner_user_id FK "M_owners(id)"
     TEXT stripe_subscription_id "UNIQUE"
     TEXT status "active/past_due/canceled/unpaid/incomplete"
     TEXT plan_id
   }
-  billing_invoices {
+  T_billing_invoices {
     TEXT id PK
-    TEXT contract_owner_user_id FK "owners(id)"
+    TEXT contract_owner_user_id FK "M_owners(id)"
     TEXT billing_year_month "(owner,YYYY-MM) UNIQUE"
     TEXT status "draft/issued/paid/past_due/refunded/void"
     TEXT stripe_invoice_id "UNIQUE"
   }
-  usage_metering {
+  T_usage_metering {
     TEXT id PK
-    TEXT contract_owner_user_id FK "owners(id)"
-    TEXT project_id FK "projects(id)"
+    TEXT contract_owner_user_id FK "M_owners(id)"
+    TEXT project_id FK "M_projects(id)"
     TEXT billing_year_month "(owner,project,YYYY-MM) UNIQUE"
     INTEGER question_count
     INTEGER ai_cost_yen
   }
-  owner_quota_overrides {
+  M_owner_quota_overrides {
     TEXT id PK
-    TEXT contract_owner_user_id FK "owners(id)"
+    TEXT contract_owner_user_id FK "M_owners(id)"
     TEXT resource_kind "widget_*/email_per_hour/admin_api_per_min"
     INTEGER threshold
     TEXT valid_until
   }
-  project_quota_limits {
+  M_project_quota_limits {
     TEXT id PK
-    TEXT project_id FK "projects(id)"
-    TEXT contract_owner_user_id FK "owners(id)"
+    TEXT project_id FK "M_projects(id)"
+    TEXT contract_owner_user_id FK "M_owners(id)"
     TEXT resource_kind "(project_id,resource_kind) UNIQUE"
     INTEGER threshold "月次上限件数(NULL=上限OFF)"
     INTEGER free_quota "月次無料枠"
   }
-  service_announcements {
+  M_service_announcements {
     TEXT id PK
     TEXT created_by_actor_type "owner/project_user/system"
     TEXT created_by "論理参照(FK制約なし)"
@@ -255,88 +255,88 @@ erDiagram
     TEXT published_at
     TEXT retracted_at
   }
-  announcement_audiences {
-    TEXT announcement_id PK,FK "service_announcements(id)"
-    TEXT contract_owner_user_id PK,FK "owners(id)"
+  M_announcement_audiences {
+    TEXT announcement_id PK,FK "M_service_announcements(id)"
+    TEXT contract_owner_user_id PK,FK "M_owners(id)"
   }
-  announcement_recipients {
+  T_announcement_recipients {
     TEXT id PK
-    TEXT announcement_id FK "service_announcements(id)"
+    TEXT announcement_id FK "M_service_announcements(id)"
     TEXT contract_owner_user_id "FK制約なし"
     TEXT recipient_actor_type "owner/project_user"
     TEXT recipient_actor_id "FK制約なし"
     TEXT delivery_status "pending/delivered/failed"
   }
-  inbox_messages {
+  T_inbox_messages {
     TEXT id PK
-    TEXT contract_owner_user_id FK "owners(id)"
+    TEXT contract_owner_user_id FK "M_owners(id)"
     TEXT recipient_actor_type "owner/project_user"
     TEXT recipient_actor_id "論理参照(FK制約なし)"
     TEXT category "billing/announcement/system"
     TEXT priority "low/normal/high/critical"
     TEXT dedup_key
   }
-  withdrawal_requests {
+  T_withdrawal_requests {
     TEXT id PK
-    TEXT contract_owner_user_id FK "owners(id)"
+    TEXT contract_owner_user_id FK "M_owners(id)"
     TEXT applied_by "論理参照(FK制約なし / オーナー専有操作)"
     TEXT scheduled_deletion_at
   }
-  terms_versions {
+  M_terms_versions {
     TEXT version PK
     TEXT effective_date
     INTEGER consent_deadline_days
   }
-  terms_agreements {
+  T_terms_agreements {
     TEXT id PK
     TEXT actor_type "owner/project_user"
     TEXT actor_id "論理参照(FK制約なし)"
-    TEXT terms_version FK "terms_versions(version)"
+    TEXT terms_version FK "M_terms_versions(version)"
     TEXT agreed_at
   }
 
-  owners ||--o{ project_users : "0..N(契約配下のプロジェクトユーザー)"
-  owners ||--o{ projects : owns
-  owners ||--o| billing_subscriptions : has
-  owners ||--o{ billing_invoices : "請求書"
-  owners ||--o{ usage_metering : metered
-  owners ||--o{ owner_quota_overrides : overridden
-  owners ||--o{ project_quota_limits : "プロジェクト上限"
-  owners ||--o{ faqs : scopes
-  owners ||--o{ question_logs : scopes
-  owners ||--o{ inquiries : scopes
-  owners ||--o{ notification_logs : scopes
-  owners ||--o{ ai_threshold_persistent_cache : "owner スコープ(opt)"
-  owners ||--o{ audit_logs : "1-N(opt)"
-  owners ||--o{ inbox_messages : "1-N(契約配下)"
-  owners ||--o{ announcement_audiences : "限定配信先"
-  owners ||--o{ withdrawal_requests : "退会申請"
-  owners ||--o{ project_user_assignments : "1-N(割当)"
+  M_owners ||--o{ M_project_users : "0..N(契約配下のプロジェクトユーザー)"
+  M_owners ||--o{ M_projects : owns
+  M_owners ||--o| T_billing_subscriptions : has
+  M_owners ||--o{ T_billing_invoices : "請求書"
+  M_owners ||--o{ T_usage_metering : metered
+  M_owners ||--o{ M_owner_quota_overrides : overridden
+  M_owners ||--o{ M_project_quota_limits : "プロジェクト上限"
+  M_owners ||--o{ M_faqs : scopes
+  M_owners ||--o{ H_question_logs : scopes
+  M_owners ||--o{ T_inquiries : scopes
+  M_owners ||--o{ H_notification_logs : scopes
+  M_owners ||--o{ TP_ai_threshold_persistent_cache : "owner スコープ(opt)"
+  M_owners ||--o{ H_audit_logs : "1-N(opt)"
+  M_owners ||--o{ T_inbox_messages : "1-N(契約配下)"
+  M_owners ||--o{ M_announcement_audiences : "限定配信先"
+  M_owners ||--o{ T_withdrawal_requests : "退会申請"
+  M_owners ||--o{ M_project_user_assignments : "1-N(割当)"
 
-  project_users ||--o{ project_user_assignments : "1-N(プロジェクト割当)"
+  M_project_users ||--o{ M_project_user_assignments : "1-N(プロジェクト割当)"
 
-  projects ||--o{ project_user_assignments : "1-N(プロジェクト割当)"
-  projects ||--o{ project_legacy_keys : rotates
-  projects ||--o{ allowed_domains : authorizes
-  projects ||--o{ faqs : contains
-  projects ||--o{ question_logs : records
-  projects ||--o{ inquiries : holds
-  projects ||--o{ usage_metering : metered
-  projects ||--o{ project_quota_limits : limited
-  projects ||--o{ ai_threshold_persistent_cache : "project スコープ(opt)"
+  M_projects ||--o{ M_project_user_assignments : "1-N(プロジェクト割当)"
+  M_projects ||--o{ T_project_legacy_keys : rotates
+  M_projects ||--o{ M_allowed_domains : authorizes
+  M_projects ||--o{ M_faqs : contains
+  M_projects ||--o{ H_question_logs : records
+  M_projects ||--o{ T_inquiries : holds
+  M_projects ||--o{ T_usage_metering : metered
+  M_projects ||--o{ M_project_quota_limits : limited
+  M_projects ||--o{ TP_ai_threshold_persistent_cache : "project スコープ(opt)"
 
-  faqs ||--o{ faq_revisions : versioned
-  faqs ||--o{ faq_search_fts : "FTS5同期(content=faqs)"
-  inquiries ||--o{ faqs : "source_unresolved_question_id(opt)"
-  faqs ||--o{ question_log_faq_refs : "参照される"
-  question_logs ||--o{ question_log_faq_refs : "M:N参照FAQ"
-  question_logs ||--o{ inquiries : "未解決質問起点(opt)"
-  inquiries ||--o{ notification_logs : "通知契機(opt)"
+  M_faqs ||--o{ H_faq_revisions : versioned
+  M_faqs ||--o{ TP_faq_search_fts : "FTS5同期(content=M_faqs)"
+  T_inquiries ||--o{ M_faqs : "source_unresolved_question_id(opt)"
+  M_faqs ||--o{ T_question_log_faq_refs : "参照される"
+  H_question_logs ||--o{ T_question_log_faq_refs : "M:N参照FAQ"
+  H_question_logs ||--o{ T_inquiries : "未解決質問起点(opt)"
+  T_inquiries ||--o{ H_notification_logs : "通知契機(opt)"
 
-  service_announcements ||--o{ announcement_recipients : "fan-out"
-  service_announcements ||--o{ announcement_audiences : "limited-targets"
+  M_service_announcements ||--o{ T_announcement_recipients : "fan-out"
+  M_service_announcements ||--o{ M_announcement_audiences : "limited-targets"
 
-  terms_versions ||--o{ terms_agreements : agreed
+  M_terms_versions ||--o{ T_terms_agreements : agreed
 </pre>
 
 <!-- svg-pan-zoom は UMD 配布のため通常の <script> で読み込む(window.svgPanZoom にぶら下がる) -->

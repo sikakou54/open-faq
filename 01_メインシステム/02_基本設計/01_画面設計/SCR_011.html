@@ -61,7 +61,7 @@
 <tr><td>メンバー(<code>member</code>)</td><td>—</td></tr>
 </tbody>
 </table>
-<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span><a href="../../01_要件定義/FR15_お知らせ.html#FR-180">FR-180</a> はアカウント利用者全体に閲覧資格を定義しますが、本画面ではそのうちお知らせ閲覧を <code>admin</code> 以上に限定します。オーナー(<code>owners</code> 行存在)は <code>isOwner</code> で全権のため割当を持たずに受信できます(根拠は <a href="../04_権限設計.html">04_権限設計</a>)。<code>member</code> ロールのみのプロジェクトユーザーは対象外です(ステークホルダ表の <code>member</code>=— と整合)。</div></div>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span><a href="../../01_要件定義/FR15_お知らせ.html#FR-180">FR-180</a> はアカウント利用者全体に閲覧資格を定義しますが、本画面ではそのうちお知らせ閲覧を <code>admin</code> 以上に限定します。オーナー(<code>M_owners</code> 行存在)は <code>isOwner</code> で全権のため割当を持たずに受信できます(根拠は <a href="../04_権限設計.html">04_権限設計</a>)。<code>member</code> ロールのみのプロジェクトユーザーは対象外です(ステークホルダ表の <code>member</code>=— と整合)。</div></div>
 
 <h2 id="2-画面遷移図">2. 画面遷移図</h2>
 <p class="section-lead">本画面からの画面遷移を、画面 ID・画面名とイベント(操作)で示します。</p>
@@ -139,8 +139,8 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>お知らせ</td><td>お知らせ本体を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>service_announcements</code>(<a href="../03_テーブル設計/service_announcements.html">テーブル設計 3.25</a>)</td></tr>
-<tr><td>お知らせ受信状態</td><td>未読 / 既読状態を取得・更新する(<code>read_at</code>)</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>announcement_recipients</code>(<a href="../03_テーブル設計/announcement_recipients.html">テーブル設計 3.27</a>)</td></tr>
+<tr><td>お知らせ</td><td>お知らせ本体を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>M_service_announcements</code>(<a href="../03_テーブル設計/M_service_announcements.html">テーブル設計 3.25</a>)</td></tr>
+<tr><td>お知らせ受信状態</td><td>未読 / 既読状態を取得・更新する(<code>read_at</code>)</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>T_announcement_recipients</code>(<a href="../03_テーブル設計/T_announcement_recipients.html">テーブル設計 3.27</a>)</td></tr>
 <tr><td>お知らせ一覧取得</td><td>お知らせ一覧をカーソル方式で取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /me/announcements</code>(<code>cursor</code>)(<a href="../02_API設計/お知らせ受信箱.html#API-ANN-001">API 設計 5.8.1</a>)</td></tr>
 <tr><td>お知らせ個別既読化</td><td>個別のお知らせを既読化する</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /me/announcements/{id}/read</code>(<a href="../02_API設計/お知らせ受信箱.html#API-ANN-002">API 設計 5.8.2</a>)</td></tr>
 <tr><td>お知らせ一括既読化</td><td>選択した複数のお知らせをまとめて既読化する</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /me/announcements/read</code>(<a href="../02_API設計/index.html">API 設計 5.8.2a</a>)</td></tr>

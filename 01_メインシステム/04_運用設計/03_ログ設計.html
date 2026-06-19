@@ -78,25 +78,25 @@
 <td>エラーログ</td>
 <td>障害調査(NFR-705)</td>
 <td><strong>180 日</strong></td>
-<td>R2 + D1(<code>error_logs</code>)</td>
+<td>R2 + D1(<code>H_error_logs</code>)</td>
 <td>NFR-704 と整合</td>
 </tr>
 <tr>
-<td>監査ログ(<code>audit_logs</code>)</td>
+<td>監査ログ(<code>H_audit_logs</code>)</td>
 <td>業務監査 / コンプライアンス</td>
 <td>NFR-602a / 602b / 602d に従う(1y / 5y / 7y)</td>
 <td>D1 + R2 アーカイブ</td>
 <td>retention_class で区分</td>
 </tr>
 <tr>
-<td>通知ログ(<code>notification_logs</code>)</td>
+<td>通知ログ(<code>H_notification_logs</code>)</td>
 <td>配信トラブル調査</td>
 <td>1 年</td>
 <td>D1</td>
 <td>集計後削除</td>
 </tr>
 <tr>
-<td>質問ログ(<code>question_logs</code>)</td>
+<td>質問ログ(<code>H_question_logs</code>)</td>
 <td>AI 品質分析</td>
 <td>1 年(NFR-705)</td>
 <td>D1</td>
@@ -192,7 +192,7 @@
 <td><code>contract_owner_user_id</code></td>
 <td>string</td>
 <td>該当時</td>
-<td>契約オーナーの <code>owners.id</code></td>
+<td>契約オーナーの <code>M_owners.id</code></td>
 </tr>
 <tr>
 <td><code>request_id</code></td>
@@ -204,7 +204,7 @@
 <td><code>actor_user_id</code></td>
 <td>string</td>
 <td>該当時</td>
-<td>操作主体の <code>users.id</code></td>
+<td>操作主体の <code>actor_id</code>(<code>actor_type</code> = 'owner' / 'project_user')</td>
 </tr>
 <tr>
 <td><code>action</code></td>
@@ -220,7 +220,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="41-主要-audit_logsaction-コード一覧抜粋">4.1 主要 <code>audit_logs.action</code> コード一覧(抜粋)</h3>
+<h3 id="41-主要-audit_logsaction-コード一覧抜粋">4.1 主要 <code>H_audit_logs.action</code> コード一覧(抜粋)</h3>
 <table>
 <thead>
 <tr>
@@ -325,11 +325,11 @@
 </tr>
 <tr>
 <td>同期削除</td>
-<td>詳細設計の <code>retentionCleanup</code> で <code>question_logs</code> / <code>notification_logs</code> / <code>error_logs</code> / <code>access_tokens</code> を同一ジョブ内で削除(1 transaction)</td>
+<td>詳細設計の <code>retentionCleanup</code> で <code>H_question_logs</code> / <code>H_notification_logs</code> / <code>H_error_logs</code> / <code>T_access_tokens</code> を同一ジョブ内で削除(1 transaction)</td>
 </tr>
 <tr>
 <td>不整合検知</td>
-<td>日次 JST 04:30 <code>RetentionConsistencyChecker</code>、不整合検知時 <code>audit_logs(retention.inconsistency.detected, 5y)</code> 記録 + <code>#ops-warn</code> normal 通知</td>
+<td>日次 JST 04:30 <code>RetentionConsistencyChecker</code>、不整合検知時 <code>H_audit_logs(retention.inconsistency.detected, 5y)</code> 記録 + <code>#ops-warn</code> normal 通知</td>
 </tr>
 <tr>
 <td>アーカイブ</td>
