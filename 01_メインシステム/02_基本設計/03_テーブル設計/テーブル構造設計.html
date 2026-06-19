@@ -60,6 +60,22 @@
 
 <p><strong>(1) ユーザー・契約・プロジェクト</strong> ── 認証主体 <code>users</code> を起点に、契約境界(オーナー)とプロジェクト割当が分岐します。</p>
 <pre class="mermaid"><code>erDiagram
+  users {
+    TEXT id PK
+  }
+  contract_owners {
+    TEXT user_id PK "FK→users.id"
+  }
+  project_users {
+    TEXT user_id PK "FK→users.id"
+    TEXT project_id PK "FK→projects.id"
+    TEXT contract_owner_user_id FK "→contract_owners.user_id"
+    TEXT role
+  }
+  projects {
+    TEXT id PK
+    TEXT contract_owner_user_id FK "→contract_owners.user_id"
+  }
   users ||--o| contract_owners : "行存在=オーナー"
   users ||--o{ project_users : "割当"
   projects ||--o{ project_users : "割当先"
@@ -79,6 +95,22 @@
 
 <p><strong>(2) プロジェクト配下(FAQ・未解決質問)</strong> ── コンテンツ系は <code>projects</code> に帰属します。</p>
 <pre class="mermaid"><code>erDiagram
+  projects {
+    TEXT id PK
+  }
+  faqs {
+    TEXT id PK
+    TEXT project_id FK "→projects.id"
+    TEXT source_unresolved_question_id FK "→inquiries.id"
+  }
+  faq_revisions {
+    TEXT id PK
+    TEXT faq_id FK "→faqs.id"
+  }
+  inquiries {
+    TEXT id PK
+    TEXT project_id FK "→projects.id"
+  }
   projects ||--o{ faqs : ""
   projects ||--o{ inquiries : ""
   faqs ||--o{ faq_revisions : "改訂履歴"
@@ -98,6 +130,26 @@
 
 <p><strong>(3) 課金(契約配下)</strong> ── 課金系はすべて契約 <code>contract_owners</code> に帰属します。</p>
 <pre class="mermaid"><code>erDiagram
+  contract_owners {
+    TEXT user_id PK "FK→users.id"
+  }
+  billing_subscriptions {
+    TEXT id PK
+    TEXT contract_owner_user_id FK "→contract_owners.user_id"
+  }
+  billing_invoices {
+    TEXT id PK
+    TEXT contract_owner_user_id FK "→contract_owners.user_id"
+  }
+  usage_metering {
+    TEXT id PK
+    TEXT contract_owner_user_id FK "→contract_owners.user_id"
+    TEXT project_id FK "→projects.id"
+  }
+  owner_quota_overrides {
+    TEXT id PK
+    TEXT contract_owner_user_id FK "→contract_owners.user_id"
+  }
   contract_owners ||--o{ billing_subscriptions : ""
   contract_owners ||--o{ billing_invoices : ""
   contract_owners ||--o{ usage_metering : ""
@@ -117,6 +169,18 @@
 
 <p><strong>(4) お知らせ(fan-out)</strong> ── 本体 1 件から受信者ごとの受信箱へ展開します。</p>
 <pre class="mermaid"><code>erDiagram
+  service_announcements {
+    TEXT id PK
+  }
+  announcement_recipients {
+    TEXT id PK
+    TEXT announcement_id FK "→service_announcements.id"
+  }
+  inbox_messages {
+    TEXT id PK
+    TEXT contract_owner_user_id FK "→contract_owners.user_id"
+    TEXT recipient_user_id FK "→users.id"
+  }
   service_announcements ||--o{ announcement_recipients : "fan-out"
   announcement_recipients ||--o{ inbox_messages : ""
 </code></pre>
