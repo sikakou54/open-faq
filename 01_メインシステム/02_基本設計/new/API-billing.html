@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>利用量・課金 API | API設計書</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="style.css?v=3">
+</head><body><div class="layout">
+<aside class="sidebar"><div class="brand"><div class="mark">FA</div><div><b>FAQ AI SaaS</b><span>基本設計ポータル</span></div></div>
+<nav class="nav"><div class="nav-group">設計書</div><a class="nav-top" href="index.html"><span class="n">00</span><span>ポータル概要</span></a><div class="nav-sec" data-doc="01"><a class="nav-top" href="01_画面設計.html"><span class="n">01</span><span>画面設計</span><span class="caret">▸</span></a><div class="nav-children"><a href="01_画面設計.html">概要</a><a href="SCR-001.html">SCR-001 ログイン</a><a href="SCR-002.html">SCR-002 アカウント登録</a><a href="SCR-003.html">SCR-003 パスワード再設定</a><a href="SCR-004.html">SCR-004 プロジェクト</a><a href="SCR-004-001.html">SCR-004-001 プロジェクト作成・編集モーダル</a><a href="SCR-005.html">SCR-005 要対応の質問一覧</a><a href="SCR-005-001.html">SCR-005-001 要対応の質問詳細</a><a href="SCR-006.html">SCR-006 FAQ一覧</a><a href="SCR-006-001.html">SCR-006-001 FAQ編集</a><a href="SCR-006-002.html">SCR-006-002 FAQ CSVインポートモーダル</a><a href="SCR-007.html">SCR-007 ウィジェット設定</a><a href="SCR-008.html">SCR-008 概要(プロジェクト)</a><a href="SCR-009.html">SCR-009 メンバー(プロジェクト)</a><a href="SCR-009-001.html">SCR-009-001 メンバー招待・編集モーダル</a><a href="SCR-010.html">SCR-010 利用規約閲覧</a><a href="SCR-011.html">SCR-011 お知らせ一覧</a><a href="SCR-012.html">SCR-012 お知らせ詳細</a><a href="SCR-013.html">SCR-013 メール確認</a><a href="SCR-014.html">SCR-014 退会申請</a><a href="SCR-015.html">SCR-015 規約再同意割込み</a><a href="SCR-016.html">SCR-016 利用状況</a><a href="SCR-017.html">SCR-017 個人設定</a><a href="SCR-018.html">SCR-018 メンバーアカウント有効化</a><a href="SCR-019.html">SCR-019 連絡先メール確認完了</a><a href="SCR-020.html">SCR-020 プライバシーポリシー閲覧</a><a href="SCR-021.html">SCR-021 利用量と上限</a><a href="SCR-021-001.html">SCR-021-001 質問数上限設定モーダル</a><a href="SCR-022.html">SCR-022 請求</a><a href="SCR-023.html">SCR-023 設定</a><a href="SCR-WIDGET.html">SCR-WIDGET FAQ ウィジェット</a></div></div><div class="nav-sec" data-doc="02"><a class="nav-top" href="02_API設計.html"><span class="n">02</span><span>API設計</span><span class="caret">▸</span></a><div class="nav-children"><a href="02_API設計.html">概要</a><a href="API-common.html">共通仕様・規約</a><a href="API-auth.html">認証・セッション</a><a href="API-project.html">プロジェクト</a><a href="API-member.html">メンバー</a><a href="API-faq.html">FAQ</a><a href="API-inquiry.html">未解決質問</a><a href="API-widget.html">ウィジェット配信</a><a href="API-dashboard.html">ダッシュボード</a><a href="API-billing.html">利用量・課金</a><a href="API-inbox.html">お知らせ受信箱</a><a href="API-terms.html">規約・退会</a><a href="API-ai.html">AI 推論 IF</a><a href="API-mail.html">メール配信 IF</a><a href="API-webhook.html">外部 Webhook</a></div></div><div class="nav-sec" data-doc="03"><a class="nav-top" href="03_データベース設計.html"><span class="n">03</span><span>データベース設計</span><span class="caret">▸</span></a><div class="nav-children"><a href="03_データベース設計.html">概要</a><a href="TBL-M-USER.html">M_USER</a><a href="TBL-M-CONTRACT.html">M_CONTRACT</a><a href="TBL-M-002.html">M_PRJ_USERS</a><a href="TBL-M-004.html">M_PROJECTS</a><a href="TBL-M-005.html">M_ALLOWED_DOMAINS</a><a href="TBL-M-006.html">M_FAQS</a><a href="TBL-M-007.html">M_EMAIL_SUPPRESS</a><a href="TBL-M-008.html">M_OWNER_QUOTA_OVR</a><a href="TBL-M-009.html">M_PRJ_QUOTA_LIMITS</a><a href="TBL-M-010.html">M_SERVICE_ANNOUNCE</a><a href="TBL-M-011.html">M_ANNOUNCE_AUD</a><a href="TBL-M-012.html">M_TERMS_VER</a><a href="TBL-T-001.html">T_SESSIONS</a><a href="TBL-T-002.html">T_ACCESS_TOKENS</a><a href="TBL-T-003.html">T_PRJ_LEGACY_KEYS</a><a href="TBL-T-004.html">T_QLOG_FAQ_REFS</a><a href="TBL-T-005.html">T_INQUIRIES</a><a href="TBL-T-006.html">T_BILL_SUBS</a><a href="TBL-T-007.html">T_BILL_INVOICES</a><a href="TBL-T-008.html">T_USAGE_METER</a><a href="TBL-T-009.html">T_ANNOUNCE_RCPT</a><a href="TBL-T-010.html">T_INBOX_MSG</a><a href="TBL-T-011.html">T_WITHDRAW_REQ</a><a href="TBL-T-012.html">T_TERMS_AGREE</a><a href="TBL-H-001.html">H_FAQ_REV</a><a href="TBL-H-002.html">H_QUESTION_LOGS</a><a href="TBL-H-003.html">H_NOTIF_LOGS</a><a href="TBL-H-004.html">H_AUDIT_LOGS</a><a href="TBL-H-005.html">H_ERROR_LOGS</a><a href="TBL-TP-001.html">TP_FAQ_FTS</a><a href="TBL-TP-002.html">TP_AI_THRESH_CACHE</a></div></div><a class="nav-top" href="04_ユースケース設計.html"><span class="n">04</span><span>ユースケース・シーケンス</span></a><a class="nav-top" href="05_課金請求設計.html"><span class="n">05</span><span>課金・請求設計</span></a><a class="nav-top" href="06_メール設計.html"><span class="n">06</span><span>メール設計</span></a><a class="nav-top" href="07_認証認可設計.html"><span class="n">07</span><span>認証・認可設計</span></a></nav></aside>
+<main class="main"><article class="content" style="max-width:1180px"><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px"><span class="pill" style="font-size:11px">API設計書</span><a href="02_API設計.html" class="muted" style="font-size:12px;text-decoration:none">API一覧</a><span class="muted">/</span><span class="muted" style="font-size:12px">利用量・課金</span></div><h1>利用量・課金 API</h1>
+
+<aside class="page-summary"><p class="ps-lead"><strong>このページは、利用量サマリ・請求サマリ・請求書一覧・支払方法・プロジェクト上限の API 契約を定義します。</strong></p>
+<p class="ps-label">このページの API</p>
+<ul>
+<li>API-BIL-001 利用量サマリ(プロジェクト)</li>
+<li>API-BIL-002 利用量サマリ(契約)</li>
+<li>API-BIL-003 請求サマリ</li>
+<li>API-BIL-004 請求書一覧</li>
+<li>API-BIL-005 支払方法 取得・登録・更新</li>
+<li>API-BIL-006 プロジェクト上限・アラート取得</li>
+<li>API-BIL-007 プロジェクト上限・アラート更新</li>
+</ul>
+</aside>
+<p class="doc-meta"><span><b>版数</b> v1.6</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<h2 id="API-BIL-001">API-BIL-001 利用量サマリ(プロジェクト)</h2>
+<span id="571-get-usageperiodcurrent"></span>
+
+<h3>基本情報</h3>
+<table>
+<thead><tr><th>項目</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>API ID</td><td>API-BIL-001</td></tr>
+<tr><td>API 名</td><td>利用量サマリ(プロジェクト)</td></tr>
+<tr><td>エンドポイント</td><td><code>/usage</code></td></tr>
+<tr><td>HTTP メソッド</td><td>GET</td></tr>
+<tr><td>認証</td><td>Cookie</td></tr>
+<tr><td>権限</td><td>オーナー / 該当プロジェクトの <code>admin</code> または <code>member</code></td></tr>
+</tbody>
+</table>
+<p>契約全体の利用状況は API-033 <code>GET /owner/projects/usage</code> を使用する。</p>
+<h3>処理概要</h3>
+<p class="section-lead">プロジェクト単位の利用量を返す。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>認証・認可(対象プロジェクトへのアクセス権)を検証する</td></tr>
+<tr><td>P-02</td><td>対象期間・プロジェクトの質問数・FAQ 件数を集計する</td></tr>
+<tr><td>P-03</td><td>上限・無料枠・利用率を算出し整形して返却する</td></tr>
+</tbody>
+</table>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>T_USAGE_METER</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>M_FAQS</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
+<h3>リクエストパラメータ</h3>
+<h4>Query Parameters</h4>
+<pre><code>{ "period": "current_month", "viewMode": "project", "projectId": "{id}" }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>period</code></td><td>enum</td><td>集計期間。任意。<code>current_month</code> 等</td></tr>
+<tr><td><code>viewMode</code></td><td>enum</td><td>集計の表示単位。任意。<code>project</code>(プロジェクト単位)</td></tr>
+<tr><td><code>projectId</code></td><td>string</td><td>対象プロジェクトの ID。必須</td></tr>
+</tbody>
+</table>
+<h4>Path Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Request Body</h4>
+<pre><code>{}</code></pre><h3>レスポンス(200)</h3>
+<p><code>viewMode=project</code> の例:</p>
+<pre><code>{
+  "period": "2026-05-01T00:00:00Z",
+  "projectId": "prj_...",
+  "questions": { "used": 750, "limit": 1000, "freeQuota": 1000, "percentage": 75, "resetAt": "2026-06-01T..." },
+  "faqs": { "used": 85, "freeQuota": 100 }
+}</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>period</code></td><td>string (ISO 8601)</td><td>集計対象期間の起点</td></tr>
+<tr><td><code>projectId</code></td><td>string</td><td>対象プロジェクトの ID</td></tr>
+<tr><td><code>questions</code></td><td>object</td><td>質問数の利用状況</td></tr>
+<tr><td><code>　└ used</code></td><td>integer</td><td>当月の質問数(利用済み件数)</td></tr>
+<tr><td><code>　└ limit</code></td><td>integer</td><td>月次上限件数</td></tr>
+<tr><td><code>　└ freeQuota</code></td><td>integer</td><td>質問数の無料利用枠</td></tr>
+<tr><td><code>　└ percentage</code></td><td>integer</td><td>上限に対する利用率(%)</td></tr>
+<tr><td><code>　└ resetAt</code></td><td>string (ISO 8601)</td><td>利用量がリセットされる日時</td></tr>
+<tr><td><code>M_FAQS</code></td><td>object</td><td>FAQ 件数の利用状況</td></tr>
+<tr><td><code>　└ used</code></td><td>integer</td><td>公開 FAQ 件数</td></tr>
+<tr><td><code>　└ freeQuota</code></td><td>integer</td><td>FAQ 件数の無料利用枠</td></tr>
+</tbody>
+</table>
+
+<h2 id="API-BIL-002">API-BIL-002 利用量サマリ(契約)</h2>
+<span id="572-get-ownerprojectsusageperiodcurrent_month"></span>
+
+<h3>基本情報</h3>
+<table>
+<thead><tr><th>項目</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>API ID</td><td>API-BIL-002</td></tr>
+<tr><td>API 名</td><td>利用量サマリ(契約)</td></tr>
+<tr><td>エンドポイント</td><td><code>/owner/projects/usage</code></td></tr>
+<tr><td>HTTP メソッド</td><td>GET</td></tr>
+<tr><td>認証</td><td>Cookie</td></tr>
+<tr><td>権限</td><td>オーナー専有</td></tr>
+</tbody>
+</table>
+<p>契約全体サマリーとプロジェクト別の質問数、質問数上限に対する利用率、公開 FAQ 件数、最終更新日時を返す。</p>
+<h3>処理概要</h3>
+<p class="section-lead">契約全体サマリーとプロジェクト別利用量を返す。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>認証・認可(オーナー専有)を検証する</td></tr>
+<tr><td>P-02</td><td>契約配下の全プロジェクトの質問数・公開 FAQ 件数を集計する</td></tr>
+<tr><td>P-03</td><td>契約全体サマリーとプロジェクト別内訳を整形して返却する</td></tr>
+</tbody>
+</table>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>T_USAGE_METER</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>M_FAQS</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
+<h3>リクエストパラメータ</h3>
+<h4>Query Parameters</h4>
+<pre><code>{ "period": "current_month" }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>period</code></td><td>enum</td><td>集計期間。任意。<code>current_month</code> 等</td></tr>
+</tbody>
+</table>
+<h4>Path Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Request Body</h4>
+<pre><code>{}</code></pre><h3>レスポンス(200)</h3>
+<pre><code>{
+  "period": { "from": "2026-06-01T00:00:00Z", "to": "2026-06-30T23:59:59Z" },
+  "summary": { "projectCount": 3, "questionCount": 2450, "publishedFaqCount": 184 },
+  "projects": [
+    {
+      "projectId": "prj_...",
+      "projectName": "サポートサイト",
+      "questions": { "used": 750, "limitEnabled": true, "limit": 1000, "percentage": 75 },
+      "publishedFaqCount": 85
+    }
+  ],
+  "updatedAt": "2026-06-14T05:00:00Z"
+}</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>period</code></td><td>object</td><td>集計対象期間</td></tr>
+<tr><td><code>　└ from</code></td><td>string (ISO 8601)</td><td>期間の起点</td></tr>
+<tr><td><code>　└ to</code></td><td>string (ISO 8601)</td><td>期間の終点</td></tr>
+<tr><td><code>summary</code></td><td>object</td><td>契約全体のサマリー</td></tr>
+<tr><td><code>　└ projectCount</code></td><td>integer</td><td>契約配下のプロジェクト数</td></tr>
+<tr><td><code>　└ questionCount</code></td><td>integer</td><td>契約全体の質問数</td></tr>
+<tr><td><code>　└ publishedFaqCount</code></td><td>integer</td><td>契約全体の公開 FAQ 件数</td></tr>
+<tr><td><code>M_PROJECTS</code></td><td>array&lt;object&gt;</td><td>プロジェクト別の利用量内訳</td></tr>
+<tr><td><code>　└ projectId</code></td><td>string</td><td>プロジェクトの ID</td></tr>
+<tr><td><code>　└ projectName</code></td><td>string</td><td>プロジェクト名</td></tr>
+<tr><td><code>　└ questions</code></td><td>object</td><td>プロジェクトの質問数利用状況</td></tr>
+<tr><td><code>　　└ used</code></td><td>integer</td><td>当月の質問数</td></tr>
+<tr><td><code>　　└ limitEnabled</code></td><td>boolean</td><td>月次上限が有効か</td></tr>
+<tr><td><code>　　└ limit</code></td><td>integer</td><td>月次上限件数</td></tr>
+<tr><td><code>　　└ percentage</code></td><td>integer</td><td>上限に対する利用率(%)</td></tr>
+<tr><td><code>　└ publishedFaqCount</code></td><td>integer</td><td>プロジェクトの公開 FAQ 件数</td></tr>
+<tr><td><code>updatedAt</code></td><td>string (ISO 8601)</td><td>集計値の最終更新日時</td></tr>
+</tbody>
+</table>
+
+<h2 id="API-BIL-003">API-BIL-003 請求サマリ</h2>
+<span id="573-get-billingsummaryperiodcurrent"></span>
+
+<h3>基本情報</h3>
+<table>
+<thead><tr><th>項目</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>API ID</td><td>API-BIL-003</td></tr>
+<tr><td>API 名</td><td>請求サマリ</td></tr>
+<tr><td>エンドポイント</td><td><code>/billing/summary</code></td></tr>
+<tr><td>HTTP メソッド</td><td>GET</td></tr>
+<tr><td>認証</td><td>Cookie</td></tr>
+<tr><td>権限</td><td>オーナー専有</td></tr>
+</tbody>
+</table>
+<h3>処理概要</h3>
+<p class="section-lead">当月請求見込み合計・次回請求日・請求状態・プロジェクト別内訳・支払方法登録状態を返す。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>認証・認可(オーナー専有)を検証する</td></tr>
+<tr><td>P-02</td><td>当月の請求見込み・プロジェクト別内訳を算出する</td></tr>
+<tr><td>P-03</td><td>次回請求日・請求状態・支払方法登録状態を解決する</td></tr>
+<tr><td>P-04</td><td>整形して返却する</td></tr>
+</tbody>
+</table>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>T_BILL_SUBS</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>T_USAGE_METER</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
+<h3>リクエストパラメータ</h3>
+<h4>Query Parameters</h4>
+<pre><code>{ "period": "current_month" }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>period</code></td><td>enum</td><td>集計期間。任意。<code>current_month</code> 等</td></tr>
+</tbody>
+</table>
+<h4>Path Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Request Body</h4>
+<pre><code>{}</code></pre><h3>レスポンス(200)</h3>
+<pre><code>{
+  "estimatedTotal": 12500,
+  "currency": "JPY",
+  "nextBillingDate": "2026-07-01",
+  "billingStatus": "normal|payment_method_required|payment_failed",
+  "paymentMethod": { "registered": true, "brand": "visa", "last4": "4242" },
+  "projects": [
+    {
+      "projectId": "prj_...",
+      "projectName": "サポートサイト",
+      "questionCharge": 3500,
+      "faqCharge": 1000,
+      "subtotal": 4500
+    }
+  ]
+}</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>estimatedTotal</code></td><td>integer</td><td>当月請求見込み合計</td></tr>
+<tr><td><code>currency</code></td><td>string</td><td>通貨コード</td></tr>
+<tr><td><code>nextBillingDate</code></td><td>string (ISO 8601)</td><td>次回請求日</td></tr>
+<tr><td><code>billingStatus</code></td><td>enum</td><td>請求状態。<code>normal</code> / <code>payment_method_required</code> / <code>payment_failed</code></td></tr>
+<tr><td><code>paymentMethod</code></td><td>object</td><td>支払方法の登録状態</td></tr>
+<tr><td><code>　└ registered</code></td><td>boolean</td><td>支払方法が登録済みか</td></tr>
+<tr><td><code>　└ brand</code></td><td>string</td><td>カードブランド</td></tr>
+<tr><td><code>　└ last4</code></td><td>string</td><td>カード番号下 4 桁</td></tr>
+<tr><td><code>M_PROJECTS</code></td><td>array&lt;object&gt;</td><td>プロジェクト別の請求内訳</td></tr>
+<tr><td><code>　└ projectId</code></td><td>string</td><td>プロジェクトの ID</td></tr>
+<tr><td><code>　└ projectName</code></td><td>string</td><td>プロジェクト名</td></tr>
+<tr><td><code>　└ questionCharge</code></td><td>integer</td><td>質問数に対する課金額</td></tr>
+<tr><td><code>　└ faqCharge</code></td><td>integer</td><td>FAQ 件数に対する課金額</td></tr>
+<tr><td><code>　└ subtotal</code></td><td>integer</td><td>プロジェクトの小計</td></tr>
+</tbody>
+</table>
+
+<h2 id="API-BIL-004">API-BIL-004 請求書一覧</h2>
+<span id="574-get-billinginvoiceslimit6"></span>
+
+<h3>基本情報</h3>
+<table>
+<thead><tr><th>項目</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>API ID</td><td>API-BIL-004</td></tr>
+<tr><td>API 名</td><td>請求書一覧</td></tr>
+<tr><td>エンドポイント</td><td><code>/billing/invoices</code></td></tr>
+<tr><td>HTTP メソッド</td><td>GET</td></tr>
+<tr><td>認証</td><td>Cookie</td></tr>
+<tr><td>権限</td><td>オーナー専有</td></tr>
+</tbody>
+</table>
+<h3>処理概要</h3>
+<p class="section-lead">過去請求書を一覧取得する。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>認証・認可(オーナー専有)を検証する</td></tr>
+<tr><td>P-02</td><td>過去請求書を新しい順に取得する</td></tr>
+<tr><td>P-03</td><td>PDF 署名 URL(有効期限 5 分)を付与して返却する</td></tr>
+</tbody>
+</table>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>T_BILL_INVOICES</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
+<h3>リクエストパラメータ</h3>
+<h4>Query Parameters</h4>
+<pre><code>{ "limit": "6(等)" }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>limit</code></td><td>integer</td><td>取得する請求書の件数。任意(例: <code>6</code>)</td></tr>
+</tbody>
+</table>
+<h4>Path Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Request Body</h4>
+<pre><code>{}</code></pre><h3>レスポンス(200)</h3>
+<pre><code>{
+  "items": [
+    {
+      "id": "inv_...",
+      "date": "2026-05-01T...",
+      "amount": 5000,
+      "currency": "JPY",
+      "status": "paid|failed|draft",
+      "pdfUrl": "https://..."
+    }
+  ]
+}</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>items</code></td><td>array&lt;object&gt;</td><td>請求書の配列(新しい順)</td></tr>
+<tr><td><code>　└ id</code></td><td>string</td><td>請求書の ID</td></tr>
+<tr><td><code>　└ date</code></td><td>string (ISO 8601)</td><td>請求日</td></tr>
+<tr><td><code>　└ amount</code></td><td>integer</td><td>請求金額</td></tr>
+<tr><td><code>　└ currency</code></td><td>string</td><td>通貨コード</td></tr>
+<tr><td><code>　└ status</code></td><td>enum</td><td>請求書の状態。<code>paid</code> / <code>failed</code> / <code>draft</code></td></tr>
+<tr><td><code>　└ pdfUrl</code></td><td>string</td><td>請求書 PDF の署名 URL(有効期限 5 分)</td></tr>
+</tbody>
+</table>
+<p><code>pdfUrl</code> は R2 署名 URL(有効期限 5 分)。</p>
+
+<h2 id="API-BIL-005">API-BIL-005 支払方法 取得・登録・更新</h2>
+<span id="574a-get--put-billingpayment-method"></span>
+
+<h3>基本情報</h3>
+<table>
+<thead><tr><th>項目</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>API ID</td><td>API-BIL-005</td></tr>
+<tr><td>API 名</td><td>支払方法 取得・登録・更新</td></tr>
+<tr><td>エンドポイント</td><td><code>/billing/payment-method</code></td></tr>
+<tr><td>HTTP メソッド</td><td>GET / PUT</td></tr>
+<tr><td>認証</td><td>Cookie + CSRF(PUT は再認証必須)</td></tr>
+<tr><td>権限</td><td><strong>オーナー専有</strong></td></tr>
+</tbody>
+</table>
+<p>支払方法はクレジットカードのみ(FR-136)。カード番号等の生データはサーバで保持せず、課金プロバイダのトークンを受領して紐付ける(PCI スコープ最小化、正本: <span>09_セキュリティ設計.html</span>)。サスペンション中もオーナーは本 API を実行できる(FR-138)。</p>
+<h3>処理概要</h3>
+<p class="section-lead">支払方法の取得と登録 / 更新(クレジットカードのみ)。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>認証・認可(オーナー専有、PUT は再認証必須)を検証する</td></tr>
+<tr><td>P-02</td><td>GET は登録済み支払方法(ブランド・下 4 桁等)を取得する</td></tr>
+<tr><td>P-03</td><td>PUT は課金プロバイダのトークンを検証し支払方法を登録 / 更新する(生データは保持しない)</td></tr>
+<tr><td>P-04</td><td>結果を返却する</td></tr>
+</tbody>
+</table>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>T_BILL_SUBS</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
+</tbody>
+</table>
+<h3>リクエストパラメータ</h3>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Request Body</h4>
+<pre><code>{ "paymentToken": "tok_..." }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>paymentToken</code></td><td>string</td><td>課金プロバイダが発行した支払方法トークン。PUT 時のみ必須(GET ではボディなし)</td></tr>
+</tbody>
+</table>
+<p>(GET: なし。PUT のみ。<code>paymentToken</code> は課金プロバイダ発行トークン)</p><h3>レスポンス(200)</h3>
+<p>GET: <code>{ "registered": true, "brand": "visa", "last4": "4242", "expMonth": 12, "expYear": 2028 }</code>(未登録時は <code>{ "registered": false }</code>)。PUT: <code>{ "registered": true, "brand": "visa", "last4": "4242" }</code>。</p>
+<p class="ps-label">GET レスポンス</p>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>registered</code></td><td>boolean</td><td>支払方法が登録済みか(未登録時は本項目のみ <code>false</code> を返す)</td></tr>
+<tr><td><code>brand</code></td><td>string</td><td>カードブランド</td></tr>
+<tr><td><code>last4</code></td><td>string</td><td>カード番号下 4 桁</td></tr>
+<tr><td><code>expMonth</code></td><td>integer</td><td>カード有効期限(月)</td></tr>
+<tr><td><code>expYear</code></td><td>integer</td><td>カード有効期限(年)</td></tr>
+</tbody>
+</table>
+<p class="ps-label">PUT レスポンス</p>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>registered</code></td><td>boolean</td><td>支払方法が登録済みか</td></tr>
+<tr><td><code>brand</code></td><td>string</td><td>登録 / 更新したカードブランド</td></tr>
+<tr><td><code>last4</code></td><td>string</td><td>登録 / 更新したカード番号下 4 桁</td></tr>
+</tbody>
+</table>
+<h3>エラー</h3>
+<table>
+<thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>400</td><td><code>VALIDATION_ERROR</code></td><td>入力値の検証エラー</td></tr>
+<tr><td>402</td><td><code>PAYMENT_METHOD_DECLINED</code>(E-BILL-PAYMENT-FAILED)</td><td>カードが拒否された</td></tr>
+<tr><td>403</td><td><code>E-AUTHZ-OWNER-ONLY</code></td><td>オーナー以外は不可</td></tr>
+</tbody>
+</table>
+
+<h2 id="API-BIL-006">API-BIL-006 プロジェクト上限・アラート取得</h2>
+<span id="575-get-projectsidquota-limits"></span>
+
+<h3>基本情報</h3>
+<table>
+<thead><tr><th>項目</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>API ID</td><td>API-BIL-006</td></tr>
+<tr><td>API 名</td><td>プロジェクト上限・アラート取得</td></tr>
+<tr><td>エンドポイント</td><td><code>/projects/{id}/quota-limits</code></td></tr>
+<tr><td>HTTP メソッド</td><td>GET</td></tr>
+<tr><td>認証</td><td>Cookie</td></tr>
+<tr><td>権限</td><td>オーナー / 該当プロジェクトの <code>admin</code> または <code>member</code>(閲覧)</td></tr>
+</tbody>
+</table>
+<p>SCR-021 の表示には <code>used</code> / <code>limitEnabled</code> / <code>limit</code> / <code>percentage</code> / <code>yenEquivalent</code> だけを使用し、アラート設定・設定元は表示しない。SCR-021-001 は <code>limitEnabled</code> / <code>limit</code> / <code>alertThresholds</code> を使用する。FAQ 件数は扱わないためレスポンスに含めない。質問数の無料利用枠は課金判定用の内部データとして保持するが、本 API のレスポンスには含めない。</p>
+<h3>処理概要</h3>
+<p class="section-lead">当該プロジェクトの質問数について利用状況・月次上限件数・アラート設定を返す。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>認証・認可(対象プロジェクトへのアクセス権)を検証する</td></tr>
+<tr><td>P-02</td><td>質問数の利用状況・月次上限・アラート設定を取得する</td></tr>
+<tr><td>P-03</td><td>上限消化時の参考課金額(<code>yenEquivalent</code>)を算出して返却する</td></tr>
+</tbody>
+</table>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>M_PRJ_QUOTA_LIMITS</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>T_USAGE_METER</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
+<h3>リクエストパラメータ</h3>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{ "id": "プロジェクト ID" }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>id</code></td><td>string</td><td>対象プロジェクトの ID。必須</td></tr>
+</tbody>
+</table>
+<h4>Request Body</h4>
+<pre><code>{}</code></pre><h3>レスポンス(200)</h3>
+<pre><code>{
+  "projectId": "prj_...",
+  "period": "2026-05-01T00:00:00Z",
+  "questions": { "used": 750, "limitEnabled": true, "limit": 5000, "percentage": 15, "alertThresholds": [80, 100], "yenEquivalent": 2000, "source": "owner" }
+}</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>projectId</code></td><td>string</td><td>対象プロジェクトの ID</td></tr>
+<tr><td><code>period</code></td><td>string (ISO 8601)</td><td>集計対象期間の起点</td></tr>
+<tr><td><code>questions</code></td><td>object</td><td>質問数の利用状況・上限・アラート設定</td></tr>
+<tr><td><code>　└ used</code></td><td>integer</td><td>当月の質問数</td></tr>
+<tr><td><code>　└ limitEnabled</code></td><td>boolean</td><td>月次上限が有効か(OFF 時は <code>false</code>)</td></tr>
+<tr><td><code>　└ limit</code></td><td>integer</td><td>月次上限件数(OFF 時は <code>null</code>)</td></tr>
+<tr><td><code>　└ percentage</code></td><td>integer</td><td>上限に対する利用率(%、OFF 時は <code>null</code>)</td></tr>
+<tr><td><code>　└ alertThresholds</code></td><td>array</td><td>アラート発火の閾値(%)の配列</td></tr>
+<tr><td><code>　└ yenEquivalent</code></td><td>integer</td><td>上限消化時の参考課金額(OFF 時は <code>null</code>)</td></tr>
+<tr><td><code>　└ source</code></td><td>enum</td><td>上限設定元。<code>owner</code></td></tr>
+</tbody>
+</table>
+<p><code>yenEquivalent</code> は上限件数をすべて利用した場合の最大課金額の参考値で、<code>billableCount = max(0, limit - 適用中の質問数無料利用枠)</code>、<code>yenEquivalent = billableCount × 質問単価</code> により算出する。画面では「5,000件 - 1,000件(無料枠) = 4,000件 (¥2,000 / 月)」の形式で表示する。上限 OFF 時は <code>limitEnabled=false</code>、<code>limit=null</code>、<code>percentage=null</code>、<code>yenEquivalent=null</code> を返す。SCR-021 は「今月の利用上限」を「OFF」と表示し、「利用量」には割合・件数比・ProgressBar・状態バッジを描画しない。</p>
+
+<h2 id="API-BIL-007">API-BIL-007 プロジェクト上限・アラート更新</h2>
+<span id="576-patch-projectsidquota-limitsquestions"></span>
+
+<h3>基本情報</h3>
+<table>
+<thead><tr><th>項目</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>API ID</td><td>API-BIL-007</td></tr>
+<tr><td>API 名</td><td>プロジェクト上限・アラート更新</td></tr>
+<tr><td>エンドポイント</td><td><code>/projects/{id}/quota-limits/questions</code></td></tr>
+<tr><td>HTTP メソッド</td><td>PATCH</td></tr>
+<tr><td>認証</td><td>再認証必須</td></tr>
+<tr><td>権限</td><td>オーナー / 該当プロジェクトの <code>admin</code>(member は <code>E-AUTHZ-FORBIDDEN</code>)</td></tr>
+</tbody>
+</table>
+<p><code>M_PRJ_QUOTA_LIMITS.resource_kind='q_monthly_limit'</code> かつ <code>source='owner'</code> の 1 行だけを upsert する。質問数の <code>free_quota</code> と FAQ 件数の行は更新しない。</p>
+<h3>処理概要</h3>
+<p class="section-lead">質問数の月次上限 ON/OFF・件数・アラート閾値を更新する。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>認証・認可(オーナー / 該当 PJ の <code>admin</code>、再認証必須)を検証する</td></tr>
+<tr><td>P-02</td><td>入力(上限 ON/OFF・件数・アラート閾値)を検証し正規化する</td></tr>
+<tr><td>P-03</td><td>質問数月次上限(<code>source='owner'</code>)を作成 / 更新する</td></tr>
+<tr><td>P-04</td><td>参考課金額を再算出し更新後の値を返却する</td></tr>
+</tbody>
+</table>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>M_PRJ_QUOTA_LIMITS</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+</tbody>
+</table>
+<h3>リクエストパラメータ</h3>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{ "id": "プロジェクト ID" }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>id</code></td><td>string</td><td>対象プロジェクトの ID。必須</td></tr>
+</tbody>
+</table>
+<h4>Request Body</h4>
+<pre><code>{ "limitEnabled": true, "limit": 5000, "alertThresholds": [25, 50, 80, 90, 100] }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>limitEnabled</code></td><td>boolean</td><td>月次上限の有効 / 無効。必須</td></tr>
+<tr><td><code>limit</code></td><td>integer</td><td>月次上限件数。<code>limitEnabled=true</code> の場合は必須(範囲内・1 件刻み)、<code>false</code> の場合は <code>null</code></td></tr>
+<tr><td><code>alertThresholds</code></td><td>array</td><td>アラート発火の閾値(%)の配列。<code>25</code> / <code>50</code> / <code>80</code> / <code>90</code> / <code>100</code> の重複しない値。空配列で通知なし</td></tr>
+</tbody>
+</table>
+<p>例(ON)。例(OFF): <code>{ "limitEnabled": false, "limit": null, "alertThresholds": [] }</code>。</p>
+<p>バリデーション: <code>limitEnabled=true</code> の場合、<code>limit</code> は必須かつ 1 件刻みで最小件数・最大件数の範囲内。<code>alertThresholds</code> は <code>25</code> / <code>50</code> / <code>80</code> / <code>90</code> / <code>100</code> の重複しない配列とし、サーバ側で昇順へ正規化する。空配列はアラート通知なし。<code>limitEnabled=false</code> の場合は <code>limit=null</code>、<code>alertThresholds=[]</code> とする。<code>freeQuota</code> / <code>alertEnabled</code> / <code>alertFrequency</code> を指定した場合は未サポート項目として 422。</p><h3>レスポンス(200)</h3>
+<pre><code>{ "projectId": "prj_...", "limitEnabled": true, "limit": 5000, "alertThresholds": [25, 50, 80, 90, 100], "yenEquivalent": 2000, "source": "owner", "updatedAt": "..." }</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>projectId</code></td><td>string</td><td>対象プロジェクトの ID</td></tr>
+<tr><td><code>limitEnabled</code></td><td>boolean</td><td>更新後の月次上限の有効 / 無効</td></tr>
+<tr><td><code>limit</code></td><td>integer</td><td>更新後の月次上限件数(OFF 時は <code>null</code>)</td></tr>
+<tr><td><code>alertThresholds</code></td><td>array</td><td>更新後のアラート閾値(%、昇順)の配列</td></tr>
+<tr><td><code>yenEquivalent</code></td><td>integer</td><td>上限消化時の参考課金額(OFF 時は <code>null</code>)</td></tr>
+<tr><td><code>source</code></td><td>enum</td><td>上限設定元。<code>owner</code></td></tr>
+<tr><td><code>updatedAt</code></td><td>string (ISO 8601)</td><td>更新日時</td></tr>
+</tbody>
+</table>
+<h3>エラー</h3>
+<table>
+<thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>422</td><td>(未サポート項目)</td><td><code>freeQuota</code> / <code>alertEnabled</code> / <code>alertFrequency</code> を指定</td></tr>
+<tr><td>403</td><td><code>E-AUTHZ-FORBIDDEN</code></td><td>member による変更 / 当該プロジェクトに割当のないユーザー</td></tr>
+</tbody>
+</table>
+
+<div class="footer">FAQ AI ウィジェット SaaS / メインシステム — API設計書 ・ 2026-06-19</div>
+</article></main>
+<aside class="rightbar"><div class="rb-title">このページ</div><nav class="toc"><a class="back" href="02_API設計.html">← API一覧へ戻る</a><a href="#API-BIL-001">API-BIL-001 利用量サマリ(プロジェクト)</a><a href="#API-BIL-002">API-BIL-002 利用量サマリ(契約)</a><a href="#API-BIL-003">API-BIL-003 請求サマリ</a><a href="#API-BIL-004">API-BIL-004 請求書一覧</a><a href="#API-BIL-005">API-BIL-005 支払方法 取得・登録・更新</a><a href="#API-BIL-006">API-BIL-006 プロジェクト上限・アラート取得</a><a href="#API-BIL-007">API-BIL-007 プロジェクト上限・アラート更新</a></nav></aside>
+</div>
+<script>/*__scrollspy*/(function(){function init(){var ls=[].slice.call(document.querySelectorAll('.rightbar .toc a[href^="#"]'));if(!ls.length)return;var map=ls.map(function(a){var id=decodeURIComponent(a.getAttribute('href').slice(1));return{a:a,el:document.getElementById(id)};}).filter(function(x){return x.el;});function on(){var y=window.scrollY+130,cur=null;map.forEach(function(x){if(x.el.getBoundingClientRect().top+window.scrollY<=y)cur=x;});ls.forEach(function(a){a.classList.remove('active');});if(cur)cur.a.classList.add('active');}window.addEventListener('scroll',on,{passive:true});on();}if(document.readyState!=='loading')init();else document.addEventListener('DOMContentLoaded',init);})();</script>
+<script>/*__navtree*/(function(){function init(){var file=decodeURIComponent((location.pathname.split('/').pop()||'index.html'));if(!file)file='index.html';var doc='00';if(/^SCR-/.test(file))doc='01';else if(/^TBL-/.test(file))doc='03';else if(/^API-/.test(file))doc='02';else if(/01_/.test(file))doc='01';else if(/02_/.test(file))doc='02';else if(/03_/.test(file))doc='03';else if(/04_/.test(file))doc='04';document.querySelectorAll('.nav-sec').forEach(function(s){if(s.getAttribute('data-doc')===doc)s.classList.add('open');});var hash=location.hash||'';document.querySelectorAll('.nav a[href]').forEach(function(a){var h=a.getAttribute('href');if(h===file||h===file+hash){a.classList.add('cur');}});document.querySelectorAll('.nav-sec .caret').forEach(function(c){c.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();c.closest('.nav-sec').classList.toggle('open');});});}if(document.readyState!=='loading')init();else document.addEventListener('DOMContentLoaded',init);})();</script></body></html>

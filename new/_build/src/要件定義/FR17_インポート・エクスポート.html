@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FR17: インポート・エクスポート | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/01_要件定義/FR17_インポート・エクスポート.html">
+<article class="content" id="content">
+<h1 id="fr17-インポートエクスポート">FR17: インポート・エクスポート</h1>
+<aside class="page-summary">
+<p class="ps-lead"><strong>この要件は、アカウント利用者が大量の FAQ を CSV ファイルで効率よく取り込み・書き出しでき、上書き時にも過去の内容を失わないことを目的とし、以下について記載します。</strong></p>
+<ul>
+<li>FAQ を CSV ファイルで一括取り込み(インポート)する</li>
+<li>新規登録か既存の上書きかを、行内の FAQ 識別子で判定する</li>
+<li>上書き時に改訂履歴を残し、部分失敗時に理由を確認する</li>
+<li>FAQ を CSV ファイルで書き出し(エクスポート)する</li>
+</ul>
+</aside>
+<p class="doc-meta"><span><b>版数</b> v1.3</span><span><b>更新</b> 2026-06-16</span><span><b>機能グループ</b> インポート・エクスポート</span><span><b>優先度</b> Must</span><span class="dm-status">承認済</span></p>
+<h2 id="1-業務要件">1. 業務要件</h2>
+<div class="table-scroll">
+<table class="br-table">
+<thead>
+<tr>
+<th>ID</th>
+<th>観点</th>
+<th>ステークホルダ</th>
+<th>業務要件</th>
+<th>関連 NFR</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="BR-147">BR-147</td>
+<td>FAQ の一括取り込み</td>
+<td>アカウント利用者</td>
+<td>大量の FAQ を初期投入・一括更新したい時に、CSV ファイルで FAQ をまとめて取り込む。取り込み用のテンプレートを事前にダウンロードできる。</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-148">BR-148</td>
+<td>新規・上書きの判定</td>
+<td>システム</td>
+<td>取り込み時に、各行が新規登録か既存の上書きかを、行に含まれる FAQ 識別子の有無で判定する。識別子なしは新規登録、既存と一致する識別子は上書き、当該契約に存在しない識別子は当該行を失敗扱いとする。</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-149">BR-149</td>
+<td>改訂履歴の保持</td>
+<td>システム</td>
+<td>既存 FAQ を上書きする時に、上書き前の内容を改訂履歴として残す。</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-150">BR-150</td>
+<td>部分失敗時の取り扱い</td>
+<td>アカウント利用者 / システム</td>
+<td>
+<ul class="role-req">
+<li><strong>システム：</strong>取り込みが一部の行で失敗した時に、成功分を反映し、失敗分の理由を記録する</li>
+<li><strong>アカウント利用者：</strong>失敗した行とその理由を確認できる</li>
+</ul>
+</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-151">BR-151</td>
+<td>FAQ の書き出し</td>
+<td>アカウント利用者</td>
+<td>登録済みの FAQ を定期的に保管・確認したい時に、CSV ファイルで FAQ を書き出す。</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="2-機能要件">2. 機能要件</h2>
+<div class="table-scroll">
+<table class="req-table">
+<thead>
+<tr>
+<th>ID</th>
+<th>要件</th>
+<th>関連業務要件</th>
+<th>優先度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="FR-310">FR-310</td>
+<td>FAQ を CSV 形式(UTF-8、BOM 許容)で一括取り込みできること。
+<ol class="alpha">
+<li>各行が新規登録か既存の上書きかは、行に含まれる FAQ 識別子の有無で判定する。
+<ol class="alpha-sub">
+<li>識別子なし = 新規登録</li>
+<li>既存と一致 = 上書き(改訂履歴に残す)</li>
+<li>当該契約に存在しない識別子 = 当該行を失敗扱い</li>
+</ol>
+</li>
+<li>取り込み用テンプレートをダウンロードできる</li>
+<li>部分失敗時は成功分を反映し、失敗分の理由をアカウント利用者が確認できる</li>
+</ol></td>
+<td><a href="#BR-147">BR-147</a>, <a href="#BR-148">BR-148</a>, <a href="#BR-149">BR-149</a>, <a href="#BR-150">BR-150</a></td>
+<td><span class="badge badge-p1">P1</span></td>
+</tr>
+<tr>
+<td id="FR-311">FR-311</td>
+<td>FAQ を CSV 形式(UTF-8)で書き出し(エクスポート)できること</td>
+<td><a href="#BR-151">BR-151</a></td>
+<td><span class="badge badge-p1">P1</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="callout tip"><i class="bi bi-lightbulb"></i><div><span class="c-title">未確定事項</span>v1.0 リリース時点で全項目確定済み。現在オープンな確認事項はありません。</div></div>
+<h2 id="更新履歴">更新履歴</h2>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>版数</th>
+<th>日付</th>
+<th>変更内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>v1.3</td>
+<td>2026-06-16</td>
+<td>記載スタイルを刷新テンプレート v2(業務要件 BR-147〜5 を先頭に定義、機能要件に関連業務要件列、長い要件を箇条書きへ整理、用語をアカウント利用者へ統一、関連設計の参照表・将来対応注記を除去)へ移行。識別子(FR-310 / FR-311)は不変</td>
+</tr>
+<tr>
+<td>v1.2</td>
+<td>2026-06-09</td>
+<td>FAQ インポートの新規/上書き判定を、ファイル内の FAQ 識別子による行単位判定に一本化。取り込み用テンプレートのダウンロードを追加</td>
+</tr>
+<tr>
+<td>v1.1</td>
+<td>2026-06-09</td>
+<td>FAQ インポート・全データエクスポートのファイル形式を CSV に統一(JSON 形式を全廃)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</article>
+</body>
+</html>

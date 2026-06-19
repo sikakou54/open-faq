@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FR13: プライバシー・データ管理 | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/01_要件定義/FR13_プライバシー・データ管理.html">
+<article class="content" id="content">
+<h1 id="fr13-プライバシーデータ管理">FR13: プライバシー・データ管理</h1>
+<aside class="page-summary">
+<p class="ps-lead"><strong>この要件は、ウィジェット利用者の個人データを適正に扱い、退会・規約改定・Cookie 同意の各場面で利用者の同意と権利を守ることを目的とし、以下について記載します。</strong></p>
+<ul>
+<li>ウィジェット利用者への利用目的・保存期間の案内</li>
+<li>退会時の契約データ削除(猶予期間付き)と猶予期間中の運用制限</li>
+<li>利用規約・プライバシーポリシー改定時の再同意(文書ごとの版管理)</li>
+<li>データ保存リージョンの明示と、ウィジェットの Cookie 同意取得</li>
+</ul>
+</aside>
+<p class="doc-meta"><span><b>版数</b> v1.2</span><span><b>更新</b> 2026-06-16</span><span><b>機能グループ</b> プライバシー・データ管理</span><span><b>優先度</b> Must</span><span class="dm-status">承認済</span></p>
+<h2 id="1-業務要件">1. 業務要件</h2>
+<div class="table-scroll">
+<table class="br-table">
+<thead>
+<tr>
+<th>ID</th>
+<th>観点</th>
+<th>ステークホルダ</th>
+<th>業務要件</th>
+<th>関連 NFR</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="BR-121">BR-121</td>
+<td>利用目的・保存期間の案内</td>
+<td>ウィジェット利用者 / システム</td>
+<td>ウィジェットで質問を入力する時に、入力内容の利用目的と保存期間をウィジェット利用者へ案内する。</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-122">BR-122</td>
+<td>退会時のデータ削除</td>
+<td>システム</td>
+<td>オーナーが退会を申請した時に、契約データを定められた猶予期間の経過後に削除する。</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-123">BR-123</td>
+<td>退会猶予期間中の運用</td>
+<td>アカウント利用者 / システム</td>
+<td>
+<ul class="role-req">
+<li><strong>アカウント利用者：</strong>退会猶予期間中も管理画面へログインしてデータを参照できる</li>
+<li><strong>システム：</strong>新規 FAQ 登録・新規ウィジェット応答・課金変更などの新規書込みを禁止する(参照中心の運用)</li>
+</ul>
+</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-124">BR-124</td>
+<td>規約改定時の再同意</td>
+<td>アカウント利用者 / システム</td>
+<td>利用規約・プライバシーポリシーを改定した時に、改定された文書のみを対象として再同意を取得する。両文書は個別に版管理し、閲覧画面も文書ごとに分離する。</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-125">BR-125</td>
+<td>データ保存リージョン</td>
+<td>システム</td>
+<td>契約データの保存リージョン(例:日本国内)を選択またはサービス側で明示する。</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-126">BR-126</td>
+<td>Cookie 同意取得</td>
+<td>ウィジェット利用者 / システム</td>
+<td>ウィジェット表示時に Cookie 利用の同意取得バナーを表示する。必須 Cookie 以外はオプトインとし、第三者トラッキング系は同意取得後にのみ有効化する。</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="2-機能要件">2. 機能要件</h2>
+<div class="table-scroll">
+<table class="req-table">
+<thead>
+<tr>
+<th>ID</th>
+<th>要件</th>
+<th>関連業務要件</th>
+<th>優先度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="FR-160">FR-160</td>
+<td>ウィジェット利用者に対し、入力内容の利用目的・保存期間を案内できること</td>
+<td><a href="#BR-121">BR-121</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-163">FR-163</td>
+<td>退会時に契約データを定められた猶予期間後に削除できること</td>
+<td><a href="#BR-122">BR-122</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-164">FR-164</td>
+<td>利用規約・プライバシーポリシー改定時に再同意を取得できること。
+<ol class="alpha">
+<li>利用規約とプライバシーポリシーは個別の文書として版管理し、それぞれ同意を取得する</li>
+<li>改定された文書のみを再同意の対象とする</li>
+<li>閲覧画面も文書ごとに分離する</li>
+</ol></td>
+<td><a href="#BR-124">BR-124</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-165">FR-165</td>
+<td>必要なデータ保存リージョン(例:日本国内など)を選択またはサービス側で明示できること</td>
+<td><a href="#BR-125">BR-125</a></td>
+<td><span class="badge badge-p1">P1</span></td>
+</tr>
+<tr>
+<td id="FR-167">FR-167</td>
+<td>退会猶予期間中は、アカウント利用者の管理画面ログインを許可しつつ新規書込みを禁止すること(参照中心の運用)。
+<ol class="alpha">
+<li>管理画面へのログインと既存データの参照は許可する</li>
+<li>新規 FAQ 登録・新規ウィジェット応答・課金変更などの新規書込みは不可とする</li>
+</ol></td>
+<td><a href="#BR-123">BR-123</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-168">FR-168</td>
+<td>ウィジェットで Cookie 利用について同意取得バナーを表示できること。
+<ol class="alpha">
+<li>必須 Cookie 以外はオプトインとする</li>
+<li>第三者トラッキング系は同意取得後にのみ有効化する</li>
+</ol></td>
+<td><a href="#BR-126">BR-126</a></td>
+<td><span class="badge badge-p1">P1</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="callout tip"><i class="bi bi-lightbulb"></i><div><span class="c-title">未確定事項</span>v1.0 リリース時点で全項目確定済み。現在オープンな確認事項はありません。</div></div>
+<h2 id="更新履歴">更新履歴</h2>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>版数</th>
+<th>日付</th>
+<th>変更内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>v1.2</td>
+<td>2026-06-16</td>
+<td>記載スタイルを刷新テンプレート v2(業務要件 BR-121〜6 を先頭に定義、機能要件に関連業務要件列、長文要件を主旨 1 文 + 箇条書きへ分割、用語をウィジェット利用者 / アカウント利用者へ統一)へ移行。FR-162(契約データエクスポート / MVP 対象外・将来対応)を本文から除去し将来対応へ退避。識別子(FR-160〜168)は不変</td>
+</tr>
+<tr>
+<td>v1.1</td>
+<td>2026-06-16</td>
+<td>要件定義を What 中心へ整理。画面 ID・基本設計の節番号参照を除去し、該当設計書を正本として参照化</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+</article>
+</body>
+</html>

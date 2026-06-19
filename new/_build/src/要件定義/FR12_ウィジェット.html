@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FR12: ウィジェット | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/01_要件定義/FR12_ウィジェット.html">
+<article class="content" id="content">
+<h1 id="fr12-ウィジェット">FR12: ウィジェット</h1>
+<aside class="page-summary">
+<p class="ps-lead"><strong>この要件は、アカウント利用者のサイトに埋め込んだ FAQ ウィジェットを通じて、ウィジェット利用者が AI による回答を受け取れるようにすることを目的とし、以下について記載します。</strong></p>
+<ul>
+<li>埋め込みコードの取得・設置と、許可ドメイン上での動作制限</li>
+<li>ランチャーバッジからチャット UI を開閉する表示状態と会話履歴の保持</li>
+<li>未解決時・受付制限中のシステム返信と連絡先案内</li>
+<li>主色のカスタマイズと提供元ロゴの必須表示</li>
+<li>モバイル対応・アクセシビリティ・対応ブラウザ・配信の高速化</li>
+</ul>
+</aside>
+<p class="doc-meta"><span><b>版数</b> v1.7</span><span><b>更新</b> 2026-06-16</span><span><b>機能グループ</b> ウィジェット</span><span><b>優先度</b> Must</span><span class="dm-status">承認済</span></p>
+<h2 id="1-業務要件">1. 業務要件</h2>
+<div class="table-scroll">
+<table class="br-table">
+<thead>
+<tr>
+<th>ID</th>
+<th>観点</th>
+<th>ステークホルダ</th>
+<th>業務要件</th>
+<th>関連 NFR</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="BR-114">BR-114</td>
+<td>ウィジェット設置</td>
+<td>アカウント利用者</td>
+<td>自社サイトに埋め込みコードを取得して設置し、ウィジェット利用者へ FAQ ウィジェットを提供する。</td>
+<td><a href="index.html#NFR-201">NFR-201</a></td>
+</tr>
+<tr>
+<td id="BR-115">BR-115</td>
+<td>動作ドメインの制限</td>
+<td>システム</td>
+<td>許可ドメインとして指定されたサイト上でのみウィジェットを動作させ、他契約・他プロジェクトのデータ参照を防ぐ。</td>
+<td><a href="index.html#NFR-302">NFR-302</a>, <a href="index.html#NFR-312">NFR-312</a></td>
+</tr>
+<tr>
+<td id="BR-116">BR-116</td>
+<td>チャット利用体験</td>
+<td>ウィジェット利用者</td>
+<td>ランチャーバッジからチャット UI を開いて質問し、AI 回答を会話形式で受け取る。閉じても同一ページ内では会話履歴と受付状態が保たれる。</td>
+<td><a href="index.html#NFR-103">NFR-103</a></td>
+</tr>
+<tr>
+<td id="BR-117">BR-117</td>
+<td>未解決・受付制限の案内</td>
+<td>システム</td>
+<td>AI が解決できない時、または新規質問を受け付けられない時に、その旨と確認済み連絡先メールをシステム返信として案内する。</td>
+<td><a href="index.html#NFR-308">NFR-308</a></td>
+</tr>
+<tr>
+<td id="BR-118">BR-118</td>
+<td>外観のカスタマイズとロゴ表示</td>
+<td>アカウント利用者 / システム</td>
+<td>
+<ul class="role-req">
+<li><strong>アカウント利用者：</strong>主色をプロジェクトごとに設定できる</li>
+<li><strong>システム：</strong>提供元ロゴを必須表示し、配置・形状などの固定仕様は変更させない</li>
+</ul>
+</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-119">BR-119</td>
+<td>利用環境への対応</td>
+<td>ウィジェット利用者</td>
+<td>モバイル端末・サポート対象ブラウザで利用でき、キーボード操作やスクリーンリーダーなどのアクセシビリティに配慮された状態でウィジェットを使える。</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-120">BR-120</td>
+<td>配信の高速化</td>
+<td>システム</td>
+<td>CDN・キャッシュを用いてウィジェット配信を高速化し、初期表示の応答性を保つ。</td>
+<td><a href="index.html#NFR-101">NFR-101</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="2-機能要件">2. 機能要件</h2>
+<div class="table-scroll">
+<table class="req-table">
+<thead>
+<tr>
+<th>ID</th>
+<th>要件</th>
+<th>関連業務要件</th>
+<th>優先度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="FR-150">FR-150</td>
+<td>アカウント利用者は埋め込みコードを取得し、自社サイトに設置できること</td>
+<td><a href="#BR-114">BR-114</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-151">FR-151</td>
+<td>ウィジェットは指定された許可ドメイン上でのみ動作すること</td>
+<td><a href="#BR-115">BR-115</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-152">FR-152</td>
+<td>ウィジェットの基本的な見た目をプロジェクトごとに設定できること。
+<ol class="alpha">
+<li>設定可能項目は主色(プライマリカラー)とする</li>
+<li>配置・ランチャーバッジの形状・チャット UI の角丸などは固定とする(MVP では設定不可)</li>
+<li>本サービスの提供元ロゴを必須表示とする</li>
+</ol></td>
+<td><a href="#BR-118">BR-118</a></td>
+<td><span class="badge badge-p1">P1</span></td>
+</tr>
+<tr>
+<td id="FR-153">FR-153</td>
+<td>ウィジェットはモバイル端末でも利用できること</td>
+<td><a href="#BR-119">BR-119</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-154">FR-154</td>
+<td>ウィジェットがアクセシビリティ要件(キーボード操作、スクリーンリーダー、コントラスト等)に配慮していること</td>
+<td><a href="#BR-119">BR-119</a></td>
+<td><span class="badge badge-p1">P1</span></td>
+</tr>
+<tr>
+<td id="FR-155">FR-155</td>
+<td>ウィジェットはサポート対象ブラウザで動作すること</td>
+<td><a href="#BR-119">BR-119</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-156">FR-156</td>
+<td>ウィジェット配信は高速化(CDN / キャッシュ)できること</td>
+<td><a href="#BR-120">BR-120</a></td>
+<td><span class="badge badge-p1">P1</span></td>
+</tr>
+<tr>
+<td id="FR-156a">FR-156a</td>
+<td>ウィジェットは初期状態で丸型のランチャーバッジ(メッセージアイコン)として表示し、クリックまたはキーボード操作でチャット UI を展開すること。
+<ol class="alpha">
+<li>チャット UI は質問と回答の履歴・質問入力欄・送信操作を備える</li>
+<li>閉じる操作ではランチャーバッジ表示へ戻る</li>
+<li>同一ページ内では会話履歴と受付状態を保持する</li>
+</ol></td>
+<td><a href="#BR-116">BR-116</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-156b">FR-156b</td>
+<td>チャット UI のヘッダーはウィジェットタイトル、現在状態、チャット UI を閉じるボタンのみを表示すること。ハンバーガーメニューその他の操作メニュー、および「利用規約」「プライバシーポリシー」への導線は表示しない</td>
+<td><a href="#BR-116">BR-116</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-156c">FR-156c</td>
+<td>質問数の月次上限到達または支払方法ゲートにより新規質問を受け付けない場合、ウィジェットは受付制限中の案内を行うこと。
+<ol class="alpha">
+<li>新規質問を受け付けられない旨をチャット内のシステム返信として表示する</li>
+<li>確認済みプロジェクト連絡先メールがある場合はそのメールアドレスを案内する</li>
+<li>制限中は質問入力と送信を無効化する</li>
+</ol></td>
+<td><a href="#BR-117">BR-117</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-156d">FR-156d</td>
+<td>AI が質問を解決できなかった場合、未解決質問として登録しつつウィジェット利用者へ案内を行うこと。
+<ol class="alpha">
+<li>管理用の問い合わせ ID を付与して未解決質問を登録するが、問い合わせ ID はウィジェットに表示しない</li>
+<li>同じチャット UI の会話履歴を保持したまま、回答できなかった旨と確認済みプロジェクト連絡先メール(設定済みの場合)をシステム返信として表示する</li>
+<li>別の FAQ 質問は引き続き入力・送信できる</li>
+</ol></td>
+<td><a href="#BR-117">BR-117</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="callout tip"><i class="bi bi-lightbulb"></i><div><span class="c-title">未確定事項</span>v1.0 リリース時点で全項目確定済み。現在オープンな確認事項はありません。</div></div>
+<h2 id="更新履歴">更新履歴</h2>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>版数</th>
+<th>日付</th>
+<th>変更内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>v1.7</td>
+<td>2026-06-16</td>
+<td>記載スタイルを刷新テンプレート(業務要件 BR-114〜7 を先頭に定義、機能要件に関連業務要件列、用語をウィジェット利用者 / アカウント利用者へ統一、長文要件を箇条書き整理、他システム整合参照と基本設計レベルの記載を除去)へ移行。識別子(FR-150〜156d)は不変</td>
+</tr>
+<tr>
+<td>v1.6</td>
+<td>2026-06-14</td>
+<td>初期表示を丸型ランチャーバッジとし、クリックでチャット UI を展開する開閉仕様を追加</td>
+</tr>
+<tr>
+<td>v1.5</td>
+<td>2026-06-14</td>
+<td>未解決返信から問い合わせ ID 表示を削除</td>
+</tr>
+<tr>
+<td>v1.4</td>
+<td>2026-06-14</td>
+<td>エンドユーザー向けヘッダーからメニューと規約導線を削除</td>
+</tr>
+<tr>
+<td>v1.3</td>
+<td>2026-06-12</td>
+<td>未解決質問の問い合わせ ID・連絡先案内を定義</td>
+</tr>
+</tbody>
+</table>
+</div>
+</article>
+</body>
+</html>

@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TBL-H-002 H_QUESTION_LOGS | FAQ 設計ポータル</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="../style.css?v=4">
+</head><body><div class="layout">
+<aside class="sidebar"><a class="brand" href="../index.html"><div class="mark">FA</div><div><b>FAQ AI SaaS</b><span>設計ポータル</span></div></a><nav class="nav"><div class="nav-group">ドキュメント</div><div class="nav-sec" data-sec="01_要件定義/index.html"><a class="nav-top" href="../01_要件定義/index.html"><span class="n">要</span><span>要件定義</span><span class="caret">&#9656;</span></a><div class="nav-children"><a class="" href="../01_要件定義/index.html">概要</a><a class="" href="../01_要件定義/FR01_アカウント管理.html">FR01 アカウント管理</a><a class="" href="../01_要件定義/FR02_ユーザー管理.html">FR02 ユーザー管理</a><a class="" href="../01_要件定義/FR03_プロジェクト管理.html">FR03 プロジェクト管理</a><a class="" href="../01_要件定義/FR04_FAQ管理.html">FR04 FAQ管理</a><a class="" href="../01_要件定義/FR05_AI回答.html">FR05 AI回答</a><a class="" href="../01_要件定義/FR06_未解決質問登録.html">FR06 未解決質問登録</a><a class="" href="../01_要件定義/FR07_未解決質問からFAQ登録.html">FR07 未解決質問からFAQ登録</a><a class="" href="../01_要件定義/FR08_処理エラー.html">FR08 処理エラー</a><a class="" href="../01_要件定義/FR09_利用量・課金.html">FR09 利用量・課金</a><a class="" href="../01_要件定義/FR10_管理ダッシュボード.html">FR10 管理ダッシュボード</a><a class="" href="../01_要件定義/FR11_通知.html">FR11 通知</a><a class="" href="../01_要件定義/FR12_ウィジェット.html">FR12 ウィジェット</a><a class="" href="../01_要件定義/FR13_プライバシー・データ管理.html">FR13 プライバシー・データ管理</a><a class="" href="../01_要件定義/FR14_セキュリティ.html">FR14 セキュリティ</a><a class="" href="../01_要件定義/FR15_お知らせ.html">FR15 お知らせ</a><a class="" href="../01_要件定義/FR16_検索・全文検索.html">FR16 検索・全文検索</a><a class="" href="../01_要件定義/FR17_インポート・エクスポート.html">FR17 インポート・エクスポート</a><a class="" href="../01_要件定義/FR18_UX細部・データ運用.html">FR18 UX細部・データ運用</a><a class="" href="../01_要件定義/FR19_アクセス制御細部.html">FR19 アクセス制御細部</a><a class="" href="../01_要件定義/FR20_AI推論動作.html">FR20 AI推論動作</a><a class="" href="../01_要件定義/FR21_SCR画面マスタ.html">FR21 SCR画面マスタ</a></div></div><div class="nav-sec open" data-sec="02_基本設計/index.html"><a class="nav-top" href="../02_基本設計/index.html"><span class="n">基</span><span>基本設計</span><span class="caret">&#9656;</span></a><div class="nav-children"><a class="" href="../02_基本設計/index.html">概要</a><div class="nav-sec" data-sec="02_基本設計/01_画面設計.html"><a class="nav-top" href="../02_基本設計/01_画面設計.html"><span class="n">01</span><span>画面設計</span><span class="caret">&#9656;</span></a><div class="nav-children"><a class="" href="../02_基本設計/01_画面設計.html">概要</a><a class="" href="../02_基本設計/SCR-001.html">SCR-001 ログイン</a><a class="" href="../02_基本設計/SCR-002.html">SCR-002 アカウント登録</a><a class="" href="../02_基本設計/SCR-003.html">SCR-003 パスワード再設定</a><a class="" href="../02_基本設計/SCR-004.html">SCR-004 プロジェクト</a><a class="" href="../02_基本設計/SCR-004-001.html">SCR-004-001 プロジェクト作成・編集モーダル</a><a class="" href="../02_基本設計/SCR-005.html">SCR-005 要対応の質問一覧</a><a class="" href="../02_基本設計/SCR-005-001.html">SCR-005-001 要対応の質問詳細</a><a class="" href="../02_基本設計/SCR-006.html">SCR-006 FAQ一覧</a><a class="" href="../02_基本設計/SCR-006-001.html">SCR-006-001 FAQ編集</a><a class="" href="../02_基本設計/SCR-006-002.html">SCR-006-002 FAQ CSVインポートモーダル</a><a class="" href="../02_基本設計/SCR-007.html">SCR-007 ウィジェット設定</a><a class="" href="../02_基本設計/SCR-008.html">SCR-008 概要(プロジェクト)</a><a class="" href="../02_基本設計/SCR-009.html">SCR-009 メンバー(プロジェクト)</a><a class="" href="../02_基本設計/SCR-009-001.html">SCR-009-001 メンバー招待・編集モーダル</a><a class="" href="../02_基本設計/SCR-010.html">SCR-010 利用規約閲覧</a><a class="" href="../02_基本設計/SCR-011.html">SCR-011 お知らせ一覧</a><a class="" href="../02_基本設計/SCR-012.html">SCR-012 お知らせ詳細</a><a class="" href="../02_基本設計/SCR-013.html">SCR-013 メール確認</a><a class="" href="../02_基本設計/SCR-014.html">SCR-014 退会申請</a><a class="" href="../02_基本設計/SCR-015.html">SCR-015 規約再同意割込み</a><a class="" href="../02_基本設計/SCR-016.html">SCR-016 利用状況</a><a class="" href="../02_基本設計/SCR-017.html">SCR-017 個人設定</a><a class="" href="../02_基本設計/SCR-018.html">SCR-018 メンバーアカウント有効化</a><a class="" href="../02_基本設計/SCR-019.html">SCR-019 連絡先メール確認完了</a><a class="" href="../02_基本設計/SCR-020.html">SCR-020 プライバシーポリシー閲覧</a><a class="" href="../02_基本設計/SCR-021.html">SCR-021 利用量と上限</a><a class="" href="../02_基本設計/SCR-021-001.html">SCR-021-001 質問数上限設定モーダル</a><a class="" href="../02_基本設計/SCR-022.html">SCR-022 請求</a><a class="" href="../02_基本設計/SCR-023.html">SCR-023 設定</a><a class="" href="../02_基本設計/SCR-WIDGET.html">SCR-WIDGET FAQ ウィジェット</a></div></div><div class="nav-sec" data-sec="02_基本設計/02_API設計.html"><a class="nav-top" href="../02_基本設計/02_API設計.html"><span class="n">02</span><span>API設計</span><span class="caret">&#9656;</span></a><div class="nav-children"><a class="" href="../02_基本設計/02_API設計.html">概要</a><a class="" href="../02_基本設計/API-common.html">共通仕様・規約</a><a class="" href="../02_基本設計/API-auth.html">認証・セッション</a><a class="" href="../02_基本設計/API-project.html">プロジェクト</a><a class="" href="../02_基本設計/API-member.html">メンバー</a><a class="" href="../02_基本設計/API-faq.html">FAQ</a><a class="" href="../02_基本設計/API-inquiry.html">未解決質問</a><a class="" href="../02_基本設計/API-widget.html">ウィジェット配信</a><a class="" href="../02_基本設計/API-dashboard.html">ダッシュボード</a><a class="" href="../02_基本設計/API-billing.html">利用量・課金</a><a class="" href="../02_基本設計/API-inbox.html">お知らせ受信箱</a><a class="" href="../02_基本設計/API-terms.html">規約・退会</a><a class="" href="../02_基本設計/API-ai.html">AI 推論 IF</a><a class="" href="../02_基本設計/API-mail.html">メール配信 IF</a><a class="" href="../02_基本設計/API-webhook.html">外部 Webhook</a></div></div><div class="nav-sec open" data-sec="02_基本設計/03_データベース設計.html"><a class="nav-top" href="../02_基本設計/03_データベース設計.html"><span class="n">03</span><span>データベース設計</span><span class="caret">&#9656;</span></a><div class="nav-children"><a class="" href="../02_基本設計/03_データベース設計.html">概要</a><a class="" href="../02_基本設計/TBL-M-USER.html">M_USER</a><a class="" href="../02_基本設計/TBL-M-CONTRACT.html">M_CONTRACT</a><a class="" href="../02_基本設計/TBL-M-002.html">M_PRJ_USERS</a><a class="" href="../02_基本設計/TBL-M-004.html">M_PROJECTS</a><a class="" href="../02_基本設計/TBL-M-005.html">M_ALLOWED_DOMAINS</a><a class="" href="../02_基本設計/TBL-M-006.html">M_FAQS</a><a class="" href="../02_基本設計/TBL-M-007.html">M_EMAIL_SUPPRESS</a><a class="" href="../02_基本設計/TBL-M-008.html">M_OWNER_QUOTA_OVR</a><a class="" href="../02_基本設計/TBL-M-009.html">M_PRJ_QUOTA_LIMITS</a><a class="" href="../02_基本設計/TBL-M-010.html">M_SERVICE_ANNOUNCE</a><a class="" href="../02_基本設計/TBL-M-011.html">M_ANNOUNCE_AUD</a><a class="" href="../02_基本設計/TBL-M-012.html">M_TERMS_VER</a><a class="" href="../02_基本設計/TBL-T-001.html">T_SESSIONS</a><a class="" href="../02_基本設計/TBL-T-002.html">T_ACCESS_TOKENS</a><a class="" href="../02_基本設計/TBL-T-003.html">T_PRJ_LEGACY_KEYS</a><a class="" href="../02_基本設計/TBL-T-004.html">T_QLOG_FAQ_REFS</a><a class="" href="../02_基本設計/TBL-T-005.html">T_INQUIRIES</a><a class="" href="../02_基本設計/TBL-T-006.html">T_BILL_SUBS</a><a class="" href="../02_基本設計/TBL-T-007.html">T_BILL_INVOICES</a><a class="" href="../02_基本設計/TBL-T-008.html">T_USAGE_METER</a><a class="" href="../02_基本設計/TBL-T-009.html">T_ANNOUNCE_RCPT</a><a class="" href="../02_基本設計/TBL-T-010.html">T_INBOX_MSG</a><a class="" href="../02_基本設計/TBL-T-011.html">T_WITHDRAW_REQ</a><a class="" href="../02_基本設計/TBL-T-012.html">T_TERMS_AGREE</a><a class="" href="../02_基本設計/TBL-H-001.html">H_FAQ_REV</a><a class="cur active" href="../02_基本設計/TBL-H-002.html">H_QUESTION_LOGS</a><a class="" href="../02_基本設計/TBL-H-003.html">H_NOTIF_LOGS</a><a class="" href="../02_基本設計/TBL-H-004.html">H_AUDIT_LOGS</a><a class="" href="../02_基本設計/TBL-H-005.html">H_ERROR_LOGS</a><a class="" href="../02_基本設計/TBL-TP-001.html">TP_FAQ_FTS</a><a class="" href="../02_基本設計/TBL-TP-002.html">TP_AI_THRESH_CACHE</a></div></div><a class="" href="../02_基本設計/04_ユースケース設計.html">04 ユースケース・シーケンス</a><a class="" href="../02_基本設計/05_課金請求設計.html">05 課金・請求設計</a><a class="" href="../02_基本設計/06_メール設計.html">06 メール設計</a><a class="" href="../02_基本設計/07_認証認可設計.html">07 認証・認可設計</a></div></div><div class="nav-sec" data-sec="03_将来対応/index.html"><a class="nav-top" href="../03_将来対応/index.html"><span class="n">将</span><span>将来対応</span><span class="caret">&#9656;</span></a><div class="nav-children"><a class="" href="../03_将来対応/index.html">概要</a><a class="" href="../03_将来対応/FUT01_認証・セキュリティ強化.html">FUT01 認証・セキュリティ強化</a><a class="" href="../03_将来対応/FUT02_検索・AI強化.html">FUT02 検索・AI強化</a><a class="" href="../03_将来対応/FUT03_国際化・リージョン.html">FUT03 国際化・リージョン</a><a class="" href="../03_将来対応/FUT04_プラン・課金・ブランド.html">FUT04 プラン・課金・ブランド</a><a class="" href="../03_将来対応/FUT05_通知・FAQ運用・連携.html">FUT05 通知・FAQ運用・連携</a><a class="" href="../03_将来対応/FUT06_個別チャット.html">FUT06 個別チャット</a><a class="" href="../03_将来対応/FUT06_個別チャット_要件.html">FUT06 個別チャット_要件</a><a class="" href="../03_将来対応/FUT06_個別チャット_詳細設計.html">FUT06 個別チャット_詳細設計</a></div></div></nav></aside>
+<main class="main"><article class="content">
+<div class="crumb"><span class="pill">基本設計</span><a class="muted" href="../02_基本設計/03_データベース設計.html">データベース設計</a><span class="muted">/</span><span class="muted">TBL-H-002 H_QUESTION_LOGS</span></div>
+<h1>TBL-H-002 H_QUESTION_LOGS</h1><div style="display:flex;gap:6px;flex-wrap:wrap;margin:0 0 18px"><span class="pill cat-h">履歴</span> </div>
+
+<span id="312-H_QUESTION_LOGS"></span>
+<p class="section-lead">ウィジェット利用者からの質問と AI 推論結果を記録する質問ログです。</p>
+<h3 id="3121-概要">概要</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>テーブル名</td>
+<td><code>H_QUESTION_LOGS</code></td>
+</tr>
+<tr>
+<td>論理名</td>
+<td>質問ログ</td>
+</tr>
+<tr>
+<td>主キー</td>
+<td><code>id</code></td>
+</tr>
+<tr>
+<td>外部キー</td>
+<td><ul class="key-cols">
+<li><code>contract_id</code> → <code>M_CONTRACT(id)</code></li>
+<li><code>project_id</code> → <code>M_PROJECTS(id)</code></li>
+</ul></td>
+</tr>
+</tbody>
+</table>
+<h3 id="3122-カラム定義">カラム定義</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>論理名</th>
+<th>物理名</th>
+<th>データ型</th>
+<th style="text-align: right;">桁数</th>
+<th>NULL</th>
+<th>PK</th>
+<th>FK</th>
+<th>UNIQUE</th>
+<th>DEFAULT</th>
+<th>制約</th>
+
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>ID</td>
+<td><code>id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td>○</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>契約 owner ID</td>
+<td><code>contract_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td><code>M_CONTRACT(id)</code></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>プロジェクト ID</td>
+<td><code>project_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td><code>M_PROJECTS(id)</code></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>質問本文</td>
+<td><code>user_question</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>length(user_question) BETWEEN 1 AND 2000</code></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td>AI 応答</td>
+<td><code>ai_response</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td>解決フラグ</td>
+<td><code>is_resolved</code></td>
+<td>INTEGER</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>0</code></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td>課金確定フラグ</td>
+<td><code>metering_billable</code></td>
+<td>INTEGER</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>0</code></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">8</td>
+<td>信頼度スコア</td>
+<td><code>confidence_score</code></td>
+<td>REAL</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">9</td>
+<td>関連度スコア</td>
+<td><code>relevance_score</code></td>
+<td>REAL</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">10</td>
+<td>AI モデル</td>
+<td><code>ai_model</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">11</td>
+<td>入力トークン数</td>
+<td><code>ai_token_count_input</code></td>
+<td>INTEGER</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">12</td>
+<td>出力トークン数</td>
+<td><code>ai_token_count_output</code></td>
+<td>INTEGER</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">13</td>
+<td>結果種別</td>
+<td><code>result_type</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>result_type IN ('answered','unanswered','error')</code>(NULL 許容)</td>
+
+</tr>
+<tr>
+<td style="text-align: right;">14</td>
+<td>結果理由コード</td>
+<td><code>result_reason_code</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">15</td>
+<td>PII マスク済</td>
+<td><code>pii_masked</code></td>
+<td>INTEGER</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>0</code></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">16</td>
+<td>セッション ID</td>
+<td><code>session_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">17</td>
+<td>IP アドレス</td>
+<td><code>ip_address</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">18</td>
+<td>有効フラグ</td>
+<td><code>valid</code></td>
+<td>INTEGER</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>1</code></td>
+<td><code>valid IN (0,1)</code></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">19</td>
+<td>作成日時</td>
+<td><code>created_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">20</td>
+<td>更新日時</td>
+<td><code>updated_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>datetime('now')</code></td>
+<td></td>
+
+</tr>
+</tbody>
+</table>
+<h3 id="3125-インデックス">インデックス</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">No</th>
+<th>インデックス名</th>
+<th>対象カラム</th>
+<th>UNIQUE</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td><code>idx_qlog_owner_created</code></td>
+<td><code>(contract_id, created_at DESC)</code></td>
+<td></td>
+<td>オーナー別新着</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td><code>idx_qlog_project_billable_created</code></td>
+<td><code>(project_id, metering_billable, created_at DESC)</code></td>
+<td></td>
+<td>プロジェクト × 課金確定</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td><code>idx_qlog_valid</code></td>
+<td><code>valid</code> WHERE <code>valid = 0</code></td>
+<td></td>
+<td>論理削除対象抽出</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3127-コード値区分値">コード値・区分値</h3>
+<table>
+<thead>
+<tr>
+<th>カラム名</th>
+<th>値</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>result_type</code></td>
+<td><code>answered</code></td>
+<td>解答あり</td>
+</tr>
+<tr>
+<td><code>result_type</code></td>
+<td><code>unanswered</code></td>
+<td>該当なし</td>
+</tr>
+<tr>
+<td><code>result_type</code></td>
+<td><code>error</code></td>
+<td>AI エラー</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="usedby" style="margin-top:30px">使用元(画面 / API)</h3><p class="section-lead">このテーブルを読み書きする画面と API です(逆引き)。</p><div class="kv"><div><b>画面</b></div></div><div class="usedby" style="margin-bottom:10px"><a href="SCR-004-001.html" class="pill">SCR-004-001</a><a href="SCR-005-001.html" class="pill">SCR-005-001</a><a href="SCR-005.html" class="pill">SCR-005</a><a href="SCR-007.html" class="pill">SCR-007</a><a href="SCR-008.html" class="pill">SCR-008</a><a href="SCR-WIDGET.html" class="pill">SCR-WIDGET</a></div><div class="kv"><div><b>API</b></div></div><div class="usedby"><a href="02_API設計.html#API-DASH-001" class="pill">API-DASH-001</a><a href="02_API設計.html#API-FAQ-008" class="pill">API-FAQ-008</a><a href="02_API設計.html#API-PRJ-003" class="pill">API-PRJ-003</a><a href="02_API設計.html#API-WGT-002" class="pill">API-WGT-002</a><a href="02_API設計.html#API-WGT-003" class="pill">API-WGT-003</a></div>
+<div class="footer">FAQ AI ウィジェット SaaS / メインシステム &mdash; 基本設計 ・ new 形式ポータル</div>
+</article></main>
+<aside class="rightbar"><div class="rb-title">このページ</div><nav class="toc"><a class="back" href="../02_基本設計/03_データベース設計.html">&larr; データベース設計へ</a><a class="lvl3" href="#3121-概要">概要</a><a class="lvl3" href="#3122-カラム定義">カラム定義</a><a class="lvl3" href="#3125-インデックス">インデックス</a><a class="lvl3" href="#3127-コード値区分値">コード値・区分値</a><a class="lvl3" href="#usedby">使用元(画面 / API)</a></nav></aside>
+</div>
+<script>(function(){function init(){var ls=[].slice.call(document.querySelectorAll(".rightbar .toc a[href^=\"#\"]"));if(!ls.length)return;var map=ls.map(function(a){var id=decodeURIComponent(a.getAttribute("href").slice(1));return{a:a,el:document.getElementById(id)};}).filter(function(x){return x.el;});function on(){var y=window.scrollY+130,cur=null;map.forEach(function(x){if(x.el.getBoundingClientRect().top+window.scrollY<=y)cur=x;});ls.forEach(function(a){a.classList.remove("active");});if(cur)cur.a.classList.add("active");}window.addEventListener("scroll",on,{passive:true});window.addEventListener("resize",on);on();}if(document.readyState!=="loading")init();else document.addEventListener("DOMContentLoaded",init);})();</script><script>(function(){var K="portal-nav-open",S="portal-nav-scroll";var sb=document.querySelector(".sidebar");function sid(s){return s.getAttribute("data-sec")||"";}try{var o=JSON.parse(localStorage.getItem(K)||"[]");document.querySelectorAll(".nav-sec").forEach(function(s){if(o.indexOf(sid(s))>=0)s.classList.add("open");});}catch(e){}function save(){try{var o=[];document.querySelectorAll(".nav-sec.open").forEach(function(s){o.push(sid(s));});localStorage.setItem(K,JSON.stringify(o));}catch(e){}}document.querySelectorAll(".nav-sec > .nav-top .caret").forEach(function(c){c.addEventListener("click",function(e){e.preventDefault();e.stopPropagation();c.closest(".nav-sec").classList.toggle("open");save();});});document.querySelectorAll(".nav a[href]").forEach(function(a){a.addEventListener("click",save);});try{var v=sessionStorage.getItem(S);if(v&&sb)sb.scrollTop=parseInt(v,10);}catch(e){}if(sb)sb.addEventListener("scroll",function(){try{sessionStorage.setItem(S,sb.scrollTop);}catch(e){}},{passive:true});})();</script>
+</body></html>

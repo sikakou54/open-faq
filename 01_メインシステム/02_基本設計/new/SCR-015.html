@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCR-015 規約再同意割込み | 画面設計書</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="style.css?v=3">
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+</head><body><div class="layout">
+<aside class="sidebar"><div class="brand"><div class="mark">FA</div><div><b>FAQ AI SaaS</b><span>基本設計ポータル</span></div></div>
+<nav class="nav"><div class="nav-group">設計書</div><a class="nav-top" href="index.html"><span class="n">00</span><span>ポータル概要</span></a><div class="nav-sec" data-doc="01"><a class="nav-top" href="01_画面設計.html"><span class="n">01</span><span>画面設計</span><span class="caret">▸</span></a><div class="nav-children"><a href="01_画面設計.html">概要</a><a href="SCR-001.html">SCR-001 ログイン</a><a href="SCR-002.html">SCR-002 アカウント登録</a><a href="SCR-003.html">SCR-003 パスワード再設定</a><a href="SCR-004.html">SCR-004 プロジェクト</a><a href="SCR-004-001.html">SCR-004-001 プロジェクト作成・編集モーダル</a><a href="SCR-005.html">SCR-005 要対応の質問一覧</a><a href="SCR-005-001.html">SCR-005-001 要対応の質問詳細</a><a href="SCR-006.html">SCR-006 FAQ一覧</a><a href="SCR-006-001.html">SCR-006-001 FAQ編集</a><a href="SCR-006-002.html">SCR-006-002 FAQ CSVインポートモーダル</a><a href="SCR-007.html">SCR-007 ウィジェット設定</a><a href="SCR-008.html">SCR-008 概要(プロジェクト)</a><a href="SCR-009.html">SCR-009 メンバー(プロジェクト)</a><a href="SCR-009-001.html">SCR-009-001 メンバー招待・編集モーダル</a><a href="SCR-010.html">SCR-010 利用規約閲覧</a><a href="SCR-011.html">SCR-011 お知らせ一覧</a><a href="SCR-012.html">SCR-012 お知らせ詳細</a><a href="SCR-013.html">SCR-013 メール確認</a><a href="SCR-014.html">SCR-014 退会申請</a><a href="SCR-015.html">SCR-015 規約再同意割込み</a><a href="SCR-016.html">SCR-016 利用状況</a><a href="SCR-017.html">SCR-017 個人設定</a><a href="SCR-018.html">SCR-018 メンバーアカウント有効化</a><a href="SCR-019.html">SCR-019 連絡先メール確認完了</a><a href="SCR-020.html">SCR-020 プライバシーポリシー閲覧</a><a href="SCR-021.html">SCR-021 利用量と上限</a><a href="SCR-021-001.html">SCR-021-001 質問数上限設定モーダル</a><a href="SCR-022.html">SCR-022 請求</a><a href="SCR-023.html">SCR-023 設定</a><a href="SCR-WIDGET.html">SCR-WIDGET FAQ ウィジェット</a></div></div><div class="nav-sec" data-doc="02"><a class="nav-top" href="02_API設計.html"><span class="n">02</span><span>API設計</span><span class="caret">▸</span></a><div class="nav-children"><a href="02_API設計.html">概要</a><a href="API-common.html">共通仕様・規約</a><a href="API-auth.html">認証・セッション</a><a href="API-project.html">プロジェクト</a><a href="API-member.html">メンバー</a><a href="API-faq.html">FAQ</a><a href="API-inquiry.html">未解決質問</a><a href="API-widget.html">ウィジェット配信</a><a href="API-dashboard.html">ダッシュボード</a><a href="API-billing.html">利用量・課金</a><a href="API-inbox.html">お知らせ受信箱</a><a href="API-terms.html">規約・退会</a><a href="API-ai.html">AI 推論 IF</a><a href="API-mail.html">メール配信 IF</a><a href="API-webhook.html">外部 Webhook</a></div></div><div class="nav-sec" data-doc="03"><a class="nav-top" href="03_データベース設計.html"><span class="n">03</span><span>データベース設計</span><span class="caret">▸</span></a><div class="nav-children"><a href="03_データベース設計.html">概要</a><a href="TBL-M-USER.html">M_USER</a><a href="TBL-M-CONTRACT.html">M_CONTRACT</a><a href="TBL-M-002.html">M_PRJ_USERS</a><a href="TBL-M-004.html">M_PROJECTS</a><a href="TBL-M-005.html">M_ALLOWED_DOMAINS</a><a href="TBL-M-006.html">M_FAQS</a><a href="TBL-M-007.html">M_EMAIL_SUPPRESS</a><a href="TBL-M-008.html">M_OWNER_QUOTA_OVR</a><a href="TBL-M-009.html">M_PRJ_QUOTA_LIMITS</a><a href="TBL-M-010.html">M_SERVICE_ANNOUNCE</a><a href="TBL-M-011.html">M_ANNOUNCE_AUD</a><a href="TBL-M-012.html">M_TERMS_VER</a><a href="TBL-T-001.html">T_SESSIONS</a><a href="TBL-T-002.html">T_ACCESS_TOKENS</a><a href="TBL-T-003.html">T_PRJ_LEGACY_KEYS</a><a href="TBL-T-004.html">T_QLOG_FAQ_REFS</a><a href="TBL-T-005.html">T_INQUIRIES</a><a href="TBL-T-006.html">T_BILL_SUBS</a><a href="TBL-T-007.html">T_BILL_INVOICES</a><a href="TBL-T-008.html">T_USAGE_METER</a><a href="TBL-T-009.html">T_ANNOUNCE_RCPT</a><a href="TBL-T-010.html">T_INBOX_MSG</a><a href="TBL-T-011.html">T_WITHDRAW_REQ</a><a href="TBL-T-012.html">T_TERMS_AGREE</a><a href="TBL-H-001.html">H_FAQ_REV</a><a href="TBL-H-002.html">H_QUESTION_LOGS</a><a href="TBL-H-003.html">H_NOTIF_LOGS</a><a href="TBL-H-004.html">H_AUDIT_LOGS</a><a href="TBL-H-005.html">H_ERROR_LOGS</a><a href="TBL-TP-001.html">TP_FAQ_FTS</a><a href="TBL-TP-002.html">TP_AI_THRESH_CACHE</a></div></div><a class="nav-top" href="04_ユースケース設計.html"><span class="n">04</span><span>ユースケース・シーケンス</span></a><a class="nav-top" href="05_課金請求設計.html"><span class="n">05</span><span>課金・請求設計</span></a><a class="nav-top" href="06_メール設計.html"><span class="n">06</span><span>メール設計</span></a><a class="nav-top" href="07_認証認可設計.html"><span class="n">07</span><span>認証・認可設計</span></a></nav></aside>
+<main class="main"><article class="content" style="max-width:1180px"><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px"><span class="pill" style="font-size:11px">画面設計書</span><a href="01_画面設計.html" class="muted" style="font-size:12px;text-decoration:none">画面一覧</a><span class="muted">/</span><span class="muted" style="font-size:12px">SCR-015</span></div><h1>SCR-015 規約再同意割込み</h1>
+
+
+<aside class="page-summary">
+<p class="ps-lead"><strong>このページは、規約・ポリシー改定時にログイン後へ割り込み、再同意を求める画面 SCR-015 を定義します。</strong> 画面概要 / 画面遷移図 / 画面レイアウト / 画面項目定義 / 入出力一覧 / 画面イベント一覧 の 6 セクションで記述します。</p>
+</aside>
+<p class="doc-meta"><span><b>版数</b> v1.0</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<h2 id="1-画面概要">1. 画面概要</h2>
+<p class="section-lead">利用規約・プライバシーポリシーの改定時に、ログイン後の操作へ全画面モーダルで割り込み、改定文書の主な変更点を提示して再同意を求める画面です。</p>
+<table>
+<thead>
+<tr>
+<th>画面 ID</th>
+<th>画面名</th>
+<th>機能概要</th>
+</tr>
+</thead>
+<tbody>
+<tr><td id="SCR-015"><code>SCR-015</code></td><td>規約再同意割込み</td><td>改定された利用規約・プライバシーポリシーの主な変更点を提示し、最新版への再同意を求める全画面モーダル</td></tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>関連</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>FR / BR</td><td><span>FR-011</span>, <span>FR-164</span> / —</td></tr>
+<tr><td>関連画面</td><td><a href="SCR-001.html"><code>SCR-001</code> ログイン</a> / <a href="SCR-010.html"><code>SCR-010</code> 利用規約閲覧</a> / <a href="SCR-020.html"><code>SCR-020</code> プライバシーポリシー閲覧</a></td></tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr>
+<th>ステークホルダ</th>
+<th>対象</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>オーナー</td><td>◯</td></tr>
+<tr><td>プロジェクト管理者(<code>admin</code>)</td><td>◯</td></tr>
+<tr><td>メンバー(<code>member</code>)</td><td>◯</td></tr>
+</tbody>
+</table>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>ログイン済みの全ロール利用者に対し、未同意の改定がある場合にログイン後の操作へ割り込んで表示します(SP / PC ともフルスクリーン)。改定された文書のみが対象の場合は、当該文書の変更点と同意チェックのみを表示します。</div></div>
+
+<h2 id="2-画面遷移図">2. 画面遷移図</h2>
+<p class="section-lead">本画面からの画面遷移を、画面 ID・画面名とイベント(操作)で示します。</p>
+<pre class="mermaid">flowchart LR
+  S0["SCR-001 ログイン"]
+  S1["SCR-015 規約再同意割込み"]
+  S2["SCR-010 利用規約閲覧"]
+  S3["SCR-020 プライバシーポリシー閲覧"]
+  S0 --&gt;|未同意の改定あり / 割込み| S1
+  S1 --&gt;|利用規約リンク（別タブ）| S2
+  S1 --&gt;|プライバシーポリシーリンク（別タブ）| S3
+  S1 --&gt;|同意して続行する| S0
+</pre>
+
+<h2 id="3-画面レイアウト">3. 画面レイアウト</h2>
+<div class="layout-embed">
+<div class="le-cap">両方改定(利用規約 + プライバシーポリシー)</div>
+<div class="scr-mock"><div class="screen" id="scr-015" role="region" aria-labelledby="scr-015-title"> <div class="screen-header"> <div><span class="scr-name" id="scr-015-title">利用規約への再同意案内(両方改定)</span></div> <div class="scr-user">利用者: 利用者(オーナー / プロジェクト管理者 / メンバー)</div> </div> <div class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="scr-015-modal-title"> <div class="modal-card" style="width: 640px;"> <h3 id="scr-015-modal-title">利用規約への再同意</h3> <div class="panel"> <div class="panel-title">主な変更点</div> <div style="font-size: 11px; line-height: 1.6;"> <div style="font-weight: 600; margin-top: 4px;">利用規約の主な変更点</div> <ul style="margin: 4px 0; padding-left: 20px;"> <li>個人情報の取り扱いに関する説明をわかりやすく更新</li> <li>利用停止までの猶予期間を明記</li> </ul> <div style="font-weight: 600; margin-top: 8px;">プライバシーポリシーの主な変更点</div> <ul style="margin: 4px 0; padding-left: 20px;"> <li>取得する利用データの項目と利用目的を追記</li> <li>第三者提供の範囲を明確化</li> </ul> </div> </div> <div class="field"><label class="checkbox"><input type="checkbox"> <a class="link">利用規約(リンク)</a>に同意します <span class="req">●</span></label></div> <div class="field"><label class="checkbox"><input type="checkbox"> <a class="link">プライバシーポリシー(リンク)</a>に同意します <span class="req">●</span></label></div> <div style="display: flex; justify-content: flex-end; align-items: center; margin: 16px 0 8px;"> <button class="btn primary">同意して続行する</button> </div> </div> </div> </div></div>
+</div>
+<div class="layout-embed">
+<div class="le-cap">利用規約のみ改定(改定文書のみ表示)</div>
+<div class="scr-mock"><div class="screen" id="scr-015-terms" role="region" aria-labelledby="scr-015-terms-title"> <div class="screen-header"> <div><span class="scr-name" id="scr-015-terms-title">利用規約への再同意案内(利用規約のみ改定)</span></div> <div class="scr-user">利用者: 利用者(オーナー / プロジェクト管理者 / メンバー)</div> </div> <div class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="scr-015-terms-modal-title"> <div class="modal-card" style="width: 640px;"> <h3 id="scr-015-terms-modal-title">利用規約への再同意</h3> <div class="panel"> <div class="panel-title">主な変更点</div> <div style="font-size: 11px; line-height: 1.6;"> <div style="font-weight: 600; margin-top: 4px;">利用規約の主な変更点</div> <ul style="margin: 4px 0; padding-left: 20px;"> <li>個人情報の取り扱いに関する説明をわかりやすく更新</li> <li>利用停止までの猶予期間を明記</li> </ul> </div> </div> <div class="field"><label class="checkbox"><input type="checkbox"> <a class="link">利用規約(リンク)</a>に同意します <span class="req">●</span></label></div> <div style="display: flex; justify-content: flex-end; align-items: center; margin: 16px 0 8px;"> <button class="btn primary">同意して続行する</button> </div> </div> </div> </div></div>
+</div>
+<div class="layout-embed">
+<div class="le-cap">プライバシーポリシーのみ改定(改定文書のみ表示)</div>
+<div class="scr-mock"><div class="screen" id="scr-015-privacy" role="region" aria-labelledby="scr-015-privacy-title"> <div class="screen-header"> <div><span class="scr-name" id="scr-015-privacy-title">利用規約への再同意案内(プライバシーポリシーのみ改定)</span></div> <div class="scr-user">利用者: 利用者(オーナー / プロジェクト管理者 / メンバー)</div> </div> <div class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="scr-015-privacy-modal-title"> <div class="modal-card" style="width: 640px;"> <h3 id="scr-015-privacy-modal-title">プライバシーポリシーへの再同意</h3> <div class="panel"> <div class="panel-title">主な変更点</div> <div style="font-size: 11px; line-height: 1.6;"> <div style="font-weight: 600; margin-top: 4px;">プライバシーポリシーの主な変更点</div> <ul style="margin: 4px 0; padding-left: 20px;"> <li>取得する利用データの項目と利用目的を追記</li> <li>第三者提供の範囲を明確化</li> </ul> </div> </div> <div class="field"><label class="checkbox"><input type="checkbox"> <a class="link">プライバシーポリシー(リンク)</a>に同意します <span class="req">●</span></label></div> <div style="display: flex; justify-content: flex-end; align-items: center; margin: 16px 0 8px;"> <button class="btn primary">同意して続行する</button> </div> </div> </div> </div></div>
+</div>
+
+<h2 id="4-画面項目定義">4. 画面項目定義</h2>
+<p class="section-lead">本画面の入出力項目(変更点表示・同意チェック・操作ボタン)を定義します。項目の正本は本表です。</p>
+<table>
+<thead>
+<tr>
+<th>項目 ID</th>
+<th>項目</th>
+<th>説明</th>
+<th>種類</th>
+<th>表示条件</th>
+<th>表示</th>
+</tr>
+</thead>
+<tbody>
+<tr><td id="IT-01"><code>IT-01</code></td><td>主な変更点</td><td>改定された利用規約 / プライバシーポリシーの主な変更点を見出しで区別して表示する</td><td>カード</td><td>改定された文書のみ表示(利用規約 / プライバシーポリシーの該当文書)</td><td>各文書の主な変更点(差分サマリー)</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>利用規約同意</td><td>利用規約最新版への同意をチェックする(必須。リンクで SCR-010 を参照)</td><td>チェックボックス</td><td>利用規約が改定対象の場合に表示</td><td>「利用規約の最新版に同意します」</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>プライバシーポリシー同意</td><td>プライバシーポリシー最新版への同意をチェックする(必須。リンクで SCR-020 を参照)</td><td>チェックボックス</td><td>プライバシーポリシーが改定対象の場合に表示</td><td>「プライバシーポリシーの最新版に同意します」</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>同意して続行する</td><td>同意を確定して元の操作へ戻る</td><td>ボタン</td><td>両チェック充足時のみ活性化</td><td>「同意して続行する」</td></tr>
+</tbody>
+</table>
+
+<h2 id="5-入出力一覧">5. 入出力一覧</h2>
+<p class="section-lead">本画面が読み書きするテーブルと、呼び出す API の一覧です。テーブルの正本は <a href="03_データベース設計.html">03_テーブル設計</a>、API の正本は <a href="02_API設計.html">02_API設計 §5.9.2</a> です。</p>
+<table>
+<thead>
+<tr>
+<th rowspan="2">入出力名</th>
+<th rowspan="2">説明</th>
+<th rowspan="2">種別</th>
+<th rowspan="2">I/O</th>
+<th colspan="4">アクセス種別(CRUD)</th>
+<th rowspan="2">備考</th>
+</tr>
+<tr>
+<th>C</th>
+<th>R</th>
+<th>U</th>
+<th>D</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>規約バージョン</td><td>差分サマリ・最新版を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>M_TERMS_VER</code>(<a href="03_データベース設計.html#TBL-M-012">テーブル設計 3.30</a>)</td></tr>
+<tr><td>規約同意</td><td><code>doc_type</code> 別で同意を記録する</td><td>テーブル</td><td>出力</td><td>◯</td><td>—</td><td>—</td><td>—</td><td><code>T_TERMS_AGREE</code>(<a href="03_データベース設計.html#TBL-T-012">テーブル設計 3.31</a>)</td></tr>
+<tr><td>利用規約 最新版取得</td><td>利用規約の最新版・差分サマリを取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /terms/current</code>(<a href="02_API設計.html">API 設計 5.9.1</a>)</td></tr>
+<tr><td>プライバシーポリシー 最新版取得</td><td>プライバシーポリシーの最新版・差分サマリを取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /privacy/current</code>(<a href="02_API設計.html">API 設計 5.9.1a</a>)</td></tr>
+<tr><td>利用規約 同意</td><td>利用規約最新版への同意を送信する</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /terms/agree</code>(<a href="02_API設計.html">API 設計 5.9.2</a>)</td></tr>
+<tr><td>プライバシーポリシー 同意</td><td>プライバシーポリシー最新版への同意を送信する</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /privacy/agree</code>(<a href="02_API設計.html">API 設計 5.9.2a</a>)</td></tr>
+</tbody>
+</table>
+
+<h2 id="6-画面イベント一覧">6. 画面イベント一覧</h2>
+<p class="section-lead">本画面で発生するイベントと発生タイミング・概要の一覧です。</p>
+<table>
+<thead>
+<tr>
+<th>イベント ID</th>
+<th>イベント</th>
+<th>トリガー</th>
+<th>処理</th>
+<th>関連項目</th>
+</tr>
+</thead>
+<tbody>
+<tr><td><code>EV-01</code></td><td>割込み表示</td><td>ログイン後・未同意の改定がある場合</td><td><ul><li><code>GET /terms/current</code> / <code>GET /privacy/current</code> で差分サマリを取得</li><li>主な変更点を全画面モーダルで表示</li></ul></td><td><a href="#IT-01">IT-01</a></td></tr>
+<tr><td><code>EV-02</code></td><td>同意チェック</td><td>各同意チェックボックス操作時</td><td>両チェックの充足状態を判定し「同意して続行する」の活性 / 非活性を切替</td><td><a href="#IT-02">IT-02</a>, <a href="#IT-03">IT-03</a>, <a href="#IT-04">IT-04</a></td></tr>
+<tr><td><code>EV-03</code></td><td>同意して続行</td><td>「同意して続行する」押下時</td><td><ul><li><code>POST /terms/agree</code> と <code>POST /privacy/agree</code>(改定文書のみ)を実行し <code>T_TERMS_AGREE</code> に記録</li><li>完了後は元の操作へ戻る</li></ul></td><td><a href="#IT-04">IT-04</a></td></tr>
+<tr><td><code>EV-04</code></td><td>規約 / ポリシー閲覧</td><td>文書リンク押下時</td><td>SCR-010 利用規約 / SCR-020 プライバシーポリシーを別タブで開く</td><td><a href="#IT-02">IT-02</a>, <a href="#IT-03">IT-03</a></td></tr>
+</tbody>
+</table>
+
+
+<div class="footer">FAQ AI ウィジェット SaaS / メインシステム — 画面設計書 ・ 2026-06-19</div>
+</article></main><aside class="rightbar"><div class="rb-title">このページ</div><nav class="toc"><a class="back" href="01_画面設計.html" style="font-weight:600;color:var(--accent)">← 画面一覧へ戻る</a><a href="#1-画面概要">1. 画面概要</a><a href="#2-画面遷移図">2. 画面遷移図</a><a href="#3-画面レイアウト">3. 画面レイアウト</a><a href="#4-画面項目定義">4. 画面項目定義</a><a href="#5-入出力一覧">5. 入出力一覧</a><a href="#6-画面イベント一覧">6. 画面イベント一覧</a></nav></aside></div>
+<script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";mermaid.initialize({startOnLoad:true,theme:"neutral",flowchart:{useMaxWidth:true}});</script>
+<script>window.addEventListener('load',function(){try{window.lucide&&lucide.createIcons();}catch(e){}});</script>
+<script>/*__scrollspy*/(function(){function init(){var ls=[].slice.call(document.querySelectorAll('.rightbar .toc a[href^="#"]'));if(!ls.length)return;var map=ls.map(function(a){var id=decodeURIComponent(a.getAttribute('href').slice(1));return{a:a,el:document.getElementById(id)};}).filter(function(x){return x.el;});function on(){var y=window.scrollY+130,cur=null;map.forEach(function(x){if(x.el.getBoundingClientRect().top+window.scrollY<=y)cur=x;});ls.forEach(function(a){a.classList.remove('active');});if(cur)cur.a.classList.add('active');}window.addEventListener('scroll',on,{passive:true});window.addEventListener('resize',on);on();}if(document.readyState!=='loading')init();else document.addEventListener('DOMContentLoaded',init);})();</script><script>/*__navtree*/(function(){function init(){var file=decodeURIComponent((location.pathname.split('/').pop()||'index.html'));if(!file)file='index.html';var doc='00';if(/^SCR-/.test(file))doc='01';else if(/^TBL-/.test(file))doc='03';else if(/01_/.test(file))doc='01';else if(/02_/.test(file))doc='02';else if(/03_/.test(file))doc='03';else if(/04_/.test(file))doc='04';document.querySelectorAll('.nav-sec').forEach(function(s){if(s.getAttribute('data-doc')===doc)s.classList.add('open');});var hash=location.hash||'';document.querySelectorAll('.nav a[href]').forEach(function(a){var h=a.getAttribute('href');if(h===file||h===file+hash||(file==='index.html'&&h==='index.html')){a.classList.add('cur');}});document.querySelectorAll('.nav-sec .caret').forEach(function(c){c.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();c.closest('.nav-sec').classList.toggle('open');});});}if(document.readyState!=='loading')init();else document.addEventListener('DOMContentLoaded',init);})();</script></body></html>

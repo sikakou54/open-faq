@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FUT06: 個別チャット | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/05_future/FUT06_個別チャット.html">
+<article class="content" id="content">
+<h1 id="fut06-個別チャット">FUT06: 個別チャット</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書名</td>
+<td>FUT06: 個別チャット</td>
+</tr>
+<tr>
+<td>文書種別</td>
+<td>Future / Post-MVP</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>FAQ AI ウィジェット SaaS / メインシステム</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-06-12</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>検討中(MVP 対象外)</td>
+</tr>
+<tr>
+<td>移管元</td>
+<td>FR-080〜091 / SCR-013 / SCR-024 / SCR-033 / SCR-034 / DD06</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-移管方針">1. 移管方針</h2>
+<p>個別チャット機能は MVP から除外し、Post-MVP の開発候補として本書へ移管する。MVP では AI が回答できなかった質問を管理用の問い合わせ ID 付きで <code>T_INQUIRIES</code> に登録し、ウィジェットへは確認済みプロジェクト連絡先メールを表示するところまでを提供する。問い合わせ ID はウィジェットに表示しない。</p>
+<p>MVP では次の機能を実装しない。</p>
+<ul>
+<li>エンドユーザーと管理者ユーザー間のメッセージ送受信</li>
+<li>個別チャット部屋・チャット ID の作成</li>
+<li>チャットへの担当者割当・デフォルト担当者設定</li>
+<li>エンドユーザー再入室トークン・再入室画面</li>
+<li>チャット投稿通知</li>
+<li>チャット部屋数の利用量計測・課金</li>
+<li><code>chat_rooms</code> / <code>chat_messages</code> / チャット用 <code>end_users</code> の本番マイグレーション</li>
+</ul>
+<h2 id="2-将来機能候補">2. 将来機能候補</h2>
+<table>
+<thead>
+<tr>
+<th>FUT ID</th>
+<th>機能</th>
+<th>移管元</th>
+<th style="text-align: center;">優先度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FUT-CHAT-001</td>
+<td>未解決質問を起点に匿名の個別チャット部屋を作成し、チャット ID を発行する</td>
+<td>FR-080〜082</td>
+<td style="text-align: center;">高</td>
+</tr>
+<tr>
+<td>FUT-CHAT-002</td>
+<td>ウィジェットの会話履歴を維持したままカスタマーサポート対応へ切り替える</td>
+<td>FR-081 / FR-156d</td>
+<td style="text-align: center;">高</td>
+</tr>
+<tr>
+<td>FUT-CHAT-003</td>
+<td>エンドユーザーと管理者ユーザーがテキストメッセージを送受信する</td>
+<td>FR-085 / FR-086</td>
+<td style="text-align: center;">高</td>
+</tr>
+<tr>
+<td>FUT-CHAT-004</td>
+<td>ブラウザ保持の推測困難なトークンで本人のチャットへ再入室する</td>
+<td>FR-083 / FR-084 / FR-174</td>
+<td style="text-align: center;">高</td>
+</tr>
+<tr>
+<td>FUT-CHAT-005</td>
+<td>プロジェクトの管理者へエンドユーザー投稿を通知する</td>
+<td>FR-087</td>
+<td style="text-align: center;">中</td>
+</tr>
+<tr>
+<td>FUT-CHAT-006</td>
+<td>チャットを未解決質問・FAQ 状態から独立して管理する</td>
+<td>FR-088 / FR-089</td>
+<td style="text-align: center;">高</td>
+</tr>
+<tr>
+<td>FUT-CHAT-007</td>
+<td>投稿文字数・頻度制限と機密情報入力注意を提供する</td>
+<td>FR-090 / FR-091</td>
+<td style="text-align: center;">高</td>
+</tr>
+<tr>
+<td>FUT-CHAT-008</td>
+<td>新規部屋へ担当者を自動割当し、管理者が担当変更できる</td>
+<td>FR-086a〜c</td>
+<td style="text-align: center;">中</td>
+</tr>
+<tr>
+<td>FUT-CHAT-009</td>
+<td>添付ファイル・音声・既読同期・外部ヘルプデスク連携を提供する</td>
+<td>旧 FUT-05 チャット拡張</td>
+<td style="text-align: center;">低</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-将来画面">3. 将来画面</h2>
+<table>
+<thead>
+<tr>
+<th>画面 ID</th>
+<th>画面名</th>
+<th>利用者</th>
+<th>MVP での扱い</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SCR-013</td>
+<td>個別チャット一覧 / エンドユーザー部屋</td>
+<td>管理者 / エンドユーザー</td>
+<td>非表示・ルート未実装</td>
+</tr>
+<tr>
+<td>SCR-024</td>
+<td>エンドユーザー再入室</td>
+<td>エンドユーザー</td>
+<td>非表示・ルート未実装</td>
+</tr>
+<tr>
+<td>SCR-033</td>
+<td>個別チャット部屋</td>
+<td>管理者</td>
+<td>非表示・ルート未実装</td>
+</tr>
+<tr>
+<td>SCR-034</td>
+<td>自動割り当て</td>
+<td>オーナー / プロジェクト管理者</td>
+<td>非表示・ルート未実装</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-将来-apiデータ">4. 将来 API・データ</h2>
+<table>
+<thead>
+<tr>
+<th>区分</th>
+<th>候補</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ウィジェット API</td>
+<td><code>POST /widget/v1/chat-rooms</code>, <code>POST /widget/v1/chat-rooms/{id}/messages</code>, <code>GET /widget/v1/reentry/{token}</code></td>
+</tr>
+<tr>
+<td>管理 API</td>
+<td><code>GET /chat-rooms</code>, <code>GET/POST /chat-rooms/{id}/messages</code>, <code>PATCH /chat-rooms/{id}</code></td>
+</tr>
+<tr>
+<td>テーブル</td>
+<td><code>end_users</code>, <code>chat_rooms</code>, <code>chat_messages</code>, <code>T_ACCESS_TOKENS(purpose='reentry')</code></td>
+</tr>
+<tr>
+<td>通知</td>
+<td><code>NOTIF-CHAT_REPLY_TO_STAFF</code></td>
+</tr>
+<tr>
+<td>課金</td>
+<td>個別チャット部屋数の計測・無料枠・超過単価は導入時に再決定</td>
+</tr>
+</tbody>
+</table>
+<p>これらは予約仕様であり、MVP の DDL・API ルーティング・画面ルーティング・課金計算には含めない。</p>
+<h2 id="5-導入判断条件">5. 導入判断条件</h2>
+<table>
+<thead>
+<tr>
+<th>判断項目</th>
+<th>導入条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>顧客需要</td>
+<td>未解決質問への有人対応要望と外部ヘルプデスク連携要望を定量化できること</td>
+</tr>
+<tr>
+<td>運用体制</td>
+<td>応答時間、担当割当、営業時間外対応、通報・削除手順を定義できること</td>
+</tr>
+<tr>
+<td>セキュリティ</td>
+<td>本文暗号化、再入室トークン、権限境界、レート制限の設計レビュー完了</td>
+</tr>
+<tr>
+<td>コスト</td>
+<td>保存容量、通知、同時接続、有人対応コストを含む価格モデルが承認されること</td>
+</tr>
+<tr>
+<td>法務</td>
+<td>チャット本文の利用目的・保持期間・削除方針が規約とプライバシーポリシーへ反映されること</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-mvp-との境界">6. MVP との境界</h2>
+<p>MVP の未解決時フローは次のとおりとする。</p>
+<ol type="1">
+<li>質問ログを記録する。</li>
+<li><code>T_INQUIRIES</code> に未解決質問を登録し、問い合わせ ID を発行する。</li>
+<li>ウィジェットに「回答を見つけられなかった」旨を表示し、管理用の問い合わせ ID は表示しない。</li>
+<li>確認済みプロジェクト連絡先メールがある場合は問い合わせ先として表示する。</li>
+<li>FAQ 質問入力は継続可能とし、有人チャットへの切替は行わない。</li>
+</ol>
+<h2 id="7-関連資料">7. 関連資料</h2>
+<ul>
+<li><a href="FUT06_個別チャット_要件.html">FUT06_個別チャット_要件.html</a>: 要件詳細</li>
+<li><a href="FUT06_個別チャット_詳細設計.html">FUT06_個別チャット_詳細設計.html</a>: 詳細設計</li>
+<li><a href="../01_要件定義/FR05_AI回答.html">FR05_AI回答.html</a>: MVP の未解決時動作</li>
+<li><a href="../01_要件定義/FR12_ウィジェット.html">FR12_ウィジェット.html</a>: MVP ウィジェット表示</li>
+</ul>
+
+</article>
+</body>
+</html>

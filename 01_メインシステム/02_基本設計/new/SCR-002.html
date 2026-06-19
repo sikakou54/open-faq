@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCR-002 アカウント登録 | 画面設計書</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="style.css?v=3">
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+</head><body><div class="layout">
+<aside class="sidebar"><div class="brand"><div class="mark">FA</div><div><b>FAQ AI SaaS</b><span>基本設計ポータル</span></div></div>
+<nav class="nav"><div class="nav-group">設計書</div><a class="nav-top" href="index.html"><span class="n">00</span><span>ポータル概要</span></a><div class="nav-sec" data-doc="01"><a class="nav-top" href="01_画面設計.html"><span class="n">01</span><span>画面設計</span><span class="caret">▸</span></a><div class="nav-children"><a href="01_画面設計.html">概要</a><a href="SCR-001.html">SCR-001 ログイン</a><a href="SCR-002.html">SCR-002 アカウント登録</a><a href="SCR-003.html">SCR-003 パスワード再設定</a><a href="SCR-004.html">SCR-004 プロジェクト</a><a href="SCR-004-001.html">SCR-004-001 プロジェクト作成・編集モーダル</a><a href="SCR-005.html">SCR-005 要対応の質問一覧</a><a href="SCR-005-001.html">SCR-005-001 要対応の質問詳細</a><a href="SCR-006.html">SCR-006 FAQ一覧</a><a href="SCR-006-001.html">SCR-006-001 FAQ編集</a><a href="SCR-006-002.html">SCR-006-002 FAQ CSVインポートモーダル</a><a href="SCR-007.html">SCR-007 ウィジェット設定</a><a href="SCR-008.html">SCR-008 概要(プロジェクト)</a><a href="SCR-009.html">SCR-009 メンバー(プロジェクト)</a><a href="SCR-009-001.html">SCR-009-001 メンバー招待・編集モーダル</a><a href="SCR-010.html">SCR-010 利用規約閲覧</a><a href="SCR-011.html">SCR-011 お知らせ一覧</a><a href="SCR-012.html">SCR-012 お知らせ詳細</a><a href="SCR-013.html">SCR-013 メール確認</a><a href="SCR-014.html">SCR-014 退会申請</a><a href="SCR-015.html">SCR-015 規約再同意割込み</a><a href="SCR-016.html">SCR-016 利用状況</a><a href="SCR-017.html">SCR-017 個人設定</a><a href="SCR-018.html">SCR-018 メンバーアカウント有効化</a><a href="SCR-019.html">SCR-019 連絡先メール確認完了</a><a href="SCR-020.html">SCR-020 プライバシーポリシー閲覧</a><a href="SCR-021.html">SCR-021 利用量と上限</a><a href="SCR-021-001.html">SCR-021-001 質問数上限設定モーダル</a><a href="SCR-022.html">SCR-022 請求</a><a href="SCR-023.html">SCR-023 設定</a><a href="SCR-WIDGET.html">SCR-WIDGET FAQ ウィジェット</a></div></div><div class="nav-sec" data-doc="02"><a class="nav-top" href="02_API設計.html"><span class="n">02</span><span>API設計</span><span class="caret">▸</span></a><div class="nav-children"><a href="02_API設計.html">概要</a><a href="API-common.html">共通仕様・規約</a><a href="API-auth.html">認証・セッション</a><a href="API-project.html">プロジェクト</a><a href="API-member.html">メンバー</a><a href="API-faq.html">FAQ</a><a href="API-inquiry.html">未解決質問</a><a href="API-widget.html">ウィジェット配信</a><a href="API-dashboard.html">ダッシュボード</a><a href="API-billing.html">利用量・課金</a><a href="API-inbox.html">お知らせ受信箱</a><a href="API-terms.html">規約・退会</a><a href="API-ai.html">AI 推論 IF</a><a href="API-mail.html">メール配信 IF</a><a href="API-webhook.html">外部 Webhook</a></div></div><div class="nav-sec" data-doc="03"><a class="nav-top" href="03_データベース設計.html"><span class="n">03</span><span>データベース設計</span><span class="caret">▸</span></a><div class="nav-children"><a href="03_データベース設計.html">概要</a><a href="TBL-M-USER.html">M_USER</a><a href="TBL-M-CONTRACT.html">M_CONTRACT</a><a href="TBL-M-002.html">M_PRJ_USERS</a><a href="TBL-M-004.html">M_PROJECTS</a><a href="TBL-M-005.html">M_ALLOWED_DOMAINS</a><a href="TBL-M-006.html">M_FAQS</a><a href="TBL-M-007.html">M_EMAIL_SUPPRESS</a><a href="TBL-M-008.html">M_OWNER_QUOTA_OVR</a><a href="TBL-M-009.html">M_PRJ_QUOTA_LIMITS</a><a href="TBL-M-010.html">M_SERVICE_ANNOUNCE</a><a href="TBL-M-011.html">M_ANNOUNCE_AUD</a><a href="TBL-M-012.html">M_TERMS_VER</a><a href="TBL-T-001.html">T_SESSIONS</a><a href="TBL-T-002.html">T_ACCESS_TOKENS</a><a href="TBL-T-003.html">T_PRJ_LEGACY_KEYS</a><a href="TBL-T-004.html">T_QLOG_FAQ_REFS</a><a href="TBL-T-005.html">T_INQUIRIES</a><a href="TBL-T-006.html">T_BILL_SUBS</a><a href="TBL-T-007.html">T_BILL_INVOICES</a><a href="TBL-T-008.html">T_USAGE_METER</a><a href="TBL-T-009.html">T_ANNOUNCE_RCPT</a><a href="TBL-T-010.html">T_INBOX_MSG</a><a href="TBL-T-011.html">T_WITHDRAW_REQ</a><a href="TBL-T-012.html">T_TERMS_AGREE</a><a href="TBL-H-001.html">H_FAQ_REV</a><a href="TBL-H-002.html">H_QUESTION_LOGS</a><a href="TBL-H-003.html">H_NOTIF_LOGS</a><a href="TBL-H-004.html">H_AUDIT_LOGS</a><a href="TBL-H-005.html">H_ERROR_LOGS</a><a href="TBL-TP-001.html">TP_FAQ_FTS</a><a href="TBL-TP-002.html">TP_AI_THRESH_CACHE</a></div></div><a class="nav-top" href="04_ユースケース設計.html"><span class="n">04</span><span>ユースケース・シーケンス</span></a><a class="nav-top" href="05_課金請求設計.html"><span class="n">05</span><span>課金・請求設計</span></a><a class="nav-top" href="06_メール設計.html"><span class="n">06</span><span>メール設計</span></a><a class="nav-top" href="07_認証認可設計.html"><span class="n">07</span><span>認証・認可設計</span></a></nav></aside>
+<main class="main"><article class="content" style="max-width:1180px"><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px"><span class="pill" style="font-size:11px">画面設計書</span><a href="01_画面設計.html" class="muted" style="font-size:12px;text-decoration:none">画面一覧</a><span class="muted">/</span><span class="muted" style="font-size:12px">SCR-002</span></div><h1>SCR-002 アカウント登録</h1>
+
+
+<aside class="page-summary">
+<p class="ps-lead"><strong>このページは、新規オーナーがメールアドレスとパスワードでアカウントを登録し、確認メール送信フローへ進む画面 SCR-002 を定義します。</strong> 画面概要 / 画面遷移図 / 画面レイアウト / 画面項目定義 / 入出力一覧 / 画面イベント一覧 の 6 セクションで記述します。</p>
+</aside>
+<p class="doc-meta"><span><b>版数</b> v1.0</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<h2 id="1-画面概要">1. 画面概要</h2>
+<p class="section-lead">新規オーナーがメールアドレス・パスワード・規約同意を入力してアカウントを登録し、確認メール送信フロー(SCR-013)へ進む画面です。</p>
+<table>
+<thead>
+<tr>
+<th>画面 ID</th>
+<th>画面名</th>
+<th>機能概要</th>
+</tr>
+</thead>
+<tbody>
+<tr><td id="SCR-002"><code>SCR-002</code></td><td>アカウント登録</td><td>新規オーナーのアカウント登録と確認メール送信フローへの導線を提供する</td></tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>関連</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>FR / BR</td><td><span>FR-001</span>, <span>FR-002</span> / <span>BR-028</span></td></tr>
+<tr><td>関連画面</td><td><a href="SCR-001.html"><code>SCR-001</code> ログイン</a></td></tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr>
+<th>ステークホルダ</th>
+<th>対象</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>未認証ユーザー(ログイン前)</td><td>◯</td></tr>
+</tbody>
+</table>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>本画面は認証前に表示されるため権限は不要です(認証前)。登録するユーザーは契約のオーナー(契約あたり 1 ユーザー)となります。高規制業界(金融 / 医療等)を業種に選択した場合は標準提供範囲外である旨を表示し、サポート窓口を案内します。</div></div>
+
+<h2 id="2-画面遷移図">2. 画面遷移図</h2>
+<p class="section-lead">本画面からの画面遷移を、画面 ID・画面名とイベント(操作)で示します。</p>
+<pre class="mermaid">flowchart LR
+  S2["SCR-002 アカウント登録"]
+  S13["SCR-013 メール確認待ち"]
+  S1["SCR-001 ログイン"]
+  S2 --&gt;|登録ボタン| S13
+  S2 --&gt;|ログイン画面リンク| S1
+</pre>
+
+<h2 id="3-画面レイアウト">3. 画面レイアウト</h2>
+<div style="background:#f5f6f8;padding:24px;border-radius:12px;font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN',Meiryo,sans-serif;color:#3a3f46;--accent:#5e6ad2;--row-pad:14px"><div style="max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:28px"><section style="flex:none;width:360px">
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:12px"><span style="font-size:11px;font-weight:700;color:var(--accent,#5e6ad2);background:color-mix(in srgb,var(--accent,#5e6ad2) 10%,#fff);border-radius:6px;padding:3px 8px">SCR-002</span><span style="font-size:13px;font-weight:600;color:#16191d">アカウント登録</span></div>
+      <div style="height:500px;background:radial-gradient(120% 80% at 50% 0%,color-mix(in srgb,var(--accent,#5e6ad2) 7%,#fff) 0%,#fbfbfc 60%);border:1px solid #e6e8eb;border-radius:14px;box-shadow:0 1px 2px rgba(16,24,40,.04),0 6px 20px rgba(16,24,40,.05);display:flex;align-items:center;justify-content:center;padding:24px">
+        <div style="width:300px;background:#fff;border:1px solid #eef0f2;border-radius:14px;box-shadow:0 4px 18px rgba(16,24,40,.06);padding:24px">
+          <div style="display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:16px"><span style="width:26px;height:26px;border-radius:8px;background:var(--accent,#5e6ad2);display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:800">o</span><span style="font-weight:700;font-size:17px;color:#16191d">open-faq</span></div>
+          <h2 style="margin:0 0 16px;font-size:16px;font-weight:700;color:#16191d;text-align:center">アカウント登録</h2>
+          <label style="display:block;font-size:11.5px;font-weight:600;color:#3a3f46;margin-bottom:5px">会社名<span style="color:#e5484d;margin-left:3px">●</span></label>
+          <div style="height:38px;border:1px solid #e6e8eb;border-radius:8px;background:#fbfbfc;display:flex;align-items:center;padding:0 11px;font-size:12.5px;color:#b5bac0;margin-bottom:11px">Acme Inc.</div>
+          <label style="display:block;font-size:11.5px;font-weight:600;color:#3a3f46;margin-bottom:5px">メールアドレス<span style="color:#e5484d;margin-left:3px">●</span></label>
+          <div style="height:38px;border:1px solid #e6e8eb;border-radius:8px;background:#fbfbfc;display:flex;align-items:center;padding:0 11px;font-size:12.5px;color:#b5bac0;margin-bottom:11px">owner@example.com</div>
+          <label style="display:block;font-size:11.5px;font-weight:600;color:#3a3f46;margin-bottom:5px">パスワード<span style="color:#e5484d;margin-left:3px">●</span></label>
+          <div style="height:38px;border:1px solid #e6e8eb;border-radius:8px;background:#fbfbfc;display:flex;align-items:center;padding:0 11px;font-size:12.5px;letter-spacing:2px;color:#b5bac0;margin-bottom:14px">••••••••</div>
+          <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:14px"><span style="width:15px;height:15px;border:1.5px solid var(--accent,#5e6ad2);border-radius:4px;background:var(--accent,#5e6ad2);display:flex;align-items:center;justify-content:center;flex:none;margin-top:1px"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4 10-10"></path></svg></span><span style="font-size:11px;color:#71767e;line-height:1.5"><a style="color:var(--accent,#5e6ad2);text-decoration:none">利用規約</a>と<a style="color:var(--accent,#5e6ad2);text-decoration:none">プライバシーポリシー</a>に同意します</span></div>
+          <button style="width:100%;height:42px;border:none;border-radius:9px;background:var(--accent,#5e6ad2);color:#fff;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 1px 2px rgba(16,24,40,.12);font-family:inherit">登録する</button>
+          <div style="text-align:center;margin-top:14px;font-size:12px;color:#71767e">すでにアカウントをお持ちですか? <a style="color:var(--accent,#5e6ad2);text-decoration:none;cursor:pointer">ログイン</a></div>
+        </div>
+      </div>
+    </section></div></div>
+
+<h2 id="4-画面項目定義">4. 画面項目定義</h2>
+<p class="section-lead">本画面の入出力項目(入力フォーム・同意チェック・操作ボタン)を定義します。項目の正本は本表です。</p>
+<table>
+<thead>
+<tr>
+<th>項目 ID</th>
+<th>項目</th>
+<th>説明</th>
+<th>種類</th>
+<th>表示条件</th>
+<th>表示</th>
+</tr>
+</thead>
+<tbody>
+<tr><td id="IT-01"><code>IT-01</code></td><td>メールアドレス</td><td>オーナー本人のメールアドレスを入力する(必須・形式チェック)</td><td>テキストボックス(メールアドレス)</td><td>—</td><td>placeholder「admin@example.com」</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>パスワード</td><td>アカウントのパスワードを入力する(必須・強度要件: 12 文字以上・3 種類以上の文字種)</td><td>テキストボックス(パスワード)</td><td>—</td><td>マスク表示</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>パスワード(確認)</td><td>パスワードを再入力して一致を確認する(必須・一致確認)</td><td>テキストボックス(パスワード)</td><td>—</td><td>マスク表示</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>業種選択</td><td>利用者の業種を選択する(任意)</td><td>ドロップダウン</td><td>—</td><td>「選択してください」/ IT / 小売 / 教育 / 金融 …</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>利用規約同意</td><td>利用規約への同意を表明する(必須チェック)</td><td>チェックボックス</td><td>—</td><td>「利用規約に同意する」</td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>プライバシーポリシー同意</td><td>プライバシーポリシーへの同意を表明する(必須チェック)</td><td>チェックボックス</td><td>—</td><td>「プライバシーポリシーに同意する」</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>規約・ポリシーリンク</td><td>利用規約・プライバシーポリシーの全文を別ウィンドウで表示する</td><td>リンク</td><td>—</td><td>「全文を別ウィンドウで表示」</td></tr>
+<tr><td id="IT-08"><code>IT-08</code></td><td>登録ボタン</td><td>入力内容で登録し確認メール送信フローへ進む</td><td>ボタン(Primary)</td><td>—</td><td>「登録して確認メールを送信する」</td></tr>
+<tr><td id="IT-09"><code>IT-09</code></td><td>ログイン画面リンク</td><td>既存ユーザー向けにログイン画面へ遷移する導線</td><td>リンク</td><td>—</td><td>「ログインする」</td></tr>
+</tbody>
+</table>
+
+<h2 id="5-入出力一覧">5. 入出力一覧</h2>
+<p class="section-lead">本画面が読み書きするテーブルと、呼び出す API の一覧です。テーブルの正本は <a href="03_データベース設計.html">03_テーブル設計</a>、API の正本は <a href="02_API設計.html">02_API設計 §5.1.1</a> です。</p>
+<table>
+<thead>
+<tr>
+<th rowspan="2">入出力名</th>
+<th rowspan="2">説明</th>
+<th rowspan="2">種別</th>
+<th rowspan="2">I/O</th>
+<th colspan="4">アクセス種別(CRUD)</th>
+<th rowspan="2">備考</th>
+</tr>
+<tr>
+<th>C</th>
+<th>R</th>
+<th>U</th>
+<th>D</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>オーナー</td><td>メール重複を確認し新規オーナーを作成する(1 契約 = 1 オーナー。オーナーマスタはプロジェクトユーザーと完全分離)</td><td>テーブル</td><td>出力</td><td>◯</td><td>◯</td><td>—</td><td>—</td><td><code>M_CONTRACT</code>(<a href="03_データベース設計.html#TBL-M-001">テーブル設計 3.2</a>)</td></tr>
+<tr><td>新規登録</td><td>登録して確認メールを送信する</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /auth/signup</code>(<a href="02_API設計.html">API 設計 5.1.1</a>)</td></tr>
+</tbody>
+</table>
+
+<h2 id="6-画面イベント一覧">6. 画面イベント一覧</h2>
+<p class="section-lead">本画面で発生するイベントと発生タイミング・概要の一覧です。</p>
+<table>
+<thead>
+<tr>
+<th>イベント ID</th>
+<th>イベント</th>
+<th>トリガー</th>
+<th>処理</th>
+<th>関連項目</th>
+</tr>
+</thead>
+<tbody>
+<tr><td><code>EV-01</code></td><td>入力バリデーション</td><td>各入力欄のフォーカスアウト時</td><td>メール形式・パスワード強度・確認一致・必須同意を検証しエラーを表示</td><td><a href="#IT-01">IT-01</a>, <a href="#IT-02">IT-02</a>, <a href="#IT-03">IT-03</a>, <a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a></td></tr>
+<tr><td><code>EV-02</code></td><td>業種選択</td><td>業種プルダウン変更時</td><td>高規制業界選択時に提供範囲外の注意とサポート窓口を表示</td><td><a href="#IT-04">IT-04</a></td></tr>
+<tr><td><code>EV-03</code></td><td>登録実行</td><td>登録ボタン押下時</td><td><ul><li><code>POST /auth/signup</code> で登録し確認メールを送信</li><li>完了後 SCR-013 へ遷移</li></ul></td><td><a href="#IT-08">IT-08</a></td></tr>
+<tr><td><code>EV-04</code></td><td>ログイン画面へ遷移</td><td>「ログインする」押下時</td><td>SCR-001 へ遷移</td><td><a href="#IT-09">IT-09</a></td></tr>
+<tr><td><code>EV-05</code></td><td>規約・ポリシー全文表示</td><td>規約・ポリシーリンク押下時</td><td>利用規約 / プライバシーポリシーの全文を別ウィンドウで表示</td><td><a href="#IT-07">IT-07</a></td></tr>
+</tbody>
+</table>
+
+
+<div class="footer">FAQ AI ウィジェット SaaS / メインシステム — 画面設計書 ・ 2026-06-19</div>
+</article></main><aside class="rightbar"><div class="rb-title">このページ</div><nav class="toc"><a class="back" href="01_画面設計.html" style="font-weight:600;color:var(--accent)">← 画面一覧へ戻る</a><a href="#1-画面概要">1. 画面概要</a><a href="#2-画面遷移図">2. 画面遷移図</a><a href="#3-画面レイアウト">3. 画面レイアウト</a><a href="#4-画面項目定義">4. 画面項目定義</a><a href="#5-入出力一覧">5. 入出力一覧</a><a href="#6-画面イベント一覧">6. 画面イベント一覧</a></nav></aside></div>
+<script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";mermaid.initialize({startOnLoad:true,theme:"neutral",flowchart:{useMaxWidth:true}});</script>
+<script>window.addEventListener('load',function(){try{window.lucide&&lucide.createIcons();}catch(e){}});</script>
+<script>/*__scrollspy*/(function(){function init(){var ls=[].slice.call(document.querySelectorAll('.rightbar .toc a[href^="#"]'));if(!ls.length)return;var map=ls.map(function(a){var id=decodeURIComponent(a.getAttribute('href').slice(1));return{a:a,el:document.getElementById(id)};}).filter(function(x){return x.el;});function on(){var y=window.scrollY+130,cur=null;map.forEach(function(x){if(x.el.getBoundingClientRect().top+window.scrollY<=y)cur=x;});ls.forEach(function(a){a.classList.remove('active');});if(cur)cur.a.classList.add('active');}window.addEventListener('scroll',on,{passive:true});window.addEventListener('resize',on);on();}if(document.readyState!=='loading')init();else document.addEventListener('DOMContentLoaded',init);})();</script><script>/*__navtree*/(function(){function init(){var file=decodeURIComponent((location.pathname.split('/').pop()||'index.html'));if(!file)file='index.html';var doc='00';if(/^SCR-/.test(file))doc='01';else if(/^TBL-/.test(file))doc='03';else if(/01_/.test(file))doc='01';else if(/02_/.test(file))doc='02';else if(/03_/.test(file))doc='03';else if(/04_/.test(file))doc='04';document.querySelectorAll('.nav-sec').forEach(function(s){if(s.getAttribute('data-doc')===doc)s.classList.add('open');});var hash=location.hash||'';document.querySelectorAll('.nav a[href]').forEach(function(a){var h=a.getAttribute('href');if(h===file||h===file+hash||(file==='index.html'&&h==='index.html')){a.classList.add('cur');}});document.querySelectorAll('.nav-sec .caret').forEach(function(c){c.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();c.closest('.nav-sec').classList.toggle('open');});});}if(document.readyState!=='loading')init();else document.addEventListener('DOMContentLoaded',init);})();</script></body></html>

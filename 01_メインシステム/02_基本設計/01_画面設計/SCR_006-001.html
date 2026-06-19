@@ -75,9 +75,83 @@
 </code></pre>
 
 <h2 id="3-画面レイアウト">3. 画面レイアウト</h2>
-<div class="layout-embed">
-<div class="le-cap">編集画面 / 既存 FAQ 編集・自動保存済</div>
-<div class="scr-mock"><div class="screen" id="scr-006-edit" role="region" aria-labelledby="scr-006-edit-title"> <div class="screen-header"> <div><span class="scr-name" id="scr-006-edit-title">FAQ 編集</span></div> <div class="scr-user">利用者: 利用者(オーナー / メンバー)(オーナーまたは「FAQ」権限保持メンバー)</div> </div> <div class="app-layout"> <div class="app-header" role="banner"> <div class="left"> <span class="logo" role="link" aria-label="open-faq ホーム">open-faq</span> <span class="ws-switcher" role="button" aria-haspopup="menu" aria-label="管理範囲を切り替え(現在地: サポートサイト)">サポートサイト <i data-lucide="folder"></i></span> </div> <div class="right"> <span class="bell" role="button" aria-label="お知らせ通知ベル(未読 3 件)"><i data-lucide="bell"></i><span class="badge" aria-hidden="true">3</span></span> <span class="user-menu" role="button" aria-haspopup="menu" aria-label="アカウントメニュー(admin@example.com)">▼ admin@example.com</span> </div> </div> <div class="app-sidebar" role="navigation" aria-label="メインナビゲーション"> <div class="item" role="link"><i data-lucide="home"></i>概要</div> <div class="group" role="heading" aria-level="2">対応</div> <div class="item" role="link"><i data-lucide="inbox"></i>要対応の質問<span class="badge">87</span></div>  <div class="group" role="heading" aria-level="2">通知</div> <div class="item" role="link"><i data-lucide="bell"></i>お知らせ<span class="badge">3</span></div> <div class="group" role="heading" aria-level="2">コンテンツ</div> <div class="item active" role="link" aria-current="page"><i data-lucide="book-open"></i>FAQ</div>  <div class="item" role="link"><i data-lucide="puzzle"></i>ウィジェット</div> <div class="group" role="heading" aria-level="2">プロジェクト</div> <div class="item" role="link"><i data-lucide="users"></i>メンバー</div> <div class="item" role="link"><i data-lucide="gauge"></i>利用量と上限</div>  <div class="group" role="heading" aria-level="2">共通</div> <div class="item" role="link"><i data-lucide="scroll-text"></i>利用規約</div> <div class="item" role="link"><i data-lucide="shield"></i>プライバシーポリシー</div> </div> <div class="app-main" role="main" aria-label="メインコンテンツ"> <nav class="breadcrumb" aria-label="現在位置"><a>ホーム</a> / <a>FAQ</a> / <span aria-current="page">faq_01HMK... 編集</span></nav> <header class="page-header"><div><h1>FAQ 編集</h1><p class="page-description">faq_01HMK... の内容を編集します。30 秒ごとに自動保存されます</p></div><div><span class="autosave-indicator">30 秒前に保存しました</span></div></header> <div> <div class="field"> <label>質問<span class="req">●</span></label> <div class="textarea" style="min-height: 60px;"><span class="placeholder">退会後のデータ取扱について教えてください</span></div> <div class="helper">142 / 500</div> </div> <div class="field"> <label>回答<span class="req">●</span></label> <div class="textarea rich" style="min-height: 180px;"><span class="placeholder">退会手続きの受付後、30 日の猶予期間中はデータの確認とダウンロードが可能です...</span></div> <div class="helper">482 / 5,000</div> </div> <div class="field"> <label>カテゴリ <span class="small">(サジェスト付き)</span></label> <div class="input"><span class="placeholder">例: プライバシー(既存カテゴリから選択 or 新規入力)</span></div> </div> <div class="field"> <label>状態</label> <div>○ 下書き &nbsp; ◉ 公開中 &nbsp; ○ 非公開</div> </div> </div> <div style="display: flex; justify-content: space-between; margin-top: 12px; padding-top: 8px; border-top: 1px solid var(--border);"> <button class="btn">キャンセル</button> <div> <button class="btn danger">削除</button> <button class="btn primary">保存</button> </div> </div> </div> </div> </div></div>
+<div style="background:#f5f6f8;padding:24px;border-radius:12px;font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN',Meiryo,sans-serif;color:#3a3f46;-webkit-font-smoothing:antialiased;--accent:#5e6ad2">
+<div style="max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:40px">
+
+  
+
+  <section>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:13px">
+      <span style="font-size:11px;font-weight:700;color:var(--accent,#5e6ad2);background:color-mix(in srgb,var(--accent,#5e6ad2) 10%,#fff);border-radius:6px;padding:3px 8px">状態 1</span>
+      <span style="font-size:13.5px;font-weight:600;color:#16191d">編集中 — 自動保存</span>
+    </div>
+    <div style="background:#fff;border:1px solid #e6e8eb;border-radius:14px;box-shadow:0 1px 2px rgba(16,24,40,.04),0 6px 20px rgba(16,24,40,.05);overflow:hidden">
+      <div style="display:flex;align-items:center;justify-content:space-between;height:54px;padding:0 16px;border-bottom:1px solid #eef0f2;background:#fff">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:15px;color:#16191d"><span style="width:23px;height:23px;border-radius:7px;background:var(--accent,#5e6ad2);display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:800">o</span>open-faq</span>
+          <span style="width:1px;height:22px;background:#eef0f2"></span>
+          <button style="display:inline-flex;align-items:center;gap:7px;padding:6px 11px;border:1px solid #e6e8eb;border-radius:8px;background:#fff;font-size:13px;color:#3a3f46;cursor:pointer;font-family:inherit"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#71767e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h5l2 2.5h9A1.5 1.5 0 0 1 21.5 9v9A1.5 1.5 0 0 1 20 19.5H4A1.5 1.5 0 0 1 2.5 18V6.5A1.5 1.5 0 0 1 4 5z"/></svg>サポートサイト<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9aa0a8" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:#1a7f37;margin-right:4px"><span style="width:7px;height:7px;border-radius:999px;background:#2da44e"></span>30 秒前に保存しました</span>
+          <button style="display:inline-flex;align-items:center;gap:8px;padding:4px 10px 4px 4px;border:1px solid #e6e8eb;border-radius:999px;background:#fff;cursor:pointer;font-family:inherit"><span style="width:26px;height:26px;border-radius:999px;background:color-mix(in srgb,var(--accent,#5e6ad2) 18%,#fff);color:var(--accent,#5e6ad2);font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center">A</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9aa0a8" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+        </div>
+      </div>
+      <div style="display:flex;min-height:560px">
+        <aside style="width:240px;flex:none;background:#fbfbfc;border-right:1px solid #eef0f2;padding:12px 12px 16px;display:flex;flex-direction:column">
+          <a style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;color:#3a3f46;font-size:13.5px;text-decoration:none"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#71767e" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/><path d="M9.5 21v-6h5v6"/></svg>概要</a>
+          <div style="font-size:10.5px;font-weight:700;letter-spacing:.04em;color:#9aa0a8;padding:14px 10px 6px">対応</div>
+          <a style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;color:#3a3f46;font-size:13.5px;text-decoration:none"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#71767e" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.8 4H7.2a2 2 0 0 0-1.7 1.1z"/></svg>要対応の質問<span style="margin-left:auto;font-size:11px;font-weight:600;background:#eef0f2;color:#6b7280;border-radius:999px;padding:1px 7px">12</span></a>
+          <div style="font-size:10.5px;font-weight:700;letter-spacing:.04em;color:#9aa0a8;padding:14px 10px 6px">コンテンツ</div>
+          <a style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;background:color-mix(in srgb,var(--accent,#5e6ad2) 12%,#fff);color:var(--accent,#5e6ad2);font-weight:600;font-size:13.5px;text-decoration:none"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v13"/><path d="M3 18a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>FAQ</a>
+          <a style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;color:#3a3f46;font-size:13.5px;text-decoration:none"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#71767e" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>ウィジェット</a>
+          <div style="font-size:10.5px;font-weight:700;letter-spacing:.04em;color:#9aa0a8;padding:14px 10px 6px">プロジェクト</div>
+          <a style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;color:#3a3f46;font-size:13.5px;text-decoration:none"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#71767e" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.1a4 4 0 0 1 0 7.75"/></svg>メンバー</a>
+          <a style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;color:#3a3f46;font-size:13.5px;text-decoration:none"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#71767e" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg>利用量と上限</a>
+        </aside>
+        <main style="flex:1;min-width:0;background:#fff;padding:18px 22px 24px;display:flex;flex-direction:column;gap:16px;max-width:780px">
+          <nav style="display:flex;align-items:center;gap:7px;font-size:12px;color:#9aa0a8"><span style="cursor:pointer">FAQ</span><span>/</span><span style="color:#3a3f46">FAQ を編集</span></nav>
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px">
+            <h1 style="margin:0;font-size:20px;font-weight:700;color:#16191d;letter-spacing:-.01em">FAQ を編集</h1>
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-size:12px;color:#71767e">公開</span>
+              <span style="width:40px;height:23px;border-radius:999px;background:var(--accent,#5e6ad2);position:relative;cursor:pointer"><span style="position:absolute;top:2px;right:2px;width:19px;height:19px;border-radius:999px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2)"></span></span>
+              <button style="padding:8px 16px;border:none;border-radius:8px;background:var(--accent,#5e6ad2);color:#fff;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 1px 2px rgba(16,24,40,.12);font-family:inherit">保存して公開</button>
+            </div>
+          </div>
+
+          <div>
+            <label style="display:block;font-size:12.5px;font-weight:600;color:#3a3f46;margin-bottom:7px">質問<span style="color:#e5484d;margin-left:3px">●</span></label>
+            <div style="min-height:42px;border:1px solid #e6e8eb;border-radius:8px;background:#fff;padding:11px 12px;font-size:13.5px;color:#16191d;line-height:1.5">料金プランの変更方法を教えてください</div>
+          </div>
+          <div>
+            <label style="display:block;font-size:12.5px;font-weight:600;color:#3a3f46;margin-bottom:7px">回答<span style="color:#e5484d;margin-left:3px">●</span></label>
+            <div style="border:1px solid #e6e8eb;border-radius:8px;background:#fff;overflow:hidden">
+              <div style="display:flex;gap:2px;padding:7px 10px;border-bottom:1px solid #eef0f2;background:#fbfbfc">
+                <span style="width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#71767e;font-weight:700;font-size:13px;cursor:pointer">B</span>
+                <span style="width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#71767e;font-style:italic;font-size:13px;cursor:pointer">I</span>
+                <span style="width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#71767e;cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></span>
+                <span style="width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#71767e;cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.5-1.5"/></svg></span>
+              </div>
+              <div style="padding:12px;font-size:13px;color:#16191d;line-height:1.8;min-height:120px">プランの変更は、管理画面の「請求」→「プランを変更」から行えます。変更内容は次回請求日から適用されます。<br><br>ダウングレードの場合、現在のプランの上限を超えるデータがあると変更できないことがあります。</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+            <div>
+              <label style="display:block;font-size:12.5px;font-weight:600;color:#3a3f46;margin-bottom:7px">カテゴリ</label>
+              <div style="height:40px;border:1px solid #e6e8eb;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-size:13px;color:#16191d">料金・支払い<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9aa0a8" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></div>
+            </div>
+            <div>
+              <label style="display:block;font-size:12.5px;font-weight:600;color:#3a3f46;margin-bottom:7px">表示順</label>
+              <div style="height:40px;border:1px solid #e6e8eb;border-radius:8px;background:#fff;display:flex;align-items:center;padding:0 12px;font-size:13px;color:#16191d">3</div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </section>
+
+</div>
 </div>
 
 <h2 id="4-画面項目定義">4. 画面項目定義</h2>

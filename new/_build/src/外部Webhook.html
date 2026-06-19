@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>外部 Webhook | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../../assets/js/nav-data.js" defer></script>
+<script src="../../../assets/js/search-index.js" defer></script>
+<script src="../../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/02_基本設計/02_API設計/外部Webhook.html">
+<article class="content" id="content">
+<h1>外部 Webhook</h1>
+<aside class="page-summary"><p class="ps-lead"><strong>このページは、メール配信プロバイダ(Resend)からの配信状態 Webhook 受信の契約を定義します。</strong></p>
+<p class="ps-label">このページの API</p>
+<ul>
+<li>API-WHK-001 外部 Webhook(Resend)</li>
+</ul>
+</aside>
+<p class="doc-meta"><span><b>版数</b> v1.6</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<h2 id="API-WHK-001">API-WHK-001 外部 Webhook(Resend)</h2>
+<span id="5131-post-webhooksresend"></span>
+
+<h3>基本情報</h3>
+<table>
+<thead><tr><th>項目</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>API ID</td><td>API-WHK-001</td></tr>
+<tr><td>API 名</td><td>外部 Webhook(Resend)</td></tr>
+<tr><td>エンドポイント</td><td><code>/webhooks/resend</code></td></tr>
+<tr><td>HTTP メソッド</td><td>POST</td></tr>
+<tr><td>認証</td><td>Resend 署名検証(HMAC-SHA256)</td></tr>
+<tr><td>権限</td><td>—(署名検証のみ)</td></tr>
+</tbody>
+</table>
+<h3>処理概要</h3>
+<p class="section-lead">メール配信状態 Webhook を受信し配信状態 / 抑制リストを更新する。</p>
+<table>
+<thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
+<tbody>
+<tr><td>P-01</td><td>Resend 署名(HMAC-SHA256)を検証する(失敗時は 401)</td></tr>
+<tr><td>P-02</td><td>イベント種別を判定する</td></tr>
+<tr><td>P-03</td><td><code>H_NOTIF_LOGS.delivery_state</code> を遷移する</td></tr>
+<tr><td>P-04</td><td><code>bounced</code> / <code>complained</code> の場合は <code>M_EMAIL_SUPPRESS</code> に追加する(全契約横断)</td></tr>
+<tr><td>P-05</td><td>受領応答を返す</td></tr>
+</tbody>
+</table>
+<h3>I/O</h3>
+<table>
+<thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
+<tbody>
+<tr><td><code>H_NOTIF_LOGS</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>M_EMAIL_SUPPRESS</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td><code>H_AUDIT_LOGS</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
+<h3>リクエストパラメータ</h3>
+<h4>Query Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Path Parameters</h4>
+<pre><code>{}</code></pre>
+<h4>Request Body</h4>
+<p>(Resend 仕様準拠):</p>
+<pre><code>{
+  "type": "email.delivered|email.bounced|email.complained|email.delivery_delayed",
+  "data": {
+    "message_id": "...",
+    "to": "...",
+    "subject": "...",
+    "timestamp": "..."
+  }
+}</code></pre>
+<table>
+<thead><tr><th>項目</th><th>型</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>type</code></td><td>enum</td><td>配信イベント種別(<code>email.delivered</code> / <code>email.bounced</code> / <code>email.complained</code> / <code>email.delivery_delayed</code>)</td></tr>
+<tr><td><code>data</code></td><td>object</td><td>イベント詳細データ</td></tr>
+<tr><td>　└ <code>message_id</code></td><td>string</td><td>対象メールのメッセージ ID</td></tr>
+<tr><td>　└ <code>to</code></td><td>string</td><td>宛先メールアドレス</td></tr>
+<tr><td>　└ <code>subject</code></td><td>string</td><td>メール件名</td></tr>
+<tr><td>　└ <code>timestamp</code></td><td>string (ISO 8601)</td><td>イベント発生時刻</td></tr>
+</tbody>
+</table><h3>エラー</h3>
+<table>
+<thead><tr><th>HTTP ステータス</th><th>エラーコード</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>401</td><td><code>SIGNATURE_INVALID</code></td><td>署名検証失敗</td></tr>
+<tr><td>200</td><td>(冪等)</td><td>既存処理結果を返却(冪等性違反)</td></tr>
+</tbody>
+</table>
+</article>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCR-020 プライバシーポリシー閲覧 | FAQ 設計ポータル</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"><script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";mermaid.initialize({startOnLoad:true,theme:"neutral",flowchart:{useMaxWidth:true},sequence:{useMaxWidth:true,wrap:true,actorMargin:60}});</script>
+<link rel="stylesheet" href="../style.css?v=4">
+</head><body><div class="layout">
+<aside class="sidebar"><a class="brand" href="../index.html"><div class="mark">FA</div><div><b>FAQ AI SaaS</b><span>設計ポータル</span></div></a><nav class="nav"><div class="nav-group">ドキュメント</div><div class="nav-sec" data-sec="01_要件定義/index.html"><a class="nav-top" href="../01_要件定義/index.html"><span class="n">要</span><span>要件定義</span><span class="caret">&#9656;</span></a><div class="nav-children"><a class="" href="../01_要件定義/index.html">概要</a><a class="" href="../01_要件定義/FR01_アカウント管理.html">FR01 アカウント管理</a><a class="" href="../01_要件定義/FR02_ユーザー管理.html">FR02 ユーザー管理</a><a class="" href="../01_要件定義/FR03_プロジェクト管理.html">FR03 プロジェクト管理</a><a class="" href="../01_要件定義/FR04_FAQ管理.html">FR04 FAQ管理</a><a class="" href="../01_要件定義/FR05_AI回答.html">FR05 AI回答</a><a class="" href="../01_要件定義/FR06_未解決質問登録.html">FR06 未解決質問登録</a><a class="" href="../01_要件定義/FR07_未解決質問からFAQ登録.html">FR07 未解決質問からFAQ登録</a><a class="" href="../01_要件定義/FR08_処理エラー.html">FR08 処理エラー</a><a class="" href="../01_要件定義/FR09_利用量・課金.html">FR09 利用量・課金</a><a class="" href="../01_要件定義/FR10_管理ダッシュボード.html">FR10 管理ダッシュボード</a><a class="" href="../01_要件定義/FR11_通知.html">FR11 通知</a><a class="" href="../01_要件定義/FR12_ウィジェット.html">FR12 ウィジェット</a><a class="" href="../01_要件定義/FR13_プライバシー・データ管理.html">FR13 プライバシー・データ管理</a><a class="" href="../01_要件定義/FR14_セキュリティ.html">FR14 セキュリティ</a><a class="" href="../01_要件定義/FR15_お知らせ.html">FR15 お知らせ</a><a class="" href="../01_要件定義/FR16_検索・全文検索.html">FR16 検索・全文検索</a><a class="" href="../01_要件定義/FR17_インポート・エクスポート.html">FR17 インポート・エクスポート</a><a class="" href="../01_要件定義/FR18_UX細部・データ運用.html">FR18 UX細部・データ運用</a><a class="" href="../01_要件定義/FR19_アクセス制御細部.html">FR19 アクセス制御細部</a><a class="" href="../01_要件定義/FR20_AI推論動作.html">FR20 AI推論動作</a><a class="" href="../01_要件定義/FR21_SCR画面マスタ.html">FR21 SCR画面マスタ</a></div></div><div class="nav-sec open" data-sec="02_基本設計/index.html"><a class="nav-top" href="../02_基本設計/index.html"><span class="n">基</span><span>基本設計</span><span class="caret">&#9656;</span></a><div class="nav-children"><a class="" href="../02_基本設計/index.html">概要</a><div class="nav-sec open" data-sec="02_基本設計/01_画面設計.html"><a class="nav-top" href="../02_基本設計/01_画面設計.html"><span class="n">01</span><span>画面設計</span><span class="caret">&#9656;</span></a><div class="nav-children"><a class="" href="../02_基本設計/01_画面設計.html">概要</a><a class="" href="../02_基本設計/SCR-001.html">SCR-001 ログイン</a><a class="" href="../02_基本設計/SCR-002.html">SCR-002 アカウント登録</a><a class="" href="../02_基本設計/SCR-003.html">SCR-003 パスワード再設定</a><a class="" href="../02_基本設計/SCR-004.html">SCR-004 プロジェクト</a><a class="" href="../02_基本設計/SCR-004-001.html">SCR-004-001 プロジェクト作成・編集モーダル</a><a class="" href="../02_基本設計/SCR-005.html">SCR-005 要対応の質問一覧</a><a class="" href="../02_基本設計/SCR-005-001.html">SCR-005-001 要対応の質問詳細</a><a class="" href="../02_基本設計/SCR-006.html">SCR-006 FAQ一覧</a><a class="" href="../02_基本設計/SCR-006-001.html">SCR-006-001 FAQ編集</a><a class="" href="../02_基本設計/SCR-006-002.html">SCR-006-002 FAQ CSVインポートモーダル</a><a class="" href="../02_基本設計/SCR-007.html">SCR-007 ウィジェット設定</a><a class="" href="../02_基本設計/SCR-008.html">SCR-008 概要(プロジェクト)</a><a class="" href="../02_基本設計/SCR-009.html">SCR-009 メンバー(プロジェクト)</a><a class="" href="../02_基本設計/SCR-009-001.html">SCR-009-001 メンバー招待・編集モーダル</a><a class="" href="../02_基本設計/SCR-010.html">SCR-010 利用規約閲覧</a><a class="" href="../02_基本設計/SCR-011.html">SCR-011 お知らせ一覧</a><a class="" href="../02_基本設計/SCR-012.html">SCR-012 お知らせ詳細</a><a class="" href="../02_基本設計/SCR-013.html">SCR-013 メール確認</a><a class="" href="../02_基本設計/SCR-014.html">SCR-014 退会申請</a><a class="" href="../02_基本設計/SCR-015.html">SCR-015 規約再同意割込み</a><a class="" href="../02_基本設計/SCR-016.html">SCR-016 利用状況</a><a class="" href="../02_基本設計/SCR-017.html">SCR-017 個人設定</a><a class="" href="../02_基本設計/SCR-018.html">SCR-018 メンバーアカウント有効化</a><a class="" href="../02_基本設計/SCR-019.html">SCR-019 連絡先メール確認完了</a><a class="cur active" href="../02_基本設計/SCR-020.html">SCR-020 プライバシーポリシー閲覧</a><a class="" href="../02_基本設計/SCR-021.html">SCR-021 利用量と上限</a><a class="" href="../02_基本設計/SCR-021-001.html">SCR-021-001 質問数上限設定モーダル</a><a class="" href="../02_基本設計/SCR-022.html">SCR-022 請求</a><a class="" href="../02_基本設計/SCR-023.html">SCR-023 設定</a><a class="" href="../02_基本設計/SCR-WIDGET.html">SCR-WIDGET FAQ ウィジェット</a></div></div><div class="nav-sec" data-sec="02_基本設計/02_API設計.html"><a class="nav-top" href="../02_基本設計/02_API設計.html"><span class="n">02</span><span>API設計</span><span class="caret">&#9656;</span></a><div class="nav-children"><a class="" href="../02_基本設計/02_API設計.html">概要</a><a class="" href="../02_基本設計/API-common.html">共通仕様・規約</a><a class="" href="../02_基本設計/API-auth.html">認証・セッション</a><a class="" href="../02_基本設計/API-project.html">プロジェクト</a><a class="" href="../02_基本設計/API-member.html">メンバー</a><a class="" href="../02_基本設計/API-faq.html">FAQ</a><a class="" href="../02_基本設計/API-inquiry.html">未解決質問</a><a class="" href="../02_基本設計/API-widget.html">ウィジェット配信</a><a class="" href="../02_基本設計/API-dashboard.html">ダッシュボード</a><a class="" href="../02_基本設計/API-billing.html">利用量・課金</a><a class="" href="../02_基本設計/API-inbox.html">お知らせ受信箱</a><a class="" href="../02_基本設計/API-terms.html">規約・退会</a><a class="" href="../02_基本設計/API-ai.html">AI 推論 IF</a><a class="" href="../02_基本設計/API-mail.html">メール配信 IF</a><a class="" href="../02_基本設計/API-webhook.html">外部 Webhook</a></div></div><div class="nav-sec" data-sec="02_基本設計/03_データベース設計.html"><a class="nav-top" href="../02_基本設計/03_データベース設計.html"><span class="n">03</span><span>データベース設計</span><span class="caret">&#9656;</span></a><div class="nav-children"><a class="" href="../02_基本設計/03_データベース設計.html">概要</a><a class="" href="../02_基本設計/TBL-M-USER.html">M_USER</a><a class="" href="../02_基本設計/TBL-M-CONTRACT.html">M_CONTRACT</a><a class="" href="../02_基本設計/TBL-M-002.html">M_PRJ_USERS</a><a class="" href="../02_基本設計/TBL-M-004.html">M_PROJECTS</a><a class="" href="../02_基本設計/TBL-M-005.html">M_ALLOWED_DOMAINS</a><a class="" href="../02_基本設計/TBL-M-006.html">M_FAQS</a><a class="" href="../02_基本設計/TBL-M-007.html">M_EMAIL_SUPPRESS</a><a class="" href="../02_基本設計/TBL-M-008.html">M_OWNER_QUOTA_OVR</a><a class="" href="../02_基本設計/TBL-M-009.html">M_PRJ_QUOTA_LIMITS</a><a class="" href="../02_基本設計/TBL-M-010.html">M_SERVICE_ANNOUNCE</a><a class="" href="../02_基本設計/TBL-M-011.html">M_ANNOUNCE_AUD</a><a class="" href="../02_基本設計/TBL-M-012.html">M_TERMS_VER</a><a class="" href="../02_基本設計/TBL-T-001.html">T_SESSIONS</a><a class="" href="../02_基本設計/TBL-T-002.html">T_ACCESS_TOKENS</a><a class="" href="../02_基本設計/TBL-T-003.html">T_PRJ_LEGACY_KEYS</a><a class="" href="../02_基本設計/TBL-T-004.html">T_QLOG_FAQ_REFS</a><a class="" href="../02_基本設計/TBL-T-005.html">T_INQUIRIES</a><a class="" href="../02_基本設計/TBL-T-006.html">T_BILL_SUBS</a><a class="" href="../02_基本設計/TBL-T-007.html">T_BILL_INVOICES</a><a class="" href="../02_基本設計/TBL-T-008.html">T_USAGE_METER</a><a class="" href="../02_基本設計/TBL-T-009.html">T_ANNOUNCE_RCPT</a><a class="" href="../02_基本設計/TBL-T-010.html">T_INBOX_MSG</a><a class="" href="../02_基本設計/TBL-T-011.html">T_WITHDRAW_REQ</a><a class="" href="../02_基本設計/TBL-T-012.html">T_TERMS_AGREE</a><a class="" href="../02_基本設計/TBL-H-001.html">H_FAQ_REV</a><a class="" href="../02_基本設計/TBL-H-002.html">H_QUESTION_LOGS</a><a class="" href="../02_基本設計/TBL-H-003.html">H_NOTIF_LOGS</a><a class="" href="../02_基本設計/TBL-H-004.html">H_AUDIT_LOGS</a><a class="" href="../02_基本設計/TBL-H-005.html">H_ERROR_LOGS</a><a class="" href="../02_基本設計/TBL-TP-001.html">TP_FAQ_FTS</a><a class="" href="../02_基本設計/TBL-TP-002.html">TP_AI_THRESH_CACHE</a></div></div><a class="" href="../02_基本設計/04_ユースケース設計.html">04 ユースケース・シーケンス</a><a class="" href="../02_基本設計/05_課金請求設計.html">05 課金・請求設計</a><a class="" href="../02_基本設計/06_メール設計.html">06 メール設計</a><a class="" href="../02_基本設計/07_認証認可設計.html">07 認証・認可設計</a></div></div><div class="nav-sec" data-sec="03_将来対応/index.html"><a class="nav-top" href="../03_将来対応/index.html"><span class="n">将</span><span>将来対応</span><span class="caret">&#9656;</span></a><div class="nav-children"><a class="" href="../03_将来対応/index.html">概要</a><a class="" href="../03_将来対応/FUT01_認証・セキュリティ強化.html">FUT01 認証・セキュリティ強化</a><a class="" href="../03_将来対応/FUT02_検索・AI強化.html">FUT02 検索・AI強化</a><a class="" href="../03_将来対応/FUT03_国際化・リージョン.html">FUT03 国際化・リージョン</a><a class="" href="../03_将来対応/FUT04_プラン・課金・ブランド.html">FUT04 プラン・課金・ブランド</a><a class="" href="../03_将来対応/FUT05_通知・FAQ運用・連携.html">FUT05 通知・FAQ運用・連携</a><a class="" href="../03_将来対応/FUT06_個別チャット.html">FUT06 個別チャット</a><a class="" href="../03_将来対応/FUT06_個別チャット_要件.html">FUT06 個別チャット_要件</a><a class="" href="../03_将来対応/FUT06_個別チャット_詳細設計.html">FUT06 個別チャット_詳細設計</a></div></div></nav></aside>
+<main class="main"><article class="content">
+<div class="crumb"><span class="pill">基本設計</span><a class="muted" href="../02_基本設計/01_画面設計.html">画面設計</a><span class="muted">/</span><span class="muted">SCR-020 プライバシーポリシー閲覧</span></div>
+<h1>SCR-020 プライバシーポリシー閲覧</h1>
+
+
+<aside class="page-summary">
+<p class="ps-lead"><strong>このページは、プライバシーポリシーの最新版を 1 枚のページとして閲覧する静的閲覧画面 SCR-020 を定義します。</strong> 画面概要 / 画面遷移図 / 画面レイアウト / 画面項目定義 / 入出力一覧 / 画面イベント一覧 の 6 セクションで記述します。</p>
+</aside>
+<p class="doc-meta"><span><b>版数</b> v1.0</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<h2 id="1-画面概要">1. 画面概要</h2>
+<p class="section-lead">プライバシーポリシーの最新版のみを 1 枚のページとして表示する閲覧専用画面です。上部に同意状態バッジを置き、その下に全文を連続表示します。目次・章ナビ・過去バージョン履歴・差分表示は設けません。利用規約は SCR-010 に分離します。</p>
+<table>
+<thead>
+<tr>
+<th>画面 ID</th>
+<th>画面名</th>
+<th>機能概要</th>
+</tr>
+</thead>
+<tbody>
+<tr><td id="SCR-020"><code>SCR-020</code></td><td>プライバシーポリシー閲覧</td><td>プライバシーポリシーの最新版の全文表示と同意状態バッジ表示を行う</td></tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>関連</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>FR / BR</td><td><span>FR-160</span>, <span>FR-164</span>, <span>FR-168</span> / —</td></tr>
+<tr><td>関連画面</td><td><a href="SCR-010.html"><code>SCR-010</code> 利用規約閲覧</a> / <a href="SCR-015.html"><code>SCR-015</code> 規約再同意</a></td></tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr>
+<th>ステークホルダ</th>
+<th>対象</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>全利用者(認証前可)</td><td>◯</td></tr>
+</tbody>
+</table>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>本画面は認証不要 URL を提供し、認証前でも閲覧できます(権限は不要)。同意状態バッジはログイン済みの場合のみ表示します。ウィジェット内には表示せず、ウィジェット利用者向けの画面図・導線には含めません。</div></div>
+
+<h2 id="2-画面遷移図">2. 画面遷移図</h2>
+<p class="section-lead">本画面からの画面遷移を、画面 ID・画面名とイベント(操作)で示します。</p>
+<pre class="mermaid">flowchart LR
+  S1["SCR-020 プライバシーポリシー閲覧"]
+  S2["SCR-010 利用規約閲覧"]
+  S3["SCR-015 規約再同意"]
+  S1 --&gt;|利用規約へ| S2
+  S1 --&gt;|未同意バッジ / 再同意へ| S3
+</pre>
+
+<h2 id="3-画面レイアウト">3. 画面レイアウト</h2>
+<div style="background:#f5f6f8;padding:24px;border-radius:12px;font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN',Meiryo,sans-serif;color:#3a3f46;--accent:#5e6ad2;--row-pad:14px"><div style="max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:28px"><section style="flex:1;min-width:520px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:13px"><span style="font-size:11px;font-weight:700;color:var(--accent,#5e6ad2);background:color-mix(in srgb,var(--accent,#5e6ad2) 10%,#fff);border-radius:6px;padding:3px 8px">SCR-010 / 020</span><span style="font-size:13.5px;font-weight:600;color:#16191d">文書閲覧(利用規約 / プライバシー)</span></div>
+      <div style="background:#fff;border:1px solid #e6e8eb;border-radius:14px;box-shadow:0 1px 2px rgba(16,24,40,.04),0 6px 20px rgba(16,24,40,.05);overflow:hidden">
+        <div style="display:flex;align-items:center;height:54px;padding:0 16px;border-bottom:1px solid #eef0f2"><span style="display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:15px;color:#16191d"><span style="width:23px;height:23px;border-radius:7px;background:var(--accent,#5e6ad2);display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:800">o</span>open-faq</span></div>
+        <div style="display:flex;min-height:520px">
+          <aside style="width:200px;flex:none;border-right:1px solid #eef0f2;padding:18px 14px;background:#fbfbfc">
+            <div style="font-size:10.5px;font-weight:700;letter-spacing:.04em;color:#9aa0a8;margin-bottom:10px">目次</div>
+            <div style="display:flex;flex-direction:column;gap:3px">
+              <span style="padding:6px 10px;border-radius:7px;background:color-mix(in srgb,var(--accent,#5e6ad2) 12%,#fff);color:var(--accent,#5e6ad2);font-weight:600;font-size:12px;cursor:pointer">第 1 条 総則</span>
+              <span style="padding:6px 10px;border-radius:7px;color:#3a3f46;font-size:12px;cursor:pointer">第 2 条 利用登録</span>
+              <span style="padding:6px 10px;border-radius:7px;color:#3a3f46;font-size:12px;cursor:pointer">第 3 条 禁止事項</span>
+              <span style="padding:6px 10px;border-radius:7px;color:#3a3f46;font-size:12px;cursor:pointer">第 4 条 料金・支払い</span>
+              <span style="padding:6px 10px;border-radius:7px;color:#3a3f46;font-size:12px;cursor:pointer">第 5 条 免責事項</span>
+            </div>
+          </aside>
+          <main style="flex:1;min-width:0;padding:26px 30px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><h1 style="margin:0;font-size:21px;font-weight:700;color:#16191d;letter-spacing:-.01em">利用規約</h1><span style="font-size:11.5px;color:#9aa0a8">発効日: 2026-04-01 ・ v3.2</span></div>
+            <div style="font-size:13px;color:#3a3f46;line-height:1.9;max-width:560px">
+              <h3 style="margin:22px 0 8px;font-size:14px;font-weight:700;color:#16191d" id="h1">第 1 条(総則)</h3>
+              <p style="margin:0 0 12px">本規約は、株式会社 Acme(以下「当社」)が提供する FAQ ウィジェットサービス「open-faq」(以下「本サービス」)の利用条件を定めるものです。利用者は本規約に同意のうえ本サービスを利用するものとします。</p>
+              <h3 style="margin:22px 0 8px;font-size:14px;font-weight:700;color:#16191d" id="h2">第 2 条(利用登録)</h3>
+              <p style="margin:0 0 12px">本サービスの利用を希望する者は、当社所定の方法により利用登録を申請し、当社がこれを承認することによって利用契約が成立します。</p>
+              <p style="margin:0 0 12px">当社は、申請者に当社が定める事由があると判断した場合、利用登録の申請を承認しないことがあります。</p>
+            </div>
+            <div style="margin-top:26px;padding-top:18px;border-top:1px solid #eef0f2;display:flex;align-items:center;gap:12px">
+              <button style="padding:10px 20px;border:none;border-radius:8px;background:var(--accent,#5e6ad2);color:#fff;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 1px 2px rgba(16,24,40,.12);font-family:inherit">同意して続ける</button>
+              <span style="font-size:11.5px;color:#9aa0a8">最後までスクロールすると同意できます</span>
+            </div>
+          </main><aside class="rightbar"><div class="rb-title">このページ</div><nav class="toc"><a class="back" href="01_画面設計.html" style="font-weight:600;color:var(--accent)">← 画面一覧へ戻る</a><a href="#1-画面概要">1. 画面概要</a><a href="#2-画面遷移図">2. 画面遷移図</a><a href="#3-画面レイアウト">3. 画面レイアウト</a><a href="#4-画面項目定義">4. 画面項目定義</a><a href="#5-入出力一覧">5. 入出力一覧</a><a href="#6-画面イベント一覧">6. 画面イベント一覧</a></nav></aside>
+        </div>
+      </div>
+    </section></div></div>
+
+<h2 id="4-画面項目定義">4. 画面項目定義</h2>
+<p class="section-lead">本画面の表示項目を定義します。項目の正本は本表です。閲覧専用画面のため入力項目はありません。</p>
+<table>
+<thead>
+<tr>
+<th>項目 ID</th>
+<th>項目</th>
+<th>説明</th>
+<th>種類</th>
+<th>表示条件</th>
+<th>表示</th>
+</tr>
+</thead>
+<tbody>
+<tr><td id="IT-01"><code>IT-01</code></td><td>同意状態バッジ</td><td>最新版プライバシーポリシーへの同意状態を上部に表示する</td><td>バッジ</td><td>ログイン済み時のみ表示</td><td>同意済み(同意日付き・緑)/ 未同意(赤・SCR-015 へのリンク併記)</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>最新版の全文</td><td>プライバシーポリシー最新版の全文を 1 枚のページに連続表示する。目次・章ナビ・セクション分け・過去バージョン履歴・差分表示は設けない</td><td>ラベル</td><td>—</td><td>プライバシーポリシー本文</td></tr>
+</tbody>
+</table>
+
+<h2 id="5-入出力一覧">5. 入出力一覧</h2>
+<p class="section-lead">本画面が読み取るテーブルと、呼び出す API の一覧です。テーブルの正本は <a href="03_データベース設計.html">03_テーブル設計</a>、API の正本は <a href="02_API設計.html">02_API設計 §5.9.1a</a> です。</p>
+<table>
+<thead>
+<tr>
+<th rowspan="2">入出力名</th>
+<th rowspan="2">説明</th>
+<th rowspan="2">種別</th>
+<th rowspan="2">I/O</th>
+<th colspan="4">アクセス種別(CRUD)</th>
+<th rowspan="2">備考</th>
+</tr>
+<tr>
+<th>C</th>
+<th>R</th>
+<th>U</th>
+<th>D</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>規約バージョン</td><td>プライバシーポリシー最新版(<code>doc_type='privacy_policy'</code>)を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>M_TERMS_VER</code>(<a href="03_データベース設計.html#TBL-M-012">テーブル設計 3.30</a>)</td></tr>
+<tr><td>規約同意</td><td>同意状態バッジ用に同意有無を照合する(ログイン時のみ)</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>T_TERMS_AGREE</code>(<a href="03_データベース設計.html#TBL-T-012">テーブル設計 3.31</a>)</td></tr>
+<tr><td>プライバシーポリシー最新版取得</td><td>最新版の全文を取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /privacy/current</code>(<a href="02_API設計.html">API 設計 5.9.1a</a>)</td></tr>
+</tbody>
+</table>
+
+<h2 id="6-画面イベント一覧">6. 画面イベント一覧</h2>
+<p class="section-lead">本画面で発生するイベントと発生タイミング・概要の一覧です。</p>
+<table>
+<thead>
+<tr>
+<th>イベント ID</th>
+<th>イベント</th>
+<th>トリガー</th>
+<th>処理</th>
+<th>関連項目</th>
+</tr>
+</thead>
+<tbody>
+<tr><td><code>EV-01</code></td><td>ポリシー初期表示</td><td>画面遷移・リロード時</td><td><ul><li><code>GET /privacy/current</code> で最新版全文を取得し表示</li><li>ログイン済みなら同意状態バッジを併せて表示</li></ul></td><td><a href="#IT-01">IT-01</a>, <a href="#IT-01">IT-01</a>, <a href="#IT-02">IT-02</a>, <a href="#IT-02">IT-02</a></td></tr>
+<tr><td><code>EV-02</code></td><td>再同意へ遷移</td><td>未同意バッジ内リンク押下時</td><td>SCR-015 規約再同意へ遷移</td><td><a href="#IT-01">IT-01</a>, <a href="#IT-01">IT-01</a></td></tr>
+</tbody>
+</table>
+<div class="footer">FAQ AI ウィジェット SaaS / メインシステム &mdash; 基本設計 ・ new 形式ポータル</div>
+</article></main>
+<aside class="rightbar"><div class="rb-title">このページ</div><nav class="toc"><a class="back" href="../02_基本設計/01_画面設計.html">&larr; 画面設計へ</a><a class="" href="#1-画面概要">1. 画面概要</a><a class="" href="#2-画面遷移図">2. 画面遷移図</a><a class="" href="#3-画面レイアウト">3. 画面レイアウト</a><a class="lvl3" href="#h1">第 1 条(総則)</a><a class="lvl3" href="#h2">第 2 条(利用登録)</a><a class="" href="#4-画面項目定義">4. 画面項目定義</a><a class="" href="#5-入出力一覧">5. 入出力一覧</a><a class="" href="#6-画面イベント一覧">6. 画面イベント一覧</a></nav></aside>
+</div>
+<script>(function(){function init(){var ls=[].slice.call(document.querySelectorAll(".rightbar .toc a[href^=\"#\"]"));if(!ls.length)return;var map=ls.map(function(a){var id=decodeURIComponent(a.getAttribute("href").slice(1));return{a:a,el:document.getElementById(id)};}).filter(function(x){return x.el;});function on(){var y=window.scrollY+130,cur=null;map.forEach(function(x){if(x.el.getBoundingClientRect().top+window.scrollY<=y)cur=x;});ls.forEach(function(a){a.classList.remove("active");});if(cur)cur.a.classList.add("active");}window.addEventListener("scroll",on,{passive:true});window.addEventListener("resize",on);on();}if(document.readyState!=="loading")init();else document.addEventListener("DOMContentLoaded",init);})();</script><script>(function(){var K="portal-nav-open",S="portal-nav-scroll";var sb=document.querySelector(".sidebar");function sid(s){return s.getAttribute("data-sec")||"";}try{var o=JSON.parse(localStorage.getItem(K)||"[]");document.querySelectorAll(".nav-sec").forEach(function(s){if(o.indexOf(sid(s))>=0)s.classList.add("open");});}catch(e){}function save(){try{var o=[];document.querySelectorAll(".nav-sec.open").forEach(function(s){o.push(sid(s));});localStorage.setItem(K,JSON.stringify(o));}catch(e){}}document.querySelectorAll(".nav-sec > .nav-top .caret").forEach(function(c){c.addEventListener("click",function(e){e.preventDefault();e.stopPropagation();c.closest(".nav-sec").classList.toggle("open");save();});});document.querySelectorAll(".nav a[href]").forEach(function(a){a.addEventListener("click",save);});try{var v=sessionStorage.getItem(S);if(v&&sb)sb.scrollTop=parseInt(v,10);}catch(e){}if(sb)sb.addEventListener("scroll",function(){try{sessionStorage.setItem(S,sb.scrollTop);}catch(e){}},{passive:true});})();</script>
+</body></html>

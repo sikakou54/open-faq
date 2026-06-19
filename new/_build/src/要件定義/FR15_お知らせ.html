@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FR15: お知らせ | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/01_要件定義/FR15_お知らせ.html">
+<article class="content" id="content">
+<h1 id="fr15-お知らせ">FR15: お知らせ</h1>
+<aside class="page-summary">
+<p class="ps-lead"><strong>この要件は、アカウント利用者が請求確定・運営からの連絡・運用イベントをアプリ内のお知らせ受信箱で受け取り、見落とさず確認できるようにすることを目的とし、以下について記載します。</strong></p>
+<ul>
+<li>お知らせの一覧・詳細表示と、種別(請求確定 / 運営お知らせ / システム通知)・重要度(低 / 通常 / 重要 / 最重要)の扱い</li>
+<li>既読管理(個別 / 一括)と、種別・既読状態・期間での絞り込み</li>
+<li>ヘッダ通知ベルの未読バッジと直近お知らせの表示</li>
+<li>請求確定・運営お知らせ・運用イベントに連動した受信箱の自動生成と重複集約</li>
+<li>受信箱の保持範囲(アカウント利用者限定)と、無効化・退会時の削除</li>
+</ul>
+</aside>
+<p class="doc-meta"><span><b>版数</b> v1.1</span><span><b>更新</b> 2026-06-16</span><span><b>機能グループ</b> お知らせ</span><span><b>優先度</b> Must</span><span class="dm-status">承認済</span></p>
+<h2 id="1-業務要件">1. 業務要件</h2>
+<div class="table-scroll">
+<table class="br-table">
+<thead>
+<tr>
+<th>ID</th>
+<th>観点</th>
+<th>ステークホルダ</th>
+<th>業務要件</th>
+<th>関連 NFR</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="BR-134">BR-134</td>
+<td>お知らせの確認</td>
+<td>アカウント利用者</td>
+<td>管理画面ログイン時や日常の操作中に、自契約宛のお知らせを一覧と詳細で確認する。詳細では本文・種別・重要度・配信日時を読み取れる。</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-135">BR-135</td>
+<td>重要度の区分</td>
+<td>システム</td>
+<td>お知らせを重要度「低 / 通常 / 重要 / 最重要」の 4 段階で区分し、最重要は規約改定・重大セキュリティ通知・サスペンション確定の 3 場面に限定して付与する。</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-136">BR-136</td>
+<td>既読管理</td>
+<td>アカウント利用者</td>
+<td>確認したお知らせを、個別または一括で既読にする。種別・既読状態・期間で絞り込んで目的のお知らせに素早く到達する。</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-137">BR-137</td>
+<td>未読の即時把握</td>
+<td>アカウント利用者</td>
+<td>管理画面ヘッダの通知ベルから、未読件数と直近のお知らせを画面遷移なしに把握する。</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-138">BR-138</td>
+<td>受信箱の自動生成</td>
+<td>システム</td>
+<td>月次請求の確定時・運営お知らせの配信時・運用イベントの発生時に、対象アカウント利用者の受信箱へお知らせを生成する。請求確定・運営お知らせはメール通知と同期して生成する。</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-139">BR-139</td>
+<td>重複生成の集約</td>
+<td>システム</td>
+<td>同一契約・同一イベント種別で 60 分以内に連続発火した場合は、お知らせを 1 件に集約する。</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-140">BR-140</td>
+<td>閲覧範囲の限定</td>
+<td>システム</td>
+<td>お知らせ受信箱はアカウント利用者ごとに保持し、当該利用者本人のみが閲覧できる。ウィジェット利用者には公開しない。</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-141">BR-141</td>
+<td>退会・無効化時の削除</td>
+<td>システム</td>
+<td>アカウントの無効化・退会が確定した時に、当該アカウント利用者の受信箱を削除する。</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-142">BR-142</td>
+<td>操作の監査</td>
+<td>システム</td>
+<td>一括既読操作を、操作者・対象件数・実行日時とともに監査記録する。</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="2-機能要件">2. 機能要件</h2>
+<div class="table-scroll">
+<table class="req-table">
+<thead>
+<tr>
+<th>ID</th>
+<th>要件</th>
+<th>関連業務要件</th>
+<th>優先度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="FR-180">FR-180</td>
+<td>アカウント利用者は自契約宛のお知らせ一覧を取得・表示できること</td>
+<td><a href="#BR-134">BR-134</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-181">FR-181</td>
+<td>アカウント利用者はお知らせの詳細(本文・種別・重要度・配信日時)を表示できること。
+<ol class="alpha">
+<li>重要度は「低 / 通常 / 重要 / 最重要」の 4 段階とする</li>
+<li>「最重要」は規約改定・重大セキュリティ通知・サスペンション確定時に限定して使用する</li>
+</ol></td>
+<td><a href="#BR-134">BR-134</a>, <a href="#BR-135">BR-135</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-182">FR-182</td>
+<td>アカウント利用者はお知らせを個別および一括で既読化できること</td>
+<td><a href="#BR-136">BR-136</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-183">FR-183</td>
+<td>アカウント利用者はお知らせを種別(請求確定 / 運営お知らせ / システム通知)、既読状態、期間で絞り込みできること</td>
+<td><a href="#BR-136">BR-136</a></td>
+<td><span class="badge badge-p1">P1</span></td>
+</tr>
+<tr>
+<td id="FR-184">FR-184</td>
+<td>管理画面ヘッダの通知ベルに、未読件数のバッジを表示できること(0 件時は非表示)</td>
+<td><a href="#BR-137">BR-137</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-185">FR-185</td>
+<td>管理画面ヘッダの通知ベルから、直近 10 件のお知らせをドロップダウンで表示できること</td>
+<td><a href="#BR-137">BR-137</a></td>
+<td><span class="badge badge-p1">P1</span></td>
+</tr>
+<tr>
+<td id="FR-186">FR-186</td>
+<td>お知らせはアカウント利用者のみ閲覧可能とし、ウィジェット利用者は閲覧できないこと</td>
+<td><a href="#BR-140">BR-140</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-187">FR-187</td>
+<td>月次請求の確定タイミングで、アカウント利用者の受信箱に請求確定のお知らせを生成できること。請求確定メール通知と同期して実施する</td>
+<td><a href="#BR-138">BR-138</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-188">FR-188</td>
+<td>お知らせを配信したタイミングで、対象アカウント利用者の受信箱にお知らせを生成できること。お知らせメール通知と同期して実施する</td>
+<td><a href="#BR-138">BR-138</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-189">FR-189</td>
+<td>運用イベントをシステム通知として受信箱に生成できること。
+<ol class="alpha">
+<li>対象とする運用イベントは次のとおり。
+<ol class="alpha-sub">
+<li>上限接近(80%)・上限超過</li>
+<li>通知配信失敗の急増</li>
+<li>AI 利用上限到達</li>
+</ol>
+</li>
+<li>同一契約・同一イベント種別で 60 分以内に連続発火した場合は 1 件に集約する</li>
+</ol></td>
+<td><a href="#BR-138">BR-138</a>, <a href="#BR-139">BR-139</a></td>
+<td><span class="badge badge-p1">P1</span></td>
+</tr>
+<tr>
+<td id="FR-190">FR-190</td>
+<td>お知らせ受信箱はアカウント利用者ごとに保持し、アカウント無効化・退会時に削除されること</td>
+<td><a href="#BR-140">BR-140</a>, <a href="#BR-141">BR-141</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-191">FR-191</td>
+<td>お知らせの未読件数は管理画面遷移時に取得し、画面滞在中も過大な負荷を生まない範囲で更新できること</td>
+<td><a href="#BR-137">BR-137</a></td>
+<td><span class="badge badge-p1">P1</span></td>
+</tr>
+<tr>
+<td id="FR-192">FR-192</td>
+<td>一括既読操作は監査ログに記録できること(操作者・対象件数・実行日時)</td>
+<td><a href="#BR-142">BR-142</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="callout tip"><i class="bi bi-lightbulb"></i><div><span class="c-title">未確定事項</span>v1.0 リリース時点で全項目確定済み。現在オープンな確認事項はありません。</div></div>
+<h2 id="更新履歴">更新履歴</h2>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>版数</th>
+<th>日付</th>
+<th>変更内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>v1.2</td>
+<td>2026-06-16</td>
+<td>記載スタイルを刷新テンプレート(v2)へ移行。要約ブロックと業務要件 BR-134〜9 を先頭に定義し、機能要件に関連業務要件列を追加。長文要件を主旨 + 箇条書きへ整理、用語をアカウント利用者へ統一、他システム整合参照(FR-148 / FR-149 注記)・基本設計参照節を除去。識別子(FR-180〜192)は不変</td>
+</tr>
+<tr>
+<td>v1.1</td>
+<td>2026-06-16</td>
+<td>要件定義を What 中心へ整理。テーブル名・基本設計の節番号参照を除去し、該当設計書を正本として参照化(種別・重要度・集約ルール等の業務ルールは保持)</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+</article>
+</body>
+</html>

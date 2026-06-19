@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FR11: 通知 | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/01_要件定義/FR11_通知.html">
+<article class="content" id="content">
+<h1 id="fr11-通知">FR11: 通知</h1>
+<aside class="page-summary">
+<p class="ps-lead"><strong>この要件は、請求確定・運営お知らせ・役割変更などの契機で、対象のアカウント利用者へメールと受信箱でお知らせを確実に届け、不達や悪用を防ぐことを目的とし、以下について記載します。</strong></p>
+<ul>
+<li>通知契機(請求確定・運営お知らせ・運用イベント・役割割当変更)と配信先</li>
+<li>送信失敗時の再送と再送回数上限、配信状態の可視化</li>
+<li>バウンス・苦情の検知と全契約横断での送信停止</li>
+<li>送信レート・バウンス率・苦情率の監視と、認証通知のオプトアウト不可</li>
+</ul>
+</aside>
+<p class="doc-meta"><span><b>版数</b> v1.2</span><span><b>更新</b> 2026-06-16</span><span><b>機能グループ</b> 通知</span><span><b>優先度</b> Must</span><span class="dm-status">承認済</span></p>
+<h2 id="1-業務要件">1. 業務要件</h2>
+<div class="table-scroll">
+<table class="br-table">
+<thead>
+<tr>
+<th>ID</th>
+<th>観点</th>
+<th>ステークホルダ</th>
+<th>業務要件</th>
+<th>関連 NFR</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="BR-103">BR-103</td>
+<td>通知の到達</td>
+<td>システム</td>
+<td>請求確定・運営お知らせなどの契機が発生した時に、対象のアカウント利用者へメールまたはお知らせ受信箱で通知を届ける。</td>
+<td><a href="index.html#NFR-501">NFR-501</a></td>
+</tr>
+<tr>
+<td id="BR-104">BR-104</td>
+<td>請求確定通知</td>
+<td>システム</td>
+<td>月次の請求が確定した時に、オーナーへ請求対象期間・請求金額・内訳・請求書 / 明細の確認導線を含むメールを送り、お知らせ受信箱にも「請求確定」のお知らせを生成する。同一契約・同一請求月で重複して請求しない。</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-105">BR-105</td>
+<td>お知らせ配信</td>
+<td>システム / アカウント利用者</td>
+<td>
+<ul class="role-req">
+<li><strong>システム：</strong>宛先範囲・件名・本文・送信予定日時を指定したお知らせ(メンテナンス予告・機能追加・規約改定・価格改定など)が配信された時に、対象のアカウント利用者へ届ける</li>
+<li><strong>アカウント利用者：</strong>種別ごとにオプトアウトの可否を設定する。ただし規約改定・重要セキュリティ通知は強制送信としオプトアウトできない</li>
+</ul>
+</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-106">BR-106</td>
+<td>役割変更通知</td>
+<td>システム</td>
+<td>メンバーのプロジェクト別の役割割当が追加・変更・剥奪された時に、当該メンバーへお知らせ受信箱とメールで通知する。</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-107">BR-107</td>
+<td>システム通知の自動生成</td>
+<td>システム</td>
+<td>運用イベント(利用上限への接近・到達、通知失敗の急増、サスペンション、復元、規約改定、価格改定など)が発生した時に、「システム通知」のお知らせを自動生成する。</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-108">BR-108</td>
+<td>送信失敗時の再送</td>
+<td>システム</td>
+<td>通知の送信に失敗した時に、上限を設けたうえで再送する。</td>
+<td><a href="index.html#NFR-501">NFR-501</a></td>
+</tr>
+<tr>
+<td id="BR-109">BR-109</td>
+<td>バウンス・苦情対応</td>
+<td>システム</td>
+<td>バウンスや無効アドレス・苦情を検知した時に、当該宛先への送信を停止し、管理者へ通知する。送信停止リストは全契約横断で共有する。</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-110">BR-110</td>
+<td>送信品質の監視</td>
+<td>システム</td>
+<td>契約 / プロジェクト単位で送信レート・バウンス率・苦情率を監視し、しきい値を超過した時に送信を抑制する。</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-111">BR-111</td>
+<td>配信状態の可視化</td>
+<td>アカウント利用者</td>
+<td>通知の配信状態(送信待ち / 送信済み / 配信済み / 失敗 / バウンス / 苦情 / 停止)を確認できる。</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-112">BR-112</td>
+<td>認証通知の強制送信</td>
+<td>アカウント利用者</td>
+<td>アカウント認証関連の通知(パスワード再設定等)はオプトアウトできない。</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-113">BR-113</td>
+<td>なりすまし・スパム対策</td>
+<td>システム</td>
+<td>ウィジェット利用者が入力した文字列を、メール件名・送信元情報など外部に露出する箇所へそのまま使わない。</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="2-機能要件">2. 機能要件</h2>
+<div class="table-scroll">
+<table class="req-table">
+<thead>
+<tr>
+<th>ID</th>
+<th>要件</th>
+<th>関連業務要件</th>
+<th>優先度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="FR-140">FR-140</td>
+<td>請求確定、運営からのお知らせなどの契機で、対象となるアカウント利用者へメールまたは受信箱通知できること</td>
+<td><a href="#BR-103">BR-103</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-141">FR-141</td>
+<td>通知の送信失敗時に再送できること</td>
+<td><a href="#BR-108">BR-108</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-142">FR-142</td>
+<td>バウンスや無効アドレスを検知し、通知停止と管理者通知ができること</td>
+<td><a href="#BR-109">BR-109</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-143">FR-143</td>
+<td>アカウント利用者のアカウント認証関連通知(パスワード再設定等)はオプトアウト不可とすること</td>
+<td><a href="#BR-112">BR-112</a></td>
+<td><span class="badge badge-p1">P1</span></td>
+</tr>
+<tr>
+<td id="FR-144">FR-144</td>
+<td>契約 / プロジェクト単位で送信レート制限・バウンス率・苦情率を監視し、しきい値超過時に送信抑制ができること</td>
+<td><a href="#BR-110">BR-110</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-145">FR-145</td>
+<td>ウィジェット利用者が入力した文字列を、メール件名・送信元情報など外部に露出する箇所にそのまま使わないこと(スパム埋め込み・なりすまし対策)</td>
+<td><a href="#BR-113">BR-113</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-146">FR-146</td>
+<td>通知配信状態(送信待ち / 送信済み / 配信済み / 失敗 / バウンス / 苦情 / 停止)を可視化できること</td>
+<td><a href="#BR-111">BR-111</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-147">FR-147</td>
+<td>通知再送回数の上限を設けること</td>
+<td><a href="#BR-108">BR-108</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-148">FR-148</td>
+<td>月次の請求が確定したタイミングで、オーナーにメール通知できること。
+<ol class="alpha">
+<li>通知には請求対象期間、請求金額、内訳(質問数・各種上限の超過分など)、請求書 / 明細の確認導線を含める</li>
+<li>同タイミングで対象オーナーのお知らせ受信箱に「請求確定」のお知らせを生成する</li>
+<li>同一契約・同一請求月での重複請求を行わない</li>
+</ol></td>
+<td><a href="#BR-104">BR-104</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-149">FR-149</td>
+<td>特定契約または全契約に対して任意のお知らせ(メンテナンス予告、機能追加、規約改定、価格改定など)をメール通知できること。
+<ol class="alpha">
+<li>宛先範囲(全契約 / 特定契約 / 特定ユーザー種別)、件名、本文、送信予定日時を指定できる</li>
+<li>受信者はアカウント利用者を対象とし、種別ごとにオプトアウトの可否を設定できる(規約改定・重要セキュリティ通知などは強制送信としオプトアウト不可)</li>
+<li>同タイミングで対象契約のアカウント利用者のお知らせ受信箱に「お知らせ」を生成する</li>
+</ol></td>
+<td><a href="#BR-105">BR-105</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-149a">FR-149a</td>
+<td>運用イベント(FAQ 利用上限 80% / 100% 接近、AI 利用上限到達、通知失敗急増、サスペンション、復元、規約改定、価格改定 等)を契機に「システム通知」のお知らせを自動生成できること</td>
+<td><a href="#BR-107">BR-107</a></td>
+<td><span class="badge badge-p1">P1</span></td>
+</tr>
+<tr>
+<td id="FR-149b">FR-149b</td>
+<td>バウンス・苦情検知時のメール配信停止リストは全契約横断で共有し、宛先別に再送停止すること(共通ドメイン使用に伴う対策)</td>
+<td><a href="#BR-109">BR-109</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-145a">FR-145a</td>
+<td>メンバーのプロジェクト別の役割割当が追加・変更・剥奪された場合、当該メンバーへお知らせ受信箱(「運営お知らせ」種別・「通常」重要度)とメールで通知できること</td>
+<td><a href="#BR-106">BR-106</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="callout tip"><i class="bi bi-lightbulb"></i><div><span class="c-title">未確定事項</span>v1.0 リリース時点で全項目確定済み。現在オープンな確認事項はありません。</div></div>
+<h2 id="更新履歴">更新履歴</h2>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>版数</th>
+<th>日付</th>
+<th>変更内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>v1.2</td>
+<td>2026-06-16</td>
+<td>記載スタイルを刷新テンプレート v2(業務要件 BR-103〜11 を先頭に定義、機能要件に関連業務要件列、長文要件を主旨 1 文 + alpha 箇条書きへ分解、用語をアカウント利用者 / ウィジェット利用者へ統一、他システム整合参照を除去)へ移行。識別子(FR-140〜149b / FR-145a)は不変</td>
+</tr>
+<tr>
+<td>v1.3</td>
+<td>2026-06-16</td>
+<td>要件定義を What 中心へ整理。基本設計の節番号参照・冪等キー等の実装記述・カラム名を除去し、該当設計書を正本として参照化</td>
+</tr>
+<tr>
+<td>v1.2</td>
+<td>2026-06-12</td>
+<td>MVP の通知契機と配信先を整理</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+</article>
+</body>
+</html>

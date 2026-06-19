@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FR14: セキュリティ | FAQ 設計ポータル</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="../style.css?v=4">
+</head><body><div class="layout">
+<aside class="sidebar"><a class="brand" href="../index.html"><div class="mark">FA</div><div><b>FAQ AI SaaS</b><span>設計ポータル</span></div></a><nav class="nav"><div class="nav-group">ドキュメント</div><div class="nav-sec open" data-sec="01_要件定義/index.html"><a class="nav-top" href="../01_要件定義/index.html"><span class="n">要</span><span>要件定義</span><span class="caret">&#9656;</span></a><div class="nav-children"><a class="" href="../01_要件定義/index.html">概要</a><a class="" href="../01_要件定義/FR01_アカウント管理.html">FR01 アカウント管理</a><a class="" href="../01_要件定義/FR02_ユーザー管理.html">FR02 ユーザー管理</a><a class="" href="../01_要件定義/FR03_プロジェクト管理.html">FR03 プロジェクト管理</a><a class="" href="../01_要件定義/FR04_FAQ管理.html">FR04 FAQ管理</a><a class="" href="../01_要件定義/FR05_AI回答.html">FR05 AI回答</a><a class="" href="../01_要件定義/FR06_未解決質問登録.html">FR06 未解決質問登録</a><a class="" href="../01_要件定義/FR07_未解決質問からFAQ登録.html">FR07 未解決質問からFAQ登録</a><a class="" href="../01_要件定義/FR08_処理エラー.html">FR08 処理エラー</a><a class="" href="../01_要件定義/FR09_利用量・課金.html">FR09 利用量・課金</a><a class="" href="../01_要件定義/FR10_管理ダッシュボード.html">FR10 管理ダッシュボード</a><a class="" href="../01_要件定義/FR11_通知.html">FR11 通知</a><a class="" href="../01_要件定義/FR12_ウィジェット.html">FR12 ウィジェット</a><a class="" href="../01_要件定義/FR13_プライバシー・データ管理.html">FR13 プライバシー・データ管理</a><a class="cur active" href="../01_要件定義/FR14_セキュリティ.html">FR14 セキュリティ</a><a class="" href="../01_要件定義/FR15_お知らせ.html">FR15 お知らせ</a><a class="" href="../01_要件定義/FR16_検索・全文検索.html">FR16 検索・全文検索</a><a class="" href="../01_要件定義/FR17_インポート・エクスポート.html">FR17 インポート・エクスポート</a><a class="" href="../01_要件定義/FR18_UX細部・データ運用.html">FR18 UX細部・データ運用</a><a class="" href="../01_要件定義/FR19_アクセス制御細部.html">FR19 アクセス制御細部</a><a class="" href="../01_要件定義/FR20_AI推論動作.html">FR20 AI推論動作</a><a class="" href="../01_要件定義/FR21_SCR画面マスタ.html">FR21 SCR画面マスタ</a></div></div><div class="nav-sec" data-sec="02_基本設計/index.html"><a class="nav-top" href="../02_基本設計/index.html"><span class="n">基</span><span>基本設計</span><span class="caret">&#9656;</span></a><div class="nav-children"><a class="" href="../02_基本設計/index.html">概要</a><div class="nav-sec" data-sec="02_基本設計/01_画面設計.html"><a class="nav-top" href="../02_基本設計/01_画面設計.html"><span class="n">01</span><span>画面設計</span><span class="caret">&#9656;</span></a><div class="nav-children"><a class="" href="../02_基本設計/01_画面設計.html">概要</a><a class="" href="../02_基本設計/SCR-001.html">SCR-001 ログイン</a><a class="" href="../02_基本設計/SCR-002.html">SCR-002 アカウント登録</a><a class="" href="../02_基本設計/SCR-003.html">SCR-003 パスワード再設定</a><a class="" href="../02_基本設計/SCR-004.html">SCR-004 プロジェクト</a><a class="" href="../02_基本設計/SCR-004-001.html">SCR-004-001 プロジェクト作成・編集モーダル</a><a class="" href="../02_基本設計/SCR-005.html">SCR-005 要対応の質問一覧</a><a class="" href="../02_基本設計/SCR-005-001.html">SCR-005-001 要対応の質問詳細</a><a class="" href="../02_基本設計/SCR-006.html">SCR-006 FAQ一覧</a><a class="" href="../02_基本設計/SCR-006-001.html">SCR-006-001 FAQ編集</a><a class="" href="../02_基本設計/SCR-006-002.html">SCR-006-002 FAQ CSVインポートモーダル</a><a class="" href="../02_基本設計/SCR-007.html">SCR-007 ウィジェット設定</a><a class="" href="../02_基本設計/SCR-008.html">SCR-008 概要(プロジェクト)</a><a class="" href="../02_基本設計/SCR-009.html">SCR-009 メンバー(プロジェクト)</a><a class="" href="../02_基本設計/SCR-009-001.html">SCR-009-001 メンバー招待・編集モーダル</a><a class="" href="../02_基本設計/SCR-010.html">SCR-010 利用規約閲覧</a><a class="" href="../02_基本設計/SCR-011.html">SCR-011 お知らせ一覧</a><a class="" href="../02_基本設計/SCR-012.html">SCR-012 お知らせ詳細</a><a class="" href="../02_基本設計/SCR-013.html">SCR-013 メール確認</a><a class="" href="../02_基本設計/SCR-014.html">SCR-014 退会申請</a><a class="" href="../02_基本設計/SCR-015.html">SCR-015 規約再同意割込み</a><a class="" href="../02_基本設計/SCR-016.html">SCR-016 利用状況</a><a class="" href="../02_基本設計/SCR-017.html">SCR-017 個人設定</a><a class="" href="../02_基本設計/SCR-018.html">SCR-018 メンバーアカウント有効化</a><a class="" href="../02_基本設計/SCR-019.html">SCR-019 連絡先メール確認完了</a><a class="" href="../02_基本設計/SCR-020.html">SCR-020 プライバシーポリシー閲覧</a><a class="" href="../02_基本設計/SCR-021.html">SCR-021 利用量と上限</a><a class="" href="../02_基本設計/SCR-021-001.html">SCR-021-001 質問数上限設定モーダル</a><a class="" href="../02_基本設計/SCR-022.html">SCR-022 請求</a><a class="" href="../02_基本設計/SCR-023.html">SCR-023 設定</a><a class="" href="../02_基本設計/SCR-WIDGET.html">SCR-WIDGET FAQ ウィジェット</a></div></div><div class="nav-sec" data-sec="02_基本設計/02_API設計.html"><a class="nav-top" href="../02_基本設計/02_API設計.html"><span class="n">02</span><span>API設計</span><span class="caret">&#9656;</span></a><div class="nav-children"><a class="" href="../02_基本設計/02_API設計.html">概要</a><a class="" href="../02_基本設計/API-common.html">共通仕様・規約</a><a class="" href="../02_基本設計/API-auth.html">認証・セッション</a><a class="" href="../02_基本設計/API-project.html">プロジェクト</a><a class="" href="../02_基本設計/API-member.html">メンバー</a><a class="" href="../02_基本設計/API-faq.html">FAQ</a><a class="" href="../02_基本設計/API-inquiry.html">未解決質問</a><a class="" href="../02_基本設計/API-widget.html">ウィジェット配信</a><a class="" href="../02_基本設計/API-dashboard.html">ダッシュボード</a><a class="" href="../02_基本設計/API-billing.html">利用量・課金</a><a class="" href="../02_基本設計/API-inbox.html">お知らせ受信箱</a><a class="" href="../02_基本設計/API-terms.html">規約・退会</a><a class="" href="../02_基本設計/API-ai.html">AI 推論 IF</a><a class="" href="../02_基本設計/API-mail.html">メール配信 IF</a><a class="" href="../02_基本設計/API-webhook.html">外部 Webhook</a></div></div><div class="nav-sec" data-sec="02_基本設計/03_データベース設計.html"><a class="nav-top" href="../02_基本設計/03_データベース設計.html"><span class="n">03</span><span>データベース設計</span><span class="caret">&#9656;</span></a><div class="nav-children"><a class="" href="../02_基本設計/03_データベース設計.html">概要</a><a class="" href="../02_基本設計/TBL-M-USER.html">M_USER</a><a class="" href="../02_基本設計/TBL-M-CONTRACT.html">M_CONTRACT</a><a class="" href="../02_基本設計/TBL-M-002.html">M_PRJ_USERS</a><a class="" href="../02_基本設計/TBL-M-004.html">M_PROJECTS</a><a class="" href="../02_基本設計/TBL-M-005.html">M_ALLOWED_DOMAINS</a><a class="" href="../02_基本設計/TBL-M-006.html">M_FAQS</a><a class="" href="../02_基本設計/TBL-M-007.html">M_EMAIL_SUPPRESS</a><a class="" href="../02_基本設計/TBL-M-008.html">M_OWNER_QUOTA_OVR</a><a class="" href="../02_基本設計/TBL-M-009.html">M_PRJ_QUOTA_LIMITS</a><a class="" href="../02_基本設計/TBL-M-010.html">M_SERVICE_ANNOUNCE</a><a class="" href="../02_基本設計/TBL-M-011.html">M_ANNOUNCE_AUD</a><a class="" href="../02_基本設計/TBL-M-012.html">M_TERMS_VER</a><a class="" href="../02_基本設計/TBL-T-001.html">T_SESSIONS</a><a class="" href="../02_基本設計/TBL-T-002.html">T_ACCESS_TOKENS</a><a class="" href="../02_基本設計/TBL-T-003.html">T_PRJ_LEGACY_KEYS</a><a class="" href="../02_基本設計/TBL-T-004.html">T_QLOG_FAQ_REFS</a><a class="" href="../02_基本設計/TBL-T-005.html">T_INQUIRIES</a><a class="" href="../02_基本設計/TBL-T-006.html">T_BILL_SUBS</a><a class="" href="../02_基本設計/TBL-T-007.html">T_BILL_INVOICES</a><a class="" href="../02_基本設計/TBL-T-008.html">T_USAGE_METER</a><a class="" href="../02_基本設計/TBL-T-009.html">T_ANNOUNCE_RCPT</a><a class="" href="../02_基本設計/TBL-T-010.html">T_INBOX_MSG</a><a class="" href="../02_基本設計/TBL-T-011.html">T_WITHDRAW_REQ</a><a class="" href="../02_基本設計/TBL-T-012.html">T_TERMS_AGREE</a><a class="" href="../02_基本設計/TBL-H-001.html">H_FAQ_REV</a><a class="" href="../02_基本設計/TBL-H-002.html">H_QUESTION_LOGS</a><a class="" href="../02_基本設計/TBL-H-003.html">H_NOTIF_LOGS</a><a class="" href="../02_基本設計/TBL-H-004.html">H_AUDIT_LOGS</a><a class="" href="../02_基本設計/TBL-H-005.html">H_ERROR_LOGS</a><a class="" href="../02_基本設計/TBL-TP-001.html">TP_FAQ_FTS</a><a class="" href="../02_基本設計/TBL-TP-002.html">TP_AI_THRESH_CACHE</a></div></div><a class="" href="../02_基本設計/04_ユースケース設計.html">04 ユースケース・シーケンス</a><a class="" href="../02_基本設計/05_課金請求設計.html">05 課金・請求設計</a><a class="" href="../02_基本設計/06_メール設計.html">06 メール設計</a><a class="" href="../02_基本設計/07_認証認可設計.html">07 認証・認可設計</a></div></div><div class="nav-sec" data-sec="03_将来対応/index.html"><a class="nav-top" href="../03_将来対応/index.html"><span class="n">将</span><span>将来対応</span><span class="caret">&#9656;</span></a><div class="nav-children"><a class="" href="../03_将来対応/index.html">概要</a><a class="" href="../03_将来対応/FUT01_認証・セキュリティ強化.html">FUT01 認証・セキュリティ強化</a><a class="" href="../03_将来対応/FUT02_検索・AI強化.html">FUT02 検索・AI強化</a><a class="" href="../03_将来対応/FUT03_国際化・リージョン.html">FUT03 国際化・リージョン</a><a class="" href="../03_将来対応/FUT04_プラン・課金・ブランド.html">FUT04 プラン・課金・ブランド</a><a class="" href="../03_将来対応/FUT05_通知・FAQ運用・連携.html">FUT05 通知・FAQ運用・連携</a><a class="" href="../03_将来対応/FUT06_個別チャット.html">FUT06 個別チャット</a><a class="" href="../03_将来対応/FUT06_個別チャット_要件.html">FUT06 個別チャット_要件</a><a class="" href="../03_将来対応/FUT06_個別チャット_詳細設計.html">FUT06 個別チャット_詳細設計</a></div></div></nav></aside>
+<main class="main"><article class="content">
+<div class="crumb"><span class="pill">要件定義</span><a class="muted" href="../01_要件定義/index.html">要件定義一覧</a><span class="muted">/</span><span class="muted">FR14: セキュリティ</span></div>
+<h1 id="fr14-セキュリティ">FR14: セキュリティ</h1>
+<aside class="page-summary">
+<p class="ps-lead"><strong>この要件は、利用者の機密データを暗号化して守り、不正アクセス・濫用・なりすましを防ぎ、重要操作を監査できるようにすることを目的とし、以下について記載します。</strong></p>
+<ul>
+<li>通信の暗号化(HTTPS)と、機密データの暗号化・安全なハッシュ保存</li>
+<li>API・ウィジェットへのレート制限、Bot 対策、不審リクエストの検知</li>
+<li>ウィジェット埋め込み元ドメインの検証と、最小権限によるデータ分離</li>
+<li>ユーザー管理操作の監査ログと、公開キーのローテーション</li>
+<li>不正利用の自動検知・自動ブロックと、管理者への即時通知</li>
+</ul>
+</aside>
+<p class="doc-meta"><span><b>版数</b> v1.2</span><span><b>更新</b> 2026-06-16</span><span><b>機能グループ</b> セキュリティ</span><span><b>優先度</b> Must</span><span class="dm-status">承認済</span></p>
+<h2 id="1-業務要件">1. 業務要件</h2>
+<div class="table-scroll">
+<table class="br-table">
+<thead>
+<tr>
+<th>ID</th>
+<th>観点</th>
+<th>ステークホルダ</th>
+<th>業務要件</th>
+<th>関連 NFR</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="BR-127">BR-127</td>
+<td>機密データ保護</td>
+<td>システム</td>
+<td>通信を行うときと機密データ(パスワード、トークン、課金情報等)を保存するときに、通信を暗号化し、機密データを暗号化または安全なハッシュで保存する。</td>
+<td><a href="index.html#NFR-301">NFR-301</a>, <a href="index.html#NFR-304">NFR-304</a>, <a href="index.html#NFR-305">NFR-305</a></td>
+</tr>
+<tr>
+<td id="BR-128">BR-128</td>
+<td>アクセス制御・データ分離</td>
+<td>システム</td>
+<td>データへアクセスするときに、最小権限の原則に従い、オーナー境界でデータを分離し、ユーザー種別ごとに認可する。これにより他契約のデータへ到達できないようにする。</td>
+<td><a href="index.html#NFR-302">NFR-302</a>, <a href="index.html#NFR-303">NFR-303</a></td>
+</tr>
+<tr>
+<td id="BR-129">BR-129</td>
+<td>濫用・過負荷防御</td>
+<td>システム</td>
+<td>API・ウィジェットへアクセスがあったときに、レート制限を適用し、必要に応じて Bot 対策(CAPTCHA 等)を行い、大量アクセス・未許可ドメイン等の不審リクエストを検知・記録する。</td>
+<td><a href="index.html#NFR-308">NFR-308</a>, <a href="index.html#NFR-316">NFR-316</a></td>
+</tr>
+<tr>
+<td id="BR-130">BR-130</td>
+<td>ウィジェット配信元制限</td>
+<td>システム</td>
+<td>ウィジェットが読み込まれるときに、埋め込み元ドメインを検証し、許可ドメイン以外からの読み込みを拒否する。</td>
+<td><a href="index.html#NFR-312">NFR-312</a></td>
+</tr>
+<tr>
+<td id="BR-131">BR-131</td>
+<td>操作監査</td>
+<td>システム</td>
+<td>アカウント利用者がユーザー管理操作(招待・再送・役割変更・離脱・削除等)を実行したときに、操作者・対象・変更前後の差分・実行時刻を監査ログとして改ざん検知可能な形で保持する。</td>
+<td><a href="index.html#NFR-306">NFR-306</a></td>
+</tr>
+<tr>
+<td id="BR-132">BR-132</td>
+<td>公開キー管理</td>
+<td>アカウント利用者 / システム</td>
+<td>
+<ul class="role-req">
+<li><strong>アカウント利用者：</strong>必要なときにウィジェット公開キーをローテーション(再発行)できる</li>
+<li><strong>システム：</strong>再発行時に旧キーを 24 時間の猶予付きで失効させ、猶予中は両キーで認証を許可する。公開キー自体には有効期限を設けない</li>
+</ul>
+</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-133">BR-133</td>
+<td>不正利用検知・自動ブロック</td>
+<td>システム</td>
+<td>大量送信・Bot 疑い・規約違反を検知したときに、自動でブロックし、管理者ユーザーへ即時通知して申し立て窓口を案内する。判定ルール・しきい値は契約別に上書きできる。</td>
+<td><a href="index.html#NFR-317">NFR-317</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="2-機能要件">2. 機能要件</h2>
+<div class="table-scroll">
+<table class="req-table">
+<thead>
+<tr>
+<th>ID</th>
+<th>要件</th>
+<th>関連業務要件</th>
+<th>優先度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="FR-170">FR-170</td>
+<td>通信は暗号化されること(HTTPS)</td>
+<td><a href="#BR-127">BR-127</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-171">FR-171</td>
+<td>保存データのうち機密度の高い項目(パスワード、トークン、課金情報等)は暗号化または安全なハッシュで保存されること</td>
+<td><a href="#BR-127">BR-127</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-172">FR-172</td>
+<td>API・ウィジェットに対してレート制限ができること</td>
+<td><a href="#BR-129">BR-129</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-173">FR-173</td>
+<td>ウィジェットの埋め込み元ドメインを検証できること(許可ドメイン以外からの読み込み拒否)</td>
+<td><a href="#BR-130">BR-130</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-175">FR-175</td>
+<td>管理者の操作ログを監査用に保持できること</td>
+<td><a href="#BR-131">BR-131</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-176">FR-176</td>
+<td>アクセス制御は最小権限の原則に従うこと(オーナー境界によるデータ分離、ユーザー種別別認可)</td>
+<td><a href="#BR-128">BR-128</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-177">FR-177</td>
+<td>Bot 対策(CAPTCHA 等)を必要に応じて実施できること</td>
+<td><a href="#BR-129">BR-129</a></td>
+<td><span class="badge badge-p1">P1</span></td>
+</tr>
+<tr>
+<td id="FR-178">FR-178</td>
+<td>不審なリクエスト(大量アクセス、未許可ドメイン等)を検知・記録できること</td>
+<td><a href="#BR-129">BR-129</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-178a">FR-178a</td>
+<td>メンバー管理に関する操作を監査ログに記録できること。
+<ol class="alpha">
+<li>記録対象の操作は、メンバー招待・招待再送・プロジェクト別ロール割当の変更・プロジェクトからの離脱・メンバー削除とする</li>
+<li>記録項目は、操作者・対象メンバー・変更前後のプロジェクト × ロール差分(該当時)・対応理由(任意)・実行時刻を含む</li>
+</ol></td>
+<td><a href="#BR-131">BR-131</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-193">FR-193</td>
+<td>ウィジェット公開キーのローテーション機能を管理者操作で提供すること。
+<ol class="alpha">
+<li>新キー発行と同時に、旧キーを <strong>24 時間の猶予期間</strong> 付きの失効予告状態とする</li>
+<li>猶予中は新旧両キーで認証を許可し、アクセスログを両キーで記録する(どちらの利用率が高いかを管理者が確認できる)</li>
+<li>猶予期間の経過後は、旧キーを完全失効とする</li>
+</ol></td>
+<td><a href="#BR-132">BR-132</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-194">FR-194</td>
+<td>ウィジェット公開キーには有効期限を設けないこと(無期限)。
+<ol class="alpha">
+<li>キーの失効は再発行(ローテーション、<a href="#FR-193">FR-193</a>)によってのみ行う</li>
+<li>再発行時は旧キーを 24 時間猶予で失効させる</li>
+<li>キー形式・失効方式・ローテーション猶予期間は基本設計を正本とする</li>
+</ol></td>
+<td><a href="#BR-132">BR-132</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-195">FR-195</td>
+<td>不正利用(大量送信・Bot 疑い・規約違反)の検知と自動ブロックを行うこと。
+<ol class="alpha">
+<li>自動検知はメインシステム側で行う</li>
+<li>判定ルール・しきい値は契約別に上書きできる(設定は他システムの操作を契機とする)</li>
+<li>自動ブロックはメインシステム側で実行する</li>
+<li>自動ブロック発火時は管理者ユーザーへ即時通知し、申し立て窓口を案内する</li>
+<li>連携方式と通知種別は基本設計を正本とする</li>
+</ol></td>
+<td><a href="#BR-133">BR-133</a></td>
+<td><span class="badge badge-p1">P1</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="callout tip"><i class="bi bi-lightbulb"></i><div><span class="c-title">未確定事項</span>v1.0 リリース時点で全項目確定済み。現在オープンな確認事項はありません。</div></div>
+<h2 id="更新履歴">更新履歴</h2>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>版数</th>
+<th>日付</th>
+<th>変更内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>v1.2</td>
+<td>2026-06-16</td>
+<td>記載スタイルを刷新テンプレート(業務要件 BR-127〜7 を先頭に定義、機能要件に関連業務要件列、長文要件を主旨 + 箇条書きへ分解、用語をアカウント利用者へ統一、他システム整合参照・連携 IF 参照を除去)へ移行。識別子(FR-170〜195)は不変</td>
+</tr>
+<tr>
+<td>v1.2</td>
+<td>2026-06-12</td>
+<td>MVP の認証・アクセス制御要件を整理</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="footer">FAQ AI ウィジェット SaaS / メインシステム &mdash; 要件定義 ・ new 形式ポータル</div>
+</article></main>
+<aside class="rightbar"><div class="rb-title">このページ</div><nav class="toc"><a class="back" href="../01_要件定義/index.html">&larr; 要件定義一覧へ</a><a class="" href="#1-業務要件">1. 業務要件</a><a class="" href="#2-機能要件">2. 機能要件</a><a class="" href="#更新履歴">更新履歴</a></nav></aside>
+</div>
+<script>(function(){function init(){var ls=[].slice.call(document.querySelectorAll(".rightbar .toc a[href^=\"#\"]"));if(!ls.length)return;var map=ls.map(function(a){var id=decodeURIComponent(a.getAttribute("href").slice(1));return{a:a,el:document.getElementById(id)};}).filter(function(x){return x.el;});function on(){var y=window.scrollY+130,cur=null;map.forEach(function(x){if(x.el.getBoundingClientRect().top+window.scrollY<=y)cur=x;});ls.forEach(function(a){a.classList.remove("active");});if(cur)cur.a.classList.add("active");}window.addEventListener("scroll",on,{passive:true});window.addEventListener("resize",on);on();}if(document.readyState!=="loading")init();else document.addEventListener("DOMContentLoaded",init);})();</script><script>(function(){var K="portal-nav-open",S="portal-nav-scroll";var sb=document.querySelector(".sidebar");function sid(s){return s.getAttribute("data-sec")||"";}try{var o=JSON.parse(localStorage.getItem(K)||"[]");document.querySelectorAll(".nav-sec").forEach(function(s){if(o.indexOf(sid(s))>=0)s.classList.add("open");});}catch(e){}function save(){try{var o=[];document.querySelectorAll(".nav-sec.open").forEach(function(s){o.push(sid(s));});localStorage.setItem(K,JSON.stringify(o));}catch(e){}}document.querySelectorAll(".nav-sec > .nav-top .caret").forEach(function(c){c.addEventListener("click",function(e){e.preventDefault();e.stopPropagation();c.closest(".nav-sec").classList.toggle("open");save();});});document.querySelectorAll(".nav a[href]").forEach(function(a){a.addEventListener("click",save);});try{var v=sessionStorage.getItem(S);if(v&&sb)sb.scrollTop=parseInt(v,10);}catch(e){}if(sb)sb.addEventListener("scroll",function(){try{sessionStorage.setItem(S,sb.scrollTop);}catch(e){}},{passive:true});})();</script>
+</body></html>
