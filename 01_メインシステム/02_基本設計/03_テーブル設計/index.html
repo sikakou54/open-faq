@@ -18,7 +18,7 @@
 <p class="ps-lead"><strong>このページは、メインシステムのデータベース(Cloudflare D1 / SQLite)に存在する全テーブルのスキーマ(カラム定義 / 主キー / 外部キー / インデックス / 制約 / コード値)を定義します。</strong></p>
 </aside>
 
-<p class="doc-meta"><span><b>版数</b> v2.4</span><span><b>更新</b> 2026-06-18</span><span class="dm-status">承認済</span></p>
+<p class="doc-meta"><span><b>版数</b> v2.5</span><span><b>更新</b> 2026-06-18</span><span class="dm-status">承認済</span></p>
 
 <h2 id="1-テーブル一覧">1. テーブル一覧</h2>
 <table>
@@ -285,36 +285,6 @@
 </tr>
 </tbody>
 </table>
-<h2 id="2-未決事項">2. 未決事項</h2>
-<p class="section-lead">現時点で確認待ち・既決の検討事項を記録します。次の表は各事項の内容・確認先・期限・ステータスを示します。</p>
-<table>
-<thead>
-<tr>
-<th>No</th>
-<th>内容</th>
-<th>確認先</th>
-<th>期限</th>
-<th>ステータス</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1</td>
-<td>利用上限テーブルの構成</td>
-<td>-</td>
-<td>-</td>
-<td>既決: レート制限は契約単位で <code>owner_quota_overrides</code>(<code>resource_kind</code> = レート種別のみ)、月次上限件数・無料枠はプロジェクト単位で <code>project_quota_limits</code>(§3.24)に分離</td>
-</tr>
-<tr>
-<td>2</td>
-<td><code>question_log_faq_refs</code> のスキーマ(本書 §3.13 で新規記述。詳細設計側との整合確認待ち)</td>
-<td>詳細設計 DD03</td>
-<td>-</td>
-<td>確認待ち</td>
-</tr>
-</tbody>
-</table>
-
 <h2 id="更新履歴">更新履歴</h2>
 <table>
 <thead>
@@ -325,6 +295,11 @@
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>2026-06-18</td>
+<td>v2.5</td>
+<td>未決事項を解消し §2 未決事項セクションを削除。#1(利用上限テーブル構成)は既決。#2(<code>question_log_faq_refs</code> スキーマ)は DD03 と整合確認済み(DD03 §3.1 に参照 FAQ を <code>relevance_score</code> 付きで記録する旨を明記)。</td>
+</tr>
 <tr>
 <td>2026-06-18</td>
 <td>v2.4</td>
