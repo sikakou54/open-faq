@@ -27,13 +27,13 @@
 
 <p class="doc-meta"><span><b>版数</b> v1.6</span><span><b>更新</b> 2026-06-18</span><span class="dm-status">承認済</span></p>
 
-<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">本ページの位置づけ</span>本ページは <a href="index.html">テーブル設計(一覧)</a>から「設計意図・取り決め」セクション(旧 §2.3 / §2.4 / §4 一式)を移設して集約したものです。テーブルの一覧と各テーブルのスキーマは <a href="index.html">テーブル設計</a>、<code>retention_class</code> の値の正本定義は <a href="index.html#22-retention_class-値の正本定義audit_logsretention_class">テーブル設計 §2.2</a> を参照してください。</div></div>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">本ページの位置づけ</span>本ページは <a href="index.html">テーブル設計(一覧)</a>から「設計意図・取り決め」セクション(旧 §2.3 / §2.4 / §4 一式)を移設して集約したものです。テーブルの一覧と各テーブルのスキーマは <a href="index.html">テーブル設計</a>、<code>retention_class</code> の値の正本定義は <a href="index.html#11-保持クラスの定義">テーブル設計 §1.1</a> を参照してください。</div></div>
 
 <h2 id="1-主要関係性">1. 主要関係性</h2>
-<p class="section-lead">主要なテーブル間の対応関係(カーディナリティ)を示します。まずドメイン別の主要 FK 関係を概観図で俯瞰し、続けて代表的な関係を表で整理します。</p>
+<p class="section-lead">主要テーブル間のカーディナリティを示します。概観図で俯瞰し、表で整理します。</p>
 
 <h3 id="11-テーブル関係概観図">1.1 テーブル関係概観図</h3>
-<p class="section-lead">主要な外部キー関係をドメイン(認証・ユーザー / プロジェクト・FAQ / 課金 / お知らせ)別にグルーピングした概観です。共通技術カラムや一部の従属テーブルは省略しています。完全な関係は <a href="../ER図.html">ER図.html</a> を参照してください。</p>
+<p class="section-lead">主要 FK 関係をドメイン(認証・ユーザー / プロジェクト・FAQ / 課金 / お知らせ)別にグルーピングした概観です。共通技術カラムと一部の従属テーブルは省略します。完全な関係は <a href="../ER図.html">ER図.html</a> を参照してください。</p>
 <pre class="mermaid"><code>erDiagram
   users ||--o| contract_owners : "行存在=オーナー"
   users ||--o{ project_users : "割当"
@@ -56,7 +56,7 @@
 </code></pre>
 
 <h3 id="12-関係一覧">1.2 関係一覧</h3>
-<p class="section-lead">ユーザー・契約者・プロジェクト・FAQ・未解決質問・お知らせの間の主要な関係と、それを表現する外部キーを並べたものです。</p>
+<p class="section-lead">ユーザー・契約者・プロジェクト・FAQ・未解決質問・お知らせ間の主要な関係と、それを表す外部キーの一覧です。</p>
 <table>
 <thead>
 <tr>
@@ -100,10 +100,10 @@
 </table>
 
 <h2 id="2-ユーザー権限保持方式3-表モデル">2. ユーザー権限保持方式(3 表モデル)</h2>
-<p class="section-lead">ユーザーの権限(オーナー / プロジェクト管理者 / メンバー)を 3 つのテーブルに分離して保持する方式を示します。まず役割分担を図解し、続けて各表の責務と運用上の取り決めを述べます。</p>
+<p class="section-lead">権限(オーナー / プロジェクト管理者 / メンバー)を 3 テーブルに分離保持する方式です。役割分担を図解し、各表の責務を述べます。</p>
 
 <h3 id="21-3-表モデル図">2.1 3 表モデル図</h3>
-<p class="section-lead"><code>users</code>(認証主体)に対し、<code>contract_owners</code> 行の存在がオーナーを表し、<code>project_users</code> 行がプロジェクト割当とロール(<code>admin</code> / <code>member</code>)を表します。<code>project_users.contract_owner_user_id</code> はオーナー(契約境界)を冗長保持します。</p>
+<p class="section-lead"><code>users</code>(認証主体)に対し、<code>contract_owners</code> 行の存在がオーナーを、<code>project_users</code> 行がプロジェクト割当とロール(<code>admin</code> / <code>member</code>)を表します。<code>project_users.contract_owner_user_id</code> はオーナー(契約境界)を冗長保持します。</p>
 <pre class="mermaid"><code>flowchart TD
   U["users<br/>(全ロール共通の認証主体 + PII)"]
   CO["contract_owners<br/>(オーナー専有属性)<br/>user_id PRIMARY KEY"]
@@ -125,14 +125,14 @@
 <li><code>project_users</code>: プロジェクト単位ロール(<code>admin</code> / <code>member</code>)。<code>(user_id, project_id)</code> 複合 PK + <code>contract_owner_user_id</code> 冗長保持(認可境界クエリ高速化と意図明示) + <code>granted_at</code> / <code>granted_by</code> 保持で行レベル監査</li>
 </ul>
 <p><strong>オーナーも <code>project_users</code> に行を持つ</strong>(プロジェクト作成時に <code>project_users(user_id=オーナー, project_id=新PJ, contract_owner_user_id=オーナー, role='admin', valid=1)</code> を自動 INSERT。FR-030a)。認可フロー先頭の <code>isOwner=true</code> bypass(<code>contract_owners</code> 行存在で判定)は維持し、<code>project_users</code> 行は critical 通知宛先解決と画面表示(プロジェクト管理者一覧)の事実情報として参照する。</p>
-<p><strong>最後の管理者保護判定</strong>(<code>E-AUTHZ-LAST-ADMIN-PROTECTED</code>): オーナー由来の <code>project_users</code> 行を判定対象から除外する。具体的には <code>pu.user_id NOT IN (SELECT user_id FROM contract_owners WHERE valid=1)</code> で「メンバー由来 admin 行」のみを抽出して件数判定する(オーナーは常に admin 行を持つため判定対象外)。</p>
-<p><strong><code>valid</code> カラムによる論理削除を全削除対象テーブルに適用する</strong>(対象テーブルは §6 削除モード表を正本)。<code>valid INTEGER NOT NULL DEFAULT 1 CHECK (valid IN (0,1))</code> を持つテーブルでは、論理削除は <code>UPDATE … SET valid=0</code> で表現する。論理削除データは <code>updated_at</code> 基準で 90 日経過後に物理削除バッチで物理削除する(<a href="../../03_詳細設計/DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html</a> を正本)。<code>deleted_at</code> カラムは持たず、論理削除日時は既存 <code>updated_at</code>(<code>valid</code> が 0 に更新された時刻)で代用する。例外テーブル: <code>audit_logs</code>(API 操作ログ専用、<code>created_at + retention 期間</code> で物理 DELETE)、<code>sessions</code>(<code>revoked_at</code> で代用)、法定保管 7 年テーブル(<code>billing_invoices</code> / <code>usage_metering</code> / <code>withdrawal_requests</code> / <code>terms_versions</code> / <code>terms_agreements</code>)、全契約横断テーブル(<code>email_suppression_list</code>)、ログ系(<code>notification_logs</code> / <code>error_logs</code> / <code>inbox_messages</code>)、トークン / 履歴系(<code>access_tokens</code> / <code>faq_revisions</code> / <code>faq_search_fts</code> / <code>question_log_faq_refs</code>)、M:N 関係系(<code>announcement_audiences</code>)。</p>
+<p><strong>最後の管理者保護判定</strong>(<code>E-AUTHZ-LAST-ADMIN-PROTECTED</code>): <code>pu.user_id NOT IN (SELECT user_id FROM contract_owners WHERE valid=1)</code> で「メンバー由来 admin 行」のみを抽出して件数判定する(オーナーは常に admin 行を持つため判定対象外)。</p>
+<p><strong><code>valid</code> カラムによる論理削除を全削除対象テーブルに適用する</strong>(対象は §6 削除モード表が正本)。<code>valid INTEGER NOT NULL DEFAULT 1 CHECK (valid IN (0,1))</code> を持つテーブルでは論理削除を <code>UPDATE … SET valid=0</code> で表す。論理削除データは <code>updated_at</code> 基準で 90 日経過後に物理削除バッチで物理削除する(<a href="../../03_詳細設計/DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html</a> 正本)。<code>deleted_at</code> は持たず、論理削除日時は <code>updated_at</code>(<code>valid</code> が 0 に更新された時刻)で代用する。例外テーブル: <code>audit_logs</code>(API 操作ログ専用、<code>created_at + retention 期間</code> で物理 DELETE)、<code>sessions</code>(<code>revoked_at</code> で代用)、法定保管 7 年テーブル(<code>billing_invoices</code> / <code>usage_metering</code> / <code>withdrawal_requests</code> / <code>terms_versions</code> / <code>terms_agreements</code>)、全契約横断テーブル(<code>email_suppression_list</code>)、ログ系(<code>notification_logs</code> / <code>error_logs</code> / <code>inbox_messages</code>)、トークン / 履歴系(<code>access_tokens</code> / <code>faq_revisions</code> / <code>faq_search_fts</code> / <code>question_log_faq_refs</code>)、M:N 関係系(<code>announcement_audiences</code>)。</p>
 
 <h2 id="3-設計意図の補足">3. 設計意図の補足</h2>
-<p class="section-lead">各テーブルの概要メタからは省いた、テーブル横断の設計意図(契約境界キーの持ち方・<code>retention_class</code> 分類・論理削除と物理削除バッチ)をここに一元化します。</p>
+<p class="section-lead">各テーブルの概要メタから省いたテーブル横断の設計意図(契約境界キーの持ち方・<code>retention_class</code> 分類・論理削除と物理削除バッチ)をここに集約します。</p>
 
 <h3 id="31-契約境界キー-contract_owner_user_id">3.1 契約境界キー <code>contract_owner_user_id</code></h3>
-<p class="section-lead">マルチテナント(SaaS)分離の境界キーが <code>contract_owner_user_id</code> です。多くのテーブルは本列を直接持ちますが、一部のテーブルは親テーブル経由で契約所属を間接表現します。下表でどのテーブルが直接保持 / 間接表現かを整理します。</p>
+<p class="section-lead">マルチテナント(SaaS)分離の境界キーが <code>contract_owner_user_id</code> です。多くのテーブルは本列を直接持ち、一部は親テーブル経由で契約所属を間接表現します。下表で直接保持 / 間接表現を整理します。</p>
 <table>
 <thead>
 <tr>
@@ -166,7 +166,7 @@
 </table>
 
 <h3 id="32-retention_class-分類の設計意図">3.2 <code>retention_class</code> 分類の設計意図</h3>
-<p class="section-lead">監査ログの保持クラス(<code>retention_class</code> = <code>general</code> / <code>billing</code>)は、どの保持規制に対応するかを表します。値の正本表は <a href="index.html#22-retention_class-値の正本定義audit_logsretention_class">テーブル設計 §2.2</a> を参照してください。</p>
+<p class="section-lead">監査ログの保持クラス(<code>retention_class</code> = <code>general</code> / <code>billing</code>)は対応する保持規制を表します。値の正本表は <a href="index.html#11-保持クラスの定義">テーブル設計 §1.1</a> を参照してください。</p>
 <table>
 <thead>
 <tr>
@@ -188,10 +188,10 @@
 </tr>
 </tbody>
 </table>
-<p>値の意味・代表例の正本は <a href="index.html#22-retention_class-値の正本定義audit_logsretention_class">テーブル設計 §2.2</a>、保持規制の詳細は <a href="../09_セキュリティ設計.html">09_セキュリティ設計.html §7</a> を参照する。</p>
+<p>保持規制の詳細は <a href="../09_セキュリティ設計.html">09_セキュリティ設計.html §7</a> を参照する。</p>
 
 <h3 id="33-論理削除と物理削除バッチ">3.3 論理削除(<code>valid</code>)と物理削除バッチ・匿名化モード</h3>
-<p class="section-lead">論理削除は <code>valid=0</code> で表現し、90 日経過後に物理削除バッチが <code>data_deletion_mode</code>(<code>physical</code> / <code>anonymize</code>)に従って実体を処理する取り決めです。詳細表は §6 データ削除モードを正本とします。</p>
+<p class="section-lead">論理削除は <code>valid=0</code> で表し、90 日経過後に物理削除バッチが <code>data_deletion_mode</code>(<code>physical</code> / <code>anonymize</code>)に従って実体を処理します。詳細表は §6 が正本です。</p>
 <ul>
 <li><strong>論理削除</strong>: 全削除対象テーブル(§6 削除モード表が正本)で <code>UPDATE … SET valid=0</code>。論理削除日時は <code>updated_at</code> で代用(<code>deleted_at</code> は持たない)</li>
 <li><strong>物理削除バッチ(90 日)</strong>: 日次バッチが <code>valid=0 AND updated_at &lt; now() - 90d</code> の行を <code>contract_owners.data_deletion_mode</code> に従って処理する(<a href="../../03_詳細設計/DD13_バッチ・非同期処理.html">DD13</a> 正本)</li>
@@ -199,10 +199,10 @@
 </ul>
 
 <h2 id="4-命名規則型方針saas-データ分離">4. 命名規則・型方針 / SaaS データ分離</h2>
-<p class="section-lead">全テーブルに共通する命名規則・型方針と、SaaS マルチテナントのデータ分離方式を示します。</p>
+<p class="section-lead">全テーブル共通の命名規則・型方針と、SaaS マルチテナントのデータ分離方式を示します。</p>
 
 <h3 id="41-命名規則型方針">4.1 命名規則・型方針</h3>
-<p class="section-lead">テーブル名・カラム名・データ型に関する全テーブル共通の命名規則と型方針を示します。次の表は対象と規則を並べたものです。</p>
+<p class="section-lead">テーブル名・カラム名・データ型の全テーブル共通規則です。次の表に対象と規則を並べます。</p>
 <table>
 <thead>
 <tr>
@@ -247,7 +247,7 @@
 </table>
 
 <h3 id="43-saas-データ分離">4.2 SaaS データ分離</h3>
-<p class="section-lead">契約境界キー <code>contract_owner_user_id</code> を用いたマルチテナント分離の概念と判定方式を示します。まず概念図で分離の仕組みを俯瞰します。</p>
+<p class="section-lead">契約境界キー <code>contract_owner_user_id</code> によるマルチテナント分離の概念と判定方式です。概念図で分離の仕組みを俯瞰します。</p>
 <pre class="mermaid"><code>flowchart TD
   subgraph A["契約 A(オーナー A)"]
     AO["contract_owners(user_id=A)"]
@@ -279,7 +279,7 @@
 </ul>
 
 <h3 id="44-全契約横断テーブルcontract_owner_user_id-を持たない">4.3 全契約横断テーブル(<code>contract_owner_user_id</code> を持たない)</h3>
-<p class="section-lead">契約境界キー <code>contract_owner_user_id</code> を持たない、全契約横断で共有するテーブルを列挙します。次の表は各テーブルと横断保持とする理由を示します。</p>
+<p class="section-lead">契約境界キーを持たず全契約横断で共有するテーブルを、横断保持とする理由とともに列挙します。</p>
 <table>
 <thead>
 <tr>
@@ -304,10 +304,10 @@
 </table>
 
 <h2 id="45-状態遷移">5. 状態遷移</h2>
-<p class="section-lead">状態カラムを持つ主要テーブル(FAQ / 未解決質問 / 通知 / 契約)の状態遷移を定義します。<code>inquiries.status</code> と <code>contract_owners.contract_status</code> は共有概念の正本としてここで定義します。主要 2 つは状態遷移図で俯瞰してから表で示します。</p>
+<p class="section-lead">状態カラムを持つ主要テーブル(FAQ / 未解決質問 / 通知 / 契約)の状態遷移を定義します。<code>inquiries.status</code> と <code>contract_owners.contract_status</code> はここが共有概念の正本です。主要 2 つは状態遷移図で俯瞰し表で示します。</p>
 
 <h3 id="50-主要状態遷移図">5.0 主要状態遷移図</h3>
-<p class="section-lead">共有概念の正本である契約状態(<code>contract_owners.contract_status</code>)と未解決質問の状況(<code>inquiries.status</code>)を状態遷移図で示します。</p>
+<p class="section-lead">共有概念正本である契約状態(<code>contract_owners.contract_status</code>)と未解決質問の状況(<code>inquiries.status</code>)を状態遷移図で示します。</p>
 <pre class="mermaid"><code>stateDiagram-v2
   direction LR
   [*] --&gt; active : 契約作成
@@ -370,7 +370,7 @@
 </tr>
 </tbody>
 </table>
-<p><strong>運用方針</strong>: <code>draft</code> / <code>published</code> / <code>hidden</code> の 3 状態は相互に自由遷移する。専用の公開 API・状態遷移ガードは持たない。<code>published</code> への変更が管理者(admin)による公開前の内容確認(FR-045)を兼ねる。</p>
+<p><strong>運用方針</strong>: <code>draft</code> / <code>published</code> / <code>hidden</code> の 3 状態は相互に自由遷移し、専用の公開 API・状態遷移ガードは持たない。<code>published</code> への変更が管理者(admin)による公開前の内容確認(FR-045)を兼ねる。</p>
 
 <h3 id="452-未解決質問の状況遷移inquiriesstatus共有概念正本">5.2 未解決質問の状況遷移(<code>inquiries.status</code>、共有概念正本)</h3>
 <table>
@@ -569,10 +569,10 @@
 
 <h2 id="46-データ削除モード">6. データ削除モード</h2>
 <p class="section-lead">退会・削除時のデータ処理モード(物理削除 / 匿名化)と、対象テーブルごとの削除挙動を定義します。</p>
-<p><strong>設定</strong>: <code>contract_owners.data_deletion_mode</code>(<code>physical</code> / <code>anonymize</code>、初期値 <code>physical</code>)で保持する独立カラム。</p>
-<p><strong>論理削除</strong> は <code>UPDATE … SET valid=0</code> で行い、90 日経過後の物理削除バッチ(DD13)で物理削除モード(<code>physical</code> / <code>anonymize</code>)に従って実体を消去する。メンバーのプロジェクト割当解除は対象 <code>project_users</code> 行だけを論理削除する。オーナーによるメンバーの契約からの削除は <code>users</code> と当該ユーザーの全 <code>project_users</code> を論理削除する。プロジェクト削除は <code>projects</code> と関連 <code>project_users</code> 行を論理削除する。</p>
+<p><strong>設定</strong>: <code>contract_owners.data_deletion_mode</code>(<code>physical</code> / <code>anonymize</code>、初期値 <code>physical</code>)の独立カラムで保持する。</p>
+<p><strong>論理削除</strong> は <code>UPDATE … SET valid=0</code> で行い、90 日経過後の物理削除バッチ(DD13)が <code>data_deletion_mode</code>(<code>physical</code> / <code>anonymize</code>)に従って実体を消去する。論理削除対象は、メンバーのプロジェクト割当解除=対象 <code>project_users</code> 行、オーナーによるメンバー削除=<code>users</code> + 当該ユーザーの全 <code>project_users</code>、プロジェクト削除=<code>projects</code> + 関連 <code>project_users</code> 行。</p>
 <h3 id="461-削除モード対応表">6.1 削除モード対応表</h3>
-<p class="section-lead">各テーブルの論理削除・物理削除・匿名化の挙動を一覧します。次の表は対象テーブルごとに 3 モードの処理内容を並べたものです。</p>
+<p class="section-lead">各テーブルの論理削除・物理削除・匿名化の挙動を一覧します。</p>
 <table>
 <thead>
 <tr>
@@ -706,7 +706,7 @@
 </ul>
 
 <h2 id="48-pii-取扱">8. PII 取扱</h2>
-<p class="section-lead">個人情報(PII)を含むカラムの取扱方針を示します。次の表は対象カラムと暗号化・ハッシュ等の保護方式を並べたものです。詳細は <a href="../09_セキュリティ設計.html">09_セキュリティ設計.html</a> が正本です。</p>
+<p class="section-lead">個人情報(PII)を含むカラムの取扱方針を示します。対象カラムと暗号化・ハッシュ等の保護方式を次の表に並べます。詳細は <a href="../09_セキュリティ設計.html">09_セキュリティ設計.html</a> が正本です。</p>
 <table>
 <thead>
 <tr>
@@ -744,7 +744,7 @@
 <p>詳細は <a href="../09_セキュリティ設計.html">09_セキュリティ設計.html §3 / §8</a> を正本とする。</p>
 
 <h2 id="49-インデックス方針">9. インデックス方針</h2>
-<p class="section-lead">インデックス設計の全テーブル共通方針を示します。次の表は方針の観点とその内容を並べたものです。</p>
+<p class="section-lead">インデックス設計の全テーブル共通方針を、観点とその内容で次の表に示します。</p>
 <table>
 <thead>
 <tr>
@@ -781,7 +781,7 @@
 </table>
 
 <h2 id="10-er-図">10. ER 図</h2>
-<p class="section-lead">完全な ER 図は本書とは別の HTML ファイルで管理します(md に直接 Mermaid を埋め込むと PDF 出力時に縮小されすぎて可読性が落ちるため)。本ページ §1.1 の概観図は主要 FK の俯瞰用です。</p>
+<p class="section-lead">完全な ER 図は別 HTML で管理します(Mermaid を直接埋め込むと PDF 出力時に縮小されすぎ可読性が落ちるため)。本ページ §1.1 の概観図は主要 FK の俯瞰用です。</p>
 <ul>
 <li>ER 図は <a href="../ER図.html">ER図.html</a> で管理する。HTML 上でブラウザサイドレンダリング + ズーム / パン / 全体表示ボタンを利用可能</li>
 <li><strong>掲載カラム</strong>: 主要キー(PK / FK)+ 業務キー(<code>inquiry_code</code> / <code>widget_public_key</code> 等)+ 状態カラム(<code>inquiries.status</code> / <code>contract_status</code> 等)+ 特徴的なカラム(<code>actor_user_id</code> 等)</li>
