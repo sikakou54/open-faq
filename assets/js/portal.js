@@ -67,7 +67,7 @@
           var grpOpen = sysOpen && pageHit(p);
           h.push('<li><details class="nav-subcat"'+(grpOpen?' open':'')+'>');
           h.push('<summary>'+esc(p.title)+'</summary><ul>');
-          if(p.url){ h.push('<li>'+link({url:p.url,title:'画面一覧・共通',kind:p.kind})+'</li>'); }
+          if(p.url){ h.push('<li>'+link({url:p.url,title:'概要',kind:p.kind})+'</li>'); }
           p.children.forEach(function(c){ h.push('<li>'+link(c)+'</li>'); });
           h.push('</ul></details></li>');
         } else {
