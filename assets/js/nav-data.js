@@ -371,9 +371,9 @@ window.NAV = [
       "kind": "group",
       "children": [
        { "url": "01_メインシステム/02_基本設計/03_テーブル設計/テーブル構造設計.html", "title": "テーブル構造設計", "kind": "md" },
-       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/users.html", "title": "TBL-001 users", "kind": "md" },
-       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/contract_owners.html", "title": "TBL-002 contract_owners", "kind": "md" },
-       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/project_users.html", "title": "TBL-003 project_users", "kind": "md" },
+       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/owners.html", "title": "TBL-001 owners", "kind": "md" },
+       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/project_users.html", "title": "TBL-002 project_users", "kind": "md" },
+       { "url": "01_メインシステム/02_基本設計/03_テーブル設計/project_user_assignments.html", "title": "TBL-003 project_user_assignments", "kind": "md" },
        { "url": "01_メインシステム/02_基本設計/03_テーブル設計/sessions.html", "title": "TBL-004 sessions", "kind": "md" },
        { "url": "01_メインシステム/02_基本設計/03_テーブル設計/access_tokens.html", "title": "TBL-005 access_tokens", "kind": "md" },
        { "url": "01_メインシステム/02_基本設計/03_テーブル設計/projects.html", "title": "TBL-006 projects", "kind": "md" },
