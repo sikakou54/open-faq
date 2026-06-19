@@ -18,7 +18,7 @@
 <p class="ps-lead"><strong>このページは、メインシステム API の認可ヘルパ(<code>requireTenant</code> / <code>requireOwner</code> / <code>requireProjectRole</code> / <code>requireInquiry</code> 等)の判定ロジックと、オーナー境界によるデータ分離(NFR-301)の実装方針を定義します。</strong> 他オーナーのデータには漏洩防止のため 403 ではなく 404 を返します。</p>
 </aside>
 
-<p class="doc-meta"><span><b>版数</b> v1.2</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+<p class="doc-meta"><span><b>版数</b> v1.3</span><span><b>更新</b> 2026-06-19</span><span class="dm-status">承認済</span></p>
 
 <h2 id="1-対象範囲">1. 対象範囲</h2>
 <p class="section-lead">本 DD が実装方針を定める機能・ライブラリを示します。次の表は、対象となる NFR / FR と認可ヘルパの実装ファイルを並べたもので、契約境界・オーナー判定・プロジェクトロール・未解決質問境界の各ヘルパが範囲であることを一望できます。</p>
@@ -170,34 +170,41 @@
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p><code>PATCH</code> 成功時は質問数の <code>source='owner'</code> 行だけを upsert する。FAQ無料枠の内部解決は請求処理用ヘルパでデフォルト値を用い、SCR-021 の認可・レスポンス・更新処理から分離する。</p>
 <h3 id="31b-メンバー割当解除の認可">3.1b メンバー割当解除の認可</h3>
-<div class="sourceCode" id="cb3"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fu">requireRemovableProjectGrant</span>(c<span class="op">:</span> Context<span class="op">,</span> projectId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span> userId<span class="op">:</span> <span class="dt">string</span>) {</span>
+<div class="sourceCode" id="cb3"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fu">requireRemovableProjectGrant</span>(c<span class="op">:</span> Context<span class="op">,</span> projectId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span> projectUserId<span class="op">:</span> <span class="dt">string</span>) {</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> <span class="fu">requireProjectRole</span>(c<span class="op">,</span> projectId<span class="op">,</span> <span class="st">&#39;admin&#39;</span>)<span class="op">;</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> principal <span class="op">=</span> c<span class="op">.</span><span class="fu">get</span>(<span class="st">&#39;principal&#39;</span>)<span class="op">;</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (principal<span class="op">.</span><span class="at">userId</span> <span class="op">===</span> userId) <span class="cf">throw</span> <span class="fu">appError</span>(<span class="st">&#39;E-AUTHZ-SELF-MUTATION&#39;</span>)<span class="op">;</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="cf">await</span> <span class="fu">isContractOwner</span>(c<span class="op">.</span><span class="at">env</span><span class="op">.</span><span class="at">DB</span><span class="op">,</span> userId)) <span class="cf">throw</span> <span class="fu">appError</span>(<span class="st">&#39;E-AUTHZ-OWNER-PROTECTED&#39;</span>)<span class="op">;</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> <span class="fu">requireSameTenantUser</span>(c<span class="op">,</span> userId)<span class="op">;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 自己割当解除の禁止(プロジェクトユーザー本人のみ該当。オーナーは project_users 外なので一致しない)</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (principal<span class="op">.</span><span class="at">actorType</span> <span class="op">===</span> <span class="st">&#39;project_user&#39;</span> <span class="op">&amp;&amp;</span> principal<span class="op">.</span><span class="at">actorId</span> <span class="op">===</span> projectUserId) <span class="cf">throw</span> <span class="fu">appError</span>(<span class="st">&#39;E-AUTHZ-SELF-MUTATION&#39;</span>)<span class="op">;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 対象は project_users(オーナー除外の完全分離)に限定。owners は割当対象外</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> <span class="fu">requireSameTenantProjectUser</span>(c<span class="op">,</span> projectUserId)<span class="op">;</span></span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p><code>DELETE /projects/{id}/members/{userId}</code> は <code>requireRemovableProjectGrant</code> を使用する。他プロジェクト有効割当数は認可エラーには使わず、割当解除後にアカウントを論理削除するかを決める業務処理で参照する。</p>
+<p><code>DELETE /projects/{id}/members/{userId}</code>(パスの <code>userId</code> は対象 <code>project_users.id</code>)は <code>requireRemovableProjectGrant</code> を使用する。他プロジェクト有効割当数は認可エラーには使わず、割当解除後にプロジェクトユーザーを論理削除するかを決める業務処理で参照する。</p>
 <h3 id="32-principal-構築参照のみ">3.2 Principal 構築（参照のみ）</h3>
 <p><code>c.get('principal')</code> で取得する Principal の構築フローは <a href="../02_基本設計/08_認証・認可設計.html">../02_基本設計/08_認証・認可設計.html §6.1</a> を正本とする。Principal には以下を含む。</p>
 <ul>
-<li><code>userId</code>: ユーザー ID(オーナー / プロジェクト管理者 / メンバー全員)</li>
-<li><code>contractOwnerUserId</code>: 所属契約の owner user_id(本人がオーナーなら自身の userId、メンバーなら所属契約の owner user_id)</li>
-<li><code>actorRole</code>: 操作者種別(管理者 = <code>users</code> 行 / システム)。Principal 構築時に決定され、<code>audit_logs.actor_role</code> の値(<code>admin</code> / <code>system</code>)に対応。ウィジェット利用者は管理コンソールPrincipalを構築しない</li>
-<li><code>isOwner</code>: オーナー判定(<code>contract_owners</code> 行存在で判定 = <code>co.user_id IS NOT NULL</code>)</li>
-<li><code>projectRoles</code>: <code>Map&lt;projectId, 'admin' | 'member'&gt;</code>。オーナー / メンバー共通で <code>project_users WHERE valid=1</code> を 1 クエリで取得して構築する。認可ヘルパは <code>isOwner=true</code> のときに <code>projectRoles</code> の中身を参照せず bypass する優先順位を保つ。<code>projectRoles</code> は通知宛先解決と画面表示の事実情報として参照可能</li>
+<li><code>actorType</code>: アクター種別(<code>owner</code> / <code>project_user</code> / <code>system</code>)。認証時にどちらのマスタ(<code>owners</code> / <code>project_users</code>)で認証されたかにより決定する</li>
+<li><code>actorId</code>: アクター ID(<code>actorType='owner'</code> なら <code>owners.id</code>、<code>actorType='project_user'</code> なら <code>project_users.id</code>)</li>
+<li><code>contractOwnerUserId</code>: 所属契約の <code>owners.id</code>(本人がオーナーなら自身の <code>owners.id</code>、プロジェクトユーザーなら <code>project_users.contract_owner_user_id</code>)</li>
+<li><code>actorRole</code>: 操作者種別(<code>owner</code> / <code>project_user</code> / <code>system</code>)。Principal 構築時に決定され、<code>audit_logs.actor_type</code> の値に対応。ウィジェット利用者は管理コンソールPrincipalを構築しない</li>
+<li><code>isOwner</code>: オーナー判定(<code>owners</code> 行で認証されたか = <code>actorType='owner'</code>)</li>
+<li><code>projectRoles</code>: <code>Map&lt;projectId, 'admin' | 'member'&gt;</code>。プロジェクトユーザーは <code>project_user_assignments WHERE valid=1</code> を 1 クエリで取得して構築する(オーナーは <code>isOwner</code> 全権 bypass のため割当行を持たず、<code>projectRoles</code> は空でよい)。認可ヘルパは <code>isOwner=true</code> のときに <code>projectRoles</code> の中身を参照せず bypass する優先順位を保つ。<code>projectRoles</code> は通知宛先解決と画面表示の事実情報として参照可能</li>
 </ul>
 <h4 id="principal-構築クエリ参考基本設計と同期">Principal 構築クエリ(参考、基本設計と同期)</h4>
-<div class="sourceCode" id="cb4"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> u.<span class="kw">id</span>, u.<span class="kw">role</span>, u.status, u.valid,</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>       (co.user_id <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw">NULL</span>)                          <span class="kw">AS</span> is_owner,</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>       <span class="fu">COALESCE</span>(co.user_id, pu.contract_owner_user_id)   <span class="kw">AS</span> contract_owner_user_id</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> users u</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">LEFT</span> <span class="kw">JOIN</span> contract_owners co <span class="kw">ON</span> co.user_id <span class="op">=</span> u.<span class="kw">id</span> <span class="kw">AND</span> co.valid <span class="op">=</span> <span class="dv">1</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">LEFT</span> <span class="kw">JOIN</span> project_users   pu <span class="kw">ON</span> pu.user_id <span class="op">=</span> u.<span class="kw">id</span> <span class="kw">AND</span> pu.valid <span class="op">=</span> <span class="dv">1</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> u.<span class="kw">id</span> <span class="op">=</span> ?<span class="dv">1</span> <span class="kw">AND</span> u.valid <span class="op">=</span> <span class="dv">1</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="kw">LIMIT</span> <span class="dv">1</span>;</span></code></pre></div>
-<p><code>projectRoles</code> は別途 <code>SELECT project_id, role FROM project_users WHERE user_id=? AND valid=1</code> で取得する。</p>
+<p>オーナーとプロジェクトユーザーは別マスタ・別認証系統のため、Principal 構築クエリも <code>actorType</code> ごとに分岐する。セッションの <code>actor_type</code> がどちらのマスタで認証されたかを示す。</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- actor_type = &#39;owner&#39; の場合(isOwner=true, contractOwnerUserId = 自身の id)</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> o.<span class="kw">id</span>, o.status, o.valid, o.contract_status,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>       <span class="dv">1</span>                  <span class="kw">AS</span> is_owner,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>       o.<span class="kw">id</span>               <span class="kw">AS</span> contract_owner_user_id</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> owners o</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> o.<span class="kw">id</span> <span class="op">=</span> ?<span class="dv">1</span> <span class="kw">AND</span> o.valid <span class="op">=</span> <span class="dv">1</span> <span class="kw">LIMIT</span> <span class="dv">1</span>;</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">-- actor_type = &#39;project_user&#39; の場合(isOwner=false, contractOwnerUserId = 所属オーナー)</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> pu.<span class="kw">id</span>, pu.status, pu.valid,</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>       <span class="dv">0</span>                          <span class="kw">AS</span> is_owner,</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>       pu.contract_owner_user_id  <span class="kw">AS</span> contract_owner_user_id</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> project_users pu</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> pu.<span class="kw">id</span> <span class="op">=</span> ?<span class="dv">1</span> <span class="kw">AND</span> pu.valid <span class="op">=</span> <span class="dv">1</span> <span class="kw">LIMIT</span> <span class="dv">1</span>;</span></code></pre></div>
+<p><code>projectRoles</code> は <code>actorType='project_user'</code> のときのみ <code>SELECT project_id, role FROM project_user_assignments WHERE project_user_id=? AND valid=1</code> で取得する(オーナーは <code>isOwner</code> 全権 bypass のため取得しない)。</p>
 <h3 id="33-オーナー境界nfr-301">3.3 オーナー境界（NFR-301）</h3>
 <p>すべての CRUD API は <strong><code>contract_owner_user_id</code> フィルタを必須</strong> とする。<code>requireTenant</code> / <code>requireProject</code> / <code>requireInquiry</code> で境界チェックを実施し、他オーナーのデータには 404 を返す（漏洩防止のため 403 ではなく 404）。</p>
 <h3 id="34-不正アクセスの監査記録">3.4 不正アクセスの監査記録</h3>
@@ -251,7 +258,7 @@
 </tr>
 <tr>
 <td>結合</td>
-<td>プロジェクト割当がない(<code>project_users</code> 行なし)メンバーによる FAQ 編集試行で 404 偽装(<code>E-AUTHZ-PROJECT-DENIED</code>)/ 該当 PJ の <code>member</code>+ なら 200</td>
+<td>プロジェクト割当がない(<code>project_user_assignments</code> 行なし)プロジェクトユーザーによる FAQ 編集試行で 404 偽装(<code>E-AUTHZ-PROJECT-DENIED</code>)/ 該当 PJ の <code>member</code>+ なら 200</td>
 </tr>
 <tr>
 <td>異常系</td>

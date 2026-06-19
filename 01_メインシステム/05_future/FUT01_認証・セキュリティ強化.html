@@ -155,15 +155,15 @@
 </table>
 <h3 id="23-詳細設計バックログ">2.3 詳細設計バックログ</h3>
 <h4 id="契約-mfa-強制ddl-候補">契約 MFA 強制(DDL 候補)</h4>
-<div class="sourceCode" id="cb1"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- 契約オーナー専有属性に追加(v1.11 で `accounts` を `users` / `contract_owners` / `project_users` に 3 表分割済み)</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> contract_owners</span>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- 契約オーナー専有属性に追加(v1.11 で 2 マスタ完全分離: `owners` / `project_users` / `project_user_assignments` へ再編済み)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> owners</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">ADD</span> <span class="kw">COLUMN</span> mfa_enforcement TEXT <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">DEFAULT</span> <span class="st">&#39;off&#39;</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">CHECK</span> (mfa_enforcement <span class="kw">IN</span> (<span class="st">&#39;off&#39;</span>, <span class="st">&#39;admin_only&#39;</span>, <span class="st">&#39;all_members&#39;</span>));</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> owner_mfa_policy_audit_logs (</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">id</span>                      TEXT <span class="kw">PRIMARY</span> <span class="kw">KEY</span>,</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  contract_owner_user_id  TEXT <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">REFERENCES</span> contract_owners(user_id) <span class="kw">ON</span> <span class="kw">DELETE</span> <span class="kw">CASCADE</span>,</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  changed_by              TEXT <span class="kw">REFERENCES</span> users(<span class="kw">id</span>) <span class="kw">ON</span> <span class="kw">DELETE</span> <span class="kw">SET</span> <span class="kw">NULL</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  contract_owner_user_id  TEXT <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">REFERENCES</span> owners(<span class="kw">id</span>) <span class="kw">ON</span> <span class="kw">DELETE</span> <span class="kw">CASCADE</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  changed_by              TEXT <span class="kw">REFERENCES</span> owners(<span class="kw">id</span>) <span class="kw">ON</span> <span class="kw">DELETE</span> <span class="kw">SET</span> <span class="kw">NULL</span>,</span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  before_policy           TEXT <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  after_policy            TEXT <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  reason                  TEXT,</span>
@@ -177,7 +177,7 @@
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> owner_key_versions (</span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">id</span>                      TEXT <span class="kw">PRIMARY</span> <span class="kw">KEY</span>,</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  contract_owner_user_id  TEXT <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">REFERENCES</span> contract_owners(user_id) <span class="kw">ON</span> <span class="kw">DELETE</span> <span class="kw">CASCADE</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  contract_owner_user_id  TEXT <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">REFERENCES</span> owners(<span class="kw">id</span>) <span class="kw">ON</span> <span class="kw">DELETE</span> <span class="kw">CASCADE</span>,</span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  key_version             <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  status                  TEXT <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  created_at              TEXT <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
@@ -205,7 +205,7 @@
 <tr>
 <td>FUT-DD-SEC-002</td>
 <td>利用者側 MFA</td>
-<td><code>contract_owners.mfa_enforcement</code>、MFA 登録 API、回復コード、未設定時ログイン制御、監査ログ</td>
+<td><code>owners.mfa_enforcement</code>、MFA 登録 API、回復コード、未設定時ログイン制御、監査ログ</td>
 <td>FUT-REQ-SEC-002</td>
 </tr>
 </tbody>
@@ -268,7 +268,7 @@
 </tr>
 <tr>
 <td>テーブル</td>
-<td><code>contract_owners.mfa_enforcement</code> 列追加、<code>owner_mfa_policy_audit_logs</code>、<code>chat_messages.body_ciphertext</code> / <code>body_nonce</code> / <code>body_key_version</code>、<code>owner_key_versions</code></td>
+<td><code>owners.mfa_enforcement</code> 列追加、<code>owner_mfa_policy_audit_logs</code>、<code>chat_messages.body_ciphertext</code> / <code>body_nonce</code> / <code>body_key_version</code>、<code>owner_key_versions</code></td>
 </tr>
 <tr>
 <td>運用</td>
@@ -296,7 +296,7 @@
 </tr>
 <tr>
 <td>依存関係</td>
-<td>共有概念の <code>accounts</code> モデル拡張、PII 暗号化(メイン正本)・暗号鍵管理(メイン正本)との整合</td>
+<td>共有概念の 2 マスタ完全分離ユーザーモデル(<code>owners</code> / <code>project_users</code> / <code>project_user_assignments</code>)拡張、PII 暗号化(メイン正本)・暗号鍵管理(メイン正本)との整合</td>
 </tr>
 </tbody>
 </table>

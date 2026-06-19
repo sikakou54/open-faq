@@ -18,7 +18,7 @@
 <p class="ps-lead"><strong>このページは、利用者側アカウント(オーナー / プロジェクト管理者 / メンバー)の登録・有効化・割当解除・退会と、それに付随する認証認可の実装ロジック(モジュール構成・トランザクション・URL ルーティング)を定義します。</strong></p>
 </aside>
 
-<p class="doc-meta"><span><b>版数</b> v1.4</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+<p class="doc-meta"><span><b>版数</b> v1.5</span><span><b>更新</b> 2026-06-19</span><span class="dm-status">承認済</span></p>
 
 <h2 id="1-対象範囲">1. 対象範囲</h2>
 <p class="section-lead">本書が実装ロジックを扱う機能・画面・API・テーブルを一覧します。次の表は、認証認可と管理者ユーザー操作・規約同意・招待トークン検証にかかわる対象を、FR ID / SCR ID / API パス / テーブル名で示したものです。</p>
@@ -103,8 +103,8 @@
 </tr>
 <tr>
 <td>テーブル</td>
-<td><code>users</code> <code>contract_owners</code> <code>project_users</code> <code>sessions</code> <code>access_tokens</code></td>
-<td>アカウント基盤(認証情報 = <code>users</code>、オーナー専有属性 = <code>contract_owners</code>、プロジェクト別ロール <code>admin</code> / <code>member</code> = <code>project_users.role</code>)</td>
+<td><code>owners</code> <code>project_users</code> <code>project_user_assignments</code> <code>sessions</code> <code>access_tokens</code></td>
+<td>アカウント基盤(オーナー認証 + 契約属性 = <code>owners</code>、プロジェクトユーザー認証 = <code>project_users</code>(オーナー除外の完全分離)、プロジェクト別ロール <code>admin</code> / <code>member</code> = <code>project_user_assignments.role</code>)</td>
 </tr>
 </tbody>
 </table>
@@ -146,10 +146,10 @@
 <h3 id="31-利用者権限詳細設計参照のみ">3.1 利用者・権限詳細設計（参照のみ）</h3>
 <p class="section-lead">ユーザー種別とロールの設計は基本設計が正本です。本節はその所在を示し、本書側で扱う割当解除の論理削除挙動だけを補足します。</p>
 <p>ユーザー種別、3 ロール(オーナー / プロジェクト管理者 / メンバー)、画面別権限マトリクス、認証フロー、Principal 構築は <a href="../02_基本設計/04_権限設計.html">../02_基本設計/04_権限設計.html</a> および <a href="../02_基本設計/08_認証・認可設計.html">../02_基本設計/08_認証・認可設計.html</a> を正本とする。</p>
-<p>利用者側アカウントはオーナーとメンバーに分かれ、メンバーはプロジェクトごとに <code>admin</code> / <code>member</code> を持つ。SCR-009-001の「プロジェクトから外す」は対象 <code>project_users</code> 行を論理削除し、最後の有効割当だった場合は <code>users.valid=0</code> と全セッション・未使用招待を同一トランザクションで失効する。</p>
+<p>利用者側アカウントはオーナー(<code>owners</code>)とプロジェクトユーザー(<code>project_users</code>)の 2 マスタに完全分離され、認証・ログインも別系統となる。プロジェクトユーザーはプロジェクトごとに <code>project_user_assignments.role</code>(<code>admin</code> / <code>member</code>)を持つ。SCR-009-001の「プロジェクトから外す」は対象 <code>project_user_assignments</code> 行を論理削除し、最後の有効割当だった場合は <code>project_users.valid=0</code> と全セッション・未使用招待を同一トランザクションで失効する。</p>
 <h3 id="32-状態詳細設計参照のみ">3.2 状態詳細設計（参照のみ）</h3>
 <p class="section-lead">契約状態の状態遷移はテーブル設計が正本です。本節はその所在のみを示します。</p>
-<p>契約状態（<code>contract_owners.contract_status</code>: <code>active</code> / <code>suspended</code> / <code>deleted_pending</code> / <code>deleted</code>）の全状態遷移は <a href="../02_基本設計/03_テーブル設計/index.html">../02_基本設計/03_テーブル設計/index.html</a> §4.5.5 を正本とする。</p>
+<p>契約状態（<code>owners.contract_status</code>: <code>active</code> / <code>suspended</code> / <code>deleted_pending</code> / <code>deleted</code>）の全状態遷移は <a href="../02_基本設計/03_テーブル設計/index.html">../02_基本設計/03_テーブル設計/index.html</a> §4.5.5 を正本とする。</p>
 <h3 id="33-画面詳細設計参照のみ">3.3 画面詳細設計（参照のみ）</h3>
 <p class="section-lead">対象画面の表示・入力・操作・メッセージ ID は基本設計が正本です。本節はその所在のみを示します。</p>
 <p>SCR-001〜003 / SCR-009 / SCR-016 / SCR-017 / SCR-023 の表示・入力・操作・メッセージIDは基本設計を正本とする。</p>
@@ -168,11 +168,11 @@
 │   └── legal.ts              # GET /terms/current / POST /terms/agree(利用規約)/ GET /privacy/current / POST /privacy/agree(プライバシーポリシー)
 ├── handlers/                 # 上記 routes と 1:1
 ├── domain/
-│   └── contract-status.ts    # contract_owners.contract_status 遷移ガード（active → suspended → deleted_pending → deleted）
+│   └── contract-status.ts    # owners.contract_status 遷移ガード（active → suspended → deleted_pending → deleted）
 ├── repository/
-│   ├── users.ts              # users(認証情報) CRUD
-│   ├── contract-owners.ts    # contract_owners(オーナー専有属性 = 契約状態 / data_deletion_mode) CRUD
-│   ├── project-users.ts      # project_users(プロジェクト割当 + role 列含む) CRUD
+│   ├── owners.ts             # owners(オーナー認証 + 契約属性 = 契約状態 / data_deletion_mode) CRUD
+│   ├── project-users.ts      # project_users(プロジェクトユーザー認証情報・オーナー除外) CRUD
+│   ├── project-user-assignments.ts  # project_user_assignments(プロジェクト割当 + role 列含む) CRUD
 │   ├── sessions.ts
 │   └── access-tokens.ts
 ├── middleware/
@@ -199,13 +199,13 @@
 <p class="section-lead">PII の暗号化と検索用ハッシュ列の方式は DD10 が正本です。</p>
 <p><code>email</code> / <code>phone</code> などの PII はオーナー派生鍵で AES-256-GCM 暗号化し、検索用に HMAC-SHA256 列（<code>email_hmac</code> 等）を併設する。詳細は <a href="DD10_暗号化・鍵管理.html">DD10_暗号化・鍵管理.html</a> を参照。</p>
 <h3 id="37-オーナー--メンバー--プロジェクト割当">3.7 オーナー / メンバー / プロジェクト割当</h3>
-<p class="section-lead">オーナーとメンバーをデータ構造でどう区別し、契約・プロジェクトへどう紐付けるかの実装規約を定めます。次の箇条書きは、オーナー判定が <code>contract_owners</code> 行存在であること、新規オーナー登録時の同一トランザクション処理を示します。</p>
+<p class="section-lead">オーナーとプロジェクトユーザーを 2 マスタでどう完全分離し、契約・プロジェクトへどう紐付けるかの実装規約を定めます。次の箇条書きは、オーナー判定が <code>owners</code> 行存在であること、新規オーナー登録時の同一トランザクション処理を示します。</p>
 <ul>
-<li><strong>オーナー判定</strong> = <code>contract_owners</code> 行(<code>valid=1</code>)を持つユーザー。<code>contract_owners.user_id</code> が当該オーナーの <code>users.id</code> を直接参照する(<code>is_owner</code> カラムも <code>owner_account_id</code> 自己参照も持たない)</li>
-<li>メンバーは <code>contract_owners</code> 行を持たず、<code>project_users.contract_owner_user_id</code> 経由で所属契約に紐付く</li>
-<li>メンバーの権限は <code>project_users.role</code>(<code>admin</code> / <code>member</code>)とプロジェクト割当の組合せで管理</li>
-<li>オーナーもプロジェクト作成時に <code>project_users(role='admin', valid=1)</code> 行を自動取得し、明示的なプロジェクト管理者として行を保持する。認可フロー先頭の <code>isOwner=true</code> bypass(<code>contract_owners</code> 行存在で判定)は維持し、<code>project_users</code> 行は通知宛先解決と画面表示の事実情報として参照する</li>
-<li>新規オーナー登録時のトランザクション: <code>INSERT INTO users(...)</code> → <code>INSERT INTO contract_owners(user_id, contract_status='active', valid=1, ...)</code> を同一 BEGIN IMMEDIATE で実行(<code>users.id</code> = <code>contract_owners.user_id</code> = <code>contractOwnerUserId</code>、物理値は同一 ULID)</li>
+<li><strong>オーナー判定(isOwner)</strong> = <code>owners</code> 行(<code>valid=1</code>)が存在すること。<code>owners.id</code> が契約境界キー本体であり、オーナーは <code>owners</code> マスタで認証・契約属性を一元管理する(プロジェクトユーザーとは別マスタ・別認証系統)</li>
+<li>プロジェクトユーザーは <code>project_users</code> マスタで認証情報を持ち(オーナーは含まない完全分離)、<code>project_users.contract_owner_user_id</code>(→ <code>owners.id</code>)経由で所属契約に紐付く</li>
+<li>プロジェクトユーザーの権限は <code>project_user_assignments.role</code>(<code>admin</code> / <code>member</code>)とプロジェクト割当の組合せで管理する。割当行は <code>project_user_assignments(project_user_id</code> → <code>project_users</code>, <code>project_id</code>, <code>contract_owner_user_id</code> → <code>owners.id</code>, <code>role)</code></li>
+<li>オーナーは <code>owners</code> 行存在(<code>isOwner=true</code>)による全権 bypass で認可され、プロジェクトへの自動 admin 割当行(旧 v1.10)は持たない。プロジェクト別の <code>admin</code> は <code>project_user_assignments</code> の割当でのみ付与される</li>
+<li>新規オーナー登録時のトランザクション: <code>INSERT INTO owners(id, contract_status='active', valid=1, ...)</code> を BEGIN IMMEDIATE で実行(<code>owners.id</code> = <code>contractOwnerUserId</code> = 契約境界キー、ULID)。認証情報(メール / パスワード)も <code>owners</code> 行に持つ</li>
 <li>共有概念は <a href="../../共有/共有概念.html">../../共有/共有概念.html</a> を正本とする</li>
 </ul>
 <h3 id="37a-メンバーアカウント有効化フローscr-018--fr-016d--fr-016e">3.7a メンバーアカウント有効化フロー(SCR-018 / FR-016d / FR-016e)</h3>
@@ -221,12 +221,12 @@
   W-&gt;&gt;D: 既存アカウント照会(同一オーナースコープ)
   D--&gt;&gt;W: 照合結果(既存あり / なし)
   alt 既存アカウントあり(FR-021c)
-    W-&gt;&gt;D: project_users 行を valid=1 で追加(SCR-018 バイパス)
+    W-&gt;&gt;D: project_user_assignments 行を valid=1 で追加(SCR-018 バイパス)
     D--&gt;&gt;W:
     W-&gt;&gt;M: ログイン URL を含む簡易メール送信
     M--&gt;&gt;W:
   else 新規
-    W-&gt;&gt;D: users(name=NULL, status=pending_activation) + project_users(valid=0) + access_tokens(activation, 7d)
+    W-&gt;&gt;D: project_users(name=NULL, status=pending_activation) + project_user_assignments(valid=0) + access_tokens(activation, 7d)
     D--&gt;&gt;W:
     W-&gt;&gt;M: 招待メール送信(activation URL)
     M--&gt;&gt;W:
@@ -239,19 +239,19 @@
     else 有効
       W--&gt;&gt;I: 招待情報パネル(メール / プロジェクト / 役割 / 招待者)
       I-&gt;&gt;W: POST /auth/invitations/{token}/activate(氏名 + 初回PW + 規約同意 + Turnstile)
-      W-&gt;&gt;D: users 更新 + terms_agreements + project_users.valid=1 + consumeToken + 監査ログ(同一Tx)
+      W-&gt;&gt;D: project_users 更新 + terms_agreements + project_user_assignments.valid=1 + consumeToken + 監査ログ(同一Tx)
       D--&gt;&gt;W:
       W--&gt;&gt;I: 有効化完了(/auth/login へ誘導)
     end
   end</code></pre>
 <div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">基本設計の正本</span>フローの正本は <a href="../02_基本設計/08_認証・認可設計.html">../02_基本設計/08_認証・認可設計.html §3.4</a> と <a href="../02_基本設計/02_API設計/index.html">../02_基本設計/02_API設計/index.html §5.1.7 / §5.1.8</a> を参照。本書は各 API の DB 操作の実体(トランザクション内訳)を定めます。</div></div>
 <h4 id="37a1-招待時の-db-状態作成post-projectsidmembers">3.7a.1 招待時の DB 状態作成(<code>POST /projects/{id}/members</code>)</h4>
-<p class="section-lead">招待時に作成する DB 状態を定めます。次のコードは、氏名・パスワード未設定の <code>users</code> 行(<code>pending_activation</code>)、予約状態の <code>project_users</code> 行(<code>valid=0</code>)、有効期限 7 日の <code>access_tokens</code>(<code>activation</code>)を同一トランザクションで作成する実体です。</p>
+<p class="section-lead">招待時に作成する DB 状態を定めます。次のコードは、氏名・パスワード未設定の <code>project_users</code> 行(<code>pending_activation</code>)、予約状態の <code>project_user_assignments</code> 行(<code>valid=0</code>)、有効期限 7 日の <code>access_tokens</code>(<code>activation</code>)を同一トランザクションで作成する実体です。</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> db<span class="op">.</span><span class="fu">transaction</span>(<span class="kw">async</span> (tx) <span class="kw">=&gt;</span> {</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">// (1) users 行を name=NULL で作成(個人情報原則により、招待者は氏名を入力しない)</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> userId <span class="op">=</span> <span class="fu">ulid</span>()</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> tx<span class="op">.</span><span class="at">users</span><span class="op">.</span><span class="fu">insert</span>({</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    id<span class="op">:</span> userId<span class="op">,</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">// (1) project_users 行を name=NULL で作成(個人情報原則により、招待者は氏名を入力しない)</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> projectUserId <span class="op">=</span> <span class="fu">ulid</span>()</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> tx<span class="op">.</span><span class="at">projectUsers</span><span class="op">.</span><span class="fu">insert</span>({</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    id<span class="op">:</span> projectUserId<span class="op">,</span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    email_encrypted<span class="op">:</span> <span class="fu">encrypt</span>(email<span class="op">,</span> ownerKey)<span class="op">,</span></span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    email_hmac<span class="op">:</span> <span class="fu">hmac</span>(email<span class="op">,</span> ownerKey)<span class="op">,</span></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    name<span class="op">:</span> <span class="dt">null</span><span class="op">,</span>                              <span class="co">// SCR-018 で本人が入力</span></span>
@@ -259,9 +259,9 @@
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    status<span class="op">:</span> <span class="st">&#39;pending_activation&#39;</span><span class="op">,</span></span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    valid<span class="op">:</span> <span class="dv">1</span><span class="op">,</span></span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  })</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="co">// (2) project_users 予約行(valid=0)</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> tx<span class="op">.</span><span class="at">projectUsers</span><span class="op">.</span><span class="fu">insert</span>({</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    user_id<span class="op">:</span> userId<span class="op">,</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="co">// (2) project_user_assignments 予約行(valid=0)</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> tx<span class="op">.</span><span class="at">projectUserAssignments</span><span class="op">.</span><span class="fu">insert</span>({</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    project_user_id<span class="op">:</span> projectUserId<span class="op">,</span></span>
 <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    contract_owner_user_id<span class="op">:</span> contractOwnerUserId<span class="op">,</span></span>
 <span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    project_id<span class="op">:</span> projectId<span class="op">,</span></span>
 <span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    role<span class="op">:</span> invitedRole<span class="op">,</span>                       <span class="co">// &#39;admin&#39; | &#39;member&#39;</span></span>
@@ -271,7 +271,7 @@
 <span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> rawToken <span class="op">=</span> <span class="fu">generateRawToken</span>()</span>
 <span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> tx<span class="op">.</span><span class="at">accessTokens</span><span class="op">.</span><span class="fu">insert</span>({</span>
 <span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    id<span class="op">:</span> <span class="fu">ulid</span>()<span class="op">,</span></span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    user_id<span class="op">:</span> userId<span class="op">,</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    actor_type<span class="op">:</span> <span class="st">&#39;project_user&#39;</span><span class="op">,</span> actor_id<span class="op">:</span> projectUserId<span class="op">,</span></span>
 <span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    token_hash<span class="op">:</span> <span class="fu">hmac</span>(rawToken<span class="op">,</span> hashKey)<span class="op">,</span></span>
 <span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    purpose<span class="op">:</span> <span class="st">&#39;activation&#39;</span><span class="op">,</span></span>
 <span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    meta<span class="op">:</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">stringify</span>({ invitedProjectId<span class="op">:</span> projectId<span class="op">,</span> invitedRole })<span class="op">,</span></span>
@@ -282,13 +282,13 @@
 <span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
 <h4 id="37a2-プレビュー-apipost-authinvitationstokenpreview">3.7a.2 プレビュー API(<code>POST /auth/invitations/{token}/preview</code>)</h4>
 <p class="section-lead">有効化ページ表示前に招待情報を返すプレビュー API の実装です。未認証可とし、トークン検証後に招待情報パネル用のメタ情報を返却します。次のコードがその返却ロジックの実体です。</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> { tokenRecord<span class="op">,</span> userId } <span class="op">=</span> <span class="cf">await</span> <span class="fu">verifyToken</span>(rawToken<span class="op">,</span> <span class="st">&#39;activation&#39;</span><span class="op">,</span> env)</span>
+<div class="sourceCode" id="cb3"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> { tokenRecord<span class="op">,</span> projectUserId } <span class="op">=</span> <span class="cf">await</span> <span class="fu">verifyToken</span>(rawToken<span class="op">,</span> <span class="st">&#39;activation&#39;</span><span class="op">,</span> env)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> meta <span class="op">=</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">parse</span>(tokenRecord<span class="op">.</span><span class="at">meta</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> project <span class="op">=</span> <span class="cf">await</span> db<span class="op">.</span><span class="at">projects</span><span class="op">.</span><span class="fu">findById</span>(meta<span class="op">.</span><span class="at">invitedProjectId</span>)</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> owner <span class="op">=</span> <span class="cf">await</span> db<span class="op">.</span><span class="at">users</span><span class="op">.</span><span class="fu">findById</span>(project<span class="op">.</span><span class="at">contract_owner_user_id</span>)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> user <span class="op">=</span> <span class="cf">await</span> db<span class="op">.</span><span class="at">users</span><span class="op">.</span><span class="fu">findById</span>(userId)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> owner <span class="op">=</span> <span class="cf">await</span> db<span class="op">.</span><span class="at">owners</span><span class="op">.</span><span class="fu">findById</span>(project<span class="op">.</span><span class="at">contract_owner_user_id</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> user <span class="op">=</span> <span class="cf">await</span> db<span class="op">.</span><span class="at">projectUsers</span><span class="op">.</span><span class="fu">findById</span>(projectUserId)</span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="cf">return</span> {</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  userId<span class="op">,</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  projectUserId<span class="op">,</span></span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  email<span class="op">:</span> <span class="fu">decrypt</span>(user<span class="op">.</span><span class="at">email_encrypted</span><span class="op">,</span> ownerKey)<span class="op">,</span></span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  projectId<span class="op">:</span> project<span class="op">.</span><span class="at">id</span><span class="op">,</span></span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  projectName<span class="op">:</span> project<span class="op">.</span><span class="at">name</span><span class="op">,</span></span>
@@ -297,9 +297,9 @@
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  expiresAt<span class="op">:</span> tokenRecord<span class="op">.</span><span class="at">expires_at</span><span class="op">,</span></span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h4 id="37a3-有効化-apipost-authinvitationstokenactivate">3.7a.3 有効化 API(<code>POST /auth/invitations/{token}/activate</code>)</h4>
-<p class="section-lead">本人入力を受けてアカウントを有効化する API の実装です。次のコードは、Turnstile・入力検証の後に、<code>users</code> 更新・<code>terms_agreements</code> INSERT・<code>project_users.valid=1</code>・<code>consumeToken()</code>・監査ログを 1 つのトランザクションで確定する実体を示します。</p>
+<p class="section-lead">本人入力を受けてアカウントを有効化する API の実装です。次のコードは、Turnstile・入力検証の後に、<code>project_users</code> 更新・<code>terms_agreements</code> INSERT・<code>project_user_assignments.valid=1</code>・<code>consumeToken()</code>・監査ログを 1 つのトランザクションで確定する実体を示します。</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> <span class="fu">verifyTurnstile</span>(req<span class="op">.</span><span class="at">turnstileToken</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> { tokenRecord<span class="op">,</span> userId } <span class="op">=</span> <span class="cf">await</span> <span class="fu">verifyToken</span>(rawToken<span class="op">,</span> <span class="st">&#39;activation&#39;</span><span class="op">,</span> env)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> { tokenRecord<span class="op">,</span> projectUserId } <span class="op">=</span> <span class="cf">await</span> <span class="fu">verifyToken</span>(rawToken<span class="op">,</span> <span class="st">&#39;activation&#39;</span><span class="op">,</span> env)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> meta <span class="op">=</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">parse</span>(tokenRecord<span class="op">.</span><span class="at">meta</span>)</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">validateDisplayName</span>(req<span class="op">.</span><span class="at">displayName</span>)        <span class="co">// 1〜100 文字</span></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">validatePassword</span>(req<span class="op">.</span><span class="at">password</span>)              <span class="co">// FR-006 強度要件</span></span>
@@ -307,7 +307,7 @@
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="op">!</span>req<span class="op">.</span><span class="at">termsAgreed</span> <span class="op">||</span> <span class="op">!</span>req<span class="op">.</span><span class="at">privacyAgreed</span>) <span class="cf">throw</span> E_INPUT_REQUIRED</span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> db<span class="op">.</span><span class="fu">transaction</span>(<span class="kw">async</span> (tx) <span class="kw">=&gt;</span> {</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> tx<span class="op">.</span><span class="at">users</span><span class="op">.</span><span class="fu">update</span>(userId<span class="op">,</span> {</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> tx<span class="op">.</span><span class="at">projectUsers</span><span class="op">.</span><span class="fu">update</span>(projectUserId<span class="op">,</span> {</span>
 <span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    name<span class="op">:</span> req<span class="op">.</span><span class="at">displayName</span><span class="op">.</span><span class="fu">trim</span>()<span class="op">,</span></span>
 <span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    password_hash<span class="op">:</span> <span class="cf">await</span> <span class="fu">hashPassword</span>(req<span class="op">.</span><span class="at">password</span>)<span class="op">,</span></span>
 <span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    status<span class="op">:</span> <span class="st">&#39;active&#39;</span><span class="op">,</span></span>
@@ -315,52 +315,52 @@
 <span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  })</span>
 <span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 利用規約・プライバシーポリシーを doc_type 別の 2 行で記録</span></span>
 <span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> tx<span class="op">.</span><span class="at">termsAgreements</span><span class="op">.</span><span class="fu">insertMany</span>([</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    { id<span class="op">:</span> <span class="fu">ulid</span>()<span class="op">,</span> user_id<span class="op">:</span> userId<span class="op">,</span> doc_type<span class="op">:</span> <span class="st">&#39;terms_of_service&#39;</span><span class="op">,</span> terms_version<span class="op">:</span> latestTermsVersion<span class="op">,</span> agreed_at<span class="op">:</span> <span class="fu">now</span>() }<span class="op">,</span></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    { id<span class="op">:</span> <span class="fu">ulid</span>()<span class="op">,</span> user_id<span class="op">:</span> userId<span class="op">,</span> doc_type<span class="op">:</span> <span class="st">&#39;privacy_policy&#39;</span><span class="op">,</span> terms_version<span class="op">:</span> latestPrivacyVersion<span class="op">,</span> agreed_at<span class="op">:</span> <span class="fu">now</span>() }<span class="op">,</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    { id<span class="op">:</span> <span class="fu">ulid</span>()<span class="op">,</span> actor_type<span class="op">:</span> <span class="st">&#39;project_user&#39;</span><span class="op">,</span> actor_id<span class="op">:</span> projectUserId<span class="op">,</span> doc_type<span class="op">:</span> <span class="st">&#39;terms_of_service&#39;</span><span class="op">,</span> terms_version<span class="op">:</span> latestTermsVersion<span class="op">,</span> agreed_at<span class="op">:</span> <span class="fu">now</span>() }<span class="op">,</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    { id<span class="op">:</span> <span class="fu">ulid</span>()<span class="op">,</span> actor_type<span class="op">:</span> <span class="st">&#39;project_user&#39;</span><span class="op">,</span> actor_id<span class="op">:</span> projectUserId<span class="op">,</span> doc_type<span class="op">:</span> <span class="st">&#39;privacy_policy&#39;</span><span class="op">,</span> terms_version<span class="op">:</span> latestPrivacyVersion<span class="op">,</span> agreed_at<span class="op">:</span> <span class="fu">now</span>() }<span class="op">,</span></span>
 <span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  ])</span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> tx<span class="op">.</span><span class="at">projectUsers</span><span class="op">.</span><span class="fu">update</span>({</span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    user_id<span class="op">:</span> userId<span class="op">,</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> tx<span class="op">.</span><span class="at">projectUserAssignments</span><span class="op">.</span><span class="fu">update</span>({</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    project_user_id<span class="op">:</span> projectUserId<span class="op">,</span></span>
 <span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    project_id<span class="op">:</span> meta<span class="op">.</span><span class="at">invitedProjectId</span><span class="op">,</span></span>
 <span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  }<span class="op">,</span> { valid<span class="op">:</span> <span class="dv">1</span><span class="op">,</span> updated_at<span class="op">:</span> <span class="fu">now</span>() })</span>
 <span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> tx<span class="op">.</span><span class="at">accessTokens</span><span class="op">.</span><span class="fu">update</span>(tokenRecord<span class="op">.</span><span class="at">id</span><span class="op">,</span> { used_at<span class="op">:</span> <span class="fu">now</span>() })</span>
 <span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> tx<span class="op">.</span><span class="at">auditLogs</span><span class="op">.</span><span class="fu">insert</span>({</span>
 <span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>    action<span class="op">:</span> <span class="st">&#39;user.activation_completed&#39;</span><span class="op">,</span></span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    actor_user_id<span class="op">:</span> userId<span class="op">,</span></span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    target_user_id<span class="op">:</span> userId<span class="op">,</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    actor_type<span class="op">:</span> <span class="st">&#39;project_user&#39;</span><span class="op">,</span> actor_id<span class="op">:</span> projectUserId<span class="op">,</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    target_type<span class="op">:</span> <span class="st">&#39;project_user&#39;</span><span class="op">,</span> target_id<span class="op">:</span> projectUserId<span class="op">,</span></span>
 <span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>    meta<span class="op">:</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">stringify</span>({ project_id<span class="op">:</span> meta<span class="op">.</span><span class="at">invitedProjectId</span><span class="op">,</span> role<span class="op">:</span> meta<span class="op">.</span><span class="at">invitedRole</span> })<span class="op">,</span></span>
 <span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>    retention_class<span class="op">:</span> <span class="st">&#39;general&#39;</span><span class="op">,</span></span>
 <span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>  })</span>
 <span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="cf">return</span> { userId<span class="op">,</span> redirectUrl<span class="op">:</span> <span class="st">&#39;/auth/login&#39;</span> }</span></code></pre></div>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="cf">return</span> { projectUserId<span class="op">,</span> redirectUrl<span class="op">:</span> <span class="st">&#39;/auth/login&#39;</span> }</span></code></pre></div>
 <h4 id="37a4-招待再送post-membersidresend-invitation">3.7a.4 招待再送(<code>POST /members/{id}/resend-invitation</code>)</h4>
 <p class="section-lead">期限切れ等で再招待するときのトークン再発行ロジックを定めます。旧トークンを失効させ、招待時の <code>meta</code> を引き継いで新規トークンを発行します。</p>
 <p>旧 <code>access_tokens</code> を <code>used_at=now()</code> で失効させ、<code>meta</code> を同一(<code>invitedProjectId</code> / <code>invitedRole</code>)で新規トークンを発行。リクエストボディは空(<code>displayName</code> を受け付けない)。</p>
 <h4 id="37a5-名前解決による既存アカウント招待fr-021c">3.7a.5 名前解決による既存アカウント招待(FR-021c)</h4>
 <p class="section-lead">同一オーナー配下に既存アカウントがある場合の有効化バイパスを定めます。氏名入力を伴う SCR-018 を経ず、割当のみを追加します。</p>
-<p>既存アカウントが同一オーナースコープに存在する場合は、SCR-018 をバイパスして <code>project_users</code> 行のみを <code>valid=1</code> で追加 + 既存アカウントのログイン URL を含む簡易メールを送信(氏名 / パスワードは既存値を保持)。</p>
+<p>既存アカウントが同一オーナースコープに存在する場合は、SCR-018 をバイパスして <code>project_user_assignments</code> 行のみを <code>valid=1</code> で追加 + 既存アカウントのログイン URL を含む簡易メールを送信(氏名 / パスワードは既存 <code>project_users</code> 値を保持)。</p>
 <h3 id="37b-プロジェクト割当解除とアカウント停止">3.7b プロジェクト割当解除とアカウント停止</h3>
 <p class="section-lead">メンバーをプロジェクトから外す処理と、最後の割当だった場合のアカウント自動停止の実装手順を定めます。次の手順は、保護チェックから論理削除・全セッション失効・監査記録までの順序を示します。</p>
 <p><code>DELETE /projects/{id}/members/{userId}</code>:</p>
 <ol type="1">
 <li><code>requireProjectRole(..., 'admin')</code> と自己・オーナー保護を実行する。</li>
 <li>対象ユーザーの他プロジェクト有効割当数を取得する。</li>
-<li>対象 <code>project_users</code> 行を <code>valid=0</code> にする。</li>
-<li>他プロジェクト有効割当数が0件なら <code>users.valid=0</code>、全セッション失効、未使用招待失効を同一トランザクションで実行する。</li>
+<li>対象 <code>project_user_assignments</code> 行を <code>valid=0</code> にする。</li>
+<li>他プロジェクト有効割当数が0件なら <code>project_users.valid=0</code>、全セッション失効、未使用招待失効を同一トランザクションで実行する。</li>
 <li><code>project.member_removed</code> を監査記録し、アカウント停止を伴う場合は <code>account_deactivated=true</code> をmetadataへ記録する。</li>
 </ol>
 <h3 id="38-退会フロー参照のみ">3.8 退会フロー（参照のみ）</h3>
 <p class="section-lead">オーナーの退会から物理削除までの流れを概観します。詳細バッチは DD13 が正本で、本節は契約状態の遷移と削除予約のみを示します。</p>
 <ul>
-<li>オーナーが退会要求 → <code>UPDATE contract_owners SET contract_status='deleted_pending'</code> + <code>withdrawal_requests</code> レコード作成 + <code>scheduled_deletion_at</code>（30 日後）</li>
-<li>30 日経過後、§14.1.9 定期削除 cron が <code>UPDATE contract_owners SET contract_status='deleted', valid=0</code> に更新し、後続バッチで <code>users.valid=0</code> を揃える</li>
+<li>オーナーが退会要求 → <code>UPDATE owners SET contract_status='deleted_pending'</code> + <code>withdrawal_requests</code> レコード作成 + <code>scheduled_deletion_at</code>（30 日後）</li>
+<li>30 日経過後、§14.1.9 定期削除 cron が <code>UPDATE owners SET contract_status='deleted', valid=0</code> に更新し、後続バッチで配下 <code>project_users.valid=0</code> を揃える</li>
 <li>詳細は <a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html</a> を参照</li>
 </ul>
 <h3 id="39-フロント-url-ルーティング規約fr-325">3.9 フロント URL ルーティング規約(FR-325)</h3>
 <p class="section-lead">利用者向け管理コンソール SPA の URL スコープ構成を定めます。次のルートツリーは、認証 / オーナー / プロジェクト / 共通 / エンドユーザーの 5 系列と、各系列のアクセス主体を示します。</p>
 <p>利用者向け管理コンソールの SPA は <strong>スコープ別 4 系列</strong> のルートツリーで構成する。スコープ判定はフロント router の <code>beforeEach</code> ガードと API ミドルウェア <code>authenticate.ts</code> + <code>requireTenant</code> の二重化で行う。</p>
 <pre><code>/auth/*                        ── 認証フロー(未認証可)
-/owner/*                       ── 契約 WS(オーナー専有 = `contract_owners` 行存在)
-/projects/:projectId/*         ── プロジェクト WS(`project_users` 保持者)
+/owner/*                       ── 契約 WS(オーナー専有 = `owners` 行存在 = isOwner)
+/projects/:projectId/*         ── プロジェクト WS(`project_user_assignments` 保持者)
 /account/*                     ── 共通領域(認証済全員)
 /eu/*                          ── エンドユーザー(認証コンソール外、トークン認証)</code></pre>
 <h4 id="391-フロント-router-のガード疑似コード">3.9.1 フロント router のガード(疑似コード)</h4>
@@ -382,9 +382,9 @@
 <span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (scope <span class="op">===</span> <span class="st">&#39;projects&#39;</span>) {</span>
 <span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> projectId <span class="op">=</span> to<span class="op">.</span><span class="at">params</span><span class="op">.</span><span class="at">projectId</span></span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> projectUser <span class="op">=</span> me<span class="op">.</span><span class="at">projectUsers</span><span class="op">.</span><span class="fu">find</span>(pu <span class="kw">=&gt;</span> pu<span class="op">.</span><span class="at">project_id</span> <span class="op">===</span> projectId)</span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="op">!</span>me<span class="op">.</span><span class="at">isOwner</span> <span class="op">&amp;&amp;</span> <span class="op">!</span>projectUser) {</span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>      <span class="co">// 最後の割当解除時は users.valid=0 となるため、通常は projectUsers.length &gt;= 1</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> assignment <span class="op">=</span> me<span class="op">.</span><span class="at">assignments</span><span class="op">.</span><span class="fu">find</span>(a <span class="kw">=&gt;</span> a<span class="op">.</span><span class="at">project_id</span> <span class="op">===</span> projectId)</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="op">!</span>me<span class="op">.</span><span class="at">isOwner</span> <span class="op">&amp;&amp;</span> <span class="op">!</span>assignment) {</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>      <span class="co">// 最後の割当解除時は project_users.valid=0 となるため、通常は assignments.length &gt;= 1</span></span>
 <span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> <span class="fu">resolveDefaultWorkspace</span>(me)</span>
 <span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    }</span>
 <span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>  }</span>
@@ -395,13 +395,13 @@
 <p class="section-lead">ログイン後や権限不足時に遷移する既定ワークスペースの決定ロジックを定めます。次の評価順は、前回ワークスペース・オーナー・単一/複数プロジェクトの優先順位を示します。</p>
 <p><code>resolveDefaultWorkspace(me)</code> は次の順で評価する:</p>
 <ol type="1">
-<li>localStorage の <code>lastWorkspace</code> が現在の <code>project_users</code> で有効ならその WS のホーム</li>
+<li>localStorage の <code>lastWorkspace</code> が現在の <code>project_user_assignments</code> で有効ならその WS のホーム</li>
 <li>オーナーかつ未保存なら <code>/owner</code> (SCR-016)</li>
-<li>メンバーで <code>project_users</code> 行が 1 件なら <code>/projects/{onlyRow.project_id}</code> (SCR-008)</li>
-<li>メンバーで <code>project_users</code> 行が複数なら最新 <code>last_accessed_at</code> のプロジェクト</li>
+<li>プロジェクトユーザーで <code>project_user_assignments</code> 行が 1 件なら <code>/projects/{onlyRow.project_id}</code> (SCR-008)</li>
+<li>プロジェクトユーザーで <code>project_user_assignments</code> 行が複数なら最新 <code>last_accessed_at</code> のプロジェクト</li>
 </ol>
-<p>ユーザー削除はユーザーレベル論理削除(<code>users.valid=0</code>)のため、現存するメンバー(<code>users.valid=1</code>)は <code>project_users.valid=1</code> を 1 件以上満たし、「<code>project_users</code> 行が 0 件のケース」は構造的に発生しない。データ不整合等で <code>WHERE valid=1</code> 条件下で <code>projectUsers.length === 0</code> を検出した場合のフェイルセーフは Sentry へ重大度 high を通知し <code>/auth/login</code> へ強制ログアウトする。</p>
-<p><strong>認証ミドルウェアの追加チェック</strong>: 認証成功直後に <code>users.valid=1</code> を確認し、<code>valid=0</code> の場合は 401 でログイン拒否(セッション失効扱い)。これにより論理削除済みユーザーのセッションが残存しても再アクセスを防止する。オーナーの場合は加えて <code>contract_owners.valid=1 AND contract_status NOT IN ('deleted')</code> も検証(<code>deleted_pending</code> は 30 日間の猶予期間中は許容)。</p>
+<p>プロジェクトユーザー削除はユーザーレベル論理削除(<code>project_users.valid=0</code>)のため、現存するプロジェクトユーザー(<code>project_users.valid=1</code>)は <code>project_user_assignments.valid=1</code> を 1 件以上満たし、「割当行が 0 件のケース」は構造的に発生しない。データ不整合等で <code>WHERE valid=1</code> 条件下で <code>assignments.length === 0</code> を検出した場合のフェイルセーフは Sentry へ重大度 high を通知し <code>/auth/login</code> へ強制ログアウトする。</p>
+<p><strong>認証ミドルウェアの追加チェック</strong>: 認証成功直後に、プロジェクトユーザーは <code>project_users.valid=1</code> を確認し、<code>valid=0</code> の場合は 401 でログイン拒否(セッション失効扱い)。これにより論理削除済みユーザーのセッションが残存しても再アクセスを防止する。オーナーの場合は <code>owners.valid=1 AND contract_status NOT IN ('deleted')</code> を検証(<code>deleted_pending</code> は 30 日間の猶予期間中は許容)。オーナーとプロジェクトユーザーはセッションの <code>actor_type</code>('owner' / 'project_user')で別系統に判別する。</p>
 <h3 id="310-scr-016-プロジェクト0件の空状態fr-326">3.10 SCR-016 プロジェクト0件の空状態(FR-326)</h3>
 <p class="section-lead">プロジェクトが 1 件もないときの利用状況画面の表示ロジックを定めます。全体サマリーを出さず、作成 CTA のみを表示します。</p>
 <p><code>GET /owner/projects/usage</code> の <code>summary.projectCount=0</code> の場合、SCR-016は全体サマリーと一覧を表示せず、「プロジェクトがまだありません」と「最初のプロジェクトを作成」の単一CTAだけを表示する。専用のオンボーディングAPIや進捗状態は保持しない。</p>
@@ -473,7 +473,7 @@
 <td>AC-009</td>
 <td><code>e2e-admin-user-activation-001</code></td>
 <td>E2E</td>
-<td><code>apps/main/e2e/admin-users.spec.ts</code>(SCR-009-001 招待 → 招待メール → SCR-018 で氏名 + 初回パスワード + 規約同意 → 有効化完了 → SCR-001 ログイン の一連シナリオ。氏名は SCR-009-001 では入力せず SCR-018 でのみ本人入力、users.name が NULL → 設定済、users.status が pending_activation → active、project_users.valid が 0 → 1、access_tokens.used_at セットを検証)</td>
+<td><code>apps/main/e2e/admin-users.spec.ts</code>(SCR-009-001 招待 → 招待メール → SCR-018 で氏名 + 初回パスワード + 規約同意 → 有効化完了 → SCR-001 ログイン の一連シナリオ。氏名は SCR-009-001 では入力せず SCR-018 でのみ本人入力、project_users.name が NULL → 設定済、project_users.status が pending_activation → active、project_user_assignments.valid が 0 → 1、access_tokens.used_at セットを検証)</td>
 </tr>
 <tr>
 <td>AC-016</td>
@@ -556,6 +556,11 @@
 <tr><th>版数</th><th>日付</th><th>変更内容</th></tr>
 </thead>
 <tbody>
+<tr>
+<td>v1.5</td>
+<td>2026-06-19</td>
+<td>ユーザーモデルを 2 マスタ完全分離へ改訂。旧 <code>users</code> + <code>contract_owners</code> を <code>owners</code>(オーナー認証 + 契約属性 = 契約境界キー本体)へ統合、旧 <code>users</code>(非オーナー)を <code>project_users</code>(プロジェクトユーザー認証・オーナー除外)へ、旧 <code>project_users</code>(割当 + <code>role</code>)を <code>project_user_assignments</code> へ分離。オーナー判定 = <code>owners</code> 行存在(isOwner)。「オーナー自動 admin 行(v1.10)」前提を撤回(オーナーは isOwner 全権、admin は割当でのみ付与)。状態値正本を <code>owners.contract_status</code> に改名。招待・有効化・割当解除・退会の擬似コード / SQL / シーケンス図を新マスタ構成へ更新し、横断参照(トークン・規約同意・監査ログ)を <code>actor_type</code> + <code>actor_id</code> 化。<code>contract_owner_user_id</code> 名称は維持(→ <code>owners.id</code>)。</td>
+</tr>
 <tr>
 <td>v1.4</td>
 <td>2026-06-17</td>

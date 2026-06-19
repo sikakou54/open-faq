@@ -374,7 +374,7 @@
 </tr>
 <tr>
 <td>E-AUTHZ-PROJECT-DENIED</td>
-<td>プロジェクト割当不足(<code>project_users</code> に該当行なし)</td>
+<td>プロジェクト割当不足(<code>project_user_assignments</code> に該当行なし)</td>
 <td>MSG-COMMON-NOT-FOUND</td>
 <td><strong>404 偽装</strong></td>
 <td>同上</td>
@@ -382,7 +382,7 @@
 </tr>
 <tr>
 <td>E-AUTHZ-OWNER-ONLY</td>
-<td>オーナー専有機能(<code>contract_owners</code> 行を持たないユーザーがプロジェクト作成・編集・削除 / 課金 / 退会 / 規約再同意 等にアクセス)</td>
+<td>オーナー専有機能(<code>owners</code> 行を持たない主体(= プロジェクトユーザー)がプロジェクト作成・編集・削除 / 課金 / 退会 / 規約再同意 等にアクセス)</td>
 <td>MSG-COMMON-OWNER-ONLY</td>
 <td>403</td>
 <td>UI 非表示</td>
@@ -440,7 +440,7 @@
 <tbody>
 <tr>
 <td>E-BIZ-ACCOUNT-INACTIVE</td>
-<td>既に論理削除済(<code>users.valid=0</code>)のアカウントを対象とする操作試行(招待リンク再開 等)</td>
+<td>既に論理削除済(<code>project_users.valid=0</code>)のアカウントを対象とする操作試行(招待リンク再開 等)</td>
 <td>MSG-COMMON-ACCOUNT-INACTIVE</td>
 <td>409 Conflict</td>
 <td>「対象アカウントは既に削除されています」</td>

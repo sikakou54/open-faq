@@ -18,7 +18,7 @@
 <p class="ps-lead"><strong>このページは、PII 列の AES-256-GCM 列単位暗号化と、Master Key を起点とした HKDF-SHA256 派生鍵・各シークレットの鍵ローテーション(年次 + dual-decrypt 期間)の実装方針を定義します。</strong></p>
 </aside>
 
-<p class="doc-meta"><span><b>版数</b> v1.0</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+<p class="doc-meta"><span><b>版数</b> v1.1</span><span><b>更新</b> 2026-06-19</span><span class="dm-status">承認済</span></p>
 
 <h2 id="1-対象範囲">1. 対象範囲</h2>
 <p class="section-lead">本 DD が実装方針を定めるライブラリ・シークレット・カラムを示します。次の表は、暗号化ライブラリ(<code>encrypt.ts</code>)・鍵管理シークレット・PII 列単位暗号化・検索用 HMAC 列が範囲であることを一望できます。関連する非機能要件は NFR-301(オーナー境界)/ NFR-401(プライバシー保護)/ AC-028 です。</p>
@@ -109,9 +109,9 @@
   Note over SS: 1 年後 MASTER_KEY_PREV を削除</code></pre>
 
 <h3 id="32-hkdf-sha256-派生鍵">3.2 HKDF-SHA256 派生鍵</h3>
-<p class="section-lead">オーナー単位の派生鍵を <code>MASTER_KEY</code> から HKDF-SHA256 で生成します。次の擬似コードは <code>deriveOwnerKey</code> の実装で、HKDF の <code>info</code> 文字列 <code>owner:&lt;id&gt;</code> に <code>contract_owners.user_id</code> を埋め込み、オーナーごとに異なる AES-GCM 鍵を導出します。</p>
+<p class="section-lead">オーナー単位の派生鍵を <code>MASTER_KEY</code> から HKDF-SHA256 で生成します。次の擬似コードは <code>deriveOwnerKey</code> の実装で、HKDF の <code>info</code> 文字列 <code>owner:&lt;id&gt;</code> に契約境界キー <code>owners.id</code>(= <code>contractOwnerUserId</code>)を埋め込み、オーナーごとに異なる AES-GCM 鍵を導出します。</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// app/shared/src/lib/encrypt.ts</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">// contractOwnerUserId は `contract_owners.user_id`(旧オーナー `accounts.id` と物理値同じ ULID)。</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">// contractOwnerUserId は契約境界キー `owners.id`(旧 `contract_owners.user_id` / `users.id` と物理値同じ ULID を継承)。</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">// HKDF info 文字列 `owner:&lt;id&gt;` のリテラルは v1.11 リファクタ後も不変(物理値継承により既存暗号化データの復号互換を維持)。</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fu">deriveOwnerKey</span>(masterKeyB64<span class="op">:</span> <span class="dt">string</span><span class="op">,</span> contractOwnerUserId<span class="op">:</span> <span class="dt">string</span>)<span class="op">:</span> <span class="bu">Promise</span><span class="op">&lt;</span><span class="bu">CryptoKey</span><span class="op">&gt;</span> {</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> masterRaw <span class="op">=</span> <span class="fu">base64Decode</span>(masterKeyB64)<span class="op">;</span></span>

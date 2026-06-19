@@ -67,45 +67,51 @@
   <ul>
     <li><b>掲載カラム</b>: MVPの主要キー(PK / FK)+ 業務キー(<code>inquiry_code</code> / <code>widget_public_key</code> 等)+ 状態カラム(<code>inquiries.status</code> / <code>contract_status</code> 等)+ 特徴的なカラム(<code>actor_user_id</code> 等)。</li>
     <li><b>省略カラム</b>: <code>created_at</code> / <code>updated_at</code> / <code>valid</code> / <code>*_encrypted</code> / <code>*_key_version</code> / <code>metadata</code> 等の共通技術カラム。完全なカラム定義は <a href="03_テーブル設計/index.html">03_テーブル設計/index.html §3</a> を参照。</li>
-    <li><b>関係性</b>: 実線 = FK 制約あり / 注記 <code>FK制約なし</code> = 論理参照のみ(<code>error_logs</code> / <code>announcement_recipients</code> の一部カラム)。本図は FK 制約に基づく関係のみを線で描く。<code>announcement_recipients</code> → <code>inbox_messages</code> の受信箱 fan-out と <code>billing_subscriptions</code> → <code>billing_invoices</code> の請求書生成は <strong>FK 制約を持たないアプリ層の論理 fan-out</strong> のため線を引かない(<code>inbox_messages</code> / <code>billing_invoices</code> はいずれも <code>contract_owners</code> に FK で帰属)。</li>
-    <li><b>MVP主体モデル</b>: <code>users</code>(管理者:オーナー / プロジェクト管理者 / メンバー)+ <code>contract_owners</code>(オーナー専有属性、行存在 = オーナー判定)+ <code>project_users</code>(プロジェクト割当 + 別ロール)。ウィジェット利用者は永続アカウントを持たない。</li>
-    <li><b>SaaS 境界キー</b>: <code>contract_owner_user_id</code>(全契約スコープのテーブルに冗長保持、認可境界クエリ高速化)。</li>
+    <li><b>関係性</b>: 実線 = FK 制約あり / 注記 <code>FK制約なし</code> = 論理参照のみ。本図は FK 制約に基づく関係のみを線で描く。アクター横断参照(作成者 / 更新者 / 監査アクター / セッション主体 / 受信者)は <code>owners</code> と <code>project_users</code> の 2 マスタに分かれるため物理 FK を張らず、<strong><code>actor_type</code>(<code>owner</code> / <code>project_user</code>)+ <code>actor_id</code> の論理参照</strong>で表現する(線を引かない)。<code>announcement_recipients</code> → <code>inbox_messages</code> の受信箱 fan-out と <code>billing_subscriptions</code> → <code>billing_invoices</code> の請求書生成も <strong>FK 制約を持たないアプリ層の論理 fan-out</strong> のため線を引かない(<code>inbox_messages</code> / <code>billing_invoices</code> はいずれも <code>owners</code> に FK で帰属)。</li>
+    <li><b>主体モデル(2 マスタ完全分離)</b>: <code>owners</code>(オーナーの認証属性 + 契約属性〔<code>contract_status</code> / <code>data_deletion_mode</code>〕を統合した契約マスタ。<code>owners.id</code> 自体が契約境界キー本体)+ <code>project_users</code>(プロジェクトユーザーの認証マスタ。オーナーを含まず、メール一意空間もオーナーと完全分離)。プロジェクトへの割当・ロールは <code>project_user_assignments</code>(<code>role</code> = <code>admin</code> / <code>member</code>)で表現する。ウィジェット利用者(<code>end_users</code>)は永続アカウントを持つ別マスタ。</li>
+    <li><b>SaaS 境界キー</b>: <code>contract_owner_user_id</code>(全契約スコープのテーブルに冗長保持し <code>owners.id</code> を参照、認可境界クエリ高速化)。</li>
   </ul>
 </section>
 
 <pre id="mermaid-src" style="display:none;">
 erDiagram
-  users {
-    TEXT id PK
+  owners {
+    TEXT id PK "契約境界キー本体"
     TEXT email_hmac "検索用HMAC"
     TEXT status "pending_verification/pending_activation/active"
-  }
-  contract_owners {
-    TEXT user_id PK,FK "users(id)"
     TEXT contract_status "active/suspended/deleted_pending/deleted"
     TEXT data_deletion_mode "physical/anonymize"
   }
   project_users {
-    TEXT user_id PK,FK "users(id)"
-    TEXT project_id PK,FK "projects(id)"
-    TEXT contract_owner_user_id FK "contract_owners(user_id)"
+    TEXT id PK
+    TEXT contract_owner_user_id FK "owners(id)"
+    TEXT email_hmac "検索用HMAC(オーナーと別空間)"
+    TEXT status "pending_verification/pending_activation/active"
+  }
+  project_user_assignments {
+    TEXT id PK
+    TEXT project_user_id FK "project_users(id)"
+    TEXT project_id FK "projects(id)"
+    TEXT contract_owner_user_id FK "owners(id)"
     TEXT role "admin/member"
   }
   sessions {
     TEXT id PK
-    TEXT user_id FK "users(id)"
+    TEXT actor_type "owner/project_user"
+    TEXT actor_id "論理参照(FK制約なし)"
     TEXT expires_at
     TEXT revoked_at
   }
   access_tokens {
     TEXT id PK
-    TEXT user_id FK "users(id)"
+    TEXT actor_type "owner/project_user"
+    TEXT actor_id "論理参照(FK制約なし)"
     TEXT token_hash "UNIQUE"
     TEXT purpose "email_verify/password_reset/activation/contact_verify"
   }
   projects {
     TEXT id PK
-    TEXT contract_owner_user_id FK "contract_owners(user_id)"
+    TEXT contract_owner_user_id FK "owners(id)"
     TEXT name
     TEXT status "active/deleted"
     TEXT widget_public_key "UNIQUE"
@@ -123,18 +129,20 @@ erDiagram
   }
   faqs {
     TEXT id PK
-    TEXT contract_owner_user_id FK "contract_owners(user_id)"
+    TEXT contract_owner_user_id FK "owners(id)"
     TEXT project_id FK "projects(id)"
     TEXT source_unresolved_question_id FK "inquiries(id) opt"
-    TEXT created_by FK "users(id)"
-    TEXT updated_by FK "users(id)"
+    TEXT created_by_actor_type "owner/project_user"
+    TEXT created_by "論理参照(FK制約なし)"
+    TEXT updated_by "論理参照(FK制約なし)"
     TEXT status "draft/published/hidden/deleted"
     INTEGER version
   }
   faq_revisions {
     TEXT id PK
     TEXT faq_id FK "faqs(id)"
-    TEXT created_by FK "users(id)"
+    TEXT created_by_actor_type "owner/project_user"
+    TEXT created_by "論理参照(FK制約なし)"
     INTEGER version
     TEXT status_snapshot
     TEXT source "manual/import"
@@ -147,7 +155,7 @@ erDiagram
   }
   question_logs {
     TEXT id PK
-    TEXT contract_owner_user_id FK "contract_owners(user_id)"
+    TEXT contract_owner_user_id FK "owners(id)"
     TEXT project_id FK "projects(id)"
     INTEGER metering_billable "課金確定スナップショット"
     TEXT result_type "answered/unanswered/error"
@@ -160,7 +168,7 @@ erDiagram
   }
   inquiries {
     TEXT id PK
-    TEXT contract_owner_user_id FK "contract_owners(user_id)"
+    TEXT contract_owner_user_id FK "owners(id)"
     TEXT project_id FK "projects(id)"
     TEXT question_log_id FK "question_logs(id) opt"
     TEXT inquiry_code "UNIQUE"
@@ -168,14 +176,14 @@ erDiagram
   }
   notification_logs {
     TEXT id PK
-    TEXT contract_owner_user_id FK "contract_owners(user_id)"
+    TEXT contract_owner_user_id FK "owners(id)"
     TEXT inquiry_id FK "inquiries(id) opt"
     TEXT notification_type "TPL-*"
     TEXT delivery_state "queued/sending/sent/delivered/failed/bounced/complained/suppressed"
   }
   ai_threshold_persistent_cache {
     TEXT id PK
-    TEXT contract_owner_user_id FK "contract_owners(user_id) opt"
+    TEXT contract_owner_user_id FK "owners(id) opt"
     TEXT project_id FK "projects(id) opt"
     TEXT scope "global/owner/project"
     INTEGER version
@@ -188,8 +196,9 @@ erDiagram
   }
   audit_logs {
     TEXT id PK
-    TEXT contract_owner_user_id FK "contract_owners(user_id) opt"
-    TEXT actor_user_id FK "users(id) opt"
+    TEXT contract_owner_user_id FK "owners(id) opt"
+    TEXT actor_type "owner/project_user/system"
+    TEXT actor_id "論理参照(FK制約なし) opt"
     TEXT actor_role "admin/system"
     TEXT action
     TEXT retention_class "general/billing"
@@ -197,26 +206,27 @@ erDiagram
   error_logs {
     TEXT id PK
     TEXT contract_owner_user_id "FK制約なし"
-    TEXT user_id "FK制約なし"
+    TEXT actor_type "owner/project_user"
+    TEXT actor_id "FK制約なし"
     TEXT error_type
   }
   billing_subscriptions {
     TEXT id PK
-    TEXT contract_owner_user_id FK "contract_owners(user_id)"
+    TEXT contract_owner_user_id FK "owners(id)"
     TEXT stripe_subscription_id "UNIQUE"
     TEXT status "active/past_due/canceled/unpaid/incomplete"
     TEXT plan_id
   }
   billing_invoices {
     TEXT id PK
-    TEXT contract_owner_user_id FK "contract_owners(user_id)"
+    TEXT contract_owner_user_id FK "owners(id)"
     TEXT billing_year_month "(owner,YYYY-MM) UNIQUE"
     TEXT status "draft/issued/paid/past_due/refunded/void"
     TEXT stripe_invoice_id "UNIQUE"
   }
   usage_metering {
     TEXT id PK
-    TEXT contract_owner_user_id FK "contract_owners(user_id)"
+    TEXT contract_owner_user_id FK "owners(id)"
     TEXT project_id FK "projects(id)"
     TEXT billing_year_month "(owner,project,YYYY-MM) UNIQUE"
     INTEGER question_count
@@ -224,7 +234,7 @@ erDiagram
   }
   owner_quota_overrides {
     TEXT id PK
-    TEXT contract_owner_user_id FK "contract_owners(user_id)"
+    TEXT contract_owner_user_id FK "owners(id)"
     TEXT resource_kind "widget_*/email_per_hour/admin_api_per_min"
     INTEGER threshold
     TEXT valid_until
@@ -232,41 +242,44 @@ erDiagram
   project_quota_limits {
     TEXT id PK
     TEXT project_id FK "projects(id)"
-    TEXT contract_owner_user_id FK "contract_owners(user_id)"
+    TEXT contract_owner_user_id FK "owners(id)"
     TEXT resource_kind "(project_id,resource_kind) UNIQUE"
     INTEGER threshold "月次上限件数(NULL=上限OFF)"
     INTEGER free_quota "月次無料枠"
   }
   service_announcements {
     TEXT id PK
-    TEXT created_by FK "users(id)"
+    TEXT created_by_actor_type "owner/project_user/system"
+    TEXT created_by "論理参照(FK制約なし)"
     TEXT importance "low/normal/high/critical"
     TEXT published_at
     TEXT retracted_at
   }
   announcement_audiences {
     TEXT announcement_id PK,FK "service_announcements(id)"
-    TEXT contract_owner_user_id PK,FK "contract_owners(user_id)"
+    TEXT contract_owner_user_id PK,FK "owners(id)"
   }
   announcement_recipients {
     TEXT id PK
     TEXT announcement_id FK "service_announcements(id)"
     TEXT contract_owner_user_id "FK制約なし"
-    TEXT user_id "FK制約なし"
+    TEXT recipient_actor_type "owner/project_user"
+    TEXT recipient_actor_id "FK制約なし"
     TEXT delivery_status "pending/delivered/failed"
   }
   inbox_messages {
     TEXT id PK
-    TEXT contract_owner_user_id FK "contract_owners(user_id)"
-    TEXT recipient_user_id FK "users(id)"
+    TEXT contract_owner_user_id FK "owners(id)"
+    TEXT recipient_actor_type "owner/project_user"
+    TEXT recipient_actor_id "論理参照(FK制約なし)"
     TEXT category "billing/announcement/system"
     TEXT priority "low/normal/high/critical"
     TEXT dedup_key
   }
   withdrawal_requests {
     TEXT id PK
-    TEXT contract_owner_user_id FK "contract_owners(user_id)"
-    TEXT applied_by FK "users(id)"
+    TEXT contract_owner_user_id FK "owners(id)"
+    TEXT applied_by "論理参照(FK制約なし / オーナー専有操作)"
     TEXT scheduled_deletion_at
   }
   terms_versions {
@@ -276,40 +289,33 @@ erDiagram
   }
   terms_agreements {
     TEXT id PK
-    TEXT user_id FK "users(id)"
+    TEXT actor_type "owner/project_user"
+    TEXT actor_id "論理参照(FK制約なし)"
     TEXT terms_version FK "terms_versions(version)"
     TEXT agreed_at
   }
 
-  users ||--o| contract_owners : "owner profile (0..1)"
-  users ||--o{ project_users : "0..N(全管理者ロール)"
-  users ||--o{ sessions : has
-  users ||--o{ access_tokens : has
-  users ||--o{ terms_agreements : has
-  users ||--o{ faqs : "created_by/updated_by"
-  users ||--o{ faq_revisions : "created_by"
-  users ||--o{ audit_logs : "操作(actor_user_id)"
-  users ||--o{ inbox_messages : "recipient_user_id"
-  users ||--o{ withdrawal_requests : "applied_by(申請者)"
-  users ||--o{ service_announcements : "created_by"
+  owners ||--o{ project_users : "0..N(契約配下のプロジェクトユーザー)"
+  owners ||--o{ projects : owns
+  owners ||--o| billing_subscriptions : has
+  owners ||--o{ billing_invoices : "請求書"
+  owners ||--o{ usage_metering : metered
+  owners ||--o{ owner_quota_overrides : overridden
+  owners ||--o{ project_quota_limits : "プロジェクト上限"
+  owners ||--o{ faqs : scopes
+  owners ||--o{ question_logs : scopes
+  owners ||--o{ inquiries : scopes
+  owners ||--o{ notification_logs : scopes
+  owners ||--o{ ai_threshold_persistent_cache : "owner スコープ(opt)"
+  owners ||--o{ audit_logs : "1-N(opt)"
+  owners ||--o{ inbox_messages : "1-N(契約配下)"
+  owners ||--o{ announcement_audiences : "限定配信先"
+  owners ||--o{ withdrawal_requests : "退会申請"
+  owners ||--o{ project_user_assignments : "1-N(割当)"
 
-  contract_owners ||--o{ projects : owns
-  contract_owners ||--o| billing_subscriptions : has
-  contract_owners ||--o{ billing_invoices : "請求書"
-  contract_owners ||--o{ usage_metering : metered
-  contract_owners ||--o{ owner_quota_overrides : overridden
-  contract_owners ||--o{ project_quota_limits : "プロジェクト上限"
-  contract_owners ||--o{ faqs : scopes
-  contract_owners ||--o{ question_logs : scopes
-  contract_owners ||--o{ inquiries : scopes
-  contract_owners ||--o{ notification_logs : scopes
-  contract_owners ||--o{ ai_threshold_persistent_cache : "owner スコープ(opt)"
-  contract_owners ||--o{ audit_logs : "1-N(opt)"
-  contract_owners ||--o{ inbox_messages : "1-N(契約配下)"
-  contract_owners ||--o{ announcement_audiences : "限定配信先"
-  contract_owners ||--o{ withdrawal_requests : "退会申請"
+  project_users ||--o{ project_user_assignments : "1-N(プロジェクト割当)"
 
-  projects ||--o{ project_users : "1-N(プロジェクト割当)"
+  projects ||--o{ project_user_assignments : "1-N(プロジェクト割当)"
   projects ||--o{ project_legacy_keys : rotates
   projects ||--o{ allowed_domains : authorizes
   projects ||--o{ faqs : contains

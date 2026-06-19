@@ -29,28 +29,28 @@
 <tr>
 <td>オーナー</td>
 <td>契約オーナー</td>
-<td><code>contract_owners</code> 行が存在する</td>
+<td><code>owners</code> 行が存在する(主体が owners 由来 / <code>actor_type='owner'</code>)</td>
 <td>自契約配下の全プロジェクトへの全権 + オーナー専有操作(§2)。割当の有無に関わらず全プロジェクトを操作できる。役割変更・降格・譲渡なし</td>
 <td><a href="../01_要件定義/FR02_ユーザー管理.html#FR-015a">FR-015a</a> / <a href="../01_要件定義/FR02_ユーザー管理.html#FR-015d">FR-015d</a></td>
 </tr>
 <tr>
 <td>プロジェクト管理者</td>
 <td>プロジェクト管理者</td>
-<td><code>contract_owners</code> 行を持たず、当該プロジェクトの <code>project_users.role='admin'</code></td>
+<td><code>owners</code> 由来でなく(<code>actor_type='project_user'</code>)、当該プロジェクトの <code>project_user_assignments.role='admin'</code></td>
 <td>当該プロジェクトの FAQ 管理・未解決質問管理・ログ参照に加え、当該プロジェクト範囲のメンバー招待・役割変更・離脱</td>
 <td><a href="../01_要件定義/FR02_ユーザー管理.html#FR-015b">FR-015b</a></td>
 </tr>
 <tr>
 <td>メンバー</td>
 <td>プロジェクトメンバー</td>
-<td><code>contract_owners</code> 行を持たず、当該プロジェクトの <code>project_users.role='member'</code></td>
+<td><code>owners</code> 由来でなく(<code>actor_type='project_user'</code>)、当該プロジェクトの <code>project_user_assignments.role='member'</code></td>
 <td>当該プロジェクトの FAQ 管理・未解決質問管理・ログ参照のみ。メンバー管理はできない</td>
 <td><a href="../01_要件定義/FR02_ユーザー管理.html#FR-015b">FR-015b</a></td>
 </tr>
 <tr>
 <td>(未割当)</td>
 <td>—</td>
-<td><code>contract_owners</code> 行も有効な <code>project_users</code> 行も持たない</td>
+<td>主体が <code>owners</code> 由来でなく、有効な <code>project_user_assignments</code> 割当も持たない <code>project_user</code></td>
 <td>ダッシュボード(自分の通知・お知らせ受信箱)のみ。他画面はプロジェクト境界不充足で拒否</td>
 <td><a href="../01_要件定義/FR19_アクセス制御細部.html#FR-337">FR-337</a></td>
 </tr>
@@ -64,7 +64,7 @@
 </tbody>
 </table>
 </div>
-<div class="callout important"><i class="bi bi-pin-angle"></i><div><span class="c-title">オーナーの自動 admin 行は認可の根拠にしない</span>オーナーはプロジェクト作成時に当該プロジェクトの <code>project_users(role='admin', valid=1)</code> 行を自動取得します(<a href="../01_要件定義/FR02_ユーザー管理.html#FR-015e">FR-015e</a>)。ただし認可は <code>contract_owners</code> 行存在による <code>isOwner=true</code> bypass を最優先とし(判定フローの正本は <a href="08_認証・認可設計.html#51-ユーザー種別とオーナー判定">08_認証・認可設計.html §5.1</a>)、自動付与の admin 行は <strong>通知宛先解決と画面表示の事実情報</strong>としてのみ参照します。最後の管理者保護の件数判定でも、オーナー由来の自動 admin 行は除外します。</div></div>
+<div class="callout important"><i class="bi bi-pin-angle"></i><div><span class="c-title">オーナーは project_user_assignments の admin 割当を持たない</span>オーナーは <code>owners</code> マスタ由来の独立した主体であり、<code>project_users</code> / <code>project_user_assignments</code> の行は <strong>一切持ちません</strong>(2 マスタ完全分離)。認可は <code>owners</code> 行存在(主体が owners 由来 / <code>actor_type='owner'</code>)による <code>isOwner=true</code> bypass を最優先とします(判定フローの正本は <a href="08_認証・認可設計.html#51-ユーザー種別とオーナー判定">08_認証・認可設計.html §5.1</a>)。プロジェクト管理者の権限は <code>project_user_assignments.role='admin'</code> 割当によってのみ付与され、オーナーへの自動付与は行いません。最後の管理者保護の件数判定では <code>project_user_assignments.role='admin'</code> 割当のみを数え、オーナーは割当を持たないため本質的に件数に含まれません(オーナーは割当ではなく常に isOwner で全権を保持します)。</div></div>
 <div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">役割・割当変更の反映タイミング(D-03)</span>役割やプロジェクト割当の追加・剥奪は既存セッションを即時失効させず、次回の認可チェック時点で反映されます(<a href="../01_要件定義/FR19_アクセス制御細部.html#FR-338">FR-338</a>)。本ページは「変更後に成立する権限状態」を表し、反映上限時間(TTL)とキャッシュ方式の正本は <a href="08_認証・認可設計.html#53-認可判定の順序">08_認証・認可設計.html §5.3</a> です。</div></div>
 
 <h2 id="2-オーナー専有操作">2. オーナー専有操作</h2>
@@ -208,7 +208,7 @@
 </tr>
 <tr>
 <td>最後の管理者保護</td>
-<td>他者を当該プロジェクトの最後の管理者から外す(降格・割当解除)。オーナー由来の自動 admin 行は件数判定から除外する</td>
+<td>他者を当該プロジェクトの最後の管理者から外す(降格・割当解除)。件数判定は <code>project_user_assignments.role='admin'</code> 割当のみを数え、オーナーは <code>project_user_assignments</code> に行を持たないため本質的に件数に含まれない</td>
 <td><code>E-AUTHZ-LAST-ADMIN-PROTECTED</code></td>
 <td><a href="../01_要件定義/FR02_ユーザー管理.html#FR-018a">FR-018a</a></td>
 </tr>

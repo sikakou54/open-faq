@@ -107,7 +107,7 @@
 <tr>
 <td>4</td>
 <td>権限設計方針</td>
-<td>オーナー専有機能 + プロジェクト別ロール(<code>project_users.role</code> = <code>admin</code> / <code>member</code>) + 契約状態による利用上書き。</td>
+<td>オーナー専有機能 + プロジェクト別ロール(<code>project_user_assignments.role</code> = <code>admin</code> / <code>member</code>) + 契約状態による利用上書き。</td>
 <td><a href="04_権限設計.html">04_権限設計.html</a></td>
 </tr>
 <tr>
@@ -418,7 +418,7 @@
 <tr>
 <td>04</td>
 <td><a href="04_権限設計.html">04_権限設計.html</a></td>
-<td>3 ロール(オーナー / プロジェクト管理者 / メンバー)+ プロジェクト別ロール(<code>project_users.role</code>)+ 契約状態上書き</td>
+<td>3 ロール(オーナー / プロジェクト管理者 / メンバー)+ プロジェクト別ロール(<code>project_user_assignments.role</code>)+ 契約状態上書き</td>
 </tr>
 <tr>
 <td>05</td>
@@ -519,7 +519,7 @@
 <td>プロジェクト</td>
 <td>§5.SCR-004</td>
 <td><code>GET /v1/projects</code></td>
-<td><code>projects</code>, <code>project_users</code></td>
+<td><code>projects</code>, <code>project_user_assignments</code></td>
 <td>オーナー専有</td>
 <td>E-AUTHZ-OWNER-ONLY</td>
 <td>MSG-SCR-004-*</td>
@@ -532,7 +532,7 @@
 <td>プロジェクト作成・編集モーダル</td>
 <td>§5.SCR-004-001</td>
 <td><code>POST /v1/projects</code> / <code>PATCH /v1/projects/{id}</code> / <code>DELETE /v1/projects/{id}</code></td>
-<td><code>projects</code>(作成時にオーナー grants 自動 INSERT、削除は論理削除)</td>
+<td><code>projects</code>(作成は projects 行のみ。オーナーは isOwner で全権を持ち project_user_assignments への自動 admin 付与は行わない。削除は論理削除)</td>
 <td>オーナー専有</td>
 <td>E-INPUT-*</td>
 <td>MSG-SCR-004-001-*</td>
@@ -610,7 +610,7 @@
 <td>メンバー(プロジェクト)</td>
 <td>§5.SCR-009</td>
 <td>プロジェクトメンバーAPI</td>
-<td><code>users</code>, <code>project_users</code></td>
+<td><code>project_users</code>, <code>project_user_assignments</code></td>
 <td>オーナー / <code>admin</code>(該当 PJ)</td>
 <td>E-AUTHZ-*</td>
 <td>MSG-SCR-009-*</td>
@@ -623,7 +623,7 @@
 <td>メンバー招待 / 編集モーダル(プロジェクト単位)</td>
 <td>§5.SCR-009-001</td>
 <td><code>POST /v1/projects/:id/members</code>(招待), <code>PATCH /v1/projects/:id/members/:userId</code>(ロール変更), <code>DELETE /v1/projects/:id/members/:userId</code>(離脱・最後の割当時はアカウント停止)</td>
-<td><code>users</code>, <code>project_users</code>, <code>sessions</code>, <code>access_tokens</code></td>
+<td><code>project_users</code>, <code>project_user_assignments</code>, <code>sessions</code>, <code>access_tokens</code></td>
 <td>オーナー / <code>admin</code>(該当 PJ)</td>
 <td>E-INPUT-* / E-AUTHZ-*</td>
 <td>MSG-SCR-009-001-*</td>
@@ -766,7 +766,7 @@
 <td>個人設定</td>
 <td>§5.SCR-017</td>
 <td><code>PATCH /v1/me</code>, <code>POST /v1/me/password</code></td>
-<td><code>accounts</code>, <code>project_users</code></td>
+<td><code>accounts</code>, <code>project_user_assignments</code></td>
 <td>全認証ユーザー(自分のみ)</td>
 <td>E-AUTH-*</td>
 <td>MSG-SCR-017-*</td>
@@ -792,7 +792,7 @@
 <td>設定</td>
 <td>§5.SCR-023</td>
 <td><code>PATCH /v1/me/contact-email</code>, 退会/出力API</td>
-<td><code>contract_owners</code></td>
+<td><code>owners</code></td>
 <td>オーナー専有</td>
 <td>E-AUTHZ-OWNER-ONLY</td>
 <td>MSG-SCR-023-*</td>

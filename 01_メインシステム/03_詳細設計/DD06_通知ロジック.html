@@ -18,7 +18,7 @@
 <p class="ps-lead"><strong>このページは、通知メールの送信基盤(EmailProvider 抽象 / Resend 実装 / Queue 再試行)、Resend Webhook の受信処理、サプレッション照合、通知重要度に応じた配信制御(<code>critical</code> の強制送信)の実装方針を定義します。</strong></p>
 </aside>
 
-<p class="doc-meta"><span><b>版数</b> v1.0</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+<p class="doc-meta"><span><b>版数</b> v1.1</span><span><b>更新</b> 2026-06-19</span><span class="dm-status">承認済</span></p>
 
 <h2 id="1-対象範囲">1. 対象範囲</h2>
 <p class="section-lead">本 DD が実装方針を定める機能・API・テーブル・Queue を示します。次の表は、通知 13 種・メール送信・Webhook 受信・サプレッションが範囲であることを一望できるよう、対象となる FR / API / テーブル / Queue を並べたものです。</p>
@@ -226,10 +226,19 @@
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span><span class="op">;</span></span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h3 id="36-通知重要度と強制送信">3.6 通知重要度と強制送信</h3>
-<p>通知重要度は <code>low</code> / <code>normal</code> / <code>high</code> / <code>critical</code> の 4 区分（共有概念）。<code>critical</code> はメール送信が必須となるイベント(<code>project_users.role='admin' AND valid=1</code> を 1 件でも保持する全ユーザー = オーナー自身も admin 行を保持するため自動的に網羅)に予約。<code>critical</code> はシステム判定で<strong>強制送信</strong>される。</p>
-<p><strong>critical 通知の宛先解決クエリ</strong>: オーナーが自動 admin 行を持つため、<code>project_users.role='admin' AND valid=1</code> の EXISTS 単独条件で宛先を網羅できる。<code>SELECT DISTINCT user_id</code> でメンバーが複数 PJ で admin を保持する場合の二重カウントを防ぐ。</p>
-<p>プロジェクト関連通知(<code>NOTIF-CHAT_REPLY_TO_STAFF</code> / <code>NOTIF-CHAT_HOLD_CHECK</code> 等の <code>normal</code> / <code>low</code>)は <strong>常時 ON 固定</strong> とし、配信時点で <code>project_users</code> を <code>WHERE valid=1</code> 条件で動的スキャンして当該プロジェクトの全メンバー(オーナー + admin + member)に即時配信する。画面設定と <code>project_notification_settings</code> テーブルは持たない。契約単位の <code>normal</code> / <code>high</code> 通知(課金・契約・運営お知らせ等)は契約 WS 側で扱う。個人通知オプトアウト・メンバー選択型 UI は MVP では提供しない。</p>
-<p>質問数上限アラート(<code>usage.question_limit.threshold</code>)はSCR-021-001で選択された25/50/80/90/100%への当月初回到達時に、オーナーと当該プロジェクトの有効な<code>admin</code>へメールだけを送信する。宛先は<code>project_id</code>で限定し、ユーザーIDと正規化メールアドレスで重複排除する。冪等キーは<code>question-limit-alert:{projectId}:{yyyyMM}:{thresholdPercent}</code>とし、画面上に送信先の表示・変更項目は設けない。</p>
+<p>通知重要度は <code>low</code> / <code>normal</code> / <code>high</code> / <code>critical</code> の 4 区分（共有概念）。<code>critical</code> はメール送信が必須となるイベントに予約し、宛先は<strong>契約オーナー(<code>owners</code> 行)</strong>と<strong>当該契約で <code>project_user_assignments.role='admin' AND valid=1</code> を 1 件でも保持するプロジェクトユーザー</strong>の和集合とする。<code>owners</code> は <code>project_user_assignments</code> の外にあるため、オーナーは別途明示的に宛先へ含める。<code>critical</code> はシステム判定で<strong>強制送信</strong>される。</p>
+<p><strong>critical 通知の宛先解決クエリ</strong>: 2 マスタ完全分離のため、オーナーとプロジェクトユーザーを <code>UNION</code> で解決する。<code>actor_type</code> を付与して宛先種別を区別し、正規化メールアドレスで重複排除する。</p>
+<div class="sourceCode"><pre class="sourceCode sql"><code class="sourceCode sql"><span>-- オーナー(契約境界キー = owners.id)</span>
+<span>SELECT 'owner' AS actor_type, o.id AS actor_id, o.email_hmac</span>
+<span>FROM owners o WHERE o.id = :contractOwnerUserId AND o.valid = 1</span>
+<span>UNION</span>
+<span>-- 当該契約で admin 割当を持つプロジェクトユーザー</span>
+<span>SELECT 'project_user' AS actor_type, pu.id AS actor_id, pu.email_hmac</span>
+<span>FROM project_users pu</span>
+<span>JOIN project_user_assignments pua ON pua.project_user_id = pu.id AND pua.valid = 1 AND pua.role = 'admin'</span>
+<span>WHERE pu.contract_owner_user_id = :contractOwnerUserId AND pu.valid = 1;</span></code></pre></div>
+<p>プロジェクト関連通知(<code>NOTIF-CHAT_REPLY_TO_STAFF</code> / <code>NOTIF-CHAT_HOLD_CHECK</code> 等の <code>normal</code> / <code>low</code>)は <strong>常時 ON 固定</strong> とし、配信時点で当該プロジェクトの宛先を動的スキャンして即時配信する。宛先はオーナー(<code>owners</code>)と当該プロジェクトに割り当たる全プロジェクトユーザー(<code>project_user_assignments WHERE valid=1</code> の admin + member)の和集合とする。画面設定と <code>project_notification_settings</code> テーブルは持たない。契約単位の <code>normal</code> / <code>high</code> 通知(課金・契約・運営お知らせ等)は契約 WS 側で扱う。個人通知オプトアウト・メンバー選択型 UI は MVP では提供しない。</p>
+<p>質問数上限アラート(<code>usage.question_limit.threshold</code>)はSCR-021-001で選択された25/50/80/90/100%への当月初回到達時に、オーナー(<code>owners</code>)と当該プロジェクトの有効な<code>admin</code>(<code>project_user_assignments.role='admin'</code>)へメールだけを送信する。宛先は<code>project_id</code>で限定し、アクター ID(<code>actor_type</code> + <code>actor_id</code>)と正規化メールアドレスで重複排除する。冪等キーは<code>question-limit-alert:{projectId}:{yyyyMM}:{thresholdPercent}</code>とし、画面上に送信先の表示・変更項目は設けない。</p>
 <p><code>announcement.kind = critical</code> は障害告知や緊急法令対応など、配信遅延が許容できない重大通知。メイン障害時の代替経路（Resend 直送フォールバック）の詳細は <a href="index.html">index.html</a> §7.2 / §13.2.2 を参照。</p>
 <h3 id="37-メール本文の表示義務特定電子メール法">3.7 メール本文の表示義務（特定電子メール法）</h3>
 <p>メール本文末尾には <code>COMPANY_LEGAL_NAME</code> / <code>UNSUBSCRIBE_URL</code> 等の表示義務情報を含める（テンプレート側で必須）。</p>

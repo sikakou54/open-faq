@@ -43,7 +43,7 @@
 <p class="section-lead">脅威に共通して適用する基本姿勢を 4 本柱で定める。個別の節はこの方針を具体化したものとして読む。</p>
 <ul>
 <li><strong>多層防御</strong>(認証 → 認可 → 入力検証 → 出力検査 → 監査)</li>
-<li><strong>最小権限原則</strong>(オーナー専有 / プロジェクト別ロール <code>admin</code> / <code>member</code>(<code>project_users.role</code>)の二段階)</li>
+<li><strong>最小権限原則</strong>(オーナー専有 / プロジェクト別ロール <code>admin</code> / <code>member</code>(<code>project_user_assignments.role</code>)の二段階)</li>
 <li><strong>監査の網羅性</strong>(変更系操作は全て監査、参照系は高権限操作のみ)</li>
 <li><strong>改ざん検知</strong>(ハッシュチェーン + 完全性検証バッチによる完全性検証を行う)</li>
 </ul>
@@ -173,7 +173,7 @@
 <p>担保事項:</p>
 <ul>
 <li><strong>不可逆性</strong>: メールアドレスハッシュ化など、原文復元不可な置換のみ</li>
-<li>設定管理: <code>contract_owners.data_deletion_mode</code> は契約締結時に既定 <code>physical</code>。MVP では UI 上の変更操作を提供せず、変更が必要な場合はサポート窓口経由の対応とする(SCR-017 個人設定にデータ保持・削除モード設定 UI は持たない)</li>
+<li>設定管理: <code>owners.data_deletion_mode</code> は契約締結時に既定 <code>physical</code>。MVP では UI 上の変更操作を提供せず、変更が必要な場合はサポート窓口経由の対応とする(SCR-017 個人設定にデータ保持・削除モード設定 UI は持たない)</li>
 <li>監査: <code>audit_logs.action='owner.data_deletion_mode.change'</code>(<code>retention_class=general</code>)</li>
 </ul>
 <h3 id="34-お知らせ二層構成">3.4 お知らせ二層構成</h3>
@@ -360,7 +360,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 <tbody>
 <tr>
 <td>利用者管理画面</td>
-<td>セッション + プロジェクト別ロール(<code>project_users.role</code>)+ オーナー境界</td>
+<td>セッション + プロジェクト別ロール(<code>project_user_assignments.role</code>)+ オーナー境界</td>
 <td><a href="08_認証・認可設計.html">08_認証・認可設計.html</a></td>
 </tr>
 <tr>
@@ -476,7 +476,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 <tbody>
 <tr>
 <td>操作者</td>
-<td>実行したアカウント利用者(<code>actor_user_id</code>)</td>
+<td>実行した主体(<code>actor_type='owner'</code> / <code>'project_user'</code> + <code>actor_id</code>)</td>
 </tr>
 <tr>
 <td>対象メンバー</td>
@@ -484,7 +484,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </tr>
 <tr>
 <td>変更前後のプロジェクト × ロール差分</td>
-<td>ロール割当の追加・変更・剥奪時に、対象プロジェクトと変更前後の <code>project_users.role</code>(<code>admin</code> / <code>member</code>)を before/after で記録(該当時のみ)</td>
+<td>ロール割当の追加・変更・剥奪時に、対象プロジェクトと変更前後の <code>project_user_assignments.role</code>(<code>admin</code> / <code>member</code>)を before/after で記録(該当時のみ)</td>
 </tr>
 <tr>
 <td>対応理由</td>
@@ -583,7 +583,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </tbody>
 </table>
 <h4 id="821-鍵バージョン参照">8.2.1 鍵バージョン参照</h4>
-<p class="section-lead">dual-decrypt 期間中はレコードごとにどの世代の鍵で暗号化したかを <code>email_key_version</code> で明示し、ローテーション完了後に旧鍵で暗号化された行を再暗号化する。鍵バージョン列の定義は <a href="03_テーブル設計/users.html">03_テーブル設計/index.html §3.1</a> を正本とし、本書は運用フローを定める。</p>
+<p class="section-lead">dual-decrypt 期間中はレコードごとにどの世代の鍵で暗号化したかを <code>email_key_version</code> で明示し、ローテーション完了後に旧鍵で暗号化された行を再暗号化する。鍵バージョン列の定義は <a href="03_テーブル設計/index.html">03_テーブル設計/index.html §3.1</a> を正本とし、本書は運用フローを定める。</p>
 <table>
 <thead>
 <tr>
@@ -594,7 +594,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </thead>
 <tbody>
 <tr>
-<td><code>users</code></td>
+<td><code>owners</code> / <code>project_users</code></td>
 <td><code>email_key_version</code></td>
 <td>管理者(オーナー / プロジェクト管理者 / メンバー)のメールアドレス暗号化バージョン</td>
 </tr>
@@ -604,7 +604,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 <pre class="mermaid"><code>sequenceDiagram
   participant A as worker-main-api
   participant S as Secrets Store
-  participant D as D1 (users)
+  participant D as D1 (owners / project_users)
 
   rect rgb(240,240,240)
     Note over A,D: INSERT / UPDATE 時
@@ -637,8 +637,8 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
       S--&gt;&gt;A:
     end
   end</code></pre>
-<p><strong>ローテーション完了の判定</strong>:<code>SELECT COUNT(*) FROM users WHERE email_key_version &lt; N</code> が 0 件であること。</p>
-<p><strong>例外</strong>:<code>contract_owners.contract_status='deleted'</code> または <code>users.valid=0</code> の論理削除済み行は、90 日経過後の物理削除バッチに任せ、再暗号化対象外とする(復元時の dual-decrypt 整合性を維持するため、ローテーション期間は 60 日 + 物理削除遅延 90 日を考慮した運用窓設計とする)。</p>
+<p><strong>ローテーション完了の判定</strong>:<code>SELECT COUNT(*) FROM owners WHERE email_key_version &lt; N</code> + <code>SELECT COUNT(*) FROM project_users WHERE email_key_version &lt; N</code> がいずれも 0 件であること。</p>
+<p><strong>例外</strong>:<code>owners.contract_status='deleted'</code>・<code>owners.valid=0</code> または <code>project_users.valid=0</code> の論理削除済み行は、90 日経過後の物理削除バッチに任せ、再暗号化対象外とする(復元時の dual-decrypt 整合性を維持するため、ローテーション期間は 60 日 + 物理削除遅延 90 日を考慮した運用窓設計とする)。</p>
 <h3 id="83-ウィジェット-api-キーprojects--project_legacy_keys834-から移管">8.3 ウィジェット API キー(<code>projects</code> / <code>project_legacy_keys</code>)</h3>
 <p class="section-lead">ウィジェット公開キーは無期限で、失効は再発行(ローテーション)でのみ行う(FR-194)。再発行時は旧キーを 24 時間併存させ猶予後に完全失効する(FR-193)。キーと旧キーのテーブル定義は <a href="03_テーブル設計/project_legacy_keys.html">03_テーブル設計/index.html §3.7</a> を正本とする。</p>
 <ul>
@@ -665,7 +665,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </tr>
 <tr>
 <td><strong>管理者権限の濫用防止</strong></td>
-<td>監査ログ全件 + プロジェクト別ロール(<code>admin</code> / <code>member</code>)の最小化 + オーナー専有機能の <code>project_users.role</code> 付与不可(プロジェクト作成・編集・削除・課金・退会・規約再同意はオーナー専有。メンバーアカウント物理削除はオーナーおよび当該プロジェクト管理者だが、プロジェクト管理者は member 在籍中は他 admin を削除不可)</td>
+<td>監査ログ全件 + プロジェクト別ロール(<code>admin</code> / <code>member</code>)の最小化 + オーナー専有機能の <code>project_user_assignments.role</code> 付与不可(プロジェクト作成・編集・削除・課金・退会・規約再同意はオーナー専有。メンバーアカウント物理削除はオーナーおよび当該プロジェクト管理者だが、プロジェクト管理者は member 在籍中は他 admin を削除不可)</td>
 <td><a href="04_権限設計.html">04_権限設計.html</a> / §7</td>
 </tr>
 <tr>

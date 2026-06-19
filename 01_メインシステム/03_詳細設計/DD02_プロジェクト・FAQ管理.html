@@ -16,7 +16,7 @@
 <aside class="page-summary">
 <p class="ps-lead"><strong>このページは、プロジェクトと FAQ を作成・編集・公開・削除する実装ロジックを定義します。</strong></p>
 </aside>
-<p class="doc-meta"><span><b>版数</b> v1.1</span><span><b>更新</b> 2026-06-17</span><span><b>詳細設計 ID</b> DD02</span><span><b>関連 FR</b> FR-040〜048 / FR-100〜106</span><span class="dm-status">承認済</span></p>
+<p class="doc-meta"><span><b>版数</b> v1.2</span><span><b>更新</b> 2026-06-19</span><span><b>詳細設計 ID</b> DD02</span><span><b>関連 FR</b> FR-040〜048 / FR-100〜106</span><span class="dm-status">承認済</span></p>
 <h2 id="1-対象範囲">1. 対象範囲</h2>
 <p class="section-lead">本ページが扱う機能・画面・API・テーブルの一覧です。設計仕様そのものは基本設計を正本とし、ここでは実装ロジックを定義します。</p>
 <div class="table-scroll">
@@ -194,9 +194,9 @@
 </tr>
 </tbody>
 </table>
-<h3 id="310-プロジェクト作成時のオーナー自動-admin-付与fr-015e--fr-030a">3.10 プロジェクト作成時のオーナー自動 admin 付与(FR-015e / FR-030a)</h3>
-<p class="section-lead">プロジェクト作成時に、オーナーを当該プロジェクトの管理者として自動的に登録する処理を定めます。1 トランザクション内で <code>projects</code> INSERT・オーナー admin 行 INSERT・監査ログ記録を行う流れを示します。</p>
-<p><code>POST /projects</code> 実行時は SCR-004-001(新規作成モード)から <code>name</code> / <code>allowedDomains</code> 等の基本情報のみを受け取る(<code>initialAdmins</code> フィールドは受け取らない)。オーナーは作成時に自動で当該プロジェクトの管理者となる(<code>project_users(role='admin', valid=1)</code> 自動 INSERT)。他者をプロジェクト管理者として招待する操作は、プロジェクト作成後に SCR-009-001 経由(<code>POST /projects/{id}/members</code> + <code>role='admin'</code>)で行う。</p>
+<h3 id="310-プロジェクト作成fr-015e--fr-030a">3.10 プロジェクト作成(FR-015e / FR-030a)</h3>
+<p class="section-lead">プロジェクト作成処理を定めます。オーナーは <code>owners</code> 行存在(isOwner)による全権でプロジェクトを管理するため、作成時に自身の割当行(<code>project_user_assignments</code>)を作る必要はありません。1 トランザクション内で <code>projects</code> INSERT と監査ログ記録を行う流れを示します。</p>
+<p><code>POST /projects</code> 実行時は SCR-004-001(新規作成モード)から <code>name</code> / <code>allowedDomains</code> 等の基本情報のみを受け取る(<code>initialAdmins</code> フィールドは受け取らない)。オーナーは <code>isOwner</code> 全権で当該プロジェクトを管理でき、プロジェクトへの自動 admin 割当行(旧 v1.10)は作成しない。他者をプロジェクト管理者として割り当てる操作は、プロジェクト作成後に SCR-009-001 経由(<code>POST /projects/{id}/members</code> + <code>role='admin'</code>)で <code>project_user_assignments</code> に行う。</p>
 <pre class="mermaid"><code>sequenceDiagram
   participant U as オーナー
   participant W as worker-main-api
@@ -209,42 +209,32 @@
   else 検証 OK
     W-&gt;&gt;D: projects INSERT(公開鍵発行・valid=1)
     D--&gt;&gt;W: projectId
-    W-&gt;&gt;D: project_users INSERT(オーナー・role='admin'・valid=1)
-    D--&gt;&gt;W:
-    W-&gt;&gt;D: 監査ログ project.created_with_owner_admin(retention_class=general)
+    W-&gt;&gt;D: 監査ログ project.create(retention_class=general)
     D--&gt;&gt;W:
     W--&gt;&gt;U: 作成したプロジェクト
   end</code></pre>
 <p>擬似コード(上記トランザクションの実体、INSERT 各列値を含む):</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">function</span> <span class="fu">createProject</span>(actor<span class="op">:</span> Principal<span class="op">,</span> req<span class="op">:</span> CreateProjectRequest) {</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">requireOwner</span>(actor)<span class="op">;</span> <span class="co">// E-AUTHZ-OWNER-ONLY</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">requireOwner</span>(actor)<span class="op">;</span> <span class="co">// E-AUTHZ-OWNER-ONLY(owners 行存在 = isOwner)</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">validateCreateProjectRequest</span>(req)<span class="op">;</span> <span class="co">// 400</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="cf">await</span> db<span class="op">.</span><span class="fu">transaction</span>(<span class="kw">async</span> (tx) <span class="kw">=&gt;</span> {</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> project <span class="op">=</span> <span class="cf">await</span> tx<span class="op">.</span><span class="fu">insert</span>(<span class="st">&#39;projects&#39;</span><span class="op">,</span> {</span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>      <span class="op">...</span>req<span class="op">,</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>      contract_owner_user_id<span class="op">:</span> actor<span class="op">.</span><span class="at">contractOwnerUserId</span><span class="op">,</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>      contract_owner_user_id<span class="op">:</span> actor<span class="op">.</span><span class="at">contractOwnerUserId</span><span class="op">,</span>  <span class="co">// → owners.id</span></span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>      valid<span class="op">:</span> <span class="dv">1</span><span class="op">,</span></span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">// オーナー admin 行を自動 INSERT(project_users)</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> tx<span class="op">.</span><span class="fu">insert</span>(<span class="st">&#39;project_users&#39;</span><span class="op">,</span> {</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>      user_id<span class="op">:</span> actor<span class="op">.</span><span class="at">contractOwnerUserId</span><span class="op">,</span>  <span class="co">// オーナー本人 = contract_owners.user_id = users.id</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>      project_id<span class="op">:</span> project<span class="op">.</span><span class="at">id</span><span class="op">,</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>      contract_owner_user_id<span class="op">:</span> actor<span class="op">.</span><span class="at">contractOwnerUserId</span><span class="op">,</span>  <span class="co">// 認可境界クエリ高速化の冗長保持</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>      role<span class="op">:</span> <span class="st">&#39;admin&#39;</span><span class="op">,</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>      valid<span class="op">:</span> <span class="dv">1</span><span class="op">,</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>      granted_by<span class="op">:</span> actor<span class="op">.</span><span class="at">userId</span><span class="op">,</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>      granted_at<span class="op">:</span> <span class="fu">now</span>()<span class="op">,</span></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">// オーナーは isOwner 全権で管理するため、自身の割当行(project_user_assignments)は作成しない</span></span>
 <span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> tx<span class="op">.</span><span class="fu">insertAudit</span>({</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>      action<span class="op">:</span> <span class="st">&#39;project.created_with_owner_admin&#39;</span><span class="op">,</span></span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>      target_type<span class="op">:</span> <span class="st">&#39;project&#39;</span><span class="op">,</span></span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>      target_id<span class="op">:</span> project<span class="op">.</span><span class="at">id</span><span class="op">,</span></span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>      metadata<span class="op">:</span> { contractOwnerUserId<span class="op">:</span> actor<span class="op">.</span><span class="at">contractOwnerUserId</span> }<span class="op">,</span></span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>      retention_class<span class="op">:</span> <span class="st">&#39;general&#39;</span><span class="op">,</span></span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> project<span class="op">;</span></span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>      action<span class="op">:</span> <span class="st">&#39;project.create&#39;</span><span class="op">,</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>      actor_type<span class="op">:</span> <span class="st">&#39;owner&#39;</span><span class="op">,</span> actor_id<span class="op">:</span> actor<span class="op">.</span><span class="at">actorId</span><span class="op">,</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>      target_type<span class="op">:</span> <span class="st">&#39;project&#39;</span><span class="op">,</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>      target_id<span class="op">:</span> project<span class="op">.</span><span class="at">id</span><span class="op">,</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>      metadata<span class="op">:</span> { contractOwnerUserId<span class="op">:</span> actor<span class="op">.</span><span class="at">contractOwnerUserId</span> }<span class="op">,</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>      retention_class<span class="op">:</span> <span class="st">&#39;general&#39;</span><span class="op">,</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> project<span class="op">;</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h3 id="311-プロジェクト削除時の論理削除カスケード--孤立メンバー-cleanupfr-030b">3.11 プロジェクト削除時の論理削除カスケード + 孤立メンバー cleanup(FR-030b)</h3>
 <p class="section-lead">プロジェクト削除時に、関連行を論理削除へ伝播させ、他に割当の無くなった孤立メンバーを併せて無効化する 1 トランザクションの流れを定めます。<code>DELETE /projects/{id}</code> は <strong>SCR-004-001 プロジェクト作成・編集モーダル(編集モード)のオーナー専有 DangerSection のみ</strong> から起動可能です。</p>
 <pre class="mermaid"><code>sequenceDiagram
@@ -253,14 +243,14 @@
   participant D as D1
 
   U-&gt;&gt;W: DELETE /projects/{id}
-  W-&gt;&gt;D: 割当メンバー userId 一覧を取得(valid=1, オーナー含む)
-  D--&gt;&gt;W: メンバー一覧
-  W-&gt;&gt;D: project_users を valid=0 へ(オーナー admin 行含む全行)
+  W-&gt;&gt;D: 割当プロジェクトユーザー一覧を取得(valid=1)
+  D--&gt;&gt;W: 割当一覧
+  W-&gt;&gt;D: project_user_assignments を valid=0 へ(当該プロジェクトの全割当行)
   D--&gt;&gt;W:
-  W-&gt;&gt;D: 孤立メンバーを抽出(他 valid=1 割当 0 件 かつ 非オーナー)
-  D--&gt;&gt;W: 孤立メンバー一覧
-  opt 孤立メンバーあり
-    W-&gt;&gt;D: 孤立メンバーの sessions 失効・未使用 access_tokens 失効・users を valid=0
+  W-&gt;&gt;D: 孤立プロジェクトユーザーを抽出(他 valid=1 割当 0 件)
+  D--&gt;&gt;W: 孤立ユーザー一覧
+  opt 孤立プロジェクトユーザーあり
+    W-&gt;&gt;D: 孤立ユーザーの sessions 失効・未使用 access_tokens 失効・project_users を valid=0
     D--&gt;&gt;W:
   end
   W-&gt;&gt;D: projects を status='deleted', valid=0, deleted_at へ + 関連テーブルへ valid=0 伝播
@@ -268,8 +258,8 @@
   W-&gt;&gt;D: 監査ログ project.logical_delete(retention_class=general)
   D--&gt;&gt;W:
   W--&gt;&gt;U: 削除完了</code></pre>
-<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">論理削除の伝播先と除外</span>関連テーブル(<code>allowed_domains</code> / <code>faqs</code> / <code>inquiries</code> / <code>question_logs</code> / <code>project_quota_limits</code>)へ <code>valid=0, updated_at=now()</code> を伝播する。<code>usage_metering</code> は法定保管 7 年のため論理削除せず保持する。孤立メンバーの抽出条件は「割当メンバーのうち他プロジェクト割当(<code>valid=1</code> の <code>project_users</code>)が 0 件かつ <code>contract_owners</code> 行を持たない(非オーナー)もの」。監査ログ <code>metadata</code> には <code>{ projectId, logicallyDeletedUserIds: [...] }</code> を含める。</div></div>
-<p>オーナーの <code>users</code> 行は本処理の論理削除対象外(<code>contract_owners</code> 行を持つユーザーは常に <code>valid=1</code> 維持)。当該プロジェクトに対するオーナー自身の <code>project_users</code> admin 行は他のメンバー行と同様に <code>valid=0</code> に論理削除される。論理削除データは <code>updated_at &lt; now() - 90d AND valid=0</code> の物理削除バッチ(<a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html §3.12</a>)で 90 日後に物理削除される。</p>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">論理削除の伝播先と除外</span>関連テーブル(<code>allowed_domains</code> / <code>faqs</code> / <code>inquiries</code> / <code>question_logs</code> / <code>project_quota_limits</code>)へ <code>valid=0, updated_at=now()</code> を伝播する。<code>usage_metering</code> は法定保管 7 年のため論理削除せず保持する。孤立プロジェクトユーザーの抽出条件は「当該プロジェクトに割り当たっていたプロジェクトユーザーのうち、他プロジェクト割当(<code>valid=1</code> の <code>project_user_assignments</code>)が 0 件のもの」。<code>project_users</code> はオーナーを含まない完全分離マスタのため、抽出対象は常にプロジェクトユーザーのみとなる。監査ログ <code>metadata</code> には <code>{ projectId, logicallyDeletedProjectUserIds: [...] }</code> を含める。</div></div>
+<p>オーナー(<code>owners</code> 行)は <code>project_users</code> マスタの外にあり、本処理の論理削除対象に含まれない(<code>owners</code> は常に <code>valid=1</code> 維持)。オーナーは <code>isOwner</code> 全権でプロジェクトを管理し自身の割当行を持たないため、削除されるのは当該プロジェクトの <code>project_user_assignments</code> 行のみである。論理削除データは <code>updated_at &lt; now() - 90d AND valid=0</code> の物理削除バッチ(<a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html §3.12</a>)で 90 日後に物理削除される。</p>
 <h3 id="311a-プロジェクト連絡先メール確認フローfr-033a--scr-019">3.11a プロジェクト連絡先メール確認フロー(FR-033a / SCR-019)</h3>
 <p class="section-lead">プロジェクト連絡先メールを変更したときに、確認メールのトークンで到達確認を行い <code>contact_email_verified_at</code> をセットするまでの流れを定めます。</p>
 <p>SCR-004-001(新規モードで初期入力、または編集モードで <code>projects.contact_email</code> を変更)した時に、TPL-PROJECT_CONTACT_VERIFY確認メールを送信する。受信者はSCR-019へ着地し、<code>POST /auth/contact-verifications/{token}</code> で確認完了する。</p>
@@ -326,12 +316,12 @@
 </ul>
 <h3 id="312-90-日後物理削除バッチ概要">3.12 90 日後物理削除バッチ(概要)</h3>
 <p class="section-lead">論理削除済みデータを 90 日後に物理削除する日次バッチの概要を示します。詳細ロジックは DD13 が正本のため、本節は対象と CASCADE の範囲のみを述べます。</p>
-<p>詳細は <a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html §3.12</a> を正本とする。日次バッチで <code>valid=0 AND updated_at &lt; now() - 90d</code> の行を物理削除する。<code>users</code> 行が物理 DELETE されると <code>ON DELETE CASCADE</code> で関連 <code>contract_owners</code> / <code>project_users</code> / <code>sessions</code> / <code>access_tokens</code> / <code>terms_agreements</code> 等が連鎖物理削除される。<code>projects</code> 行が物理 DELETE されると <code>ON DELETE CASCADE</code> で関連 <code>faqs</code> / <code>inquiries</code> / <code>chat_*</code> / <code>project_quota_limits</code> 等が連鎖物理削除される。<code>billing_subscriptions</code> / <code>usage_metering</code> は物理削除バッチの対象外(電子帳簿保存法 7 年保持、永久維持。<code>usage_metering</code> はプロジェクト単位行も含め 7 年保持)。匿名化モード(<code>contract_owners.data_deletion_mode='anonymize'</code>)は物理削除前に匿名化処理を実施する。</p>
+<p>詳細は <a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html §3.12</a> を正本とする。日次バッチで <code>valid=0 AND updated_at &lt; now() - 90d</code> の行を物理削除する。<code>owners</code> 行が物理 DELETE されると <code>ON DELETE CASCADE</code> で関連 <code>project_users</code> / <code>project_user_assignments</code> / <code>sessions</code> / <code>access_tokens</code> / <code>terms_agreements</code>(<code>actor_type='owner'</code> 分)等が連鎖物理削除される。<code>project_users</code> 行が物理 DELETE されると <code>project_user_assignments</code> / 当該ユーザーの <code>sessions</code> / <code>access_tokens</code> 等が連鎖物理削除される。<code>projects</code> 行が物理 DELETE されると <code>ON DELETE CASCADE</code> で関連 <code>faqs</code> / <code>inquiries</code> / <code>chat_*</code> / <code>project_quota_limits</code> 等が連鎖物理削除される。<code>billing_subscriptions</code> / <code>usage_metering</code> は物理削除バッチの対象外(電子帳簿保存法 7 年保持、永久維持。<code>usage_metering</code> はプロジェクト単位行も含め 7 年保持)。匿名化モード(<code>owners.data_deletion_mode='anonymize'</code>)は物理削除前に匿名化処理を実施する。</p>
 <h3 id="313-関連する横断設計">3.13 関連する横断設計</h3>
 <p class="section-lead">本ページのロジックが依存する認可・監査ログ・キャッシュ反映・論理削除フィルタの横断的な取り決めを示します。</p>
 <ul>
 <li>認可: <a href="DD08_認可ヘルパ.html">DD08_認可ヘルパ.html</a> の <code>requireProjectRole</code> でオーナー境界 + プロジェクトロール(<code>admin</code> / <code>member</code>)を検証</li>
-<li>監査ログ: <code>faq.create</code> / <code>faq.update</code>(状態変更を含む。<code>metadata</code> に <code>status</code> の from/to を記録)/ <code>faq.delete</code> / <code>faq.bulk_import</code> / <code>project.created_with_owner_admin</code> / <code>project.logical_delete</code> / <code>project.member_invited</code> / <code>project.hard_delete_by_batch</code>(90 日後物理削除バッチ起動)を <code>retention_class=general</code> で記録</li>
+<li>監査ログ: <code>faq.create</code> / <code>faq.update</code>(状態変更を含む。<code>metadata</code> に <code>status</code> の from/to を記録)/ <code>faq.delete</code> / <code>faq.bulk_import</code> / <code>project.create</code> / <code>project.logical_delete</code> / <code>project.member_invited</code> / <code>project.hard_delete_by_batch</code>(90 日後物理削除バッチ起動)を <code>retention_class=general</code> で記録</li>
 <li>リアルタイム反映: FAQ 保存(状態変更含む)・編集時に <code>widget-api</code> 側の KV キャッシュ(<code>embedding:{faqId}</code>、<code>ai_threshold:{owner}:{project}</code> は別系統)を invalidate</li>
 <li>論理削除フィルタ: 全 GET 系クエリで <code>WHERE valid=1</code> を必須付与(漏れは IDOR 類似の脆弱性、09_セキュリティ設計参照)</li>
 </ul>
@@ -393,7 +383,7 @@
 </tr>
 <tr>
 <td>権限</td>
-<td>該当プロジェクトに割当のないメンバー(<code>project_users</code> 行なし)による FAQ 編集試行で 404 偽装 / 該当 PJ の <code>member</code>+ ロールを持つメンバーは編集可</td>
+<td>該当プロジェクトに割当のないプロジェクトユーザー(<code>project_user_assignments</code> 行なし)による FAQ 編集試行で 404 偽装 / 該当 PJ の <code>member</code>+ ロールを持つプロジェクトユーザーは編集可</td>
 </tr>
 <tr>
 <td>性能</td>

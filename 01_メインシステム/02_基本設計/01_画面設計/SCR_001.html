@@ -132,7 +132,7 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>利用者</td><td>認証情報を照合する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>users</code>(<a href="../03_テーブル設計/users.html">テーブル設計 3.1</a>)</td></tr>
+<tr><td>オーナー / プロジェクトユーザー</td><td>認証情報を照合する(オーナーマスタとプロジェクトユーザーマスタは完全分離。両マスタを照合対象とする)</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>owners</code>(<a href="../03_テーブル設計/owners.html">テーブル設計 3.2</a>)/ <code>project_users</code>(<a href="../03_テーブル設計/project_users.html">テーブル設計 3.1</a>)</td></tr>
 <tr><td>ログイン</td><td>認証してセッションを発行する</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /auth/login</code>(<a href="../02_API設計/認証.html#API-AUTH-002">API 設計 5.1.2</a>)</td></tr>
 </tbody>
 </table>

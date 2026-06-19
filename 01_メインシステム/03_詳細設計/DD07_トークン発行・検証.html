@@ -18,7 +18,7 @@
 <p class="ps-lead"><strong>このページは、メール確認・パスワード再設定・管理者ユーザー有効化などで使う一時トークンの発行・検証・1 回限り消費の実装方針を定義します。</strong> 生トークンはユーザーへ返し、DB(<code>access_tokens</code>)には HMAC-SHA256 ハッシュのみを保存します。</p>
 </aside>
 
-<p class="doc-meta"><span><b>版数</b> v1.1</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+<p class="doc-meta"><span><b>版数</b> v1.2</span><span><b>更新</b> 2026-06-19</span><span class="dm-status">承認済</span></p>
 
 <h2 id="1-対象範囲">1. 対象範囲</h2>
 <p class="section-lead">本 DD が実装方針を定める機能・API・テーブルを示します。次の表は、対象となる FR / API / テーブルを並べたもので、メール確認・パスワード再設定・管理者ユーザー有効化の各トークンと、それらを支える <code>access_tokens</code> 基盤が範囲であることを一望できます。</p>
@@ -129,7 +129,7 @@
 <td><code>contact_verify</code></td>
 <td>24h</td>
 <td>◎</td>
-<td><strong><code>meta.projectId</code>(JSON)</strong>(SCR-019 着地時に <code>projects.contact_email_verified_at</code> を更新する対象プロジェクトを特定。<code>user_id</code> は持たない ── 連絡先メール所有者がアカウントを持つとは限らない)</td>
+<td><strong><code>meta.projectId</code>(JSON)</strong>(SCR-019 着地時に <code>projects.contact_email_verified_at</code> を更新する対象プロジェクトを特定。<code>actor_type</code> / <code>actor_id</code> は持たない ── 連絡先メール所有者がアカウント(<code>owners</code> / <code>project_users</code>)を持つとは限らない)</td>
 </tr>
 </tbody>
 </table>
@@ -177,12 +177,12 @@
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> tokenHash <span class="op">=</span> <span class="cf">await</span> <span class="fu">hmacSha256</span>(env<span class="op">.</span><span class="at">MASTER_KEY</span><span class="op">,</span> rawToken)<span class="op">;</span></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="vs">    INSERT INTO access_tokens (id, token_hash, purpose, meta, created_at, expires_at, user_id)</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="vs">    VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="vs">    INSERT INTO access_tokens (id, token_hash, purpose, meta, created_at, expires_at, actor_type, actor_id)</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="vs">    VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)</span></span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="vs">  `</span>)<span class="op">.</span><span class="fu">bind</span>(tokenId<span class="op">,</span> tokenHash<span class="op">,</span> purpose<span class="op">,</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">stringify</span>(payload)<span class="op">,</span></span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        <span class="kw">new</span> <span class="bu">Date</span>()<span class="op">.</span><span class="fu">toISOString</span>()<span class="op">,</span></span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        <span class="kw">new</span> <span class="bu">Date</span>(<span class="bu">Date</span><span class="op">.</span><span class="fu">now</span>() <span class="op">+</span> ttlSec <span class="op">*</span> <span class="dv">1000</span>)<span class="op">.</span><span class="fu">toISOString</span>()<span class="op">,</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        payload<span class="op">.</span><span class="at">userId</span>)<span class="op">.</span><span class="fu">run</span>()<span class="op">;</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        payload<span class="op">.</span><span class="at">actorType</span> <span class="op">??</span> <span class="dt">null</span><span class="op">,</span> payload<span class="op">.</span><span class="at">actorId</span> <span class="op">??</span> <span class="dt">null</span>)<span class="op">.</span><span class="fu">run</span>()<span class="op">;</span></span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> rawToken<span class="op">;</span>  <span class="co">// ユーザーに返す生トークン (DB には hash のみ)</span></span>
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>}</span>
@@ -213,11 +213,11 @@
 <p class="section-lead">1 回限り用途(<code>email_verify</code> / <code>password_reset</code> / <code>activation</code> / <code>contact_verify</code>)は、検証成功直後に必ず消費し、再使用を防ぎます。</p>
 <p><code>consumeToken()</code> を検証直後に必ず呼び、<code>used_at</code> を設定。再使用時は <code>TOKEN_REUSED</code>。</p>
 <h3 id="33a-メンバー招待トークンactivation-scr-018-有効化">3.3a メンバー招待トークン(activation)+ SCR-018 有効化</h3>
-<p>招待時 (<code>POST /projects/{id}/members</code>) に <code>purpose='activation'</code> で発行し、<code>meta</code> に <code>invitedProjectId</code> / <code>invitedRole</code> を JSON 保持。SCR-018 「登録を完了する」押下時に <code>verifyToken</code> → 同一トランザクションでユーザー有効化 + <code>consumeToken</code> を実行する。</p>
+<p>招待時 (<code>POST /projects/{id}/members</code>) に <code>purpose='activation'</code> で発行し、<code>meta</code> に <code>invitedProjectId</code> / <code>invitedRole</code> を JSON 保持。トークンのアクターは招待されたプロジェクトユーザー(<code>actorType='project_user'</code> / <code>actorId=project_users.id</code>)。SCR-018 「登録を完了する」押下時に <code>verifyToken</code> → 同一トランザクションでプロジェクトユーザー有効化 + <code>consumeToken</code> を実行する。</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 招待時(POST /projects/{id}/members)</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> rawToken <span class="op">=</span> <span class="cf">await</span> <span class="fu">generateToken</span>(<span class="st">&#39;activation&#39;</span><span class="op">,</span> {</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  userId<span class="op">,</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  contractOwnerUserId<span class="op">,</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  actorType<span class="op">:</span> <span class="st">&#39;project_user&#39;</span><span class="op">,</span> actorId<span class="op">:</span> projectUserId<span class="op">,</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  contractOwnerUserId<span class="op">,</span>           <span class="co">// → owners.id</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  invitedProjectId<span class="op">:</span> projectId<span class="op">,</span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  invitedRole<span class="op">,</span>                  <span class="co">// &#39;admin&#39; | &#39;member&#39;</span></span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>}<span class="op">,</span> env<span class="op">,</span> <span class="co">/* 7d */</span> <span class="dv">7</span> <span class="op">*</span> <span class="dv">86400</span>)<span class="op">;</span></span>
@@ -226,20 +226,20 @@
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">// SCR-018 で「登録を完了する」押下時(POST /auth/invitations/{token}/activate)</span></span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> { payload } <span class="op">=</span> <span class="cf">await</span> <span class="fu">verifyToken</span>(rawToken<span class="op">,</span> <span class="st">&#39;activation&#39;</span><span class="op">,</span> env)<span class="op">;</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> { userId<span class="op">,</span> invitedProjectId<span class="op">,</span> invitedRole } <span class="op">=</span> payload<span class="op">;</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> { actorId<span class="op">:</span> projectUserId<span class="op">,</span> invitedProjectId<span class="op">,</span> invitedRole } <span class="op">=</span> payload<span class="op">;</span></span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">batch</span>([</span>
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="vs">`UPDATE users SET name = ?1, password_hash = ?2, status = &#39;active&#39;, updated_at = ?3 WHERE id = ?4`</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  )<span class="op">.</span><span class="fu">bind</span>(displayName<span class="op">,</span> passwordHash<span class="op">,</span> now<span class="op">,</span> userId)<span class="op">,</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="vs">`UPDATE project_users SET name = ?1, password_hash = ?2, status = &#39;active&#39;, updated_at = ?3 WHERE id = ?4`</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  )<span class="op">.</span><span class="fu">bind</span>(displayName<span class="op">,</span> passwordHash<span class="op">,</span> now<span class="op">,</span> projectUserId)<span class="op">,</span></span>
 <span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="vs">`INSERT INTO terms_agreements (id, user_id, doc_type, terms_version, agreed_at) VALUES (?1, ?2, &#39;terms_of_service&#39;, ?3, ?4), (?5, ?2, &#39;privacy_policy&#39;, ?6, ?4)`</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  )<span class="op">.</span><span class="fu">bind</span>(<span class="fu">ulid</span>()<span class="op">,</span> userId<span class="op">,</span> termsVer<span class="op">,</span> now<span class="op">,</span> <span class="fu">ulid</span>()<span class="op">,</span> privacyVer)<span class="op">,</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="vs">`INSERT INTO terms_agreements (id, actor_type, actor_id, doc_type, terms_version, agreed_at) VALUES (?1, &#39;project_user&#39;, ?2, &#39;terms_of_service&#39;, ?3, ?4), (?5, &#39;project_user&#39;, ?2, &#39;privacy_policy&#39;, ?6, ?4)`</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  )<span class="op">.</span><span class="fu">bind</span>(<span class="fu">ulid</span>()<span class="op">,</span> projectUserId<span class="op">,</span> termsVer<span class="op">,</span> now<span class="op">,</span> <span class="fu">ulid</span>()<span class="op">,</span> privacyVer)<span class="op">,</span></span>
 <span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(</span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="vs">`UPDATE project_users SET valid = 1, updated_at = ?1 WHERE user_id = ?2 AND project_id = ?3`</span></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  )<span class="op">.</span><span class="fu">bind</span>(now<span class="op">,</span> userId<span class="op">,</span> invitedProjectId)<span class="op">,</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="vs">`UPDATE project_user_assignments SET valid = 1, updated_at = ?1 WHERE project_user_id = ?2 AND project_id = ?3`</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  )<span class="op">.</span><span class="fu">bind</span>(now<span class="op">,</span> projectUserId<span class="op">,</span> invitedProjectId)<span class="op">,</span></span>
 <span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>])<span class="op">;</span></span>
 <span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> <span class="fu">consumeToken</span>(rawToken<span class="op">,</span> <span class="st">&#39;activation&#39;</span><span class="op">,</span> env)<span class="op">;</span></span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> <span class="fu">writeAudit</span>({ action<span class="op">:</span> <span class="st">&#39;user.activation_completed&#39;</span><span class="op">,</span> actor_user_id<span class="op">:</span> userId<span class="op">,</span> target_user_id<span class="op">:</span> userId<span class="op">,</span> meta<span class="op">:</span> { project_id<span class="op">:</span> invitedProjectId<span class="op">,</span> role<span class="op">:</span> invitedRole } })<span class="op">;</span></span></code></pre></div>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> <span class="fu">writeAudit</span>({ action<span class="op">:</span> <span class="st">&#39;user.activation_completed&#39;</span><span class="op">,</span> actor_type<span class="op">:</span> <span class="st">&#39;project_user&#39;</span><span class="op">,</span> actor_id<span class="op">:</span> projectUserId<span class="op">,</span> target_type<span class="op">:</span> <span class="st">&#39;project_user&#39;</span><span class="op">,</span> target_id<span class="op">:</span> projectUserId<span class="op">,</span> meta<span class="op">:</span> { project_id<span class="op">:</span> invitedProjectId<span class="op">,</span> role<span class="op">:</span> invitedRole } })<span class="op">;</span></span></code></pre></div>
 <p>再送時 (<code>POST /members/{id}/resend-invitation</code>) は旧トークンを <code>consumeToken()</code> で失効させ、同一 <code>invitedProjectId</code> / <code>invitedRole</code> を <code>meta</code> に含めて新規トークンを発行する。</p>
 <h3 id="33b-プロジェクト連絡先メール確認トークンcontact_verify-scr-019-着地">3.3b プロジェクト連絡先メール確認トークン(contact_verify)+ SCR-019 着地</h3>
 <p>SCR-004-001 プロジェクト作成・編集モーダルで連絡先メールが新規入力 / 変更された時に <code>purpose='contact_verify'</code> で発行し、<code>meta</code> に <code>projectId</code> を JSON 保持。SCR-019 着地ページから <code>POST /auth/contact-verifications/{token}</code> 経由で同一トランザクションで <code>projects.contact_email_verified_at</code> セット + <code>consumeToken</code> を実行する。</p>

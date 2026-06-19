@@ -61,8 +61,7 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>users</code></td><td>◯</td><td>◯</td><td>—</td><td>—</td></tr>
-<tr><td><code>contract_owners</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td><code>owners</code></td><td>◯</td><td>◯</td><td>—</td><td>—</td></tr>
 <tr><td><code>terms_agreements</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
 <tr><td><code>access_tokens</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
 </tbody>
@@ -138,8 +137,8 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>users</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
-<tr><td><code>contract_owners</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>owners</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
+<tr><td><code>project_users</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
 <tr><td><code>sessions</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
@@ -269,7 +268,8 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>users</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>owners</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>project_users</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
 <tr><td><code>access_tokens</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
@@ -325,7 +325,8 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>users</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>owners</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>project_users</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
 <tr><td><code>access_tokens</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
@@ -390,7 +391,7 @@
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
 <tr><td><code>access_tokens</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
-<tr><td><code>users</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>owners</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -454,8 +455,9 @@
 <tbody>
 <tr><td><code>access_tokens</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
 <tr><td><code>projects</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>project_user_assignments</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
 <tr><td><code>project_users</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
-<tr><td><code>users</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>owners</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -536,8 +538,8 @@
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
 <tr><td><code>access_tokens</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
-<tr><td><code>users</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
 <tr><td><code>project_users</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>project_user_assignments</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
 <tr><td><code>terms_agreements</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
 <tr><td><code>audit_logs</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
 </tbody>

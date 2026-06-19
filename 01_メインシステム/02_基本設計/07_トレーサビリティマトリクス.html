@@ -66,7 +66,7 @@
 <tr><td>BR-013b</td><td>オーナー固定・譲渡不可</td><td>FR-015a, FR-333</td><td>—</td><td>AC-018a, AC-018e, AC-018g</td><td>メイン</td></tr>
 <tr><td>BR-013c</td><td>ロール割当変更の通知・監査</td><td>FR-018b, FR-145a, FR-178a, FR-338</td><td>NFR-602 系列</td><td>AC-018d, AC-018h</td><td>メイン</td></tr>
 <tr><td>BR-013d</td><td>プロジェクト割当解除と契約アカウント削除の分離</td><td>FR-015, FR-018a, FR-019, FR-019a, FR-019b, FR-339</td><td>—</td><td>AC-018i</td><td>メイン</td></tr>
-<tr><td>BR-013e</td><td>プロジェクト作成時はオーナーが自動でプロジェクト管理者となる</td><td>FR-015e, FR-030a</td><td>—</td><td>—</td><td>メイン</td></tr>
+<tr><td>BR-013e</td><td>プロジェクト作成時、オーナーは isOwner bypass で当該プロジェクトの全権を持つ(<code>project_user_assignments</code> への自動 admin 付与は行わない。プロジェクト管理者は明示的な <code>role='admin'</code> 割当で付与する)</td><td>FR-015e, FR-030a</td><td>—</td><td>—</td><td>メイン</td></tr>
 <tr><td>BR-013f</td><td>管理範囲の二軸分離 + スイッチャー表示</td><td>FR-135a, FR-135b, FR-328, FR-340, FR-341</td><td>—</td><td>—</td><td>メイン</td></tr>
 <tr><td>BR-013g</td><td>資産配置の正規化(プロジェクト単位 / 契約単位の分離)</td><td>FR-031</td><td>—</td><td>—</td><td>メイン</td></tr>
 <tr><td>BR-015</td><td>退会削除(契約データエクスポートは将来対応)</td><td>FR-009, FR-163, FR-167</td><td>NFR-703, NFR-704</td><td>AC-022</td><td>メイン</td></tr>
@@ -111,7 +111,7 @@
 <td>F-AUTH-002</td>
 <td>SCR-002</td>
 <td><code>POST /auth/signup</code></td>
-<td><code>users</code>, <code>contract_owners</code>, <code>terms_agreements</code></td>
+<td><code>owners</code>, <code>terms_agreements</code></td>
 <td>—</td>
 <td>E-INPUT-*</td>
 <td>MSG-SCR-002-*</td>
@@ -123,7 +123,7 @@
 <td>F-AUTH-001</td>
 <td>SCR-001</td>
 <td><code>POST /auth/login</code></td>
-<td><code>users</code>, <code>sessions</code></td>
+<td><code>owners</code>, <code>project_users</code>, <code>sessions</code></td>
 <td>—</td>
 <td>E-AUTH-CREDENTIAL / E-AUTH-LOCKED</td>
 <td>MSG-SCR-001-*</td>
@@ -135,7 +135,7 @@
 <td>F-AUTH-004</td>
 <td>SCR-013</td>
 <td><code>POST /auth/email-verifications/{token}</code></td>
-<td><code>users</code>, <code>access_tokens</code></td>
+<td><code>owners</code>, <code>access_tokens</code></td>
 <td>—</td>
 <td>E-AUTH-TOKEN-EXPIRED</td>
 <td>MSG-SCR-013-*</td>
@@ -171,7 +171,7 @@
 <td>F-AUTH-003</td>
 <td>SCR-003</td>
 <td><code>POST /auth/password-reset-request</code>, <code>POST /auth/password/reset</code></td>
-<td><code>users</code>, <code>access_tokens</code></td>
+<td><code>owners</code>, <code>project_users</code>, <code>access_tokens</code></td>
 <td>—</td>
 <td>E-AUTH-TOKEN-EXPIRED</td>
 <td>MSG-SCR-003-*</td>
@@ -183,7 +183,7 @@
 <td>F-AUTH-001</td>
 <td>SCR-001</td>
 <td>(グローバル)</td>
-<td><code>users</code></td>
+<td><code>owners</code>, <code>project_users</code></td>
 <td>—</td>
 <td>E-AUTH-LOCKED</td>
 <td>MSG-SCR-001-ERROR-003</td>
@@ -207,7 +207,7 @@
 <td>F-ACC-002</td>
 <td>SCR-014</td>
 <td><code>POST /withdrawal-requests</code></td>
-<td><code>withdrawal_requests</code>, <code>contract_owners</code></td>
+<td><code>withdrawal_requests</code>, <code>owners</code></td>
 <td>オーナー専有</td>
 <td>E-BILL-*</td>
 <td>MSG-SCR-014-*</td>
@@ -231,7 +231,7 @@
 <td>F-USER-001</td>
 <td>SCR-009, SCR-009-001</td>
 <td><code>POST /projects/{id}/members</code>, <code>PATCH /projects/{id}/members/{userId}</code>, <code>DELETE /projects/{id}/members/{userId}</code></td>
-<td><code>users</code>, <code>project_users</code></td>
+<td><code>project_users</code>, <code>project_user_assignments</code></td>
 <td>オーナー / <code>admin</code>(該当PJ)</td>
 <td>E-AUTHZ-FORBIDDEN / E-AUTHZ-LAST-ADMIN-PROTECTED</td>
 <td>MSG-SCR-009-*</td>
@@ -243,7 +243,7 @@
 <td>F-USER-001 / F-AUTH-004</td>
 <td><strong>SCR-018</strong></td>
 <td><code>POST /auth/invitations/{token}/preview</code>(プレビュー), <code>POST /auth/invitations/{token}/activate</code>(有効化)</td>
-<td><code>users.name</code>(NULL→ 設定), <code>users.status</code>(<code>pending_activation</code>→<code>active</code>), <code>project_users.valid</code>(0→1), <code>terms_agreements</code>(INSERT), <code>access_tokens.used_at</code>(セット、<code>meta</code> から <code>invitedProjectId</code> / <code>invitedRole</code> 取得)</td>
+<td><code>project_users.name</code>(NULL→ 設定), <code>project_users.status</code>(<code>pending_activation</code>→<code>active</code>), <code>project_user_assignments.valid</code>(0→1), <code>terms_agreements</code>(INSERT), <code>access_tokens.used_at</code>(セット、<code>meta</code> から <code>invitedProjectId</code> / <code>invitedRole</code> 取得)</td>
 <td>招待トークン保有者(未認証、<code>access_tokens.purpose='activation'</code>)</td>
 <td>E-AUTH-TOKEN-EXPIRED / E-AUTH-TOKEN-USED / E-INPUT-REQUIRED / E-INPUT-LENGTH / E-INPUT-TURNSTILE</td>
 <td>MSG-SCR-018-*</td>
@@ -279,11 +279,11 @@
 <td>F-USER-001</td>
 <td>SCR-009-001「プロジェクトから外す」</td>
 <td><code>DELETE /projects/{id}/members/{userId}</code></td>
-<td>対象<code>project_users.valid=0</code>、最後の割当時は<code>users.valid=0</code>, <code>sessions.revoked_at</code>, <code>access_tokens.used_at</code></td>
+<td>対象<code>project_user_assignments.valid=0</code>、最後の割当時は<code>project_users.valid=0</code>, <code>sessions.revoked_at</code>, <code>access_tokens.used_at</code></td>
 <td>オーナー / 該当PJ管理者</td>
 <td>E-AUTHZ-OWNER-PROTECTED / E-AUTHZ-SELF-MUTATION</td>
 <td>MSG-SCR-009-001-*</td>
-<td>他PJ割当があればusersは維持</td>
+<td>他PJ割当があれば<code>project_users</code>は維持</td>
 </tr>
 <tr>
 <td>FR-030〜036, FR-030a, FR-030b</td>
@@ -555,7 +555,7 @@
 <td>F-BILL-001</td>
 <td>SCR-008</td>
 <td>—</td>
-<td><code>contract_owners.contract_status</code></td>
+<td><code>owners.contract_status</code></td>
 <td>—</td>
 <td>E-BILL-PAYMENT-FAILED</td>
 <td>MSG-BILL-PAYMENT-FAILED</td>
@@ -591,7 +591,7 @@
 <td>F-WIDGET-001</td>
 <td>(ウィジェット)</td>
 <td><code>POST /widget/v1/*</code></td>
-<td><code>contract_owners.contract_status</code></td>
+<td><code>owners.contract_status</code></td>
 <td>—</td>
 <td>E-BIZ-WIDGET-SUSPENDED</td>
 <td>—</td>
@@ -687,7 +687,7 @@
 <td>F-USER-001</td>
 <td>SCR-009-001</td>
 <td><code>POST /members/*</code></td>
-<td><code>contract_owners</code>(行存在 = オーナー判定)</td>
+<td><code>owners</code>(行存在 = オーナー判定)</td>
 <td>—</td>
 <td>E-AUTHZ-OWNER-PROTECTED</td>
 <td>—</td>
@@ -759,7 +759,7 @@
 <td>F-DASH-001</td>
 <td>SCR-017 / 全 SCR(共通ヘッダー)</td>
 <td>—</td>
-<td><code>project_users</code>, <code>contract_owners</code></td>
+<td><code>project_user_assignments</code>, <code>owners</code></td>
 <td>全認証ユーザー</td>
 <td>—</td>
 <td>(共通ヘッダーラベル)</td>
@@ -822,28 +822,28 @@
 <td>ログイン / セッション / 強制ログアウト</td>
 <td>SCR-001</td>
 <td><code>POST /auth/login</code>, <code>POST /auth/logout</code>, <code>POST /auth/re-auth</code></td>
-<td><code>users</code>, <code>sessions</code></td>
+<td><code>owners</code>, <code>project_users</code>, <code>sessions</code></td>
 </tr>
 <tr>
 <td>F-AUTH-002</td>
 <td>アカウント登録</td>
 <td>SCR-002</td>
 <td><code>POST /auth/signup</code></td>
-<td><code>users</code>, <code>contract_owners</code>, <code>terms_agreements</code></td>
+<td><code>owners</code>, <code>terms_agreements</code></td>
 </tr>
 <tr>
 <td>F-AUTH-003</td>
 <td>パスワード再設定</td>
 <td>SCR-003</td>
 <td><code>POST /auth/password-reset-request</code>, <code>POST /auth/password/reset</code></td>
-<td><code>users</code>, <code>access_tokens</code></td>
+<td><code>owners</code>, <code>project_users</code>, <code>access_tokens</code></td>
 </tr>
 <tr>
 <td>F-AUTH-004</td>
 <td>メール確認 / メンバーアカウント有効化</td>
 <td>SCR-013, <strong>SCR-018</strong></td>
 <td><code>POST /auth/email-verifications/{token}</code>, <code>POST /auth/invitations/{token}/preview</code>, <code>POST /auth/invitations/{token}/activate</code></td>
-<td><code>users</code>, <code>access_tokens</code>, <code>project_users</code>, <code>terms_agreements</code></td>
+<td><code>owners</code>(メール確認), <code>project_users</code>, <code>project_user_assignments</code>, <code>access_tokens</code>, <code>terms_agreements</code></td>
 </tr>
 <tr>
 <td>F-PRJ-001</td>
@@ -899,21 +899,21 @@
 <td>アカウント設定</td>
 <td>SCR-017</td>
 <td><code>PATCH /v1/me</code>, <code>POST /v1/me/password</code>, <code>PATCH /v1/me/contact-email</code>(オーナーのみ)</td>
-<td><code>users</code>, <code>sessions</code></td>
+<td><code>owners</code>, <code>project_users</code>, <code>sessions</code></td>
 </tr>
 <tr>
 <td>F-ACC-002</td>
 <td>退会申請</td>
 <td>SCR-014</td>
 <td><code>POST /withdrawal-requests</code></td>
-<td><code>withdrawal_requests</code>, <code>contract_owners</code></td>
+<td><code>withdrawal_requests</code>, <code>owners</code></td>
 </tr>
 <tr>
 <td>F-USER-001</td>
 <td>メンバー管理(プロジェクト単位)</td>
 <td>SCR-009, SCR-009-001</td>
 <td>招待、ロール変更、当該PJ割当解除、招待再送</td>
-<td><code>users</code>, <code>project_users</code></td>
+<td><code>project_users</code>, <code>project_user_assignments</code></td>
 </tr>
 <tr>
 <td>F-LEGAL-001</td>
@@ -1401,7 +1401,7 @@
 <td>契約全体 + 全プロジェクト</td>
 <td>契約 = SCR-004, SCR-004-001, SCR-016, SCR-022, SCR-023 / PJ = SCR-005, SCR-006, SCR-007, SCR-008, SCR-009, SCR-021 / 共通 = SCR-010, SCR-011, SCR-012, SCR-017, SCR-020</td>
 <td>利用状況、プロジェクト作成・編集・削除、請求、設定、退会</td>
-<td>オーナー専有機能 + 全PJの自動admin</td>
+<td>オーナー専有機能 + isOwner による全 PJ 全権(自動 admin 付与なし)</td>
 </tr>
 <tr>
 <td>PROJECT_ADMIN(プロジェクト管理者)</td>
@@ -1664,10 +1664,10 @@
 <td>—</td>
 </tr>
 <tr>
-<td>FR-015e / FR-030a(プロジェクト作成時はオーナーが自動 admin)</td>
+<td>FR-015e / FR-030a(プロジェクト作成時オーナーは isOwner で全権・自動 admin 付与なし)</td>
 <td>F-PRJ-001</td>
-<td>プロジェクト作成成功時に <code>project_users(user_id=オーナー, project_id=新PJ, contract_owner_user_id=オーナー, role='admin', valid=1)</code> 自動 INSERT</td>
-<td>(バリデーション無し、自動付与のため不要)</td>
+<td>プロジェクト作成成功時、オーナーは isOwner bypass で当該プロジェクトの全権を持つ(<code>project_user_assignments</code> への自動 admin INSERT は行わない)</td>
+<td>(オーナーへの自動付与は行わないため、<code>project_user_assignments</code> にオーナー行が生成されないこと)</td>
 <td>—</td>
 <td>オーナー専有</td>
 <td>—</td>
@@ -1676,8 +1676,8 @@
 <tr>
 <td>FR-030b(プロジェクト削除時の孤立メンバー論理削除)</td>
 <td>F-PRJ-001</td>
-<td>プロジェクト削除で当該 PJ のみ割当のメンバーが <code>users.valid=0</code> で論理削除</td>
-<td>他 PJ 割当(<code>valid=1</code>)ありメンバーは users.valid=1 維持 + 当該 PJ の <code>project_users</code> のみ valid=0</td>
+<td>プロジェクト削除で当該 PJ のみ割当のメンバーが <code>project_users.valid=0</code> で論理削除</td>
+<td>他 PJ 割当(<code>valid=1</code>)ありメンバーは <code>project_users.valid=1</code> 維持 + 当該 PJ の <code>project_user_assignments</code> のみ valid=0</td>
 <td>—</td>
 <td>オーナー専有</td>
 <td>—</td>
@@ -1686,8 +1686,8 @@
 <tr>
 <td><code>E-AUTHZ-LAST-ADMIN-PROTECTED</code>(最後の管理者保護)</td>
 <td>F-USER-001</td>
-<td>別の <strong>メンバー由来</strong> <code>admin</code>(<code>contract_owners</code> 行を持たない)がいる前提で降格</td>
-<td>最後の <strong>メンバー由来</strong> <code>admin</code> を降格する試行で 403。オーナーは作成時に自動付与される admin 行を常に保持するため判定対象外</td>
+<td>別のプロジェクトユーザー由来の <code>admin</code>(<code>owners</code> 行を持たない <code>project_user</code>)がいる前提で降格</td>
+<td>最後の <code>project_user</code> 由来の <code>admin</code>(<code>project_user_assignments.role='admin'</code>)を降格する試行で 403。オーナーは <code>project_user_assignments</code> に含まれず isOwner で全権のため判定対象外</td>
 <td>—</td>
 <td>—</td>
 <td>—</td>

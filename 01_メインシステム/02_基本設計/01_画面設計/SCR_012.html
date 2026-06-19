@@ -61,7 +61,7 @@
 <tr><td>メンバー(<code>member</code>)</td><td>—</td></tr>
 </tbody>
 </table>
-<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span><a href="../../01_要件定義/FR15_お知らせ.html#FR-180">FR-180</a> はアカウント利用者全体に閲覧資格を定義しますが、本画面ではそのうちお知らせ閲覧を <code>admin</code> 以上に限定します。オーナーは自動 <code>admin</code> 行を保持するため受信できます(根拠は <a href="../04_権限設計.html">04_権限設計</a>)。<code>member</code> ロールのみのメンバーは対象外です(ステークホルダ表の <code>member</code>=— と整合)。</div></div>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span><a href="../../01_要件定義/FR15_お知らせ.html#FR-180">FR-180</a> はアカウント利用者全体に閲覧資格を定義しますが、本画面ではそのうちお知らせ閲覧を <code>admin</code> 以上に限定します。オーナー(<code>owners</code> 行存在)は <code>isOwner</code> で全権のため割当を持たずに受信できます(根拠は <a href="../04_権限設計.html">04_権限設計</a>)。<code>member</code> ロールのみのプロジェクトユーザーは対象外です(ステークホルダ表の <code>member</code>=— と整合)。</div></div>
 
 <h2 id="2-画面遷移図">2. 画面遷移図</h2>
 <p class="section-lead">本画面への流入と本画面からの遷移を、画面 ID・画面名とイベント(操作)で示します。</p>

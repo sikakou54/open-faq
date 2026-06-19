@@ -15,7 +15,7 @@
 <h1 id="認証認可設計書メイン">認証・認可設計(メイン)</h1>
 
 <aside class="page-summary">
-<p class="ps-lead"><strong>このページは、利用者側(オーナー / プロジェクト管理者 / メンバー)の認証(本人確認)と認可(操作可否)の方針・判定フローを定義します。</strong></p>
+<p class="ps-lead"><strong>このページは、利用者側(オーナー / プロジェクト管理者 / メンバー)の認証(本人確認)と認可(操作可否)の方針・判定フローを定義します。</strong>オーナーは <code>owners</code> マスタ、プロジェクト管理者 / メンバーは <code>project_users</code> マスタで管理し、ログイン経路・メール一意空間・セッションを完全に分離します。</p>
 </aside>
 
 <p class="doc-meta"><span><b>版数</b> v2.0</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
@@ -109,20 +109,20 @@
 <p class="section-lead">ログインからログアウト、パスワード再設定、メンバー有効化、メール確認、強制ログアウトまで、認証にかかわる各フローの処理手順をまとめます。以降の各小節は、それぞれのフローを順序付きの手順表で示します。</p>
 
 <h3 id="31-ログイン">3.1 ログイン</h3>
-<p class="section-lead">通常ログイン時の処理を入口から初期画面遷移まで順に追います。次のシーケンス図は、資格情報の検証・セッション確立に加え、規約再同意ゲート(§6)と契約状態ゲート(§5.7)をログイン直後に通す順序と、不一致・停止状態などの分岐を示します。</p>
+<p class="section-lead">通常ログイン時の処理を入口から初期画面遷移まで順に追います。ログイン経路はオーナーとプロジェクトユーザーで完全に分離し、入口ごとに照合先マスタ(オーナー = <code>owners</code> / プロジェクトユーザー = <code>project_users</code>)を切り替えます。メール一意性も両マスタで別空間のため、同一メールでも別系統のアカウントとして扱います。次のシーケンス図は、資格情報の検証・セッション確立に加え、規約再同意ゲート(§6)と契約状態ゲート(§5.7)をログイン直後に通す順序と、不一致・停止状態などの分岐を示します。</p>
 <pre class="mermaid"><code>sequenceDiagram
   participant U as ブラウザ(利用者)
   participant W as worker-main-api
-  participant D as D1
+  participant D as D1 (owners / project_users)
   participant K as KV (session)
 
-  U-&gt;&gt;W: メール + パスワード送信
-  W-&gt;&gt;D: 資格情報を照会
+  U-&gt;&gt;W: メール + パスワード送信(ログイン経路で主体種別を識別)
+  W-&gt;&gt;D: ログイン経路に対応するマスタ(owners / project_users)で資格情報を照会
   D--&gt;&gt;W: 照合結果(一致 / 不一致)
   alt 不一致
     W--&gt;&gt;U: 認証失敗(失敗カウント加算・ヒントなし)
   else 一致
-    W-&gt;&gt;K: セッション確立(sessions 行作成)
+    W-&gt;&gt;K: セッション確立(主体を actor_type='owner'/'project_user' + actor_id で保持)
     K--&gt;&gt;W:
     W--&gt;&gt;U: セッション Cookie 発行
     W-&gt;&gt;D: 規約再同意の要否を確認
@@ -290,7 +290,7 @@
 <p class="section-lead">誰が何を操作できるかを判定する認可モデルを定めます。ユーザー種別とオーナー判定、契約・プロジェクトの境界、判定段の順序、専有・保護制約、通知宛先解決、アカウント状態・契約状態によるアクセス制限を以降の小節で順に示します。</p>
 
 <h3 id="51-ユーザー種別とオーナー判定">5.1 ユーザー種別とオーナー判定</h3>
-<p class="section-lead">認可の起点となるユーザー種別と、その見分け方を定めます。次の表は <code>contract_owners</code> 行の有無でオーナーかどうかを判定し、非オーナーは <code>project_users.role</code> で操作範囲が決まることを示します(<a href="../01_要件定義/FR02_ユーザー管理.html#FR-015a">FR-015a</a> / <a href="../01_要件定義/FR02_ユーザー管理.html#FR-015b">FR-015b</a>)。</p>
+<p class="section-lead">認可の起点となるユーザー種別と、その見分け方を定めます。オーナーとプロジェクトユーザーは別マスタで完全に分離し、次の表は主体が <code>owners</code> マスタ由来ならオーナー、<code>project_users</code> マスタ由来なら <code>project_user_assignments.role</code> で操作範囲が決まることを示します(<a href="../01_要件定義/FR02_ユーザー管理.html#FR-015a">FR-015a</a> / <a href="../01_要件定義/FR02_ユーザー管理.html#FR-015b">FR-015b</a>)。</p>
 <table>
 <thead>
 <tr><th>ユーザー種別</th><th>判定</th><th>権限の表し方</th></tr>
@@ -298,13 +298,13 @@
 <tbody>
 <tr>
 <td>オーナー</td>
-<td><code>contract_owners</code> 行が存在する(<code>contract_owners.user_id PRIMARY KEY</code> で 1 契約 1 オーナーを DB レベル担保)</td>
+<td>主体が <code>owners</code> マスタ由来(<code>actor_type='owner'</code>)。<code>owners.id</code> が契約境界キー本体で 1 契約 1 オーナーを担保する</td>
 <td>全プロジェクトへの全権 + オーナー専有機能。役割変更・降格・譲渡なし(<a href="../01_要件定義/FR02_ユーザー管理.html#FR-015a">FR-015a</a>)</td>
 </tr>
 <tr>
 <td>プロジェクト管理者 / メンバー</td>
-<td><code>contract_owners</code> 行を持たず、<code>project_users</code> 行を保持する</td>
-<td>プロジェクトごとの役割(<code>project_users.role</code> = <code>admin</code> / <code>member</code>)で操作範囲が決まる(<a href="../01_要件定義/FR02_ユーザー管理.html#FR-015b">FR-015b</a> / <a href="../01_要件定義/FR19_アクセス制御細部.html#FR-336">FR-336</a>)</td>
+<td>主体が <code>project_users</code> マスタ由来(<code>actor_type='project_user'</code>)。オーナーは <code>project_users</code> に含まれない(完全分離)</td>
+<td>プロジェクトごとの役割(<code>project_user_assignments.role</code> = <code>admin</code> / <code>member</code>)で操作範囲が決まる(<a href="../01_要件定義/FR02_ユーザー管理.html#FR-015b">FR-015b</a> / <a href="../01_要件定義/FR19_アクセス制御細部.html#FR-336">FR-336</a>)</td>
 </tr>
 <tr>
 <td>ウィジェット利用者</td>
@@ -313,7 +313,7 @@
 </tr>
 </tbody>
 </table>
-<div class="callout important"><i class="bi bi-pin-angle"></i><div><span class="c-title">オーナー判定 = isOwner bypass を先頭に</span>プロジェクト作成時にオーナーは当該プロジェクトの <code>project_users(role='admin', valid=1)</code> 行を自動取得しますが(<a href="../01_要件定義/FR02_ユーザー管理.html#FR-015e">FR-015e</a>)、<strong>認可は <code>contract_owners</code> 行存在による <code>isOwner=true</code> bypass を最優先</strong>とし、オーナーは自契約配下の全プロジェクトに無条件でアクセスできます(<a href="../01_要件定義/FR02_ユーザー管理.html#FR-015d">FR-015d</a> / <a href="../01_要件定義/FR02_ユーザー管理.html#FR-021b">FR-021b</a>)。自動付与された admin 行は認可の根拠には使わず、通知宛先解決と画面表示の事実情報として参照します(§5.5)。</div></div>
+<div class="callout important"><i class="bi bi-pin-angle"></i><div><span class="c-title">オーナー判定 = isOwner bypass を先頭に</span>オーナーは <code>owners</code> マスタの独立した主体であり、<code>project_users</code> / <code>project_user_assignments</code> には行を持ちません。<strong>認可は主体が <code>owners</code> 由来(<code>actor_type='owner'</code>)であることによる <code>isOwner=true</code> bypass を最優先</strong>とし、オーナーは自契約配下の全プロジェクトに無条件でアクセスできます(<a href="../01_要件定義/FR02_ユーザー管理.html#FR-015d">FR-015d</a> / <a href="../01_要件定義/FR02_ユーザー管理.html#FR-021b">FR-021b</a>)。プロジェクト管理者権限は <code>project_user_assignments.role='admin'</code> の割当でのみ付与され、オーナーへの自動付与は行いません。通知宛先解決と画面表示では、オーナーを <code>owners</code> から、当該プロジェクトの管理者を <code>project_user_assignments.role='admin'</code> から個別に解決します(§5.5)。</div></div>
 
 <h3 id="52-オーナー境界判定">5.2 オーナー境界判定</h3>
 <p class="section-lead">他契約のデータへ越境させないための境界チェックを定めます。次の表は操作者の契約境界キーと対象リソースの <code>contract_owner_user_id</code> の一致を要求し、不一致は相手契約の存在を漏らさないため 404 偽装で拒否することを示します(<a href="../01_要件定義/FR19_アクセス制御細部.html#FR-335">FR-335</a>)。</p>
@@ -339,7 +339,7 @@
 <tr><td>2</td><td><strong>アカウント有効性</strong></td><td>アカウントが利用可能状態か(無効化済みなら再ログインへ誘導、§5.6)</td><td>—</td></tr>
 <tr><td>3</td><td><strong>規約再同意ゲート</strong></td><td>改定済みで未同意の文書があれば SCR-015 割込みへ(§6)</td><td><code>E-AUTHZ-TERMS</code></td></tr>
 <tr><td>4</td><td><strong>契約状態ゲート</strong></td><td><code>suspended</code> / <code>deleted_pending</code> / <code>deleted</code> 時は §5.7 のアクセス制限を適用</td><td><code>E-BIZ-CONTRACT-SUSPENDED</code> 等</td></tr>
-<tr><td>5</td><td><strong>オーナー判定(isOwner bypass)</strong></td><td><code>contract_owners</code> 行が存在すれば自契約配下を無条件許可(§5.1)</td><td>—</td></tr>
+<tr><td>5</td><td><strong>オーナー判定(isOwner bypass)</strong></td><td>主体が <code>owners</code> 由来(<code>actor_type='owner'</code>)であれば自契約配下を無条件許可(§5.1)</td><td>—</td></tr>
 <tr><td>6</td><td><strong>オーナー境界判定</strong></td><td>非オーナーは契約境界キー一致を要求。不一致は <strong>404 偽装</strong>(§5.2)</td><td><code>E-AUTHZ-OWNER-BOUNDARY</code></td></tr>
 <tr><td>7</td><td><strong>プロジェクト境界・ロール判定</strong></td><td>対象プロジェクトへの割当があり、必要ロール以上を満たすこと。割当なしは <strong>404 偽装</strong>、ロール不足は 403</td><td><code>E-AUTHZ-PROJECT-DENIED</code> / <code>E-AUTHZ-FORBIDDEN</code>(<a href="../01_要件定義/FR19_アクセス制御細部.html#FR-339">FR-339</a>)</td></tr>
 <tr><td>8</td><td><strong>オーナー専有機能判定</strong></td><td>専有機能(§5.4)を非オーナーが要求した場合は 403</td><td><code>E-AUTHZ-OWNER-ONLY</code></td></tr>
@@ -375,22 +375,22 @@
 </tr>
 <tr>
 <td>最後の管理者保護</td>
-<td>役割変更・離脱の対象が当該プロジェクトの最後の管理者になる場合は拒否する。オーナー由来の自動 admin 行は件数判定から除外し、メンバー由来の <code>admin</code> 行のみで判定する</td>
+<td>役割変更・離脱の対象が当該プロジェクトの最後の管理者になる場合は拒否する。判定は <code>project_user_assignments.role='admin'</code> の割当件数で行う(オーナーは <code>project_user_assignments</code> に含まれず、isOwner bypass で常に全権を持つため件数判定の対象外)</td>
 <td><a href="../01_要件定義/FR02_ユーザー管理.html#FR-018a">FR-018a</a> / <a href="../01_要件定義/FR19_アクセス制御細部.html#FR-334">FR-334</a></td>
 </tr>
 </tbody>
 </table>
 
 <h3 id="55-通知宛先解決">5.5 critical 通知の宛先解決(共有概念正本)</h3>
-<p class="section-lead">critical 通知を「誰に送るか」を決める宛先解決ロジックを本書で正本化します。次の表は、オーナーも admin 行を持つことを利用した網羅的な宛先抽出、重複排除、プロジェクト限定通知の絞り込みをまとめたものです。配信契機・文面は <a href="06_メッセージ一覧.html">06_メッセージ一覧.html</a> / <a href="11_メール設計.html">11_メール設計.html</a> が正本です。</p>
+<p class="section-lead">critical 通知を「誰に送るか」を決める宛先解決ロジックを本書で正本化します。次の表は、オーナー(<code>owners</code>)と当該プロジェクトの管理者(<code>project_user_assignments.role='admin' AND valid=1</code>)を両マスタから個別に抽出して合算する手順、重複排除、プロジェクト限定通知の絞り込みをまとめたものです。配信契機・文面は <a href="06_メッセージ一覧.html">06_メッセージ一覧.html</a> / <a href="11_メール設計.html">11_メール設計.html</a> が正本です。</p>
 <table>
 <thead>
 <tr><th>観点</th><th>内容</th><th>参照</th></tr>
 </thead>
 <tbody>
-<tr><td>網羅性</td><td>オーナー自身が admin 行を持つため、admin 行を起点に解決すればオーナー + プロジェクト管理者を漏れなく解決できる</td><td>—</td></tr>
-<tr><td>重複排除</td><td>同一ユーザーが複数プロジェクトで admin を持つ場合の二重配信を避けるため、ユーザー ID と正規化メールアドレスで重複排除する</td><td>—</td></tr>
-<tr><td>プロジェクト限定通知</td><td>質問数上限の選択アラート等は対象プロジェクトに限定し、当該プロジェクトの管理者(オーナー + 当該 PJ admin)のみに配信する</td><td><a href="../01_要件定義/FR02_ユーザー管理.html#FR-021a">FR-021a</a></td></tr>
+<tr><td>網羅性</td><td>オーナーは <code>project_users</code> に含まれないため、宛先は <code>owners</code> 由来のオーナーと <code>project_user_assignments.role='admin' AND valid=1</code> 由来のプロジェクト管理者の <strong>2 マスタを合算</strong>して解決する</td><td>—</td></tr>
+<tr><td>重複排除</td><td>同一のプロジェクトユーザーが複数プロジェクトで admin を持つ場合の二重配信を避けるため、主体(<code>actor_type</code> + <code>actor_id</code>)と正規化メールアドレスで重複排除する。両マスタはメール一意空間が別のため、合算後の重複排除も正規化メールアドレスで行う</td><td>—</td></tr>
+<tr><td>プロジェクト限定通知</td><td>質問数上限の選択アラート等は対象プロジェクトに限定し、当該プロジェクトの管理者(オーナー + 当該 PJ の <code>role='admin'</code> 割当)のみに配信する</td><td><a href="../01_要件定義/FR02_ユーザー管理.html#FR-021a">FR-021a</a></td></tr>
 </tbody>
 </table>
 <div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">配信契機・文面の正本</span>通知契機・配信先一覧は <a href="06_メッセージ一覧.html">06_メッセージ一覧.html</a>、本文テンプレートは <a href="11_メール設計.html">11_メール設計.html</a> が正本です。本書は「誰が宛先か」を決める解決ロジックのみを定めます。</div></div>

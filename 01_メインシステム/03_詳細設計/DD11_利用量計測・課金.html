@@ -18,7 +18,7 @@
 <p class="ps-lead"><strong>このページは、メインシステムの利用量計測(プロジェクト単位)と課金集計(契約単位)の実装方針を定義します。</strong> 月次集計から請求確定・Stripe Webhook 受信までの課金フローと、質問数月次上限による選択閾値アラート・100% 受付停止のリミット判定ロジックを扱います(FR-120〜127 / FR-139 / AC-020 / AC-040)。</p>
 </aside>
 
-<p class="doc-meta"><span><b>版数</b> v1.4</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+<p class="doc-meta"><span><b>版数</b> v1.5</span><span><b>更新</b> 2026-06-19</span><span class="dm-status">承認済</span></p>
 
 <h2 id="1-対象範囲">1. 対象範囲</h2>
 <p class="section-lead">本 DD が実装方針を定める機能・画面・API・テーブル・cron を示します。次の表は、利用量ダッシュボード(FR-120〜127)・Stripe ハンドラ(FR-139)から利用量・課金基盤テーブルまでを一望できるよう整理したものです。</p>
@@ -231,12 +231,12 @@
 <div class="sourceCode" id="cb2"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// app/workers/cron/src/jobs/monthly-aggregate.ts</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">// 実行条件: UTC 15:00 かつ DATE_ADD(date, &#39;+1 day&#39;) 月が変わる場合</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fu">monthlyAggregate</span>(env<span class="op">:</span> Env) {</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 対象プロジェクト = 有効なオーナー(`contract_owners.valid=1` かつ `contract_status != &#39;deleted&#39;`)配下の projects。</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 対象プロジェクト = 有効なオーナー(`owners.valid=1` かつ `contract_status != &#39;deleted&#39;`)配下の projects。</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> projects <span class="op">=</span> <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`</span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="vs">    SELECT p.id AS project_id, p.contract_owner_user_id</span></span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="vs">    FROM projects p</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="vs">    JOIN contract_owners co ON co.user_id = p.contract_owner_user_id</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="vs">    WHERE p.valid = 1 AND co.valid = 1 AND co.contract_status != &#39;deleted&#39;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="vs">    JOIN owners o ON o.id = p.contract_owner_user_id</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="vs">    WHERE p.valid = 1 AND o.valid = 1 AND o.contract_status != &#39;deleted&#39;</span></span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="vs">  `</span>)<span class="op">.</span><span class="fu">all</span><span class="op">&lt;</span>{ project_id<span class="op">:</span> <span class="dt">string</span><span class="op">;</span> contract_owner_user_id<span class="op">:</span> <span class="dt">string</span> }<span class="op">&gt;</span>()<span class="op">;</span></span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> ym <span class="op">=</span> <span class="fu">currentBillingYearMonth</span>()<span class="op">;</span>  <span class="co">// &#39;YYYY-MM&#39;</span></span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
@@ -369,9 +369,9 @@
 <div class="sourceCode" id="cb5"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">// app/workers/cron/src/jobs/monthly-finalize.ts</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fu">monthlyFinalize</span>(env<span class="op">:</span> Env) {</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> prevYm <span class="op">=</span> <span class="fu">previousBillingYearMonth</span>()<span class="op">;</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 課金対象オーナー = contract_owners 行(`valid=1` かつ `contract_status=&#39;active&#39;` かつ `contract_plan != &#39;free&#39;`)。</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 課金対象オーナー = owners 行(`valid=1` かつ `contract_status=&#39;active&#39;` かつ `contract_plan != &#39;free&#39;`)。</span></span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> owners <span class="op">=</span> <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="vs">    SELECT user_id AS id, contract_plan AS plan FROM contract_owners</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="vs">    SELECT id, contract_plan AS plan FROM owners</span></span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="vs">    WHERE valid = 1 AND contract_status = &#39;active&#39; AND contract_plan != &#39;free&#39;</span></span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="vs">  `</span>)<span class="op">.</span><span class="fu">all</span><span class="op">&lt;</span>TenantRow<span class="op">&gt;</span>()<span class="op">;</span></span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
@@ -457,7 +457,7 @@
 <p><strong>選択閾値アラート(FR-127)</strong>:</p>
 <ul>
 <li>質問数更新後の利用率が、保存済み <code>alert_thresholds</code> の未通知閾値を初めて満たした時点で通知ジョブを投入する。一度の更新で複数閾値を跨いだ場合は、該当する各閾値を1件ずつ通知対象とする。</li>
-<li>配信先はオーナー + 当該プロジェクトの <code>project_users.role='admin' AND valid=1</code>。ユーザーIDと正規化メールアドレスで重複排除し、メールだけを送信する。</li>
+<li>配信先はオーナー(<code>owners</code> 行)+ 当該プロジェクトの <code>project_user_assignments.role='admin' AND valid=1</code> を持つプロジェクトユーザー。オーナーは <code>project_user_assignments</code> の外にあるため別途明示的に含める。アクター(<code>actor_type</code> + <code>actor_id</code>)と正規化メールアドレスで重複排除し、メールだけを送信する。</li>
 <li>冪等キーは <code>question-limit-alert:{projectId}:{yyyyMM}:{thresholdPercent}</code>。同じプロジェクト・請求月・閾値の再送を抑止する。全閾値未選択時は通知ジョブを生成しない。</li>
 <li>100%アラートを選択している場合、停止処理と同じイベントから1通だけ送信する。100%未選択でも停止処理は実行する。</li>
 </ul>

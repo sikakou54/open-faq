@@ -52,11 +52,11 @@
 
 <h3 id="32a-論理削除フィルタ">2.3 論理削除フィルタ</h3>
 <p class="section-lead"><code>valid</code> カラムを持つテーブルへの GET 系 API は論理削除済みの行を返しません。</p>
-<p><code>valid</code> カラムを持つテーブル(<code>users</code> / <code>contract_owners</code> / <code>project_users</code> / <code>projects</code> / <code>allowed_domains</code> / <code>faqs</code> / <code>question_logs</code> / <code>inquiries</code> / <code>billing_subscriptions</code>)に対する全 GET 系 API(一覧 / 詳細)のクエリは、原則として <code>WHERE &lt;table&gt;.valid=1</code> フィルタを追加する。論理削除済み(<code>valid=0</code>)の行は通常 API 経由では返却しない。</p>
+<p><code>valid</code> カラムを持つテーブル(<code>owners</code> / <code>project_users</code> / <code>project_user_assignments</code> / <code>projects</code> / <code>allowed_domains</code> / <code>faqs</code> / <code>question_logs</code> / <code>inquiries</code> / <code>billing_subscriptions</code>)に対する全 GET 系 API(一覧 / 詳細)のクエリは、原則として <code>WHERE &lt;table&gt;.valid=1</code> フィルタを追加する。論理削除済み(<code>valid=0</code>)の行は通常 API 経由では返却しない。</p>
 <p>例外:</p>
 <ul>
 <li>監査ログ参照系 API は <code>valid</code> 概念外(<code>audit_logs</code> には <code>valid</code> カラムを追加しない)</li>
-<li>認証ミドルウェアは <code>users.valid=0</code> 行へのログインを 401 で拒否する(セッション内 <code>userId</code> の <code>valid</code> を確認、<code>valid=0</code> ならセッションも失効扱い)</li>
+<li>認証ミドルウェアは、セッションの主体(<code>actor_type='owner'</code> / <code>'project_user'</code>)に応じて <code>owners.valid=0</code> / <code>project_users.valid=0</code> の行へのログインを 401 で拒否する(セッション内 <code>actor_id</code> の <code>valid</code> を確認、<code>valid=0</code> ならセッションも失効扱い)</li>
 </ul>
 <p><code>WHERE valid=1</code> フィルタの漏れは IDOR 類似の脆弱性として扱う(<a href="../09_セキュリティ設計.html">09_セキュリティ設計.html</a>)。</p>
 

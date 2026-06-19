@@ -248,8 +248,8 @@
   U-&gt;&gt;P: GET /
   P--&gt;&gt;U: SPA + HTML/JS/CSS
   U-&gt;&gt;W: POST /api/v1/auth/login (Cookie 未保持)
-  W-&gt;&gt;D: SELECT users WHERE email_hmac=?
-  W-&gt;&gt;D: Argon2id verify
+  W-&gt;&gt;D: SELECT owners / project_users WHERE email_hmac=? (2 マスタ別系統で照合)
+  W-&gt;&gt;D: Argon2id verify(actor_type を確定)
   W-&gt;&gt;K: SET session:{sid} (TTL 12h)
   W--&gt;&gt;U: Set-Cookie: session=...; CSRF Cookie
   U-&gt;&gt;W: GET /api/v1/inquiries (Cookie + X-CSRF-Token)

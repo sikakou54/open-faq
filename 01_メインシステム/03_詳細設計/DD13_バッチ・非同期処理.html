@@ -18,7 +18,7 @@
 <p class="ps-lead"><strong>このページは、メインシステムの cron バッチ(9 ジョブ)と Queue / Consumer による非同期処理の実装方針を定義します。</strong> 月次集計・保持期間処理・論理削除データの 90 日後物理削除などの定期ジョブと、メール送信やお知らせ配信を担う Queue の再試行・DLQ・冪等性の共通仕様を扱います(FR-148 / FR-191 / NFR-501〜507 / NFR-801〜810 / AC-021 / AC-022)。</p>
 </aside>
 
-<p class="doc-meta"><span><b>版数</b> v1.0</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+<p class="doc-meta"><span><b>版数</b> v1.1</span><span><b>更新</b> 2026-06-19</span><span class="dm-status">承認済</span></p>
 
 <h2 id="1-対象範囲">1. 対象範囲</h2>
 <p class="section-lead">本 DD が実装方針を定める cron バッチ・Queue・Consumer・冪等性ライブラリを示します。次の表は、対象となるジョブ群とその種別を一望できるよう整理したものです。</p>
@@ -188,7 +188,7 @@
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  )<span class="op">.</span><span class="fu">run</span>()<span class="op">;</span></span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h4 id="319-定期削除jst-0500">3.1.9 定期削除（JST 05:00）</h4>
-<p class="section-lead">保持期間を超過したログ・トークン・受信メッセージ等を一括で物理削除し、退会確定オーナーの <code>contract_owners</code> を <code>deleted_pending</code> → <code>deleted</code>(<code>valid=0</code> 同時セット)に確定します。次の擬似コードは各テーブルの保持期間と DELETE / UPDATE 条件です。</p>
+<p class="section-lead">保持期間を超過したログ・トークン・受信メッセージ等を一括で物理削除し、退会確定オーナーの <code>owners.contract_status</code> を <code>deleted_pending</code> → <code>deleted</code>(<code>valid=0</code> 同時セット)に確定します。次の擬似コードは各テーブルの保持期間と DELETE / UPDATE 条件です。</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fu">retentionCleanup</span>(env<span class="op">:</span> Env) {</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> now <span class="op">=</span> <span class="bu">Date</span><span class="op">.</span><span class="fu">now</span>()<span class="op">;</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">batch</span>([</span>
@@ -206,16 +206,16 @@
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>      <span class="op">.</span><span class="fu">bind</span>(<span class="kw">new</span> <span class="bu">Date</span>(now <span class="op">-</span> <span class="dv">30</span> <span class="op">*</span> <span class="dv">86400000</span>)<span class="op">.</span><span class="fu">toISOString</span>())<span class="op">,</span></span>
 <span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`DELETE FROM inbox_messages WHERE created_at &lt; ?1`</span>)</span>
 <span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>      <span class="op">.</span><span class="fu">bind</span>(<span class="kw">new</span> <span class="bu">Date</span>(now <span class="op">-</span> <span class="dv">365</span> <span class="op">*</span> <span class="dv">86400000</span>)<span class="op">.</span><span class="fu">toISOString</span>())<span class="op">,</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 退会確定: contract_owners.contract_status を deleted_pending → deleted (30 日経過、valid=0 を同時セット)。</span></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="co">// オーナー判定は contract_owners 行存在で行うため、本 UPDATE は contract_owners テーブルを対象とする。</span></span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="co">// また、当該オーナーの users 行も valid=0 にする必要があるが、それは下記 hardDeleteLogicalDeletedUsers</span></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="co">// バッチで論理削除済 users をまとめて物理削除する前段として、別途 withdrawal-finalize 処理(SCR-014 動線)で</span></span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="co">// contract_owners と users の双方を valid=0 に揃える運用とする。</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 退会確定: owners.contract_status を deleted_pending → deleted (30 日経過、valid=0 を同時セット)。</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="co">// オーナー判定は owners 行存在で行うため、本 UPDATE は owners テーブルを対象とする。</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="co">// owners は認証 + 契約属性を一元保持するため、valid=0 確定で当該オーナーのログインも不可となる。</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 配下 project_users は別途 withdrawal-finalize 処理(SCR-014 動線)で valid=0 に揃え、</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 下記 hardDeleteLogicalDeletedUsers バッチで物理削除する。</span></span>
 <span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`</span></span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="vs">      UPDATE contract_owners SET contract_status = &#39;deleted&#39;, valid = 0, updated_at = ?1</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="vs">      UPDATE owners SET contract_status = &#39;deleted&#39;, valid = 0, updated_at = ?1</span></span>
 <span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="vs">      WHERE contract_status = &#39;deleted_pending&#39;</span></span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="vs">        AND user_id IN (SELECT contract_owner_user_id FROM withdrawal_requests</span></span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="vs">                        WHERE scheduled_deletion_at &lt; ?1)</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="vs">        AND id IN (SELECT contract_owner_user_id FROM withdrawal_requests</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="vs">                   WHERE scheduled_deletion_at &lt; ?1)</span></span>
 <span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="vs">    `</span>)<span class="op">.</span><span class="fu">bind</span>(<span class="kw">new</span> <span class="bu">Date</span>()<span class="op">.</span><span class="fu">toISOString</span>())<span class="op">,</span></span>
 <span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>  ])<span class="op">;</span></span>
 <span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
@@ -223,15 +223,15 @@
 <p class="section-lead">D1 の容量を毎時監視し、80% 超過時に high アラートを送ります。</p>
 <p>D1 の容量を監視し、80% を超えるとアラート(high)。詳細は基本設計を参照。</p>
 <h4 id="3111-論理削除データの-90-日後物理削除バッチ日次-0300-jst">3.1.11 論理削除データの 90 日後物理削除バッチ(日次 03:00 JST)</h4>
-<p class="section-lead">論理削除(<code>valid=0</code>)から <code>updated_at</code> 基準で 90 日経過したデータを物理削除します。次のシーケンス図で <code>users</code> / <code>projects</code> を起点とした CASCADE 連鎖と匿名化分岐の流れを示し、続けて処理ステップと擬似コードを保持します。</p>
+<p class="section-lead">論理削除(<code>valid=0</code>)から <code>updated_at</code> 基準で 90 日経過したデータを物理削除します。次のシーケンス図で <code>owners</code> / <code>project_users</code> / <code>projects</code> を起点とした CASCADE 連鎖と匿名化分岐の流れを示し、続けて処理ステップと擬似コードを保持します。</p>
 <pre class="mermaid"><code>sequenceDiagram
   participant C as cronバッチ
   participant D as D1
   participant AL as audit_logs
 
   C-&gt;&gt;D: valid=0 かつ updated_at &lt; 90日前 の対象抽出
-  D--&gt;&gt;C: 対象(users / contract_owners / projects …)
-  loop 対象ユーザーごと
+  D--&gt;&gt;C: 対象(owners / project_users / projects …)
+  loop 対象アクターごと
     C-&gt;&gt;AL: user.hard_delete_by_batch 発行(retention_class=general)
     C-&gt;&gt;D: data_deletion_mode を照会
     D--&gt;&gt;C: 削除モード(anonymize / delete)
@@ -239,46 +239,50 @@
       C-&gt;&gt;D: 契約配下データを匿名化(§4.6)
     end
   end
-  C-&gt;&gt;D: DELETE users(ON DELETE CASCADE)
+  C-&gt;&gt;D: DELETE owners / project_users(ON DELETE CASCADE)
   C-&gt;&gt;D: DELETE projects(ON DELETE CASCADE)
   C-&gt;&gt;D: 孤立中間テーブル行を独立 DELETE
   Note over D: billing_subscriptions / usage_metering は除外(永久保持)</code></pre>
-<p>全削除対象テーブル(<code>users</code> / <code>contract_owners</code> / <code>project_users</code> / <code>projects</code> / <code>allowed_domains</code> / <code>faqs</code> / <code>question_logs</code> / <code>inquiries</code> / <code>project_quota_limits</code>)の <code>valid</code> カラムによる論理削除データを、<code>updated_at</code> 基準で 90 日経過後に物理削除する。<code>billing_subscriptions</code> / <code>usage_metering</code> は除外(電子帳簿保存法 7 年保持、永久維持)。<code>project_quota_limits</code> は単独で論理削除された行も本バッチで物理削除し、<code>projects</code> 物理削除時は CASCADE で連鎖物理削除される。</p>
+<p>全削除対象テーブル(<code>owners</code> / <code>project_users</code> / <code>project_user_assignments</code> / <code>projects</code> / <code>allowed_domains</code> / <code>faqs</code> / <code>question_logs</code> / <code>inquiries</code> / <code>project_quota_limits</code>)の <code>valid</code> カラムによる論理削除データを、<code>updated_at</code> 基準で 90 日経過後に物理削除する。<code>billing_subscriptions</code> / <code>usage_metering</code> は除外(電子帳簿保存法 7 年保持、永久維持)。<code>project_quota_limits</code> は単独で論理削除された行も本バッチで物理削除し、<code>projects</code> 物理削除時は CASCADE で連鎖物理削除される。</p>
 <p><strong>処理ステップ</strong>:</p>
 <ol type="1">
 <li>監査ログ <code>user.hard_delete_by_batch</code> / <code>project.hard_delete_by_batch</code> を物理 DELETE 前に発行(<code>retention_class='general'</code>、metadata に削除対象 ID と論理削除日時を含む)</li>
-<li><code>contract_owners.data_deletion_mode='anonymize'</code> の対象オーナーは物理 DELETE 前に匿名化処理(03_テーブル設計/index.html §4.6 削除モード表に従う)</li>
-<li><code>users</code> 行を物理 DELETE(<code>ON DELETE CASCADE</code> で関連 <code>contract_owners</code> / <code>project_users</code> / <code>sessions</code> / <code>access_tokens</code> / <code>terms_agreements</code> 等が連鎖物理削除)</li>
+<li><code>owners.data_deletion_mode='anonymize'</code> の対象オーナーは物理 DELETE 前に匿名化処理(03_テーブル設計/index.html §4.6 削除モード表に従う)</li>
+<li><code>owners</code> 行を物理 DELETE(<code>ON DELETE CASCADE</code> で関連 <code>project_users</code> / <code>project_user_assignments</code> / <code>sessions</code> / <code>access_tokens</code> / <code>terms_agreements</code>(<code>actor_type='owner'</code> 分)等が連鎖物理削除)。<code>project_users</code> 行を物理 DELETE すると配下 <code>project_user_assignments</code> / 当該ユーザーの <code>sessions</code> / <code>access_tokens</code> が連鎖物理削除される</li>
 <li><code>projects</code> 行を物理 DELETE(<code>ON DELETE CASCADE</code> で関連 <code>faqs</code> / <code>inquiries</code> 等が連鎖物理削除)</li>
 <li>中間テーブル / 履歴系の独立物理削除(<code>allowed_domains</code> / <code>question_logs</code> 等で親が既に物理削除されていない孤立行があれば独立 DELETE)</li>
 </ol>
 <div class="sourceCode" id="cb4"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 物理削除バッチ(疑似コード)</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">function</span> <span class="fu">hardDeleteLogicalDeletedUsers</span>(env<span class="op">,</span> now) {</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> cutoff <span class="op">=</span> <span class="kw">new</span> <span class="bu">Date</span>(now <span class="op">-</span> <span class="dv">90</span> <span class="op">*</span> <span class="dv">86400000</span>)<span class="op">.</span><span class="fu">toISOString</span>()<span class="op">;</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 1. 監査ログを先行発行。論理削除済オーナー(contract_owners 行が valid=0)は data_deletion_mode を取得して匿名化要否を判定</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> targets <span class="op">=</span> <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="vs">    SELECT u.id AS user_id, co.user_id AS contract_owner_user_id, co.data_deletion_mode</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="vs">    FROM users u</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="vs">    LEFT JOIN contract_owners co ON co.user_id = u.id</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="vs">    WHERE u.valid = 0 AND u.updated_at &lt; ?1</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="vs">  `</span>)<span class="op">.</span><span class="fu">bind</span>(cutoff)<span class="op">.</span><span class="fu">all</span>()<span class="op">;</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (<span class="kw">const</span> u <span class="kw">of</span> targets<span class="op">.</span><span class="at">results</span>) {</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`INSERT INTO audit_logs (...) VALUES (...)`</span>)<span class="op">.</span><span class="fu">bind</span>(</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>      <span class="st">&#39;user.hard_delete_by_batch&#39;</span><span class="op">,</span> <span class="st">&#39;user&#39;</span><span class="op">,</span> u<span class="op">.</span><span class="at">user_id</span><span class="op">,</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>      <span class="bu">JSON</span><span class="op">.</span><span class="fu">stringify</span>({ contractOwnerUserId<span class="op">:</span> u<span class="op">.</span><span class="at">contract_owner_user_id</span> <span class="op">??</span> <span class="dt">null</span> })<span class="op">,</span> <span class="st">&#39;general&#39;</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    )<span class="op">.</span><span class="fu">run</span>()<span class="op">;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 1. 監査ログを先行発行。論理削除済オーナー(owners 行が valid=0)は data_deletion_mode を取得して匿名化要否を判定</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">// オーナーとプロジェクトユーザーは別マスタのため、それぞれ抽出する</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> ownerTargets <span class="op">=</span> <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="vs">    SELECT o.id AS contract_owner_user_id, o.data_deletion_mode</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="vs">    FROM owners o WHERE o.valid = 0 AND o.updated_at &lt; ?1</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="vs">  `</span>)<span class="op">.</span><span class="fu">bind</span>(cutoff)<span class="op">.</span><span class="fu">all</span>()<span class="op">;</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> projectUserTargets <span class="op">=</span> <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="vs">`SELECT id AS project_user_id FROM project_users WHERE valid = 0 AND updated_at &lt; ?1`</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  )<span class="op">.</span><span class="fu">bind</span>(cutoff)<span class="op">.</span><span class="fu">all</span>()<span class="op">;</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (<span class="kw">const</span> o <span class="kw">of</span> ownerTargets<span class="op">.</span><span class="at">results</span>) {</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 監査ログ: actor_type=&#39;owner&#39;, actor_id=owners.id</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> <span class="fu">writeHardDeleteAudit</span>(env<span class="op">,</span> <span class="st">&#39;owner&#39;</span><span class="op">,</span> o<span class="op">.</span><span class="at">contract_owner_user_id</span><span class="op">,</span> o<span class="op">.</span><span class="at">contract_owner_user_id</span>)<span class="op">;</span></span>
 <span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 匿名化はオーナーのみ(契約配下データへの永続書換が発生するため)</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (u<span class="op">.</span><span class="at">contract_owner_user_id</span> <span class="op">&amp;&amp;</span> u<span class="op">.</span><span class="at">data_deletion_mode</span> <span class="op">===</span> <span class="st">&#39;anonymize&#39;</span>) {</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (o<span class="op">.</span><span class="at">data_deletion_mode</span> <span class="op">===</span> <span class="st">&#39;anonymize&#39;</span>) {</span>
 <span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>      <span class="co">// 2. 匿名化処理(03_テーブル設計 §4.6 に従う)</span></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>      <span class="cf">await</span> <span class="fu">anonymizeContractOwnerData</span>(env<span class="op">,</span> u<span class="op">.</span><span class="at">contract_owner_user_id</span>)<span class="op">;</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>      <span class="cf">await</span> <span class="fu">anonymizeContractOwnerData</span>(env<span class="op">,</span> o<span class="op">.</span><span class="at">contract_owner_user_id</span>)<span class="op">;</span></span>
 <span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    }</span>
 <span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 3. users 物理 DELETE(CASCADE で contract_owners / project_users / sessions / access_tokens 等連鎖削除)</span></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`DELETE FROM users WHERE valid = 0 AND updated_at &lt; ?1`</span>)<span class="op">.</span><span class="fu">bind</span>(cutoff)<span class="op">.</span><span class="fu">run</span>()<span class="op">;</span></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 3a. users が valid=1 で残ったまま contract_owners 単独が valid=0 のケースへのフェイルセーフ</span></span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`DELETE FROM contract_owners WHERE valid = 0 AND updated_at &lt; ?1`</span>)<span class="op">.</span><span class="fu">bind</span>(cutoff)<span class="op">.</span><span class="fu">run</span>()<span class="op">;</span></span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 3b. project_users 単独論理削除(プロジェクト削除起因でメンバー by メンバーに valid=0 が発生したケース)</span></span>
+<span id="cb4-21b"><a href="#cb4-21b" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (<span class="kw">const</span> pu <span class="kw">of</span> projectUserTargets<span class="op">.</span><span class="at">results</span>) {</span>
+<span id="cb4-21c"><a href="#cb4-21c" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 監査ログ: actor_type=&#39;project_user&#39;, actor_id=project_users.id</span></span>
+<span id="cb4-21d"><a href="#cb4-21d" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> <span class="fu">writeHardDeleteAudit</span>(env<span class="op">,</span> <span class="st">&#39;project_user&#39;</span><span class="op">,</span> pu<span class="op">.</span><span class="at">project_user_id</span><span class="op">,</span> <span class="dt">null</span>)<span class="op">;</span></span>
+<span id="cb4-21e"><a href="#cb4-21e" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 3. owners 物理 DELETE(CASCADE で project_users / project_user_assignments / sessions / access_tokens 等連鎖削除)</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`DELETE FROM owners WHERE valid = 0 AND updated_at &lt; ?1`</span>)<span class="op">.</span><span class="fu">bind</span>(cutoff)<span class="op">.</span><span class="fu">run</span>()<span class="op">;</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 3b. project_users 単独論理削除(プロジェクト削除起因でユーザー単位に valid=0 が発生したケース)。CASCADE で project_user_assignments も連鎖削除</span></span>
 <span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`DELETE FROM project_users WHERE valid = 0 AND updated_at &lt; ?1`</span>)<span class="op">.</span><span class="fu">bind</span>(cutoff)<span class="op">.</span><span class="fu">run</span>()<span class="op">;</span></span>
+<span id="cb4-27b"><a href="#cb4-27b" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 3c. project_user_assignments 単独論理削除(割当解除のみ)の孤立行</span></span>
+<span id="cb4-27c"><a href="#cb4-27c" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`DELETE FROM project_user_assignments WHERE valid = 0 AND updated_at &lt; ?1`</span>)<span class="op">.</span><span class="fu">bind</span>(cutoff)<span class="op">.</span><span class="fu">run</span>()<span class="op">;</span></span>
 <span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 4. projects 物理 DELETE(CASCADE)</span></span>
 <span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`DELETE FROM projects WHERE valid = 0 AND updated_at &lt; ?1`</span>)<span class="op">.</span><span class="fu">bind</span>(cutoff)<span class="op">.</span><span class="fu">run</span>()<span class="op">;</span></span>
 <span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 5. 孤立中間テーブル行の物理 DELETE</span></span>
@@ -290,7 +294,7 @@
 <span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p><strong>注意</strong>:</p>
 <ul>
-<li><code>users</code> の物理 DELETE は <code>ON DELETE CASCADE</code> で広範囲が連鎖する(<code>contract_owners</code> / <code>project_users</code> / <code>sessions</code> / <code>access_tokens</code> / <code>terms_agreements</code> 等)。そのため <code>users</code> を最初に処理し、その後の独立 DELETE は孤立行を拾うのみとなる</li>
+<li><code>owners</code> の物理 DELETE は <code>ON DELETE CASCADE</code> で広範囲が連鎖する(<code>project_users</code> / <code>project_user_assignments</code> / <code>sessions</code> / <code>access_tokens</code> / <code>terms_agreements</code>(<code>actor_type='owner'</code> 分)等)。そのため <code>owners</code> を最初に処理し、続く <code>project_users</code> 物理 DELETE と独立 DELETE は孤立行を拾うのみとなる</li>
 <li>監査ログ自体は tombstone 方式(<code>audit_logs.tombstone</code>)で保持されるため、物理削除バッチは本テーブルには適用しない</li>
 <li>90 日カットオフは <code>updated_at</code> 基準。論理削除以降に <code>updated_at</code> が変動するイベント(例: 復元処理)が発生した場合は再カウントとなる(復元から 90 日後の物理削除)。MVP では復元 UI は持たない。</li>
 </ul>

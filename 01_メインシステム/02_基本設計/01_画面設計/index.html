@@ -401,8 +401,8 @@
 </table>
 <h4 id="402-アクセス制御規約">4.0.2 アクセス制御規約</h4>
 <ul>
-<li><code>/owner/*</code> への到達はオーナー(<code>contract_owners</code> 行存在で判定)以外は 403 + 当該ユーザーの既定ワークスペースへリダイレクト</li>
-<li><code>/projects/:projectId/*</code> への到達は当該 <code>projectId</code> に対し <code>project_users</code> を持たないユーザーは 403 + 既定ワークスペース(§4.4.7)へリダイレクト</li>
+<li><code>/owner/*</code> への到達はオーナー(<code>owners</code> 行存在で判定)以外は 403 + 当該ユーザーの既定ワークスペースへリダイレクト</li>
+<li><code>/projects/:projectId/*</code> への到達は当該 <code>projectId</code> に対し <code>project_user_assignments</code> を持たないユーザーは 403 + 既定ワークスペース(§4.4.7)へリダイレクト(オーナーは <code>isOwner</code> で全プロジェクトに到達可)</li>
 <li>認証フロー(<code>/auth/*</code>)は未認証時のみ到達可。認証済ユーザーが到達した場合は既定ワークスペース(§4.4.7)へリダイレクト</li>
 <li>URL ベースでスコープ違反を検知できるため、ナビゲーション層・API 層の二重チェックを統一する基準とする</li>
 </ul>
@@ -639,7 +639,7 @@
 <tbody>
 <tr>
 <td>契約ワークスペース</td>
-<td>オーナー専有(<code>contract_owners</code> 行存在)</td>
+<td>オーナー専有(<code>owners</code> 行存在)</td>
 <td>SCR-016 / SCR-004 / SCR-004-001 / SCR-022 / SCR-023 / SCR-014 / SCR-015</td>
 <td>契約全体の利用状況、プロジェクト、請求、設定、退会を扱う</td>
 </tr>
@@ -930,7 +930,7 @@
 <td>2</td>
 <td><code>契約ダッシュボード</code></td>
 <td>選択可項目(<i class="bi bi-link-45deg" aria-hidden="true"></i> アイコン)</td>
-<td>オーナー(<code>contract_owners</code> 行存在)のみ</td>
+<td>オーナー(<code>owners</code> 行存在)のみ</td>
 <td>契約 WS / SCR-016 へ切替(URL <code>/owner</code>)</td>
 </tr>
 <tr>
@@ -944,7 +944,7 @@
 <td>3</td>
 <td><code>{プロジェクト名}</code></td>
 <td>選択可項目(<i class="bi bi-folder-fill" aria-hidden="true"></i> アイコン)</td>
-<td>当該プロジェクトに <code>project_users</code> を持つ(オーナーは全 PJ。プロジェクト数が 10 件超なら検索ボックスを冒頭に表示)</td>
+<td>当該プロジェクトに <code>project_user_assignments</code> を持つ(オーナーは <code>isOwner</code> で全 PJ。プロジェクト数が 10 件超なら検索ボックスを冒頭に表示)</td>
 <td>プロジェクト WS / 同種画面が新 WS 側に存在すれば維持、無ければ SCR-008 ホーム</td>
 </tr>
 </tbody>

@@ -405,7 +405,7 @@ open-faq &lt;noreply@&lt;service-domain&gt;&gt;</code></pre>
 <tbody>
 <tr>
 <td><code>{recipient_email}</code></td>
-<td>招待対象のメールアドレス(招待時点で <code>users.name=NULL</code> のため宛先表示は email を用いる。FR-016e)</td>
+<td>招待対象のメールアドレス(招待時点で <code>project_users.name=NULL</code> のため宛先表示は email を用いる。FR-016e)</td>
 </tr>
 <tr>
 <td><code>{inviter_owner_name}</code></td>
@@ -527,7 +527,7 @@ open-faq &lt;noreply@&lt;service-domain&gt;&gt;</code></pre>
 open-faq &lt;noreply@&lt;service-domain&gt;&gt;</code></pre>
 <p><strong>本文(HTML 版)</strong>: プロジェクト名を大きく表示 + 「付与される権限」をリスト表示 + プライマリボタン「アクティベーションを完了する」。本文の必須項目に「氏名(表示名)入力 + 初回パスワード設定 + 利用規約・プライバシーポリシー同意」を含める。</p>
 <p><strong>着地ページ</strong>: SCR-018 メンバーアカウント有効化(01_画面設計/index.html §5.25)。</p>
-<p><strong>備考</strong>: 既存アカウントがある場合(FR-021c 名前解決)は <code>{activation_url}</code> がログイン URL になり、ログイン後に当該プロジェクトに <code>project_users.role='admin'</code> 行が追加される(SCR-018 はバイパス、氏名は既存値を保持)。</p>
+<p><strong>備考</strong>: 既存アカウントがある場合(FR-021c 名前解決)は <code>{activation_url}</code> がログイン URL になり、ログイン後に当該プロジェクトへ <code>project_user_assignments.role='admin'</code> の割当(割当行)が追加される(マスタ行の追加ではなく割当の追加。SCR-018 はバイパス、氏名は既存値を保持)。</p>
 <hr />
 <h3 id="45-tpl-project_contact_verifyプロジェクト連絡先メール確認">4.5 TPL-PROJECT_CONTACT_VERIFY(プロジェクト連絡先メール確認)</h3>
 <p class="section-lead">プロジェクトのお問い合わせ先メールアドレスをウィジェット表示前に確認する <code>critical</code> メールです。確認 URL(24h 有効)を提示し、受信者はアカウントを持たない第三者でも構いません。</p>
@@ -585,7 +585,7 @@ open-faq &lt;noreply@&lt;service-domain&gt;&gt;</code></pre>
 <hr />
 <h3 id="46-tpl-lockout_notifyログインロックアウト発動">4.6 TPL-LOCKOUT_NOTIFY(ログインロックアウト発動)</h3>
 <p class="section-lead">連続ログイン失敗でロックアウトが発動したことを本人とオーナー / 全プロジェクト管理者へ知らせる <code>critical</code> メールです。ロック詳細と不正試行が疑われる場合の対応を提示します。</p>
-<p><strong>発火条件</strong>: FR-007 連続ログイン失敗閾値到達時。本人 + 同一オーナースコープで <code>project_users.role='admin' AND valid=1</code> を 1 件でも保持する全ユーザー(オーナーは作成時に自動で admin 行を保持するため本クエリ単独でオーナー + 全プロジェクト管理者を網羅)へ送信。</p>
+<p><strong>発火条件</strong>: FR-007 連続ログイン失敗閾値到達時。宛先は本人 + <strong>オーナー(<code>owners</code> マスタから取得)</strong> + <strong>当該オーナースコープのプロジェクト管理者(<code>project_user_assignments.role='admin' AND valid=1</code>)</strong>。オーナーと管理者は別マスタ(<code>owners</code> と <code>project_users</code> / 割当は <code>project_user_assignments</code>)で完全分離しているため、両マスタから個別に解決しマージして送信する(オーナーは管理者クエリ単独では網羅されない)。</p>
 <p><strong>テンプレート変数</strong>:</p>
 <table>
 <thead>
@@ -1213,11 +1213,11 @@ open-faq &lt;noreply@&lt;service-domain&gt;&gt;</code></pre>
 </tr>
 <tr>
 <td>TPL-LOCKOUT_NOTIFY</td>
-<td>ロック対象者 + 同一オーナースコープで <code>project_users.role='admin' AND valid=1</code> を 1 件でも保持する全ユーザー(オーナー + 全プロジェクト管理者を網羅)</td>
+<td>ロック対象者 + 同一オーナースコープで <code>project_user_assignments.role='admin' AND valid=1</code> を 1 件でも保持する全ユーザー(オーナー + 全プロジェクト管理者を網羅)</td>
 </tr>
 <tr>
 <td>TPL-DELETION_REMINDER / PAYMENT_METHOD_REQUIRED / BILLING_INVOICE_ISSUED / BILLING_PAYMENT_FAILED</td>
-<td>契約のオーナー(<code>contract_owners</code> 行が存在するユーザー)のみ</td>
+<td>契約のオーナー(<code>owners</code> 行が存在する主体)のみ</td>
 </tr>
 <tr>
 <td>TPL-BILLING_SUSPENSION / TERMS_REVISION</td>
@@ -1229,7 +1229,7 @@ open-faq &lt;noreply@&lt;service-domain&gt;&gt;</code></pre>
 </tr>
 <tr>
 <td>TPL-SYSTEM_NOTICE</td>
-<td><code>question_limit_threshold_reached</code> はオーナー + 当該プロジェクトの <code>project_users.role='admin' AND valid=1</code>。その他はサブ契機ごとに定義</td>
+<td><code>question_limit_threshold_reached</code> はオーナー + 当該プロジェクトの <code>project_user_assignments.role='admin' AND valid=1</code>。その他はサブ契機ごとに定義</td>
 </tr>
 </tbody>
 </table>

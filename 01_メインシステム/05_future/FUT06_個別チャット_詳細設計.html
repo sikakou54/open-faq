@@ -317,8 +317,8 @@ worker-widget-api/src/
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">// 新規チャット部屋作成時の担当者を解決する(FR-086b)。</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">// 優先順位:</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">//   1. projects.default_assignee_user_id が設定され、かつ当該ユーザーが</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">//      当該プロジェクトに有効割当(project_users.valid=1)を持つ → その管理者</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">//   2. 上記以外(未設定 / 無効化済 / 当該PJ未割当) → オーナー(contract_owners.user_id)</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">//      当該プロジェクトに有効割当(project_user_assignments.valid=1)を持つ → その管理者</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">//   2. 上記以外(未設定 / 無効化済 / 当該PJ未割当) → オーナー(owners.id)</span></span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">// オーナーは契約あたり常に 1 名存在し全プロジェクトの暗黙 admin のため、</span></span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">// 必ず担当者を確定でき、未割当の部屋は生成されない(FR-086a)。</span></span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">resolveInitialAssignee</span>(project<span class="op">,</span> defaultAssigneeValid)<span class="op">:</span> <span class="dt">string</span> {</span>

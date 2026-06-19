@@ -18,7 +18,7 @@
 <p class="ps-lead"><strong>このページは、監査ログ(<code>audit_logs</code>)の書込ロジック(SHA-256 ハッシュチェーン・<code>retention_class</code> 自動付与・IP マスク)と、日次 / 月次の完全性検証(チェーン再計算・tombstone 整合性)の実装方針を定義します。</strong></p>
 </aside>
 
-<p class="doc-meta"><span><b>版数</b> v1.0</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+<p class="doc-meta"><span><b>版数</b> v1.1</span><span><b>更新</b> 2026-06-19</span><span class="dm-status">承認済</span></p>
 
 <h2 id="1-対象範囲">1. 対象範囲</h2>
 <p class="section-lead">本 DD が実装方針を定める機能・ライブラリ・cron・テーブルを示します。次の表は、監査ログ網羅(NFR-601)・完全性検証(NFR-602)・tombstone 方式(NFR-602c)と、ハッシュチェーン / 書込ライブラリ・検証 cron が範囲であることを一望できます。</p>
@@ -167,8 +167,8 @@
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> fields <span class="op">=</span> {</span>
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    id<span class="op">:</span> input<span class="op">.</span><span class="at">id</span> <span class="op">??</span> <span class="fu">generateUlid</span>()<span class="op">,</span></span>
 <span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    contractOwnerUserId<span class="op">:</span> input<span class="op">.</span><span class="at">contractOwnerUserId</span> <span class="op">??</span> <span class="dt">null</span><span class="op">,</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    actorUserId<span class="op">:</span> input<span class="op">.</span><span class="at">actorUserId</span> <span class="op">??</span> <span class="dt">null</span><span class="op">,</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    actorRole<span class="op">:</span> input<span class="op">.</span><span class="at">actorRole</span> <span class="op">??</span> <span class="dt">null</span><span class="op">,</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    actorType<span class="op">:</span> input<span class="op">.</span><span class="at">actorType</span> <span class="op">??</span> <span class="dt">null</span><span class="op">,</span>  <span class="co">// &#39;owner&#39; | &#39;project_user&#39; | &#39;system&#39;</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    actorId<span class="op">:</span> input<span class="op">.</span><span class="at">actorId</span> <span class="op">??</span> <span class="dt">null</span><span class="op">,</span>      <span class="co">// owners.id または project_users.id(論理参照)</span></span>
 <span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    action<span class="op">:</span> input<span class="op">.</span><span class="at">action</span><span class="op">,</span></span>
 <span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    targetType<span class="op">:</span> input<span class="op">.</span><span class="at">targetType</span> <span class="op">??</span> <span class="dt">null</span><span class="op">,</span></span>
 <span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    targetId<span class="op">:</span> input<span class="op">.</span><span class="at">targetId</span> <span class="op">??</span> <span class="dt">null</span><span class="op">,</span></span>
@@ -179,10 +179,10 @@
 <span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
 <span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> currentHash <span class="op">=</span> <span class="cf">await</span> <span class="fu">computeChainHash</span>(prev<span class="op">?.</span><span class="at">current_hash</span> <span class="op">??</span> <span class="kw">null</span><span class="op">,</span> fields)<span class="op">;</span></span>
 <span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`</span></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="vs">    INSERT INTO audit_logs (id, contract_owner_user_id, actor_user_id, actor_role, action, target_type, target_id,</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="vs">    INSERT INTO audit_logs (id, contract_owner_user_id, actor_type, actor_id, action, target_type, target_id,</span></span>
 <span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="vs">                           ip_address_masked, metadata, retention_class, prev_hash, current_hash, created_at)</span></span>
 <span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="vs">    VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13)</span></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="vs">  `</span>)<span class="op">.</span><span class="fu">bind</span>(fields<span class="op">.</span><span class="at">id</span><span class="op">,</span> fields<span class="op">.</span><span class="at">contractOwnerUserId</span><span class="op">,</span> fields<span class="op">.</span><span class="at">actorUserId</span><span class="op">,</span> fields<span class="op">.</span><span class="at">actorRole</span><span class="op">,</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="vs">  `</span>)<span class="op">.</span><span class="fu">bind</span>(fields<span class="op">.</span><span class="at">id</span><span class="op">,</span> fields<span class="op">.</span><span class="at">contractOwnerUserId</span><span class="op">,</span> fields<span class="op">.</span><span class="at">actorType</span><span class="op">,</span> fields<span class="op">.</span><span class="at">actorId</span><span class="op">,</span></span>
 <span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>        fields<span class="op">.</span><span class="at">action</span><span class="op">,</span> fields<span class="op">.</span><span class="at">targetType</span><span class="op">,</span> fields<span class="op">.</span><span class="at">targetId</span><span class="op">,</span> fields<span class="op">.</span><span class="at">ipAddressMasked</span><span class="op">,</span></span>
 <span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>        fields<span class="op">.</span><span class="at">metadata</span><span class="op">,</span> fields<span class="op">.</span><span class="at">retentionClass</span><span class="op">,</span> prev<span class="op">?.</span><span class="at">current_hash</span> <span class="op">??</span> <span class="kw">null</span><span class="op">,</span> currentHash<span class="op">,</span></span>
 <span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>        fields<span class="op">.</span><span class="at">createdAt</span>)<span class="op">.</span><span class="fu">run</span>()<span class="op">;</span></span>
@@ -249,7 +249,7 @@
 <tr>
 <td>適用判定</td>
 <td>全オーナー (デフォルト)</td>
-<td><code>contract_owners.gdpr_applicable=true</code> のオーナー配下のみ</td>
+<td><code>owners.gdpr_applicable=true</code> のオーナー配下のみ</td>
 </tr>
 <tr>
 <td>適用箇所</td>
@@ -267,7 +267,7 @@
 <ul>
 <li><strong>IP マスクモード</strong>: <code>default</code> 固定 (<code>/24</code> + <code>/48</code>)。</li>
 <li><strong>不正検知への影響緩和</strong>: GDPR 強化モード時はレート制限の判定キーを <code>ip_masked</code> → <code>user_id (またはセッション ID)</code> に切替（不正検知バッチで <code>ip_mask_mode='gdpr_enhanced'</code> 契約には <code>user_id</code> キーを優先）。</li>
-<li><strong>監査ログ整合性</strong>: マスク方式の変更は <strong>適用日時を <code>contract_owners.ip_mask_mode_changed_at</code> に保存</strong>、変更前後の <code>audit_logs.ip_masked</code> 値は混在する想定で検証バッチを設計 (hash 連鎖検証は影響なし、列値の比較分析時にモード境界を考慮)。</li>
+<li><strong>監査ログ整合性</strong>: マスク方式の変更は <strong>適用日時を <code>owners.ip_mask_mode_changed_at</code> に保存</strong>、変更前後の <code>audit_logs.ip_masked</code> 値は混在する想定で検証バッチを設計 (hash 連鎖検証は影響なし、列値の比較分析時にモード境界を考慮)。</li>
 </ul>
 <h3 id="35-action-コード網羅表">3.5 action コード網羅表</h3>
 <table>
@@ -301,7 +301,7 @@
 </tr>
 <tr>
 <td>論理削除 / 物理削除(v1.10)</td>
-<td><code>user.logical_delete</code>, <code>project.logical_delete</code>, <code>project_users.logical_delete</code>, <code>user.hard_delete_by_batch</code>, <code>project.hard_delete_by_batch</code>, <code>project.created_with_owner_admin</code>(プロジェクト作成時のオーナー admin 行自動 INSERT)</td>
+<td><code>user.logical_delete</code>, <code>project.logical_delete</code>, <code>project_user_assignment.logical_delete</code>, <code>user.hard_delete_by_batch</code>, <code>project.hard_delete_by_batch</code></td>
 <td>general</td>
 </tr>
 </tbody>
@@ -329,8 +329,8 @@
 <span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>          level<span class="op">:</span> <span class="st">&#39;critical&#39;</span><span class="op">,</span></span>
 <span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>          message<span class="op">:</span> <span class="vs">`監査ログ完全性違反検出: owner=</span><span class="sc">${</span>t<span class="op">.</span><span class="at">tid</span><span class="sc">}</span><span class="vs"> id=</span><span class="sc">${</span>row<span class="op">.</span><span class="at">id</span><span class="sc">}</span><span class="vs">`</span><span class="op">,</span></span>
 <span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>        })<span class="op">;</span></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>        <span class="co">// contract_owners 行存在で「オーナー」を判定するため、IS NOT NULL チェックで対象を絞る</span></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`UPDATE contract_owners SET audit_dual_chain_enabled = 1 WHERE user_id = ?1`</span>)</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>        <span class="co">// owners 行存在で「オーナー」を判定するため、契約境界キー(owners.id)で対象を絞る</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`UPDATE owners SET audit_dual_chain_enabled = 1 WHERE id = ?1`</span>)</span>
 <span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>          <span class="op">.</span><span class="fu">bind</span>(t<span class="op">.</span><span class="at">tid</span>)<span class="op">.</span><span class="fu">run</span>()<span class="op">;</span></span>
 <span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span><span class="op">;</span></span>
 <span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>      }</span>

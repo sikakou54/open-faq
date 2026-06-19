@@ -126,15 +126,14 @@
 </tbody>
 </table>
 <h3>処理概要</h3>
-<p class="section-lead">プロジェクトを作成し公開キーを発行する(オーナーを自動 admin 化)。</p>
+<p class="section-lead">プロジェクトを作成し公開キーを発行する(オーナーは isOwner で当該プロジェクトの全権を持つ)。</p>
 <table>
 <thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
 <tbody>
 <tr><td>P-01</td><td>認証・認可(オーナー専有)を検証する</td></tr>
 <tr><td>P-02</td><td>入力値(プロジェクト名・許可ドメイン)を検証し、名称重複を判定する</td></tr>
 <tr><td>P-03</td><td>プロジェクトを作成しウィジェット公開キーを発行する</td></tr>
-<tr><td>P-04</td><td>同一トランザクションでオーナーを当該プロジェクトの管理者として自動付与する</td></tr>
-<tr><td>P-05</td><td>作成結果(ID・公開キー)を返す</td></tr>
+<tr><td>P-04</td><td>作成結果(ID・公開キー)を返す</td></tr>
 </tbody>
 </table>
 <h3>I/O</h3>
@@ -143,7 +142,6 @@
 <tbody>
 <tr><td><code>projects</code></td><td>◯</td><td>◯</td><td>—</td><td>—</td></tr>
 <tr><td><code>allowed_domains</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
-<tr><td><code>project_users</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -167,8 +165,8 @@
 </table>
 <p>オーナー固定化(FR-030a / FR-015e):</p>
 <ul>
-<li>リクエストに <code>initialAdmins</code> フィールド(<code>selfAsAdmin</code> フラグや <code>adminEmails[]</code>)は持たない。オーナーは作成時に自動で当該プロジェクトの管理者となるため、UI / API での個別指定は不要。</li>
-<li>サーバー側処理: プロジェクト作成と同一トランザクションで、オーナーを当該プロジェクトの管理者(<code>project_users.role='admin'</code>・<code>valid=1</code>)として 1 行自動付与する(オーナー自動 admin 行付与)。認可上は <code>isOwner=true</code> bypass を維持しつつ、本 admin 行は critical 通知の宛先解決(<code>role='admin'</code> かつ <code>valid=1</code> の利用者)と画面表示の事実情報として参照される。</li>
+<li>リクエストに <code>initialAdmins</code> フィールド(<code>selfAsAdmin</code> フラグや <code>adminEmails[]</code>)は持たない。オーナーは <code>isOwner</code> bypass で当該プロジェクトの全権を持つため、admin 指定は不要(<code>project_user_assignments</code> への自動付与も行わない)。</li>
+<li>サーバー側処理: プロジェクト作成は <code>projects</code> 行と公開キーのみを作成し、<code>project_user_assignments</code> への自動 admin 付与は行わない。オーナーは <code>isOwner=true</code> bypass で全権を持つ。critical 通知の宛先解決はオーナー(<code>owners</code>)+ 当該プロジェクトの <code>project_user_assignments.role='admin'</code> かつ <code>valid=1</code> を両マスタから合算して行う(<a href="../08_認証・認可設計.html">08_認証・認可設計.html §5.5</a> 正本)。</li>
 <li>他者をプロジェクト管理者として招待する操作は、プロジェクト作成後に当該プロジェクトの SCR-009 / SCR-009-001(プロジェクト WS)から <code>POST /projects/{id}/members</code>(API-011)経由で行う。</li>
 </ul><h3>レスポンス(201)</h3>
 <pre><code>{
@@ -226,8 +224,8 @@
 <tbody>
 <tr><td><code>projects</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
 <tr><td><code>allowed_domains</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>project_user_assignments</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
 <tr><td><code>project_users</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
-<tr><td><code>users</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
 <tr><td><code>sessions</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
 <tr><td><code>access_tokens</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
 <tr><td><code>faqs</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>

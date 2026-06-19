@@ -22,7 +22,7 @@
 <p class="doc-meta"><span><b>版数</b> v1.0</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
 
 <h2 id="1-画面概要">1. 画面概要</h2>
-<p class="section-lead">招待メール内リンクのトークン認証で到達する未認証画面(共通領域)です。招待された本人が氏名(表示名)・初回パスワード・利用規約同意・プライバシーポリシー同意を入力し、アカウントを有効化します。完了時に <code>users.name</code> 設定・<code>users.status='active'</code> 化・<code>terms_agreements</code> 記録・<code>project_users.valid=1</code> 化・トークン消費を同一トランザクションで実行します。</p>
+<p class="section-lead">招待メール内リンクのトークン認証で到達する未認証画面(共通領域)です。招待された本人が氏名(表示名)・初回パスワード・利用規約同意・プライバシーポリシー同意を入力し、アカウントを有効化します。完了時に <code>project_users.name</code> 設定・<code>project_users.status='active'</code> 化・<code>terms_agreements</code> 記録・<code>project_user_assignments.valid=1</code> 化・トークン消費を同一トランザクションで実行します。</p>
 <table>
 <thead>
 <tr>
@@ -123,7 +123,7 @@
     <button class="btn primary" style="width: 100%; margin-top: 8px;">ログインする</button>
   </div>
 </div> <div class="simple-footer">FAQ AI ウィジェット SaaS — open-faq</div> </div>
-<div class="note" style="margin-top: 10px;"><strong>備考(v1.6 新規)</strong><ul style="margin: 4px 0 0; padding-left: 18px;"><li>未認証画面(招待トークン認証のみ、Cookie セッションなし)。URL = <code>/auth/activate?token=...</code></li><li>招待メール (TPL-ADMIN_USER_REGISTER / TPL-PROJECT_ADMIN_INVITE) のリンクから到達。両テンプレート共通の着地ページ</li><li>「登録を完了する」押下時は `POST /auth/invitations/{token}/activate` 経由で同一トランザクションで `UPDATE users SET name=?, password_hash=?, status='active'` + `INSERT INTO terms_agreements` + `UPDATE project_users SET valid=1` + `consumeToken('activation')` を実行(FR-016e)</li><li>サイドメニュー除外(未認証画面のため。01_画面設計/index.html §4.4.5)</li></ul></div>
+<div class="note" style="margin-top: 10px;"><strong>備考(v1.6 新規)</strong><ul style="margin: 4px 0 0; padding-left: 18px;"><li>未認証画面(招待トークン認証のみ、Cookie セッションなし)。URL = <code>/auth/activate?token=...</code></li><li>招待メール (TPL-ADMIN_USER_REGISTER / TPL-PROJECT_ADMIN_INVITE) のリンクから到達。両テンプレート共通の着地ページ</li><li>「登録を完了する」押下時は `POST /auth/invitations/{token}/activate` 経由で同一トランザクションで `UPDATE project_users SET name=?, password_hash=?, status='active'` + `INSERT INTO terms_agreements` + `UPDATE project_user_assignments SET valid=1` + `consumeToken('activation')` を実行(FR-016e)</li><li>サイドメニュー除外(未認証画面のため。01_画面設計/index.html §4.4.5)</li></ul></div>
 </div></div>
 </div>
 
@@ -179,8 +179,8 @@
 </thead>
 <tbody>
 <tr><td>アクセストークン</td><td>招待トークンを検証・消費し、<code>meta</code> から招待プロジェクト / ロールを取得する(<code>used_at</code> セット、<code>invitedProjectId</code> / <code>invitedRole</code> 取得)</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>access_tokens</code>(<a href="../03_テーブル設計/access_tokens.html">テーブル設計 3.5</a>)</td></tr>
-<tr><td>利用者</td><td>氏名・パスワードハッシュを設定し <code>status='active'</code> 化する</td><td>テーブル</td><td>出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>users</code>(<a href="../03_テーブル設計/users.html">テーブル設計 3.1</a>)</td></tr>
-<tr><td>プロジェクト割当</td><td>招待時の予約行を <code>valid=1</code> 化する</td><td>テーブル</td><td>出力</td><td>—</td><td>—</td><td>◯</td><td>—</td><td><code>project_users</code>(<a href="../03_テーブル設計/project_users.html">テーブル設計 3.3</a>)</td></tr>
+<tr><td>プロジェクトユーザー</td><td>氏名・パスワードハッシュを設定し <code>status='active'</code> 化する(招待されるのはプロジェクトユーザー。オーナーマスタとは完全分離)</td><td>テーブル</td><td>出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>project_users</code>(<a href="../03_テーブル設計/project_users.html">テーブル設計 3.1</a>)</td></tr>
+<tr><td>プロジェクト割当</td><td>招待時の予約割当を <code>valid=1</code> 化する</td><td>テーブル</td><td>出力</td><td>—</td><td>—</td><td>◯</td><td>—</td><td><code>project_user_assignments</code>(<a href="../03_テーブル設計/project_user_assignments.html">テーブル設計 3.3</a>)</td></tr>
 <tr><td>規約同意記録</td><td>利用規約・プライバシーポリシーの各最新版に対し <code>doc_type</code> 別の 2 行を記録する</td><td>テーブル</td><td>出力</td><td>◯</td><td>—</td><td>—</td><td>—</td><td><code>terms_agreements</code>(<a href="../03_テーブル設計/terms_agreements.html">テーブル設計 3.31</a>)</td></tr>
 <tr><td>招待トークン検証</td><td>招待トークンを検証し招待情報をプレビューする</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /auth/invitations/{token}/preview</code>(<a href="../02_API設計/index.html">API 設計 5.1.7</a>)</td></tr>
 <tr><td>アカウント有効化</td><td>入力内容を送信してアカウントを有効化する(同一トランザクション)</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /auth/invitations/{token}/activate</code>(<a href="../02_API設計/index.html">API 設計 5.1.8</a>)</td></tr>
@@ -202,7 +202,7 @@
 <tbody>
 <tr><td><code>EV-01</code></td><td>トークン検証・プレビュー</td><td>画面到達時</td><td><ul><li><code>POST /auth/invitations/{token}/preview</code> で検証</li><li>成功で招待情報パネル・メール・入力フォームを表示</li><li>410 でエラー画面を表示</li><li>既使用で既使用エラー画面を表示</li></ul></td><td><a href="#IT-02">IT-02</a>, <a href="#IT-03">IT-03</a>, <a href="#IT-11">IT-11</a>, <a href="#IT-12">IT-12</a></td></tr>
 <tr><td><code>EV-02</code></td><td>入力バリデーション</td><td>各入力欄のフォーカスアウト時</td><td>氏名・パスワード・確認・規約同意・Turnstile を検証しフィールド単位でエラー表示</td><td><a href="#IT-04">IT-04</a>, <a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a>, <a href="#IT-07">IT-07</a>, <a href="#IT-08">IT-08</a>, <a href="#IT-09">IT-09</a></td></tr>
-<tr><td><code>EV-03</code></td><td>登録完了</td><td>「登録を完了する」押下時</td><td><ul><li><code>POST /auth/invitations/{token}/activate</code> を実行(同一トランザクションで users / terms_agreements / project_users 更新 + トークン消費)</li><li>成功で完了画面へ</li></ul></td><td><a href="#IT-10">IT-10</a>, <a href="#IT-13">IT-13</a></td></tr>
+<tr><td><code>EV-03</code></td><td>登録完了</td><td>「登録を完了する」押下時</td><td><ul><li><code>POST /auth/invitations/{token}/activate</code> を実行(同一トランザクションで project_users / terms_agreements / project_user_assignments 更新 + トークン消費)</li><li>成功で完了画面へ</li></ul></td><td><a href="#IT-10">IT-10</a>, <a href="#IT-13">IT-13</a></td></tr>
 <tr><td><code>EV-04</code></td><td>ログイン遷移</td><td>完了画面・エラー画面の「ログインする」押下時</td><td>SCR-001 ログインへ遷移</td><td><a href="#IT-11">IT-11</a>, <a href="#IT-12">IT-12</a>, <a href="#IT-13">IT-13</a></td></tr>
 </tbody>
 </table>
