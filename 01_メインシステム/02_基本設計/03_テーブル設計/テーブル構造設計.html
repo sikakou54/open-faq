@@ -55,49 +55,58 @@
   announcement_recipients ||--o{ inbox_messages : "受信箱"
 </code></pre>
 
-<h3 id="12-関係一覧">1.2 関係一覧</h3>
-<p class="section-lead">ユーザー・契約者・プロジェクト・FAQ・未解決質問・お知らせ間の主要な関係と、それを表す外部キーの一覧です。</p>
-<table>
-<thead>
-<tr>
-<th>関係</th>
-<th>型</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ユーザー ↔︎ 契約者</td>
-<td>1:0..1</td>
-<td><code>users</code> 1 行に対し <code>contract_owners</code> は 0 行(メンバー)or 1 行(オーナー)。<code>contract_owners</code> 行存在 = オーナー判定</td>
-</tr>
-<tr>
-<td>契約者 ↔︎ プロジェクト</td>
-<td>1:N</td>
-<td>契約削除時にプロジェクトも削除対象(<code>projects.contract_owner_user_id</code> REFERENCES <code>contract_owners(user_id)</code>)</td>
-</tr>
-<tr>
-<td>プロジェクト ↔︎ FAQ</td>
-<td>1:N</td>
-<td>FAQ はプロジェクトに帰属</td>
-</tr>
-<tr>
-<td>プロジェクト ↔︎ 未解決質問</td>
-<td>1:N</td>
-<td>—</td>
-</tr>
-<tr>
-<td>未解決質問 ↔︎ FAQ</td>
-<td>0..1:N</td>
-<td><code>faqs.source_unresolved_question_id</code> で参照可</td>
-</tr>
-<tr>
-<td>お知らせ ↔︎ 受信箱</td>
-<td>1:N</td>
-<td><code>service_announcements</code> → <code>announcement_recipients</code> → <code>inbox_messages</code> の fan-out</td>
-</tr>
-</tbody>
-</table>
+<h3 id="12-関係一覧">1.2 親子関係の図解</h3>
+<p class="section-lead">主要テーブルの親子(1:N / 1:0..1)関係を、ドメインごとに図で示しながら解説します。エッジのラベルはカーディナリティと外部キー・連鎖の要点です。完全な関係は <a href="../ER図.html">ER図.html</a> が正本です。</p>
+
+<p><strong>(1) ユーザー・契約・プロジェクト</strong> ── 認証主体 <code>users</code> を起点に、契約境界(オーナー)とプロジェクト割当が分岐します。</p>
+<pre class="mermaid"><code>flowchart TD
+  U["users(認証主体)"]
+  CO["contract_owners(契約=オーナー)"]
+  PU["project_users(割当 + ロール)"]
+  P["projects"]
+  U --&gt;|"1:0..1 行存在=オーナー"| CO
+  U --&gt;|"1:N 割当"| PU
+  P --&gt;|"1:N 割当先"| PU
+  CO --&gt;|"1:N 契約削除で連鎖削除対象"| P
+</code></pre>
+<p><code>users</code> 1 行に対し <code>contract_owners</code> は 0..1 行(行存在 = オーナー判定。メンバーは行を持たない)。<code>projects</code> は <code>contract_owner_user_id</code> で <code>contract_owners(user_id)</code> に帰属し、契約削除でプロジェクトも削除対象になります。<code>project_users</code> は <code>users</code> × <code>projects</code> の割当に <code>role</code>(admin / member)を載せた中間テーブルです。</p>
+
+<p><strong>(2) プロジェクト配下(FAQ・未解決質問)</strong> ── コンテンツ系は <code>projects</code> に帰属します。</p>
+<pre class="mermaid"><code>flowchart TD
+  P["projects"]
+  F["faqs"]
+  FR["faq_revisions"]
+  I["inquiries(未解決質問)"]
+  P --&gt;|"1:N"| F
+  P --&gt;|"1:N"| I
+  F --&gt;|"1:N 改訂履歴(最大50)"| FR
+  I --&gt;|"0..1 : N"| F
+</code></pre>
+<p>FAQ と未解決質問はいずれもプロジェクトに帰属します。<code>faqs</code> は全文スナップショットの改訂履歴 <code>faq_revisions</code> を持ちます。未解決質問から起こした FAQ は <code>faqs.source_unresolved_question_id</code> で元の <code>inquiries</code> を逆参照できます(0..1 : N)。</p>
+
+<p><strong>(3) 課金(契約配下)</strong> ── 課金系はすべて契約 <code>contract_owners</code> に帰属します。</p>
+<pre class="mermaid"><code>flowchart TD
+  CO["contract_owners(契約)"]
+  BS["billing_subscriptions"]
+  BI["billing_invoices"]
+  UM["usage_metering(PJ計測/契約集計)"]
+  OQ["owner_quota_overrides(レート上書き)"]
+  CO --&gt;|"1:N"| BS
+  CO --&gt;|"1:N"| BI
+  CO --&gt;|"1:N"| UM
+  CO --&gt;|"1:0..1"| OQ
+</code></pre>
+<p>サブスクリプション・請求書・利用量計測は契約単位に紐づきます。<code>usage_metering</code> はプロジェクト単位で計測し契約単位で集計します。<code>owner_quota_overrides</code> は契約あたり 0..1 のレート制限上書きです。</p>
+
+<p><strong>(4) お知らせ(fan-out)</strong> ── 本体 1 件から受信者ごとの受信箱へ展開します。</p>
+<pre class="mermaid"><code>flowchart LR
+  SA["service_announcements(本体)"]
+  AR["announcement_recipients(配信先)"]
+  IM["inbox_messages(受信箱)"]
+  SA --&gt;|"1:N fan-out"| AR
+  AR --&gt;|"1:N"| IM
+</code></pre>
+<p>お知らせ本体 <code>service_announcements</code> から配信先 <code>announcement_recipients</code> へ fan-out し、各受信者の受信箱 <code>inbox_messages</code> に展開されます。</p>
 
 <h2 id="2-ユーザー権限保持方式3-表モデル">2. ユーザー権限保持方式(3 表モデル)</h2>
 <p class="section-lead">権限(オーナー / プロジェクト管理者 / メンバー)を 3 テーブルに分離保持する方式です。役割分担を図解し、各表の責務を述べます。</p>
