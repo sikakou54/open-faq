@@ -59,15 +59,11 @@
 <p class="section-lead">主要テーブルの親子(1:N / 1:0..1)関係を、ドメインごとに図で示しながら解説します。各図の下に親 / 子 / カーディナリティ / 説明を表で整理します。完全な関係は <a href="../ER図.html">ER図.html</a> が正本です。</p>
 
 <p><strong>(1) ユーザー・契約・プロジェクト</strong> ── 認証主体 <code>users</code> を起点に、契約境界(オーナー)とプロジェクト割当が分岐します。</p>
-<pre class="mermaid"><code>flowchart LR
-  U["users(認証主体)"]
-  CO["contract_owners(契約=オーナー)"]
-  PU["project_users(割当 + ロール)"]
-  P["projects"]
-  U --&gt;|"1:0..1 行存在=オーナー"| CO
-  U --&gt;|"1:N 割当"| PU
-  P --&gt;|"1:N 割当先"| PU
-  CO --&gt;|"1:N 契約削除で連鎖削除対象"| P
+<pre class="mermaid"><code>erDiagram
+  users ||--o| contract_owners : "行存在=オーナー"
+  users ||--o{ project_users : "割当"
+  projects ||--o{ project_users : "割当先"
+  contract_owners ||--o{ projects : "契約削除で連鎖"
 </code></pre>
 <table>
 <thead>
@@ -82,15 +78,11 @@
 </table>
 
 <p><strong>(2) プロジェクト配下(FAQ・未解決質問)</strong> ── コンテンツ系は <code>projects</code> に帰属します。</p>
-<pre class="mermaid"><code>flowchart LR
-  P["projects"]
-  F["faqs"]
-  FR["faq_revisions"]
-  I["inquiries(未解決質問)"]
-  P --&gt;|"1:N"| F
-  P --&gt;|"1:N"| I
-  F --&gt;|"1:N 改訂履歴(最大50)"| FR
-  I --&gt;|"0..1 : N"| F
+<pre class="mermaid"><code>erDiagram
+  projects ||--o{ faqs : ""
+  projects ||--o{ inquiries : ""
+  faqs ||--o{ faq_revisions : "改訂履歴"
+  inquiries |o--o{ faqs : "source_unresolved_question_id"
 </code></pre>
 <table>
 <thead>
@@ -105,16 +97,11 @@
 </table>
 
 <p><strong>(3) 課金(契約配下)</strong> ── 課金系はすべて契約 <code>contract_owners</code> に帰属します。</p>
-<pre class="mermaid"><code>flowchart LR
-  CO["contract_owners(契約)"]
-  BS["billing_subscriptions"]
-  BI["billing_invoices"]
-  UM["usage_metering(PJ計測/契約集計)"]
-  OQ["owner_quota_overrides(レート上書き)"]
-  CO --&gt;|"1:N"| BS
-  CO --&gt;|"1:N"| BI
-  CO --&gt;|"1:N"| UM
-  CO --&gt;|"1:0..1"| OQ
+<pre class="mermaid"><code>erDiagram
+  contract_owners ||--o{ billing_subscriptions : ""
+  contract_owners ||--o{ billing_invoices : ""
+  contract_owners ||--o{ usage_metering : ""
+  contract_owners ||--o| owner_quota_overrides : "レート上書き"
 </code></pre>
 <table>
 <thead>
@@ -129,12 +116,9 @@
 </table>
 
 <p><strong>(4) お知らせ(fan-out)</strong> ── 本体 1 件から受信者ごとの受信箱へ展開します。</p>
-<pre class="mermaid"><code>flowchart LR
-  SA["service_announcements(本体)"]
-  AR["announcement_recipients(配信先)"]
-  IM["inbox_messages(受信箱)"]
-  SA --&gt;|"1:N fan-out"| AR
-  AR --&gt;|"1:N"| IM
+<pre class="mermaid"><code>erDiagram
+  service_announcements ||--o{ announcement_recipients : "fan-out"
+  announcement_recipients ||--o{ inbox_messages : ""
 </code></pre>
 <table>
 <thead>
