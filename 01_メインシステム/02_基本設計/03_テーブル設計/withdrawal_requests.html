@@ -39,8 +39,8 @@
 <tr>
 <td>外部キー</td>
 <td><ul class="key-cols">
-<li><code>contract_owner_user_id</code> → <code>contract_owners(user_id)</code></li>
-<li><code>applied_by</code> → <code>users(id)</code></li>
+<li><code>contract_owner_user_id</code> → <code>owners(id)</code></li>
+<li><code>applied_by_type</code> + <code>applied_by_id</code> → <code>owners(id)</code> / <code>project_users(id)</code>(論理参照)</li>
 </ul></td>
 </tr>
 </tbody>
@@ -86,7 +86,7 @@
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
-<td><code>contract_owners(user_id)</code></td>
+<td><code>owners(id)</code></td>
 <td></td>
 <td></td>
 <td></td>
@@ -108,20 +108,34 @@
 </tr>
 <tr>
 <td style="text-align: right;">4</td>
-<td>申請者</td>
-<td><code>applied_by</code></td>
+<td>申請者種別</td>
+<td><code>applied_by_type</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
-<td><code>users(id)</code></td>
 <td></td>
 <td></td>
 <td></td>
+<td><code>applied_by_type IN ('owner','project_user')</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">5</td>
+<td>申請者 ID</td>
+<td><code>applied_by_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>applied_by_type</code> に応じ <code>owners(id)</code> / <code>project_users(id)</code> を指す(論理参照)</td>
+
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
 <td>理由</td>
 <td><code>reason</code></td>
 <td>TEXT</td>
@@ -135,7 +149,7 @@
 
 </tr>
 <tr>
-<td style="text-align: right;">6</td>
+<td style="text-align: right;">7</td>
 <td>削除予定日</td>
 <td><code>scheduled_deletion_at</code></td>
 <td>TEXT</td>

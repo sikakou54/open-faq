@@ -39,7 +39,7 @@
 <tr>
 <td>外部キー</td>
 <td><ul class="key-cols">
-<li><code>user_id</code> → <code>users(id)</code></li>
+<li><code>actor_type</code> + <code>actor_id</code> → <code>owners(id)</code> / <code>project_users(id)</code>(論理参照)</li>
 <li><code>(doc_type, terms_version)</code> → <code>terms_versions(doc_type, version)</code></li>
 </ul></td>
 </tr>
@@ -80,20 +80,34 @@
 </tr>
 <tr>
 <td style="text-align: right;">2</td>
-<td>ユーザー ID</td>
-<td><code>user_id</code></td>
+<td>操作者種別</td>
+<td><code>actor_type</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
-<td><code>users(id)</code></td>
+<td></td>
 <td>①</td>
 <td></td>
-<td></td>
+<td><code>actor_type IN ('owner','project_user')</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">3</td>
+<td>操作者 ID</td>
+<td><code>actor_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td>①</td>
+<td></td>
+<td><code>actor_type</code> に応じ <code>owners(id)</code> / <code>project_users(id)</code> を指す(論理参照)</td>
+
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
 <td>文書種別</td>
 <td><code>doc_type</code></td>
 <td>TEXT</td>
@@ -107,7 +121,7 @@
 
 </tr>
 <tr>
-<td style="text-align: right;">4</td>
+<td style="text-align: right;">5</td>
 <td>規約版</td>
 <td><code>terms_version</code></td>
 <td>TEXT</td>
@@ -121,7 +135,7 @@
 
 </tr>
 <tr>
-<td style="text-align: right;">5</td>
+<td style="text-align: right;">6</td>
 <td>同意日時</td>
 <td><code>agreed_at</code></td>
 <td>TEXT</td>
@@ -135,7 +149,7 @@
 
 </tr>
 <tr>
-<td style="text-align: right;">6</td>
+<td style="text-align: right;">7</td>
 <td>同意 IP(マスク済)</td>
 <td><code>agreed_ip_masked</code></td>
 <td>TEXT</td>
@@ -164,10 +178,10 @@
 <tbody>
 <tr>
 <td style="text-align: right;">1</td>
-<td><code>uq_terms_user_doc_version</code></td>
-<td><code>(user_id, doc_type, terms_version)</code></td>
+<td><code>uq_terms_actor_doc_version</code></td>
+<td><code>(actor_type, actor_id, doc_type, terms_version)</code></td>
 <td>○</td>
-<td>ユーザー × 文書 × 版で一意</td>
+<td>操作者 × 文書 × 版で一意</td>
 </tr>
 </tbody>
 </table>

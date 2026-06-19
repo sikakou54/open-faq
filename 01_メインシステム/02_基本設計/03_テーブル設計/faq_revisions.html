@@ -40,7 +40,7 @@
 <td>外部キー</td>
 <td><ul class="key-cols">
 <li><code>faq_id</code> → <code>faqs(id)</code></li>
-<li><code>created_by</code> → <code>users(id)</code></li>
+<li><code>created_by_type</code> + <code>created_by_id</code> → <code>owners(id)</code> / <code>project_users(id)</code>(論理参照)</li>
 </ul></td>
 </tr>
 </tbody>
@@ -206,16 +206,30 @@
 </tr>
 <tr>
 <td style="text-align: right;">11</td>
-<td>作成者</td>
-<td><code>created_by</code></td>
+<td>作成者種別</td>
+<td><code>created_by_type</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
-<td><code>users(id)</code></td>
 <td></td>
 <td></td>
 <td></td>
+<td><code>created_by_type IN ('owner','project_user')</code></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">12</td>
+<td>作成者 ID</td>
+<td><code>created_by_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>created_by_type</code> に応じ <code>owners(id)</code> / <code>project_users(id)</code> を指す(論理参照)</td>
 
 </tr>
 </tbody>

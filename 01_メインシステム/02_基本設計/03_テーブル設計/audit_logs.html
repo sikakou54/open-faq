@@ -39,8 +39,8 @@
 <tr>
 <td>外部キー</td>
 <td><ul class="key-cols">
-<li><code>contract_owner_user_id</code> → <code>contract_owners(user_id)</code></li>
-<li><code>actor_user_id</code> → <code>users(id)</code></li>
+<li><code>contract_owner_user_id</code> → <code>owners(id)</code></li>
+<li><code>actor_type</code> + <code>actor_id</code> → <code>owners(id)</code> / <code>project_users(id)</code>(論理参照)</li>
 </ul></td>
 </tr>
 </tbody>
@@ -86,7 +86,7 @@
 <td style="text-align: right;">-</td>
 <td>YES</td>
 <td></td>
-<td><code>contract_owners(user_id)</code></td>
+<td><code>owners(id)</code></td>
 <td></td>
 <td></td>
 <td></td>
@@ -94,20 +94,34 @@
 </tr>
 <tr>
 <td style="text-align: right;">3</td>
-<td>操作者(管理者)</td>
-<td><code>actor_user_id</code></td>
+<td>操作者種別</td>
+<td><code>actor_type</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
 <td></td>
-<td><code>users(id)</code></td>
 <td></td>
 <td></td>
 <td></td>
+<td><code>actor_type IN ('owner','project_user')</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">4</td>
+<td>操作者 ID</td>
+<td><code>actor_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>actor_type</code> に応じ <code>owners(id)</code> / <code>project_users(id)</code> を指す(論理参照)</td>
+
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
 <td>操作者ロール</td>
 <td><code>actor_role</code></td>
 <td>TEXT</td>
@@ -121,7 +135,7 @@
 
 </tr>
 <tr>
-<td style="text-align: right;">5</td>
+<td style="text-align: right;">6</td>
 <td>アクション</td>
 <td><code>action</code></td>
 <td>TEXT</td>
@@ -135,7 +149,7 @@
 
 </tr>
 <tr>
-<td style="text-align: right;">6</td>
+<td style="text-align: right;">7</td>
 <td>対象種別</td>
 <td><code>target_type</code></td>
 <td>TEXT</td>
@@ -149,7 +163,7 @@
 
 </tr>
 <tr>
-<td style="text-align: right;">7</td>
+<td style="text-align: right;">8</td>
 <td>対象 ID</td>
 <td><code>target_id</code></td>
 <td>TEXT</td>
@@ -163,7 +177,7 @@
 
 </tr>
 <tr>
-<td style="text-align: right;">8</td>
+<td style="text-align: right;">9</td>
 <td>IP(マスク済)</td>
 <td><code>ip_address_masked</code></td>
 <td>TEXT</td>
@@ -177,7 +191,7 @@
 
 </tr>
 <tr>
-<td style="text-align: right;">9</td>
+<td style="text-align: right;">10</td>
 <td>ユーザーエージェント</td>
 <td><code>user_agent</code></td>
 <td>TEXT</td>
@@ -191,7 +205,7 @@
 
 </tr>
 <tr>
-<td style="text-align: right;">10</td>
+<td style="text-align: right;">11</td>
 <td>メタデータ</td>
 <td><code>metadata</code></td>
 <td>TEXT</td>
@@ -205,7 +219,7 @@
 
 </tr>
 <tr>
-<td style="text-align: right;">11</td>
+<td style="text-align: right;">12</td>
 <td>保持クラス</td>
 <td><code>retention_class</code></td>
 <td>TEXT</td>
@@ -219,7 +233,7 @@
 
 </tr>
 <tr>
-<td style="text-align: right;">12</td>
+<td style="text-align: right;">13</td>
 <td>作成日時</td>
 <td><code>created_at</code></td>
 <td>TEXT</td>
@@ -263,7 +277,7 @@
 <tr>
 <td style="text-align: right;">3</td>
 <td><code>idx_audit_actor_created</code></td>
-<td><code>(actor_user_id, created_at DESC)</code></td>
+<td><code>(actor_type, actor_id, created_at DESC)</code></td>
 <td></td>
 <td>管理者操作の操作者別新着</td>
 </tr>

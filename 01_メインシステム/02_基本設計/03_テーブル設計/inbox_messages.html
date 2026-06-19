@@ -39,8 +39,8 @@
 <tr>
 <td>外部キー</td>
 <td><ul class="key-cols">
-<li><code>contract_owner_user_id</code> → <code>contract_owners(user_id)</code></li>
-<li><code>recipient_user_id</code> → <code>users(id)</code></li>
+<li><code>contract_owner_user_id</code> → <code>owners(id)</code></li>
+<li><code>recipient_type</code> + <code>recipient_id</code> → <code>owners(id)</code> / <code>project_users(id)</code>(論理参照)</li>
 </ul></td>
 </tr>
 </tbody>
@@ -86,7 +86,7 @@
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
-<td><code>contract_owners(user_id)</code></td>
+<td><code>owners(id)</code></td>
 <td></td>
 <td></td>
 <td></td>
@@ -94,20 +94,34 @@
 </tr>
 <tr>
 <td style="text-align: right;">3</td>
-<td>受信者ユーザー ID</td>
-<td><code>recipient_user_id</code></td>
+<td>受信者種別</td>
+<td><code>recipient_type</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
-<td><code>users(id)</code></td>
 <td></td>
 <td></td>
 <td></td>
+<td><code>recipient_type IN ('owner','project_user')</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">4</td>
+<td>受信者 ID</td>
+<td><code>recipient_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>recipient_type</code> に応じ <code>owners(id)</code> / <code>project_users(id)</code> を指す(論理参照)</td>
+
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
 <td>カテゴリ</td>
 <td><code>category</code></td>
 <td>TEXT</td>
@@ -121,7 +135,7 @@
 
 </tr>
 <tr>
-<td style="text-align: right;">5</td>
+<td style="text-align: right;">6</td>
 <td>優先度</td>
 <td><code>priority</code></td>
 <td>TEXT</td>
@@ -135,7 +149,7 @@
 
 </tr>
 <tr>
-<td style="text-align: right;">6</td>
+<td style="text-align: right;">7</td>
 <td>タイトル</td>
 <td><code>title</code></td>
 <td>TEXT</td>
@@ -149,7 +163,7 @@
 
 </tr>
 <tr>
-<td style="text-align: right;">7</td>
+<td style="text-align: right;">8</td>
 <td>本文(HTML)</td>
 <td><code>body_html</code></td>
 <td>TEXT</td>
@@ -163,7 +177,7 @@
 
 </tr>
 <tr>
-<td style="text-align: right;">8</td>
+<td style="text-align: right;">9</td>
 <td>由来種別</td>
 <td><code>source_kind</code></td>
 <td>TEXT</td>
@@ -177,7 +191,7 @@
 
 </tr>
 <tr>
-<td style="text-align: right;">9</td>
+<td style="text-align: right;">10</td>
 <td>由来 ID</td>
 <td><code>source_id</code></td>
 <td>TEXT</td>
@@ -191,7 +205,7 @@
 
 </tr>
 <tr>
-<td style="text-align: right;">10</td>
+<td style="text-align: right;">11</td>
 <td>重複キー</td>
 <td><code>dedup_key</code></td>
 <td>TEXT</td>
@@ -205,7 +219,7 @@
 
 </tr>
 <tr>
-<td style="text-align: right;">11</td>
+<td style="text-align: right;">12</td>
 <td>既読日時</td>
 <td><code>read_at</code></td>
 <td>TEXT</td>
@@ -219,7 +233,7 @@
 
 </tr>
 <tr>
-<td style="text-align: right;">12</td>
+<td style="text-align: right;">13</td>
 <td>非表示日時</td>
 <td><code>hidden_at</code></td>
 <td>TEXT</td>
@@ -233,7 +247,7 @@
 
 </tr>
 <tr>
-<td style="text-align: right;">13</td>
+<td style="text-align: right;">14</td>
 <td>作成日時</td>
 <td><code>created_at</code></td>
 <td>TEXT</td>
@@ -263,7 +277,7 @@
 <tr>
 <td style="text-align: right;">1</td>
 <td><code>idx_inbox_owner_user_unread</code></td>
-<td><code>(contract_owner_user_id, recipient_user_id, read_at, created_at DESC)</code></td>
+<td><code>(contract_owner_user_id, recipient_type, recipient_id, read_at, created_at DESC)</code></td>
 <td></td>
 <td>未読 + 新着</td>
 </tr>

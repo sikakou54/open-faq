@@ -39,7 +39,7 @@
 <tr>
 <td>外部キー</td>
 <td><ul class="key-cols">
-<li><code>user_id</code> → <code>users(id)</code></li>
+<li><code>actor_type</code> + <code>actor_id</code> → <code>owners(id)</code> / <code>project_users(id)</code>(論理参照)</li>
 </ul></td>
 </tr>
 </tbody>
@@ -79,20 +79,34 @@
 </tr>
 <tr>
 <td style="text-align: right;">2</td>
-<td>ユーザー ID</td>
-<td><code>user_id</code></td>
+<td>操作者種別</td>
+<td><code>actor_type</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
-<td><code>users(id)</code></td>
 <td></td>
 <td></td>
 <td></td>
+<td><code>actor_type IN ('owner','project_user')</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">3</td>
+<td>操作者 ID</td>
+<td><code>actor_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>actor_type</code> に応じ <code>owners(id)</code> / <code>project_users(id)</code> を指す(論理参照)</td>
+
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
 <td>トークンハッシュ</td>
 <td><code>token_hash</code></td>
 <td>TEXT</td>
@@ -106,7 +120,7 @@
 
 </tr>
 <tr>
-<td style="text-align: right;">4</td>
+<td style="text-align: right;">5</td>
 <td>用途</td>
 <td><code>purpose</code></td>
 <td>TEXT</td>
@@ -120,7 +134,7 @@
 
 </tr>
 <tr>
-<td style="text-align: right;">5</td>
+<td style="text-align: right;">6</td>
 <td>メタ情報</td>
 <td><code>meta</code></td>
 <td>TEXT</td>
@@ -134,7 +148,7 @@
 
 </tr>
 <tr>
-<td style="text-align: right;">6</td>
+<td style="text-align: right;">7</td>
 <td>作成日時</td>
 <td><code>created_at</code></td>
 <td>TEXT</td>
@@ -148,7 +162,7 @@
 
 </tr>
 <tr>
-<td style="text-align: right;">7</td>
+<td style="text-align: right;">8</td>
 <td>有効期限</td>
 <td><code>expires_at</code></td>
 <td>TEXT</td>
@@ -162,7 +176,7 @@
 
 </tr>
 <tr>
-<td style="text-align: right;">8</td>
+<td style="text-align: right;">9</td>
 <td>使用日時</td>
 <td><code>used_at</code></td>
 <td>TEXT</td>

@@ -40,22 +40,22 @@
 <tr>
 <td>1</td>
 <td>TBL-001</td>
-<td><a href="users.html"><code>users</code></a><br>ユーザーマスタ(管理者専用)</td>
-<td>管理者(オーナー / プロジェクト管理者 / メンバー)の認証情報(メール / パスワード / 氏名 / セッション状態)を一元保持するユーザーマスタです。</td>
+<td><a href="owners.html"><code>owners</code></a><br>オーナーマスタ</td>
+<td>オーナー(契約あたり 1 ユーザー)の認証情報(メール / パスワード / 氏名 / セッション状態)と契約状態・データ削除モードを一元保持するオーナーマスタです。<code>id</code> が契約境界キー本体です。</td>
 <td>通常</td>
 </tr>
 <tr>
 <td>2</td>
 <td>TBL-002</td>
-<td><a href="contract_owners.html"><code>contract_owners</code></a><br>契約者ユーザー</td>
-<td>オーナーごとの契約状態やデータ削除モードなど、オーナー専有の契約属性を保持する契約者テーブルです。</td>
+<td><a href="project_users.html"><code>project_users</code></a><br>プロジェクトユーザーマスタ</td>
+<td>プロジェクト管理者・メンバー(オーナー以外のログインユーザー)の認証情報を保持するプロジェクトユーザーマスタです。オーナーは含みません。</td>
 <td>通常</td>
 </tr>
 <tr>
 <td>3</td>
 <td>TBL-003</td>
-<td><a href="project_users.html"><code>project_users</code></a><br>プロジェクトユーザー割当 + プロジェクト別ロール</td>
-<td>オーナー・メンバーのプロジェクトへの割当と、プロジェクトごとのロール(プロジェクト管理者 / メンバー)を保持します。</td>
+<td><a href="project_user_assignments.html"><code>project_user_assignments</code></a><br>プロジェクト割当 + プロジェクト別ロール</td>
+<td>プロジェクトユーザーのプロジェクトへの割当と、プロジェクトごとのロール(プロジェクト管理者 / メンバー)を保持します。</td>
 <td>通常</td>
 </tr>
 <tr>

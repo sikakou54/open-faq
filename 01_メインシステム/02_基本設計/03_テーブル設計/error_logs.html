@@ -91,8 +91,8 @@
 </tr>
 <tr>
 <td style="text-align: right;">3</td>
-<td>ユーザー ID</td>
-<td><code>user_id</code></td>
+<td>操作者種別</td>
+<td><code>actor_type</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
@@ -100,11 +100,25 @@
 <td></td>
 <td></td>
 <td></td>
-<td></td>
+<td><code>actor_type IN ('owner','project_user')</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">4</td>
+<td>操作者 ID</td>
+<td><code>actor_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>actor_type</code> に応じ <code>owners(id)</code> / <code>project_users(id)</code> を指す(論理参照)</td>
+
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
 <td>URL</td>
 <td><code>url</code></td>
 <td>TEXT</td>
@@ -118,7 +132,7 @@
 
 </tr>
 <tr>
-<td style="text-align: right;">5</td>
+<td style="text-align: right;">6</td>
 <td>エラー種別</td>
 <td><code>error_type</code></td>
 <td>TEXT</td>
@@ -132,7 +146,7 @@
 
 </tr>
 <tr>
-<td style="text-align: right;">6</td>
+<td style="text-align: right;">7</td>
 <td>スタック</td>
 <td><code>stack</code></td>
 <td>TEXT</td>
@@ -146,7 +160,7 @@
 
 </tr>
 <tr>
-<td style="text-align: right;">7</td>
+<td style="text-align: right;">8</td>
 <td>発生日時</td>
 <td><code>occurred_at</code></td>
 <td>TEXT</td>
