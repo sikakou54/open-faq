@@ -41,8 +41,8 @@
 <tbody>
 <tr>
 <td>1</td>
-<td><code>contract_owners.contract_status</code>(4 値: <code>active</code> / <code>suspended</code> / <code>deleted_pending</code> / <code>deleted</code>)</td>
-<td><a href="../01_メインシステム/02_基本設計/10_課金・請求設計.html">10_課金・請求設計.html</a> §4 + <a href="../01_メインシステム/02_基本設計/03_テーブル設計/contract_owners.html">03_テーブル設計/contract_owners.html</a></td>
+<td><code>owners.contract_status</code>(4 値: <code>active</code> / <code>suspended</code> / <code>deleted_pending</code> / <code>deleted</code>)</td>
+<td><a href="../01_メインシステム/02_基本設計/10_課金・請求設計.html">10_課金・請求設計.html</a> §4 + <a href="../01_メインシステム/02_基本設計/03_テーブル設計/owners.html">03_テーブル設計/owners.html</a></td>
 <td><code>contract_status</code>, <code>active</code>, <code>suspended</code>, <code>deleted_pending</code>, <code>deleted</code></td>
 </tr>
 <tr>
@@ -54,7 +54,7 @@
 <tr>
 <td>3</td>
 <td>通知重要度(<code>low</code> / <code>normal</code> / <code>high</code> / <code>critical</code>)+ <strong>critical → メール強制送信</strong></td>
-<td><a href="../01_メインシステム/02_基本設計/06_メッセージ一覧.html">06_メッセージ一覧.html</a> §0 + <a href="../01_メインシステム/02_基本設計/08_認証・認可設計.html">08_認証・認可設計.html</a> § 通知宛先解決(<code>project_users.role='admin' AND valid=1</code> を 1 件でも保持するユーザー)</td>
+<td><a href="../01_メインシステム/02_基本設計/06_メッセージ一覧.html">06_メッセージ一覧.html</a> §0 + <a href="../01_メインシステム/02_基本設計/08_認証・認可設計.html">08_認証・認可設計.html</a> § 通知宛先解決(<code>project_user_assignments.role='admin' AND valid=1</code> を 1 件でも保持するプロジェクトユーザー + オーナー)</td>
 <td><code>low</code>, <code>normal</code>, <code>high</code>, <code>critical</code>, <code>role = 'admin'</code></td>
 </tr>
 <tr>
@@ -65,9 +65,9 @@
 </tr>
 <tr>
 <td>5</td>
-<td>利用者側のユーザーモデル: <strong>管理者 3 ロール</strong>(オーナー / プロジェクト管理者 / メンバー = <code>users</code> マスタ + <code>contract_owners</code>(オーナー専有属性、行存在 = オーナー判定)+ <code>project_users</code>(プロジェクト割当、<code>role</code>='admin'/'member')、契約境界キー = <code>contract_owner_user_id</code>)+ <strong>エンドユーザー独立</strong>(<code>end_users</code> テーブル、プロジェクト単位スコープ、<code>users</code> とは完全分離)。認可は <code>contract_owners</code> 行存在による <code>isOwner=true</code> bypass を最優先、<code>project_users.admin</code> 行は通知宛先解決と画面表示の事実情報として参照される</td>
+<td>利用者側のユーザーモデル: <strong>オーナーとプロジェクトユーザーの 2 マスタ完全分離</strong>(<code>owners</code>(オーナーマスタ = 認証 + 契約属性、<code>id</code> が契約境界キー本体)/ <code>project_users</code>(プロジェクトユーザーマスタ = 認証、<strong>オーナーを含まない</strong>)/ <code>project_user_assignments</code>(プロジェクト割当 + <code>role</code>='admin'/'member'))。認証・ログインは 2 マスタで完全分離(メール一意制約も別空間)。横断参照(作成者 / 監査アクター / セッション / トークン等)は <code>actor_type</code>('owner' / 'project_user')+ <code>actor_id</code> の polymorphic 参照。エンドユーザーは <code>end_users</code> で別管理。契約境界キー = <code>contract_owner_user_id</code>(→ <code>owners.id</code>)。オーナー判定は <code>owners</code> 行(認可フロー先頭の <code>isOwner</code> bypass)</td>
 <td><a href="../01_メインシステム/02_基本設計/03_テーブル設計/index.html">03_テーブル設計/index.html</a> + <a href="../01_メインシステム/02_基本設計/04_権限設計.html">04_権限設計.html</a> + <a href="../01_メインシステム/02_基本設計/08_認証・認可設計.html">08_認証・認可設計.html</a></td>
-<td><code>users</code>, <code>contract_owners</code>, <code>project_users</code>, <code>end_users</code>, <code>contract_owner_user_id</code>, <code>role IN ('admin','member')</code></td>
+<td><code>owners</code>, <code>project_users</code>, <code>project_user_assignments</code>, <code>end_users</code>, <code>contract_owner_user_id</code>, <code>actor_type</code>, <code>actor_id</code>, <code>role IN ('admin','member')</code></td>
 </tr>
 <tr>
 <td>6</td>
@@ -148,7 +148,7 @@
 <tr><td>SC-004</td><td>SCR ID クロスチェック(画面設計 ・ トレーサビリティマトリクス の SCR 集合一致)</td><td>SCR 漏れ / 不一致</td></tr>
 <tr><td>SC-005</td><td>メッセージ ID 体系 <code>MSG-SCR-NNN-&lt;種別&gt;-NNN</code> の出現</td><td>メッセージ一覧 06 の体系破綻</td></tr>
 <tr><td>SC-006</td><td>エラー ID 体系 <code>E-&lt;分類&gt;-NNN</code> の出現</td><td>エラー設計 05 の体系破綻</td></tr>
-<tr><td>SC-007</td><td><code>contract_owners.contract_status</code> 4 値が正本ドキュメントに出現</td><td>列挙値の取りこぼし</td></tr>
+<tr><td>SC-007</td><td><code>owners.contract_status</code> 4 値が正本ドキュメントに出現</td><td>列挙値の取りこぼし</td></tr>
 <tr><td>SC-008</td><td>通知重要度 4 値が正本ドキュメントに出現、<code>critical</code> に "強制送信" 文言を伴う</td><td>critical 通知ルール違反</td></tr>
 <tr><td>SC-010</td><td>主要相対パスのリンク到達性 + CLAUDE.md の層構成記述</td><td>参照リンク切れ</td></tr>
 <tr><td>SC-011</td><td>要件定義 FR / 詳細設計 DD / 将来対応 FUT グループファイルの連番・件数</td><td>構成不適合</td></tr>
@@ -187,6 +187,11 @@
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>2026-06-18</td>
+<td>2.1</td>
+<td>ユーザーモデルを 2 マスタ完全分離へ改訂。<code>users</code> + <code>contract_owners</code> を <code>owners</code>(オーナーマスタ)に統合し、<code>project_users</code> をプロジェクトユーザーマスタ(オーナー除外)に、旧 <code>project_users</code>(割当)を <code>project_user_assignments</code> に再編。横断参照を <code>actor_type</code> + <code>actor_id</code> の polymorphic 参照に変更。#1 を <code>owners.contract_status</code>、#3 を <code>project_user_assignments.role</code> に更新。</td>
+</tr>
 <tr>
 <td>2026-06-18</td>
 <td>2.0</td>
