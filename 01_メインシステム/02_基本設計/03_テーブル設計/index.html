@@ -18,7 +18,7 @@
 <p class="ps-lead"><strong>このページは、メインシステムのデータベース(Cloudflare D1 / SQLite)に存在する全テーブルのスキーマ(カラム定義 / 主キー / 外部キー / インデックス / 制約 / コード値)を定義します。</strong></p>
 </aside>
 
-<p class="doc-meta"><span><b>版数</b> v2.5</span><span><b>更新</b> 2026-06-18</span><span class="dm-status">承認済</span></p>
+<p class="doc-meta"><span><b>版数</b> v2.6</span><span><b>更新</b> 2026-06-18</span><span class="dm-status">承認済</span></p>
 
 <h2 id="1-テーブル一覧">1. テーブル一覧</h2>
 <table>
@@ -29,6 +29,7 @@
 <th>テーブル名 / 論理名</th>
 <th>概要</th>
 <th>保持クラス</th>
+<th>分類</th>
 
 
 
@@ -43,6 +44,7 @@
 <td><a href="owners.html"><code>owners</code></a><br>オーナーマスタ</td>
 <td>オーナー(契約あたり 1 ユーザー)の認証情報(メール / パスワード / 氏名 / セッション状態)と契約状態・データ削除モードを一元保持するオーナーマスタです。<code>id</code> が契約境界キー本体です。</td>
 <td>通常</td>
+<td>M_(マスタ)</td>
 </tr>
 <tr>
 <td>2</td>
@@ -50,6 +52,7 @@
 <td><a href="project_users.html"><code>project_users</code></a><br>プロジェクトユーザーマスタ</td>
 <td>プロジェクト管理者・メンバー(オーナー以外のログインユーザー)の認証情報を保持するプロジェクトユーザーマスタです。オーナーは含みません。</td>
 <td>通常</td>
+<td>M_(マスタ)</td>
 </tr>
 <tr>
 <td>3</td>
@@ -57,6 +60,7 @@
 <td><a href="project_user_assignments.html"><code>project_user_assignments</code></a><br>プロジェクト割当 + プロジェクト別ロール</td>
 <td>プロジェクトユーザーのプロジェクトへの割当と、プロジェクトごとのロール(プロジェクト管理者 / メンバー)を保持します。</td>
 <td>通常</td>
+<td>M_(マスタ)</td>
 </tr>
 <tr>
 <td>4</td>
@@ -64,6 +68,7 @@
 <td><a href="sessions.html"><code>sessions</code></a><br>セッション</td>
 <td>複数デバイス対応のログインセッションを管理します。</td>
 <td>通常</td>
+<td>T_(トランザクション)</td>
 </tr>
 <tr>
 <td>5</td>
@@ -71,6 +76,7 @@
 <td><a href="access_tokens.html"><code>access_tokens</code></a><br>アクセストークン</td>
 <td>招待・パスワード再設定・メール確認などの短期トークンを保持します。</td>
 <td>通常</td>
+<td>T_(トランザクション)</td>
 </tr>
 <tr>
 <td>6</td>
@@ -78,6 +84,7 @@
 <td><a href="projects.html"><code>projects</code></a><br>プロジェクト</td>
 <td>FAQ プロジェクトとウィジェット設定を保持します。</td>
 <td>通常</td>
+<td>M_(マスタ)</td>
 </tr>
 <tr>
 <td>7</td>
@@ -85,6 +92,7 @@
 <td><a href="project_legacy_keys.html"><code>project_legacy_keys</code></a><br>レガシー API キー</td>
 <td>ウィジェット鍵ローテーション時に旧キーを 24 時間だけ有効にするためのレガシー API キーを保持します。</td>
 <td>通常</td>
+<td>T_(トランザクション)</td>
 </tr>
 <tr>
 <td>8</td>
@@ -92,6 +100,7 @@
 <td><a href="allowed_domains.html"><code>allowed_domains</code></a><br>許可ドメイン</td>
 <td>ウィジェット埋め込みを許可するドメインを保持します。</td>
 <td>通常</td>
+<td>M_(マスタ)</td>
 </tr>
 <tr>
 <td>9</td>
@@ -99,6 +108,7 @@
 <td><a href="faqs.html"><code>faqs</code></a><br>FAQ</td>
 <td>FAQ 本体(質問・回答・公開状態)を保持します。</td>
 <td>通常</td>
+<td>M_(マスタ)</td>
 </tr>
 <tr>
 <td>10</td>
@@ -106,6 +116,7 @@
 <td><a href="faq_revisions.html"><code>faq_revisions</code></a><br>FAQ 改訂履歴</td>
 <td>FAQ の改訂履歴を全文スナップショットで最大 50 件保持します。</td>
 <td>通常</td>
+<td>H_(履歴)</td>
 </tr>
 <tr>
 <td>11</td>
@@ -113,6 +124,7 @@
 <td><a href="faq_search_fts.html"><code>faq_search_fts</code></a><br>FAQ 全文検索</td>
 <td>FAQ 全文検索用の FTS5 仮想テーブル(trigram トークナイザ)です。</td>
 <td>通常</td>
+<td>TP_(ワーク)</td>
 </tr>
 <tr>
 <td>12</td>
@@ -120,6 +132,7 @@
 <td><a href="question_logs.html"><code>question_logs</code></a><br>質問ログ</td>
 <td>ウィジェット利用者からの質問と AI 推論結果を記録する質問ログです。</td>
 <td>通常</td>
+<td>H_(履歴)</td>
 </tr>
 <tr>
 <td>13</td>
@@ -127,6 +140,7 @@
 <td><a href="question_log_faq_refs.html"><code>question_log_faq_refs</code></a><br>参照 FAQ</td>
 <td>質問ログと参照 FAQ の M:N 関係を保持する中間テーブルです。</td>
 <td>通常</td>
+<td>T_(トランザクション)</td>
 </tr>
 <tr>
 <td>14</td>
@@ -134,6 +148,7 @@
 <td><a href="inquiries.html"><code>inquiries</code></a><br>未解決質問</td>
 <td>FAQ 登録前の未解決質問を保持します。</td>
 <td>通常</td>
+<td>T_(トランザクション)</td>
 </tr>
 <tr>
 <td>15</td>
@@ -141,6 +156,7 @@
 <td><a href="notification_logs.html"><code>notification_logs</code></a><br>通知ログ</td>
 <td>メール通知の送信履歴を保持します。</td>
 <td>通常</td>
+<td>H_(履歴)</td>
 </tr>
 <tr>
 <td>16</td>
@@ -148,6 +164,7 @@
 <td><a href="ai_threshold_persistent_cache.html"><code>ai_threshold_persistent_cache</code></a><br>AI しきい値キャッシュ</td>
 <td>3 階層 AI しきい値を永続キャッシュするテーブルです。</td>
 <td>通常</td>
+<td>TP_(ワーク)</td>
 </tr>
 <tr>
 <td>17</td>
@@ -155,6 +172,7 @@
 <td><a href="email_suppression_list.html"><code>email_suppression_list</code></a><br>メールサプレスリスト</td>
 <td>バウンス・苦情を起こしたメールアドレスを全契約横断で管理するサプレスリストです。</td>
 <td>通常</td>
+<td>M_(マスタ)</td>
 </tr>
 <tr>
 <td>18</td>
@@ -162,6 +180,7 @@
 <td><a href="audit_logs.html"><code>audit_logs</code></a><br>監査ログ(メイン側、API 操作ログ専用)</td>
 <td>メイン管理者向けの API 操作ログを保持します。</td>
 <td>通常 / 課金</td>
+<td>H_(履歴)</td>
 </tr>
 <tr>
 <td>19</td>
@@ -169,6 +188,7 @@
 <td><a href="error_logs.html"><code>error_logs</code></a><br>エラーログ</td>
 <td>サーバーエラーを記録するエラーログです。</td>
 <td>通常</td>
+<td>H_(履歴)</td>
 </tr>
 <tr>
 <td>20</td>
@@ -176,6 +196,7 @@
 <td><a href="billing_subscriptions.html"><code>billing_subscriptions</code></a><br>課金サブスクリプション</td>
 <td>Stripe のサブスクリプションと連動する、課金サブスクリプション情報を保持します。</td>
 <td>課金</td>
+<td>T_(トランザクション)</td>
 </tr>
 <tr>
 <td>21</td>
@@ -183,6 +204,7 @@
 <td><a href="billing_invoices.html"><code>billing_invoices</code></a><br>請求書</td>
 <td>月次請求書を保持します。</td>
 <td>課金</td>
+<td>T_(トランザクション)</td>
 </tr>
 <tr>
 <td>22</td>
@@ -190,6 +212,7 @@
 <td><a href="usage_metering.html"><code>usage_metering</code></a><br>利用量計測(プロジェクト単位)</td>
 <td>質問数・FAQ 件数をプロジェクト単位で計測し、請求はオーナーで SUM 集計します。</td>
 <td>課金</td>
+<td>T_(トランザクション)</td>
 </tr>
 <tr>
 <td>23</td>
@@ -197,6 +220,7 @@
 <td><a href="owner_quota_overrides.html"><code>owner_quota_overrides</code></a><br>契約別レート上書き</td>
 <td>契約単位のレート制限上書きを保持します。</td>
 <td>通常</td>
+<td>M_(マスタ)</td>
 </tr>
 <tr>
 <td>24</td>
@@ -204,6 +228,7 @@
 <td><a href="project_quota_limits.html"><code>project_quota_limits</code></a><br>プロジェクト別利用設定</td>
 <td>質問数の月次上限件数・無料枠・アラート、および FAQ 件数無料枠をプロジェクト単位で保持します。</td>
 <td>通常</td>
+<td>M_(マスタ)</td>
 </tr>
 <tr>
 <td>25</td>
@@ -211,6 +236,7 @@
 <td><a href="service_announcements.html"><code>service_announcements</code></a><br>お知らせ(Control Plane)</td>
 <td>お知らせの本体を保持します。</td>
 <td>通常</td>
+<td>M_(マスタ)</td>
 </tr>
 <tr>
 <td>26</td>
@@ -218,6 +244,7 @@
 <td><a href="announcement_audiences.html"><code>announcement_audiences</code></a><br>お知らせ配信対象 M:N</td>
 <td>お知らせの配信先オーナーを限定指定する M:N テーブルです。</td>
 <td>通常</td>
+<td>M_(マスタ)</td>
 </tr>
 <tr>
 <td>27</td>
@@ -225,6 +252,7 @@
 <td><a href="announcement_recipients.html"><code>announcement_recipients</code></a><br>お知らせ受信者</td>
 <td>お知らせの実配信先・配信集計・監査情報を保持します。</td>
 <td>通常</td>
+<td>T_(トランザクション)</td>
 </tr>
 <tr>
 <td>28</td>
@@ -232,6 +260,7 @@
 <td><a href="inbox_messages.html"><code>inbox_messages</code></a><br>受信箱(Tenant Plane)</td>
 <td>利用者(テナント側)が受け取るお知らせ・通知の既読状態を管理する受信箱です。</td>
 <td>通常</td>
+<td>T_(トランザクション)</td>
 </tr>
 <tr>
 <td>29</td>
@@ -239,6 +268,7 @@
 <td><a href="withdrawal_requests.html"><code>withdrawal_requests</code></a><br>退会申請</td>
 <td>退会申請レコード(90 日猶予)を保持します。</td>
 <td>通常</td>
+<td>T_(トランザクション)</td>
 </tr>
 <tr>
 <td>30</td>
@@ -246,6 +276,7 @@
 <td><a href="terms_versions.html"><code>terms_versions</code></a><br>規約版数</td>
 <td>利用規約・プライバシーポリシーの版を保持します。</td>
 <td>通常</td>
+<td>M_(マスタ)</td>
 </tr>
 <tr>
 <td>31</td>
@@ -253,6 +284,7 @@
 <td><a href="terms_agreements.html"><code>terms_agreements</code></a><br>規約同意</td>
 <td>利用者ごとの規約同意履歴を保持します。</td>
 <td>通常</td>
+<td>T_(トランザクション)</td>
 </tr>
 </tbody>
 </table>
@@ -295,6 +327,11 @@
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>2026-06-18</td>
+<td>v2.6</td>
+<td>テーブル名の分類接頭辞規約(<code>M_</code> マスタ / <code>T_</code> トランザクション / <code>H_</code> 履歴・ログ / <code>TP_</code> ワーク)を制定。§1 テーブル一覧に「分類」列を追加(M 12 / T 12 / H 5 / TP 2)。物理名は変更せず分類のみ文書化(規約は <code>CLAUDE.md</code> + テーブル構造設計 §4.1)。</td>
+</tr>
 <tr>
 <td>2026-06-18</td>
 <td>v2.5</td>
