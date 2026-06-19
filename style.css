@@ -17,6 +17,16 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);fon
 /* layout */
 .layout{display:flex;align-items:flex-start;min-height:100vh}
 .sidebar{position:sticky;top:0;flex:none;width:268px;height:100vh;overflow-y:auto;background:var(--bg-softer);border-right:1px solid var(--border-soft);padding:22px 16px 60px}
+
+/* 左ペイン全体の開閉トグル(状態は localStorage 保持・FOUC 防止のため html クラスで制御) */
+.nav-toggle{position:fixed;top:14px;left:226px;z-index:60;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;padding:0;border:1px solid var(--border-soft);border-radius:8px;background:var(--bg);color:var(--muted);cursor:pointer;font-size:15px;line-height:1;box-shadow:var(--shadow);transition:left .2s ease,background .12s,color .12s,border-color .12s}
+.nav-toggle:hover{background:var(--bg-soft);color:var(--text);border-color:var(--border)}
+.nav-toggle .open-ic{display:none}
+html.nav-collapsed .sidebar{display:none}
+html.nav-collapsed .nav-toggle{left:14px}
+html.nav-collapsed .nav-toggle .close-ic{display:none}
+html.nav-collapsed .nav-toggle .open-ic{display:inline-flex}
+@media print{.nav-toggle{display:none}}
 .brand{display:flex;align-items:center;gap:10px;padding:6px 8px 16px;margin-bottom:8px;border-bottom:1px solid var(--border-soft)}
 .brand .mark{width:30px;height:30px;border-radius:8px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;letter-spacing:-.02em;flex:none}
 .brand b{font-size:13.5px;color:var(--head);font-weight:700;line-height:1.3}

@@ -215,13 +215,20 @@ MERMAID = ('<script type="module">import mermaid from "https://cdn.jsdelivr.net/
 SPY = '<script>(function(){function init(){var ls=[].slice.call(document.querySelectorAll(".rightbar .toc a[href^=\\"#\\"]"));if(!ls.length)return;var map=ls.map(function(a){var id=decodeURIComponent(a.getAttribute("href").slice(1));return{a:a,el:document.getElementById(id)};}).filter(function(x){return x.el;});function on(){var y=window.scrollY+130,cur=null;map.forEach(function(x){if(x.el.getBoundingClientRect().top+window.scrollY<=y)cur=x;});ls.forEach(function(a){a.classList.remove("active");});if(cur)cur.a.classList.add("active");}window.addEventListener("scroll",on,{passive:true});window.addEventListener("resize",on);on();}if(document.readyState!=="loading")init();else document.addEventListener("DOMContentLoaded",init);})();</script>'
 # ナビ: caret 開閉トグル + 展開状態(localStorage)とスクロール位置(sessionStorage)をページ遷移後も保持
 CARET = '<script>(function(){var K="portal-nav-open",S="portal-nav-scroll";var sb=document.querySelector(".sidebar");function sid(s){return s.getAttribute("data-sec")||"";}try{var o=JSON.parse(localStorage.getItem(K)||"[]");document.querySelectorAll(".nav-sec").forEach(function(s){if(o.indexOf(sid(s))>=0)s.classList.add("open");});}catch(e){}function save(){try{var o=[];document.querySelectorAll(".nav-sec.open").forEach(function(s){o.push(sid(s));});localStorage.setItem(K,JSON.stringify(o));}catch(e){}}document.querySelectorAll(".nav-sec > .nav-top .caret").forEach(function(c){c.addEventListener("click",function(e){e.preventDefault();e.stopPropagation();c.closest(".nav-sec").classList.toggle("open");save();});});document.querySelectorAll(".nav a[href]").forEach(function(a){a.addEventListener("click",save);});try{var v=sessionStorage.getItem(S);if(v&&sb)sb.scrollTop=parseInt(v,10);}catch(e){}if(sb)sb.addEventListener("scroll",function(){try{sessionStorage.setItem(S,sb.scrollTop);}catch(e){}},{passive:true});})();</script>'
+# 左ペイン全体の開閉トグル。状態(localStorage)はページ遷移後も保持する。
+# PRECOLLAPSE は <head> で先行適用し、開いた状態の一瞬の表示(FOUC)を防ぐ。
+PRECOLLAPSE = '<script>try{if(localStorage.getItem("portal-sidebar-collapsed")==="1")document.documentElement.classList.add("nav-collapsed");}catch(e){}</script>'
+NAV_TOGGLE  = '<button class="nav-toggle" type="button" aria-label="左ペインの開閉" title="左ペインの開閉"><i class="bi bi-chevron-left close-ic"></i><i class="bi bi-list open-ic"></i></button>'
+TOGGLE      = '<script>(function(){var K="portal-sidebar-collapsed";var b=document.querySelector(".nav-toggle");if(!b)return;b.addEventListener("click",function(){var c=document.documentElement.classList.toggle("nav-collapsed");try{localStorage.setItem(K,c?"1":"0");}catch(e){}});})();</script>'
 
 PAGE = """<!DOCTYPE html>
 <html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{title} | FAQ 設計ポータル</title>
 {fonts}{bi}{lucide_cdn}{mermaid}
-<link rel="stylesheet" href="{css}?v=4">
+<link rel="stylesheet" href="{css}?v=5">
+{precollapse}
 </head><body><div class="layout">
+{nav_toggle}
 {sidebar}
 <main class="main"><article class="content">
 <div class="crumb"><span class="pill">{pill}</span><a class="muted" href="{index_href}">{index_label}</a><span class="muted">/</span><span class="muted">{title}</span></div>
@@ -230,7 +237,7 @@ PAGE = """<!DOCTYPE html>
 </article></main>
 {rightbar}
 </div>
-{lucide_init}{spy}{caret}
+{lucide_init}{spy}{caret}{toggle}
 </body></html>
 """
 
@@ -245,11 +252,11 @@ def render_page(job):
         title=html.escape(title), fonts=FONTS, bi=BI,
         lucide_cdn=(LUCIDE_CDN if needs_lucide else ""),
         mermaid=(MERMAID if needs_mermaid else ""),
-        css=prefix + "style.css",
+        css=prefix + "style.css", precollapse=PRECOLLAPSE, nav_toggle=NAV_TOGGLE,
         sidebar=render_sidebar(prefix, out_rel),
         pill=job["pill"], index_href=prefix + job["index_url"], index_label=job["index_label"],
         body=body, rightbar=render_rightbar(prefix, toc, job["index_url"], job["index_label"]),
-        lucide_init=(LUCIDE_INIT if needs_lucide else ""), spy=SPY, caret=CARET)
+        lucide_init=(LUCIDE_INIT if needs_lucide else ""), spy=SPY, caret=CARET, toggle=TOGGLE)
 
 def render_portal_index():
     prefix = ""; cur = "index.html"
@@ -266,11 +273,12 @@ def render_portal_index():
 """
     toc = build_toc(ensure_ids(body))
     page = PAGE.format(title="ポータル概要", fonts=FONTS, bi=BI, lucide_cdn="", mermaid="",
-        css="style.css", sidebar=render_sidebar(prefix, cur),
+        css="style.css", precollapse=PRECOLLAPSE, nav_toggle=NAV_TOGGLE,
+        sidebar=render_sidebar(prefix, cur),
         pill="ポータル", index_href=REQ_PREFIX + "index.html", index_label="要件定義一覧",
         body=re.sub(r'^<div class="crumb">.*?</div>\s*', "", body, flags=re.S),
         rightbar=render_rightbar(prefix, toc, REQ_PREFIX + "index.html", "要件定義一覧"),
-        lucide_init="", spy=SPY, caret=CARET)
+        lucide_init="", spy=SPY, caret=CARET, toggle=TOGGLE)
     open(os.path.join(NEW_ROOT, "index.html"), "w", encoding="utf-8").write(page)
 
 def main():
