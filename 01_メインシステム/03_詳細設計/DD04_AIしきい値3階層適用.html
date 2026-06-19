@@ -112,7 +112,7 @@
 </thead>
 <tbody>
 <tr><td>1</td><td><code>project</code></td><td><code>project_id</code></td><td>最優先。当該プロジェクトに設定されたしきい値</td></tr>
-<tr><td>2</td><td><code>owner</code></td><td><code>contract_owner_user_id</code></td><td>プロジェクト未設定時に適用する契約(オーナー)既定</td></tr>
+<tr><td>2</td><td><code>owner</code></td><td><code>owner_id</code></td><td>プロジェクト未設定時に適用する契約(オーナー)既定</td></tr>
 <tr><td>3</td><td><code>global</code></td><td>—</td><td>最終フォールバック。信頼度 <strong>0.60</strong> / 関連度 <strong>0.50</strong></td></tr>
 </tbody>
 </table>
@@ -158,7 +158,7 @@
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> persistent <span class="op">=</span> <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`</span></span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="vs">    SELECT confidence_threshold, relevance_threshold FROM TP_AI_THRESH_CACHE</span></span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="vs">    WHERE (scope=&#39;project&#39; AND project_id=?1)</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="vs">       OR (scope=&#39;owner&#39; AND contract_owner_user_id=?2)</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="vs">       OR (scope=&#39;owner&#39; AND owner_id=?2)</span></span>
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="vs">       OR (scope=&#39;global&#39;)</span></span>
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="vs">    ORDER BY CASE scope WHEN &#39;project&#39; THEN 0 WHEN &#39;owner&#39; THEN 1 ELSE 2 END</span></span>
 <span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="vs">    LIMIT 1</span></span>

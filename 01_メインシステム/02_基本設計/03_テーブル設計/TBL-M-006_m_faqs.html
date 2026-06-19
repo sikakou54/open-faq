@@ -39,9 +39,9 @@
 <tr>
 <td>外部キー</td>
 <td><ul class="key-cols">
-<li><code>contract_owner_user_id</code> → <code>M_OWNERS(id)</code></li>
+<li><code>owner_id</code> → <code>M_OWNERS(id)</code></li>
 <li><code>project_id</code> → <code>M_PROJECTS(id)</code></li>
-<li><code>source_unresolved_question_id</code> → <code>T_INQUIRIES(id)</code></li>
+<li><code>source_inquiry_id</code> → <code>T_INQUIRIES(id)</code></li>
 <li><code>created_by_type</code> + <code>created_by_id</code> → <code>M_OWNERS(id)</code> / <code>M_PRJ_USERS(id)</code>(論理参照)</li>
 <li><code>updated_by_type</code> + <code>updated_by_id</code> → <code>M_OWNERS(id)</code> / <code>M_PRJ_USERS(id)</code>(論理参照)</li>
 </ul></td>
@@ -84,7 +84,7 @@
 <tr>
 <td style="text-align: right;">2</td>
 <td>契約 owner ID</td>
-<td><code>contract_owner_user_id</code></td>
+<td><code>owner_id</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
@@ -196,7 +196,7 @@
 <tr>
 <td style="text-align: right;">10</td>
 <td>元未解決質問 ID</td>
-<td><code>source_unresolved_question_id</code></td>
+<td><code>source_inquiry_id</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
@@ -322,7 +322,7 @@
 <tr>
 <td style="text-align: right;">1</td>
 <td><code>idx_faqs_owner_project</code></td>
-<td><code>(contract_owner_user_id, project_id)</code></td>
+<td><code>(owner_id, project_id)</code></td>
 <td></td>
 <td>契約境界 + プロジェクト</td>
 </tr>
@@ -336,7 +336,7 @@
 <tr>
 <td style="text-align: right;">3</td>
 <td><code>idx_faqs_source_inquiry</code></td>
-<td><code>source_unresolved_question_id</code></td>
+<td><code>source_inquiry_id</code></td>
 <td></td>
 <td>元未解決質問逆引き</td>
 </tr>

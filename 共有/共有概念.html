@@ -65,9 +65,9 @@
 </tr>
 <tr>
 <td>5</td>
-<td>利用者側のユーザーモデル: <strong>オーナーとプロジェクトユーザーの 2 マスタ完全分離</strong>(<code>M_OWNERS</code>(オーナーマスタ = 認証 + 契約属性、<code>id</code> が契約境界キー本体)/ <code>M_PRJ_USERS</code>(プロジェクトユーザーマスタ = 認証、<strong>オーナーを含まない</strong>)/ <code>M_PRJ_USER_ASGN</code>(プロジェクト割当 + <code>role</code>='admin'/'member'))。認証・ログインは 2 マスタで完全分離(メール一意制約も別空間)。横断参照(作成者 / 監査アクター / セッション / トークン等)は <code>actor_type</code>('owner' / 'project_user')+ <code>actor_id</code> の polymorphic 参照。エンドユーザーは <code>end_users</code> で別管理。契約境界キー = <code>contract_owner_user_id</code>(→ <code>M_OWNERS.id</code>)。オーナー判定は <code>M_OWNERS</code> 行(認可フロー先頭の <code>isOwner</code> bypass)</td>
+<td>利用者側のユーザーモデル: <strong>オーナーとプロジェクトユーザーの 2 マスタ完全分離</strong>(<code>M_OWNERS</code>(オーナーマスタ = 認証 + 契約属性、<code>id</code> が契約境界キー本体)/ <code>M_PRJ_USERS</code>(プロジェクトユーザーマスタ = 認証、<strong>オーナーを含まない</strong>)/ <code>M_PRJ_USER_ASGN</code>(プロジェクト割当 + <code>role</code>='admin'/'member'))。認証・ログインは 2 マスタで完全分離(メール一意制約も別空間)。横断参照(作成者 / 監査アクター / セッション / トークン等)は <code>actor_type</code>('owner' / 'project_user')+ <code>actor_id</code> の polymorphic 参照。エンドユーザーは <code>end_users</code> で別管理。契約境界キー = <code>owner_id</code>(→ <code>M_OWNERS.id</code>)。オーナー判定は <code>M_OWNERS</code> 行(認可フロー先頭の <code>isOwner</code> bypass)</td>
 <td><a href="../01_メインシステム/02_基本設計/03_テーブル設計/index.html">03_テーブル設計/index.html</a> + <a href="../01_メインシステム/02_基本設計/04_権限設計.html">04_権限設計.html</a> + <a href="../01_メインシステム/02_基本設計/08_認証・認可設計.html">08_認証・認可設計.html</a></td>
-<td><code>M_OWNERS</code>, <code>M_PRJ_USERS</code>, <code>M_PRJ_USER_ASGN</code>, <code>end_users</code>, <code>contract_owner_user_id</code>, <code>actor_type</code>, <code>actor_id</code>, <code>role IN ('admin','member')</code></td>
+<td><code>M_OWNERS</code>, <code>M_PRJ_USERS</code>, <code>M_PRJ_USER_ASGN</code>, <code>end_users</code>, <code>owner_id</code>, <code>actor_type</code>, <code>actor_id</code>, <code>role IN ('admin','member')</code></td>
 </tr>
 <tr>
 <td>6</td>
@@ -210,7 +210,7 @@
 <tr>
 <td>2026-05-20</td>
 <td>1.2</td>
-<td>ユーザー情報管理テーブル 3 表分割(<code>accounts</code> → <code>users</code> + <code>contract_owners</code> + <code>M_PRJ_USERS</code>、契約境界キー = <code>contract_owner_user_id</code>)。</td>
+<td>ユーザー情報管理テーブル 3 表分割(<code>accounts</code> → <code>users</code> + <code>contract_owners</code> + <code>M_PRJ_USERS</code>、契約境界キー = <code>owner_id</code>)。</td>
 </tr>
 <tr>
 <td>2026-05-17</td>

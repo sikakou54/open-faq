@@ -251,11 +251,11 @@
 </tr>
 <tr>
 <td>FR-033a</td>
-<td>プロジェクト連絡先メール確認(TPL-PROJECT_CONTACT_VERIFY 着地ページで <code>M_PROJECTS.contact_email_verified_at</code> セット)</td>
+<td>プロジェクト連絡先メール確認(TPL-PROJECT_CONTACT_VERIFY 着地ページで <code>M_PROJECTS.contact_verified_at</code> セット)</td>
 <td>F-PRJ-001</td>
 <td><strong>SCR-019</strong></td>
 <td><code>POST /auth/contact-verifications/{token}</code></td>
-<td><code>M_PROJECTS.contact_email_verified_at</code>(NULL→ 設定), <code>T_ACCESS_TOKENS.used_at</code>(セット、<code>meta.projectId</code> 取得)</td>
+<td><code>M_PROJECTS.contact_verified_at</code>(NULL→ 設定), <code>T_ACCESS_TOKENS.used_at</code>(セット、<code>meta.projectId</code> 取得)</td>
 <td>連絡先確認トークン保有者(未認証、<code>T_ACCESS_TOKENS.purpose='contact_verify'</code>)</td>
 <td>E-AUTH-TOKEN-EXPIRED / E-AUTH-TOKEN-USED</td>
 <td>MSG-SCR-019-*</td>
@@ -1436,7 +1436,7 @@
 <td>トークン認証</td>
 <td>SCR-019</td>
 <td><code>POST /auth/contact-verifications/{token}</code></td>
-<td>プロジェクト連絡先メール確認(<code>M_PROJECTS.contact_email_verified_at</code> セット)。<code>T_ACCESS_TOKENS.purpose='contact_verify'</code> の有効トークン保持が唯一の認可条件。アカウント不要、確認完了後は静的ランディングに留まる</td>
+<td>プロジェクト連絡先メール確認(<code>M_PROJECTS.contact_verified_at</code> セット)。<code>T_ACCESS_TOKENS.purpose='contact_verify'</code> の有効トークン保持が唯一の認可条件。アカウント不要、確認完了後は静的ランディングに留まる</td>
 </tr>
 </tbody>
 </table>
@@ -1496,7 +1496,7 @@
 </thead>
 <tbody>
 <tr>
-<td><code>question_monthly_limit</code></td>
+<td><code>q_monthly_limit</code></td>
 <td>F-LIMIT-001</td>
 <td>質問数の月次上限件数・無料枠(円相当併記)</td>
 <td>件 / 月</td>

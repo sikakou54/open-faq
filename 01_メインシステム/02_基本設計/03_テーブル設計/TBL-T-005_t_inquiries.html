@@ -39,7 +39,7 @@
 <tr>
 <td>外部キー</td>
 <td><ul class="key-cols">
-<li><code>contract_owner_user_id</code> → <code>M_OWNERS(id)</code></li>
+<li><code>owner_id</code> → <code>M_OWNERS(id)</code></li>
 <li><code>project_id</code> → <code>M_PROJECTS(id)</code></li>
 <li><code>question_log_id</code> → <code>H_QUESTION_LOGS(id)</code></li>
 </ul></td>
@@ -82,7 +82,7 @@
 <tr>
 <td style="text-align: right;">2</td>
 <td>契約 owner ID</td>
-<td><code>contract_owner_user_id</code></td>
+<td><code>owner_id</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
@@ -222,7 +222,7 @@
 <tr>
 <td style="text-align: right;">1</td>
 <td><code>idx_inquiries_contract_status_created</code></td>
-<td><code>(contract_owner_user_id, status, created_at DESC)</code></td>
+<td><code>(owner_id, status, created_at DESC)</code></td>
 <td></td>
 <td>契約境界 + 状況別新着</td>
 </tr>

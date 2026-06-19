@@ -156,7 +156,7 @@
 <tr>
 <td><code>H_NOTIF_LOGS</code></td>
 <td>DELETE</td>
-<td><code>recipient_email_hmac</code> → SHA-256、vars → 空 JSON</td>
+<td><code>recipient_hmac</code> → SHA-256、vars → 空 JSON</td>
 </tr>
 <tr>
 <td><code>T_ACCESS_TOKENS</code></td>
@@ -214,7 +214,7 @@
 </tr>
 </tbody>
 </table>
-<p>重複生成対策(R-012): 同一 <code>(contract_owner_user_id, event_kind, dedup_key)</code> で 60 分以内の複数発火は 1 件に集約</p>
+<p>重複生成対策(R-012): 同一 <code>(owner_id, event_kind, dedup_key)</code> で 60 分以内の複数発火は 1 件に集約</p>
 <h2 id="4-入力値検証">4. 入力値検証</h2>
 <p class="section-lead">すべての外部入力はサーバ側で検証し、想定外の型・長さ・内容を遮断する。エンドユーザー入力はログに全文を残さず、先頭一部とハッシュのみを記録して PII 漏洩を防ぐ(FR-114)。具体的なスキーマ・桁数の正本は各機能の設計に従う。</p>
 <table>
@@ -583,7 +583,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 </tbody>
 </table>
 <h4 id="821-鍵バージョン参照">8.2.1 鍵バージョン参照</h4>
-<p class="section-lead">dual-decrypt 期間中はレコードごとにどの世代の鍵で暗号化したかを <code>email_key_version</code> で明示し、ローテーション完了後に旧鍵で暗号化された行を再暗号化する。鍵バージョン列の定義は <a href="03_テーブル設計/index.html">03_テーブル設計/index.html §3.1</a> を正本とし、本書は運用フローを定める。</p>
+<p class="section-lead">dual-decrypt 期間中はレコードごとにどの世代の鍵で暗号化したかを <code>email_key_ver</code> で明示し、ローテーション完了後に旧鍵で暗号化された行を再暗号化する。鍵バージョン列の定義は <a href="03_テーブル設計/index.html">03_テーブル設計/index.html §3.1</a> を正本とし、本書は運用フローを定める。</p>
 <table>
 <thead>
 <tr>
@@ -595,12 +595,12 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 <tbody>
 <tr>
 <td><code>M_OWNERS</code> / <code>M_PRJ_USERS</code></td>
-<td><code>email_key_version</code></td>
+<td><code>email_key_ver</code></td>
 <td>管理者(オーナー / プロジェクト管理者 / メンバー)のメールアドレス暗号化バージョン</td>
 </tr>
 </tbody>
 </table>
-<p><strong>運用フロー</strong>:dual-decrypt 期間中の暗号化・復号・再暗号化の流れを次のシーケンス図に示す。INSERT / UPDATE は最新鍵で暗号化し、SELECT は行の <code>email_key_version</code> に応じて N / N-1 を試行し、完了後にバッチで旧版行を再暗号化する。</p>
+<p><strong>運用フロー</strong>:dual-decrypt 期間中の暗号化・復号・再暗号化の流れを次のシーケンス図に示す。INSERT / UPDATE は最新鍵で暗号化し、SELECT は行の <code>email_key_ver</code> に応じて N / N-1 を試行し、完了後にバッチで旧版行を再暗号化する。</p>
 <pre class="mermaid"><code>sequenceDiagram
   participant A as worker-main-api
   participant S as Secrets Store
@@ -610,13 +610,13 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
     Note over A,D: INSERT / UPDATE 時
     A-&gt;&gt;S: 最新鍵バージョンを取得(email_key_active_version)
     S--&gt;&gt;A: 鍵バージョン(N)
-    A-&gt;&gt;D: email_encrypted + email_key_version=N で保存
+    A-&gt;&gt;D: email_encrypted + email_key_ver=N で保存
     D--&gt;&gt;A:
   end
   rect rgb(240,240,240)
     Note over A,D: SELECT 時
-    A-&gt;&gt;D: 行を取得(email_key_version 同梱)
-    D--&gt;&gt;A: email_key_version(N / N-1)
+    A-&gt;&gt;D: 行を取得(email_key_ver 同梱)
+    D--&gt;&gt;A: email_key_ver(N / N-1)
     A-&gt;&gt;S: 該当バージョンの鍵を取得
     S--&gt;&gt;A: 復号鍵
     alt 復号成功
@@ -628,16 +628,16 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
   end
   rect rgb(240,240,240)
     Note over A,D: ローテーション完了後(バッチ)
-    A-&gt;&gt;D: email_key_version &lt; N の行を新鍵で再暗号化
+    A-&gt;&gt;D: email_key_ver &lt; N の行を新鍵で再暗号化
     D--&gt;&gt;A: 再暗号化件数
-    A-&gt;&gt;D: COUNT(email_key_version &lt; N) を確認
+    A-&gt;&gt;D: COUNT(email_key_ver &lt; N) を確認
     D--&gt;&gt;A: 残存件数(0 / 0 以外)
     opt 残存 0 件
       A-&gt;&gt;S: 旧鍵を削除
       S--&gt;&gt;A:
     end
   end</code></pre>
-<p><strong>ローテーション完了の判定</strong>:<code>SELECT COUNT(*) FROM M_OWNERS WHERE email_key_version &lt; N</code> + <code>SELECT COUNT(*) FROM M_PRJ_USERS WHERE email_key_version &lt; N</code> がいずれも 0 件であること。</p>
+<p><strong>ローテーション完了の判定</strong>:<code>SELECT COUNT(*) FROM M_OWNERS WHERE email_key_ver &lt; N</code> + <code>SELECT COUNT(*) FROM M_PRJ_USERS WHERE email_key_ver &lt; N</code> がいずれも 0 件であること。</p>
 <p><strong>例外</strong>:<code>M_OWNERS.contract_status='deleted'</code>・<code>M_OWNERS.valid=0</code> または <code>M_PRJ_USERS.valid=0</code> の論理削除済み行は、90 日経過後の物理削除バッチに任せ、再暗号化対象外とする(復元時の dual-decrypt 整合性を維持するため、ローテーション期間は 60 日 + 物理削除遅延 90 日を考慮した運用窓設計とする)。</p>
 <h3 id="83-ウィジェット-api-キーprojects--project_legacy_keys834-から移管">8.3 ウィジェット API キー(<code>M_PROJECTS</code> / <code>T_PRJ_LEGACY_KEYS</code>)</h3>
 <p class="section-lead">ウィジェット公開キーは無期限で、失効は再発行(ローテーション)でのみ行う(FR-194)。再発行時は旧キーを 24 時間併存させ猶予後に完全失効する(FR-193)。キーと旧キーのテーブル定義は <a href="03_テーブル設計/TBL-T-003_t_prj_legacy_keys.html">03_テーブル設計/index.html §3.7</a> を正本とする。</p>
@@ -660,7 +660,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()</code></pre>
 <tbody>
 <tr>
 <td><strong>オーナー間データ漏洩防止</strong></td>
-<td>全テーブルに <code>contract_owner_user_id</code> + API 層でオーナー境界判定(<strong>404 偽装</strong>)+ 自動テスト(月次 50 ケース)(NFR-302)</td>
+<td>全テーブルに <code>owner_id</code> + API 層でオーナー境界判定(<strong>404 偽装</strong>)+ 自動テスト(月次 50 ケース)(NFR-302)</td>
 <td><a href="03_テーブル設計/テーブル構造設計.html#43-saas-データ分離">03_テーブル設計/テーブル構造設計.html §4.2</a> / <a href="08_認証・認可設計.html#52-オーナー境界判定">08_認証・認可設計.html §5.2</a></td>
 </tr>
 <tr>

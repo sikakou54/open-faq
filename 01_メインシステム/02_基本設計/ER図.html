@@ -69,7 +69,7 @@
     <li><b>省略カラム</b>: <code>created_at</code> / <code>updated_at</code> / <code>valid</code> / <code>*_encrypted</code> / <code>*_key_version</code> / <code>metadata</code> 等の共通技術カラム。完全なカラム定義は <a href="03_テーブル設計/index.html">03_テーブル設計/index.html §3</a> を参照。</li>
     <li><b>関係性</b>: 実線 = FK 制約あり / 注記 <code>FK制約なし</code> = 論理参照のみ。本図は FK 制約に基づく関係のみを線で描く。アクター横断参照(作成者 / 更新者 / 監査アクター / セッション主体 / 受信者)は <code>M_OWNERS</code> と <code>M_PRJ_USERS</code> の 2 マスタに分かれるため物理 FK を張らず、<strong><code>actor_type</code>(<code>owner</code> / <code>project_user</code>)+ <code>actor_id</code> の論理参照</strong>で表現する(線を引かない)。<code>T_ANNOUNCE_RCPT</code> → <code>T_INBOX_MSG</code> の受信箱 fan-out と <code>T_BILL_SUBS</code> → <code>T_BILL_INVOICES</code> の請求書生成も <strong>FK 制約を持たないアプリ層の論理 fan-out</strong> のため線を引かない(<code>T_INBOX_MSG</code> / <code>T_BILL_INVOICES</code> はいずれも <code>M_OWNERS</code> に FK で帰属)。</li>
     <li><b>主体モデル(2 マスタ完全分離)</b>: <code>M_OWNERS</code>(オーナーの認証属性 + 契約属性〔<code>contract_status</code> / <code>data_deletion_mode</code>〕を統合した契約マスタ。<code>M_OWNERS.id</code> 自体が契約境界キー本体)+ <code>M_PRJ_USERS</code>(プロジェクトユーザーの認証マスタ。オーナーを含まず、メール一意空間もオーナーと完全分離)。プロジェクトへの割当・ロールは <code>M_PRJ_USER_ASGN</code>(<code>role</code> = <code>admin</code> / <code>member</code>)で表現する。ウィジェット利用者(<code>end_users</code>)は永続アカウントを持つ別マスタ。</li>
-    <li><b>SaaS 境界キー</b>: <code>contract_owner_user_id</code>(全契約スコープのテーブルに冗長保持し <code>M_OWNERS.id</code> を参照、認可境界クエリ高速化)。</li>
+    <li><b>SaaS 境界キー</b>: <code>owner_id</code>(全契約スコープのテーブルに冗長保持し <code>M_OWNERS.id</code> を参照、認可境界クエリ高速化)。</li>
   </ul>
 </section>
 
@@ -84,7 +84,7 @@ erDiagram
   }
   M_PRJ_USERS {
     TEXT id PK
-    TEXT contract_owner_user_id FK "M_OWNERS(id)"
+    TEXT owner_id FK "M_OWNERS(id)"
     TEXT email_hmac "検索用HMAC(オーナーと別空間)"
     TEXT status "pending_verification/pending_activation/active"
   }
@@ -92,7 +92,7 @@ erDiagram
     TEXT id PK
     TEXT project_user_id FK "M_PRJ_USERS(id)"
     TEXT project_id FK "M_PROJECTS(id)"
-    TEXT contract_owner_user_id FK "M_OWNERS(id)"
+    TEXT owner_id FK "M_OWNERS(id)"
     TEXT role "admin/member"
   }
   T_SESSIONS {
@@ -111,7 +111,7 @@ erDiagram
   }
   M_PROJECTS {
     TEXT id PK
-    TEXT contract_owner_user_id FK "M_OWNERS(id)"
+    TEXT owner_id FK "M_OWNERS(id)"
     TEXT name
     TEXT status "active/deleted"
     TEXT widget_public_key "UNIQUE"
@@ -129,9 +129,9 @@ erDiagram
   }
   M_FAQS {
     TEXT id PK
-    TEXT contract_owner_user_id FK "M_OWNERS(id)"
+    TEXT owner_id FK "M_OWNERS(id)"
     TEXT project_id FK "M_PROJECTS(id)"
-    TEXT source_unresolved_question_id FK "T_INQUIRIES(id) opt"
+    TEXT source_inquiry_id FK "T_INQUIRIES(id) opt"
     TEXT created_by_actor_type "owner/project_user"
     TEXT created_by "論理参照(FK制約なし)"
     TEXT updated_by "論理参照(FK制約なし)"
@@ -155,7 +155,7 @@ erDiagram
   }
   H_QUESTION_LOGS {
     TEXT id PK
-    TEXT contract_owner_user_id FK "M_OWNERS(id)"
+    TEXT owner_id FK "M_OWNERS(id)"
     TEXT project_id FK "M_PROJECTS(id)"
     INTEGER metering_billable "課金確定スナップショット"
     TEXT result_type "answered/unanswered/error"
@@ -168,7 +168,7 @@ erDiagram
   }
   T_INQUIRIES {
     TEXT id PK
-    TEXT contract_owner_user_id FK "M_OWNERS(id)"
+    TEXT owner_id FK "M_OWNERS(id)"
     TEXT project_id FK "M_PROJECTS(id)"
     TEXT question_log_id FK "H_QUESTION_LOGS(id) opt"
     TEXT inquiry_code "UNIQUE"
@@ -176,14 +176,14 @@ erDiagram
   }
   H_NOTIF_LOGS {
     TEXT id PK
-    TEXT contract_owner_user_id FK "M_OWNERS(id)"
+    TEXT owner_id FK "M_OWNERS(id)"
     TEXT inquiry_id FK "T_INQUIRIES(id) opt"
     TEXT notification_type "TPL-*"
     TEXT delivery_state "queued/sending/sent/delivered/failed/bounced/complained/suppressed"
   }
   TP_AI_THRESH_CACHE {
     TEXT id PK
-    TEXT contract_owner_user_id FK "M_OWNERS(id) opt"
+    TEXT owner_id FK "M_OWNERS(id) opt"
     TEXT project_id FK "M_PROJECTS(id) opt"
     TEXT scope "global/owner/project"
     INTEGER version
@@ -196,7 +196,7 @@ erDiagram
   }
   H_AUDIT_LOGS {
     TEXT id PK
-    TEXT contract_owner_user_id FK "M_OWNERS(id) opt"
+    TEXT owner_id FK "M_OWNERS(id) opt"
     TEXT actor_type "owner/project_user/system"
     TEXT actor_id "論理参照(FK制約なし) opt"
     TEXT actor_role "admin/system"
@@ -205,36 +205,36 @@ erDiagram
   }
   H_ERROR_LOGS {
     TEXT id PK
-    TEXT contract_owner_user_id "FK制約なし"
+    TEXT owner_id "FK制約なし"
     TEXT actor_type "owner/project_user"
     TEXT actor_id "FK制約なし"
     TEXT error_type
   }
   T_BILL_SUBS {
     TEXT id PK
-    TEXT contract_owner_user_id FK "M_OWNERS(id)"
-    TEXT stripe_subscription_id "UNIQUE"
+    TEXT owner_id FK "M_OWNERS(id)"
+    TEXT stripe_sub_id "UNIQUE"
     TEXT status "active/past_due/canceled/unpaid/incomplete"
     TEXT plan_id
   }
   T_BILL_INVOICES {
     TEXT id PK
-    TEXT contract_owner_user_id FK "M_OWNERS(id)"
-    TEXT billing_year_month "(owner,YYYY-MM) UNIQUE"
+    TEXT owner_id FK "M_OWNERS(id)"
+    TEXT billing_ym "(owner,YYYY-MM) UNIQUE"
     TEXT status "draft/issued/paid/past_due/refunded/void"
-    TEXT stripe_invoice_id "UNIQUE"
+    TEXT stripe_inv_id "UNIQUE"
   }
   T_USAGE_METER {
     TEXT id PK
-    TEXT contract_owner_user_id FK "M_OWNERS(id)"
+    TEXT owner_id FK "M_OWNERS(id)"
     TEXT project_id FK "M_PROJECTS(id)"
-    TEXT billing_year_month "(owner,project,YYYY-MM) UNIQUE"
+    TEXT billing_ym "(owner,project,YYYY-MM) UNIQUE"
     INTEGER question_count
     INTEGER ai_cost_yen
   }
   M_OWNER_QUOTA_OVR {
     TEXT id PK
-    TEXT contract_owner_user_id FK "M_OWNERS(id)"
+    TEXT owner_id FK "M_OWNERS(id)"
     TEXT resource_kind "widget_*/email_per_hour/admin_api_per_min"
     INTEGER threshold
     TEXT valid_until
@@ -242,7 +242,7 @@ erDiagram
   M_PRJ_QUOTA_LIMITS {
     TEXT id PK
     TEXT project_id FK "M_PROJECTS(id)"
-    TEXT contract_owner_user_id FK "M_OWNERS(id)"
+    TEXT owner_id FK "M_OWNERS(id)"
     TEXT resource_kind "(project_id,resource_kind) UNIQUE"
     INTEGER threshold "月次上限件数(NULL=上限OFF)"
     INTEGER free_quota "月次無料枠"
@@ -257,19 +257,19 @@ erDiagram
   }
   M_ANNOUNCE_AUD {
     TEXT announcement_id PK,FK "M_SERVICE_ANNOUNCE(id)"
-    TEXT contract_owner_user_id PK,FK "M_OWNERS(id)"
+    TEXT owner_id PK,FK "M_OWNERS(id)"
   }
   T_ANNOUNCE_RCPT {
     TEXT id PK
     TEXT announcement_id FK "M_SERVICE_ANNOUNCE(id)"
-    TEXT contract_owner_user_id "FK制約なし"
+    TEXT owner_id "FK制約なし"
     TEXT recipient_actor_type "owner/project_user"
     TEXT recipient_actor_id "FK制約なし"
     TEXT delivery_status "pending/delivered/failed"
   }
   T_INBOX_MSG {
     TEXT id PK
-    TEXT contract_owner_user_id FK "M_OWNERS(id)"
+    TEXT owner_id FK "M_OWNERS(id)"
     TEXT recipient_actor_type "owner/project_user"
     TEXT recipient_actor_id "論理参照(FK制約なし)"
     TEXT category "billing/announcement/system"
@@ -278,7 +278,7 @@ erDiagram
   }
   T_WITHDRAW_REQ {
     TEXT id PK
-    TEXT contract_owner_user_id FK "M_OWNERS(id)"
+    TEXT owner_id FK "M_OWNERS(id)"
     TEXT applied_by "論理参照(FK制約なし / オーナー専有操作)"
     TEXT scheduled_deletion_at
   }
@@ -327,7 +327,7 @@ erDiagram
 
   M_FAQS ||--o{ H_FAQ_REV : versioned
   M_FAQS ||--o{ TP_FAQ_FTS : "FTS5同期(content=M_FAQS)"
-  T_INQUIRIES ||--o{ M_FAQS : "source_unresolved_question_id(opt)"
+  T_INQUIRIES ||--o{ M_FAQS : "source_inquiry_id(opt)"
   M_FAQS ||--o{ T_QLOG_FAQ_REFS : "参照される"
   H_QUESTION_LOGS ||--o{ T_QLOG_FAQ_REFS : "M:N参照FAQ"
   H_QUESTION_LOGS ||--o{ T_INQUIRIES : "未解決質問起点(opt)"

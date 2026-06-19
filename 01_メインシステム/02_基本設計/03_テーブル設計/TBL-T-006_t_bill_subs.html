@@ -39,7 +39,7 @@
 <tr>
 <td>外部キー</td>
 <td><ul class="key-cols">
-<li><code>contract_owner_user_id</code> → <code>M_OWNERS(id)</code></li>
+<li><code>owner_id</code> → <code>M_OWNERS(id)</code></li>
 </ul></td>
 </tr>
 </tbody>
@@ -80,7 +80,7 @@
 <tr>
 <td style="text-align: right;">2</td>
 <td>契約 owner ID</td>
-<td><code>contract_owner_user_id</code></td>
+<td><code>owner_id</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
@@ -94,7 +94,7 @@
 <tr>
 <td style="text-align: right;">3</td>
 <td>Stripe サブスク ID</td>
-<td><code>stripe_subscription_id</code></td>
+<td><code>stripe_sub_id</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
@@ -136,7 +136,7 @@
 <tr>
 <td style="text-align: right;">6</td>
 <td>当期開始</td>
-<td><code>current_period_start</code></td>
+<td><code>period_start</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
@@ -150,7 +150,7 @@
 <tr>
 <td style="text-align: right;">7</td>
 <td>当期終了</td>
-<td><code>current_period_end</code></td>
+<td><code>period_end</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
@@ -234,7 +234,7 @@
 <tr>
 <td style="text-align: right;">1</td>
 <td><code>idx_billing_subs_owner</code></td>
-<td><code>contract_owner_user_id</code></td>
+<td><code>owner_id</code></td>
 <td></td>
 <td>オーナー検索</td>
 </tr>

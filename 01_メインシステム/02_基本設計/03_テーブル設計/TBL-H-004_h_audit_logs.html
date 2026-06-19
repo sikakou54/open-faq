@@ -39,7 +39,7 @@
 <tr>
 <td>外部キー</td>
 <td><ul class="key-cols">
-<li><code>contract_owner_user_id</code> → <code>M_OWNERS(id)</code></li>
+<li><code>owner_id</code> → <code>M_OWNERS(id)</code></li>
 <li><code>actor_type</code> + <code>actor_id</code> → <code>M_OWNERS(id)</code> / <code>M_PRJ_USERS(id)</code>(論理参照)</li>
 </ul></td>
 </tr>
@@ -81,7 +81,7 @@
 <tr>
 <td style="text-align: right;">2</td>
 <td>契約 owner ID</td>
-<td><code>contract_owner_user_id</code></td>
+<td><code>owner_id</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
@@ -263,7 +263,7 @@
 <tr>
 <td style="text-align: right;">1</td>
 <td><code>idx_audit_owner_action_created</code></td>
-<td><code>(contract_owner_user_id, action, created_at DESC)</code></td>
+<td><code>(owner_id, action, created_at DESC)</code></td>
 <td></td>
 <td>オーナー × アクション × 新着</td>
 </tr>

@@ -325,7 +325,7 @@ worker-widget-api/src/
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (project<span class="op">.</span><span class="at">default_assignee_user_id</span> <span class="op">&amp;&amp;</span> defaultAssigneeValid) {</span>
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> project<span class="op">.</span><span class="at">default_assignee_user_id</span></span>
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> project<span class="op">.</span><span class="at">contract_owner_user_id</span> <span class="co">// オーナーへフォールバック</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> project<span class="op">.</span><span class="at">owner_id</span> <span class="co">// オーナーへフォールバック</span></span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <ul>
 <li><strong>担当者変更(SCR-033, <code>PATCH /chat-rooms/{id}</code>)</strong>: <code>assigneeUserId</code> は必須・<code>null</code> 不可。当該プロジェクトに有効割当を持つ管理者(オーナー / <code>admin</code> / <code>member</code>)のみ受理。それ以外は 400 <code>E-INPUT-ASSIGNEE</code>。変更操作自体は <code>member</code>+ の誰でも可。</li>

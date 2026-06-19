@@ -580,7 +580,7 @@ open-faq &lt;noreply@&lt;service-domain&gt;&gt;</code></pre>
 このメールに直接返信しないでください。
 open-faq &lt;noreply@&lt;service-domain&gt;&gt;</code></pre>
 <p><strong>本文(HTML 版)</strong>: プロジェクト名を強調 + 確認用プライマリボタン + 確認前は非表示である旨を注記。</p>
-<p><strong>着地ページ</strong>: <strong>SCR-019 プロジェクト連絡先メール確認完了</strong>(01_画面設計/index.html §5.26、共通領域、未認証可)。トークン検証成功時に <code>M_PROJECTS.contact_email_verified_at=now()</code> をセットし、結果(完了 / 期限切れ / 既使用)を表示する。</p>
+<p><strong>着地ページ</strong>: <strong>SCR-019 プロジェクト連絡先メール確認完了</strong>(01_画面設計/index.html §5.26、共通領域、未認証可)。トークン検証成功時に <code>M_PROJECTS.contact_verified_at=now()</code> をセットし、結果(完了 / 期限切れ / 既使用)を表示する。</p>
 <p><strong>備考</strong>: 受信者はオーナーや管理者である必要はなく、第三者(例: サポート窓口担当者の共有メールアドレス)でも構わない。アカウント作成や認証は不要で、トークン保有者のみが本フローを進められる。トークンは <code>T_ACCESS_TOKENS.purpose='contact_verify'</code>(24 時間)、<code>meta</code> に <code>projectId</code> を JSON 保持(FR-033a)。</p>
 <hr />
 <h3 id="46-tpl-lockout_notifyログインロックアウト発動">4.6 TPL-LOCKOUT_NOTIFY(ログインロックアウト発動)</h3>

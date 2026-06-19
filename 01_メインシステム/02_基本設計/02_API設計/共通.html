@@ -48,7 +48,7 @@
 
 <h3 id="32-オーナー境界判定">2.2 オーナー境界判定</h3>
 <p class="section-lead">全操作で契約境界を強制し、違反時は存在を秘匿します。</p>
-<p>すべての操作で <code>actor.contract_owner_user_id == target.contract_owner_user_id</code> を必須とする(正本: <a href="../08_認証・認可設計.html#52-オーナー境界判定">08_認証・認可設計.html §5.2</a>)。違反時は <strong>404 偽装</strong>で応答する(正本: <a href="../05_エラー設計.html#53-認可エラー時の方針">05_エラー設計.html §5.3</a>)。</p>
+<p>すべての操作で <code>actor.owner_id == target.owner_id</code> を必須とする(正本: <a href="../08_認証・認可設計.html#52-オーナー境界判定">08_認証・認可設計.html §5.2</a>)。違反時は <strong>404 偽装</strong>で応答する(正本: <a href="../05_エラー設計.html#53-認可エラー時の方針">05_エラー設計.html §5.3</a>)。</p>
 
 <h3 id="32a-論理削除フィルタ">2.3 論理削除フィルタ</h3>
 <p class="section-lead"><code>valid</code> カラムを持つテーブルへの GET 系 API は論理削除済みの行を返しません。</p>

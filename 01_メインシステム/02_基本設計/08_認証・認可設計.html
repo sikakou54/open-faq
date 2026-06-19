@@ -316,13 +316,13 @@
 <div class="callout important"><i class="bi bi-pin-angle"></i><div><span class="c-title">オーナー判定 = isOwner bypass を先頭に</span>オーナーは <code>M_OWNERS</code> マスタの独立した主体であり、<code>M_PRJ_USERS</code> / <code>M_PRJ_USER_ASGN</code> には行を持ちません。<strong>認可は主体が <code>M_OWNERS</code> 由来(<code>actor_type='owner'</code>)であることによる <code>isOwner=true</code> bypass を最優先</strong>とし、オーナーは自契約配下の全プロジェクトに無条件でアクセスできます(<a href="../01_要件定義/FR02_ユーザー管理.html#FR-015d">FR-015d</a> / <a href="../01_要件定義/FR02_ユーザー管理.html#FR-021b">FR-021b</a>)。プロジェクト管理者権限は <code>M_PRJ_USER_ASGN.role='admin'</code> の割当でのみ付与され、オーナーへの自動付与は行いません。通知宛先解決と画面表示では、オーナーを <code>M_OWNERS</code> から、当該プロジェクトの管理者を <code>M_PRJ_USER_ASGN.role='admin'</code> から個別に解決します(§5.5)。</div></div>
 
 <h3 id="52-オーナー境界判定">5.2 オーナー境界判定</h3>
-<p class="section-lead">他契約のデータへ越境させないための境界チェックを定めます。次の表は操作者の契約境界キーと対象リソースの <code>contract_owner_user_id</code> の一致を要求し、不一致は相手契約の存在を漏らさないため 404 偽装で拒否することを示します(<a href="../01_要件定義/FR19_アクセス制御細部.html#FR-335">FR-335</a>)。</p>
+<p class="section-lead">他契約のデータへ越境させないための境界チェックを定めます。次の表は操作者の契約境界キーと対象リソースの <code>owner_id</code> の一致を要求し、不一致は相手契約の存在を漏らさないため 404 偽装で拒否することを示します(<a href="../01_要件定義/FR19_アクセス制御細部.html#FR-335">FR-335</a>)。</p>
 <table>
 <thead>
 <tr><th>観点</th><th>内容</th><th>参照</th></tr>
 </thead>
 <tbody>
-<tr><td>判定</td><td>操作者の契約境界キーと、操作対象リソースの <code>contract_owner_user_id</code> が一致すること</td><td>—</td></tr>
+<tr><td>判定</td><td>操作者の契約境界キーと、操作対象リソースの <code>owner_id</code> が一致すること</td><td>—</td></tr>
 <tr><td>不一致時</td><td>相手契約の存在を漏らさないため <strong>404 偽装</strong> で拒否する(<code>E-AUTHZ-OWNER-BOUNDARY</code>)</td><td>エラー方針は <a href="05_エラー設計.html#53-認可エラー時の方針">05_エラー設計.html §5.3</a> 正本</td></tr>
 <tr><td>メンバーの 1 オーナー固定</td><td>同一メールアドレスでも別オーナー配下は別アカウントとして扱う</td><td><a href="../01_要件定義/FR19_アクセス制御細部.html#FR-335">FR-335</a></td></tr>
 </tbody>

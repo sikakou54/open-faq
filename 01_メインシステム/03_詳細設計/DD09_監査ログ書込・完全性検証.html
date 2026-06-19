@@ -122,7 +122,7 @@
 <h3 id="31-チェーンセグメント分割方針-長大化対策">3.1 チェーンセグメント分割方針 (長大化対策)</h3>
 <p class="section-lead">ハッシュチェーンが長大化すると検証コストが線形に増えるため、契約単位 × 月次でセグメントを分割する方針を定めます。次の段落でセグメントキーと連続性の担保方法を述べ、続く表で検証の性能目標を示します。</p>
 <p>ハッシュチェーンは「契約単位 × 月次セグメント」を原則とする。<code>segment_key = YYYY-MM</code> をキーとして、チェーンの prev_hash 連結は同セグメント内のみで完結させる。月初の最初の行は前月末の最後の行の current_hash を <code>prev_segment_hash</code> として別カラムに記録し、セグメント間の連続性を担保する。</p>
-<p>これにより、契約に紐づかない操作 (contract_owner_user_id=NULL) のグローバルチェーンも月次セグメントに分割され、日次検証バッチの O(N) コストを 30 日分のみに抑制する。差分検証 (前日分の prev_hash 連結のみ再計算) との併用で、性能目標は次の通り。</p>
+<p>これにより、契約に紐づかない操作 (owner_id=NULL) のグローバルチェーンも月次セグメントに分割され、日次検証バッチの O(N) コストを 30 日分のみに抑制する。差分検証 (前日分の prev_hash 連結のみ再計算) との併用で、性能目標は次の通り。</p>
 <table>
 <thead>
 <tr>
@@ -162,7 +162,7 @@
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fu">writeAudit</span>(env<span class="op">:</span> Env<span class="op">,</span> input<span class="op">:</span> AuditInput) {</span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 直前の current_hash を取得 (契約単位チェーン)</span></span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> prev <span class="op">=</span> <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="vs">`SELECT current_hash FROM H_AUDIT_LOGS WHERE contract_owner_user_id = ?1 ORDER BY created_at DESC LIMIT 1`</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="vs">`SELECT current_hash FROM H_AUDIT_LOGS WHERE owner_id = ?1 ORDER BY created_at DESC LIMIT 1`</span></span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  )<span class="op">.</span><span class="fu">bind</span>(input<span class="op">.</span><span class="at">contractOwnerUserId</span> <span class="op">??</span> <span class="kw">null</span>)<span class="op">.</span><span class="fu">first</span><span class="op">&lt;</span>{ current_hash<span class="op">:</span> <span class="dt">string</span> } <span class="op">|</span> <span class="dt">null</span><span class="op">&gt;</span>()<span class="op">;</span></span>
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> fields <span class="op">=</span> {</span>
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    id<span class="op">:</span> input<span class="op">.</span><span class="at">id</span> <span class="op">??</span> <span class="fu">generateUlid</span>()<span class="op">,</span></span>
@@ -179,7 +179,7 @@
 <span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
 <span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> currentHash <span class="op">=</span> <span class="cf">await</span> <span class="fu">computeChainHash</span>(prev<span class="op">?.</span><span class="at">current_hash</span> <span class="op">??</span> <span class="kw">null</span><span class="op">,</span> fields)<span class="op">;</span></span>
 <span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`</span></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="vs">    INSERT INTO H_AUDIT_LOGS (id, contract_owner_user_id, actor_type, actor_id, action, target_type, target_id,</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="vs">    INSERT INTO H_AUDIT_LOGS (id, owner_id, actor_type, actor_id, action, target_type, target_id,</span></span>
 <span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="vs">                           ip_address_masked, metadata, retention_class, prev_hash, current_hash, created_at)</span></span>
 <span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="vs">    VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13)</span></span>
 <span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="vs">  `</span>)<span class="op">.</span><span class="fu">bind</span>(fields<span class="op">.</span><span class="at">id</span><span class="op">,</span> fields<span class="op">.</span><span class="at">contractOwnerUserId</span><span class="op">,</span> fields<span class="op">.</span><span class="at">actorType</span><span class="op">,</span> fields<span class="op">.</span><span class="at">actorId</span><span class="op">,</span></span>
@@ -310,13 +310,13 @@
 <div class="sourceCode" id="cb4"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">// app/workers/cron/src/jobs/audit-chain-verify.ts (JST 03:00)</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fu">verifyAuditChain</span>(env<span class="op">:</span> Env) {</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> contractOwnerUserIds <span class="op">=</span> <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="vs">`SELECT DISTINCT COALESCE(contract_owner_user_id, &#39;__global__&#39;) as tid FROM H_AUDIT_LOGS`</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="vs">`SELECT DISTINCT COALESCE(owner_id, &#39;__global__&#39;) as tid FROM H_AUDIT_LOGS`</span></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  )<span class="op">.</span><span class="fu">all</span><span class="op">&lt;</span>{ tid<span class="op">:</span> <span class="dt">string</span> }<span class="op">&gt;</span>()<span class="op">;</span></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (<span class="kw">const</span> t <span class="kw">of</span> contractOwnerUserIds<span class="op">.</span><span class="at">results</span>) {</span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> rows <span class="op">=</span> <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`</span></span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="vs">      SELECT * FROM H_AUDIT_LOGS</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="vs">      WHERE COALESCE(contract_owner_user_id, &#39;__global__&#39;) = ?1 AND tombstone = 0</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="vs">      WHERE COALESCE(owner_id, &#39;__global__&#39;) = ?1 AND tombstone = 0</span></span>
 <span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="vs">      ORDER BY created_at</span></span>
 <span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="vs">    `</span>)<span class="op">.</span><span class="fu">bind</span>(t<span class="op">.</span><span class="at">tid</span> <span class="op">===</span> <span class="st">&#39;__global__&#39;</span> <span class="op">?</span> <span class="kw">null</span> <span class="op">:</span> t<span class="op">.</span><span class="at">tid</span>)<span class="op">.</span><span class="fu">all</span>()<span class="op">;</span></span>
 <span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>

@@ -44,7 +44,7 @@
 <td><ul class="key-cols">
 <li><code>project_user_id</code> → <code>M_PRJ_USERS(id)</code></li>
 <li><code>project_id</code> → <code>M_PROJECTS(id)</code></li>
-<li><code>contract_owner_user_id</code> → <code>M_OWNERS(id)</code></li>
+<li><code>owner_id</code> → <code>M_OWNERS(id)</code></li>
 <li><code>granted_by_type</code> + <code>granted_by_id</code> → <code>M_OWNERS(id)</code> / <code>M_PRJ_USERS(id)</code>(論理参照)</li>
 </ul></td>
 </tr>
@@ -100,7 +100,7 @@
 <tr>
 <td style="text-align: right;">3</td>
 <td>契約境界 owner ID</td>
-<td><code>contract_owner_user_id</code></td>
+<td><code>owner_id</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
@@ -219,7 +219,7 @@
 <tr>
 <td style="text-align: right;">2</td>
 <td><code>idx_pua_owner</code></td>
-<td><code>contract_owner_user_id</code></td>
+<td><code>owner_id</code></td>
 <td></td>
 <td>契約境界クエリ</td>
 </tr>

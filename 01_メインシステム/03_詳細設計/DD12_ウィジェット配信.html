@@ -140,7 +140,7 @@
   W-&gt;&gt;API: POST /widget/v1/ask { question, session_token }
   API-&gt;&gt;D: FTS5 検索 (TP_FAQ_FTS)
   D--&gt;&gt;API: FAQ 候補(最大 5 件)
-  API-&gt;&gt;K: GET ai_threshold:{contract_owner_user_id}:{project_id}
+  API-&gt;&gt;K: GET ai_threshold:{owner_id}:{project_id}
   K--&gt;&gt;API: しきい値
   API-&gt;&gt;AI: 推論（質問 + FAQ 抜粋）
   AI--&gt;&gt;API: 推論結果(スコア / 回答)
@@ -264,7 +264,7 @@
 <tbody>
 <tr>
 <td>上限件数到達(FR-122)</td>
-<td>当月の <strong>当該プロジェクト</strong> 質問数 ≥ <code>M_PRJ_QUOTA_LIMITS.question_monthly_limit</code>(当該プロジェクト設定)</td>
+<td>当月の <strong>当該プロジェクト</strong> 質問数 ≥ <code>M_PRJ_QUOTA_LIMITS.q_monthly_limit</code>(当該プロジェクト設定)</td>
 <td><code>question_monthly_limit_reached</code></td>
 </tr>
 <tr>
@@ -313,7 +313,7 @@
 </tr>
 </tbody>
 </table>
-<p>連絡先メール表示は確認済み(<code>M_PROJECTS.contact_email_verified_at IS NOT NULL</code>)のもののみ。停止判定・通知ロジックの正本は上限件数到達 = <a href="DD11_利用量計測・課金.html">DD11_利用量計測・課金.html §3.8</a>、支払方法ゲート = <a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html §3.1.3</a>。</p>
+<p>連絡先メール表示は確認済み(<code>M_PROJECTS.contact_verified_at IS NOT NULL</code>)のもののみ。停止判定・通知ロジックの正本は上限件数到達 = <a href="DD11_利用量計測・課金.html">DD11_利用量計測・課金.html §3.8</a>、支払方法ゲート = <a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html §3.1.3</a>。</p>
 <h3 id="37b-ウィジェット-ui-状態遷移fr-156ad">3.7b ウィジェット UI 状態遷移（FR-156a〜d）</h3>
 <p class="section-lead">丸型ランチャーバッジによる開閉状態と、回答結果に応じた会話状態の遷移を定義します。以降の 2 つの表で開閉状態(<code>collapsed</code> ↔ <code>expanded</code>)と会話状態(<code>normal</code> / <code>limited</code>)の遷移を示します。</p>
 <h4 id="開閉状態">開閉状態</h4>

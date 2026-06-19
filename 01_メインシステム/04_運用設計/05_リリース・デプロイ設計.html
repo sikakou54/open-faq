@@ -489,7 +489,7 @@
 </tr>
 <tr>
 <td>M4</td>
-<td><code>accounts</code> テーブル再作成(<code>deleted_at</code> 列削除 + <code>email_key_version</code> 列追加 + <code>role</code> CHECK から <code>service_operator</code> 削除)</td>
+<td><code>accounts</code> テーブル再作成(<code>deleted_at</code> 列削除 + <code>email_key_ver</code> 列追加 + <code>role</code> CHECK から <code>service_operator</code> 削除)</td>
 <td>テーブル再作成</td>
 <td><strong>高</strong>(参照先が広範)</td>
 </tr>
@@ -537,7 +537,7 @@
 </tr>
 <tr>
 <td>M13</td>
-<td><code>M_FAQS.created_by, updated_by, source_unresolved_question_id</code> の FK / ON DELETE 句明示のためテーブル再作成</td>
+<td><code>M_FAQS.created_by, updated_by, source_inquiry_id</code> の FK / ON DELETE 句明示のためテーブル再作成</td>
 <td>テーブル再作成</td>
 <td>低</td>
 </tr>
@@ -584,7 +584,7 @@
 <li><strong>お知らせ作成</strong>: <code>M_SERVICE_ANNOUNCE</code> 単独 INSERT から、<code>M_SERVICE_ANNOUNCE</code> + <code>M_ANNOUNCE_AUD</code> の 2 段 INSERT(D1 batch API)に変更</li>
 <li><strong>配信先取得 API</strong>: <code>audience_owner_account_ids</code> の JSON パースから <code>JOIN M_ANNOUNCE_AUD</code> に切替</li>
 <li><strong>論理削除日時参照</strong>: <code>deleted_at</code> を見ていたコードを <code>updated_at</code> に統一</li>
-<li><strong>暗号鍵バージョン</strong>: 復号処理で <code>email_key_version</code> 列を読み、対応する鍵を Secrets Store から取得(セキュリティ設計 §8.2.1)</li>
+<li><strong>暗号鍵バージョン</strong>: 復号処理で <code>email_key_ver</code> 列を読み、対応する鍵を Secrets Store から取得(セキュリティ設計 §8.2.1)</li>
 <li><strong><code>H_AUDIT_LOGS</code></strong>: <code>prev_hash</code> / <code>current_hash</code> を計算していたコードを削除する</li>
 <li><strong>DD13 物理削除バッチ</strong>: §3.1.7 / §3.1.8 / §3.1.9 / §3.1.11 のクエリで <code>deleted_at</code> 参照を <code>valid</code> / <code>updated_at</code> に置換(本マイグレーション併走で実施)</li>
 </ul>
@@ -621,7 +621,7 @@
 <td>大規模テーブルは分割マイグレーション(例: <code>H_AUDIT_LOGS</code> を <code>created_at</code> 範囲ごとに ETL)</td>
 </tr>
 <tr>
-<td><code>email_key_version=1</code> 既定値で dual-decrypt が動かない</td>
+<td><code>email_key_ver=1</code> 既定値で dual-decrypt が動かない</td>
 <td>低</td>
 <td>アプリ側で「version 未指定 = 1」フォールバック実装</td>
 </tr>
@@ -648,31 +648,31 @@
 </tr>
 <tr>
 <td>M11-2</td>
-<td>新スキーマを適用(基本設計 03_テーブル設計/index.html §3.1 / §3.2 / §3.3 を正本):<br>・<code>M_OWNERS</code>(オーナーマスタ。認証 + 契約属性を統合保持。<code>id</code> が契約境界キー本体。<code>contract_status</code> / <code>data_deletion_mode</code> 専有)<br>・<code>M_PRJ_USERS</code>(プロジェクトユーザーマスタ、認証情報。<strong>オーナー除外の完全分離</strong>。<code>contract_owner_user_id</code> → <code>M_OWNERS(id)</code>)<br>・<code>M_PRJ_USER_ASGN</code>(プロジェクトユーザー割当、<code>(project_user_id, project_id)</code> 複合 PK + <code>contract_owner_user_id</code> 冗長保持 + <code>role</code>('admin'/'member'))</td>
+<td>新スキーマを適用(基本設計 03_テーブル設計/index.html §3.1 / §3.2 / §3.3 を正本):<br>・<code>M_OWNERS</code>(オーナーマスタ。認証 + 契約属性を統合保持。<code>id</code> が契約境界キー本体。<code>contract_status</code> / <code>data_deletion_mode</code> 専有)<br>・<code>M_PRJ_USERS</code>(プロジェクトユーザーマスタ、認証情報。<strong>オーナー除外の完全分離</strong>。<code>owner_id</code> → <code>M_OWNERS(id)</code>)<br>・<code>M_PRJ_USER_ASGN</code>(プロジェクトユーザー割当、<code>(project_user_id, project_id)</code> 複合 PK + <code>owner_id</code> 冗長保持 + <code>role</code>('admin'/'member'))</td>
 <td>CREATE TABLE</td>
 <td>低</td>
 </tr>
 <tr>
 <td>M11-3</td>
-<td>MVPテーブルの FK 書換 + カラムリネーム(契約境界系 → <code>M_OWNERS(id)</code>、操作者・アクター・セッション・トークン系 → 横断参照 <code>actor_type</code>('owner'/'project_user')+ <code>actor_id</code> へ再編)<br>・契約境界(CASCADE、<code>contract_owner_user_id</code> → <code>M_OWNERS(id)</code>):<code>M_PROJECTS.contract_owner_user_id</code> / <code>M_FAQS.contract_owner_user_id</code> / <code>T_INQUIRIES.contract_owner_user_id</code> / <code>H_QUESTION_LOGS.contract_owner_user_id</code> / <code>T_BILL_SUBS.contract_owner_user_id</code> / <code>T_BILL_INVOICES.contract_owner_user_id</code> / <code>T_USAGE_METER.contract_owner_user_id</code> / <code>M_OWNER_QUOTA_OVR.contract_owner_user_id</code> / <code>H_AUDIT_LOGS.contract_owner_user_id</code> / <code>H_NOTIF_LOGS.contract_owner_user_id</code> / <code>T_INBOX_MSG.contract_owner_user_id</code> / <code>T_WITHDRAW_REQ.contract_owner_user_id</code> / <code>TP_AI_THRESH_CACHE.contract_owner_user_id</code> / <code>H_ERROR_LOGS.contract_owner_user_id</code><br>・操作者・アクター(横断参照 <code>actor_type</code> + <code>actor_id</code> に置換):<code>M_FAQS.created_by</code> / <code>M_FAQS.updated_by</code> / <code>T_SESSIONS</code> の主体 / <code>T_ACCESS_TOKENS</code> の主体 / <code>T_TERMS_AGREE</code> の主体 / <code>M_PRJ_USER_ASGN.granted_by</code> / <code>H_AUDIT_LOGS</code> のアクター / <code>H_ERROR_LOGS</code> の主体(いずれも <code>actor_type</code>='owner' なら <code>M_OWNERS(id)</code>、'project_user' なら <code>M_PRJ_USERS(id)</code> を指す)</td>
+<td>MVPテーブルの FK 書換 + カラムリネーム(契約境界系 → <code>M_OWNERS(id)</code>、操作者・アクター・セッション・トークン系 → 横断参照 <code>actor_type</code>('owner'/'project_user')+ <code>actor_id</code> へ再編)<br>・契約境界(CASCADE、<code>owner_id</code> → <code>M_OWNERS(id)</code>):<code>M_PROJECTS.owner_id</code> / <code>M_FAQS.owner_id</code> / <code>T_INQUIRIES.owner_id</code> / <code>H_QUESTION_LOGS.owner_id</code> / <code>T_BILL_SUBS.owner_id</code> / <code>T_BILL_INVOICES.owner_id</code> / <code>T_USAGE_METER.owner_id</code> / <code>M_OWNER_QUOTA_OVR.owner_id</code> / <code>H_AUDIT_LOGS.owner_id</code> / <code>H_NOTIF_LOGS.owner_id</code> / <code>T_INBOX_MSG.owner_id</code> / <code>T_WITHDRAW_REQ.owner_id</code> / <code>TP_AI_THRESH_CACHE.owner_id</code> / <code>H_ERROR_LOGS.owner_id</code><br>・操作者・アクター(横断参照 <code>actor_type</code> + <code>actor_id</code> に置換):<code>M_FAQS.created_by</code> / <code>M_FAQS.updated_by</code> / <code>T_SESSIONS</code> の主体 / <code>T_ACCESS_TOKENS</code> の主体 / <code>T_TERMS_AGREE</code> の主体 / <code>M_PRJ_USER_ASGN.granted_by</code> / <code>H_AUDIT_LOGS</code> のアクター / <code>H_ERROR_LOGS</code> の主体(いずれも <code>actor_type</code>='owner' なら <code>M_OWNERS(id)</code>、'project_user' なら <code>M_PRJ_USERS(id)</code> を指す)</td>
 <td>テーブル再作成</td>
 <td><strong>高</strong>(参照先広範)</td>
 </tr>
 <tr>
 <td>M11-4</td>
-<td>インデックス再作成(基本設計 03_テーブル設計/index.html 各テーブルの §N.5 インデックスを反映):<br>・<code>idx_owners_status</code> / <code>idx_owners_valid</code>(オーナーマスタ。認証 + 契約属性を統合保持)<br>・<code>idx_project_users_email_hmac</code> / <code>idx_project_users_owner</code> / <code>idx_project_users_valid</code>(プロジェクトユーザーマスタ)<br>・<code>idx_project_user_assignments_project</code> / <code>idx_project_user_assignments_owner</code> / <code>idx_project_user_assignments_role_admin</code> / <code>idx_project_user_assignments_valid</code>(割当)<br>・<code>uq_usage_metering_owner_month(contract_owner_user_id, billing_year_month)</code><br>・<code>uq_billing_invoices_owner_month(contract_owner_user_id, billing_year_month)</code><br>・<code>idx_faqs_owner_project</code> / <code>idx_inquiries_contract_status_created</code> / <code>idx_qlog_owner_created</code> 等の <code>contract_owner_user_id</code> 系インデックス</td>
+<td>インデックス再作成(基本設計 03_テーブル設計/index.html 各テーブルの §N.5 インデックスを反映):<br>・<code>idx_owners_status</code> / <code>idx_owners_valid</code>(オーナーマスタ。認証 + 契約属性を統合保持)<br>・<code>idx_project_users_email_hmac</code> / <code>idx_project_users_owner</code> / <code>idx_project_users_valid</code>(プロジェクトユーザーマスタ)<br>・<code>idx_project_user_assignments_project</code> / <code>idx_project_user_assignments_owner</code> / <code>idx_project_user_assignments_role_admin</code> / <code>idx_project_user_assignments_valid</code>(割当)<br>・<code>uq_usage_metering_owner_month(owner_id, billing_ym)</code><br>・<code>uq_billing_invoices_owner_month(owner_id, billing_ym)</code><br>・<code>idx_faqs_owner_project</code> / <code>idx_inquiries_contract_status_created</code> / <code>idx_qlog_owner_created</code> 等の <code>owner_id</code> 系インデックス</td>
 <td>CREATE INDEX</td>
 <td>低</td>
 </tr>
 <tr>
 <td>M11-5</td>
-<td>seed / E2E fixtures(<code>scripts/seed-staging.ts</code> 等)を 2 マスタ完全分離の INSERT に変更:<br>・オーナーは <code>M_OWNERS</code> へ単一 INSERT(認証 + 契約属性を統合保持。<code>id</code> が契約境界キー本体)<br>・メンバー(プロジェクトユーザー)は <code>M_PRJ_USERS</code>(オーナー除外マスタ。<code>contract_owner_user_id</code> → <code>M_OWNERS(id)</code>)へ INSERT<br>・プロジェクト作成と同時に <code>M_PRJ_USER_ASGN(project_user_id=NULL〔オーナーは M_PRJ_USERS に存在しないため actor_type='owner' + actor_id=オーナー〕, project_id, contract_owner_user_id=オーナー, role='admin', valid=1)</code> を自動 INSERT(オーナー自身の admin 割当)</td>
+<td>seed / E2E fixtures(<code>scripts/seed-staging.ts</code> 等)を 2 マスタ完全分離の INSERT に変更:<br>・オーナーは <code>M_OWNERS</code> へ単一 INSERT(認証 + 契約属性を統合保持。<code>id</code> が契約境界キー本体)<br>・メンバー(プロジェクトユーザー)は <code>M_PRJ_USERS</code>(オーナー除外マスタ。<code>owner_id</code> → <code>M_OWNERS(id)</code>)へ INSERT<br>・プロジェクト作成と同時に <code>M_PRJ_USER_ASGN(project_user_id=NULL〔オーナーは M_PRJ_USERS に存在しないため actor_type='owner' + actor_id=オーナー〕, project_id, owner_id=オーナー, role='admin', valid=1)</code> を自動 INSERT(オーナー自身の admin 割当)</td>
 <td>スクリプト改修</td>
 <td>低</td>
 </tr>
 <tr>
 <td>M11-6</td>
-<td>アプリ層クエリの一括書換(<code>account_id</code> → <code>user_id</code>、<code>owner_account_id</code> → <code>contract_owner_user_id</code>、<code>accounts</code> → 文脈で <code>M_OWNERS</code>(オーナー)/ <code>M_PRJ_USERS</code>(プロジェクトユーザー)に振り分け、<code>assignee_account_id</code> → <code>assignee_user_id</code>、<code>actor_account_id</code> → 横断参照 <code>actor_type</code> + <code>actor_id</code>、<code>accountId</code> → <code>userId</code>、<code>ownerAccountId</code> → <code>contractOwnerUserId</code>、<code>is_owner</code> フラグ参照 → <code>M_OWNERS</code> 行存在判定(<code>M_OWNERS.id</code> = 認証主体)に置換)</td>
+<td>アプリ層クエリの一括書換(<code>account_id</code> → <code>user_id</code>、<code>owner_account_id</code> → <code>owner_id</code>、<code>accounts</code> → 文脈で <code>M_OWNERS</code>(オーナー)/ <code>M_PRJ_USERS</code>(プロジェクトユーザー)に振り分け、<code>assignee_account_id</code> → <code>assignee_user_id</code>、<code>actor_account_id</code> → 横断参照 <code>actor_type</code> + <code>actor_id</code>、<code>accountId</code> → <code>userId</code>、<code>ownerAccountId</code> → <code>contractOwnerUserId</code>、<code>is_owner</code> フラグ参照 → <code>M_OWNERS</code> 行存在判定(<code>M_OWNERS.id</code> = 認証主体)に置換)</td>
 <td>アプリ改修</td>
 <td>中</td>
 </tr>
@@ -698,13 +698,13 @@
 <tbody>
 <tr>
 <td>M12-1</td>
-<td><code>M_PRJ_QUOTA_LIMITS</code> を新規作成(基本設計 03_テーブル設計/index.html §3.24)。FK <code>project_id</code>→<code>M_PROJECTS(id)</code> CASCADE / <code>contract_owner_user_id</code>→<code>M_OWNERS(id)</code> CASCADE</td>
+<td><code>M_PRJ_QUOTA_LIMITS</code> を新規作成(基本設計 03_テーブル設計/index.html §3.24)。FK <code>project_id</code>→<code>M_PROJECTS(id)</code> CASCADE / <code>owner_id</code>→<code>M_OWNERS(id)</code> CASCADE</td>
 <td>CREATE TABLE</td>
 <td>低</td>
 </tr>
 <tr>
 <td>M12-2</td>
-<td><code>T_USAGE_METER</code> に <code>project_id TEXT NOT NULL</code>(FK→<code>M_PROJECTS(id)</code> CASCADE)を追加し、UNIQUE を <code>uq_usage_metering_owner_project_month(contract_owner_user_id, project_id, billing_year_month)</code> に変更 + <code>idx_usage_metering_owner_month</code> 追加</td>
+<td><code>T_USAGE_METER</code> に <code>project_id TEXT NOT NULL</code>(FK→<code>M_PROJECTS(id)</code> CASCADE)を追加し、UNIQUE を <code>uq_usage_metering_owner_project_month(owner_id, project_id, billing_ym)</code> に変更 + <code>idx_usage_metering_owner_month</code> 追加</td>
 <td>テーブル再作成</td>
 <td><strong>高</strong>(履歴バックフィル要)</td>
 </tr>
@@ -716,7 +716,7 @@
 </tr>
 <tr>
 <td>M12-4</td>
-<td>既存 <code>question_monthly_limit</code> は各プロジェクトの質問数上限へ展開する</td>
+<td>既存 <code>q_monthly_limit</code> は各プロジェクトの質問数上限へ展開する</td>
 <td>データ移行</td>
 <td>中</td>
 </tr>
@@ -750,11 +750,11 @@
 <p>旧 <code>uq_accounts_owner_email(owner_account_id, email_hmac) WHERE valid=1</code> は新スキーマ(オーナー / プロジェクトユーザーの 2 マスタに分離)では単一の DB UNIQUE では表現不能。<strong>アプリ層トランザクション</strong>で担保する(<a href="../02_基本設計/03_テーブル設計/index.html">../02_基本設計/03_テーブル設計/index.html</a> §3.1 設計判断、§3.3 メンバー招待時手順を正本):</p>
 <ul>
 <li><strong>オーナー登録時</strong>: 単に新 <code>M_OWNERS</code> 行 INSERT(契約はまだ無いので重複なし)</li>
-<li><strong>メンバー招待時</strong>: <code>BEGIN IMMEDIATE</code> で「同一 <code>contract_owner_user_id</code> 配下の既存 <code>M_PRJ_USERS.email_hmac</code> セット」+「対応する <code>M_OWNERS</code> 行の <code>email_hmac</code>」を SELECT し重複検査 → 新 <code>M_PRJ_USERS</code> 行 INSERT → <code>M_PRJ_USER_ASGN</code> 行 INSERT</li>
+<li><strong>メンバー招待時</strong>: <code>BEGIN IMMEDIATE</code> で「同一 <code>owner_id</code> 配下の既存 <code>M_PRJ_USERS.email_hmac</code> セット」+「対応する <code>M_OWNERS</code> 行の <code>email_hmac</code>」を SELECT し重複検査 → 新 <code>M_PRJ_USERS</code> 行 INSERT → <code>M_PRJ_USER_ASGN</code> 行 INSERT</li>
 <li>テストケース: <code>it-contract-email-unique-001</code>(同時招待 2 リクエストで片方が <code>E-BIZ-DUPLICATE-EMAIL</code> で弾かれること)</li>
 </ul>
 <h3 id="5c3-v110-オーナー自動-admin-行-insertは維持">5c.3 v1.10 「オーナー自動 admin 行 INSERT」は維持</h3>
-<p>プロジェクト作成 API は引き続き同一トランザクション内で <code>INSERT INTO M_PRJ_USER_ASGN(actor_type='owner', actor_id=actor, project_id=newId, contract_owner_user_id=actor, role='admin', valid=1, granted_at=now())</code> を 1 行発行する(オーナーは <code>M_PRJ_USERS</code> マスタには存在せず横断参照 <code>actor_type</code> + <code>actor_id</code> で割当を表す)。認可は <code>isOwner</code> bypass(<code>M_OWNERS</code> 行存在で判定)を最優先、<code>M_PRJ_USER_ASGN</code> 行は critical 通知宛先解決と画面の「プロジェクト管理者一覧」表示のための事実情報として参照する。</p>
+<p>プロジェクト作成 API は引き続き同一トランザクション内で <code>INSERT INTO M_PRJ_USER_ASGN(actor_type='owner', actor_id=actor, project_id=newId, owner_id=actor, role='admin', valid=1, granted_at=now())</code> を 1 行発行する(オーナーは <code>M_PRJ_USERS</code> マスタには存在せず横断参照 <code>actor_type</code> + <code>actor_id</code> で割当を表す)。認可は <code>isOwner</code> bypass(<code>M_OWNERS</code> 行存在で判定)を最優先、<code>M_PRJ_USER_ASGN</code> 行は critical 通知宛先解決と画面の「プロジェクト管理者一覧」表示のための事実情報として参照する。</p>
 <h3 id="5c4-pii-鍵管理への影響">5c.4 PII 鍵管理への影響</h3>
 <p><code>deriveOwnerKey(masterKey, ownerId)</code> の引数 <code>ownerId</code> セマンティクスを「<code>M_OWNERS.id</code>(= 旧 <code>accounts.id</code> の物理値を継承する同一 ULID)」に再定義。DD10 §10.9.2 の HKDF info 文字列 <code>owner:&lt;id&gt;</code> の中身は不変。MVP 未リリースのためバックフィル不要。鍵ローテーション単位は引き続き「契約 1 つ = <code>M_OWNERS</code> 1 行」。</p>
 <h3 id="5c5-ロールバック方針">5c.5 ロールバック方針</h3>
@@ -774,7 +774,7 @@
 </thead>
 <tbody>
 <tr>
-<td><code>M_PRJ_USER_ASGN.contract_owner_user_id</code> と <code>M_PROJECTS.contract_owner_user_id</code> の不整合</td>
+<td><code>M_PRJ_USER_ASGN.owner_id</code> と <code>M_PROJECTS.owner_id</code> の不整合</td>
 <td>高(認可境界クエリの結果が齟齬する)</td>
 <td>アプリ層 INSERT で必ず両者一致を担保し、レビューチェックリストで検証</td>
 </tr>
@@ -784,7 +784,7 @@
 <td><code>check-spec-sync.sh</code> SC-002 / SC-007 の検査キーワード差替で機械検出、PR レビュー必須</td>
 </tr>
 <tr>
-<td>404 偽装ロジック(<code>principal.contractOwnerUserId !== resource.contract_owner_user_id</code>)の比較箇所 sed 漏れ</td>
+<td>404 偽装ロジック(<code>principal.contractOwnerUserId !== resource.owner_id</code>)の比較箇所 sed 漏れ</td>
 <td>高(クロス契約データ漏洩)</td>
 <td>一括 grep + 単体テストで対象 9 テーブルの 404 偽装をすべて回帰</td>
 </tr>
@@ -969,9 +969,9 @@
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> db<span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`INSERT INTO M_OWNERS (id, contract_status, data_deletion_mode, valid, created_at, updated_at, ...) VALUES (?1, &#39;active&#39;, &#39;physical&#39;, 1, datetime(&#39;now&#39;), datetime(&#39;now&#39;), ...)`</span>)<span class="op">.</span><span class="fu">bind</span>(contractOwnerUserId<span class="op">,</span> <span class="op">...</span>)<span class="op">.</span><span class="fu">run</span>()<span class="op">;</span></span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 2. M_PRJ_USER_ASGN(プロジェクト作成と同時にオーナー自身の admin 割当を自動 INSERT)</span></span>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">//    オーナーは M_PRJ_USERS マスタには存在しないため actor_type=&#39;owner&#39; + actor_id で割当を表す</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 3. M_FAQS 等(契約境界キー contract_owner_user_id = M_OWNERS.id を付与してテストデータ投入)</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 3. M_FAQS 等(契約境界キー owner_id = M_OWNERS.id を付与してテストデータ投入)</span></span>
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (<span class="kw">let</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> <span class="dv">100</span><span class="op">;</span> i<span class="op">++</span>) {</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> db<span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`INSERT INTO M_FAQS (id, contract_owner_user_id, project_id, ...) VALUES (?1, ?2, ...)`</span>)<span class="op">.</span><span class="fu">bind</span>(<span class="co">/* ... */</span><span class="op">,</span> contractOwnerUserId<span class="op">,</span> <span class="co">/* ... */</span>)<span class="op">.</span><span class="fu">run</span>()<span class="op">;</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> db<span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`INSERT INTO M_FAQS (id, owner_id, project_id, ...) VALUES (?1, ?2, ...)`</span>)<span class="op">.</span><span class="fu">bind</span>(<span class="co">/* ... */</span><span class="op">,</span> contractOwnerUserId<span class="op">,</span> <span class="co">/* ... */</span>)<span class="op">.</span><span class="fu">run</span>()<span class="op">;</span></span>
 <span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="co">// ... 全テーブルにテストデータ投入</span></span>
 <span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>

@@ -39,7 +39,7 @@
 <tr>
 <td>外部キー</td>
 <td><ul class="key-cols">
-<li><code>contract_owner_user_id</code> → <code>M_OWNERS(id)</code></li>
+<li><code>owner_id</code> → <code>M_OWNERS(id)</code></li>
 <li><code>project_id</code> → <code>M_PROJECTS(id)</code></li>
 </ul></td>
 </tr>
@@ -81,7 +81,7 @@
 <tr>
 <td style="text-align: right;">2</td>
 <td>契約 owner ID</td>
-<td><code>contract_owner_user_id</code></td>
+<td><code>owner_id</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
@@ -117,7 +117,7 @@
 <td></td>
 <td></td>
 <td></td>
-<td><code>scope IN ('global','owner','project')</code><br>（複合）<code>(scope = 'global' AND contract_owner_user_id IS NULL AND project_id IS NULL) OR (scope = 'owner' AND contract_owner_user_id IS NOT NULL AND project_id IS NULL) OR (scope = 'project' AND contract_owner_user_id IS NOT NULL AND project_id IS NOT NULL)</code></td>
+<td><code>scope IN ('global','owner','project')</code><br>（複合）<code>(scope = 'global' AND owner_id IS NULL AND project_id IS NULL) OR (scope = 'owner' AND owner_id IS NOT NULL AND project_id IS NULL) OR (scope = 'project' AND owner_id IS NOT NULL AND project_id IS NOT NULL)</code></td>
 
 </tr>
 <tr>
@@ -207,7 +207,7 @@
 <tr>
 <td style="text-align: right;">1</td>
 <td><code>uq_ai_threshold_scope</code></td>
-<td><code>(scope, COALESCE(contract_owner_user_id, ''), COALESCE(project_id, ''))</code></td>
+<td><code>(scope, COALESCE(owner_id, ''), COALESCE(project_id, ''))</code></td>
 <td>○</td>
 <td>スコープ + キーで一意</td>
 </tr>

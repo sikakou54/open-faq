@@ -619,7 +619,7 @@
 </table>
 <p>Turnstile は不要(入力フォームを持たない単純な確認専用エンドポイントで、トークン HMAC-SHA256 検証 + IP / トークン単位のレート制限で十分)。</p>
 <h3>処理概要</h3>
-<p class="section-lead">プロジェクト連絡先メールを確認済みとし <code>M_PROJECTS.contact_email_verified_at</code> をセットする。本処理は 1 つのトランザクションで実行する。</p>
+<p class="section-lead">プロジェクト連絡先メールを確認済みとし <code>M_PROJECTS.contact_verified_at</code> をセットする。本処理は 1 つのトランザクションで実行する。</p>
 <table>
 <thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
 <tbody>

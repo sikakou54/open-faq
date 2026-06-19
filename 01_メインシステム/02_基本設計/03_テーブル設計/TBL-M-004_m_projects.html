@@ -39,7 +39,7 @@
 <tr>
 <td>外部キー</td>
 <td><ul class="key-cols">
-<li><code>contract_owner_user_id</code> → <code>M_OWNERS(id)</code></li>
+<li><code>owner_id</code> → <code>M_OWNERS(id)</code></li>
 </ul></td>
 </tr>
 </tbody>
@@ -80,7 +80,7 @@
 <tr>
 <td style="text-align: right;">2</td>
 <td>契約 owner ID</td>
-<td><code>contract_owner_user_id</code></td>
+<td><code>owner_id</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
@@ -158,13 +158,13 @@
 <td></td>
 <td></td>
 <td></td>
-<td>（複合）<code>contact_email_verified_at IS NULL OR contact_email IS NOT NULL</code></td>
+<td>（複合）<code>contact_verified_at IS NULL OR contact_email IS NOT NULL</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">8</td>
 <td>連絡先確認日時</td>
-<td><code>contact_email_verified_at</code></td>
+<td><code>contact_verified_at</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
@@ -248,7 +248,7 @@
 <tr>
 <td style="text-align: right;">1</td>
 <td><code>idx_projects_owner_status</code></td>
-<td><code>(contract_owner_user_id, status)</code></td>
+<td><code>(owner_id, status)</code></td>
 <td></td>
 <td>オーナー別プロジェクト一覧</td>
 </tr>

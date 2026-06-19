@@ -112,7 +112,7 @@
 <p>FAQ CRUD / 状態保存 / 一括インポートの全項目は <a href="../02_基本設計/02_API設計/index.html">../02_基本設計/02_API設計/index.html</a> を正本とする。</p>
 <h3 id="33-データベース詳細設計参照のみ">3.3 データベース詳細設計（参照のみ）</h3>
 <p class="section-lead">DDL・制約・インデックスは基本設計が正本のため、本ページでは正本へのリンクのみを示します。</p>
-<p><code>M_PROJECTS</code> / <code>M_FAQS</code> / <code>faq_embeddings</code> / <code>TP_FAQ_FTS</code> の DDL、CHECK 制約、インデックス、外部キー、コード値、SaaS データ分離観点（<code>contract_owner_user_id</code>）、保持期間は <a href="../02_基本設計/03_テーブル設計/index.html">../02_基本設計/03_テーブル設計/index.html</a> を正本とする。</p>
+<p><code>M_PROJECTS</code> / <code>M_FAQS</code> / <code>faq_embeddings</code> / <code>TP_FAQ_FTS</code> の DDL、CHECK 制約、インデックス、外部キー、コード値、SaaS データ分離観点（<code>owner_id</code>）、保持期間は <a href="../02_基本設計/03_テーブル設計/index.html">../02_基本設計/03_テーブル設計/index.html</a> を正本とする。</p>
 <h3 id="34-実装モジュール構成">3.4 実装モジュール構成</h3>
 <p class="section-lead">本機能を構成する <code>worker-main-api</code> 内のソースファイル配置と各ファイルの責務を示します。</p>
 <pre><code>src/
@@ -148,7 +148,7 @@
 <p><strong>文字コード事前検証</strong>（クライアント側）: SCR-006-002 のドラッグ&amp;ドロップ / ファイル選択の時点で、ファイル先頭バイト（BOM）および本文のバイト列から文字コードを判定し、<strong>UTF-8（BOM 許容）以外はアップロードせず即エラー</strong>（E-INPUT-CSV-INVALID / MSG-SCR-006-002-ERR-005、検出した文字コード名を併記）。これによりサーバ側の文字化け INSERT を未然に防ぐ。</p>
 <p><strong>CSV 列定義</strong>（ヘッダ行必須）: <code>FAQ ID, 質問, 回答, カテゴリ</code>。<code>status</code>（状態）列は受理しない。</p>
 <p><strong>テンプレート生成</strong>（<code>GET /faqs/import/template</code>）: ヘッダ行のみ（<code>FAQ ID,質問,回答,カテゴリ</code>）を <code>text/csv; charset=utf-8</code>（BOM 付与）でストリーム返却。動的データなし（静的文字列）、Queue 不経由の同期レスポンス。</p>
-<p><strong>FAQ ID 行判定ロジック</strong>（consumer 側、行単位）。consumer は CSV 各行について <code>FAQ ID</code> の有無と当該契約境界（<code>contract_owner_user_id</code>）での突合結果に応じて INSERT / UPDATE / 失敗を分岐する。質問・回答の欠落 / 文字数超過はいずれの分岐でも当該行を失敗させる（カテゴリは任意）。</p>
+<p><strong>FAQ ID 行判定ロジック</strong>（consumer 側、行単位）。consumer は CSV 各行について <code>FAQ ID</code> の有無と当該契約境界（<code>owner_id</code>）での突合結果に応じて INSERT / UPDATE / 失敗を分岐する。質問・回答の欠落 / 文字数超過はいずれの分岐でも当該行を失敗させる（カテゴリは任意）。</p>
 <pre class="mermaid"><code>sequenceDiagram
   participant Q as Queue consumer
   participant D as D1 (M_FAQS)
@@ -220,7 +220,7 @@
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="cf">await</span> db<span class="op">.</span><span class="fu">transaction</span>(<span class="kw">async</span> (tx) <span class="kw">=&gt;</span> {</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> project <span class="op">=</span> <span class="cf">await</span> tx<span class="op">.</span><span class="fu">insert</span>(<span class="st">&#39;M_PROJECTS&#39;</span><span class="op">,</span> {</span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>      <span class="op">...</span>req<span class="op">,</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>      contract_owner_user_id<span class="op">:</span> actor<span class="op">.</span><span class="at">contractOwnerUserId</span><span class="op">,</span>  <span class="co">// → M_OWNERS.id</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>      owner_id<span class="op">:</span> actor<span class="op">.</span><span class="at">contractOwnerUserId</span><span class="op">,</span>  <span class="co">// → M_OWNERS.id</span></span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>      valid<span class="op">:</span> <span class="dv">1</span><span class="op">,</span></span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">// オーナーは isOwner 全権で管理するため、自身の割当行(M_PRJ_USER_ASGN)は作成しない</span></span>
@@ -261,7 +261,7 @@
 <div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">論理削除の伝播先と除外</span>関連テーブル(<code>M_ALLOWED_DOMAINS</code> / <code>M_FAQS</code> / <code>T_INQUIRIES</code> / <code>H_QUESTION_LOGS</code> / <code>M_PRJ_QUOTA_LIMITS</code>)へ <code>valid=0, updated_at=now()</code> を伝播する。<code>T_USAGE_METER</code> は法定保管 7 年のため論理削除せず保持する。孤立プロジェクトユーザーの抽出条件は「当該プロジェクトに割り当たっていたプロジェクトユーザーのうち、他プロジェクト割当(<code>valid=1</code> の <code>M_PRJ_USER_ASGN</code>)が 0 件のもの」。<code>M_PRJ_USERS</code> はオーナーを含まない完全分離マスタのため、抽出対象は常にプロジェクトユーザーのみとなる。監査ログ <code>metadata</code> には <code>{ projectId, logicallyDeletedProjectUserIds: [...] }</code> を含める。</div></div>
 <p>オーナー(<code>M_OWNERS</code> 行)は <code>M_PRJ_USERS</code> マスタの外にあり、本処理の論理削除対象に含まれない(<code>M_OWNERS</code> は常に <code>valid=1</code> 維持)。オーナーは <code>isOwner</code> 全権でプロジェクトを管理し自身の割当行を持たないため、削除されるのは当該プロジェクトの <code>M_PRJ_USER_ASGN</code> 行のみである。論理削除データは <code>updated_at &lt; now() - 90d AND valid=0</code> の物理削除バッチ(<a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html §3.12</a>)で 90 日後に物理削除される。</p>
 <h3 id="311a-プロジェクト連絡先メール確認フローfr-033a--scr-019">3.11a プロジェクト連絡先メール確認フロー(FR-033a / SCR-019)</h3>
-<p class="section-lead">プロジェクト連絡先メールを変更したときに、確認メールのトークンで到達確認を行い <code>contact_email_verified_at</code> をセットするまでの流れを定めます。</p>
+<p class="section-lead">プロジェクト連絡先メールを変更したときに、確認メールのトークンで到達確認を行い <code>contact_verified_at</code> をセットするまでの流れを定めます。</p>
 <p>SCR-004-001(新規モードで初期入力、または編集モードで <code>M_PROJECTS.contact_email</code> を変更)した時に、TPL-PROJECT_CONTACT_VERIFY確認メールを送信する。受信者はSCR-019へ着地し、<code>POST /auth/contact-verifications/{token}</code> で確認完了する。</p>
 <pre class="mermaid"><code>sequenceDiagram
   participant U as オーナー / 管理者
@@ -271,7 +271,7 @@
   participant R as 連絡先メール受信者
 
   U-&gt;&gt;W: POST/PATCH /projects(contact_email 変更)
-  W-&gt;&gt;D: contact_email 更新 + contact_email_verified_at=NULL
+  W-&gt;&gt;D: contact_email 更新 + contact_verified_at=NULL
   D--&gt;&gt;W:
   W-&gt;&gt;W: contact_verify トークン発行(有効 24h)
   W-&gt;&gt;M: TPL-PROJECT_CONTACT_VERIFY を enqueue
@@ -281,7 +281,7 @@
   alt 期限切れ / 使用済み
     W--&gt;&gt;R: 410
   else 有効
-    W-&gt;&gt;D: contact_email_verified_at をセット
+    W-&gt;&gt;D: contact_verified_at をセット
     D--&gt;&gt;W:
     W-&gt;&gt;W: consumeToken + 監査ログ project.contact_email_verified
     W--&gt;&gt;R: 確認完了
@@ -289,7 +289,7 @@
 <p>下記の擬似コードは上記フローの実体(SQL バインドとトークン操作の詳細):</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">// (1) 連絡先メール変更時(POST/PATCH /projects 内)</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="vs">`UPDATE M_PROJECTS SET contact_email = ?1, contact_email_verified_at = NULL, updated_at = ?2 WHERE id = ?3`</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="vs">`UPDATE M_PROJECTS SET contact_email = ?1, contact_verified_at = NULL, updated_at = ?2 WHERE id = ?3`</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">.</span><span class="fu">bind</span>(newContactEmail<span class="op">,</span> now<span class="op">,</span> projectId)<span class="op">.</span><span class="fu">run</span>()<span class="op">;</span></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> rawToken <span class="op">=</span> <span class="cf">await</span> <span class="fu">generateToken</span>(<span class="st">&#39;contact_verify&#39;</span><span class="op">,</span> { projectId }<span class="op">,</span> env<span class="op">,</span> <span class="dv">24</span> <span class="op">*</span> <span class="dv">3600</span>)<span class="op">;</span></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> <span class="fu">enqueueEmail</span>({</span>
@@ -302,14 +302,14 @@
 <span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> { payload } <span class="op">=</span> <span class="cf">await</span> <span class="fu">verifyToken</span>(rawToken<span class="op">,</span> <span class="st">&#39;contact_verify&#39;</span><span class="op">,</span> env)<span class="op">;</span>  <span class="co">// 410 if expired/used</span></span>
 <span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> { projectId } <span class="op">=</span> payload<span class="op">;</span></span>
 <span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">batch</span>([</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`UPDATE M_PROJECTS SET contact_email_verified_at = ?1, updated_at = ?1 WHERE id = ?2`</span>)<span class="op">.</span><span class="fu">bind</span>(now<span class="op">,</span> projectId)<span class="op">,</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`UPDATE M_PROJECTS SET contact_verified_at = ?1, updated_at = ?1 WHERE id = ?2`</span>)<span class="op">.</span><span class="fu">bind</span>(now<span class="op">,</span> projectId)<span class="op">,</span></span>
 <span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>])<span class="op">;</span></span>
 <span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> <span class="fu">consumeToken</span>(rawToken<span class="op">,</span> <span class="st">&#39;contact_verify&#39;</span><span class="op">,</span> env)<span class="op">;</span></span>
 <span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> <span class="fu">writeAudit</span>({ action<span class="op">:</span> <span class="st">&#39;project.contact_email_verified&#39;</span><span class="op">,</span> target_project_id<span class="op">:</span> projectId })<span class="op">;</span></span></code></pre></div>
 <p>注意:</p>
 <ul>
 <li>連絡先メール再変更時は旧トークンを <code>consumeToken()</code> で失効させ、新トークンを発行する</li>
-<li><code>contact_email_verified_at</code> が <code>NULL</code> の間はウィジェット表示に用いない(FR-033c)</li>
+<li><code>contact_verified_at</code> が <code>NULL</code> の間はウィジェット表示に用いない(FR-033c)</li>
 <li>受信者(連絡先メール所有者)はアカウントを持つ必要がない ── 第三者の共有メールアドレスでも本フローを進められる</li>
 <li>Turnstile は不要(状態変更は単純な <code>verified_at</code> セットのみ、トークン HMAC + レート制限で十分)</li>
 <li>詳細なトークン発行ロジックは <a href="DD07_トークン発行・検証.html">DD07_トークン発行・検証.html §3.3b</a> を参照</li>

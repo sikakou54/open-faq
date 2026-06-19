@@ -254,7 +254,7 @@
   W--&gt;&gt;U: Set-Cookie: session=...; CSRF Cookie
   U-&gt;&gt;W: GET /api/v1/inquiries (Cookie + X-CSRF-Token)
   W-&gt;&gt;K: GET session:{sid}
-  W-&gt;&gt;D: SELECT T_INQUIRIES WHERE contract_owner_user_id=? AND ...
+  W-&gt;&gt;D: SELECT T_INQUIRIES WHERE owner_id=? AND ...
   W-&gt;&gt;A: INSERT H_AUDIT_LOGS (read 操作は省略可)
   W--&gt;&gt;U: 200 OK + JSON</code></pre>
 <h4 id="232-ウィジェット-apiend_user">2.3.2 ウィジェット API（end_user）</h4>
@@ -276,7 +276,7 @@
   W-&gt;&gt;API: POST /widget/v1/ask { question, session_token }
   API-&gt;&gt;D: FTS5 検索 (TP_FAQ_FTS)
   API-&gt;&gt;AI: 推論（質問 + FAQ 抜粋）
-  API-&gt;&gt;K: GET ai_threshold:{contract_owner_user_id}:{project_id}
+  API-&gt;&gt;K: GET ai_threshold:{owner_id}:{project_id}
   API-&gt;&gt;D: INSERT H_QUESTION_LOGS (metering_billable=...)
   API--&gt;&gt;W: { type: &quot;answered&quot; | &quot;unanswered&quot; | &quot;error&quot;, ... }</code></pre>
 <h3 id="24-環境構成">2.4 環境構成</h3>

@@ -159,7 +159,7 @@
 <tr>
 <td><strong>月次確定 cron</strong></td>
 <td>月次(JST 02:00)</td>
-<td>請求書発行、idempotent key <code>(contract_owner_user_id, billing_year_month)</code>(FR-148。<code>uq_billing_invoices_owner_month</code> および <code>uq_usage_metering_owner_month</code> で担保)</td>
+<td>請求書発行、idempotent key <code>(owner_id, billing_ym)</code>(FR-148。<code>uq_billing_invoices_owner_month</code> および <code>uq_usage_metering_owner_month</code> で担保)</td>
 </tr>
 <tr>
 <td><strong>無料枠超過・支払方法未登録判定</strong></td>

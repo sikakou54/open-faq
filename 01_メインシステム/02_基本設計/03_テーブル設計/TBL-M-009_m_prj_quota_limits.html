@@ -43,7 +43,7 @@
 <td>外部キー</td>
 <td><ul class="key-cols">
 <li><code>project_id</code> → <code>M_PROJECTS(id)</code></li>
-<li><code>contract_owner_user_id</code> → <code>M_OWNERS(id)</code></li>
+<li><code>owner_id</code> → <code>M_OWNERS(id)</code></li>
 </ul></td>
 </tr>
 </tbody>
@@ -78,7 +78,7 @@
 <td></td>
 <td></td>
 <td></td>
-<td>（複合）<code>(resource_kind = 'question_monthly_limit' AND (threshold IS NOT NULL OR alert_thresholds = '[]')) OR (resource_kind = 'faq_monthly_limit' AND threshold IS NULL AND alert_thresholds = '[]')</code></td>
+<td>（複合）<code>(resource_kind = 'q_monthly_limit' AND (threshold IS NOT NULL OR alert_thresholds = '[]')) OR (resource_kind = 'faq_monthly_limit' AND threshold IS NULL AND alert_thresholds = '[]')</code></td>
 
 </tr>
 <tr>
@@ -98,7 +98,7 @@
 <tr>
 <td style="text-align: right;">3</td>
 <td>契約 owner ID</td>
-<td><code>contract_owner_user_id</code></td>
+<td><code>owner_id</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
@@ -120,7 +120,7 @@
 <td></td>
 <td>①</td>
 <td></td>
-<td><code>resource_kind IN ('question_monthly_limit','faq_monthly_limit')</code></td>
+<td><code>resource_kind IN ('q_monthly_limit','faq_monthly_limit')</code></td>
 
 </tr>
 <tr>
@@ -327,7 +327,7 @@
 <tbody>
 <tr>
 <td><code>resource_kind</code></td>
-<td><code>question_monthly_limit</code></td>
+<td><code>q_monthly_limit</code></td>
 <td>質問数の月次上限件数</td>
 <td>上限=KV <code>usage-limit:default:question</code> / 無料枠=KV <code>usage-limit:free-default:question</code>(初期 1,000)</td>
 </tr>
@@ -339,7 +339,7 @@
 </tr>
 </tbody>
 </table>
-<p>質問数上限の最小 / 最大件数は KV <code>usage-limit:min</code> / <code>usage-limit:max</code> を入力ガードに用いる。FAQには上限値を保持しない。KV ミラーは <code>usage-limit:&lt;contract_owner_user_id&gt;:&lt;project_id&gt;</code>(30s TTL)。</p>
+<p>質問数上限の最小 / 最大件数は KV <code>usage-limit:min</code> / <code>usage-limit:max</code> を入力ガードに用いる。FAQには上限値を保持しない。KV ミラーは <code>usage-limit:&lt;owner_id&gt;:&lt;project_id&gt;</code>(30s TTL)。</p>
 </article>
 </body>
 </html>

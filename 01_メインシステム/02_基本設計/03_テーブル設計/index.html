@@ -18,7 +18,7 @@
 <p class="ps-lead"><strong>このページは、メインシステムのデータベース(Cloudflare D1 / SQLite)に存在する全テーブルのスキーマ(カラム定義 / 主キー / 外部キー / インデックス / 制約 / コード値)を定義します。</strong></p>
 </aside>
 
-<p class="doc-meta"><span><b>版数</b> v2.9</span><span><b>更新</b> 2026-06-18</span><span class="dm-status">承認済</span></p>
+<p class="doc-meta"><span><b>版数</b> v3.0</span><span><b>更新</b> 2026-06-18</span><span class="dm-status">承認済</span></p>
 
 <h2 id="1-テーブル一覧">1. テーブル一覧</h2>
 <table>
@@ -329,8 +329,13 @@
 <tbody>
 <tr>
 <td>2026-06-18</td>
+<td>v3.0</td>
+<td>長いカラム名を短縮。契約境界キー <code>contract_owner_user_id</code>→<code>owner_id</code>(概念名・全層・FK・索引・検査も追随)。ほか <code>source_unresolved_question_id</code>→<code>source_inquiry_id</code> / <code>contact_email_verified_at</code>→<code>contact_verified_at</code> / <code>email_key_version</code>→<code>email_key_ver</code> / <code>recipient_email_hmac</code>→<code>recipient_hmac</code> / <code>stripe_subscription_id</code>→<code>stripe_sub_id</code> / <code>stripe_invoice_id</code>→<code>stripe_inv_id</code> / <code>current_period_start・end</code>→<code>period_start・end</code> / <code>question_monthly_limit</code>→<code>q_monthly_limit</code> / <code>faq_count_snapshot</code>→<code>faq_cnt_snapshot</code> / <code>billing_year_month</code>→<code>billing_ym</code>。短い共通カラム(<code>id</code>/<code>status</code>/<code>name</code> 等)は不変。</td>
+</tr>
+<tr>
+<td>2026-06-18</td>
 <td>v2.9</td>
-<td>テーブル物理名を大文字化 + 略語短縮(例 <code>M_project_users</code>→<code>M_PRJ_USERS</code>、<code>H_faq_revisions</code>→<code>H_FAQ_REV</code>、<code>TP_ai_threshold_persistent_cache</code>→<code>TP_AI_THRESH_CACHE</code>)。設計ファイル名・全層参照・nav・検索を追随。あわせて、テーブル名と一致して誤って接頭辞が付いていた REST API パス(<code>/projects</code> / <code>/faqs</code> / <code>/inquiries</code> 等)と JSON 応答キーを原状に復元。列名・<code>contract_owner_user_id</code>・<code>actor_type</code> は不変。</td>
+<td>テーブル物理名を大文字化 + 略語短縮(例 <code>M_project_users</code>→<code>M_PRJ_USERS</code>、<code>H_faq_revisions</code>→<code>H_FAQ_REV</code>、<code>TP_ai_threshold_persistent_cache</code>→<code>TP_AI_THRESH_CACHE</code>)。設計ファイル名・全層参照・nav・検索を追随。あわせて、テーブル名と一致して誤って接頭辞が付いていた REST API パス(<code>/projects</code> / <code>/faqs</code> / <code>/inquiries</code> 等)と JSON 応答キーを原状に復元。列名・<code>owner_id</code>・<code>actor_type</code> は不変。</td>
 </tr>
 <tr>
 <td>2026-06-18</td>
@@ -340,7 +345,7 @@
 <tr>
 <td>2026-06-18</td>
 <td>v2.7</td>
-<td>命名規約を物理適用。全 31 テーブルの物理名・設計ファイル名・FK 参照・全層相互参照・<code>nav-data.js</code>・検索インデックスへ分類接頭辞(<code>M_</code> / <code>T_</code> / <code>H_</code> / <code>TP_</code>)を一括付与(例 <code>owners</code>→<code>M_OWNERS</code>、<code>audit_logs</code>→<code>H_AUDIT_LOGS</code>)。列名・<code>contract_owner_user_id</code>・<code>actor_type</code> 等の非テーブル識別子は不変。</td>
+<td>命名規約を物理適用。全 31 テーブルの物理名・設計ファイル名・FK 参照・全層相互参照・<code>nav-data.js</code>・検索インデックスへ分類接頭辞(<code>M_</code> / <code>T_</code> / <code>H_</code> / <code>TP_</code>)を一括付与(例 <code>owners</code>→<code>M_OWNERS</code>、<code>audit_logs</code>→<code>H_AUDIT_LOGS</code>)。列名・<code>owner_id</code>・<code>actor_type</code> 等の非テーブル識別子は不変。</td>
 </tr>
 <tr>
 <td>2026-06-18</td>

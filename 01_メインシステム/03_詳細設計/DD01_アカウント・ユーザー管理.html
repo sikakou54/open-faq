@@ -202,8 +202,8 @@
 <p class="section-lead">オーナーとプロジェクトユーザーを 2 マスタでどう完全分離し、契約・プロジェクトへどう紐付けるかの実装規約を定めます。次の箇条書きは、オーナー判定が <code>M_OWNERS</code> 行存在であること、新規オーナー登録時の同一トランザクション処理を示します。</p>
 <ul>
 <li><strong>オーナー判定(isOwner)</strong> = <code>M_OWNERS</code> 行(<code>valid=1</code>)が存在すること。<code>M_OWNERS.id</code> が契約境界キー本体であり、オーナーは <code>M_OWNERS</code> マスタで認証・契約属性を一元管理する(プロジェクトユーザーとは別マスタ・別認証系統)</li>
-<li>プロジェクトユーザーは <code>M_PRJ_USERS</code> マスタで認証情報を持ち(オーナーは含まない完全分離)、<code>M_PRJ_USERS.contract_owner_user_id</code>(→ <code>M_OWNERS.id</code>)経由で所属契約に紐付く</li>
-<li>プロジェクトユーザーの権限は <code>M_PRJ_USER_ASGN.role</code>(<code>admin</code> / <code>member</code>)とプロジェクト割当の組合せで管理する。割当行は <code>M_PRJ_USER_ASGN(project_user_id</code> → <code>M_PRJ_USERS</code>, <code>project_id</code>, <code>contract_owner_user_id</code> → <code>M_OWNERS.id</code>, <code>role)</code></li>
+<li>プロジェクトユーザーは <code>M_PRJ_USERS</code> マスタで認証情報を持ち(オーナーは含まない完全分離)、<code>M_PRJ_USERS.owner_id</code>(→ <code>M_OWNERS.id</code>)経由で所属契約に紐付く</li>
+<li>プロジェクトユーザーの権限は <code>M_PRJ_USER_ASGN.role</code>(<code>admin</code> / <code>member</code>)とプロジェクト割当の組合せで管理する。割当行は <code>M_PRJ_USER_ASGN(project_user_id</code> → <code>M_PRJ_USERS</code>, <code>project_id</code>, <code>owner_id</code> → <code>M_OWNERS.id</code>, <code>role)</code></li>
 <li>オーナーは <code>M_OWNERS</code> 行存在(<code>isOwner=true</code>)による全権 bypass で認可され、プロジェクトへの自動 admin 割当行(旧 v1.10)は持たない。プロジェクト別の <code>admin</code> は <code>M_PRJ_USER_ASGN</code> の割当でのみ付与される</li>
 <li>新規オーナー登録時のトランザクション: <code>INSERT INTO M_OWNERS(id, contract_status='active', valid=1, ...)</code> を BEGIN IMMEDIATE で実行(<code>M_OWNERS.id</code> = <code>contractOwnerUserId</code> = 契約境界キー、ULID)。認証情報(メール / パスワード)も <code>M_OWNERS</code> 行に持つ</li>
 <li>共有概念は <a href="../../共有/共有概念.html">../../共有/共有概念.html</a> を正本とする</li>
@@ -262,7 +262,7 @@
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="co">// (2) M_PRJ_USER_ASGN 予約行(valid=0)</span></span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> tx<span class="op">.</span><span class="at">projectUserAssignments</span><span class="op">.</span><span class="fu">insert</span>({</span>
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    project_user_id<span class="op">:</span> projectUserId<span class="op">,</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    contract_owner_user_id<span class="op">:</span> contractOwnerUserId<span class="op">,</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    owner_id<span class="op">:</span> contractOwnerUserId<span class="op">,</span></span>
 <span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    project_id<span class="op">:</span> projectId<span class="op">,</span></span>
 <span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    role<span class="op">:</span> invitedRole<span class="op">,</span>                       <span class="co">// &#39;admin&#39; | &#39;member&#39;</span></span>
 <span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    valid<span class="op">:</span> <span class="dv">0</span><span class="op">,</span>                                <span class="co">// SCR-018 完了時に 1 に更新</span></span>
@@ -285,7 +285,7 @@
 <div class="sourceCode" id="cb3"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> { tokenRecord<span class="op">,</span> projectUserId } <span class="op">=</span> <span class="cf">await</span> <span class="fu">verifyToken</span>(rawToken<span class="op">,</span> <span class="st">&#39;activation&#39;</span><span class="op">,</span> env)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> meta <span class="op">=</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">parse</span>(tokenRecord<span class="op">.</span><span class="at">meta</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> project <span class="op">=</span> <span class="cf">await</span> db<span class="op">.</span><span class="at">M_PROJECTS</span><span class="op">.</span><span class="fu">findById</span>(meta<span class="op">.</span><span class="at">invitedProjectId</span>)</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> owner <span class="op">=</span> <span class="cf">await</span> db<span class="op">.</span><span class="at">M_OWNERS</span><span class="op">.</span><span class="fu">findById</span>(project<span class="op">.</span><span class="at">contract_owner_user_id</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> owner <span class="op">=</span> <span class="cf">await</span> db<span class="op">.</span><span class="at">M_OWNERS</span><span class="op">.</span><span class="fu">findById</span>(project<span class="op">.</span><span class="at">owner_id</span>)</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> user <span class="op">=</span> <span class="cf">await</span> db<span class="op">.</span><span class="at">projectUsers</span><span class="op">.</span><span class="fu">findById</span>(projectUserId)</span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="cf">return</span> {</span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  projectUserId<span class="op">,</span></span>
@@ -409,7 +409,7 @@
 <p class="section-lead">契約共通項目に表示するプロジェクト件数の集計ロジックを定めます。月次上限・無料枠はプロジェクト単位のため本集計の対象外です。</p>
 <p>契約共通項目の「利用中のプロジェクト: N」表示用に参照プロジェクト件数を返す。今月の利用上限・無料利用枠はプロジェクト単位のため対象外とする。</p>
 <ul>
-<li>AI 利用コスト消化率等の契約共通指標: <code>SELECT COUNT(*) FROM M_PROJECTS WHERE contract_owner_user_id = :contractOwnerUserId AND deleted_at IS NULL</code>(契約配下の全プロジェクト数。契約全体に適用される指標のため、全プロジェクトが利用先となる)</li>
+<li>AI 利用コスト消化率等の契約共通指標: <code>SELECT COUNT(*) FROM M_PROJECTS WHERE owner_id = :contractOwnerUserId AND deleted_at IS NULL</code>(契約配下の全プロジェクト数。契約全体に適用される指標のため、全プロジェクトが利用先となる)</li>
 <li>集約レスポンスは <code>GET /me/onboarding-status</code> と同一 API にまとめて返却(<code>shared_assets_usage</code> フィールド)し、SCR-016 の 1 ロードで全データを揃える</li>
 </ul>
 <p>N=0 の場合のラベル切替は基本設計 <a href="../02_基本設計/01_画面設計/index.html">01_画面設計/index.html §4.4.4</a> のメッセージ ID 体系(<code>MSG-SCR-016-LBL-005</code> / <code>LBL-006</code>)に従う。</p>
@@ -559,7 +559,7 @@
 <tr>
 <td>v1.5</td>
 <td>2026-06-19</td>
-<td>ユーザーモデルを 2 マスタ完全分離へ改訂。旧 <code>users</code> + <code>contract_owners</code> を <code>M_OWNERS</code>(オーナー認証 + 契約属性 = 契約境界キー本体)へ統合、旧 <code>users</code>(非オーナー)を <code>M_PRJ_USERS</code>(プロジェクトユーザー認証・オーナー除外)へ、旧 <code>M_PRJ_USERS</code>(割当 + <code>role</code>)を <code>M_PRJ_USER_ASGN</code> へ分離。オーナー判定 = <code>M_OWNERS</code> 行存在(isOwner)。「オーナー自動 admin 行(v1.10)」前提を撤回(オーナーは isOwner 全権、admin は割当でのみ付与)。状態値正本を <code>M_OWNERS.contract_status</code> に改名。招待・有効化・割当解除・退会の擬似コード / SQL / シーケンス図を新マスタ構成へ更新し、横断参照(トークン・規約同意・監査ログ)を <code>actor_type</code> + <code>actor_id</code> 化。<code>contract_owner_user_id</code> 名称は維持(→ <code>M_OWNERS.id</code>)。</td>
+<td>ユーザーモデルを 2 マスタ完全分離へ改訂。旧 <code>users</code> + <code>contract_owners</code> を <code>M_OWNERS</code>(オーナー認証 + 契約属性 = 契約境界キー本体)へ統合、旧 <code>users</code>(非オーナー)を <code>M_PRJ_USERS</code>(プロジェクトユーザー認証・オーナー除外)へ、旧 <code>M_PRJ_USERS</code>(割当 + <code>role</code>)を <code>M_PRJ_USER_ASGN</code> へ分離。オーナー判定 = <code>M_OWNERS</code> 行存在(isOwner)。「オーナー自動 admin 行(v1.10)」前提を撤回(オーナーは isOwner 全権、admin は割当でのみ付与)。状態値正本を <code>M_OWNERS.contract_status</code> に改名。招待・有効化・割当解除・退会の擬似コード / SQL / シーケンス図を新マスタ構成へ更新し、横断参照(トークン・規約同意・監査ログ)を <code>actor_type</code> + <code>actor_id</code> 化。<code>owner_id</code> 名称は維持(→ <code>M_OWNERS.id</code>)。</td>
 </tr>
 <tr>
 <td>v1.4</td>

@@ -236,7 +236,7 @@
 <span>SELECT 'project_user' AS actor_type, pu.id AS actor_id, pu.email_hmac</span>
 <span>FROM M_PRJ_USERS pu</span>
 <span>JOIN M_PRJ_USER_ASGN pua ON pua.project_user_id = pu.id AND pua.valid = 1 AND pua.role = 'admin'</span>
-<span>WHERE pu.contract_owner_user_id = :contractOwnerUserId AND pu.valid = 1;</span></code></pre></div>
+<span>WHERE pu.owner_id = :contractOwnerUserId AND pu.valid = 1;</span></code></pre></div>
 <p>プロジェクト関連通知(<code>NOTIF-CHAT_REPLY_TO_STAFF</code> / <code>NOTIF-CHAT_HOLD_CHECK</code> 等の <code>normal</code> / <code>low</code>)は <strong>常時 ON 固定</strong> とし、配信時点で当該プロジェクトの宛先を動的スキャンして即時配信する。宛先はオーナー(<code>M_OWNERS</code>)と当該プロジェクトに割り当たる全プロジェクトユーザー(<code>M_PRJ_USER_ASGN WHERE valid=1</code> の admin + member)の和集合とする。画面設定と <code>project_notification_settings</code> テーブルは持たない。契約単位の <code>normal</code> / <code>high</code> 通知(課金・契約・運営お知らせ等)は契約 WS 側で扱う。個人通知オプトアウト・メンバー選択型 UI は MVP では提供しない。</p>
 <p>質問数上限アラート(<code>usage.question_limit.threshold</code>)はSCR-021-001で選択された25/50/80/90/100%への当月初回到達時に、オーナー(<code>M_OWNERS</code>)と当該プロジェクトの有効な<code>admin</code>(<code>M_PRJ_USER_ASGN.role='admin'</code>)へメールだけを送信する。宛先は<code>project_id</code>で限定し、アクター ID(<code>actor_type</code> + <code>actor_id</code>)と正規化メールアドレスで重複排除する。冪等キーは<code>question-limit-alert:{projectId}:{yyyyMM}:{thresholdPercent}</code>とし、画面上に送信先の表示・変更項目は設けない。</p>
 <p><code>announcement.kind = critical</code> は障害告知や緊急法令対応など、配信遅延が許容できない重大通知。メイン障害時の代替経路（Resend 直送フォールバック）の詳細は <a href="index.html">index.html</a> §7.2 / §13.2.2 を参照。</p>

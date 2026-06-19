@@ -174,7 +174,7 @@
 
 | サブセクション | 内容 |
 |---|---|
-| 概要 | テーブル名 / 論理名 / 説明 / 主管 FR / 保持期間 / `contract_owner_user_id` / `retention_class` |
+| 概要 | テーブル名 / 論理名 / 説明 / 主管 FR / 保持期間 / `owner_id` / `retention_class` |
 | カラム定義 | No / 論理名 / 物理名 / データ型 / 桁数 / NULL / PK / FK / UNIQUE / DEFAULT / 説明(11 列) |
 | 主キー | 主キー名 / 対象カラム |
 | 外部キー | 外部キー名 / 対象カラム / 参照先テーブル / 参照先カラム / 更新時 / 削除時 |
@@ -205,7 +205,7 @@
 
 - **全 31 テーブルへ接頭辞を適用済み**(物理名・ファイル名・FK 参照・全層の相互参照・`nav-data.js`・検索インデックスを一括更新)。各テーブルの分類は `index.html` §1 テーブル一覧の **「分類」列**が正本。
 - 新規テーブルは作成時に上記 4 分類のいずれかの接頭辞を物理名へ付与する。分類が曖昧なテーブル(関連 / 中間テーブル、設定テーブル等)は、最も近い 4 分類へ寄せる(関連・設定はデータの安定性に応じ `M_` または `T_`、ログは `H_`)。
-- 列名・契約境界キー(`contract_owner_user_id`)・コード値・アクター種別(`actor_type`)等の**非テーブル識別子には接頭辞を付けない**。
+- 列名・契約境界キー(`owner_id`)・コード値・アクター種別(`actor_type`)等の**非テーブル識別子には接頭辞を付けない**。
 
 ---
 
@@ -291,11 +291,11 @@
 主要概念の正本ルールは [共有/共有概念.html](共有/共有概念.html) で正本化する。本書には主要ルールの要約のみ記載:
 
 - 主要概念が変更される場合は、**共有概念.html 正本ルール表で示された正本ドキュメントを必ず更新** し、参照側ドキュメントはリンクのみ更新する(再掲禁止)
-- 主要概念には以下を含む(全項目は共有概念.html 参照): `M_OWNERS.contract_status` / `T_INQUIRIES.status` / 通知重要度 / SCR ID / AC ID / retention class / 法令プライバシー制約 / **オーナーとプロジェクトユーザーの 2 マスタ完全分離モデル**(`M_OWNERS`(オーナーマスタ = 認証 + 契約属性、`id` = 契約境界キー本体)+ `M_PRJ_USERS`(プロジェクトユーザーマスタ = 認証、オーナーを含まない)+ `M_PRJ_USER_ASGN`(プロジェクト割当、`role`='admin'/'member')、契約境界キー = `contract_owner_user_id` → `M_OWNERS.id`。認証・ログインは 2 マスタで完全分離、横断参照は `actor_type`('owner'/'project_user')+ `actor_id`)/ ハッシュチェーン監査 / PII 暗号化 / 暗号鍵管理 等
+- 主要概念には以下を含む(全項目は共有概念.html 参照): `M_OWNERS.contract_status` / `T_INQUIRIES.status` / 通知重要度 / SCR ID / AC ID / retention class / 法令プライバシー制約 / **オーナーとプロジェクトユーザーの 2 マスタ完全分離モデル**(`M_OWNERS`(オーナーマスタ = 認証 + 契約属性、`id` = 契約境界キー本体)+ `M_PRJ_USERS`(プロジェクトユーザーマスタ = 認証、オーナーを含まない)+ `M_PRJ_USER_ASGN`(プロジェクト割当、`role`='admin'/'member')、契約境界キー = `owner_id` → `M_OWNERS.id`。認証・ログインは 2 マスタで完全分離、横断参照は `actor_type`('owner'/'project_user')+ `actor_id`)/ ハッシュチェーン監査 / PII 暗号化 / 暗号鍵管理 等
 - `M_OWNERS.contract_status` は `active` / `suspended` / `deleted_pending` / `deleted` に固定し、`M_OWNERS`(= オーナー)でのみ意味を持つ。`contract_status='deleted'` 設定時は必ず `M_OWNERS.valid=0` も同時セットする(`M_OWNERS` テーブルの CHECK 制約で強制)
 - `T_INQUIRIES.status` は 2 値(`open` / `closed`)。未解決質問登録時 `open`、SCR-005 詳細画面の手動操作で `open` ↔ `closed` を切替する(再オープン回数制限なし)。FAQ 下書き保存・FAQ 公開・個別チャットの操作は本カラムを変更しない(連動ロジックなし、FR-077)
 - 通知重要度は `low` / `normal` / `high` / `critical`。`critical` はメール送信が必須となるイベント(当該契約のオーナー + `M_PRJ_USER_ASGN.role='admin' AND valid=1` を 1 件でも保持するプロジェクトユーザーへ配信)に予約
-- 利用者側ユーザーは **オーナー**(`M_OWNERS` マスタ。契約あたり 1 ユーザー固定、全権、MVP では譲渡不可、`M_OWNERS.id PRIMARY KEY` で 1 契約 = 1 オーナーを DB レベル担保。認可フロー先頭の `isOwner=true` bypass = `M_OWNERS` 行存在判定。オーナーは `M_PRJ_USERS` には含まれない=完全分離)と **プロジェクトユーザー**(`M_PRJ_USERS` マスタ。0..N、`M_PRJ_USERS.contract_owner_user_id` → `M_OWNERS.id` で契約に紐付き、プロジェクトごとに `M_PRJ_USER_ASGN.role` = `admin`(プロジェクト管理者)または `member`(メンバー)で制御)に分かれる。オーナー専有機能(プロジェクト作成・編集・削除、課金、退会、規約再同意、プロジェクトユーザー削除)はプロジェクト別ロールでは付与できない。プロジェクト割当が 0 のプロジェクトユーザーはダッシュボードのみ利用可能。プロジェクト編集・削除動線は SCR-004 / SCR-004-M1 モーダルに集約(SCR-008 プロジェクトホーム・SCR-016 には削除動線を置かず、SCR-008 は概要表示に徹する。一覧の「操作」列は撤去し行内リンクで編集 / 詳細へ遷移する方針)。プロジェクトユーザー削除は論理削除(`M_PRJ_USERS.valid=0`)。論理削除データは `updated_at` 基準で 90 日経過後に物理削除バッチ(DD13)で物理削除される。全削除対象テーブルに `valid INTEGER NOT NULL DEFAULT 1 CHECK (valid IN (0,1))` カラムを付与(`M_OWNERS` / `M_PRJ_USERS` / `M_PRJ_USER_ASGN` / `M_PROJECTS` / `M_ALLOWED_DOMAINS` / `M_FAQS` / `H_QUESTION_LOGS` / `T_INQUIRIES` / `T_BILL_SUBS` / `M_PRJ_QUOTA_LIMITS`)。月次上限件数・無料枠はプロジェクト単位(`M_PRJ_QUOTA_LIMITS`、SCR-021 上限管理。オーナー / 当該プロジェクト管理者が設定可)、レート制限は契約単位(`M_OWNER_QUOTA_OVR`)。`T_USAGE_METER` はプロジェクト単位計測 + 契約単位請求集計
+- 利用者側ユーザーは **オーナー**(`M_OWNERS` マスタ。契約あたり 1 ユーザー固定、全権、MVP では譲渡不可、`M_OWNERS.id PRIMARY KEY` で 1 契約 = 1 オーナーを DB レベル担保。認可フロー先頭の `isOwner=true` bypass = `M_OWNERS` 行存在判定。オーナーは `M_PRJ_USERS` には含まれない=完全分離)と **プロジェクトユーザー**(`M_PRJ_USERS` マスタ。0..N、`M_PRJ_USERS.owner_id` → `M_OWNERS.id` で契約に紐付き、プロジェクトごとに `M_PRJ_USER_ASGN.role` = `admin`(プロジェクト管理者)または `member`(メンバー)で制御)に分かれる。オーナー専有機能(プロジェクト作成・編集・削除、課金、退会、規約再同意、プロジェクトユーザー削除)はプロジェクト別ロールでは付与できない。プロジェクト割当が 0 のプロジェクトユーザーはダッシュボードのみ利用可能。プロジェクト編集・削除動線は SCR-004 / SCR-004-M1 モーダルに集約(SCR-008 プロジェクトホーム・SCR-016 には削除動線を置かず、SCR-008 は概要表示に徹する。一覧の「操作」列は撤去し行内リンクで編集 / 詳細へ遷移する方針)。プロジェクトユーザー削除は論理削除(`M_PRJ_USERS.valid=0`)。論理削除データは `updated_at` 基準で 90 日経過後に物理削除バッチ(DD13)で物理削除される。全削除対象テーブルに `valid INTEGER NOT NULL DEFAULT 1 CHECK (valid IN (0,1))` カラムを付与(`M_OWNERS` / `M_PRJ_USERS` / `M_PRJ_USER_ASGN` / `M_PROJECTS` / `M_ALLOWED_DOMAINS` / `M_FAQS` / `H_QUESTION_LOGS` / `T_INQUIRIES` / `T_BILL_SUBS` / `M_PRJ_QUOTA_LIMITS`)。月次上限件数・無料枠はプロジェクト単位(`M_PRJ_QUOTA_LIMITS`、SCR-021 上限管理。オーナー / 当該プロジェクト管理者が設定可)、レート制限は契約単位(`M_OWNER_QUOTA_OVR`)。`T_USAGE_METER` はプロジェクト単位計測 + 契約単位請求集計
 - `H_AUDIT_LOGS.retention_class` は **クラス名表記**(`general` / `billing`)に統一(期間表記 `1y` / `5y` は人間可読補助)
 
 ---
