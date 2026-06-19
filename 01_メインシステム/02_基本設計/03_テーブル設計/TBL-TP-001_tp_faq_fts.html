@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TP_faq_search_fts(TBL-TP-001) | FAQ 設計ポータル</title>
+<title>TP_FAQ_FTS(TBL-TP-001) | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../../../assets/css/style.css">
 <script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script src="../../../assets/js/nav-data.js" defer></script>
 <script src="../../../assets/js/search-index.js" defer></script>
 <script src="../../../assets/js/portal.js" defer></script>
 </head>
-<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/TBL-TP-001_tp_faq_search_fts.html">
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/TBL-TP-001_tp_faq_fts.html">
 <article class="content" id="content">
-<h1 id="TBL-TP-001">TBL-TP-001 <code>TP_faq_search_fts</code></h1>
-<span id="311-TP_faq_search_fts"></span>
+<h1 id="TBL-TP-001">TBL-TP-001 <code>TP_FAQ_FTS</code></h1>
+<span id="311-TP_FAQ_FTS"></span>
 <p class="section-lead">FAQ 全文検索用の FTS5 仮想テーブル(trigram トークナイザ)です。</p>
 <h3 id="3111-概要">概要</h3>
 <table>
@@ -26,7 +26,7 @@
 <tbody>
 <tr>
 <td>テーブル名</td>
-<td><code>TP_faq_search_fts</code></td>
+<td><code>TP_FAQ_FTS</code></td>
 </tr>
 <tr>
 <td>論理名</td>
@@ -34,7 +34,7 @@
 </tr>
 <tr>
 <td>主キー</td>
-<td>rowid(<code>M_faqs.rowid</code> と一致)</td>
+<td>rowid(<code>M_FAQS.rowid</code> と一致)</td>
 </tr>
 <tr>
 <td>外部キー</td>
@@ -138,21 +138,21 @@
 <td style="text-align: right;">1</td>
 <td><code>faq_search_fts_ai</code></td>
 <td>AFTER INSERT トリガ</td>
-<td><code>M_faqs</code></td>
-<td>新規行を <code>TP_faq_search_fts</code> に INSERT</td>
+<td><code>M_FAQS</code></td>
+<td>新規行を <code>TP_FAQ_FTS</code> に INSERT</td>
 </tr>
 <tr>
 <td style="text-align: right;">2</td>
 <td><code>faq_search_fts_ad</code></td>
 <td>AFTER DELETE トリガ</td>
-<td><code>M_faqs</code></td>
+<td><code>M_FAQS</code></td>
 <td><code>'delete'</code> コマンドで削除行を FTS から除去</td>
 </tr>
 <tr>
 <td style="text-align: right;">3</td>
 <td><code>faq_search_fts_au</code></td>
 <td>AFTER UPDATE トリガ</td>
-<td><code>M_faqs</code></td>
+<td><code>M_FAQS</code></td>
 <td>旧行を <code>'delete'</code> コマンドで除去 → 新行を INSERT</td>
 </tr>
 </tbody>

@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>T_inbox_messages(TBL-T-010) | FAQ 設計ポータル</title>
+<title>M_PRJ_USERS(TBL-M-002) | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../../../assets/css/style.css">
 <script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script src="../../../assets/js/nav-data.js" defer></script>
 <script src="../../../assets/js/search-index.js" defer></script>
 <script src="../../../assets/js/portal.js" defer></script>
 </head>
-<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-010_t_inbox_messages.html">
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-002_m_prj_users.html">
 <article class="content" id="content">
-<h1 id="TBL-T-010">TBL-T-010 <code>T_inbox_messages</code></h1>
-<span id="328-T_inbox_messages"></span>
-<p class="section-lead">利用者(テナント側)が受け取るお知らせ・通知の既読状態を管理する受信箱です。</p>
-<h3 id="3281-概要">概要</h3>
+<h1 id="TBL-M-002">TBL-M-002 <code>M_PRJ_USERS</code></h1>
+<span id="32-M_PRJ_USERS"></span>
+<p class="section-lead">プロジェクト管理者・メンバー(オーナー以外のログインユーザー)の認証情報(メール / パスワード / 氏名 / セッション状態)を保持するプロジェクトユーザーマスタです。オーナーは含まず、所属契約を <code>contract_owner_user_id</code>(<code>M_OWNERS(id)</code> 参照)で保持します。</p>
+<h3 id="321-概要">概要</h3>
 <table>
 <thead>
 <tr>
@@ -26,11 +26,11 @@
 <tbody>
 <tr>
 <td>テーブル名</td>
-<td><code>T_inbox_messages</code></td>
+<td><code>M_PRJ_USERS</code></td>
 </tr>
 <tr>
 <td>論理名</td>
-<td>受信箱(Tenant Plane)</td>
+<td>プロジェクトユーザーマスタ</td>
 </tr>
 <tr>
 <td>主キー</td>
@@ -39,13 +39,12 @@
 <tr>
 <td>外部キー</td>
 <td><ul class="key-cols">
-<li><code>contract_owner_user_id</code> → <code>M_owners(id)</code></li>
-<li><code>recipient_type</code> + <code>recipient_id</code> → <code>M_owners(id)</code> / <code>M_project_users(id)</code>(論理参照)</li>
+<li><code>contract_owner_user_id</code> → <code>M_OWNERS(id)</code></li>
 </ul></td>
 </tr>
 </tbody>
 </table>
-<h3 id="3282-カラム定義">カラム定義</h3>
+<h3 id="322-カラム定義">カラム定義</h3>
 <table>
 <thead>
 <tr>
@@ -80,13 +79,13 @@
 </tr>
 <tr>
 <td style="text-align: right;">2</td>
-<td>契約 owner ID</td>
+<td>契約境界 owner ID</td>
 <td><code>contract_owner_user_id</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
-<td><code>M_owners(id)</code></td>
+<td><code>M_OWNERS(id)</code></td>
 <td></td>
 <td></td>
 <td></td>
@@ -94,8 +93,8 @@
 </tr>
 <tr>
 <td style="text-align: right;">3</td>
-<td>受信者種別</td>
-<td><code>recipient_type</code></td>
+<td>メール(暗号化)</td>
+<td><code>email_encrypted</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
@@ -103,13 +102,13 @@
 <td></td>
 <td></td>
 <td></td>
-<td><code>recipient_type IN ('owner','project_user')</code></td>
+<td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">4</td>
-<td>受信者 ID</td>
-<td><code>recipient_id</code></td>
+<td>メール HMAC</td>
+<td><code>email_hmac</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
@@ -117,69 +116,27 @@
 <td></td>
 <td></td>
 <td></td>
-<td><code>recipient_type</code> に応じ <code>M_owners(id)</code> / <code>M_project_users(id)</code> を指す(論理参照)</td>
+<td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">5</td>
-<td>カテゴリ</td>
-<td><code>category</code></td>
-<td>TEXT</td>
+<td>鍵バージョン</td>
+<td><code>email_key_version</code></td>
+<td>INTEGER</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
 <td></td>
 <td></td>
+<td><code>1</code></td>
 <td></td>
-<td><code>category IN ('billing','announcement','system')</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">6</td>
-<td>優先度</td>
-<td><code>priority</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>NO</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td><code>priority IN ('low','normal','high','critical')</code></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">7</td>
-<td>タイトル</td>
-<td><code>title</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>NO</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td><code>length(title) BETWEEN 1 AND 200</code></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">8</td>
-<td>本文(HTML)</td>
-<td><code>body_html</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>NO</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">9</td>
-<td>由来種別</td>
-<td><code>source_kind</code></td>
+<td>パスワードハッシュ</td>
+<td><code>password_hash</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
@@ -191,9 +148,51 @@
 
 </tr>
 <tr>
+<td style="text-align: right;">7</td>
+<td>氏名</td>
+<td><code>name</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>YES</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">8</td>
+<td>状態</td>
+<td><code>status</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>'pending_verification'</code></td>
+<td><code>status IN ('pending_verification','pending_activation','active')</code></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">9</td>
+<td>有効フラグ</td>
+<td><code>valid</code></td>
+<td>INTEGER</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>1</code></td>
+<td><code>valid IN (0,1)</code></td>
+
+</tr>
+<tr>
 <td style="text-align: right;">10</td>
-<td>由来 ID</td>
-<td><code>source_id</code></td>
+<td>最終ログイン日時</td>
+<td><code>last_login_at</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
@@ -206,11 +205,11 @@
 </tr>
 <tr>
 <td style="text-align: right;">11</td>
-<td>重複キー</td>
-<td><code>dedup_key</code></td>
+<td>メール確認日時</td>
+<td><code>email_verified_at</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
-<td>NO</td>
+<td>YES</td>
 <td></td>
 <td></td>
 <td></td>
@@ -220,34 +219,6 @@
 </tr>
 <tr>
 <td style="text-align: right;">12</td>
-<td>既読日時</td>
-<td><code>read_at</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>YES</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">13</td>
-<td>非表示日時</td>
-<td><code>hidden_at</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>YES</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">14</td>
 <td>作成日時</td>
 <td><code>created_at</code></td>
 <td>TEXT</td>
@@ -260,9 +231,23 @@
 <td></td>
 
 </tr>
+<tr>
+<td style="text-align: right;">13</td>
+<td>更新日時</td>
+<td><code>updated_at</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
 </tbody>
 </table>
-<h3 id="3285-インデックス">インデックス</h3>
+<h3 id="325-インデックス">インデックス</h3>
 <table>
 <thead>
 <tr>
@@ -276,21 +261,28 @@
 <tbody>
 <tr>
 <td style="text-align: right;">1</td>
-<td><code>idx_inbox_owner_user_unread</code></td>
-<td><code>(contract_owner_user_id, recipient_type, recipient_id, read_at, created_at DESC)</code></td>
+<td><code>idx_project_users_email_hmac</code></td>
+<td><code>email_hmac</code></td>
 <td></td>
-<td>未読 + 新着</td>
+<td>メール検索</td>
 </tr>
 <tr>
 <td style="text-align: right;">2</td>
-<td><code>idx_inbox_dedup</code></td>
-<td><code>(contract_owner_user_id, dedup_key, created_at)</code></td>
+<td><code>idx_project_users_owner</code></td>
+<td><code>contract_owner_user_id</code></td>
 <td></td>
-<td>60 分集約判定</td>
+<td>契約境界クエリ</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td><code>idx_project_users_valid</code></td>
+<td><code>valid</code> WHERE <code>valid = 0</code></td>
+<td></td>
+<td>論理削除対象抽出(物理削除バッチ)</td>
 </tr>
 </tbody>
 </table>
-<h3 id="3287-コード値区分値">コード値・区分値</h3>
+<h3 id="327-コード値区分値">コード値・区分値</h3>
 <table>
 <thead>
 <tr>
@@ -301,42 +293,36 @@
 </thead>
 <tbody>
 <tr>
-<td><code>category</code></td>
-<td><code>billing</code></td>
-<td>課金</td>
+<td><code>status</code></td>
+<td><code>pending_verification</code></td>
+<td>メール未確認</td>
 </tr>
 <tr>
-<td><code>category</code></td>
-<td><code>announcement</code></td>
-<td>お知らせ</td>
+<td><code>status</code></td>
+<td><code>pending_activation</code></td>
+<td>招待中。<code>name=NULL</code> で作成され、有効化完了時に <code>name</code> 設定 + <code>status='active'</code> に遷移する</td>
 </tr>
 <tr>
-<td><code>category</code></td>
-<td><code>system</code></td>
-<td>システム</td>
+<td><code>status</code></td>
+<td><code>active</code></td>
+<td>有効</td>
 </tr>
 <tr>
-<td><code>priority</code></td>
-<td><code>low</code></td>
-<td>低</td>
+<td><code>valid</code></td>
+<td><code>1</code></td>
+<td>有効</td>
 </tr>
 <tr>
-<td><code>priority</code></td>
-<td><code>normal</code></td>
-<td>通常</td>
-</tr>
-<tr>
-<td><code>priority</code></td>
-<td><code>high</code></td>
-<td>高</td>
-</tr>
-<tr>
-<td><code>priority</code></td>
-<td><code>critical</code></td>
-<td>クリティカル</td>
+<td><code>valid</code></td>
+<td><code>0</code></td>
+<td>論理削除済み</td>
 </tr>
 </tbody>
 </table>
+<blockquote>
+<p>オーナーは本テーブルに含まれず、<a href="TBL-M-001_m_owners.html"><code>M_OWNERS</code></a> マスタで管理する。プロジェクトへの割当とロール(プロジェクト管理者 / メンバー)は <a href="TBL-M-003_m_prj_user_asgn.html"><code>M_PRJ_USER_ASGN</code></a> で保持する。</p>
+</blockquote>
+
 </article>
 </body>
 </html>

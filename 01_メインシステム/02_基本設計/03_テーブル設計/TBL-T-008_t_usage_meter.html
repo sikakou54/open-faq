@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>T_usage_metering(TBL-T-008) | FAQ 設計ポータル</title>
+<title>T_USAGE_METER(TBL-T-008) | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../../../assets/css/style.css">
 <script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script src="../../../assets/js/nav-data.js" defer></script>
 <script src="../../../assets/js/search-index.js" defer></script>
 <script src="../../../assets/js/portal.js" defer></script>
 </head>
-<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-008_t_usage_metering.html">
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-008_t_usage_meter.html">
 <article class="content" id="content">
-<h1 id="TBL-T-008">TBL-T-008 <code>T_usage_metering</code></h1>
-<span id="322-T_usage_metering"></span>
+<h1 id="TBL-T-008">TBL-T-008 <code>T_USAGE_METER</code></h1>
+<span id="322-T_USAGE_METER"></span>
 <p class="section-lead">質問数・FAQ 件数をプロジェクト単位で計測し、請求はオーナーで SUM 集計します。</p>
 <h3 id="3221-概要">概要</h3>
 <table>
@@ -26,7 +26,7 @@
 <tbody>
 <tr>
 <td>テーブル名</td>
-<td><code>T_usage_metering</code></td>
+<td><code>T_USAGE_METER</code></td>
 </tr>
 <tr>
 <td>論理名</td>
@@ -39,8 +39,8 @@
 <tr>
 <td>外部キー</td>
 <td><ul class="key-cols">
-<li><code>contract_owner_user_id</code> → <code>M_owners(id)</code></li>
-<li><code>project_id</code> → <code>M_projects(id)</code></li>
+<li><code>contract_owner_user_id</code> → <code>M_OWNERS(id)</code></li>
+<li><code>project_id</code> → <code>M_PROJECTS(id)</code></li>
 </ul></td>
 </tr>
 </tbody>
@@ -86,7 +86,7 @@
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
-<td><code>M_owners(id)</code></td>
+<td><code>M_OWNERS(id)</code></td>
 <td>①</td>
 <td></td>
 <td></td>
@@ -100,7 +100,7 @@
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
-<td><code>M_projects(id)</code></td>
+<td><code>M_PROJECTS(id)</code></td>
 <td>②</td>
 <td></td>
 <td></td>

@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>T_terms_agreements(TBL-T-012) | FAQ 設計ポータル</title>
+<title>T_PRJ_LEGACY_KEYS(TBL-T-003) | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../../../assets/css/style.css">
 <script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script src="../../../assets/js/nav-data.js" defer></script>
 <script src="../../../assets/js/search-index.js" defer></script>
 <script src="../../../assets/js/portal.js" defer></script>
 </head>
-<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-012_t_terms_agreements.html">
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-003_t_prj_legacy_keys.html">
 <article class="content" id="content">
-<h1 id="TBL-T-012">TBL-T-012 <code>T_terms_agreements</code></h1>
-<span id="331-T_terms_agreements"></span>
-<p class="section-lead">利用者ごとの規約同意履歴を保持します。</p>
-<h3 id="3311-概要">概要</h3>
+<h1 id="TBL-T-003">TBL-T-003 <code>T_PRJ_LEGACY_KEYS</code></h1>
+<span id="37-T_PRJ_LEGACY_KEYS"></span>
+<p class="section-lead">ウィジェット鍵ローテーション時に旧キーを 24 時間だけ有効にするためのレガシー API キーを保持します。</p>
+<h3 id="371-概要">概要</h3>
 <table>
 <thead>
 <tr>
@@ -26,11 +26,11 @@
 <tbody>
 <tr>
 <td>テーブル名</td>
-<td><code>T_terms_agreements</code></td>
+<td><code>T_PRJ_LEGACY_KEYS</code></td>
 </tr>
 <tr>
 <td>論理名</td>
-<td>規約同意</td>
+<td>レガシー API キー</td>
 </tr>
 <tr>
 <td>主キー</td>
@@ -39,13 +39,12 @@
 <tr>
 <td>外部キー</td>
 <td><ul class="key-cols">
-<li><code>actor_type</code> + <code>actor_id</code> → <code>M_owners(id)</code> / <code>M_project_users(id)</code>(論理参照)</li>
-<li><code>(doc_type, terms_version)</code> → <code>M_terms_versions(doc_type, version)</code></li>
+<li><code>project_id</code> → <code>M_PROJECTS(id)</code></li>
 </ul></td>
 </tr>
 </tbody>
 </table>
-<h3 id="3312-カラム定義">カラム定義</h3>
+<h3 id="372-カラム定義">カラム定義</h3>
 <table>
 <thead>
 <tr>
@@ -80,91 +79,63 @@
 </tr>
 <tr>
 <td style="text-align: right;">2</td>
-<td>操作者種別</td>
-<td><code>actor_type</code></td>
+<td>プロジェクト ID</td>
+<td><code>project_id</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
+<td><code>M_PROJECTS(id)</code></td>
 <td></td>
-<td>①</td>
 <td></td>
-<td><code>actor_type IN ('owner','project_user')</code></td>
+<td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">3</td>
-<td>操作者 ID</td>
-<td><code>actor_id</code></td>
+<td>公開鍵</td>
+<td><code>public_key</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
 <td></td>
-<td>①</td>
 <td></td>
-<td><code>actor_type</code> に応じ <code>M_owners(id)</code> / <code>M_project_users(id)</code> を指す(論理参照)</td>
+<td></td>
+<td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">4</td>
-<td>文書種別</td>
-<td><code>doc_type</code></td>
+<td>猶予期限</td>
+<td><code>grace_until</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
-<td><code>M_terms_versions(doc_type)</code></td>
-<td>①</td>
+<td></td>
+<td></td>
 <td></td>
 <td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">5</td>
-<td>規約版</td>
-<td><code>terms_version</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>NO</td>
-<td></td>
-<td><code>M_terms_versions(version)</code></td>
-<td>①</td>
-<td></td>
-<td></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">6</td>
-<td>同意日時</td>
-<td><code>agreed_at</code></td>
+<td>作成日時</td>
+<td><code>created_at</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
-
-</tr>
-<tr>
-<td style="text-align: right;">7</td>
-<td>同意 IP(マスク済)</td>
-<td><code>agreed_ip_masked</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>YES</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
+<td><code>datetime('now')</code></td>
 <td></td>
 
 </tr>
 </tbody>
 </table>
-<h3 id="3315-インデックス">インデックス</h3>
+<h3 id="375-インデックス">インデックス</h3>
 <table>
 <thead>
 <tr>
@@ -178,15 +149,16 @@
 <tbody>
 <tr>
 <td style="text-align: right;">1</td>
-<td><code>uq_terms_actor_doc_version</code></td>
-<td><code>(actor_type, actor_id, doc_type, terms_version)</code></td>
-<td>○</td>
-<td>操作者 × 文書 × 版で一意</td>
+<td><code>idx_legacy_keys_key</code></td>
+<td><code>public_key</code></td>
+<td></td>
+<td>旧鍵検索</td>
 </tr>
 </tbody>
 </table>
-<h3 id="3317-コード値区分値">コード値・区分値</h3>
+<h3 id="377-コード値区分値">コード値・区分値</h3>
 <p>(なし)</p>
+
 </article>
 </body>
 </html>

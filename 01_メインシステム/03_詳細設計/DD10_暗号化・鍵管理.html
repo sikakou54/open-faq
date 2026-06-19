@@ -109,9 +109,9 @@
   Note over SS: 1 年後 MASTER_KEY_PREV を削除</code></pre>
 
 <h3 id="32-hkdf-sha256-派生鍵">3.2 HKDF-SHA256 派生鍵</h3>
-<p class="section-lead">オーナー単位の派生鍵を <code>MASTER_KEY</code> から HKDF-SHA256 で生成します。次の擬似コードは <code>deriveOwnerKey</code> の実装で、HKDF の <code>info</code> 文字列 <code>owner:&lt;id&gt;</code> に契約境界キー <code>M_owners.id</code>(= <code>contractOwnerUserId</code>)を埋め込み、オーナーごとに異なる AES-GCM 鍵を導出します。</p>
+<p class="section-lead">オーナー単位の派生鍵を <code>MASTER_KEY</code> から HKDF-SHA256 で生成します。次の擬似コードは <code>deriveOwnerKey</code> の実装で、HKDF の <code>info</code> 文字列 <code>owner:&lt;id&gt;</code> に契約境界キー <code>M_OWNERS.id</code>(= <code>contractOwnerUserId</code>)を埋め込み、オーナーごとに異なる AES-GCM 鍵を導出します。</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// app/shared/src/lib/encrypt.ts</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">// contractOwnerUserId は契約境界キー `M_owners.id`(旧 `contract_owners.user_id` / `users.id` と物理値同じ ULID を継承)。</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">// contractOwnerUserId は契約境界キー `M_OWNERS.id`(旧 `contract_owners.user_id` / `users.id` と物理値同じ ULID を継承)。</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">// HKDF info 文字列 `owner:&lt;id&gt;` のリテラルは v1.11 リファクタ後も不変(物理値継承により既存暗号化データの復号互換を維持)。</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fu">deriveOwnerKey</span>(masterKeyB64<span class="op">:</span> <span class="dt">string</span><span class="op">,</span> contractOwnerUserId<span class="op">:</span> <span class="dt">string</span>)<span class="op">:</span> <span class="bu">Promise</span><span class="op">&lt;</span><span class="bu">CryptoKey</span><span class="op">&gt;</span> {</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> masterRaw <span class="op">=</span> <span class="fu">base64Decode</span>(masterKeyB64)<span class="op">;</span></span>
@@ -207,7 +207,7 @@
 </table>
 <h4 id="342-dual-decrypt-期間の運用">3.4.2 dual-decrypt 期間の運用</h4>
 <ul>
-<li><strong>監査ログ</strong>: 鍵更新時は <code>key.rotation.start</code> / <code>key.rotation.complete</code> (<code>general</code> = 1y) を H_audit_logs に記録。</li>
+<li><strong>監査ログ</strong>: 鍵更新時は <code>key.rotation.start</code> / <code>key.rotation.complete</code> (<code>general</code> = 1y) を H_AUDIT_LOGS に記録。</li>
 <li><strong>アラート</strong>: 旧鍵 (<code>_PREV</code>) の使用率が 0% に近づいたら 60 日経過前でも撤去判断 (Cloudflare Analytics で旧鍵使用ヒット数を監視)。</li>
 </ul>
 <h3 id="35-backup_key-dual-decrypt-期間の運用">3.5 BACKUP_KEY dual-decrypt 期間の運用</h3>

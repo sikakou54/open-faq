@@ -127,8 +127,8 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>退会申請</td><td>退会申請を記録する</td><td>テーブル</td><td>出力</td><td>◯</td><td>—</td><td>—</td><td>—</td><td><code>T_withdrawal_requests</code>(<a href="../03_テーブル設計/TBL-T-011_t_withdrawal_requests.html">テーブル設計 3.29</a>)</td></tr>
-<tr><td>オーナー</td><td>契約状態を <code>deleted_pending</code> へ更新する</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>M_owners.contract_status</code>。<code>M_owners</code>(<a href="../03_テーブル設計/TBL-M-001_m_owners.html">テーブル設計 3.2</a>)</td></tr>
+<tr><td>退会申請</td><td>退会申請を記録する</td><td>テーブル</td><td>出力</td><td>◯</td><td>—</td><td>—</td><td>—</td><td><code>T_WITHDRAW_REQ</code>(<a href="../03_テーブル設計/TBL-T-011_t_withdraw_req.html">テーブル設計 3.29</a>)</td></tr>
+<tr><td>オーナー</td><td>契約状態を <code>deleted_pending</code> へ更新する</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>M_OWNERS.contract_status</code>。<code>M_OWNERS</code>(<a href="../03_テーブル設計/TBL-M-001_m_owners.html">テーブル設計 3.2</a>)</td></tr>
 <tr><td>退会申請</td><td>再認証付きで退会を申請する</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /withdrawal-requests</code>(<a href="../02_API設計/index.html">API 設計 5.9.3</a>)</td></tr>
 <tr><td>再認証</td><td>退会申請前に本人確認のため再認証する</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /auth/re-auth</code>(<a href="../02_API設計/index.html">API 設計 5.1.5</a>)</td></tr>
 </tbody>

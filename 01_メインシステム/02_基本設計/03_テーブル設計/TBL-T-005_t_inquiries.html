@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>T_inquiries(TBL-T-005) | FAQ 設計ポータル</title>
+<title>T_INQUIRIES(TBL-T-005) | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../../../assets/css/style.css">
 <script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script src="../../../assets/js/nav-data.js" defer></script>
@@ -12,8 +12,8 @@
 </head>
 <body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-005_t_inquiries.html">
 <article class="content" id="content">
-<h1 id="TBL-T-005">TBL-T-005 <code>T_inquiries</code></h1>
-<span id="314-T_inquiries"></span>
+<h1 id="TBL-T-005">TBL-T-005 <code>T_INQUIRIES</code></h1>
+<span id="314-T_INQUIRIES"></span>
 <p class="section-lead">FAQ 登録前の未解決質問を保持します。</p>
 <h3 id="3141-概要">概要</h3>
 <table>
@@ -26,7 +26,7 @@
 <tbody>
 <tr>
 <td>テーブル名</td>
-<td><code>T_inquiries</code></td>
+<td><code>T_INQUIRIES</code></td>
 </tr>
 <tr>
 <td>論理名</td>
@@ -39,9 +39,9 @@
 <tr>
 <td>外部キー</td>
 <td><ul class="key-cols">
-<li><code>contract_owner_user_id</code> → <code>M_owners(id)</code></li>
-<li><code>project_id</code> → <code>M_projects(id)</code></li>
-<li><code>question_log_id</code> → <code>H_question_logs(id)</code></li>
+<li><code>contract_owner_user_id</code> → <code>M_OWNERS(id)</code></li>
+<li><code>project_id</code> → <code>M_PROJECTS(id)</code></li>
+<li><code>question_log_id</code> → <code>H_QUESTION_LOGS(id)</code></li>
 </ul></td>
 </tr>
 </tbody>
@@ -87,7 +87,7 @@
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
-<td><code>M_owners(id)</code></td>
+<td><code>M_OWNERS(id)</code></td>
 <td></td>
 <td></td>
 <td></td>
@@ -101,7 +101,7 @@
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
-<td><code>M_projects(id)</code></td>
+<td><code>M_PROJECTS(id)</code></td>
 <td></td>
 <td></td>
 <td></td>
@@ -129,7 +129,7 @@
 <td style="text-align: right;">-</td>
 <td>YES</td>
 <td></td>
-<td><code>H_question_logs(id)</code></td>
+<td><code>H_QUESTION_LOGS(id)</code></td>
 <td></td>
 <td></td>
 <td></td>

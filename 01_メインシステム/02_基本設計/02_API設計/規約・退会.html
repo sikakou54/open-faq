@@ -53,7 +53,7 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>M_terms_versions</code>(<code>doc_type='terms_of_service'</code>)</td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>M_TERMS_VER</code>(<code>doc_type='terms_of_service'</code>)</td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -71,10 +71,10 @@
 <tr><td><code>version</code></td><td>string</td><td>返却した利用規約のバージョン</td></tr>
 <tr><td><code>effectiveDate</code></td><td>string (ISO 8601)</td><td>当該バージョンの施行日</td></tr>
 <tr><td><code>bodyHtml</code></td><td>string</td><td>利用規約の本文 HTML</td></tr>
-<tr><td><code>diffSummary</code></td><td>string</td><td>主な変更点(<code>M_terms_versions.diff_summary</code>。NULL の場合は省略)</td></tr>
+<tr><td><code>diffSummary</code></td><td>string</td><td>主な変更点(<code>M_TERMS_VER.diff_summary</code>。NULL の場合は省略)</td></tr>
 </tbody>
 </table>
-<p>(最新版のみ。<code>diffSummary</code> は <code>M_terms_versions.diff_summary</code>。SCR-015 の「主な変更点」表示に用いる。NULL の場合は省略)</p>
+<p>(最新版のみ。<code>diffSummary</code> は <code>M_TERMS_VER.diff_summary</code>。SCR-015 の「主な変更点」表示に用いる。NULL の場合は省略)</p>
 
 <h2 id="API-TRM-002">API-TRM-002 プライバシーポリシー 最新版取得</h2>
 <span id="591a-get-privacycurrent"></span>
@@ -104,7 +104,7 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>M_terms_versions</code>(<code>doc_type='privacy_policy'</code>)</td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>M_TERMS_VER</code>(<code>doc_type='privacy_policy'</code>)</td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -122,10 +122,10 @@
 <tr><td><code>version</code></td><td>string</td><td>返却したプライバシーポリシーのバージョン</td></tr>
 <tr><td><code>effectiveDate</code></td><td>string (ISO 8601)</td><td>当該バージョンの施行日</td></tr>
 <tr><td><code>bodyHtml</code></td><td>string</td><td>プライバシーポリシーの本文 HTML</td></tr>
-<tr><td><code>diffSummary</code></td><td>string</td><td>主な変更点(<code>M_terms_versions.diff_summary</code>。NULL の場合は省略)</td></tr>
+<tr><td><code>diffSummary</code></td><td>string</td><td>主な変更点(<code>M_TERMS_VER.diff_summary</code>。NULL の場合は省略)</td></tr>
 </tbody>
 </table>
-<p>(最新版のみ。<code>diffSummary</code> は <code>M_terms_versions.diff_summary</code>。SCR-015 の「主な変更点」表示に用いる。NULL の場合は省略)</p>
+<p>(最新版のみ。<code>diffSummary</code> は <code>M_TERMS_VER.diff_summary</code>。SCR-015 の「主な変更点」表示に用いる。NULL の場合は省略)</p>
 
 <h2 id="API-TRM-003">API-TRM-003 利用規約 同意</h2>
 <span id="592-post-termsagree"></span>
@@ -156,7 +156,7 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>T_terms_agreements</code>(<code>doc_type='terms_of_service'</code>)</td><td>◯</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>T_TERMS_AGREE</code>(<code>doc_type='terms_of_service'</code>)</td><td>◯</td><td>◯</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -172,7 +172,7 @@
 <tr><td><code>version</code></td><td>string</td><td>同意対象の利用規約バージョン(必須)</td></tr>
 </tbody>
 </table>
-<p><code>T_terms_agreements</code> に <code>(user_id, doc_type='terms_of_service', terms_version)</code> で 1 行記録(冪等: 既存同意があれば 200)。</p><h3>レスポンス(200)</h3>
+<p><code>T_TERMS_AGREE</code> に <code>(user_id, doc_type='terms_of_service', terms_version)</code> で 1 行記録(冪等: 既存同意があれば 200)。</p><h3>レスポンス(200)</h3>
 <p>同意記録結果。</p>
 
 <h2 id="API-TRM-004">API-TRM-004 プライバシーポリシー 同意</h2>
@@ -204,7 +204,7 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>T_terms_agreements</code>(<code>doc_type='privacy_policy'</code>)</td><td>◯</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>T_TERMS_AGREE</code>(<code>doc_type='privacy_policy'</code>)</td><td>◯</td><td>◯</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -220,7 +220,7 @@
 <tr><td><code>version</code></td><td>string</td><td>同意対象のプライバシーポリシーバージョン(必須)</td></tr>
 </tbody>
 </table>
-<p><code>T_terms_agreements</code> に <code>(user_id, doc_type='privacy_policy', terms_version)</code> で 1 行記録(冪等: 既存同意があれば 200)。SCR-015 / SCR-018 では利用規約・プライバシーポリシー双方の同意が必須条件であり、改定再同意では改定された文書の agree のみを呼び出す。</p><h3>レスポンス(200)</h3>
+<p><code>T_TERMS_AGREE</code> に <code>(user_id, doc_type='privacy_policy', terms_version)</code> で 1 行記録(冪等: 既存同意があれば 200)。SCR-015 / SCR-018 では利用規約・プライバシーポリシー双方の同意が必須条件であり、改定再同意では改定された文書の agree のみを呼び出す。</p><h3>レスポンス(200)</h3>
 <p>同意記録結果。</p>
 
 <h2 id="API-TRM-005">API-TRM-005 退会申請</h2>
@@ -252,8 +252,8 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>T_withdrawal_requests</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
-<tr><td><code>M_owners</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
+<tr><td><code>T_WITHDRAW_REQ</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td><code>M_OWNERS</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>

@@ -73,7 +73,7 @@
 <div class="layout-embed">
 <div class="le-cap">連絡先メール確認完了</div>
 <div class="scr-mock"><div class="screen" id="scr-019" role="region" aria-labelledby="scr-019-title"><div class="role-screen-note"><strong>外部確認ステップ:</strong> 実際の到達者は連絡先メール所有者です。プロジェクト管理者は完了状態を確認します。</div>
-<div class="screen-header"><div><span class="scr-name" id="scr-019-title">プロジェクト連絡先メール確認完了(TPL-PROJECT_CONTACT_VERIFY 着地 / 共通領域)</span></div><div class="scr-user">利用者: プロジェクト連絡先メール所有者(未認証 / `T_access_tokens.purpose='contact_verify'` 有効時のみ到達可能、アカウント不要)</div></div>
+<div class="screen-header"><div><span class="scr-name" id="scr-019-title">プロジェクト連絡先メール確認完了(TPL-PROJECT_CONTACT_VERIFY 着地 / 共通領域)</span></div><div class="scr-user">利用者: プロジェクト連絡先メール所有者(未認証 / `T_ACCESS_TOKENS.purpose='contact_verify'` 有効時のみ到達可能、アカウント不要)</div></div>
 <div class="public-form-layout"> <div class="simple-header"><i data-lucide="mail"></i>お問い合わせ先メール確認 — open-faq</div> <div style="width: 480px;">
   <!-- (a) 完了状態 -->
   <div class="auth-card xwide" style="width: auto;">
@@ -92,7 +92,7 @@
     <div class="alert-bar warn" role="status">このリンクは既に使用済みです。確認は完了しています</div>
   </div>
 </div> <div class="simple-footer">FAQ AI ウィジェット SaaS — open-faq</div> </div>
-<div class="note" style="margin-top: 10px;"><strong>備考(v1.7 新規)</strong><ul style="margin: 4px 0 0; padding-left: 18px;"><li>未認証画面(連絡先確認トークン認証のみ、Cookie セッションなし)。URL = <code>/auth/contact-verify?token=...</code></li><li>TPL-PROJECT_CONTACT_VERIFY 確認メールのリンクから到達(`T_access_tokens.purpose='contact_verify'`、24h、`meta.projectId` を JSON 保持)</li><li>「閉じる」押下前にバックグラウンドで `POST /auth/contact-verifications/{token}` を実行 → 同一トランザクションで `UPDATE M_projects SET contact_email_verified_at=?` + `consumeToken('contact_verify')`(FR-033a)</li><li>連絡先メール所有者はアカウントを持つ必要がない(第三者の共有メールアドレスでも本フローを進められる)。入力フォームを持たない確認専用ページ</li><li>サイドメニュー除外(未認証画面のため、01_画面設計/index.html §4.4.5)</li></ul></div>
+<div class="note" style="margin-top: 10px;"><strong>備考(v1.7 新規)</strong><ul style="margin: 4px 0 0; padding-left: 18px;"><li>未認証画面(連絡先確認トークン認証のみ、Cookie セッションなし)。URL = <code>/auth/contact-verify?token=...</code></li><li>TPL-PROJECT_CONTACT_VERIFY 確認メールのリンクから到達(`T_ACCESS_TOKENS.purpose='contact_verify'`、24h、`meta.projectId` を JSON 保持)</li><li>「閉じる」押下前にバックグラウンドで `POST /auth/contact-verifications/{token}` を実行 → 同一トランザクションで `UPDATE M_PROJECTS SET contact_email_verified_at=?` + `consumeToken('contact_verify')`(FR-033a)</li><li>連絡先メール所有者はアカウントを持つ必要がない(第三者の共有メールアドレスでも本フローを進められる)。入力フォームを持たない確認専用ページ</li><li>サイドメニュー除外(未認証画面のため、01_画面設計/index.html §4.4.5)</li></ul></div>
 </div></div>
 </div>
 
@@ -137,8 +137,8 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>プロジェクト</td><td>連絡先メール確認日時を設定する(<code>contact_email_verified_at</code>)</td><td>テーブル</td><td>出力</td><td>—</td><td>—</td><td>◯</td><td>—</td><td><code>M_projects</code>(<a href="../03_テーブル設計/TBL-M-004_m_projects.html">テーブル設計 3.6</a>)</td></tr>
-<tr><td>アクセストークン</td><td>確認トークンを検証・消費する(<code>purpose='contact_verify'</code>、<code>used_at</code> セット)</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>T_access_tokens</code>(<a href="../03_テーブル設計/TBL-T-002_t_access_tokens.html">テーブル設計 3.5</a>)</td></tr>
+<tr><td>プロジェクト</td><td>連絡先メール確認日時を設定する(<code>contact_email_verified_at</code>)</td><td>テーブル</td><td>出力</td><td>—</td><td>—</td><td>◯</td><td>—</td><td><code>M_PROJECTS</code>(<a href="../03_テーブル設計/TBL-M-004_m_projects.html">テーブル設計 3.6</a>)</td></tr>
+<tr><td>アクセストークン</td><td>確認トークンを検証・消費する(<code>purpose='contact_verify'</code>、<code>used_at</code> セット)</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>T_ACCESS_TOKENS</code>(<a href="../03_テーブル設計/TBL-T-002_t_access_tokens.html">テーブル設計 3.5</a>)</td></tr>
 <tr><td>連絡先メール確認</td><td>トークンを検証して連絡先メール確認日時をセットする</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /auth/contact-verifications/{token}</code>(<a href="../02_API設計/index.html">API 設計 5.1.9</a>)</td></tr>
 </tbody>
 </table>
@@ -161,7 +161,7 @@
 </tbody>
 </table>
 
-<div class="callout important"><i class="bi bi-pin-angle"></i><div><span class="c-title">サーバ側処理の正本</span>確認 API は同一トランザクションで <code>verifyToken</code> → <code>UPDATE M_projects SET contact_email_verified_at=now()</code> → <code>consumeToken</code> → 監査記録(<code>project.contact_email_verified</code>)を行います。トークン検証の正本は <a href="../08_認証・認可設計.html">08_認証・認可設計 §4</a>、メールテンプレート(TPL-PROJECT_CONTACT_VERIFY)の正本は <a href="../11_メール設計.html">11_メール設計</a>、メッセージ(MSG-SCR-019-*)の正本は <a href="../06_メッセージ一覧.html">06_メッセージ一覧</a>。</div></div>
+<div class="callout important"><i class="bi bi-pin-angle"></i><div><span class="c-title">サーバ側処理の正本</span>確認 API は同一トランザクションで <code>verifyToken</code> → <code>UPDATE M_PROJECTS SET contact_email_verified_at=now()</code> → <code>consumeToken</code> → 監査記録(<code>project.contact_email_verified</code>)を行います。トークン検証の正本は <a href="../08_認証・認可設計.html">08_認証・認可設計 §4</a>、メールテンプレート(TPL-PROJECT_CONTACT_VERIFY)の正本は <a href="../11_メール設計.html">11_メール設計</a>、メッセージ(MSG-SCR-019-*)の正本は <a href="../06_メッセージ一覧.html">06_メッセージ一覧</a>。</div></div>
 
 </article>
 <script>(function(){function r(){try{window.lucide&&lucide.createIcons({attrs:{'aria-hidden':'true',focusable:'false'}});}catch(e){}}if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',r);}else{r();}window.addEventListener('load',r);})();</script>

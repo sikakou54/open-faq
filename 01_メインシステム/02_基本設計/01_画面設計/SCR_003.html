@@ -144,7 +144,7 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>オーナー / プロジェクトユーザー</td><td>段階 2 でパスワードハッシュを更新する(対象マスタはトークンの actor 種別で特定。両マスタは完全分離)</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>M_owners</code>(<a href="../03_テーブル設計/TBL-M-001_m_owners.html">テーブル設計 3.2</a>)/ <code>M_project_users</code>(<a href="../03_テーブル設計/TBL-M-002_m_project_users.html">テーブル設計 3.1</a>)</td></tr>
+<tr><td>オーナー / プロジェクトユーザー</td><td>段階 2 でパスワードハッシュを更新する(対象マスタはトークンの actor 種別で特定。両マスタは完全分離)</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>M_OWNERS</code>(<a href="../03_テーブル設計/TBL-M-001_m_owners.html">テーブル設計 3.2</a>)/ <code>M_PRJ_USERS</code>(<a href="../03_テーブル設計/TBL-M-002_m_prj_users.html">テーブル設計 3.1</a>)</td></tr>
 <tr><td>パスワード再設定要求</td><td>段階 1 で再設定リンクを発行する(存在有無を返さない)</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /auth/password-reset-request</code>(<a href="../02_API設計/index.html">API 設計 5.1.4</a>)</td></tr>
 </tbody>
 </table>

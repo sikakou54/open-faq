@@ -34,7 +34,7 @@
 <tbody>
 <tr><td>API ID</td><td>API-MBR-001</td></tr>
 <tr><td>API 名</td><td>メンバー一覧</td></tr>
-<tr><td>エンドポイント</td><td><code>/M_projects/{id}/members</code></td></tr>
+<tr><td>エンドポイント</td><td><code>/projects/{id}/members</code></td></tr>
 <tr><td>HTTP メソッド</td><td>GET</td></tr>
 <tr><td>認証</td><td>Cookie</td></tr>
 <tr><td>権限</td><td>オーナー / 当該プロジェクト管理者</td></tr>
@@ -54,8 +54,8 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>M_project_user_assignments</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
-<tr><td><code>M_project_users</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>M_PRJ_USER_ASGN</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>M_PRJ_USERS</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -120,13 +120,13 @@
 <tbody>
 <tr><td>API ID</td><td>API-MBR-002</td></tr>
 <tr><td>API 名</td><td>プロジェクト単発招待(SCR-009-001 招待モード正本)</td></tr>
-<tr><td>エンドポイント</td><td><code>/M_projects/{id}/members</code></td></tr>
+<tr><td>エンドポイント</td><td><code>/projects/{id}/members</code></td></tr>
 <tr><td>HTTP メソッド</td><td>POST</td></tr>
 <tr><td>認証</td><td>Cookie + CSRF + 再認証必須</td></tr>
 <tr><td>権限</td><td>オーナー / 該当プロジェクトの <code>admin</code> ロール保持メンバー</td></tr>
 </tbody>
 </table>
-<p>既存のメンバーアカウントの場合は <code>M_project_user_assignments</code> 行のみ追加(指定ロール)。新規メールアドレスの場合は <code>M_project_users</code> を <strong><code>name=NULL</code> / <code>status='pending_activation'</code></strong> で作成 + <code>M_project_user_assignments</code> を <code>valid=0</code> で同時 INSERT + 招待メール送信(7 日有効、<code>T_access_tokens.purpose='activation'</code>、<code>meta={"invitedProjectId": "...", "invitedRole": "..."}</code> を JSON 保持)。<strong>氏名(<code>displayName</code>)は受け付けない</strong>(招待された本人が SCR-018 メンバーアカウント有効化ページで入力する。FR-016d / FR-016e)。</p>
+<p>既存のメンバーアカウントの場合は <code>M_PRJ_USER_ASGN</code> 行のみ追加(指定ロール)。新規メールアドレスの場合は <code>M_PRJ_USERS</code> を <strong><code>name=NULL</code> / <code>status='pending_activation'</code></strong> で作成 + <code>M_PRJ_USER_ASGN</code> を <code>valid=0</code> で同時 INSERT + 招待メール送信(7 日有効、<code>T_ACCESS_TOKENS.purpose='activation'</code>、<code>meta={"invitedProjectId": "...", "invitedRole": "..."}</code> を JSON 保持)。<strong>氏名(<code>displayName</code>)は受け付けない</strong>(招待された本人が SCR-018 メンバーアカウント有効化ページで入力する。FR-016d / FR-016e)。</p>
 <h3>処理概要</h3>
 <p class="section-lead">該当プロジェクト 1 件に対する単発招待を行う。</p>
 <table>
@@ -143,10 +143,10 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>M_project_users</code></td><td>◯</td><td>◯</td><td>—</td><td>—</td></tr>
-<tr><td><code>M_project_user_assignments</code></td><td>◯</td><td>◯</td><td>—</td><td>—</td></tr>
-<tr><td><code>T_access_tokens</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
-<tr><td><code>H_notification_logs</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td><code>M_PRJ_USERS</code></td><td>◯</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>M_PRJ_USER_ASGN</code></td><td>◯</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>T_ACCESS_TOKENS</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td><code>H_NOTIF_LOGS</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -200,14 +200,14 @@
 <tbody>
 <tr><td>API ID</td><td>API-MBR-003</td></tr>
 <tr><td>API 名</td><td>プロジェクト単位のロール変更(SCR-009-001 編集モード正本)</td></tr>
-<tr><td>エンドポイント</td><td><code>/M_projects/{id}/members/{userId}</code></td></tr>
+<tr><td>エンドポイント</td><td><code>/projects/{id}/members/{userId}</code></td></tr>
 <tr><td>HTTP メソッド</td><td>PATCH</td></tr>
 <tr><td>認証</td><td>Cookie + CSRF + 再認証必須</td></tr>
 <tr><td>権限</td><td>オーナー / 該当プロジェクトの <code>admin</code> ロール保持メンバー</td></tr>
 </tbody>
 </table>
 <h3>処理概要</h3>
-<p class="section-lead">当該プロジェクトの <code>M_project_user_assignments.role</code> を上書きする(他プロジェクトに影響なし)。</p>
+<p class="section-lead">当該プロジェクトの <code>M_PRJ_USER_ASGN.role</code> を上書きする(他プロジェクトに影響なし)。</p>
 <table>
 <thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
 <tbody>
@@ -222,7 +222,7 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>M_project_user_assignments</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
+<tr><td><code>M_PRJ_USER_ASGN</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -254,7 +254,7 @@
 <li>同時に表示名(<code>displayName</code>)を更新する場合は別途 <code>PATCH /members/{id}</code> を呼び出す(プロジェクト範囲外の属性のため)</li>
 <li>「該当プロジェクトの最後の <code>admin</code> を <code>member</code> へ降格」する結果になる場合は 403 <code>LAST_ADMIN_PROTECTED</code>(E-AUTHZ-LAST-ADMIN-PROTECTED)で拒否</li>
 <li>自分自身が当該プロジェクトの最後の <code>admin</code> で、自身を <code>member</code> へ降格する場合は 403 <code>SELF_MUTATION_FORBIDDEN</code></li>
-<li>ロール変更後も当該プロジェクトに <code>M_project_user_assignments</code> 行(割当)が維持される限り、<code>normal</code> / <code>low</code> 通知の配信対象に含まれる(配信先はトグル ON 時にプロジェクトの全メンバー)</li>
+<li>ロール変更後も当該プロジェクトに <code>M_PRJ_USER_ASGN</code> 行(割当)が維持される限り、<code>normal</code> / <code>low</code> 通知の配信対象に含まれる(配信先はトグル ON 時にプロジェクトの全メンバー)</li>
 </ul><h3>レスポンス(200)</h3>
 <pre><code>{ "userId": "...", "projectId": "...", "role": "admin|member", "updatedAt": "..." }</code></pre>
 <table>
@@ -287,7 +287,7 @@
 <tbody>
 <tr><td>API ID</td><td>API-MBR-004</td></tr>
 <tr><td>API 名</td><td>プロジェクト割当解除</td></tr>
-<tr><td>エンドポイント</td><td><code>/M_projects/{id}/members/{userId}</code></td></tr>
+<tr><td>エンドポイント</td><td><code>/projects/{id}/members/{userId}</code></td></tr>
 <tr><td>HTTP メソッド</td><td>DELETE</td></tr>
 <tr><td>認証</td><td>Cookie + CSRF + 再認証必須</td></tr>
 <tr><td>権限</td><td>オーナー / 該当プロジェクトの <code>admin</code> ロール保持メンバー</td></tr>
@@ -295,11 +295,11 @@
 </table>
 <p>対象が自分自身またはオーナーの場合は拒否する。</p>
 <ul>
-<li>対象ユーザーに他プロジェクトの有効割当が残る場合: <code>M_project_users</code>、他プロジェクトの割当(<code>M_project_user_assignments</code>)、セッション、招待トークンは維持する。</li>
-<li>他プロジェクトの有効割当が 0 件になる場合: 同一トランザクションで <code>M_project_users.valid=0</code>、全セッション失効、未使用招待トークン失効を実行する。</li>
+<li>対象ユーザーに他プロジェクトの有効割当が残る場合: <code>M_PRJ_USERS</code>、他プロジェクトの割当(<code>M_PRJ_USER_ASGN</code>)、セッション、招待トークンは維持する。</li>
+<li>他プロジェクトの有効割当が 0 件になる場合: 同一トランザクションで <code>M_PRJ_USERS.valid=0</code>、全セッション失効、未使用招待トークン失効を実行する。</li>
 </ul>
 <h3>処理概要</h3>
-<p class="section-lead">対象プロジェクトの <code>M_project_user_assignments.valid=0</code> を更新する。</p>
+<p class="section-lead">対象プロジェクトの <code>M_PRJ_USER_ASGN.valid=0</code> を更新する。</p>
 <table>
 <thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
 <tbody>
@@ -314,10 +314,10 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>M_project_user_assignments</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
-<tr><td><code>M_project_users</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
-<tr><td><code>T_sessions</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
-<tr><td><code>T_access_tokens</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>M_PRJ_USER_ASGN</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
+<tr><td><code>M_PRJ_USERS</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>T_SESSIONS</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>T_ACCESS_TOKENS</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -372,7 +372,7 @@
 <tr><td>権限</td><td>オーナー / 該当プロジェクトの <code>admin</code> 保持メンバー</td></tr>
 </tbody>
 </table>
-<p>旧 <code>T_access_tokens.purpose='activation'</code> を失効させ新規トークン(7 日有効、<code>meta</code> を同一の <code>invitedProjectId</code> / <code>invitedRole</code> で再発行)を発行。</p>
+<p>旧 <code>T_ACCESS_TOKENS.purpose='activation'</code> を失効させ新規トークン(7 日有効、<code>meta</code> を同一の <code>invitedProjectId</code> / <code>invitedRole</code> で再発行)を発行。</p>
 <h3>処理概要</h3>
 <p class="section-lead"><code>status='pending_activation'</code> のメンバーへ招待メールを再送する。</p>
 <table>
@@ -388,10 +388,10 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>M_project_users</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
-<tr><td><code>M_project_user_assignments</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
-<tr><td><code>T_access_tokens</code></td><td>◯</td><td>—</td><td>◯</td><td>—</td></tr>
-<tr><td><code>H_notification_logs</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td><code>M_PRJ_USERS</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>M_PRJ_USER_ASGN</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>T_ACCESS_TOKENS</code></td><td>◯</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>H_NOTIF_LOGS</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>

@@ -131,9 +131,9 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>未解決質問</td><td>未解決質問の一覧を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>T_inquiries</code>(<a href="../03_テーブル設計/TBL-T-005_t_inquiries.html">テーブル設計 3.14</a>)</td></tr>
-<tr><td>質問ログ</td><td>未解決理由(<code>result_reason_code</code>)を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>H_question_logs</code>(<a href="../03_テーブル設計/index.html">テーブル設計</a>)</td></tr>
-<tr><td>未解決質問一覧取得</td><td>条件付きで未解決質問一覧を取得する API を呼び出す</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /T_inquiries</code>(<code>status</code> / <code>projectId</code> / <code>cursor</code>)(<a href="../02_API設計/未解決質問.html#API-INQ-001">API 設計 5.6.1</a>)</td></tr>
+<tr><td>未解決質問</td><td>未解決質問の一覧を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>T_INQUIRIES</code>(<a href="../03_テーブル設計/TBL-T-005_t_inquiries.html">テーブル設計 3.14</a>)</td></tr>
+<tr><td>質問ログ</td><td>未解決理由(<code>result_reason_code</code>)を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>H_QUESTION_LOGS</code>(<a href="../03_テーブル設計/index.html">テーブル設計</a>)</td></tr>
+<tr><td>未解決質問一覧取得</td><td>条件付きで未解決質問一覧を取得する API を呼び出す</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /inquiries</code>(<code>status</code> / <code>projectId</code> / <code>cursor</code>)(<a href="../02_API設計/未解決質問.html#API-INQ-001">API 設計 5.6.1</a>)</td></tr>
 <tr><td>未解決質問 CSV</td><td>フィルタ適用結果を CSV でダウンロードする</td><td>ファイル</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
@@ -151,8 +151,8 @@
 </tr>
 </thead>
 <tbody>
-<tr><td><code>EV-01</code></td><td>一覧初期表示</td><td>画面遷移・リロード時</td><td><ul><li><code>GET /T_inquiries</code> で一覧を取得し表示</li><li>0 件時は EmptyState</li></ul></td><td><a href="#IT-03">IT-03</a>, <a href="#IT-04">IT-04</a>, <a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a>, <a href="#IT-07">IT-07</a>, <a href="#IT-08">IT-08</a>, <a href="#IT-09">IT-09</a></td></tr>
-<tr><td><code>EV-02</code></td><td>フィルタ適用</td><td>状況 / 期間フィルタ変更時</td><td>条件を付与して <code>GET /T_inquiries</code> を再取得し一覧を更新</td><td><a href="#IT-01">IT-01</a>, <a href="#IT-02">IT-02</a>, <a href="#IT-08">IT-08</a></td></tr>
+<tr><td><code>EV-01</code></td><td>一覧初期表示</td><td>画面遷移・リロード時</td><td><ul><li><code>GET /inquiries</code> で一覧を取得し表示</li><li>0 件時は EmptyState</li></ul></td><td><a href="#IT-03">IT-03</a>, <a href="#IT-04">IT-04</a>, <a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a>, <a href="#IT-07">IT-07</a>, <a href="#IT-08">IT-08</a>, <a href="#IT-09">IT-09</a></td></tr>
+<tr><td><code>EV-02</code></td><td>フィルタ適用</td><td>状況 / 期間フィルタ変更時</td><td>条件を付与して <code>GET /inquiries</code> を再取得し一覧を更新</td><td><a href="#IT-01">IT-01</a>, <a href="#IT-02">IT-02</a>, <a href="#IT-08">IT-08</a></td></tr>
 <tr><td><code>EV-03</code></td><td>CSV エクスポート</td><td>「CSV エクスポート」押下時</td><td>フィルタ適用結果を CSV でダウンロード</td><td>—</td></tr>
 <tr><td><code>EV-04</code></td><td>詳細遷移</td><td>問い合わせ ID リンク押下時</td><td>詳細画面(<code>SCR-005-001</code>)へ遷移</td><td><a href="#IT-03">IT-03</a></td></tr>
 </tbody>

@@ -18,7 +18,7 @@
 <p class="ps-lead"><strong>このページは、メインシステムの各テーブルを横断する設計意図と取り決め(テーブル間関係・ユーザーマスタ分離モデル・契約境界キーによるデータ分離・状態遷移・削除モード・PII 取扱・インデックス方針)を、図解付きで集約します。</strong> 個々のテーブルのスキーマ定義は <a href="index.html">テーブル設計(一覧)</a>と各テーブルファイル(<code>TBL-M-001_m_owners.html</code> 等)が正本です。</p>
 <ul>
 <li>主要テーブルがどのような関係(カーディナリティ)で結ばれるか</li>
-<li>ユーザーを 2 マスタ完全分離(<code>M_owners</code> / <code>M_project_users</code>) + 割当(<code>M_project_user_assignments</code>)で保持するモデルの役割分担</li>
+<li>ユーザーを 2 マスタ完全分離(<code>M_OWNERS</code> / <code>M_PRJ_USERS</code>) + 割当(<code>M_PRJ_USER_ASGN</code>)で保持するモデルの役割分担</li>
 <li>操作者・所有者・受信者を polymorphic actor(<code>{接頭}_type</code> + <code>{接頭}_id</code>)で表す横断参照の仕組み</li>
 <li>契約境界キー <code>contract_owner_user_id</code> によるマルチテナント分離の仕組み</li>
 <li>命名規則・型方針・SaaS データ分離・全契約横断テーブルの扱い</li>
@@ -36,164 +36,164 @@
 <h3 id="11-テーブル関係概観図">1.1 テーブル関係概観図</h3>
 <p class="section-lead">主要 FK 関係をドメイン(認証・ユーザー / プロジェクト・FAQ / 課金 / お知らせ)別にグルーピングした概観です。共通技術カラムと一部の従属テーブルは省略します。完全な関係は <a href="../ER図.html">ER図.html</a> を参照してください。</p>
 <pre class="mermaid"><code>erDiagram
-  M_owners ||--o{ M_project_users : "契約所属"
-  M_owners ||--o{ M_project_user_assignments : "契約境界"
-  M_project_users ||--o{ M_project_user_assignments : "割当"
-  M_owners ||--o{ M_projects : "contract_owner_user_id"
-  M_projects ||--o{ M_project_user_assignments : "割当先"
-  M_projects ||--o{ M_faqs : ""
-  M_projects ||--o{ T_inquiries : ""
-  M_projects ||--o{ M_allowed_domains : ""
-  M_projects ||--o| M_project_quota_limits : ""
-  M_faqs ||--o{ H_faq_revisions : "改訂履歴"
-  M_faqs ||--o| T_inquiries : "source_unresolved_question_id"
-  M_owners ||--o{ T_billing_subscriptions : ""
-  M_owners ||--o{ T_billing_invoices : ""
-  M_owners ||--o{ T_usage_metering : "プロジェクト計測/契約集計"
-  M_owners ||--o| M_owner_quota_overrides : "レート上書き"
-  M_service_announcements ||--o{ T_announcement_recipients : "fan-out"
-  T_announcement_recipients ||--o{ T_inbox_messages : "受信箱"
+  M_OWNERS ||--o{ M_PRJ_USERS : "契約所属"
+  M_OWNERS ||--o{ M_PRJ_USER_ASGN : "契約境界"
+  M_PRJ_USERS ||--o{ M_PRJ_USER_ASGN : "割当"
+  M_OWNERS ||--o{ M_PROJECTS : "contract_owner_user_id"
+  M_PROJECTS ||--o{ M_PRJ_USER_ASGN : "割当先"
+  M_PROJECTS ||--o{ M_FAQS : ""
+  M_PROJECTS ||--o{ T_INQUIRIES : ""
+  M_PROJECTS ||--o{ M_ALLOWED_DOMAINS : ""
+  M_PROJECTS ||--o| M_PRJ_QUOTA_LIMITS : ""
+  M_FAQS ||--o{ H_FAQ_REV : "改訂履歴"
+  M_FAQS ||--o| T_INQUIRIES : "source_unresolved_question_id"
+  M_OWNERS ||--o{ T_BILL_SUBS : ""
+  M_OWNERS ||--o{ T_BILL_INVOICES : ""
+  M_OWNERS ||--o{ T_USAGE_METER : "プロジェクト計測/契約集計"
+  M_OWNERS ||--o| M_OWNER_QUOTA_OVR : "レート上書き"
+  M_SERVICE_ANNOUNCE ||--o{ T_ANNOUNCE_RCPT : "fan-out"
+  T_ANNOUNCE_RCPT ||--o{ T_INBOX_MSG : "受信箱"
 </code></pre>
 
 <h3 id="12-関係一覧">1.2 親子関係の図解</h3>
 <p class="section-lead">主要テーブルの親子(1:N / 1:0..1)関係を、ドメインごとに図で示しながら解説します。各図の下に親 / 子 / カーディナリティ / 説明を表で整理します。完全な関係は <a href="../ER図.html">ER図.html</a> が正本です。</p>
 
-<p><strong>(1) ユーザー・契約・プロジェクト</strong> ── オーナーマスタ <code>M_owners</code> を契約境界の起点に、プロジェクトユーザーマスタ <code>M_project_users</code> とプロジェクト割当 <code>M_project_user_assignments</code> が連なります。オーナーは <code>M_project_users</code> に含めません。</p>
+<p><strong>(1) ユーザー・契約・プロジェクト</strong> ── オーナーマスタ <code>M_OWNERS</code> を契約境界の起点に、プロジェクトユーザーマスタ <code>M_PRJ_USERS</code> とプロジェクト割当 <code>M_PRJ_USER_ASGN</code> が連なります。オーナーは <code>M_PRJ_USERS</code> に含めません。</p>
 <pre class="mermaid"><code>erDiagram
-  M_owners {
+  M_OWNERS {
     TEXT id PK
   }
-  M_project_users {
+  M_PRJ_USERS {
     TEXT id PK
-    TEXT contract_owner_user_id FK "→M_owners.id"
+    TEXT contract_owner_user_id FK "→M_OWNERS.id"
   }
-  M_project_user_assignments {
-    TEXT project_user_id PK "FK→M_project_users.id"
-    TEXT project_id PK "FK→M_projects.id"
-    TEXT contract_owner_user_id FK "→M_owners.id"
+  M_PRJ_USER_ASGN {
+    TEXT project_user_id PK "FK→M_PRJ_USERS.id"
+    TEXT project_id PK "FK→M_PROJECTS.id"
+    TEXT contract_owner_user_id FK "→M_OWNERS.id"
     TEXT role
   }
-  M_projects {
+  M_PROJECTS {
     TEXT id PK
-    TEXT contract_owner_user_id FK "→M_owners.id"
+    TEXT contract_owner_user_id FK "→M_OWNERS.id"
   }
-  M_owners ||--o{ M_project_users : "契約所属"
-  M_owners ||--o{ M_project_user_assignments : "契約境界"
-  M_project_users ||--o{ M_project_user_assignments : "割当"
-  M_projects ||--o{ M_project_user_assignments : "割当先"
-  M_owners ||--o{ M_projects : "契約削除で連鎖"
+  M_OWNERS ||--o{ M_PRJ_USERS : "契約所属"
+  M_OWNERS ||--o{ M_PRJ_USER_ASGN : "契約境界"
+  M_PRJ_USERS ||--o{ M_PRJ_USER_ASGN : "割当"
+  M_PROJECTS ||--o{ M_PRJ_USER_ASGN : "割当先"
+  M_OWNERS ||--o{ M_PROJECTS : "契約削除で連鎖"
 </code></pre>
 <table>
 <thead>
 <tr><th>親</th><th>子</th><th>カーディナリティ</th><th>説明</th></tr>
 </thead>
 <tbody>
-<tr><td><code>M_owners</code></td><td><code>M_project_users</code></td><td>1:N</td><td>契約所属。<code>M_project_users.contract_owner_user_id</code> → <code>M_owners(id)</code></td></tr>
-<tr><td><code>M_project_users</code></td><td><code>M_project_user_assignments</code></td><td>1:N</td><td>プロジェクトユーザーのプロジェクト割当</td></tr>
-<tr><td><code>M_projects</code></td><td><code>M_project_user_assignments</code></td><td>1:N</td><td>割当先。<code>role</code>(admin / member)を保持する中間テーブル</td></tr>
-<tr><td><code>M_owners</code></td><td><code>M_projects</code></td><td>1:N</td><td><code>M_projects.contract_owner_user_id</code> → <code>M_owners(id)</code>。契約削除で連鎖削除対象</td></tr>
+<tr><td><code>M_OWNERS</code></td><td><code>M_PRJ_USERS</code></td><td>1:N</td><td>契約所属。<code>M_PRJ_USERS.contract_owner_user_id</code> → <code>M_OWNERS(id)</code></td></tr>
+<tr><td><code>M_PRJ_USERS</code></td><td><code>M_PRJ_USER_ASGN</code></td><td>1:N</td><td>プロジェクトユーザーのプロジェクト割当</td></tr>
+<tr><td><code>M_PROJECTS</code></td><td><code>M_PRJ_USER_ASGN</code></td><td>1:N</td><td>割当先。<code>role</code>(admin / member)を保持する中間テーブル</td></tr>
+<tr><td><code>M_OWNERS</code></td><td><code>M_PROJECTS</code></td><td>1:N</td><td><code>M_PROJECTS.contract_owner_user_id</code> → <code>M_OWNERS(id)</code>。契約削除で連鎖削除対象</td></tr>
 </tbody>
 </table>
 
-<p><strong>(2) プロジェクト配下(FAQ・未解決質問)</strong> ── コンテンツ系は <code>M_projects</code> に帰属します。</p>
+<p><strong>(2) プロジェクト配下(FAQ・未解決質問)</strong> ── コンテンツ系は <code>M_PROJECTS</code> に帰属します。</p>
 <pre class="mermaid"><code>erDiagram
-  M_projects {
+  M_PROJECTS {
     TEXT id PK
   }
-  M_faqs {
+  M_FAQS {
     TEXT id PK
-    TEXT project_id FK "→M_projects.id"
-    TEXT source_unresolved_question_id FK "→T_inquiries.id"
+    TEXT project_id FK "→M_PROJECTS.id"
+    TEXT source_unresolved_question_id FK "→T_INQUIRIES.id"
   }
-  H_faq_revisions {
+  H_FAQ_REV {
     TEXT id PK
-    TEXT faq_id FK "→M_faqs.id"
+    TEXT faq_id FK "→M_FAQS.id"
   }
-  T_inquiries {
+  T_INQUIRIES {
     TEXT id PK
-    TEXT project_id FK "→M_projects.id"
+    TEXT project_id FK "→M_PROJECTS.id"
   }
-  M_projects ||--o{ M_faqs : ""
-  M_projects ||--o{ T_inquiries : ""
-  M_faqs ||--o{ H_faq_revisions : "改訂履歴"
-  T_inquiries |o--o{ M_faqs : "source_unresolved_question_id"
+  M_PROJECTS ||--o{ M_FAQS : ""
+  M_PROJECTS ||--o{ T_INQUIRIES : ""
+  M_FAQS ||--o{ H_FAQ_REV : "改訂履歴"
+  T_INQUIRIES |o--o{ M_FAQS : "source_unresolved_question_id"
 </code></pre>
 <table>
 <thead>
 <tr><th>親</th><th>子</th><th>カーディナリティ</th><th>説明</th></tr>
 </thead>
 <tbody>
-<tr><td><code>M_projects</code></td><td><code>M_faqs</code></td><td>1:N</td><td>FAQ はプロジェクトに帰属</td></tr>
-<tr><td><code>M_projects</code></td><td><code>T_inquiries</code></td><td>1:N</td><td>未解決質問はプロジェクトに帰属</td></tr>
-<tr><td><code>M_faqs</code></td><td><code>H_faq_revisions</code></td><td>1:N</td><td>全文スナップショットの改訂履歴(最大 50 件)</td></tr>
-<tr><td><code>T_inquiries</code></td><td><code>M_faqs</code></td><td>0..1 : N</td><td><code>M_faqs.source_unresolved_question_id</code> で元の未解決質問を逆参照</td></tr>
+<tr><td><code>M_PROJECTS</code></td><td><code>M_FAQS</code></td><td>1:N</td><td>FAQ はプロジェクトに帰属</td></tr>
+<tr><td><code>M_PROJECTS</code></td><td><code>T_INQUIRIES</code></td><td>1:N</td><td>未解決質問はプロジェクトに帰属</td></tr>
+<tr><td><code>M_FAQS</code></td><td><code>H_FAQ_REV</code></td><td>1:N</td><td>全文スナップショットの改訂履歴(最大 50 件)</td></tr>
+<tr><td><code>T_INQUIRIES</code></td><td><code>M_FAQS</code></td><td>0..1 : N</td><td><code>M_FAQS.source_unresolved_question_id</code> で元の未解決質問を逆参照</td></tr>
 </tbody>
 </table>
 
-<p><strong>(3) 課金(契約配下)</strong> ── 課金系はすべて契約 <code>M_owners</code> に帰属します。</p>
+<p><strong>(3) 課金(契約配下)</strong> ── 課金系はすべて契約 <code>M_OWNERS</code> に帰属します。</p>
 <pre class="mermaid"><code>erDiagram
-  M_owners {
+  M_OWNERS {
     TEXT id PK
   }
-  T_billing_subscriptions {
+  T_BILL_SUBS {
     TEXT id PK
-    TEXT contract_owner_user_id FK "→M_owners.id"
+    TEXT contract_owner_user_id FK "→M_OWNERS.id"
   }
-  T_billing_invoices {
+  T_BILL_INVOICES {
     TEXT id PK
-    TEXT contract_owner_user_id FK "→M_owners.id"
+    TEXT contract_owner_user_id FK "→M_OWNERS.id"
   }
-  T_usage_metering {
+  T_USAGE_METER {
     TEXT id PK
-    TEXT contract_owner_user_id FK "→M_owners.id"
-    TEXT project_id FK "→M_projects.id"
+    TEXT contract_owner_user_id FK "→M_OWNERS.id"
+    TEXT project_id FK "→M_PROJECTS.id"
   }
-  M_owner_quota_overrides {
+  M_OWNER_QUOTA_OVR {
     TEXT id PK
-    TEXT contract_owner_user_id FK "→M_owners.id"
+    TEXT contract_owner_user_id FK "→M_OWNERS.id"
   }
-  M_owners ||--o{ T_billing_subscriptions : ""
-  M_owners ||--o{ T_billing_invoices : ""
-  M_owners ||--o{ T_usage_metering : ""
-  M_owners ||--o| M_owner_quota_overrides : "レート上書き"
+  M_OWNERS ||--o{ T_BILL_SUBS : ""
+  M_OWNERS ||--o{ T_BILL_INVOICES : ""
+  M_OWNERS ||--o{ T_USAGE_METER : ""
+  M_OWNERS ||--o| M_OWNER_QUOTA_OVR : "レート上書き"
 </code></pre>
 <table>
 <thead>
 <tr><th>親</th><th>子</th><th>カーディナリティ</th><th>説明</th></tr>
 </thead>
 <tbody>
-<tr><td><code>M_owners</code></td><td><code>T_billing_subscriptions</code></td><td>1:N</td><td>契約のサブスクリプション</td></tr>
-<tr><td><code>M_owners</code></td><td><code>T_billing_invoices</code></td><td>1:N</td><td>月次請求書</td></tr>
-<tr><td><code>M_owners</code></td><td><code>T_usage_metering</code></td><td>1:N</td><td>プロジェクト単位で計測し契約単位で集計</td></tr>
-<tr><td><code>M_owners</code></td><td><code>M_owner_quota_overrides</code></td><td>1:0..1</td><td>契約あたりのレート制限上書き</td></tr>
+<tr><td><code>M_OWNERS</code></td><td><code>T_BILL_SUBS</code></td><td>1:N</td><td>契約のサブスクリプション</td></tr>
+<tr><td><code>M_OWNERS</code></td><td><code>T_BILL_INVOICES</code></td><td>1:N</td><td>月次請求書</td></tr>
+<tr><td><code>M_OWNERS</code></td><td><code>T_USAGE_METER</code></td><td>1:N</td><td>プロジェクト単位で計測し契約単位で集計</td></tr>
+<tr><td><code>M_OWNERS</code></td><td><code>M_OWNER_QUOTA_OVR</code></td><td>1:0..1</td><td>契約あたりのレート制限上書き</td></tr>
 </tbody>
 </table>
 
 <p><strong>(4) お知らせ(fan-out)</strong> ── 本体 1 件から受信者ごとの受信箱へ展開します。</p>
 <pre class="mermaid"><code>erDiagram
-  M_service_announcements {
+  M_SERVICE_ANNOUNCE {
     TEXT id PK
   }
-  T_announcement_recipients {
+  T_ANNOUNCE_RCPT {
     TEXT id PK
-    TEXT announcement_id FK "→M_service_announcements.id"
+    TEXT announcement_id FK "→M_SERVICE_ANNOUNCE.id"
   }
-  T_inbox_messages {
+  T_INBOX_MSG {
     TEXT id PK
-    TEXT contract_owner_user_id FK "→M_owners.id"
+    TEXT contract_owner_user_id FK "→M_OWNERS.id"
     TEXT recipient_type
-    TEXT recipient_id "actor:M_owners.id/M_project_users.id"
+    TEXT recipient_id "actor:M_OWNERS.id/project_users.id"
   }
-  M_service_announcements ||--o{ T_announcement_recipients : "fan-out"
-  T_announcement_recipients ||--o{ T_inbox_messages : ""
+  M_SERVICE_ANNOUNCE ||--o{ T_ANNOUNCE_RCPT : "fan-out"
+  T_ANNOUNCE_RCPT ||--o{ T_INBOX_MSG : ""
 </code></pre>
 <table>
 <thead>
 <tr><th>親</th><th>子</th><th>カーディナリティ</th><th>説明</th></tr>
 </thead>
 <tbody>
-<tr><td><code>M_service_announcements</code></td><td><code>T_announcement_recipients</code></td><td>1:N</td><td>お知らせ本体から配信先へ fan-out</td></tr>
-<tr><td><code>T_announcement_recipients</code></td><td><code>T_inbox_messages</code></td><td>1:N</td><td>各受信者の受信箱へ展開</td></tr>
+<tr><td><code>M_SERVICE_ANNOUNCE</code></td><td><code>T_ANNOUNCE_RCPT</code></td><td>1:N</td><td>お知らせ本体から配信先へ fan-out</td></tr>
+<tr><td><code>T_ANNOUNCE_RCPT</code></td><td><code>T_INBOX_MSG</code></td><td>1:N</td><td>各受信者の受信箱へ展開</td></tr>
 </tbody>
 </table>
 
@@ -201,31 +201,31 @@
 <p class="section-lead">オーナーとプロジェクトユーザーを 2 つのマスタに完全分離し、プロジェクト割当・ロールを割当表で保持する方式です。操作者・所有者・受信者の横断参照は polymorphic actor(<code>{接頭}_type</code> + <code>{接頭}_id</code>)で表します。役割分担を図解し、各表の責務を述べます。</p>
 
 <h3 id="21-3-表モデル図">2.1 ユーザーマスタ分離モデル図</h3>
-<p class="section-lead"><code>M_owners</code>(オーナーマスタ、契約境界キー本体 = <code>id</code>)と <code>M_project_users</code>(プロジェクトユーザーマスタ、オーナー以外)を分離し、<code>M_project_user_assignments</code> がプロジェクト割当とロール(<code>admin</code> / <code>member</code>)を表します。<code>M_project_users.contract_owner_user_id</code> / <code>M_project_user_assignments.contract_owner_user_id</code> はオーナー(契約境界)を <code>M_owners(id)</code> 参照で保持します。</p>
+<p class="section-lead"><code>M_OWNERS</code>(オーナーマスタ、契約境界キー本体 = <code>id</code>)と <code>M_PRJ_USERS</code>(プロジェクトユーザーマスタ、オーナー以外)を分離し、<code>M_PRJ_USER_ASGN</code> がプロジェクト割当とロール(<code>admin</code> / <code>member</code>)を表します。<code>M_PRJ_USERS.contract_owner_user_id</code> / <code>M_PRJ_USER_ASGN.contract_owner_user_id</code> はオーナー(契約境界)を <code>M_OWNERS(id)</code> 参照で保持します。</p>
 <pre class="mermaid"><code>flowchart TD
-  OW["M_owners<br/>(オーナーマスタ・認証 + 契約属性)<br/>id PRIMARY KEY = 契約境界キー"]
-  PU["M_project_users<br/>(プロジェクトユーザーマスタ・認証)<br/>id PK / contract_owner_user_id→M_owners.id"]
-  PUA["M_project_user_assignments<br/>(プロジェクト割当 + role)<br/>(project_user_id, project_id) PK"]
-  PJ["M_projects"]
+  OW["M_OWNERS<br/>(オーナーマスタ・認証 + 契約属性)<br/>id PRIMARY KEY = 契約境界キー"]
+  PU["M_PRJ_USERS<br/>(プロジェクトユーザーマスタ・認証)<br/>id PK / contract_owner_user_id→M_OWNERS.id"]
+  PUA["M_PRJ_USER_ASGN<br/>(プロジェクト割当 + role)<br/>(project_user_id, project_id) PK"]
+  PJ["M_PROJECTS"]
 
   OW -->|"契約所属(1:N)"| PU
   PU -->|"割当(0..N)"| PUA
   PUA -->|"project_id"| PJ
-  PUA -->|"contract_owner_user_id→M_owners.id<br/>(契約境界を冗長保持)"| OW
+  PUA -->|"contract_owner_user_id→M_OWNERS.id<br/>(契約境界を冗長保持)"| OW
   OW -->|"プロジェクト所有(1:N)"| PJ
 </code></pre>
 
 <h3 id="22-各表の責務">2.2 各表の責務</h3>
-<p class="section-lead">採用方式は <strong>2 マスタ完全分離型</strong>(<code>M_owners</code> + <code>M_project_users</code>) + 割当(<code>M_project_user_assignments</code>)です。オーナーと非オーナーはマスタから分離し、個別権限フラグ方式は採用しません。</p>
+<p class="section-lead">採用方式は <strong>2 マスタ完全分離型</strong>(<code>M_OWNERS</code> + <code>M_PRJ_USERS</code>) + 割当(<code>M_PRJ_USER_ASGN</code>)です。オーナーと非オーナーはマスタから分離し、個別権限フラグ方式は採用しません。</p>
 <ul>
-<li><code>M_owners</code>: オーナーの認証主体(認証情報 + PII)とオーナー専有の契約属性(<code>contract_status</code> / <code>data_deletion_mode</code>)を統合保持する。<code>id PRIMARY KEY</code> が契約境界キー本体であり、1 契約 = 1 オーナー固定。外部キーを持たない</li>
-<li><code>M_project_users</code>: プロジェクト管理者・メンバー(オーナー以外)の認証主体(認証情報 + PII)。所属契約を <code>contract_owner_user_id</code>(<code>M_owners(id)</code> 参照)で保持する。オーナーは含まない</li>
-<li><code>M_project_user_assignments</code>: プロジェクト単位ロール(<code>admin</code> / <code>member</code>)。<code>(project_user_id, project_id)</code> 複合 PK + <code>contract_owner_user_id</code> 冗長保持(認可境界クエリ高速化と意図明示) + <code>granted_at</code> / <code>granted_by_type</code> / <code>granted_by_id</code> 保持で行レベル監査</li>
+<li><code>M_OWNERS</code>: オーナーの認証主体(認証情報 + PII)とオーナー専有の契約属性(<code>contract_status</code> / <code>data_deletion_mode</code>)を統合保持する。<code>id PRIMARY KEY</code> が契約境界キー本体であり、1 契約 = 1 オーナー固定。外部キーを持たない</li>
+<li><code>M_PRJ_USERS</code>: プロジェクト管理者・メンバー(オーナー以外)の認証主体(認証情報 + PII)。所属契約を <code>contract_owner_user_id</code>(<code>M_OWNERS(id)</code> 参照)で保持する。オーナーは含まない</li>
+<li><code>M_PRJ_USER_ASGN</code>: プロジェクト単位ロール(<code>admin</code> / <code>member</code>)。<code>(project_user_id, project_id)</code> 複合 PK + <code>contract_owner_user_id</code> 冗長保持(認可境界クエリ高速化と意図明示) + <code>granted_at</code> / <code>granted_by_type</code> / <code>granted_by_id</code> 保持で行レベル監査</li>
 </ul>
-<p><strong>横断参照は polymorphic actor で表す</strong>。操作者・所有者・受信者(旧 <code>users.id</code> 参照)を <code>{接頭}_type</code>(<code>'owner'</code> / <code>'project_user'</code>) + <code>{接頭}_id</code> の 2 カラムで表現する。<code>{接頭}_type</code> に応じ <code>{接頭}_id</code> が <code>M_owners(id)</code> または <code>M_project_users(id)</code> を指す(論理参照、物理 FK は張れない)。対象例: <code>T_sessions.actor_*</code> / <code>T_access_tokens.actor_*</code> / <code>M_faqs.created_by_*</code> / <code>M_faqs.updated_by_*</code> / <code>H_faq_revisions.created_by_*</code> / <code>T_inbox_messages.recipient_*</code> / <code>H_audit_logs.actor_*</code> / <code>T_terms_agreements.actor_*</code> / <code>M_service_announcements.created_by_*</code> / <code>T_withdrawal_requests.applied_by_*</code> / <code>T_announcement_recipients.recipient_*</code> / <code>H_error_logs.actor_*</code> 等。</p>
-<p><strong>オーナーは <code>M_project_user_assignments</code> に行を持つ</strong>(プロジェクト作成時に <code>M_project_user_assignments(project_user_id=オーナー id, project_id=新PJ, contract_owner_user_id=オーナー id, role='admin', valid=1)</code> 相当を自動 INSERT。FR-030a)。認可フロー先頭の <code>isOwner=true</code> bypass(<code>M_owners</code> 行存在で判定)は維持し、割当行は critical 通知宛先解決と画面表示(プロジェクト管理者一覧)の事実情報として参照する。</p>
-<p><strong>最後の管理者保護判定</strong>(<code>E-AUTHZ-LAST-ADMIN-PROTECTED</code>): オーナー以外(<code>M_project_users</code> 由来)の <code>role='admin'</code> 行のみを抽出して件数判定する(オーナーは常に admin 相当のため判定対象外)。</p>
-<p><strong><code>valid</code> カラムによる論理削除を全削除対象テーブルに適用する</strong>(対象は §6 削除モード表が正本)。<code>valid INTEGER NOT NULL DEFAULT 1 CHECK (valid IN (0,1))</code> を持つテーブルでは論理削除を <code>UPDATE … SET valid=0</code> で表す。論理削除データは <code>updated_at</code> 基準で 90 日経過後に物理削除バッチで物理削除する(<a href="../../03_詳細設計/DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html</a> 正本)。<code>deleted_at</code> は持たず、論理削除日時は <code>updated_at</code>(<code>valid</code> が 0 に更新された時刻)で代用する。例外テーブル: <code>H_audit_logs</code>(API 操作ログ専用、<code>created_at + retention 期間</code> で物理 DELETE)、<code>T_sessions</code>(<code>revoked_at</code> で代用)、法定保管 7 年テーブル(<code>T_billing_invoices</code> / <code>T_usage_metering</code> / <code>T_withdrawal_requests</code> / <code>M_terms_versions</code> / <code>T_terms_agreements</code>)、全契約横断テーブル(<code>M_email_suppression_list</code>)、ログ系(<code>H_notification_logs</code> / <code>H_error_logs</code> / <code>T_inbox_messages</code>)、トークン / 履歴系(<code>T_access_tokens</code> / <code>H_faq_revisions</code> / <code>TP_faq_search_fts</code> / <code>T_question_log_faq_refs</code>)、M:N 関係系(<code>M_announcement_audiences</code>)。</p>
+<p><strong>横断参照は polymorphic actor で表す</strong>。操作者・所有者・受信者(旧 <code>users.id</code> 参照)を <code>{接頭}_type</code>(<code>'owner'</code> / <code>'project_user'</code>) + <code>{接頭}_id</code> の 2 カラムで表現する。<code>{接頭}_type</code> に応じ <code>{接頭}_id</code> が <code>M_OWNERS(id)</code> または <code>M_PRJ_USERS(id)</code> を指す(論理参照、物理 FK は張れない)。対象例: <code>T_SESSIONS.actor_*</code> / <code>T_ACCESS_TOKENS.actor_*</code> / <code>M_FAQS.created_by_*</code> / <code>M_FAQS.updated_by_*</code> / <code>H_FAQ_REV.created_by_*</code> / <code>T_INBOX_MSG.recipient_*</code> / <code>H_AUDIT_LOGS.actor_*</code> / <code>T_TERMS_AGREE.actor_*</code> / <code>M_SERVICE_ANNOUNCE.created_by_*</code> / <code>T_WITHDRAW_REQ.applied_by_*</code> / <code>T_ANNOUNCE_RCPT.recipient_*</code> / <code>H_ERROR_LOGS.actor_*</code> 等。</p>
+<p><strong>オーナーは <code>M_PRJ_USER_ASGN</code> に行を持つ</strong>(プロジェクト作成時に <code>M_PRJ_USER_ASGN(project_user_id=オーナー id, project_id=新PJ, contract_owner_user_id=オーナー id, role='admin', valid=1)</code> 相当を自動 INSERT。FR-030a)。認可フロー先頭の <code>isOwner=true</code> bypass(<code>M_OWNERS</code> 行存在で判定)は維持し、割当行は critical 通知宛先解決と画面表示(プロジェクト管理者一覧)の事実情報として参照する。</p>
+<p><strong>最後の管理者保護判定</strong>(<code>E-AUTHZ-LAST-ADMIN-PROTECTED</code>): オーナー以外(<code>M_PRJ_USERS</code> 由来)の <code>role='admin'</code> 行のみを抽出して件数判定する(オーナーは常に admin 相当のため判定対象外)。</p>
+<p><strong><code>valid</code> カラムによる論理削除を全削除対象テーブルに適用する</strong>(対象は §6 削除モード表が正本)。<code>valid INTEGER NOT NULL DEFAULT 1 CHECK (valid IN (0,1))</code> を持つテーブルでは論理削除を <code>UPDATE … SET valid=0</code> で表す。論理削除データは <code>updated_at</code> 基準で 90 日経過後に物理削除バッチで物理削除する(<a href="../../03_詳細設計/DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html</a> 正本)。<code>deleted_at</code> は持たず、論理削除日時は <code>updated_at</code>(<code>valid</code> が 0 に更新された時刻)で代用する。例外テーブル: <code>H_AUDIT_LOGS</code>(API 操作ログ専用、<code>created_at + retention 期間</code> で物理 DELETE)、<code>T_SESSIONS</code>(<code>revoked_at</code> で代用)、法定保管 7 年テーブル(<code>T_BILL_INVOICES</code> / <code>T_USAGE_METER</code> / <code>T_WITHDRAW_REQ</code> / <code>M_TERMS_VER</code> / <code>T_TERMS_AGREE</code>)、全契約横断テーブル(<code>M_EMAIL_SUPPRESS</code>)、ログ系(<code>H_NOTIF_LOGS</code> / <code>H_ERROR_LOGS</code> / <code>T_INBOX_MSG</code>)、トークン / 履歴系(<code>T_ACCESS_TOKENS</code> / <code>H_FAQ_REV</code> / <code>TP_FAQ_FTS</code> / <code>T_QLOG_FAQ_REFS</code>)、M:N 関係系(<code>M_ANNOUNCE_AUD</code>)。</p>
 
 <h2 id="3-設計意図の補足">3. 設計意図の補足</h2>
 <p class="section-lead">各テーブルの概要メタから省いたテーブル横断の設計意図(契約境界キーの持ち方・<code>retention_class</code> 分類・論理削除と物理削除バッチ)をここに集約します。</p>
@@ -243,22 +243,22 @@
 <tbody>
 <tr>
 <td>直接保持(<code>contract_owner_user_id</code> カラムを持つ)</td>
-<td><code>M_project_users</code> / <code>M_project_user_assignments</code> / <code>M_projects</code> / <code>M_faqs</code> / <code>H_question_logs</code> / <code>T_inquiries</code> / <code>H_notification_logs</code> / <code>T_billing_subscriptions</code> / <code>T_billing_invoices</code> / <code>T_usage_metering</code> / <code>M_owner_quota_overrides</code> / <code>M_project_quota_limits</code> / <code>H_audit_logs</code> / <code>T_announcement_recipients</code> / <code>T_inbox_messages</code> / <code>T_withdrawal_requests</code> 等</td>
-<td>全契約スコープのテーブルに必須。境界 FK 系列は <code>M_owners(id)</code> を参照し、契約境界違反を物理的に弾く</td>
+<td><code>M_PRJ_USERS</code> / <code>M_PRJ_USER_ASGN</code> / <code>M_PROJECTS</code> / <code>M_FAQS</code> / <code>H_QUESTION_LOGS</code> / <code>T_INQUIRIES</code> / <code>H_NOTIF_LOGS</code> / <code>T_BILL_SUBS</code> / <code>T_BILL_INVOICES</code> / <code>T_USAGE_METER</code> / <code>M_OWNER_QUOTA_OVR</code> / <code>M_PRJ_QUOTA_LIMITS</code> / <code>H_AUDIT_LOGS</code> / <code>T_ANNOUNCE_RCPT</code> / <code>T_INBOX_MSG</code> / <code>T_WITHDRAW_REQ</code> 等</td>
+<td>全契約スコープのテーブルに必須。境界 FK 系列は <code>M_OWNERS(id)</code> を参照し、契約境界違反を物理的に弾く</td>
 </tr>
 <tr>
 <td>間接表現(親テーブル経由 / actor 経由)</td>
-<td><code>T_sessions</code> / <code>T_access_tokens</code> / <code>T_terms_agreements</code>(actor = <code>M_owners.id</code> / <code>M_project_users.id</code> 経由)、<code>T_project_legacy_keys</code> / <code>M_allowed_domains</code>(<code>M_projects</code> 経由)、<code>H_faq_revisions</code> / <code>TP_faq_search_fts</code>(<code>M_faqs</code> 連動)、<code>T_question_log_faq_refs</code>(<code>H_question_logs</code> 経由)</td>
+<td><code>T_SESSIONS</code> / <code>T_ACCESS_TOKENS</code> / <code>T_TERMS_AGREE</code>(actor = <code>M_OWNERS.id</code> / <code>M_PRJ_USERS.id</code> 経由)、<code>T_PRJ_LEGACY_KEYS</code> / <code>M_ALLOWED_DOMAINS</code>(<code>M_PROJECTS</code> 経由)、<code>H_FAQ_REV</code> / <code>TP_FAQ_FTS</code>(<code>M_FAQS</code> 連動)、<code>T_QLOG_FAQ_REFS</code>(<code>H_QUESTION_LOGS</code> 経由)</td>
 <td>これらは <code>contract_owner_user_id</code> を直接持たず、actor(<code>{接頭}_type</code> + <code>{接頭}_id</code>)または親テーブル経由で契約所属を表現する</td>
 </tr>
 <tr>
 <td>契約境界そのもの</td>
-<td><code>M_owners</code></td>
-<td>本テーブル自身が契約境界(<code>M_owners.id</code> = <code>contract_owner_user_id</code> の参照先)</td>
+<td><code>M_OWNERS</code></td>
+<td>本テーブル自身が契約境界(<code>M_OWNERS.id</code> = <code>contract_owner_user_id</code> の参照先)</td>
 </tr>
 <tr>
 <td>全契約横断(境界キーを持たない)</td>
-<td><code>M_email_suppression_list</code> / <code>M_terms_versions</code> / <code>M_service_announcements</code></td>
+<td><code>M_EMAIL_SUPPRESS</code> / <code>M_TERMS_VER</code> / <code>M_SERVICE_ANNOUNCE</code></td>
 <td>全契約共通で共有するため境界キーを持たない(§4.2 参照)</td>
 </tr>
 </tbody>
@@ -293,7 +293,7 @@
 <p class="section-lead">論理削除は <code>valid=0</code> で表し、90 日経過後に物理削除バッチが <code>data_deletion_mode</code>(<code>physical</code> / <code>anonymize</code>)に従って実体を処理します。詳細表は §6 が正本です。</p>
 <ul>
 <li><strong>論理削除</strong>: 全削除対象テーブル(§6 削除モード表が正本)で <code>UPDATE … SET valid=0</code>。論理削除日時は <code>updated_at</code> で代用(<code>deleted_at</code> は持たない)</li>
-<li><strong>物理削除バッチ(90 日)</strong>: 日次バッチが <code>valid=0 AND updated_at &lt; now() - 90d</code> の行を <code>M_owners.data_deletion_mode</code> に従って処理する(<a href="../../03_詳細設計/DD13_バッチ・非同期処理.html">DD13</a> 正本)</li>
+<li><strong>物理削除バッチ(90 日)</strong>: 日次バッチが <code>valid=0 AND updated_at &lt; now() - 90d</code> の行を <code>M_OWNERS.data_deletion_mode</code> に従って処理する(<a href="../../03_詳細設計/DD13_バッチ・非同期処理.html">DD13</a> 正本)</li>
 <li><strong>匿名化モード</strong>: <code>data_deletion_mode='anonymize'</code> 選択時は、原文復元不可な置換(<code>email_encrypted</code> → <code>anon_&lt;sha256&gt;</code>、<code>name</code> → 「匿名」等)を行い集計値を維持する(§6 参照)</li>
 </ul>
 
@@ -353,13 +353,13 @@
 <p class="section-lead">契約境界キー <code>contract_owner_user_id</code> によるマルチテナント分離の概念と判定方式です。概念図で分離の仕組みを俯瞰します。</p>
 <pre class="mermaid"><code>flowchart TD
   subgraph A["契約 A(オーナー A)"]
-    AO["M_owners(id=A)"]
-    AP["M_projects / M_faqs / T_inquiries …<br/>contract_owner_user_id = A"]
+    AO["M_OWNERS(id=A)"]
+    AP["M_PROJECTS / M_FAQS / T_INQUIRIES …<br/>contract_owner_user_id = A"]
     AO --- AP
   end
   subgraph B["契約 B(オーナー B)"]
-    BO["M_owners(id=B)"]
-    BP["M_projects / M_faqs / T_inquiries …<br/>contract_owner_user_id = B"]
+    BO["M_OWNERS(id=B)"]
+    BP["M_PROJECTS / M_FAQS / T_INQUIRIES …<br/>contract_owner_user_id = B"]
     BO --- BP
   end
   REQ["API リクエスト<br/>principal.contractOwnerUserId"]
@@ -368,17 +368,17 @@
 </code></pre>
 <ul>
 <li>全契約スコープのテーブルに <code>contract_owner_user_id</code> カラム必須(全契約横断テーブルを除く ── §4.3 参照)</li>
-<li>「契約境界(owner)」を表す FK 系列 → <code>M_owners(id)</code> を参照(契約境界違反を物理的に弾く)。「操作者・主体・受信者(actor)」系 → polymorphic actor(<code>{接頭}_type</code> + <code>{接頭}_id</code>)で <code>M_owners(id)</code> / <code>M_project_users(id)</code> を論理参照(物理 FK なし)</li>
+<li>「契約境界(owner)」を表す FK 系列 → <code>M_OWNERS(id)</code> を参照(契約境界違反を物理的に弾く)。「操作者・主体・受信者(actor)」系 → polymorphic actor(<code>{接頭}_type</code> + <code>{接頭}_id</code>)で <code>M_OWNERS(id)</code> / <code>M_PRJ_USERS(id)</code> を論理参照(物理 FK なし)</li>
 <li>API / 認可レイヤで境界検証: <code>principal.contractOwnerUserId === target.contract_owner_user_id</code>(<a href="../08_認証・認可設計.html">08_認証・認可設計.html §5</a>)</li>
 <li>違反時は <strong>404 偽装</strong>(403 だと相手契約のリソース存在が漏れる)</li>
 </ul>
 <h4 id="431-オーナー--プロジェクト管理者--メンバーの判定">4.2.1 オーナー / プロジェクト管理者 / メンバーの判定</h4>
 <ul>
-<li><strong>オーナー判定</strong>: <code>M_owners.id</code> として行が存在するユーザー(<code>M_owners</code> マスタに在籍 = オーナー)</li>
-<li><strong>プロジェクト管理者</strong>: <code>M_project_users</code> マスタのユーザーで <code>M_project_user_assignments.role='admin' AND valid=1</code> を 1 件以上保持する者</li>
-<li><strong>メンバー</strong>: <code>M_project_users</code> マスタのユーザーで <code>M_project_user_assignments.role='member' AND valid=1</code> のみを保持する者</li>
-<li>オーナーと非オーナーはマスタ自体が分離されるため兼任は発生しない。権限解決は認可フロー先頭の <code>isOwner</code> bypass(<code>M_owners</code> 在籍判定)を最優先(<a href="../08_認証・認可設計.html">08_認証・認可設計.html §5</a> を正本)</li>
-<li>1 契約 = 1 オーナー固定は <code>M_owners.id PRIMARY KEY</code>(契約境界キー本体)で DB レベル担保(<code>is_owner</code> カラムや <code>owner_account_id</code> 自己参照は持たない)</li>
+<li><strong>オーナー判定</strong>: <code>M_OWNERS.id</code> として行が存在するユーザー(<code>M_OWNERS</code> マスタに在籍 = オーナー)</li>
+<li><strong>プロジェクト管理者</strong>: <code>M_PRJ_USERS</code> マスタのユーザーで <code>M_PRJ_USER_ASGN.role='admin' AND valid=1</code> を 1 件以上保持する者</li>
+<li><strong>メンバー</strong>: <code>M_PRJ_USERS</code> マスタのユーザーで <code>M_PRJ_USER_ASGN.role='member' AND valid=1</code> のみを保持する者</li>
+<li>オーナーと非オーナーはマスタ自体が分離されるため兼任は発生しない。権限解決は認可フロー先頭の <code>isOwner</code> bypass(<code>M_OWNERS</code> 在籍判定)を最優先(<a href="../08_認証・認可設計.html">08_認証・認可設計.html §5</a> を正本)</li>
+<li>1 契約 = 1 オーナー固定は <code>M_OWNERS.id PRIMARY KEY</code>(契約境界キー本体)で DB レベル担保(<code>is_owner</code> カラムや <code>owner_account_id</code> 自己参照は持たない)</li>
 </ul>
 
 <h3 id="44-全契約横断テーブルcontract_owner_user_id-を持たない">4.3 全契約横断テーブル(<code>contract_owner_user_id</code> を持たない)</h3>
@@ -392,25 +392,25 @@
 </thead>
 <tbody>
 <tr>
-<td><code>M_email_suppression_list</code></td>
+<td><code>M_EMAIL_SUPPRESS</code></td>
 <td>メール bounce / 苦情の全契約横断管理(R-003 共通ドメイン対策)</td>
 </tr>
 <tr>
-<td><code>M_terms_versions</code></td>
+<td><code>M_TERMS_VER</code></td>
 <td>規約 / プライバシーポリシーの版(全利用者共通)</td>
 </tr>
 <tr>
-<td><code>M_service_announcements</code></td>
-<td>お知らせ本体(配信先は <code>M_announcement_audiences</code> / <code>T_announcement_recipients</code> で契約別)</td>
+<td><code>M_SERVICE_ANNOUNCE</code></td>
+<td>お知らせ本体(配信先は <code>M_ANNOUNCE_AUD</code> / <code>T_ANNOUNCE_RCPT</code> で契約別)</td>
 </tr>
 </tbody>
 </table>
 
 <h2 id="45-状態遷移">5. 状態遷移</h2>
-<p class="section-lead">状態カラムを持つ主要テーブル(FAQ / 未解決質問 / 通知 / 契約)の状態遷移を定義します。<code>T_inquiries.status</code> と <code>M_owners.contract_status</code> はここが共有概念の正本です。主要 2 つは状態遷移図で俯瞰し表で示します。</p>
+<p class="section-lead">状態カラムを持つ主要テーブル(FAQ / 未解決質問 / 通知 / 契約)の状態遷移を定義します。<code>T_INQUIRIES.status</code> と <code>M_OWNERS.contract_status</code> はここが共有概念の正本です。主要 2 つは状態遷移図で俯瞰し表で示します。</p>
 
 <h3 id="50-主要状態遷移図">5.0 主要状態遷移図</h3>
-<p class="section-lead">共有概念正本である契約状態(<code>M_owners.contract_status</code>)と未解決質問の状況(<code>T_inquiries.status</code>)を状態遷移図で示します。</p>
+<p class="section-lead">共有概念正本である契約状態(<code>M_OWNERS.contract_status</code>)と未解決質問の状況(<code>T_INQUIRIES.status</code>)を状態遷移図で示します。</p>
 <pre class="mermaid"><code>stateDiagram-v2
   direction LR
   [*] --&gt; active : 契約作成
@@ -430,7 +430,7 @@
   closed --&gt; open : 手動操作(再オープン)
 </code></pre>
 
-<h3 id="451-faq-状態遷移faqsstatus">5.1 FAQ 状態遷移(<code>M_faqs.status</code>)</h3>
+<h3 id="451-faq-状態遷移faqsstatus">5.1 FAQ 状態遷移(<code>M_FAQS.status</code>)</h3>
 <table>
 <thead>
 <tr>
@@ -450,7 +450,7 @@
 <tr>
 <td><code>draft</code> / <code>hidden</code> ↔︎ <code>published</code></td>
 <td>(相互)</td>
-<td>「状態」を選択して保存(<code>PATCH /M_faqs/{id}</code>)</td>
+<td>「状態」を選択して保存(<code>PATCH /faqs/{id}</code>)</td>
 <td>admin のみ。状態遷移ガードなし(<code>draft</code>/<code>published</code>/<code>hidden</code> を自由遷移)</td>
 </tr>
 <tr>
@@ -475,7 +475,7 @@
 </table>
 <p><strong>運用方針</strong>: <code>draft</code> / <code>published</code> / <code>hidden</code> の 3 状態は相互に自由遷移し、専用の公開 API・状態遷移ガードは持たない。<code>published</code> への変更が管理者(admin)による公開前の内容確認(FR-045)を兼ねる。</p>
 
-<h3 id="452-未解決質問の状況遷移inquiriesstatus共有概念正本">5.2 未解決質問の状況遷移(<code>T_inquiries.status</code>、共有概念正本)</h3>
+<h3 id="452-未解決質問の状況遷移inquiriesstatus共有概念正本">5.2 未解決質問の状況遷移(<code>T_INQUIRIES.status</code>、共有概念正本)</h3>
 <table>
 <thead>
 <tr>
@@ -512,7 +512,7 @@
 </table>
 <p>FAQ 下書き保存・FAQ 公開成功は本状況を変更しない(連動ロジックなし)。再オープン回数に制限を設けない。</p>
 
-<h3 id="454-通知状態遷移notification_logsdelivery_state">5.3 通知状態遷移(<code>H_notification_logs.delivery_state</code>)</h3>
+<h3 id="454-通知状態遷移notification_logsdelivery_state">5.3 通知状態遷移(<code>H_NOTIF_LOGS.delivery_state</code>)</h3>
 <table>
 <thead>
 <tr>
@@ -585,7 +585,7 @@
 </tbody>
 </table>
 
-<h3 id="455-契約状態遷移contract_ownerscontract_status共有概念正本">5.4 契約状態遷移(<code>M_owners.contract_status</code>、共有概念正本)</h3>
+<h3 id="455-契約状態遷移contract_ownerscontract_status共有概念正本">5.4 契約状態遷移(<code>M_OWNERS.contract_status</code>、共有概念正本)</h3>
 <p>詳細は <a href="../10_課金・請求設計.html">10_課金・請求設計.html §4 / §5</a> を正本とする。本書では概要のみ:</p>
 <table>
 <thead>
@@ -641,7 +641,7 @@
 </tr>
 </tbody>
 </table>
-<p><code>contract_status × valid</code> の整合(<code>M_owners</code> 複合 CHECK で強制):</p>
+<p><code>contract_status × valid</code> の整合(<code>M_OWNERS</code> 複合 CHECK で強制):</p>
 <table>
 <thead>
 <tr>
@@ -668,12 +668,12 @@
 </tr>
 </tbody>
 </table>
-<p>プロジェクトユーザー(プロジェクト管理者 / メンバー)の論理削除は <code>M_project_users.valid=0</code> で表現する(<code>M_owners</code> マスタに含まれないため)。オーナーの論理削除は <code>M_owners.valid=0</code>(<code>contract_status='deleted'</code> と必ず同時セット)で表現する。</p>
+<p>プロジェクトユーザー(プロジェクト管理者 / メンバー)の論理削除は <code>M_PRJ_USERS.valid=0</code> で表現する(<code>M_OWNERS</code> マスタに含まれないため)。オーナーの論理削除は <code>M_OWNERS.valid=0</code>(<code>contract_status='deleted'</code> と必ず同時セット)で表現する。</p>
 
 <h2 id="46-データ削除モード">6. データ削除モード</h2>
 <p class="section-lead">退会・削除時のデータ処理モード(物理削除 / 匿名化)と、対象テーブルごとの削除挙動を定義します。</p>
-<p><strong>設定</strong>: <code>M_owners.data_deletion_mode</code>(<code>physical</code> / <code>anonymize</code>、初期値 <code>physical</code>)の独立カラムで保持する。</p>
-<p><strong>論理削除</strong> は <code>UPDATE … SET valid=0</code> で行い、90 日経過後の物理削除バッチ(DD13)が <code>data_deletion_mode</code>(<code>physical</code> / <code>anonymize</code>)に従って実体を消去する。論理削除対象は、メンバーのプロジェクト割当解除=対象 <code>M_project_user_assignments</code> 行、オーナーによるメンバー削除=<code>M_project_users</code> + 当該ユーザーの全 <code>M_project_user_assignments</code>、プロジェクト削除=<code>M_projects</code> + 関連 <code>M_project_user_assignments</code> 行。</p>
+<p><strong>設定</strong>: <code>M_OWNERS.data_deletion_mode</code>(<code>physical</code> / <code>anonymize</code>、初期値 <code>physical</code>)の独立カラムで保持する。</p>
+<p><strong>論理削除</strong> は <code>UPDATE … SET valid=0</code> で行い、90 日経過後の物理削除バッチ(DD13)が <code>data_deletion_mode</code>(<code>physical</code> / <code>anonymize</code>)に従って実体を消去する。論理削除対象は、メンバーのプロジェクト割当解除=対象 <code>M_PRJ_USER_ASGN</code> 行、オーナーによるメンバー削除=<code>M_PRJ_USERS</code> + 当該ユーザーの全 <code>M_PRJ_USER_ASGN</code>、プロジェクト削除=<code>M_PROJECTS</code> + 関連 <code>M_PRJ_USER_ASGN</code> 行。</p>
 <h3 id="461-削除モード対応表">6.1 削除モード対応表</h3>
 <p class="section-lead">各テーブルの論理削除・物理削除・匿名化の挙動を一覧します。</p>
 <table>
@@ -687,103 +687,103 @@
 </thead>
 <tbody>
 <tr>
-<td><code>M_owners</code></td>
+<td><code>M_OWNERS</code></td>
 <td><code>valid=0</code>(<code>contract_status='deleted'</code> と必ず同時セット)</td>
 <td>DELETE(ON DELETE CASCADE で関連行連鎖)</td>
 <td><code>email_encrypted</code> → <code>anon_&lt;sha256&gt;</code>, <code>name</code> → 「匿名」</td>
 </tr>
 <tr>
-<td><code>M_project_users</code></td>
+<td><code>M_PRJ_USERS</code></td>
 <td><code>valid=0</code></td>
-<td>DELETE(<code>M_owners</code> CASCADE 経由 / メンバー削除時)</td>
+<td>DELETE(<code>M_OWNERS</code> CASCADE 経由 / メンバー削除時)</td>
 <td><code>email_encrypted</code> → <code>anon_&lt;sha256&gt;</code>, <code>name</code> → 「匿名」</td>
 </tr>
 <tr>
-<td><code>M_project_user_assignments</code></td>
+<td><code>M_PRJ_USER_ASGN</code></td>
 <td><code>valid=0</code></td>
-<td>DELETE(<code>M_project_users</code> または <code>M_projects</code> CASCADE 経由)</td>
+<td>DELETE(<code>M_PRJ_USERS</code> または <code>M_PROJECTS</code> CASCADE 経由)</td>
 <td>(匿名化対象外、CASCADE 連鎖物理削除)</td>
 </tr>
 <tr>
-<td><code>M_projects</code></td>
+<td><code>M_PROJECTS</code></td>
 <td><code>status='deleted', valid=0</code></td>
-<td>DELETE(関連 <code>M_faqs</code> / <code>T_inquiries</code> 等は CASCADE 経由)</td>
+<td>DELETE(関連 <code>M_FAQS</code> / <code>T_INQUIRIES</code> 等は CASCADE 経由)</td>
 <td><code>name</code> → 「削除済みプロジェクト」</td>
 </tr>
 <tr>
-<td><code>M_allowed_domains</code></td>
+<td><code>M_ALLOWED_DOMAINS</code></td>
 <td><code>valid=0</code></td>
 <td>DELETE</td>
 <td>(匿名化対象外)</td>
 </tr>
 <tr>
-<td><code>M_project_quota_limits</code></td>
+<td><code>M_PRJ_QUOTA_LIMITS</code></td>
 <td><code>valid=0</code></td>
-<td>DELETE(<code>M_projects</code> / <code>M_owners</code> 物理削除時に CASCADE 連鎖)</td>
+<td>DELETE(<code>M_PROJECTS</code> / <code>M_OWNERS</code> 物理削除時に CASCADE 連鎖)</td>
 <td>(匿名化対象外)</td>
 </tr>
 <tr>
-<td><code>M_faqs</code></td>
+<td><code>M_FAQS</code></td>
 <td><code>status='deleted', valid=0</code></td>
 <td>DELETE</td>
 <td><code>title</code> / <code>body</code> 空字</td>
 </tr>
 <tr>
-<td><code>H_question_logs</code></td>
+<td><code>H_QUESTION_LOGS</code></td>
 <td><code>valid=0</code></td>
 <td>DELETE</td>
 <td><code>user_question</code> 空字, <code>ip_address</code> / <code>user_agent</code> NULL, 集計値維持</td>
 </tr>
 <tr>
-<td><code>T_question_log_faq_refs</code></td>
+<td><code>T_QLOG_FAQ_REFS</code></td>
 <td>(<code>valid</code> なし、M:N 関係系)</td>
-<td><code>H_question_logs</code> / <code>M_faqs</code> 物理削除時に CASCADE 連鎖</td>
+<td><code>H_QUESTION_LOGS</code> / <code>M_FAQS</code> 物理削除時に CASCADE 連鎖</td>
 <td>(匿名化対象外)</td>
 </tr>
 <tr>
-<td><code>T_inquiries</code></td>
+<td><code>T_INQUIRIES</code></td>
 <td><code>valid=0</code></td>
 <td>DELETE</td>
 <td><code>user_question</code> 空字, <code>inquiry_code</code> 維持</td>
 </tr>
 <tr>
-<td><code>T_billing_subscriptions</code></td>
+<td><code>T_BILL_SUBS</code></td>
 <td><code>valid=0</code></td>
 <td>(物理削除バッチ対象外、永久保持)</td>
 <td>(匿名化対象外、電子帳簿保存法)</td>
 </tr>
 <tr>
-<td><code>T_usage_metering</code></td>
+<td><code>T_USAGE_METER</code></td>
 <td>(<code>valid</code> なし、法定保管 7 年)</td>
 <td>(物理削除バッチ対象外、7 年保持)</td>
 <td>(匿名化対象外。プロジェクト単位計測値は契約退会後も 7 年保持)</td>
 </tr>
 <tr>
-<td><code>H_notification_logs</code></td>
+<td><code>H_NOTIF_LOGS</code></td>
 <td>(<code>valid</code> なし、ログ系で論理削除概念外)</td>
 <td>DELETE</td>
 <td><code>recipient_email_hmac</code> → SHA-256, vars → 空 JSON</td>
 </tr>
 <tr>
-<td><code>M_announcement_audiences</code></td>
+<td><code>M_ANNOUNCE_AUD</code></td>
 <td>(<code>valid</code> なし、配信関係 M:N)</td>
-<td><code>M_service_announcements</code> / <code>M_owners</code> 物理削除時に CASCADE 連鎖</td>
+<td><code>M_SERVICE_ANNOUNCE</code> / <code>M_OWNERS</code> 物理削除時に CASCADE 連鎖</td>
 <td>(匿名化対象外)</td>
 </tr>
 <tr>
-<td><code>T_access_tokens</code></td>
+<td><code>T_ACCESS_TOKENS</code></td>
 <td>(<code>valid</code> なし、<code>used_at</code> で代用)</td>
 <td>DELETE</td>
 <td>(常に物理削除、匿名化対象外)</td>
 </tr>
 <tr>
-<td><code>T_sessions</code></td>
+<td><code>T_SESSIONS</code></td>
 <td>(<code>valid</code> なし、<code>revoked_at</code> で代用)</td>
 <td>DELETE</td>
 <td>(匿名化対象外)</td>
 </tr>
 <tr>
-<td><code>H_audit_logs</code></td>
+<td><code>H_AUDIT_LOGS</code></td>
 <td>(<code>valid</code> なし、メイン側は API 操作ログ専用)</td>
 <td><code>created_at + retention 期間</code> 経過後に物理 DELETE(<code>general</code> 1y / <code>billing</code> 7y)</td>
 <td>(匿名化対象外。ハッシュチェーンで完全性を検証)</td>
@@ -792,10 +792,10 @@
 </table>
 <h3 id="462-論理削除の物理削除バッチdd13-正本">6.2 論理削除の物理削除バッチ(DD13 正本)</h3>
 <ul>
-<li>日次バッチで <code>valid=0 AND updated_at &lt; now() - 90d</code> の行を物理削除モード(<code>M_owners.data_deletion_mode</code> 準拠)に従って処理</li>
-<li><code>M_owners</code> 行が物理 DELETE された時点で <code>ON DELETE CASCADE</code> で関連 <code>M_project_users</code> / <code>M_project_user_assignments</code> / <code>M_projects</code> 等が連鎖物理削除(<code>T_sessions</code> / <code>T_access_tokens</code> / <code>T_terms_agreements</code> は actor が論理参照のため、actor 解決でバッチ削除)</li>
-<li><code>M_projects</code> 行が物理 DELETE された時点で <code>ON DELETE CASCADE</code> で関連 <code>M_faqs</code> / <code>T_inquiries</code> 等が連鎖物理削除</li>
-<li><code>T_billing_subscriptions</code> は物理削除バッチの対象外(永久保持)</li>
+<li>日次バッチで <code>valid=0 AND updated_at &lt; now() - 90d</code> の行を物理削除モード(<code>M_OWNERS.data_deletion_mode</code> 準拠)に従って処理</li>
+<li><code>M_OWNERS</code> 行が物理 DELETE された時点で <code>ON DELETE CASCADE</code> で関連 <code>M_PRJ_USERS</code> / <code>M_PRJ_USER_ASGN</code> / <code>M_PROJECTS</code> 等が連鎖物理削除(<code>T_SESSIONS</code> / <code>T_ACCESS_TOKENS</code> / <code>T_TERMS_AGREE</code> は actor が論理参照のため、actor 解決でバッチ削除)</li>
+<li><code>M_PROJECTS</code> 行が物理 DELETE された時点で <code>ON DELETE CASCADE</code> で関連 <code>M_FAQS</code> / <code>T_INQUIRIES</code> 等が連鎖物理削除</li>
+<li><code>T_BILL_SUBS</code> は物理削除バッチの対象外(永久保持)</li>
 </ul>
 
 <h2 id="47-データ保持の調整制約nfr-702">7. データ保持の調整制約(NFR-702)</h2>
@@ -805,7 +805,7 @@
 <li>固定値は要件定義 NFR-701 / NFR-705 を正本とする</li>
 <li>短縮が必要な場合(法令・契約義務範囲内)はサポート窓口経由の対応とする</li>
 <li>データ保持期間は利用者が設定できない(固定値)</li>
-<li><code>T_usage_metering</code> / <code>T_billing_invoices</code> / <code>H_audit_logs(retention_class='billing')</code> は電子帳簿保存法・国税法の要請により最低 7 年保持(NFR-602b)、これを下回る短縮は不可</li>
+<li><code>T_USAGE_METER</code> / <code>T_BILL_INVOICES</code> / <code>H_AUDIT_LOGS(retention_class='billing')</code> は電子帳簿保存法・国税法の要請により最低 7 年保持(NFR-602b)、これを下回る短縮は不可</li>
 </ul>
 
 <h2 id="48-pii-取扱">8. PII 取扱</h2>
@@ -824,7 +824,7 @@
 </tr>
 <tr>
 <td>対象テーブル</td>
-<td><code>M_owners.email_encrypted</code> / <code>M_project_users.email_encrypted</code></td>
+<td><code>M_OWNERS.email_encrypted</code> / <code>M_PRJ_USERS.email_encrypted</code></td>
 </tr>
 <tr>
 <td>検索方式</td>
@@ -836,7 +836,7 @@
 </tr>
 <tr>
 <td>鍵派生入力</td>
-<td><code>deriveOwnerKey(masterKey, contractOwnerUserId)</code>(<code>contractOwnerUserId</code> = <code>M_owners.id</code>)</td>
+<td><code>deriveOwnerKey(masterKey, contractOwnerUserId)</code>(<code>contractOwnerUserId</code> = <code>M_OWNERS.id</code>)</td>
 </tr>
 <tr>
 <td>カード情報</td>
@@ -858,7 +858,7 @@
 <tbody>
 <tr>
 <td>FAQ 検索(FTS5)</td>
-<td><code>TP_faq_search_fts</code> 仮想テーブル、<code>(project_id, status='published')</code> 前段フィルタ</td>
+<td><code>TP_FAQ_FTS</code> 仮想テーブル、<code>(project_id, status='published')</code> 前段フィルタ</td>
 </tr>
 <tr>
 <td>未解決質問一覧</td>
@@ -874,7 +874,7 @@
 </tr>
 <tr>
 <td>ユニーク</td>
-<td><code>inquiry_code</code>, <code>widget_public_key</code>, <code>T_access_tokens.token_hash</code>, <code>(contract_owner_user_id, billing_year_month)</code></td>
+<td><code>inquiry_code</code>, <code>widget_public_key</code>, <code>T_ACCESS_TOKENS.token_hash</code>, <code>(contract_owner_user_id, billing_year_month)</code></td>
 </tr>
 <tr>
 <td>監査ログ</td>
@@ -887,9 +887,9 @@
 <p class="section-lead">完全な ER 図は別 HTML で管理します(Mermaid を直接埋め込むと PDF 出力時に縮小されすぎ可読性が落ちるため)。本ページ §1.1 の概観図は主要 FK の俯瞰用です。</p>
 <ul>
 <li>ER 図は <a href="../ER図.html">ER図.html</a> で管理する。HTML 上でブラウザサイドレンダリング + ズーム / パン / 全体表示ボタンを利用可能</li>
-<li><strong>掲載カラム</strong>: 主要キー(PK / FK)+ 業務キー(<code>inquiry_code</code> / <code>widget_public_key</code> 等)+ 状態カラム(<code>T_inquiries.status</code> / <code>contract_status</code> 等)+ 特徴的なカラム(polymorphic actor <code>actor_type</code> + <code>actor_id</code> 等)</li>
+<li><strong>掲載カラム</strong>: 主要キー(PK / FK)+ 業務キー(<code>inquiry_code</code> / <code>widget_public_key</code> 等)+ 状態カラム(<code>T_INQUIRIES.status</code> / <code>contract_status</code> 等)+ 特徴的なカラム(polymorphic actor <code>actor_type</code> + <code>actor_id</code> 等)</li>
 <li><strong>省略カラム</strong>: <code>created_at</code> / <code>updated_at</code> / <code>valid</code> / <code>*_encrypted</code> / <code>*_key_version</code> / <code>metadata</code> 等の共通技術カラム(完全なカラム定義は <a href="index.html">テーブル設計</a>各テーブルファイルを参照)</li>
-<li><strong>FK 制約を持たないが論理的に紐づく参照</strong>(<code>H_error_logs.contract_owner_user_id</code> / <code>H_error_logs.actor_type</code> + <code>actor_id</code> / <code>T_announcement_recipients.contract_owner_user_id</code> / <code>T_announcement_recipients.recipient_type</code> + <code>recipient_id</code>、および polymorphic actor 各列)は ER 図上で「FK制約なし(論理参照)」注記付きカラムとして表現し、関係線は引かない</li>
+<li><strong>FK 制約を持たないが論理的に紐づく参照</strong>(<code>H_ERROR_LOGS.contract_owner_user_id</code> / <code>H_ERROR_LOGS.actor_type</code> + <code>actor_id</code> / <code>T_ANNOUNCE_RCPT.contract_owner_user_id</code> / <code>T_ANNOUNCE_RCPT.recipient_type</code> + <code>recipient_id</code>、および polymorphic actor 各列)は ER 図上で「FK制約なし(論理参照)」注記付きカラムとして表現し、関係線は引かない</li>
 <li><strong>ER 図の編集ルール</strong>: 図を変更する場合は <a href="../ER図.html">ER図.html</a> の <code>&lt;pre id="mermaid-src"&gt;</code> ブロックを直接編集する(本書には Mermaid を二重保持しない)</li>
 </ul>
 

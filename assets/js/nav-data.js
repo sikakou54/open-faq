@@ -381,62 +381,62 @@ window.NAV = [
         "children": [
          {
           "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-001_m_owners.html",
-          "title": "TBL-M-001 M_owners",
+          "title": "TBL-M-001 M_OWNERS",
           "kind": "md"
          },
          {
-          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-002_m_project_users.html",
-          "title": "TBL-M-002 M_project_users",
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-002_m_prj_users.html",
+          "title": "TBL-M-002 M_PRJ_USERS",
           "kind": "md"
          },
          {
-          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-003_m_project_user_assignments.html",
-          "title": "TBL-M-003 M_project_user_assignments",
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-003_m_prj_user_asgn.html",
+          "title": "TBL-M-003 M_PRJ_USER_ASGN",
           "kind": "md"
          },
          {
           "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-004_m_projects.html",
-          "title": "TBL-M-004 M_projects",
+          "title": "TBL-M-004 M_PROJECTS",
           "kind": "md"
          },
          {
           "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-005_m_allowed_domains.html",
-          "title": "TBL-M-005 M_allowed_domains",
+          "title": "TBL-M-005 M_ALLOWED_DOMAINS",
           "kind": "md"
          },
          {
           "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-006_m_faqs.html",
-          "title": "TBL-M-006 M_faqs",
+          "title": "TBL-M-006 M_FAQS",
           "kind": "md"
          },
          {
-          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-007_m_email_suppression_list.html",
-          "title": "TBL-M-007 M_email_suppression_list",
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-007_m_email_suppress.html",
+          "title": "TBL-M-007 M_EMAIL_SUPPRESS",
           "kind": "md"
          },
          {
-          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-008_m_owner_quota_overrides.html",
-          "title": "TBL-M-008 M_owner_quota_overrides",
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-008_m_owner_quota_ovr.html",
+          "title": "TBL-M-008 M_OWNER_QUOTA_OVR",
           "kind": "md"
          },
          {
-          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-009_m_project_quota_limits.html",
-          "title": "TBL-M-009 M_project_quota_limits",
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-009_m_prj_quota_limits.html",
+          "title": "TBL-M-009 M_PRJ_QUOTA_LIMITS",
           "kind": "md"
          },
          {
-          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-010_m_service_announcements.html",
-          "title": "TBL-M-010 M_service_announcements",
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-010_m_service_announce.html",
+          "title": "TBL-M-010 M_SERVICE_ANNOUNCE",
           "kind": "md"
          },
          {
-          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-011_m_announcement_audiences.html",
-          "title": "TBL-M-011 M_announcement_audiences",
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-011_m_announce_aud.html",
+          "title": "TBL-M-011 M_ANNOUNCE_AUD",
           "kind": "md"
          },
          {
-          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-012_m_terms_versions.html",
-          "title": "TBL-M-012 M_terms_versions",
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-012_m_terms_ver.html",
+          "title": "TBL-M-012 M_TERMS_VER",
           "kind": "md"
          }
         ]
@@ -447,62 +447,62 @@ window.NAV = [
         "children": [
          {
           "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-001_t_sessions.html",
-          "title": "TBL-T-001 T_sessions",
+          "title": "TBL-T-001 T_SESSIONS",
           "kind": "md"
          },
          {
           "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-002_t_access_tokens.html",
-          "title": "TBL-T-002 T_access_tokens",
+          "title": "TBL-T-002 T_ACCESS_TOKENS",
           "kind": "md"
          },
          {
-          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-003_t_project_legacy_keys.html",
-          "title": "TBL-T-003 T_project_legacy_keys",
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-003_t_prj_legacy_keys.html",
+          "title": "TBL-T-003 T_PRJ_LEGACY_KEYS",
           "kind": "md"
          },
          {
-          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-004_t_question_log_faq_refs.html",
-          "title": "TBL-T-004 T_question_log_faq_refs",
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-004_t_qlog_faq_refs.html",
+          "title": "TBL-T-004 T_QLOG_FAQ_REFS",
           "kind": "md"
          },
          {
           "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-005_t_inquiries.html",
-          "title": "TBL-T-005 T_inquiries",
+          "title": "TBL-T-005 T_INQUIRIES",
           "kind": "md"
          },
          {
-          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-006_t_billing_subscriptions.html",
-          "title": "TBL-T-006 T_billing_subscriptions",
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-006_t_bill_subs.html",
+          "title": "TBL-T-006 T_BILL_SUBS",
           "kind": "md"
          },
          {
-          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-007_t_billing_invoices.html",
-          "title": "TBL-T-007 T_billing_invoices",
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-007_t_bill_invoices.html",
+          "title": "TBL-T-007 T_BILL_INVOICES",
           "kind": "md"
          },
          {
-          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-008_t_usage_metering.html",
-          "title": "TBL-T-008 T_usage_metering",
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-008_t_usage_meter.html",
+          "title": "TBL-T-008 T_USAGE_METER",
           "kind": "md"
          },
          {
-          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-009_t_announcement_recipients.html",
-          "title": "TBL-T-009 T_announcement_recipients",
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-009_t_announce_rcpt.html",
+          "title": "TBL-T-009 T_ANNOUNCE_RCPT",
           "kind": "md"
          },
          {
-          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-010_t_inbox_messages.html",
-          "title": "TBL-T-010 T_inbox_messages",
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-010_t_inbox_msg.html",
+          "title": "TBL-T-010 T_INBOX_MSG",
           "kind": "md"
          },
          {
-          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-011_t_withdrawal_requests.html",
-          "title": "TBL-T-011 T_withdrawal_requests",
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-011_t_withdraw_req.html",
+          "title": "TBL-T-011 T_WITHDRAW_REQ",
           "kind": "md"
          },
          {
-          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-012_t_terms_agreements.html",
-          "title": "TBL-T-012 T_terms_agreements",
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-012_t_terms_agree.html",
+          "title": "TBL-T-012 T_TERMS_AGREE",
           "kind": "md"
          }
         ]
@@ -512,28 +512,28 @@ window.NAV = [
         "kind": "group",
         "children": [
          {
-          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-H-001_h_faq_revisions.html",
-          "title": "TBL-H-001 H_faq_revisions",
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-H-001_h_faq_rev.html",
+          "title": "TBL-H-001 H_FAQ_REV",
           "kind": "md"
          },
          {
           "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-H-002_h_question_logs.html",
-          "title": "TBL-H-002 H_question_logs",
+          "title": "TBL-H-002 H_QUESTION_LOGS",
           "kind": "md"
          },
          {
-          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-H-003_h_notification_logs.html",
-          "title": "TBL-H-003 H_notification_logs",
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-H-003_h_notif_logs.html",
+          "title": "TBL-H-003 H_NOTIF_LOGS",
           "kind": "md"
          },
          {
           "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-H-004_h_audit_logs.html",
-          "title": "TBL-H-004 H_audit_logs",
+          "title": "TBL-H-004 H_AUDIT_LOGS",
           "kind": "md"
          },
          {
           "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-H-005_h_error_logs.html",
-          "title": "TBL-H-005 H_error_logs",
+          "title": "TBL-H-005 H_ERROR_LOGS",
           "kind": "md"
          }
         ]
@@ -543,13 +543,13 @@ window.NAV = [
         "kind": "group",
         "children": [
          {
-          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-TP-001_tp_faq_search_fts.html",
-          "title": "TBL-TP-001 TP_faq_search_fts",
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-TP-001_tp_faq_fts.html",
+          "title": "TBL-TP-001 TP_FAQ_FTS",
           "kind": "md"
          },
          {
-          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-TP-002_tp_ai_threshold_persistent_cache.html",
-          "title": "TBL-TP-002 TP_ai_threshold_persistent_cache",
+          "url": "01_メインシステム/02_基本設計/03_テーブル設計/TBL-TP-002_tp_ai_thresh_cache.html",
+          "title": "TBL-TP-002 TP_AI_THRESH_CACHE",
           "kind": "md"
          }
         ]

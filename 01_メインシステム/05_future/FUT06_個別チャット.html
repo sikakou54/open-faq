@@ -49,7 +49,7 @@
 </tbody>
 </table>
 <h2 id="1-移管方針">1. 移管方針</h2>
-<p>個別チャット機能は MVP から除外し、Post-MVP の開発候補として本書へ移管する。MVP では AI が回答できなかった質問を管理用の問い合わせ ID 付きで <code>T_inquiries</code> に登録し、ウィジェットへは確認済みプロジェクト連絡先メールを表示するところまでを提供する。問い合わせ ID はウィジェットに表示しない。</p>
+<p>個別チャット機能は MVP から除外し、Post-MVP の開発候補として本書へ移管する。MVP では AI が回答できなかった質問を管理用の問い合わせ ID 付きで <code>T_INQUIRIES</code> に登録し、ウィジェットへは確認済みプロジェクト連絡先メールを表示するところまでを提供する。問い合わせ ID はウィジェットに表示しない。</p>
 <p>MVP では次の機能を実装しない。</p>
 <ul>
 <li>エンドユーザーと管理者ユーザー間のメッセージ送受信</li>
@@ -183,7 +183,7 @@
 </tr>
 <tr>
 <td>テーブル</td>
-<td><code>end_users</code>, <code>chat_rooms</code>, <code>chat_messages</code>, <code>T_access_tokens(purpose='reentry')</code></td>
+<td><code>end_users</code>, <code>chat_rooms</code>, <code>chat_messages</code>, <code>T_ACCESS_TOKENS(purpose='reentry')</code></td>
 </tr>
 <tr>
 <td>通知</td>
@@ -231,7 +231,7 @@
 <p>MVP の未解決時フローは次のとおりとする。</p>
 <ol type="1">
 <li>質問ログを記録する。</li>
-<li><code>T_inquiries</code> に未解決質問を登録し、問い合わせ ID を発行する。</li>
+<li><code>T_INQUIRIES</code> に未解決質問を登録し、問い合わせ ID を発行する。</li>
 <li>ウィジェットに「回答を見つけられなかった」旨を表示し、管理用の問い合わせ ID は表示しない。</li>
 <li>確認済みプロジェクト連絡先メールがある場合は問い合わせ先として表示する。</li>
 <li>FAQ 質問入力は継続可能とし、有人チャットへの切替は行わない。</li>

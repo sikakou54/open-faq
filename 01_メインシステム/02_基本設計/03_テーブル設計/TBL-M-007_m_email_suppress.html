@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>T_withdrawal_requests(TBL-T-011) | FAQ 設計ポータル</title>
+<title>M_EMAIL_SUPPRESS(TBL-M-007) | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../../../assets/css/style.css">
 <script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script src="../../../assets/js/nav-data.js" defer></script>
 <script src="../../../assets/js/search-index.js" defer></script>
 <script src="../../../assets/js/portal.js" defer></script>
 </head>
-<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-011_t_withdrawal_requests.html">
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-007_m_email_suppress.html">
 <article class="content" id="content">
-<h1 id="TBL-T-011">TBL-T-011 <code>T_withdrawal_requests</code></h1>
-<span id="329-T_withdrawal_requests"></span>
-<p class="section-lead">退会申請レコード(90 日猶予)を保持します。</p>
-<h3 id="3291-概要">概要</h3>
+<h1 id="TBL-M-007">TBL-M-007 <code>M_EMAIL_SUPPRESS</code></h1>
+<span id="317-M_EMAIL_SUPPRESS"></span>
+<p class="section-lead">バウンス・苦情を起こしたメールアドレスを全契約横断で管理するサプレスリストです。</p>
+<h3 id="3171-概要">概要</h3>
 <table>
 <thead>
 <tr>
@@ -26,11 +26,11 @@
 <tbody>
 <tr>
 <td>テーブル名</td>
-<td><code>T_withdrawal_requests</code></td>
+<td><code>M_EMAIL_SUPPRESS</code></td>
 </tr>
 <tr>
 <td>論理名</td>
-<td>退会申請</td>
+<td>メールサプレスリスト(全契約横断)</td>
 </tr>
 <tr>
 <td>主キー</td>
@@ -38,14 +38,11 @@
 </tr>
 <tr>
 <td>外部キー</td>
-<td><ul class="key-cols">
-<li><code>contract_owner_user_id</code> → <code>M_owners(id)</code></li>
-<li><code>applied_by_type</code> + <code>applied_by_id</code> → <code>M_owners(id)</code> / <code>M_project_users(id)</code>(論理参照)</li>
-</ul></td>
+<td>—</td>
 </tr>
 </tbody>
 </table>
-<h3 id="3292-カラム定義">カラム定義</h3>
+<h3 id="3172-カラム定義">カラム定義</h3>
 <table>
 <thead>
 <tr>
@@ -80,22 +77,22 @@
 </tr>
 <tr>
 <td style="text-align: right;">2</td>
-<td>契約 owner ID</td>
-<td><code>contract_owner_user_id</code></td>
+<td>メール HMAC</td>
+<td><code>email_hmac</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
-<td><code>M_owners(id)</code></td>
 <td></td>
+<td>○</td>
 <td></td>
 <td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">3</td>
-<td>申請日時</td>
-<td><code>applied_at</code></td>
+<td>理由</td>
+<td><code>reason</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
@@ -103,27 +100,27 @@
 <td></td>
 <td></td>
 <td></td>
-<td></td>
+<td><code>reason IN ('bounced_hard','bounced_soft_5x','complained','manual')</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">4</td>
-<td>申請者種別</td>
-<td><code>applied_by_type</code></td>
-<td>TEXT</td>
+<td>永久フラグ</td>
+<td><code>is_permanent</code></td>
+<td>INTEGER</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
 <td></td>
 <td></td>
+<td><code>1</code></td>
 <td></td>
-<td><code>applied_by_type IN ('owner','project_user')</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">5</td>
-<td>申請者 ID</td>
-<td><code>applied_by_id</code></td>
+<td>作成日時</td>
+<td><code>created_at</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
@@ -131,13 +128,13 @@
 <td></td>
 <td></td>
 <td></td>
-<td><code>applied_by_type</code> に応じ <code>M_owners(id)</code> / <code>M_project_users(id)</code> を指す(論理参照)</td>
+<td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">6</td>
-<td>理由</td>
-<td><code>reason</code></td>
+<td>解除日時</td>
+<td><code>released_at</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
@@ -148,23 +145,9 @@
 <td></td>
 
 </tr>
-<tr>
-<td style="text-align: right;">7</td>
-<td>削除予定日</td>
-<td><code>scheduled_deletion_at</code></td>
-<td>TEXT</td>
-<td style="text-align: right;">-</td>
-<td>NO</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-
-</tr>
 </tbody>
 </table>
-<h3 id="3295-インデックス">インデックス</h3>
+<h3 id="3175-インデックス">インデックス</h3>
 <table>
 <thead>
 <tr>
@@ -178,15 +161,45 @@
 <tbody>
 <tr>
 <td style="text-align: right;">1</td>
-<td><code>idx_withdrawal_owner_scheduled</code></td>
-<td><code>(contract_owner_user_id, scheduled_deletion_at)</code></td>
+<td><code>idx_suppression_permanent</code></td>
+<td><code>(is_permanent, email_hmac)</code></td>
 <td></td>
-<td>削除予定日順</td>
+<td>永久 / 一時別検索</td>
 </tr>
 </tbody>
 </table>
-<h3 id="3297-コード値区分値">コード値・区分値</h3>
-<p>(なし)</p>
+<h3 id="3177-コード値区分値">コード値・区分値</h3>
+<table>
+<thead>
+<tr>
+<th>カラム名</th>
+<th>値</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>reason</code></td>
+<td><code>bounced_hard</code></td>
+<td>ハードバウンス</td>
+</tr>
+<tr>
+<td><code>reason</code></td>
+<td><code>bounced_soft_5x</code></td>
+<td>ソフトバウンス 5 連続</td>
+</tr>
+<tr>
+<td><code>reason</code></td>
+<td><code>complained</code></td>
+<td>スパム苦情</td>
+</tr>
+<tr>
+<td><code>reason</code></td>
+<td><code>manual</code></td>
+<td>手動追加</td>
+</tr>
+</tbody>
+</table>
 </article>
 </body>
 </html>

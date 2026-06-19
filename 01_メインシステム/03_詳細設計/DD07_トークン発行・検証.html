@@ -15,13 +15,13 @@
 <h1 id="dd07-トークン発行検証">DD07: トークン発行・検証</h1>
 
 <aside class="page-summary">
-<p class="ps-lead"><strong>このページは、メール確認・パスワード再設定・管理者ユーザー有効化などで使う一時トークンの発行・検証・1 回限り消費の実装方針を定義します。</strong> 生トークンはユーザーへ返し、DB(<code>T_access_tokens</code>)には HMAC-SHA256 ハッシュのみを保存します。</p>
+<p class="ps-lead"><strong>このページは、メール確認・パスワード再設定・管理者ユーザー有効化などで使う一時トークンの発行・検証・1 回限り消費の実装方針を定義します。</strong> 生トークンはユーザーへ返し、DB(<code>T_ACCESS_TOKENS</code>)には HMAC-SHA256 ハッシュのみを保存します。</p>
 </aside>
 
 <p class="doc-meta"><span><b>版数</b> v1.2</span><span><b>更新</b> 2026-06-19</span><span class="dm-status">承認済</span></p>
 
 <h2 id="1-対象範囲">1. 対象範囲</h2>
-<p class="section-lead">本 DD が実装方針を定める機能・API・テーブルを示します。次の表は、対象となる FR / API / テーブルを並べたもので、メール確認・パスワード再設定・管理者ユーザー有効化の各トークンと、それらを支える <code>T_access_tokens</code> 基盤が範囲であることを一望できます。</p>
+<p class="section-lead">本 DD が実装方針を定める機能・API・テーブルを示します。次の表は、対象となる FR / API / テーブルを並べたもので、メール確認・パスワード再設定・管理者ユーザー有効化の各トークンと、それらを支える <code>T_ACCESS_TOKENS</code> 基盤が範囲であることを一望できます。</p>
 <table>
 <thead>
 <tr>
@@ -53,7 +53,7 @@
 </tr>
 <tr>
 <td>テーブル</td>
-<td><code>T_access_tokens</code></td>
+<td><code>T_ACCESS_TOKENS</code></td>
 <td>トークン基盤</td>
 </tr>
 </tbody>
@@ -129,17 +129,17 @@
 <td><code>contact_verify</code></td>
 <td>24h</td>
 <td>◎</td>
-<td><strong><code>meta.projectId</code>(JSON)</strong>(SCR-019 着地時に <code>M_projects.contact_email_verified_at</code> を更新する対象プロジェクトを特定。<code>actor_type</code> / <code>actor_id</code> は持たない ── 連絡先メール所有者がアカウント(<code>M_owners</code> / <code>M_project_users</code>)を持つとは限らない)</td>
+<td><strong><code>meta.projectId</code>(JSON)</strong>(SCR-019 着地時に <code>M_PROJECTS.contact_email_verified_at</code> を更新する対象プロジェクトを特定。<code>actor_type</code> / <code>actor_id</code> は持たない ── 連絡先メール所有者がアカウント(<code>M_OWNERS</code> / <code>M_PRJ_USERS</code>)を持つとは限らない)</td>
 </tr>
 </tbody>
 </table>
 <h3 id="32-hmac-sha256-保存方式">3.2 HMAC-SHA256 保存方式</h3>
-<p class="section-lead">生トークンは発行時にユーザーへ返し、DB には <code>MASTER_KEY</code> 由来の HMAC-SHA256 ハッシュ(<code>token_hash</code>)のみを保存します。検証は受け取った生トークンを同じ鍵でハッシュ化して <code>T_access_tokens</code> を引き当て、用途一致・未使用・有効期限の順に判定します。次のシーケンス図は、発行 → 検証 → 1 回限り消費の流れを示し、検証時の状態分岐(有効 / 不正 / 用途不一致 / 使用済み / 期限切れ)を <code>alt</code> で表します。続く擬似コードが <code>generateToken</code> / <code>verifyToken</code> / <code>consumeToken</code> の実体です。</p>
+<p class="section-lead">生トークンは発行時にユーザーへ返し、DB には <code>MASTER_KEY</code> 由来の HMAC-SHA256 ハッシュ(<code>token_hash</code>)のみを保存します。検証は受け取った生トークンを同じ鍵でハッシュ化して <code>T_ACCESS_TOKENS</code> を引き当て、用途一致・未使用・有効期限の順に判定します。次のシーケンス図は、発行 → 検証 → 1 回限り消費の流れを示し、検証時の状態分岐(有効 / 不正 / 用途不一致 / 使用済み / 期限切れ)を <code>alt</code> で表します。続く擬似コードが <code>generateToken</code> / <code>verifyToken</code> / <code>consumeToken</code> の実体です。</p>
 <pre class="mermaid"><code>sequenceDiagram
   participant U as 利用者(ブラウザ)
   participant W as worker-main-api
   participant T as token.ts
-  participant D as D1 (T_access_tokens)
+  participant D as D1 (T_ACCESS_TOKENS)
 
   Note over U,D: 発行(generateToken)
   W-&gt;&gt;T: トークン生成要求(purpose, payload, ttl)
@@ -177,7 +177,7 @@
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> tokenHash <span class="op">=</span> <span class="cf">await</span> <span class="fu">hmacSha256</span>(env<span class="op">.</span><span class="at">MASTER_KEY</span><span class="op">,</span> rawToken)<span class="op">;</span></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="vs">    INSERT INTO T_access_tokens (id, token_hash, purpose, meta, created_at, expires_at, actor_type, actor_id)</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="vs">    INSERT INTO T_ACCESS_TOKENS (id, token_hash, purpose, meta, created_at, expires_at, actor_type, actor_id)</span></span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="vs">    VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)</span></span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="vs">  `</span>)<span class="op">.</span><span class="fu">bind</span>(tokenId<span class="op">,</span> tokenHash<span class="op">,</span> purpose<span class="op">,</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">stringify</span>(payload)<span class="op">,</span></span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        <span class="kw">new</span> <span class="bu">Date</span>()<span class="op">.</span><span class="fu">toISOString</span>()<span class="op">,</span></span>
@@ -192,7 +192,7 @@
 <span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>)<span class="op">:</span> <span class="bu">Promise</span><span class="op">&lt;</span>{ payload<span class="op">:</span> <span class="bu">Record</span><span class="op">&lt;</span><span class="dt">string</span><span class="op">,</span> <span class="dt">string</span><span class="op">&gt;</span> }<span class="op">&gt;</span> {</span>
 <span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> tokenHash <span class="op">=</span> <span class="cf">await</span> <span class="fu">hmacSha256</span>(env<span class="op">.</span><span class="at">MASTER_KEY</span><span class="op">,</span> rawToken)<span class="op">;</span></span>
 <span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> record <span class="op">=</span> <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="vs">`SELECT id, purpose, meta, expires_at, used_at FROM T_access_tokens WHERE token_hash = ?1`</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="vs">`SELECT id, purpose, meta, expires_at, used_at FROM T_ACCESS_TOKENS WHERE token_hash = ?1`</span></span>
 <span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  )<span class="op">.</span><span class="fu">bind</span>(tokenHash)<span class="op">.</span><span class="fu">first</span><span class="op">&lt;</span>TokenRow<span class="op">&gt;</span>()<span class="op">;</span></span>
 <span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="op">!</span>record) <span class="cf">throw</span> <span class="kw">new</span> <span class="fu">HTTPException</span>(<span class="dv">400</span><span class="op">,</span> { message<span class="op">:</span> <span class="st">&#39;TOKEN_INVALID&#39;</span> })<span class="op">;</span></span>
 <span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (record<span class="op">.</span><span class="at">purpose</span> <span class="op">!==</span> purpose) <span class="cf">throw</span> <span class="kw">new</span> <span class="fu">HTTPException</span>(<span class="dv">400</span><span class="op">,</span> { message<span class="op">:</span> <span class="st">&#39;TOKEN_INVALID&#39;</span> })<span class="op">;</span></span>
@@ -206,18 +206,18 @@
 <span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fu">consumeToken</span>(rawToken<span class="op">:</span> <span class="dt">string</span><span class="op">,</span> purpose<span class="op">:</span> TokenPurpose<span class="op">,</span> env<span class="op">:</span> Env) {</span>
 <span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> tokenHash <span class="op">=</span> <span class="cf">await</span> <span class="fu">hmacSha256</span>(env<span class="op">.</span><span class="at">MASTER_KEY</span><span class="op">,</span> rawToken)<span class="op">;</span></span>
 <span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(</span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    <span class="vs">`UPDATE T_access_tokens SET used_at = ?1 WHERE token_hash = ?2`</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    <span class="vs">`UPDATE T_ACCESS_TOKENS SET used_at = ?1 WHERE token_hash = ?2`</span></span>
 <span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>  )<span class="op">.</span><span class="fu">bind</span>(<span class="kw">new</span> <span class="bu">Date</span>()<span class="op">.</span><span class="fu">toISOString</span>()<span class="op">,</span> tokenHash)<span class="op">.</span><span class="fu">run</span>()<span class="op">;</span></span>
 <span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h3 id="33-一回限りトークン">3.3 一回限りトークン</h3>
 <p class="section-lead">1 回限り用途(<code>email_verify</code> / <code>password_reset</code> / <code>activation</code> / <code>contact_verify</code>)は、検証成功直後に必ず消費し、再使用を防ぎます。</p>
 <p><code>consumeToken()</code> を検証直後に必ず呼び、<code>used_at</code> を設定。再使用時は <code>TOKEN_REUSED</code>。</p>
 <h3 id="33a-メンバー招待トークンactivation-scr-018-有効化">3.3a メンバー招待トークン(activation)+ SCR-018 有効化</h3>
-<p>招待時 (<code>POST /M_projects/{id}/members</code>) に <code>purpose='activation'</code> で発行し、<code>meta</code> に <code>invitedProjectId</code> / <code>invitedRole</code> を JSON 保持。トークンのアクターは招待されたプロジェクトユーザー(<code>actorType='project_user'</code> / <code>actorId=M_project_users.id</code>)。SCR-018 「登録を完了する」押下時に <code>verifyToken</code> → 同一トランザクションでプロジェクトユーザー有効化 + <code>consumeToken</code> を実行する。</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 招待時(POST /M_projects/{id}/members)</span></span>
+<p>招待時 (<code>POST /projects/{id}/members</code>) に <code>purpose='activation'</code> で発行し、<code>meta</code> に <code>invitedProjectId</code> / <code>invitedRole</code> を JSON 保持。トークンのアクターは招待されたプロジェクトユーザー(<code>actorType='project_user'</code> / <code>actorId=M_PRJ_USERS.id</code>)。SCR-018 「登録を完了する」押下時に <code>verifyToken</code> → 同一トランザクションでプロジェクトユーザー有効化 + <code>consumeToken</code> を実行する。</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 招待時(POST /projects/{id}/members)</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> rawToken <span class="op">=</span> <span class="cf">await</span> <span class="fu">generateToken</span>(<span class="st">&#39;activation&#39;</span><span class="op">,</span> {</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  actorType<span class="op">:</span> <span class="st">&#39;project_user&#39;</span><span class="op">,</span> actorId<span class="op">:</span> projectUserId<span class="op">,</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  contractOwnerUserId<span class="op">,</span>           <span class="co">// → M_owners.id</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  contractOwnerUserId<span class="op">,</span>           <span class="co">// → M_OWNERS.id</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  invitedProjectId<span class="op">:</span> projectId<span class="op">,</span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  invitedRole<span class="op">,</span>                  <span class="co">// &#39;admin&#39; | &#39;member&#39;</span></span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>}<span class="op">,</span> env<span class="op">,</span> <span class="co">/* 7d */</span> <span class="dv">7</span> <span class="op">*</span> <span class="dv">86400</span>)<span class="op">;</span></span>
@@ -229,21 +229,21 @@
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> { actorId<span class="op">:</span> projectUserId<span class="op">,</span> invitedProjectId<span class="op">,</span> invitedRole } <span class="op">=</span> payload<span class="op">;</span></span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">batch</span>([</span>
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="vs">`UPDATE M_project_users SET name = ?1, password_hash = ?2, status = &#39;active&#39;, updated_at = ?3 WHERE id = ?4`</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="vs">`UPDATE M_PRJ_USERS SET name = ?1, password_hash = ?2, status = &#39;active&#39;, updated_at = ?3 WHERE id = ?4`</span></span>
 <span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  )<span class="op">.</span><span class="fu">bind</span>(displayName<span class="op">,</span> passwordHash<span class="op">,</span> now<span class="op">,</span> projectUserId)<span class="op">,</span></span>
 <span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="vs">`INSERT INTO T_terms_agreements (id, actor_type, actor_id, doc_type, terms_version, agreed_at) VALUES (?1, &#39;project_user&#39;, ?2, &#39;terms_of_service&#39;, ?3, ?4), (?5, &#39;project_user&#39;, ?2, &#39;privacy_policy&#39;, ?6, ?4)`</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="vs">`INSERT INTO T_TERMS_AGREE (id, actor_type, actor_id, doc_type, terms_version, agreed_at) VALUES (?1, &#39;project_user&#39;, ?2, &#39;terms_of_service&#39;, ?3, ?4), (?5, &#39;project_user&#39;, ?2, &#39;privacy_policy&#39;, ?6, ?4)`</span></span>
 <span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  )<span class="op">.</span><span class="fu">bind</span>(<span class="fu">ulid</span>()<span class="op">,</span> projectUserId<span class="op">,</span> termsVer<span class="op">,</span> now<span class="op">,</span> <span class="fu">ulid</span>()<span class="op">,</span> privacyVer)<span class="op">,</span></span>
 <span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(</span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="vs">`UPDATE M_project_user_assignments SET valid = 1, updated_at = ?1 WHERE project_user_id = ?2 AND project_id = ?3`</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="vs">`UPDATE M_PRJ_USER_ASGN SET valid = 1, updated_at = ?1 WHERE project_user_id = ?2 AND project_id = ?3`</span></span>
 <span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  )<span class="op">.</span><span class="fu">bind</span>(now<span class="op">,</span> projectUserId<span class="op">,</span> invitedProjectId)<span class="op">,</span></span>
 <span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>])<span class="op">;</span></span>
 <span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> <span class="fu">consumeToken</span>(rawToken<span class="op">,</span> <span class="st">&#39;activation&#39;</span><span class="op">,</span> env)<span class="op">;</span></span>
 <span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> <span class="fu">writeAudit</span>({ action<span class="op">:</span> <span class="st">&#39;user.activation_completed&#39;</span><span class="op">,</span> actor_type<span class="op">:</span> <span class="st">&#39;project_user&#39;</span><span class="op">,</span> actor_id<span class="op">:</span> projectUserId<span class="op">,</span> target_type<span class="op">:</span> <span class="st">&#39;project_user&#39;</span><span class="op">,</span> target_id<span class="op">:</span> projectUserId<span class="op">,</span> meta<span class="op">:</span> { project_id<span class="op">:</span> invitedProjectId<span class="op">,</span> role<span class="op">:</span> invitedRole } })<span class="op">;</span></span></code></pre></div>
 <p>再送時 (<code>POST /members/{id}/resend-invitation</code>) は旧トークンを <code>consumeToken()</code> で失効させ、同一 <code>invitedProjectId</code> / <code>invitedRole</code> を <code>meta</code> に含めて新規トークンを発行する。</p>
 <h3 id="33b-プロジェクト連絡先メール確認トークンcontact_verify-scr-019-着地">3.3b プロジェクト連絡先メール確認トークン(contact_verify)+ SCR-019 着地</h3>
-<p>SCR-004-001 プロジェクト作成・編集モーダルで連絡先メールが新規入力 / 変更された時に <code>purpose='contact_verify'</code> で発行し、<code>meta</code> に <code>projectId</code> を JSON 保持。SCR-019 着地ページから <code>POST /auth/contact-verifications/{token}</code> 経由で同一トランザクションで <code>M_projects.contact_email_verified_at</code> セット + <code>consumeToken</code> を実行する。</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 連絡先メール変更時(POST/PATCH /M_projects/{id} で contact_email が変更された場合)</span></span>
+<p>SCR-004-001 プロジェクト作成・編集モーダルで連絡先メールが新規入力 / 変更された時に <code>purpose='contact_verify'</code> で発行し、<code>meta</code> に <code>projectId</code> を JSON 保持。SCR-019 着地ページから <code>POST /auth/contact-verifications/{token}</code> 経由で同一トランザクションで <code>M_PROJECTS.contact_email_verified_at</code> セット + <code>consumeToken</code> を実行する。</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 連絡先メール変更時(POST/PATCH /projects/{id} で contact_email が変更された場合)</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> rawToken <span class="op">=</span> <span class="cf">await</span> <span class="fu">generateToken</span>(<span class="st">&#39;contact_verify&#39;</span><span class="op">,</span> { projectId }<span class="op">,</span> env<span class="op">,</span> <span class="co">/* 24h */</span> <span class="dv">24</span> <span class="op">*</span> <span class="dv">3600</span>)<span class="op">;</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> verifyUrl <span class="op">=</span> <span class="vs">`</span><span class="sc">${</span>env<span class="op">.</span><span class="at">WEB_BASE</span><span class="sc">}</span><span class="vs">/auth/contact-verify?token=</span><span class="sc">${</span><span class="pp">encodeURIComponent</span>(rawToken)<span class="sc">}</span><span class="vs">`</span><span class="op">;</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> <span class="fu">enqueueEmail</span>({ template<span class="op">:</span> <span class="st">&#39;TPL-PROJECT_CONTACT_VERIFY&#39;</span><span class="op">,</span> verifyUrl<span class="op">,</span> <span class="op">...</span> })<span class="op">;</span></span>
@@ -252,13 +252,13 @@
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> { payload } <span class="op">=</span> <span class="cf">await</span> <span class="fu">verifyToken</span>(rawToken<span class="op">,</span> <span class="st">&#39;contact_verify&#39;</span><span class="op">,</span> env)<span class="op">;</span></span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> { projectId } <span class="op">=</span> payload<span class="op">;</span></span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="vs">`UPDATE M_projects SET contact_email_verified_at = ?1, updated_at = ?1 WHERE id = ?2`</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="vs">`UPDATE M_PROJECTS SET contact_email_verified_at = ?1, updated_at = ?1 WHERE id = ?2`</span></span>
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>)<span class="op">.</span><span class="fu">bind</span>(now<span class="op">,</span> projectId)<span class="op">.</span><span class="fu">run</span>()<span class="op">;</span></span>
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> <span class="fu">consumeToken</span>(rawToken<span class="op">,</span> <span class="st">&#39;contact_verify&#39;</span><span class="op">,</span> env)<span class="op">;</span></span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> <span class="fu">writeAudit</span>({ action<span class="op">:</span> <span class="st">&#39;project.contact_email_verified&#39;</span><span class="op">,</span> target_project_id<span class="op">:</span> projectId<span class="op">,</span> meta<span class="op">:</span> { email_hmac } })<span class="op">;</span></span></code></pre></div>
 <p>Turnstile 不要(状態変更は単純な <code>verified_at</code> セットのみで副作用が軽微、トークン HMAC-SHA256 検証 + IP/トークン単位のレート制限で十分)。再送は連絡先メール再設定 / 再保存時の自動発行のみで、明示的な「再送」操作 API は提供しない(MVP)。</p>
 <h3 id="34-期限切れトークン削除cron">3.4 期限切れトークン削除（cron）</h3>
-<p><code>T_access_tokens</code> の <code>expires_at &lt; NOW() - 30 日</code> を物理削除。詳細は <a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html</a> §14.1.9 を参照。</p>
+<p><code>T_ACCESS_TOKENS</code> の <code>expires_at &lt; NOW() - 30 日</code> を物理削除。詳細は <a href="DD13_バッチ・非同期処理.html">DD13_バッチ・非同期処理.html</a> §14.1.9 を参照。</p>
 <h2 id="4-関連設計">4. 関連設計</h2>
 <p class="section-lead">本 DD に関連する正本ドキュメントを示します。トークンの認証・認可方針は <a href="../02_基本設計/08_認証・認可設計.html">認証・認可設計</a> を正本とし、要件は <a href="../01_要件定義/index.html">要件定義</a>、全体方針は <a href="../02_基本設計/index.html">基本設計</a> を参照します。関連 DD は <a href="DD01_アカウント・ユーザー管理.html">DD01_アカウント・ユーザー管理.html</a> / <a href="DD10_暗号化・鍵管理.html">DD10_暗号化・鍵管理.html</a>、運用面は <a href="../04_運用設計/index.html">運用設計</a> を参照します。</p>
 <h2 id="5-テスト観点">5. テスト観点</h2>

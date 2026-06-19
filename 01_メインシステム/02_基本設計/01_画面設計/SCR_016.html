@@ -155,10 +155,10 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>プロジェクト</td><td>プロジェクト名・件数を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>M_projects</code>(<a href="../03_テーブル設計/TBL-M-004_m_projects.html">テーブル設計 3.6</a>)</td></tr>
-<tr><td>利用量計測</td><td>当月の質問数・利用率を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>T_usage_metering</code>(<a href="../03_テーブル設計/TBL-T-008_t_usage_metering.html">テーブル設計 3.22</a>)</td></tr>
-<tr><td>プロジェクト上限</td><td>プロジェクト別の月次上限・上限 OFF を判定する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>M_project_quota_limits</code>(<a href="../03_テーブル設計/TBL-M-009_m_project_quota_limits.html">テーブル設計 3.24</a>)</td></tr>
-<tr><td>契約サブスクリプション</td><td>支払方法未登録・支払い失敗を判定する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>T_billing_subscriptions</code>(<a href="../03_テーブル設計/TBL-T-006_t_billing_subscriptions.html">テーブル設計 3.20</a>)</td></tr>
+<tr><td>プロジェクト</td><td>プロジェクト名・件数を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>M_PROJECTS</code>(<a href="../03_テーブル設計/TBL-M-004_m_projects.html">テーブル設計 3.6</a>)</td></tr>
+<tr><td>利用量計測</td><td>当月の質問数・利用率を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>T_USAGE_METER</code>(<a href="../03_テーブル設計/TBL-T-008_t_usage_meter.html">テーブル設計 3.22</a>)</td></tr>
+<tr><td>プロジェクト上限</td><td>プロジェクト別の月次上限・上限 OFF を判定する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>M_PRJ_QUOTA_LIMITS</code>(<a href="../03_テーブル設計/TBL-M-009_m_prj_quota_limits.html">テーブル設計 3.24</a>)</td></tr>
+<tr><td>契約サブスクリプション</td><td>支払方法未登録・支払い失敗を判定する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>T_BILL_SUBS</code>(<a href="../03_テーブル設計/TBL-T-006_t_bill_subs.html">テーブル設計 3.20</a>)</td></tr>
 <tr><td>利用状況取得</td><td>契約全体サマリーと各プロジェクト別利用量の双方を取得する。契約横断の集計は <code>viewMode=contract</code>(または同等の集約パラメータ)を、プロジェクト別は <code>viewMode=project&amp;projectId={id}</code> を用いる(SCR-021 の単一プロジェクト表示と区別する)</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>取得方式の正本は <a href="../02_API設計/利用量・課金.html#API-BIL-001_monthviewmodeprojectprojectidid">02_API設計 §5.7.1</a>。物理名 <code>GET /usage?period=current_month&amp;viewMode={contract|project}</code></td></tr>
 </tbody>
 </table>

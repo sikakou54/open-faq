@@ -61,9 +61,9 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>M_owners</code></td><td>◯</td><td>◯</td><td>—</td><td>—</td></tr>
-<tr><td><code>T_terms_agreements</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
-<tr><td><code>T_access_tokens</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td><code>M_OWNERS</code></td><td>◯</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>T_TERMS_AGREE</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td><code>T_ACCESS_TOKENS</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -137,9 +137,9 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>M_owners</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
-<tr><td><code>M_project_users</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
-<tr><td><code>T_sessions</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td><code>M_OWNERS</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
+<tr><td><code>M_PRJ_USERS</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
+<tr><td><code>T_SESSIONS</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -219,7 +219,7 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>T_sessions</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>T_SESSIONS</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -268,9 +268,9 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>M_owners</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
-<tr><td><code>M_project_users</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
-<tr><td><code>T_access_tokens</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td><code>M_OWNERS</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>M_PRJ_USERS</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>T_ACCESS_TOKENS</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -325,9 +325,9 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>M_owners</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
-<tr><td><code>M_project_users</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
-<tr><td><code>T_access_tokens</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td><code>M_OWNERS</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>M_PRJ_USERS</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>T_ACCESS_TOKENS</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -374,7 +374,7 @@
 <tr><td>権限</td><td>—</td></tr>
 </tbody>
 </table>
-<p>トークン形式 = <code>email_verify</code> purpose の <code>T_access_tokens.token_hash</code> 検証。</p>
+<p>トークン形式 = <code>email_verify</code> purpose の <code>T_ACCESS_TOKENS.token_hash</code> 検証。</p>
 <h3>処理概要</h3>
 <p class="section-lead">登録メールアドレスを確認する。</p>
 <table>
@@ -390,8 +390,8 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>T_access_tokens</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
-<tr><td><code>M_owners</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>T_ACCESS_TOKENS</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
+<tr><td><code>M_OWNERS</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -438,7 +438,7 @@
 <tr><td>権限</td><td>—</td></tr>
 </tbody>
 </table>
-<p>トークン形式 = <code>activation</code> purpose の <code>T_access_tokens.token_hash</code> 検証。検証成功時は招待情報を返し、SCR-018 の招待情報パネル表示に使用する。Turnstile 不要(プレビューは情報取得のみで状態変更なし)。</p>
+<p>トークン形式 = <code>activation</code> purpose の <code>T_ACCESS_TOKENS.token_hash</code> 検証。検証成功時は招待情報を返し、SCR-018 の招待情報パネル表示に使用する。Turnstile 不要(プレビューは情報取得のみで状態変更なし)。</p>
 <h3>処理概要</h3>
 <p class="section-lead">招待情報(プロジェクト名 / 付与ロール / 招待元オーナー名 / 招待者メール)をプレビュー取得する。</p>
 <table>
@@ -453,11 +453,11 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>T_access_tokens</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
-<tr><td><code>M_projects</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
-<tr><td><code>M_project_user_assignments</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
-<tr><td><code>M_project_users</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
-<tr><td><code>M_owners</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>T_ACCESS_TOKENS</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>M_PROJECTS</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>M_PRJ_USER_ASGN</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>M_PRJ_USERS</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
+<tr><td><code>M_OWNERS</code></td><td>—</td><td>◯</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -537,11 +537,11 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>T_access_tokens</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
-<tr><td><code>M_project_users</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
-<tr><td><code>M_project_user_assignments</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
-<tr><td><code>T_terms_agreements</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
-<tr><td><code>H_audit_logs</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td><code>T_ACCESS_TOKENS</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
+<tr><td><code>M_PRJ_USERS</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>M_PRJ_USER_ASGN</code></td><td>—</td><td>—</td><td>◯</td><td>—</td></tr>
+<tr><td><code>T_TERMS_AGREE</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td><code>H_AUDIT_LOGS</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>
@@ -619,7 +619,7 @@
 </table>
 <p>Turnstile は不要(入力フォームを持たない単純な確認専用エンドポイントで、トークン HMAC-SHA256 検証 + IP / トークン単位のレート制限で十分)。</p>
 <h3>処理概要</h3>
-<p class="section-lead">プロジェクト連絡先メールを確認済みとし <code>M_projects.contact_email_verified_at</code> をセットする。本処理は 1 つのトランザクションで実行する。</p>
+<p class="section-lead">プロジェクト連絡先メールを確認済みとし <code>M_PROJECTS.contact_email_verified_at</code> をセットする。本処理は 1 つのトランザクションで実行する。</p>
 <table>
 <thead><tr><th>処理 ID</th><th>処理内容</th></tr></thead>
 <tbody>
@@ -634,9 +634,9 @@
 <table>
 <thead><tr><th>テーブル</th><th>C</th><th>R</th><th>U</th><th>D</th></tr></thead>
 <tbody>
-<tr><td><code>T_access_tokens</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
-<tr><td><code>M_projects</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
-<tr><td><code>H_audit_logs</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td><code>T_ACCESS_TOKENS</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
+<tr><td><code>M_PROJECTS</code></td><td>—</td><td>◯</td><td>◯</td><td>—</td></tr>
+<tr><td><code>H_AUDIT_LOGS</code></td><td>◯</td><td>—</td><td>—</td><td>—</td></tr>
 </tbody>
 </table>
 <h3>リクエストパラメータ</h3>

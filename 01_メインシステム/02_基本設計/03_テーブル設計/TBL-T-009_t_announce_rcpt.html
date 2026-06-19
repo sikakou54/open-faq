@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>T_announcement_recipients(TBL-T-009) | FAQ 設計ポータル</title>
+<title>T_ANNOUNCE_RCPT(TBL-T-009) | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../../../assets/css/style.css">
 <script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script src="../../../assets/js/nav-data.js" defer></script>
 <script src="../../../assets/js/search-index.js" defer></script>
 <script src="../../../assets/js/portal.js" defer></script>
 </head>
-<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-009_t_announcement_recipients.html">
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-009_t_announce_rcpt.html">
 <article class="content" id="content">
-<h1 id="TBL-T-009">TBL-T-009 <code>T_announcement_recipients</code></h1>
-<span id="327-T_announcement_recipients"></span>
+<h1 id="TBL-T-009">TBL-T-009 <code>T_ANNOUNCE_RCPT</code></h1>
+<span id="327-T_ANNOUNCE_RCPT"></span>
 <p class="section-lead">お知らせの実配信先・配信集計・監査情報を保持します。</p>
 <h3 id="3271-概要">概要</h3>
 <table>
@@ -26,7 +26,7 @@
 <tbody>
 <tr>
 <td>テーブル名</td>
-<td><code>T_announcement_recipients</code></td>
+<td><code>T_ANNOUNCE_RCPT</code></td>
 </tr>
 <tr>
 <td>論理名</td>
@@ -39,7 +39,7 @@
 <tr>
 <td>外部キー</td>
 <td><ul class="key-cols">
-<li><code>announcement_id</code> → <code>M_service_announcements(id)</code></li>
+<li><code>announcement_id</code> → <code>M_SERVICE_ANNOUNCE(id)</code></li>
 </ul></td>
 </tr>
 </tbody>
@@ -85,7 +85,7 @@
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
-<td><code>M_service_announcements(id)</code></td>
+<td><code>M_SERVICE_ANNOUNCE(id)</code></td>
 <td></td>
 <td></td>
 <td></td>
@@ -130,7 +130,7 @@
 <td></td>
 <td></td>
 <td></td>
-<td><code>recipient_type</code> に応じ <code>M_owners(id)</code> / <code>M_project_users(id)</code> を指す(論理参照)</td>
+<td><code>recipient_type</code> に応じ <code>M_OWNERS(id)</code> / <code>M_PRJ_USERS(id)</code> を指す(論理参照)</td>
 
 </tr>
 <tr>

@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TP_ai_threshold_persistent_cache(TBL-TP-002) | FAQ 設計ポータル</title>
+<title>TP_AI_THRESH_CACHE(TBL-TP-002) | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../../../assets/css/style.css">
 <script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script src="../../../assets/js/nav-data.js" defer></script>
 <script src="../../../assets/js/search-index.js" defer></script>
 <script src="../../../assets/js/portal.js" defer></script>
 </head>
-<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/TBL-TP-002_tp_ai_threshold_persistent_cache.html">
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/TBL-TP-002_tp_ai_thresh_cache.html">
 <article class="content" id="content">
-<h1 id="TBL-TP-002">TBL-TP-002 <code>TP_ai_threshold_persistent_cache</code></h1>
-<span id="316-TP_ai_threshold_persistent_cache"></span>
+<h1 id="TBL-TP-002">TBL-TP-002 <code>TP_AI_THRESH_CACHE</code></h1>
+<span id="316-TP_AI_THRESH_CACHE"></span>
 <p class="section-lead">3 階層 AI しきい値を永続キャッシュするテーブルです。</p>
 <h3 id="3161-概要">概要</h3>
 <table>
@@ -26,7 +26,7 @@
 <tbody>
 <tr>
 <td>テーブル名</td>
-<td><code>TP_ai_threshold_persistent_cache</code></td>
+<td><code>TP_AI_THRESH_CACHE</code></td>
 </tr>
 <tr>
 <td>論理名</td>
@@ -39,8 +39,8 @@
 <tr>
 <td>外部キー</td>
 <td><ul class="key-cols">
-<li><code>contract_owner_user_id</code> → <code>M_owners(id)</code></li>
-<li><code>project_id</code> → <code>M_projects(id)</code></li>
+<li><code>contract_owner_user_id</code> → <code>M_OWNERS(id)</code></li>
+<li><code>project_id</code> → <code>M_PROJECTS(id)</code></li>
 </ul></td>
 </tr>
 </tbody>
@@ -86,7 +86,7 @@
 <td style="text-align: right;">-</td>
 <td>YES</td>
 <td></td>
-<td><code>M_owners(id)</code></td>
+<td><code>M_OWNERS(id)</code></td>
 <td></td>
 <td></td>
 <td></td>
@@ -100,7 +100,7 @@
 <td style="text-align: right;">-</td>
 <td>YES</td>
 <td></td>
-<td><code>M_projects(id)</code></td>
+<td><code>M_PROJECTS(id)</code></td>
 <td></td>
 <td></td>
 <td></td>

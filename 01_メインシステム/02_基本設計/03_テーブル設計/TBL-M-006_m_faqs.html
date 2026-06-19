@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>M_faqs(TBL-M-006) | FAQ 設計ポータル</title>
+<title>M_FAQS(TBL-M-006) | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../../../assets/css/style.css">
 <script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script src="../../../assets/js/nav-data.js" defer></script>
@@ -12,8 +12,8 @@
 </head>
 <body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-006_m_faqs.html">
 <article class="content" id="content">
-<h1 id="TBL-M-006">TBL-M-006 <code>M_faqs</code></h1>
-<span id="39-M_faqs"></span>
+<h1 id="TBL-M-006">TBL-M-006 <code>M_FAQS</code></h1>
+<span id="39-M_FAQS"></span>
 <p class="section-lead">FAQ 本体(質問・回答・公開状態)を保持します。</p>
 <h3 id="391-概要">概要</h3>
 <table>
@@ -26,7 +26,7 @@
 <tbody>
 <tr>
 <td>テーブル名</td>
-<td><code>M_faqs</code></td>
+<td><code>M_FAQS</code></td>
 </tr>
 <tr>
 <td>論理名</td>
@@ -39,11 +39,11 @@
 <tr>
 <td>外部キー</td>
 <td><ul class="key-cols">
-<li><code>contract_owner_user_id</code> → <code>M_owners(id)</code></li>
-<li><code>project_id</code> → <code>M_projects(id)</code></li>
-<li><code>source_unresolved_question_id</code> → <code>T_inquiries(id)</code></li>
-<li><code>created_by_type</code> + <code>created_by_id</code> → <code>M_owners(id)</code> / <code>M_project_users(id)</code>(論理参照)</li>
-<li><code>updated_by_type</code> + <code>updated_by_id</code> → <code>M_owners(id)</code> / <code>M_project_users(id)</code>(論理参照)</li>
+<li><code>contract_owner_user_id</code> → <code>M_OWNERS(id)</code></li>
+<li><code>project_id</code> → <code>M_PROJECTS(id)</code></li>
+<li><code>source_unresolved_question_id</code> → <code>T_INQUIRIES(id)</code></li>
+<li><code>created_by_type</code> + <code>created_by_id</code> → <code>M_OWNERS(id)</code> / <code>M_PRJ_USERS(id)</code>(論理参照)</li>
+<li><code>updated_by_type</code> + <code>updated_by_id</code> → <code>M_OWNERS(id)</code> / <code>M_PRJ_USERS(id)</code>(論理参照)</li>
 </ul></td>
 </tr>
 </tbody>
@@ -89,7 +89,7 @@
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
-<td><code>M_owners(id)</code></td>
+<td><code>M_OWNERS(id)</code></td>
 <td></td>
 <td></td>
 <td></td>
@@ -103,7 +103,7 @@
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
-<td><code>M_projects(id)</code></td>
+<td><code>M_PROJECTS(id)</code></td>
 <td></td>
 <td></td>
 <td></td>
@@ -201,7 +201,7 @@
 <td style="text-align: right;">-</td>
 <td>YES</td>
 <td></td>
-<td><code>T_inquiries(id)</code></td>
+<td><code>T_INQUIRIES(id)</code></td>
 <td></td>
 <td></td>
 <td></td>
@@ -246,7 +246,7 @@
 <td></td>
 <td></td>
 <td></td>
-<td><code>created_by_type</code> に応じ <code>M_owners(id)</code> / <code>M_project_users(id)</code> を指す(論理参照)</td>
+<td><code>created_by_type</code> に応じ <code>M_OWNERS(id)</code> / <code>M_PRJ_USERS(id)</code> を指す(論理参照)</td>
 
 </tr>
 <tr>
@@ -274,7 +274,7 @@
 <td></td>
 <td></td>
 <td></td>
-<td><code>updated_by_type</code> に応じ <code>M_owners(id)</code> / <code>M_project_users(id)</code> を指す(論理参照)</td>
+<td><code>updated_by_type</code> に応じ <code>M_OWNERS(id)</code> / <code>M_PRJ_USERS(id)</code> を指す(論理参照)</td>
 
 </tr>
 <tr>

@@ -43,7 +43,7 @@
 </tr>
 <tr>
 <td>テーブル</td>
-<td><code>H_notification_logs</code> <code>M_email_suppression_list</code> <code>unknown_webhook_events</code></td>
+<td><code>H_NOTIF_LOGS</code> <code>M_EMAIL_SUPPRESS</code> <code>unknown_webhook_events</code></td>
 <td>通知基盤</td>
 </tr>
 <tr>
@@ -140,12 +140,12 @@
   participant T as 通知契機(Worker)
   participant E as enqueueEmail
   participant Q as email-queue
-  participant D as D1 (H_notification_logs)
+  participant D as D1 (H_NOTIF_LOGS)
 
   T-&gt;&gt;E: メール送信を要求(宛先 / テンプレート / 重要度)
   E-&gt;&gt;Q: 送信ジョブを Queue 投入(producer.send)
   Q--&gt;&gt;E:
-  E-&gt;&gt;D: H_notification_logs へ記録(status=queued)
+  E-&gt;&gt;D: H_NOTIF_LOGS へ記録(status=queued)
   D--&gt;&gt;E:
   E--&gt;&gt;T: 受付完了</code></pre>
 <div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">正本委譲</span><code>enqueueEmail()</code> の API スキーマ・Queue バインディング設定は <a href="../02_基本設計/02_API設計/index.html">../02_基本設計/02_API設計/index.html</a> が正本です。</div></div>
@@ -215,30 +215,30 @@
 <div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">サプレッション昇格</span>bounced のうち soft bounced は 5 連続で permanent suppression に昇格します。complained は即時 permanent です。</div></div>
 
 <h3 id="35-サプレスチェック">3.5 サプレスチェック</h3>
-<p class="section-lead">メール送信の直前に、宛先が永続サプレッション対象かを HMAC 照合で確認し、対象なら送信を中止して通知ログをサプレス済みに記録する処理を定義します。次の擬似コードは、宛先メールの HMAC 算出・<code>M_email_suppression_list</code> 照合・サプレス時の早期 return の実体です。</p>
+<p class="section-lead">メール送信の直前に、宛先が永続サプレッション対象かを HMAC 照合で確認し、対象なら送信を中止して通知ログをサプレス済みに記録する処理を定義します。次の擬似コードは、宛先メールの HMAC 算出・<code>M_EMAIL_SUPPRESS</code> 照合・サプレス時の早期 return の実体です。</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 送信前</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> emailHmac <span class="op">=</span> <span class="cf">await</span> <span class="fu">hmacSha256</span>(env<span class="op">.</span><span class="at">MASTER_KEY</span><span class="op">,</span> to<span class="op">.</span><span class="fu">toLowerCase</span>())<span class="op">;</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> suppressed <span class="op">=</span> <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="vs">`SELECT 1 FROM M_email_suppression_list WHERE email_hmac = ?1 AND is_permanent = 1 AND released_at IS NULL`</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="vs">`SELECT 1 FROM M_EMAIL_SUPPRESS WHERE email_hmac = ?1 AND is_permanent = 1 AND released_at IS NULL`</span></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>)<span class="op">.</span><span class="fu">bind</span>(emailHmac)<span class="op">.</span><span class="fu">first</span>()<span class="op">;</span></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (suppressed) {</span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> <span class="fu">markSuppressed</span>(env<span class="op">,</span> messageId)<span class="op">;</span></span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span><span class="op">;</span></span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h3 id="36-通知重要度と強制送信">3.6 通知重要度と強制送信</h3>
-<p>通知重要度は <code>low</code> / <code>normal</code> / <code>high</code> / <code>critical</code> の 4 区分（共有概念）。<code>critical</code> はメール送信が必須となるイベントに予約し、宛先は<strong>契約オーナー(<code>M_owners</code> 行)</strong>と<strong>当該契約で <code>M_project_user_assignments.role='admin' AND valid=1</code> を 1 件でも保持するプロジェクトユーザー</strong>の和集合とする。<code>M_owners</code> は <code>M_project_user_assignments</code> の外にあるため、オーナーは別途明示的に宛先へ含める。<code>critical</code> はシステム判定で<strong>強制送信</strong>される。</p>
+<p>通知重要度は <code>low</code> / <code>normal</code> / <code>high</code> / <code>critical</code> の 4 区分（共有概念）。<code>critical</code> はメール送信が必須となるイベントに予約し、宛先は<strong>契約オーナー(<code>M_OWNERS</code> 行)</strong>と<strong>当該契約で <code>M_PRJ_USER_ASGN.role='admin' AND valid=1</code> を 1 件でも保持するプロジェクトユーザー</strong>の和集合とする。<code>M_OWNERS</code> は <code>M_PRJ_USER_ASGN</code> の外にあるため、オーナーは別途明示的に宛先へ含める。<code>critical</code> はシステム判定で<strong>強制送信</strong>される。</p>
 <p><strong>critical 通知の宛先解決クエリ</strong>: 2 マスタ完全分離のため、オーナーとプロジェクトユーザーを <code>UNION</code> で解決する。<code>actor_type</code> を付与して宛先種別を区別し、正規化メールアドレスで重複排除する。</p>
-<div class="sourceCode"><pre class="sourceCode sql"><code class="sourceCode sql"><span>-- オーナー(契約境界キー = M_owners.id)</span>
+<div class="sourceCode"><pre class="sourceCode sql"><code class="sourceCode sql"><span>-- オーナー(契約境界キー = M_OWNERS.id)</span>
 <span>SELECT 'owner' AS actor_type, o.id AS actor_id, o.email_hmac</span>
-<span>FROM M_owners o WHERE o.id = :contractOwnerUserId AND o.valid = 1</span>
+<span>FROM M_OWNERS o WHERE o.id = :contractOwnerUserId AND o.valid = 1</span>
 <span>UNION</span>
 <span>-- 当該契約で admin 割当を持つプロジェクトユーザー</span>
 <span>SELECT 'project_user' AS actor_type, pu.id AS actor_id, pu.email_hmac</span>
-<span>FROM M_project_users pu</span>
-<span>JOIN M_project_user_assignments pua ON pua.project_user_id = pu.id AND pua.valid = 1 AND pua.role = 'admin'</span>
+<span>FROM M_PRJ_USERS pu</span>
+<span>JOIN M_PRJ_USER_ASGN pua ON pua.project_user_id = pu.id AND pua.valid = 1 AND pua.role = 'admin'</span>
 <span>WHERE pu.contract_owner_user_id = :contractOwnerUserId AND pu.valid = 1;</span></code></pre></div>
-<p>プロジェクト関連通知(<code>NOTIF-CHAT_REPLY_TO_STAFF</code> / <code>NOTIF-CHAT_HOLD_CHECK</code> 等の <code>normal</code> / <code>low</code>)は <strong>常時 ON 固定</strong> とし、配信時点で当該プロジェクトの宛先を動的スキャンして即時配信する。宛先はオーナー(<code>M_owners</code>)と当該プロジェクトに割り当たる全プロジェクトユーザー(<code>M_project_user_assignments WHERE valid=1</code> の admin + member)の和集合とする。画面設定と <code>project_notification_settings</code> テーブルは持たない。契約単位の <code>normal</code> / <code>high</code> 通知(課金・契約・運営お知らせ等)は契約 WS 側で扱う。個人通知オプトアウト・メンバー選択型 UI は MVP では提供しない。</p>
-<p>質問数上限アラート(<code>usage.question_limit.threshold</code>)はSCR-021-001で選択された25/50/80/90/100%への当月初回到達時に、オーナー(<code>M_owners</code>)と当該プロジェクトの有効な<code>admin</code>(<code>M_project_user_assignments.role='admin'</code>)へメールだけを送信する。宛先は<code>project_id</code>で限定し、アクター ID(<code>actor_type</code> + <code>actor_id</code>)と正規化メールアドレスで重複排除する。冪等キーは<code>question-limit-alert:{projectId}:{yyyyMM}:{thresholdPercent}</code>とし、画面上に送信先の表示・変更項目は設けない。</p>
+<p>プロジェクト関連通知(<code>NOTIF-CHAT_REPLY_TO_STAFF</code> / <code>NOTIF-CHAT_HOLD_CHECK</code> 等の <code>normal</code> / <code>low</code>)は <strong>常時 ON 固定</strong> とし、配信時点で当該プロジェクトの宛先を動的スキャンして即時配信する。宛先はオーナー(<code>M_OWNERS</code>)と当該プロジェクトに割り当たる全プロジェクトユーザー(<code>M_PRJ_USER_ASGN WHERE valid=1</code> の admin + member)の和集合とする。画面設定と <code>project_notification_settings</code> テーブルは持たない。契約単位の <code>normal</code> / <code>high</code> 通知(課金・契約・運営お知らせ等)は契約 WS 側で扱う。個人通知オプトアウト・メンバー選択型 UI は MVP では提供しない。</p>
+<p>質問数上限アラート(<code>usage.question_limit.threshold</code>)はSCR-021-001で選択された25/50/80/90/100%への当月初回到達時に、オーナー(<code>M_OWNERS</code>)と当該プロジェクトの有効な<code>admin</code>(<code>M_PRJ_USER_ASGN.role='admin'</code>)へメールだけを送信する。宛先は<code>project_id</code>で限定し、アクター ID(<code>actor_type</code> + <code>actor_id</code>)と正規化メールアドレスで重複排除する。冪等キーは<code>question-limit-alert:{projectId}:{yyyyMM}:{thresholdPercent}</code>とし、画面上に送信先の表示・変更項目は設けない。</p>
 <p><code>announcement.kind = critical</code> は障害告知や緊急法令対応など、配信遅延が許容できない重大通知。メイン障害時の代替経路（Resend 直送フォールバック）の詳細は <a href="index.html">index.html</a> §7.2 / §13.2.2 を参照。</p>
 <h3 id="37-メール本文の表示義務特定電子メール法">3.7 メール本文の表示義務（特定電子メール法）</h3>
 <p>メール本文末尾には <code>COMPANY_LEGAL_NAME</code> / <code>UNSUBSCRIBE_URL</code> 等の表示義務情報を含める（テンプレート側で必須）。</p>

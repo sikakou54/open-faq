@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>M_service_announcements(TBL-M-010) | FAQ 設計ポータル</title>
+<title>H_FAQ_REV(TBL-H-001) | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../../../assets/css/style.css">
 <script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script src="../../../assets/js/nav-data.js" defer></script>
 <script src="../../../assets/js/search-index.js" defer></script>
 <script src="../../../assets/js/portal.js" defer></script>
 </head>
-<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-010_m_service_announcements.html">
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/TBL-H-001_h_faq_rev.html">
 <article class="content" id="content">
-<h1 id="TBL-M-010">TBL-M-010 <code>M_service_announcements</code></h1>
-<span id="325-M_service_announcements"></span>
-<p class="section-lead">お知らせの本体を保持します。</p>
-<h3 id="3251-概要">概要</h3>
+<h1 id="TBL-H-001">TBL-H-001 <code>H_FAQ_REV</code></h1>
+<span id="310-H_FAQ_REV"></span>
+<p class="section-lead">FAQ の改訂履歴を全文スナップショットで最大 50 件保持します。</p>
+<h3 id="3101-概要">概要</h3>
 <table>
 <thead>
 <tr>
@@ -26,11 +26,11 @@
 <tbody>
 <tr>
 <td>テーブル名</td>
-<td><code>M_service_announcements</code></td>
+<td><code>H_FAQ_REV</code></td>
 </tr>
 <tr>
 <td>論理名</td>
-<td>お知らせ(Control Plane)</td>
+<td>FAQ 改訂履歴</td>
 </tr>
 <tr>
 <td>主キー</td>
@@ -39,12 +39,13 @@
 <tr>
 <td>外部キー</td>
 <td><ul class="key-cols">
-<li><code>created_by_type</code> + <code>created_by_id</code> → <code>M_owners(id)</code> / <code>M_project_users(id)</code>(論理参照)</li>
+<li><code>faq_id</code> → <code>M_FAQS(id)</code></li>
+<li><code>created_by_type</code> + <code>created_by_id</code> → <code>M_OWNERS(id)</code> / <code>M_PRJ_USERS(id)</code>(論理参照)</li>
 </ul></td>
 </tr>
 </tbody>
 </table>
-<h3 id="3252-カラム定義">カラム定義</h3>
+<h3 id="3102-カラム定義-1">カラム定義</h3>
 <table>
 <thead>
 <tr>
@@ -79,23 +80,23 @@
 </tr>
 <tr>
 <td style="text-align: right;">2</td>
-<td>タイトル</td>
-<td><code>title</code></td>
+<td>FAQ ID</td>
+<td><code>faq_id</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
+<td><code>M_FAQS(id)</code></td>
 <td></td>
 <td></td>
 <td></td>
-<td><code>length(title) BETWEEN 1 AND 200</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">3</td>
-<td>本文(HTML)</td>
-<td><code>body_html</code></td>
-<td>TEXT</td>
+<td>バージョン</td>
+<td><code>version</code></td>
+<td>INTEGER</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
@@ -107,8 +108,8 @@
 </tr>
 <tr>
 <td style="text-align: right;">4</td>
-<td>重要度</td>
-<td><code>importance</code></td>
+<td>タイトル</td>
+<td><code>title</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
@@ -116,13 +117,13 @@
 <td></td>
 <td></td>
 <td></td>
-<td><code>importance IN ('low','normal','high','critical')</code></td>
+<td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">5</td>
-<td>公開日時</td>
-<td><code>published_at</code></td>
+<td>本文</td>
+<td><code>body</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>NO</td>
@@ -135,8 +136,8 @@
 </tr>
 <tr>
 <td style="text-align: right;">6</td>
-<td>取り下げ日時</td>
-<td><code>retracted_at</code></td>
+<td>カテゴリ</td>
+<td><code>category</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
@@ -149,8 +150,8 @@
 </tr>
 <tr>
 <td style="text-align: right;">7</td>
-<td>作成者種別</td>
-<td><code>created_by_type</code></td>
+<td>タグ</td>
+<td><code>tags</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
 <td>YES</td>
@@ -158,25 +159,39 @@
 <td></td>
 <td></td>
 <td></td>
-<td><code>created_by_type IN ('owner','project_user')</code></td>
+<td></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">8</td>
-<td>作成者 ID</td>
-<td><code>created_by_id</code></td>
+<td>状態スナップショット</td>
+<td><code>status_snapshot</code></td>
 <td>TEXT</td>
 <td style="text-align: right;">-</td>
-<td>YES</td>
+<td>NO</td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-<td><code>created_by_type</code> に応じ <code>M_owners(id)</code> / <code>M_project_users(id)</code> を指す(論理参照)</td>
+<td><code>status_snapshot IN ('draft','published','hidden','deleted')</code></td>
 
 </tr>
 <tr>
 <td style="text-align: right;">9</td>
+<td>由来</td>
+<td><code>source</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>'manual'</code></td>
+<td><code>source IN ('manual','import')</code></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">10</td>
 <td>作成日時</td>
 <td><code>created_at</code></td>
 <td>TEXT</td>
@@ -189,9 +204,37 @@
 <td></td>
 
 </tr>
+<tr>
+<td style="text-align: right;">11</td>
+<td>作成者種別</td>
+<td><code>created_by_type</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>created_by_type IN ('owner','project_user')</code></td>
+
+</tr>
+<tr>
+<td style="text-align: right;">12</td>
+<td>作成者 ID</td>
+<td><code>created_by_id</code></td>
+<td>TEXT</td>
+<td style="text-align: right;">-</td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><code>created_by_type</code> に応じ <code>M_OWNERS(id)</code> / <code>M_PRJ_USERS(id)</code> を指す(論理参照)</td>
+
+</tr>
 </tbody>
 </table>
-<h3 id="3255-インデックス">インデックス</h3>
+<h3 id="3105-インデックス-1">インデックス</h3>
 <table>
 <thead>
 <tr>
@@ -205,14 +248,21 @@
 <tbody>
 <tr>
 <td style="text-align: right;">1</td>
-<td><code>idx_announcements_published</code></td>
-<td><code>published_at DESC</code> WHERE <code>retracted_at IS NULL</code></td>
+<td><code>idx_faq_revisions_faq</code></td>
+<td><code>(faq_id, version DESC)</code></td>
 <td></td>
-<td>公開中の新着</td>
+<td>版数降順抽出</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td><code>idx_faq_revisions_source</code></td>
+<td><code>source</code></td>
+<td></td>
+<td>由来別集計</td>
 </tr>
 </tbody>
 </table>
-<h3 id="3257-コード値区分値">コード値・区分値</h3>
+<h3 id="3107-コード値区分値-1">コード値・区分値</h3>
 <table>
 <thead>
 <tr>
@@ -223,27 +273,18 @@
 </thead>
 <tbody>
 <tr>
-<td><code>importance</code></td>
-<td><code>low</code></td>
-<td>低</td>
+<td><code>source</code></td>
+<td><code>manual</code></td>
+<td>手動編集</td>
 </tr>
 <tr>
-<td><code>importance</code></td>
-<td><code>normal</code></td>
-<td>通常</td>
-</tr>
-<tr>
-<td><code>importance</code></td>
-<td><code>high</code></td>
-<td>高</td>
-</tr>
-<tr>
-<td><code>importance</code></td>
-<td><code>critical</code></td>
-<td>クリティカル</td>
+<td><code>source</code></td>
+<td><code>import</code></td>
+<td>インポートによる作成</td>
 </tr>
 </tbody>
 </table>
+
 </article>
 </body>
 </html>

@@ -115,7 +115,7 @@
 </table>
 
 <h2 id="5-入出力一覧">5. 入出力一覧</h2>
-<p class="section-lead">本画面が読み書きするテーブルと、呼び出す API の一覧です。テーブルの正本は <a href="../03_テーブル設計/index.html">03_テーブル設計</a>、API の正本は <a href="../02_API設計/プロジェクト管理.html#API-PRJ-003">02_API設計 §5.3</a> です。ウィジェット公開キー・見た目設定は <code>M_projects</code> テーブルに保持します。</p>
+<p class="section-lead">本画面が読み書きするテーブルと、呼び出す API の一覧です。テーブルの正本は <a href="../03_テーブル設計/index.html">03_テーブル設計</a>、API の正本は <a href="../02_API設計/プロジェクト管理.html#API-PRJ-003">02_API設計 §5.3</a> です。ウィジェット公開キー・見た目設定は <code>M_PROJECTS</code> テーブルに保持します。</p>
 <table>
 <thead>
 <tr>
@@ -134,10 +134,10 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>プロジェクト</td><td>公開キー・ウィジェット設定 JSON を取得・更新する</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>M_projects</code>(<code>widget_public_key</code> / ウィジェット設定 JSON)(<a href="../03_テーブル設計/TBL-M-004_m_projects.html">テーブル設計 3.6</a>)</td></tr>
-<tr><td>レガシー公開キー</td><td>ローテーション時に旧キーを 24 時間保持する</td><td>テーブル</td><td>出力</td><td>◯</td><td>—</td><td>—</td><td>—</td><td><code>T_project_legacy_keys</code>(<a href="../03_テーブル設計/TBL-T-003_t_project_legacy_keys.html">テーブル設計 3.7</a>)</td></tr>
-<tr><td>プロジェクト更新</td><td>ウィジェット設定(主色等)を取得・保存する</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>PATCH /M_projects/{id}</code>(<a href="../02_API設計/プロジェクト管理.html#API-PRJ-003">API 設計 5.3.3</a>)</td></tr>
-<tr><td>ウィジェット鍵ローテーション</td><td>公開キーを再発行する(旧キー 24h 猶予)</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /M_projects/{id}/widget-key/rotate</code>(<a href="../02_API設計/index.html">API 設計 5.3.4</a>)</td></tr>
+<tr><td>プロジェクト</td><td>公開キー・ウィジェット設定 JSON を取得・更新する</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>M_PROJECTS</code>(<code>widget_public_key</code> / ウィジェット設定 JSON)(<a href="../03_テーブル設計/TBL-M-004_m_projects.html">テーブル設計 3.6</a>)</td></tr>
+<tr><td>レガシー公開キー</td><td>ローテーション時に旧キーを 24 時間保持する</td><td>テーブル</td><td>出力</td><td>◯</td><td>—</td><td>—</td><td>—</td><td><code>T_PRJ_LEGACY_KEYS</code>(<a href="../03_テーブル設計/TBL-T-003_t_prj_legacy_keys.html">テーブル設計 3.7</a>)</td></tr>
+<tr><td>プロジェクト更新</td><td>ウィジェット設定(主色等)を取得・保存する</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>PATCH /projects/{id}</code>(<a href="../02_API設計/プロジェクト管理.html#API-PRJ-003">API 設計 5.3.3</a>)</td></tr>
+<tr><td>ウィジェット鍵ローテーション</td><td>公開キーを再発行する(旧キー 24h 猶予)</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /projects/{id}/widget-key/rotate</code>(<a href="../02_API設計/index.html">API 設計 5.3.4</a>)</td></tr>
 </tbody>
 </table>
 
@@ -158,8 +158,8 @@
 <tr><td><code>EV-02</code></td><td>公開キーコピー</td><td>公開キーのコピーボタン押下時</td><td><ul><li>公開キーをクリップボードへコピー</li><li>成功時に緑チェック + トースト</li></ul></td><td><a href="#IT-02">IT-02</a></td></tr>
 <tr><td><code>EV-03</code></td><td>埋め込みコードコピー</td><td>埋め込みコードのコピーアイコン押下時</td><td>コード全文をコピー(成功時 MSG-SCR-007-TOAST-002)。メンバーも実行可</td><td><a href="#IT-08">IT-08</a></td></tr>
 <tr><td><code>EV-04</code></td><td>主色変更</td><td>カラーピッカー変更時(<code>admin</code> 以上)</td><td>プレビューにリアルタイム反映</td><td><a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a></td></tr>
-<tr><td><code>EV-05</code></td><td>公開キー再発行</td><td>「公開キーを再発行する」押下時(<code>admin</code> 以上)</td><td><ul><li>L3 確認(プロジェクト名タイプ + 再認証)後 <code>POST /M_projects/{id}/widget-key/rotate</code></li><li>旧キーは 24 時間猶予で失効予告</li></ul></td><td><a href="#IT-04">IT-04</a></td></tr>
-<tr><td><code>EV-06</code></td><td>設定の保存</td><td>「設定を保存」押下時(<code>admin</code> 以上)</td><td><ul><li><code>PATCH /M_projects/{id}</code> で設定更新</li><li>KV キャッシュ無効化</li></ul></td><td><a href="#IT-09">IT-09</a></td></tr>
+<tr><td><code>EV-05</code></td><td>公開キー再発行</td><td>「公開キーを再発行する」押下時(<code>admin</code> 以上)</td><td><ul><li>L3 確認(プロジェクト名タイプ + 再認証)後 <code>POST /projects/{id}/widget-key/rotate</code></li><li>旧キーは 24 時間猶予で失効予告</li></ul></td><td><a href="#IT-04">IT-04</a></td></tr>
+<tr><td><code>EV-06</code></td><td>設定の保存</td><td>「設定を保存」押下時(<code>admin</code> 以上)</td><td><ul><li><code>PATCH /projects/{id}</code> で設定更新</li><li>KV キャッシュ無効化</li></ul></td><td><a href="#IT-09">IT-09</a></td></tr>
 </tbody>
 </table>
 

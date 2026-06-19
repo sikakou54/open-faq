@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>T_sessions(TBL-T-001) | FAQ 設計ポータル</title>
+<title>T_SESSIONS(TBL-T-001) | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../../../assets/css/style.css">
 <script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script src="../../../assets/js/nav-data.js" defer></script>
@@ -12,8 +12,8 @@
 </head>
 <body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/TBL-T-001_t_sessions.html">
 <article class="content" id="content">
-<h1 id="TBL-T-001">TBL-T-001 <code>T_sessions</code></h1>
-<span id="34-T_sessions"></span>
+<h1 id="TBL-T-001">TBL-T-001 <code>T_SESSIONS</code></h1>
+<span id="34-T_SESSIONS"></span>
 <p class="section-lead">複数デバイス対応のログインセッションを管理します。</p>
 <h3 id="341-概要">概要</h3>
 <table>
@@ -26,7 +26,7 @@
 <tbody>
 <tr>
 <td>テーブル名</td>
-<td><code>T_sessions</code></td>
+<td><code>T_SESSIONS</code></td>
 </tr>
 <tr>
 <td>論理名</td>
@@ -39,7 +39,7 @@
 <tr>
 <td>外部キー</td>
 <td><ul class="key-cols">
-<li><code>actor_type</code> + <code>actor_id</code> → <code>M_owners(id)</code> / <code>M_project_users(id)</code>(論理参照)</li>
+<li><code>actor_type</code> + <code>actor_id</code> → <code>M_OWNERS(id)</code> / <code>M_PRJ_USERS(id)</code>(論理参照)</li>
 </ul></td>
 </tr>
 </tbody>
@@ -102,7 +102,7 @@
 <td></td>
 <td></td>
 <td></td>
-<td><code>actor_type</code> に応じ <code>M_owners(id)</code> / <code>M_project_users(id)</code> を指す(論理参照)</td>
+<td><code>actor_type</code> に応じ <code>M_OWNERS(id)</code> / <code>M_PRJ_USERS(id)</code> を指す(論理参照)</td>
 
 </tr>
 <tr>

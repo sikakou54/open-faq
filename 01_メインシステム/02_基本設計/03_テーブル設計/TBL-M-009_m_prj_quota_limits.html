@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>M_project_quota_limits(TBL-M-009) | FAQ 設計ポータル</title>
+<title>M_PRJ_QUOTA_LIMITS(TBL-M-009) | FAQ 設計ポータル</title>
 <link rel="stylesheet" href="../../../assets/css/style.css">
 <script>window.PORTAL_ROOT="../../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script src="../../../assets/js/nav-data.js" defer></script>
 <script src="../../../assets/js/search-index.js" defer></script>
 <script src="../../../assets/js/portal.js" defer></script>
 </head>
-<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-009_m_project_quota_limits.html">
+<body data-page-id="01_メインシステム/02_基本設計/03_テーブル設計/TBL-M-009_m_prj_quota_limits.html">
 <article class="content" id="content">
-<h1 id="TBL-M-009">TBL-M-009 <code>M_project_quota_limits</code></h1>
-<span id="324-M_project_quota_limits"></span>
+<h1 id="TBL-M-009">TBL-M-009 <code>M_PRJ_QUOTA_LIMITS</code></h1>
+<span id="324-M_PRJ_QUOTA_LIMITS"></span>
 <p class="section-lead">質問数の月次上限件数・無料枠・アラート、および FAQ 件数無料枠をプロジェクト単位で保持します。</p>
 <blockquote>
 <p>本テーブルは表番号 #24(§2 全テーブル一覧)。掲載位置は他テーブルとの差分を最小化するため §3.23 直後に置く。</p>
@@ -29,7 +29,7 @@
 <tbody>
 <tr>
 <td>テーブル名</td>
-<td><code>M_project_quota_limits</code></td>
+<td><code>M_PRJ_QUOTA_LIMITS</code></td>
 </tr>
 <tr>
 <td>論理名</td>
@@ -42,8 +42,8 @@
 <tr>
 <td>外部キー</td>
 <td><ul class="key-cols">
-<li><code>project_id</code> → <code>M_projects(id)</code></li>
-<li><code>contract_owner_user_id</code> → <code>M_owners(id)</code></li>
+<li><code>project_id</code> → <code>M_PROJECTS(id)</code></li>
+<li><code>contract_owner_user_id</code> → <code>M_OWNERS(id)</code></li>
 </ul></td>
 </tr>
 </tbody>
@@ -89,7 +89,7 @@
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
-<td><code>M_projects(id)</code></td>
+<td><code>M_PROJECTS(id)</code></td>
 <td>①</td>
 <td></td>
 <td></td>
@@ -103,7 +103,7 @@
 <td style="text-align: right;">-</td>
 <td>NO</td>
 <td></td>
-<td><code>M_owners(id)</code></td>
+<td><code>M_OWNERS(id)</code></td>
 <td></td>
 <td></td>
 <td></td>
@@ -246,7 +246,7 @@
 <td></td>
 <td></td>
 <td></td>
-<td><code>created_by_type</code> に応じ <code>M_owners(id)</code> / <code>M_project_users(id)</code> を指す(論理参照)</td>
+<td><code>created_by_type</code> に応じ <code>M_OWNERS(id)</code> / <code>M_PRJ_USERS(id)</code> を指す(論理参照)</td>
 
 </tr>
 <tr>

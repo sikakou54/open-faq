@@ -61,7 +61,7 @@
 <tr><td>メンバー(<code>member</code>)</td><td>—</td></tr>
 </tbody>
 </table>
-<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>オーナー(<code>M_owners</code> 行存在)は <code>isOwner</code> 判定により全プロジェクトを全権操作でき、割当(<code>M_project_user_assignments</code>)を持たずに対象にできます。プロジェクト管理者(<code>M_project_user_assignments.role='admin'</code>)の対象範囲は当該プロジェクトのみです。当該プロジェクトに <code>admin</code> ロールを持たないプロジェクトユーザー(<code>member</code> 含む)の URL 直アクセスは 403 → ダッシュボードへリダイレクトします。</div></div>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>オーナー(<code>M_OWNERS</code> 行存在)は <code>isOwner</code> 判定により全プロジェクトを全権操作でき、割当(<code>M_PRJ_USER_ASGN</code>)を持たずに対象にできます。プロジェクト管理者(<code>M_PRJ_USER_ASGN.role='admin'</code>)の対象範囲は当該プロジェクトのみです。当該プロジェクトに <code>admin</code> ロールを持たないプロジェクトユーザー(<code>member</code> 含む)の URL 直アクセスは 403 → ダッシュボードへリダイレクトします。</div></div>
 
 <h2 id="2-画面遷移図">2. 画面遷移図</h2>
 <p class="section-lead">本画面からの画面遷移を、画面 ID・画面名とイベント(操作)で示します。</p>
@@ -136,9 +136,9 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>プロジェクト割当</td><td>当該プロジェクトの割当一覧(ロール)を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>M_project_user_assignments</code>(<a href="../03_テーブル設計/TBL-M-003_m_project_user_assignments.html">テーブル設計 3.3</a>)</td></tr>
-<tr><td>プロジェクトユーザー</td><td>表示名・メール・有効化状態を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>M_project_users</code>(<a href="../03_テーブル設計/TBL-M-002_m_project_users.html">テーブル設計 3.1</a>)</td></tr>
-<tr><td>メンバー一覧取得</td><td>当該プロジェクトのメンバー一覧を取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /M_projects/{id}/members</code>(<a href="../02_API設計/利用者(メンバー).html#API-MBR-001">API 設計 5.2.1</a>)</td></tr>
+<tr><td>プロジェクト割当</td><td>当該プロジェクトの割当一覧(ロール)を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>M_PRJ_USER_ASGN</code>(<a href="../03_テーブル設計/TBL-M-003_m_prj_user_asgn.html">テーブル設計 3.3</a>)</td></tr>
+<tr><td>プロジェクトユーザー</td><td>表示名・メール・有効化状態を取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>M_PRJ_USERS</code>(<a href="../03_テーブル設計/TBL-M-002_m_prj_users.html">テーブル設計 3.1</a>)</td></tr>
+<tr><td>メンバー一覧取得</td><td>当該プロジェクトのメンバー一覧を取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>GET /projects/{id}/members</code>(<a href="../02_API設計/利用者(メンバー).html#API-MBR-001">API 設計 5.2.1</a>)</td></tr>
 </tbody>
 </table>
 
@@ -155,7 +155,7 @@
 </tr>
 </thead>
 <tbody>
-<tr><td><code>EV-01</code></td><td>一覧初期表示</td><td>画面遷移・リロード時</td><td><ul><li><code>GET /M_projects/{id}/members</code> で当該プロジェクトのメンバー一覧を取得し表示</li><li>0 件時は EmptyState</li></ul></td><td><a href="#IT-04">IT-04</a>, <a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a>, <a href="#IT-07">IT-07</a>, <a href="#IT-08">IT-08</a>, <a href="#IT-10">IT-10</a></td></tr>
+<tr><td><code>EV-01</code></td><td>一覧初期表示</td><td>画面遷移・リロード時</td><td><ul><li><code>GET /projects/{id}/members</code> で当該プロジェクトのメンバー一覧を取得し表示</li><li>0 件時は EmptyState</li></ul></td><td><a href="#IT-04">IT-04</a>, <a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a>, <a href="#IT-07">IT-07</a>, <a href="#IT-08">IT-08</a>, <a href="#IT-10">IT-10</a></td></tr>
 <tr><td><code>EV-02</code></td><td>検索</td><td>検索キーワードの入力時</td><td>キーワードを付与して一覧を再取得し件数表示も更新</td><td><a href="#IT-01">IT-01</a>, <a href="#IT-03">IT-03</a></td></tr>
 <tr><td><code>EV-03</code></td><td>絞り込み</td><td>招待状態フィルタの変更時</td><td>フィルタ条件を付与して一覧を再取得し件数表示も更新</td><td><a href="#IT-02">IT-02</a>, <a href="#IT-03">IT-03</a></td></tr>
 <tr><td><code>EV-04</code></td><td>招待モーダル起動</td><td>「+ メンバーを招待」押下時</td><td>SCR-009-001 を招待モードで開く</td><td><a href="#IT-09">IT-09</a></td></tr>

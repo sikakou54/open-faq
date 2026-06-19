@@ -135,7 +135,7 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>オーナー</td><td>メール確認状態を照合・更新する(新規登録は SCR-002 のオーナー登録フロー)</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>M_owners</code>(<a href="../03_テーブル設計/TBL-M-001_m_owners.html">テーブル設計 3.2</a>)</td></tr>
+<tr><td>オーナー</td><td>メール確認状態を照合・更新する(新規登録は SCR-002 のオーナー登録フロー)</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>M_OWNERS</code>(<a href="../03_テーブル設計/TBL-M-001_m_owners.html">テーブル設計 3.2</a>)</td></tr>
 <tr><td>メール確認</td><td>確認トークンを検証し本人確認を完了する</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /auth/email-verifications/{token}</code>(<a href="../02_API設計/index.html">API 設計 5.1.6</a>)</td></tr>
 <tr><td>確認メール再送</td><td>確認メールを再送する(レート制限あり)</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>新規登録フロー(<a href="../02_API設計/index.html">API 設計 5.1.1</a>)経由</td></tr>
 </tbody>

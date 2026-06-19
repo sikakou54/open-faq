@@ -374,7 +374,7 @@
 </tr>
 <tr>
 <td>E-AUTHZ-PROJECT-DENIED</td>
-<td>プロジェクト割当不足(<code>M_project_user_assignments</code> に該当行なし)</td>
+<td>プロジェクト割当不足(<code>M_PRJ_USER_ASGN</code> に該当行なし)</td>
 <td>MSG-COMMON-NOT-FOUND</td>
 <td><strong>404 偽装</strong></td>
 <td>同上</td>
@@ -382,7 +382,7 @@
 </tr>
 <tr>
 <td>E-AUTHZ-OWNER-ONLY</td>
-<td>オーナー専有機能(<code>M_owners</code> 行を持たない主体(= プロジェクトユーザー)がプロジェクト作成・編集・削除 / 課金 / 退会 / 規約再同意 等にアクセス)</td>
+<td>オーナー専有機能(<code>M_OWNERS</code> 行を持たない主体(= プロジェクトユーザー)がプロジェクト作成・編集・削除 / 課金 / 退会 / 規約再同意 等にアクセス)</td>
 <td>MSG-COMMON-OWNER-ONLY</td>
 <td>403</td>
 <td>UI 非表示</td>
@@ -440,7 +440,7 @@
 <tbody>
 <tr>
 <td>E-BIZ-ACCOUNT-INACTIVE</td>
-<td>既に論理削除済(<code>M_project_users.valid=0</code>)のアカウントを対象とする操作試行(招待リンク再開 等)</td>
+<td>既に論理削除済(<code>M_PRJ_USERS.valid=0</code>)のアカウントを対象とする操作試行(招待リンク再開 等)</td>
 <td>MSG-COMMON-ACCOUNT-INACTIVE</td>
 <td>409 Conflict</td>
 <td>「対象アカウントは既に削除されています」</td>
@@ -448,7 +448,7 @@
 </tr>
 <tr>
 <td>E-BIZ-PROJECT-INACTIVE</td>
-<td>既に論理削除済(<code>M_projects.valid=0</code>)のプロジェクトを対象とする操作試行</td>
+<td>既に論理削除済(<code>M_PROJECTS.valid=0</code>)のプロジェクトを対象とする操作試行</td>
 <td>MSG-COMMON-PROJECT-INACTIVE</td>
 <td>409 Conflict</td>
 <td>「対象プロジェクトは既に削除されています」</td>
@@ -687,19 +687,19 @@
 <tr>
 <td>E-EXT-AI-FAILED</td>
 <td>Workers AI 推論失敗</td>
-<td><code>H_question_logs.metering_billable=false</code> で計測のみ</td>
+<td><code>H_QUESTION_LOGS.metering_billable=false</code> で計測のみ</td>
 <td>WARN</td>
 </tr>
 <tr>
 <td>E-EXT-EMAIL-FAILED</td>
 <td>Resend 配信失敗</td>
-<td><code>H_notification_logs.delivery_state='failed'</code> → 自動 BO 3 回(最大 24h)</td>
+<td><code>H_NOTIF_LOGS.delivery_state='failed'</code> → 自動 BO 3 回(最大 24h)</td>
 <td>WARN</td>
 </tr>
 <tr>
 <td>E-EXT-EMAIL-BOUNCED</td>
 <td>メール bounce(hard)</td>
-<td><code>M_email_suppression_list</code> 即時追加(全契約横断)</td>
+<td><code>M_EMAIL_SUPPRESS</code> 即時追加(全契約横断)</td>
 <td>INFO</td>
 </tr>
 <tr>
@@ -831,8 +831,8 @@
 <p class="section-lead">AI 推論失敗は質問数を計測しつつ課金対象外とし、タイムアウトも処理エラー扱いで未解決登録しません。メール配信失敗は自動バックオフ再送し、bounce / 苦情はサプレスリストで再送を抑止します。</p>
 <ul>
 <li><strong>AI 推論失敗</strong>: 質問数は計測するが <code>metering_billable=false</code>(課金対象外)。タイムアウト(8 秒、<a href="../01_要件定義/FR20_AI推論動作.html#FR-347">FR-347</a>)も処理エラー扱いで未解決登録しない</li>
-<li><strong>Resend 配信失敗</strong>: <code>H_notification_logs.delivery_state='failed'</code> → DLQ 投入 + 自動 BO 3 回(最大 24h)</li>
-<li><strong>メール bounce</strong>: <code>M_email_suppression_list</code> 即時追加(全契約横断、R-003 共通ドメイン対策)</li>
+<li><strong>Resend 配信失敗</strong>: <code>H_NOTIF_LOGS.delivery_state='failed'</code> → DLQ 投入 + 自動 BO 3 回(最大 24h)</li>
+<li><strong>メール bounce</strong>: <code>M_EMAIL_SUPPRESS</code> 即時追加(全契約横断、R-003 共通ドメイン対策)</li>
 <li><strong>メール苦情(complained)</strong>: 永久サプレス、<strong>復帰不可</strong></li>
 </ul>
 <h3 id="58-webhook-エラー時の方針">5.8 Webhook エラー時の方針</h3>
@@ -846,8 +846,8 @@
 <p class="section-lead">サーバー内部起因のエラーは 500 で内部詳細を隠し、利用者にはエラー識別子のみを提示します。再試行のリトライ回数・クールダウン、提示する識別子、記録から除外する項目は<strong>本ページを正本</strong>とします(<a href="../01_要件定義/FR08_処理エラー.html#FR-113">FR-113</a> / <a href="../01_要件定義/FR08_処理エラー.html#FR-112">FR-112</a> / <a href="../01_要件定義/FR08_処理エラー.html#FR-114">FR-114</a>)。</p>
 <ul>
 <li><strong>システムエラー</strong>: 500 統一、内部詳細(スタックトレース・内部メッセージ)は応答に含めない</li>
-<li><strong>エラー識別子の利用者提示</strong>(<a href="../01_要件定義/FR08_処理エラー.html#FR-113">FR-113</a>): 5xx 系(カテゴリ C)はサポート問い合わせと紐付けられるようエラー識別子を画面に表示する。識別子は <code>H_error_logs</code> の主キーに対応づける</li>
-<li>監査が必要な操作の途中で発生した場合は <code>H_audit_logs</code> にも記録する</li>
+<li><strong>エラー識別子の利用者提示</strong>(<a href="../01_要件定義/FR08_処理エラー.html#FR-113">FR-113</a>): 5xx 系(カテゴリ C)はサポート問い合わせと紐付けられるようエラー識別子を画面に表示する。識別子は <code>H_ERROR_LOGS</code> の主キーに対応づける</li>
+<li>監査が必要な操作の途中で発生した場合は <code>H_AUDIT_LOGS</code> にも記録する</li>
 </ul>
 <div class="callout important"><i class="bi bi-pin-angle"></i><div><span class="c-title">再試行案内・連打防止の正本値(FR-112)</span>
 <ul>
@@ -938,8 +938,8 @@
 </tbody>
 </table>
 </div>
-<h2 id="7-H_error_logs-記録方針">7. <code>H_error_logs</code> 記録方針</h2>
-<p class="section-lead">エラー記録の方針を定めます。<strong>記録から除外する項目(<a href="../01_要件定義/FR08_処理エラー.html#FR-114">FR-114</a>)は本ページが正本</strong>です。<code>H_error_logs</code> のカラム定義・保持期間・削除バッチの物理仕様は <a href="03_テーブル設計/TBL-H-005_h_error_logs.html">03_テーブル設計/index.html §3.19</a> を正本とし、ここでは記録に何を残し何を残さないかの方針のみを示します。</p>
+<h2 id="7-H_ERROR_LOGS-記録方針">7. <code>H_ERROR_LOGS</code> 記録方針</h2>
+<p class="section-lead">エラー記録の方針を定めます。<strong>記録から除外する項目(<a href="../01_要件定義/FR08_処理エラー.html#FR-114">FR-114</a>)は本ページが正本</strong>です。<code>H_ERROR_LOGS</code> のカラム定義・保持期間・削除バッチの物理仕様は <a href="03_テーブル設計/TBL-H-005_h_error_logs.html">03_テーブル設計/index.html §3.19</a> を正本とし、ここでは記録に何を残し何を残さないかの方針のみを示します。</p>
 <div class="table-scroll">
 <table>
 <thead>

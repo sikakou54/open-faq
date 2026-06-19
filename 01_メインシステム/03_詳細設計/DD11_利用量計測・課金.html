@@ -63,7 +63,7 @@
 </tr>
 <tr>
 <td>API</td>
-<td><code>/usage</code> <code>/billing/*</code> <code>/M_projects/{id}/quota-limits/questions</code></td>
+<td><code>/usage</code> <code>/billing/*</code> <code>/projects/{id}/quota-limits/questions</code></td>
 <td>利用量取得 / 請求書 / 質問数上限更新</td>
 </tr>
 <tr>
@@ -73,7 +73,7 @@
 </tr>
 <tr>
 <td>テーブル</td>
-<td><code>T_usage_metering</code> <code>T_billing_invoices</code> <code>H_question_logs</code></td>
+<td><code>T_USAGE_METER</code> <code>T_BILL_INVOICES</code> <code>H_QUESTION_LOGS</code></td>
 <td>利用量・課金基盤</td>
 </tr>
 <tr>
@@ -97,7 +97,7 @@
 <tr>
 <td>§13.7</td>
 <td>データ保持・削除</td>
-<td>H_question_logs 1 年 / billing 7 年</td>
+<td>H_QUESTION_LOGS 1 年 / billing 7 年</td>
 </tr>
 <tr>
 <td>§13.8</td>
@@ -107,12 +107,12 @@
 <tr>
 <td>§14.1.1</td>
 <td>月次集計（UTC 15:00、月末日のみ実行）</td>
-<td>T_usage_metering 集計</td>
+<td>T_USAGE_METER 集計</td>
 </tr>
 <tr>
 <td>§14.1.2</td>
 <td>月次確定（JST 02:00、月初 1 日）</td>
-<td>T_billing_invoices 発行 + Stripe 連携</td>
+<td>T_BILL_INVOICES 発行 + Stripe 連携</td>
 </tr>
 <tr>
 <td>§6 SCR-016 / SCR-021 / SCR-022</td>
@@ -180,7 +180,7 @@
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="cf">return</span> c<span class="op">.</span><span class="fu">json</span>({ code<span class="op">:</span> <span class="st">&#39;SERVICE_UNAVAILABLE&#39;</span><span class="op">,</span> detail<span class="op">:</span> <span class="st">&#39;一時的に利用できません。1 分後に再度お試しください&#39;</span> })<span class="op">;</span></span></code></pre></div>
 <p>NFR-114 / 117 に基づき、AI 推論不可時もウィジェットは「管理者ユーザー誘導」モードで応答継続。</p>
 <h3 id="33-データ保持期間">3.3 データ保持期間</h3>
-<p class="section-lead">利用量・課金関連データの保持期間・起点・削除方式を定義します。次の表は、<code>H_question_logs</code>(1 年)・billing 監査ログ(7 年)・<code>T_billing_invoices</code>(電子帳簿保存法 7 年)の保持方針をまとめたものです。</p>
+<p class="section-lead">利用量・課金関連データの保持期間・起点・削除方式を定義します。次の表は、<code>H_QUESTION_LOGS</code>(1 年)・billing 監査ログ(7 年)・<code>T_BILL_INVOICES</code>(電子帳簿保存法 7 年)の保持方針をまとめたものです。</p>
 <table>
 <thead>
 <tr>
@@ -192,7 +192,7 @@
 </thead>
 <tbody>
 <tr>
-<td>H_question_logs</td>
+<td>H_QUESTION_LOGS</td>
 <td>1 年</td>
 <td>created_at</td>
 <td>物理削除 cron</td>
@@ -204,7 +204,7 @@
 <td>tombstone（本文物理削除、ハッシュは残す）</td>
 </tr>
 <tr>
-<td>T_billing_invoices</td>
+<td>T_BILL_INVOICES</td>
 <td>7 年（電子帳簿保存法）</td>
 <td>issued_at</td>
 <td>論理削除</td>
@@ -212,51 +212,51 @@
 </tbody>
 </table>
 <h3 id="34-月次集計utc-1500月末日のみ実行プロジェクト単位で計測--契約で-sum-集計">3.4 月次集計（UTC 15:00、月末日のみ実行。プロジェクト単位で計測 → 契約で SUM 集計）</h3>
-<p class="section-lead">月末日に実行する月次集計ジョブで、プロジェクト単位に <code>H_question_logs</code> を集計して <code>T_usage_metering</code> へ書き込み、請求は契約単位で SUM 集計します。計測は <strong>プロジェクト単位</strong>(<code>T_usage_metering</code> の <code>(contract_owner_user_id, project_id, billing_year_month)</code>)で行い、上限件数・無料枠判定はプロジェクト単位値を用い、<strong>Stripe 請求は契約単位</strong>で全プロジェクトの超過分を SUM 集計して確定します(§3.5)。次のシーケンス図で、対象プロジェクト抽出から <code>T_usage_metering</code> 書込みまでの流れを示し、続けて擬似コードを保持します。</p>
+<p class="section-lead">月末日に実行する月次集計ジョブで、プロジェクト単位に <code>H_QUESTION_LOGS</code> を集計して <code>T_USAGE_METER</code> へ書き込み、請求は契約単位で SUM 集計します。計測は <strong>プロジェクト単位</strong>(<code>T_USAGE_METER</code> の <code>(contract_owner_user_id, project_id, billing_year_month)</code>)で行い、上限件数・無料枠判定はプロジェクト単位値を用い、<strong>Stripe 請求は契約単位</strong>で全プロジェクトの超過分を SUM 集計して確定します(§3.5)。次のシーケンス図で、対象プロジェクト抽出から <code>T_USAGE_METER</code> 書込みまでの流れを示し、続けて擬似コードを保持します。</p>
 <pre class="mermaid"><code>sequenceDiagram
   participant C as cronバッチ
   participant D as D1
-  participant UM as T_usage_metering
+  participant UM as T_USAGE_METER
 
   C-&gt;&gt;D: 有効オーナー配下の対象プロジェクト抽出
   D--&gt;&gt;C: 対象プロジェクト一覧
   loop 対象プロジェクトごと
-    C-&gt;&gt;D: H_question_logs を集計(課金対象件数 / トークン)
+    C-&gt;&gt;D: H_QUESTION_LOGS を集計(課金対象件数 / トークン)
     D--&gt;&gt;C: 集計結果(質問数 / token_input / token_output)
-    C-&gt;&gt;D: M_faqs 公開件数スナップショット取得
+    C-&gt;&gt;D: M_FAQS 公開件数スナップショット取得
     D--&gt;&gt;C: 公開FAQ件数
     C-&gt;&gt;UM: INSERT OR REPLACE(プロジェクト単位の利用量)
   end
-  Note over C,UM: 請求確定(§3.5)は contract_owner_user_id で T_usage_metering を SUM 集計</code></pre>
+  Note over C,UM: 請求確定(§3.5)は contract_owner_user_id で T_USAGE_METER を SUM 集計</code></pre>
 <div class="sourceCode" id="cb2"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// app/workers/cron/src/jobs/monthly-aggregate.ts</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">// 実行条件: UTC 15:00 かつ DATE_ADD(date, &#39;+1 day&#39;) 月が変わる場合</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fu">monthlyAggregate</span>(env<span class="op">:</span> Env) {</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 対象プロジェクト = 有効なオーナー(`M_owners.valid=1` かつ `contract_status != &#39;deleted&#39;`)配下の M_projects。</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> M_projects <span class="op">=</span> <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 対象プロジェクト = 有効なオーナー(`M_OWNERS.valid=1` かつ `contract_status != &#39;deleted&#39;`)配下の M_PROJECTS。</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> M_PROJECTS <span class="op">=</span> <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`</span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="vs">    SELECT p.id AS project_id, p.contract_owner_user_id</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="vs">    FROM M_projects p</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="vs">    JOIN M_owners o ON o.id = p.contract_owner_user_id</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="vs">    FROM M_PROJECTS p</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="vs">    JOIN M_OWNERS o ON o.id = p.contract_owner_user_id</span></span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="vs">    WHERE p.valid = 1 AND o.valid = 1 AND o.contract_status != &#39;deleted&#39;</span></span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="vs">  `</span>)<span class="op">.</span><span class="fu">all</span><span class="op">&lt;</span>{ project_id<span class="op">:</span> <span class="dt">string</span><span class="op">;</span> contract_owner_user_id<span class="op">:</span> <span class="dt">string</span> }<span class="op">&gt;</span>()<span class="op">;</span></span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> ym <span class="op">=</span> <span class="fu">currentBillingYearMonth</span>()<span class="op">;</span>  <span class="co">// &#39;YYYY-MM&#39;</span></span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (<span class="kw">const</span> p <span class="kw">of</span> M_projects<span class="op">.</span><span class="at">results</span>) {</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (<span class="kw">const</span> p <span class="kw">of</span> M_PROJECTS<span class="op">.</span><span class="at">results</span>) {</span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> usage <span class="op">=</span> <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`</span></span>
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="vs">      SELECT</span></span>
 <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="vs">        COUNT(*) FILTER (WHERE metering_billable = 1) AS question_count,</span></span>
 <span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="vs">        COALESCE(SUM(ai_token_count_input), 0) AS token_input,</span></span>
 <span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="vs">        COALESCE(SUM(ai_token_count_output), 0) AS token_output</span></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="vs">      FROM H_question_logs WHERE project_id = ?1</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="vs">      FROM H_QUESTION_LOGS WHERE project_id = ?1</span></span>
 <span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="vs">        AND created_at &gt;= ?2 AND created_at &lt; ?3</span></span>
 <span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="vs">    `</span>)<span class="op">.</span><span class="fu">bind</span>(p<span class="op">.</span><span class="at">project_id</span><span class="op">,</span> <span class="fu">monthStart</span>(ym)<span class="op">,</span> <span class="fu">monthEnd</span>(ym))<span class="op">.</span><span class="fu">first</span>()<span class="op">;</span></span>
 <span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> faqSnapshot <span class="op">=</span> <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`</span></span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="vs">      SELECT COUNT(*) c FROM M_faqs</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="vs">      SELECT COUNT(*) c FROM M_FAQS</span></span>
 <span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="vs">      WHERE project_id = ?1 AND status = &#39;published&#39;</span></span>
 <span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="vs">    `</span>)<span class="op">.</span><span class="fu">bind</span>(p<span class="op">.</span><span class="at">project_id</span>)<span class="op">.</span><span class="fu">first</span><span class="op">&lt;</span>{ c<span class="op">:</span> <span class="dt">number</span> }<span class="op">&gt;</span>()<span class="op">;</span></span>
 <span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`</span></span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="vs">      INSERT OR REPLACE INTO T_usage_metering (</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="vs">      INSERT OR REPLACE INTO T_USAGE_METER (</span></span>
 <span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="vs">        id, contract_owner_user_id, project_id, billing_year_month,</span></span>
 <span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="vs">        question_count, faq_count_snapshot,</span></span>
 <span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="vs">        ai_token_input, ai_token_output, ai_cost_yen,</span></span>
@@ -270,16 +270,16 @@
 <span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>      <span class="kw">new</span> <span class="bu">Date</span>()<span class="op">.</span><span class="fu">toISOString</span>()<span class="op">,</span></span>
 <span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>    )<span class="op">.</span><span class="fu">run</span>()<span class="op">;</span></span>
 <span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 請求確定(§3.5)は contract_owner_user_id で T_usage_metering を SUM 集計し、</span></span>
-<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 契約単位の T_billing_invoices を作成する(請求は契約集計のまま)。</span></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 請求確定(§3.5)は contract_owner_user_id で T_USAGE_METER を SUM 集計し、</span></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 契約単位の T_BILL_INVOICES を作成する(請求は契約集計のまま)。</span></span>
 <span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h3 id="341-ダッシュボード最終更新タイムスタンプ取得元fr-135d--fr-135g">3.4.1 ダッシュボード最終更新タイムスタンプ取得元（FR-135d / FR-135g）</h3>
 <p class="section-lead">ダッシュボード集計領域に表示する「最終更新時刻」の取得元と優先順位、集計遅延判定の方針を定義します。SCR-008 / SCR-016 / SCR-021 / SCR-022 の集計領域に「最終更新: YYYY-MM-DD HH:MM(JST)」を表示します。</p>
 <ul>
 <li><strong>取得元の優先順位</strong>:
 <ol type="1">
-<li><code>T_usage_metering.updated_at</code> の最大値(当該オーナースコープ、当月 <code>billing_year_month</code>)</li>
-<li>ない場合は当月の <code>H_question_logs.created_at</code> の最大値(リアルタイム代替)</li>
+<li><code>T_USAGE_METER.updated_at</code> の最大値(当該オーナースコープ、当月 <code>billing_year_month</code>)</li>
+<li>ない場合は当月の <code>H_QUESTION_LOGS.created_at</code> の最大値(リアルタイム代替)</li>
 <li>それも 0 件のときは <code>null</code>(画面側で「—」+ Tooltip「集計予定」表示)</li>
 </ol></li>
 <li><strong>集計遅延判定</strong>: 取得した最終更新時刻が現在時刻から 5 分以上前のとき、画面側で「<i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i> 集計遅延(最終: …)」を黄表記で警告(MSG-SCR-008-LBL-002 / MSG-SCR-016-LBL-008)。閾値 5 分はリアルタイム代替経由のときも適用。</li>
@@ -311,7 +311,7 @@
 <li>全体サマリーは <code>projectCount</code> / <code>questionCount</code> / <code>publishedFaqCount</code> の3項目だけを表示する。</li>
 <li>プロジェクト0件では一覧・サマリーを隠し、サイドメニュー「プロジェクト」(SCR-004)へ誘導する EmptyState へ切り替える。</li>
 </ul>
-<p>SCR-021 は課金対象別行モデルを使わず、<code>GET /M_projects/{id}/quota-limits</code> の <code>questions</code> だけを次の表示モデルへ変換する。FAQのデータは同画面へ渡さない。</p>
+<p>SCR-021 は課金対象別行モデルを使わず、<code>GET /projects/{id}/quota-limits</code> の <code>questions</code> だけを次の表示モデルへ変換する。FAQのデータは同画面へ渡さない。</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> QuestionLimitViewModel <span class="op">=</span> {</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  usedCount<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  limitEnabled<span class="op">:</span> <span class="dt">boolean</span><span class="op">;</span></span>
@@ -327,9 +327,9 @@
 <li><code>limitEnabled=false</code> の場合は <code>monthlyLimitCount</code> / <code>monthlyLimitYen</code> / <code>usageRate</code> を <code>null</code> とし、「今月の利用上限」は「OFF」と表示する。「利用量」には割合・件数比・ProgressBar・状態バッジを描画せず、上限設定がOFFである旨の説明文だけを表示する。</li>
 </ul>
 <h3 id="344-質問数の利用設定更新scr-021-001">3.4.4 質問数の利用設定更新（SCR-021-001）</h3>
-<p class="section-lead">質問数上限の ON/OFF・上限値・アラート閾値を更新する API の入力検証・保存・KV 反映の方針を定義します。<code>PATCH /M_projects/{id}/quota-limits/questions</code> は <code>limitEnabled</code> / <code>limit</code> / <code>alertThresholds</code> を受け付けます。</p>
+<p class="section-lead">質問数上限の ON/OFF・上限値・アラート閾値を更新する API の入力検証・保存・KV 反映の方針を定義します。<code>PATCH /projects/{id}/quota-limits/questions</code> は <code>limitEnabled</code> / <code>limit</code> / <code>alertThresholds</code> を受け付けます。</p>
 <ul>
-<li><code>M_project_quota_limits.resource_kind='question_monthly_limit'</code> かつ <code>source='owner'</code> の行だけを upsert する。</li>
+<li><code>M_PRJ_QUOTA_LIMITS.resource_kind='question_monthly_limit'</code> かつ <code>source='owner'</code> の行だけを upsert する。</li>
 <li>KV <code>usage-limit:&lt;owner&gt;:&lt;projectId&gt;</code> は質問数設定だけをマージ更新し、課金計算用のFAQ無料枠を保持する。</li>
 <li><code>freeQuota</code> はリクエストスキーマに含めず、既存の <code>free_quota</code> を変更しない。</li>
 <li><code>limitEnabled=true</code> の場合だけ <code>limit</code> の必須・範囲を検証する。<code>alertThresholds</code> は <code>25</code> / <code>50</code> / <code>80</code> / <code>90</code> / <code>100</code> の重複しない配列として昇順保存する。</li>
@@ -338,26 +338,26 @@
 <li>FAQの無料枠を更新する利用者向けルート・モーダル・リクエストスキーマは提供しない。</li>
 </ul>
 <h3 id="345-請求表示モデルscr-022">3.4.5 請求表示モデル（SCR-022）</h3>
-<p class="section-lead">請求画面(SCR-022)の表示モデルへの変換ルールと、請求履歴を利用量表示モデルと混在させない方針を定義します。<code>GET /billing/summary</code> の <code>estimatedTotal</code>、<code>nextBillingDate</code>、<code>billingStatus</code>、<code>paymentMethod</code>、<code>M_projects[]</code> をそのまま請求画面の表示モデルへ変換する。<code>M_projects[]</code> は <code>projectName</code> / <code>questionCharge</code> / <code>faqCharge</code> / <code>subtotal</code> を表示し、末尾に <code>estimatedTotal</code> と一致する全体合計を置く。請求履歴は <code>GET /billing/invoices</code> を別取得し、利用量表示モデルとは混在させない。</p>
+<p class="section-lead">請求画面(SCR-022)の表示モデルへの変換ルールと、請求履歴を利用量表示モデルと混在させない方針を定義します。<code>GET /billing/summary</code> の <code>estimatedTotal</code>、<code>nextBillingDate</code>、<code>billingStatus</code>、<code>paymentMethod</code>、<code>M_PROJECTS[]</code> をそのまま請求画面の表示モデルへ変換する。<code>M_PROJECTS[]</code> は <code>projectName</code> / <code>questionCharge</code> / <code>faqCharge</code> / <code>subtotal</code> を表示し、末尾に <code>estimatedTotal</code> と一致する全体合計を置く。請求履歴は <code>GET /billing/invoices</code> を別取得し、利用量表示モデルとは混在させない。</p>
 <h3 id="35-月次確定jst-0200月初-1-日">3.5 月次確定（JST 02:00、月初 1 日）</h3>
-<p class="section-lead">月初 1 日に前月分の請求を契約単位で確定するジョブで、冪等キーで重複生成を抑止しつつ <code>T_billing_invoices</code> を発行し、Stripe へ請求書発行を依頼します。次のシーケンス図で、課金対象オーナー抽出から請求書発行・通知・監査記録までの流れと冪等分岐(生成済 / 未生成)を示し、続けて擬似コードを保持します。</p>
+<p class="section-lead">月初 1 日に前月分の請求を契約単位で確定するジョブで、冪等キーで重複生成を抑止しつつ <code>T_BILL_INVOICES</code> を発行し、Stripe へ請求書発行を依頼します。次のシーケンス図で、課金対象オーナー抽出から請求書発行・通知・監査記録までの流れと冪等分岐(生成済 / 未生成)を示し、続けて擬似コードを保持します。</p>
 <pre class="mermaid"><code>sequenceDiagram
   participant C as cronバッチ
   participant D as D1
   participant KV as KV_DEDUP
   participant ST as Stripe
   participant N as 通知Queue
-  participant AL as H_audit_logs
+  participant AL as H_AUDIT_LOGS
 
   C-&gt;&gt;D: 課金対象オーナー抽出(active かつ 非free)
   D--&gt;&gt;C: 対象オーナー一覧
   loop 対象オーナーごと
-    C-&gt;&gt;D: 前月分 T_usage_metering を SUM 取得
+    C-&gt;&gt;D: 前月分 T_USAGE_METER を SUM 取得
     D--&gt;&gt;C: 契約単位利用量
     C-&gt;&gt;KV: 冪等キー照会(invoice_finalize:…)
     KV--&gt;&gt;C: 生成状態(生成済 / 未生成)
     alt 未生成
-      C-&gt;&gt;D: T_billing_invoices INSERT + T_usage_metering 確定
+      C-&gt;&gt;D: T_BILL_INVOICES INSERT + T_USAGE_METER 確定
       C-&gt;&gt;ST: 請求書発行依頼(invoice-issued)
       C-&gt;&gt;N: BILLING_INVOICE_ISSUED 通知投入
       C-&gt;&gt;KV: 冪等キー記録(TTL 90日)
@@ -369,15 +369,15 @@
 <div class="sourceCode" id="cb5"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">// app/workers/cron/src/jobs/monthly-finalize.ts</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fu">monthlyFinalize</span>(env<span class="op">:</span> Env) {</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> prevYm <span class="op">=</span> <span class="fu">previousBillingYearMonth</span>()<span class="op">;</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 課金対象オーナー = M_owners 行(`valid=1` かつ `contract_status=&#39;active&#39;` かつ `contract_plan != &#39;free&#39;`)。</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> M_owners <span class="op">=</span> <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="vs">    SELECT id, contract_plan AS plan FROM M_owners</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 課金対象オーナー = M_OWNERS 行(`valid=1` かつ `contract_status=&#39;active&#39;` かつ `contract_plan != &#39;free&#39;`)。</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> M_OWNERS <span class="op">=</span> <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="vs">    SELECT id, contract_plan AS plan FROM M_OWNERS</span></span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="vs">    WHERE valid = 1 AND contract_status = &#39;active&#39; AND contract_plan != &#39;free&#39;</span></span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="vs">  `</span>)<span class="op">.</span><span class="fu">all</span><span class="op">&lt;</span>TenantRow<span class="op">&gt;</span>()<span class="op">;</span></span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (<span class="kw">const</span> t <span class="kw">of</span> M_owners<span class="op">.</span><span class="at">results</span>) {</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (<span class="kw">const</span> t <span class="kw">of</span> M_OWNERS<span class="op">.</span><span class="at">results</span>) {</span>
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> usage <span class="op">=</span> <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="vs">      SELECT * FROM T_usage_metering WHERE contract_owner_user_id = ?1 AND billing_year_month = ?2</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="vs">      SELECT * FROM T_USAGE_METER WHERE contract_owner_user_id = ?1 AND billing_year_month = ?2</span></span>
 <span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="vs">    `</span>)<span class="op">.</span><span class="fu">bind</span>(t<span class="op">.</span><span class="at">id</span><span class="op">,</span> prevYm)<span class="op">.</span><span class="fu">first</span><span class="op">&lt;</span>UsageRow<span class="op">&gt;</span>()<span class="op">;</span></span>
 <span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="op">!</span>usage) <span class="cf">continue</span><span class="op">;</span></span>
 <span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">// idempotent key で重複生成抑制</span></span>
@@ -388,13 +388,13 @@
 <span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> amount <span class="op">=</span> <span class="fu">calculateInvoiceAmount</span>(t<span class="op">.</span><span class="at">plan</span><span class="op">,</span> usage)<span class="op">;</span></span>
 <span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> invoiceId <span class="op">=</span> <span class="fu">generateUlid</span>()<span class="op">;</span></span>
 <span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`</span></span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="vs">      INSERT INTO T_billing_invoices</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="vs">      INSERT INTO T_BILL_INVOICES</span></span>
 <span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="vs">      (id, contract_owner_user_id, billing_year_month, status, amount_total, amount_tax, issued_at, created_at)</span></span>
 <span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="vs">      VALUES (?1, ?2, ?3, &#39;issued&#39;, ?4, ?5, ?6, ?6)</span></span>
 <span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="vs">    `</span>)<span class="op">.</span><span class="fu">bind</span>(invoiceId<span class="op">,</span> t<span class="op">.</span><span class="at">id</span><span class="op">,</span> prevYm<span class="op">,</span> amount<span class="op">.</span><span class="at">total</span><span class="op">,</span> amount<span class="op">.</span><span class="at">tax</span><span class="op">,</span></span>
 <span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>          <span class="kw">new</span> <span class="bu">Date</span>()<span class="op">.</span><span class="fu">toISOString</span>())<span class="op">.</span><span class="fu">run</span>()<span class="op">;</span></span>
 <span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`UPDATE T_usage_metering SET finalized_at = ?1 WHERE id = ?2`</span>)</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> env<span class="op">.</span><span class="at">DB</span><span class="op">.</span><span class="fu">prepare</span>(<span class="vs">`UPDATE T_USAGE_METER SET finalized_at = ?1 WHERE id = ?2`</span>)</span>
 <span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>      <span class="op">.</span><span class="fu">bind</span>(<span class="kw">new</span> <span class="bu">Date</span>()<span class="op">.</span><span class="fu">toISOString</span>()<span class="op">,</span> usage<span class="op">.</span><span class="at">id</span>)<span class="op">.</span><span class="fu">run</span>()<span class="op">;</span></span>
 <span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Stripe へ請求書発行依頼</span></span>
@@ -443,7 +443,7 @@
   Wk-&gt;&gt;D: 当月質問数と上限を照合
   D--&gt;&gt;Wk: 判定結果(上限内 / 超過)
   alt 上限内
-    Wk-&gt;&gt;D: AI 推論を実行し H_question_logs 計上
+    Wk-&gt;&gt;D: AI 推論を実行し H_QUESTION_LOGS 計上
     Wk--&gt;&gt;W: 回答
     opt 選択閾値へ当月初回到達
       Wk-&gt;&gt;N: 閾値アラート投入(オーナー + admin、冪等キー付)
@@ -457,14 +457,14 @@
 <p><strong>選択閾値アラート(FR-127)</strong>:</p>
 <ul>
 <li>質問数更新後の利用率が、保存済み <code>alert_thresholds</code> の未通知閾値を初めて満たした時点で通知ジョブを投入する。一度の更新で複数閾値を跨いだ場合は、該当する各閾値を1件ずつ通知対象とする。</li>
-<li>配信先はオーナー(<code>M_owners</code> 行)+ 当該プロジェクトの <code>M_project_user_assignments.role='admin' AND valid=1</code> を持つプロジェクトユーザー。オーナーは <code>M_project_user_assignments</code> の外にあるため別途明示的に含める。アクター(<code>actor_type</code> + <code>actor_id</code>)と正規化メールアドレスで重複排除し、メールだけを送信する。</li>
+<li>配信先はオーナー(<code>M_OWNERS</code> 行)+ 当該プロジェクトの <code>M_PRJ_USER_ASGN.role='admin' AND valid=1</code> を持つプロジェクトユーザー。オーナーは <code>M_PRJ_USER_ASGN</code> の外にあるため別途明示的に含める。アクター(<code>actor_type</code> + <code>actor_id</code>)と正規化メールアドレスで重複排除し、メールだけを送信する。</li>
 <li>冪等キーは <code>question-limit-alert:{projectId}:{yyyyMM}:{thresholdPercent}</code>。同じプロジェクト・請求月・閾値の再送を抑止する。全閾値未選択時は通知ジョブを生成しない。</li>
 <li>100%アラートを選択している場合、停止処理と同じイベントから1通だけ送信する。100%未選択でも停止処理は実行する。</li>
 </ul>
 <p><strong>質問数 100% 到達時のウィジェット停止(FR-122)</strong>:</p>
 <ul>
-<li><code>widget/v1/ask</code> のリクエスト到達時、公開キーから解決した <code>project_id</code> の質問数上限がONで、当月質問数 ≥ <code>M_project_quota_limits.question_monthly_limit</code>(当該プロジェクト)を満たす場合は <strong>AI 推論を実行せず 429</strong> を返す(<code>E-QUOTA-QUESTIONS-LIMIT</code>、<code>Retry-After</code> = 当月末 23:59:59 JST までの秒数)。レスポンスボディに <code>reason=question_monthly_limit_reached</code> と、プロジェクト連絡先メール(確認済み = <code>M_projects.contact_email_verified_at IS NOT NULL</code> のもの)を含め、ウィジェットは <code>MSG-WIDGET-QUESTION-LIMIT</code>(未設定時 <code>MSG-WIDGET-QUESTION-LIMIT-NOEMAIL</code>)を表示する。本停止は <strong>当該プロジェクトのみ</strong>(他プロジェクトのウィジェットは継続)であり、契約サスペンション(423)とは別で <code>contract_status</code> は <code>active</code> のまま、FAQ閲覧は継続する。</li>
-<li>停止はカウントしない(429 で返した質問は <code>H_question_logs</code> に計上せず、<code>metering_billable=false</code>)。</li>
+<li><code>widget/v1/ask</code> のリクエスト到達時、公開キーから解決した <code>project_id</code> の質問数上限がONで、当月質問数 ≥ <code>M_PRJ_QUOTA_LIMITS.question_monthly_limit</code>(当該プロジェクト)を満たす場合は <strong>AI 推論を実行せず 429</strong> を返す(<code>E-QUOTA-QUESTIONS-LIMIT</code>、<code>Retry-After</code> = 当月末 23:59:59 JST までの秒数)。レスポンスボディに <code>reason=question_monthly_limit_reached</code> と、プロジェクト連絡先メール(確認済み = <code>M_PROJECTS.contact_email_verified_at IS NOT NULL</code> のもの)を含め、ウィジェットは <code>MSG-WIDGET-QUESTION-LIMIT</code>(未設定時 <code>MSG-WIDGET-QUESTION-LIMIT-NOEMAIL</code>)を表示する。本停止は <strong>当該プロジェクトのみ</strong>(他プロジェクトのウィジェットは継続)であり、契約サスペンション(423)とは別で <code>contract_status</code> は <code>active</code> のまま、FAQ閲覧は継続する。</li>
+<li>停止はカウントしない(429 で返した質問は <code>H_QUESTION_LOGS</code> に計上せず、<code>metering_billable=false</code>)。</li>
 <li>管理者向けメールは上記の選択閾値アラートに従う。100%未選択時は停止のみ実行し、管理者向け上限メールは送信しない。</li>
 <li><strong>復帰</strong>: (a) 翌月 1 日 00:00 JST の月次リセットで自動復帰、(b) オーナー / 当該プロジェクト管理者が SCR-021-001 で <code>question_monthly_limit</code> を当月利用件数超に引き上げた時点、または上限をOFFにした時点で KV 反映(最大 30s)後に即時復帰。</li>
 </ul>
@@ -538,7 +538,7 @@
 </tr>
 <tr>
 <td>質問数更新</td>
-<td>SCR-021-001 は質問数上限のON / OFF・上限値・アラート閾値だけを更新し、無料枠は変更しない。<code>PATCH /M_projects/{id}/quota-limits/questions</code> の応答でサマリー全体を再描画する</td>
+<td>SCR-021-001 は質問数上限のON / OFF・上限値・アラート閾値だけを更新し、無料枠は変更しない。<code>PATCH /projects/{id}/quota-limits/questions</code> の応答でサマリー全体を再描画する</td>
 </tr>
 <tr>
 <td>上限撤廃</td>

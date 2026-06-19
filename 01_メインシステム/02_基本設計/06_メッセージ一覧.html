@@ -111,7 +111,7 @@
 </tr>
 </tbody>
 </table>
-<p><code>critical</code> の送信先解決ルール: 宛先は<strong>オーナー(<code>M_owners</code> マスタから取得)</strong>と<strong>当該オーナースコープのプロジェクト管理者(<code>M_project_user_assignments.role='admin' AND valid=1</code>)</strong>。オーナーと管理者は別マスタ(<code>M_owners</code> と <code>M_project_users</code> / 割当は <code>M_project_user_assignments</code>)で完全分離しているため、両マスタから個別に解決し、マージ・重複排除して宛先を確定する(オーナーは管理者クエリ単独では網羅されない)。詳細クエリは <a href="08_認証・認可設計.html">08_認証・認可設計.html</a> の通知宛先解決を正本とし、テンプレート別の配信先は <a href="11_メール設計.html">11_メール設計.html §5.1</a> を参照。</p>
+<p><code>critical</code> の送信先解決ルール: 宛先は<strong>オーナー(<code>M_OWNERS</code> マスタから取得)</strong>と<strong>当該オーナースコープのプロジェクト管理者(<code>M_PRJ_USER_ASGN.role='admin' AND valid=1</code>)</strong>。オーナーと管理者は別マスタ(<code>M_OWNERS</code> と <code>M_PRJ_USERS</code> / 割当は <code>M_PRJ_USER_ASGN</code>)で完全分離しているため、両マスタから個別に解決し、マージ・重複排除して宛先を確定する(オーナーは管理者クエリ単独では網羅されない)。詳細クエリは <a href="08_認証・認可設計.html">08_認証・認可設計.html</a> の通知宛先解決を正本とし、テンプレート別の配信先は <a href="11_メール設計.html">11_メール設計.html §5.1</a> を参照。</p>
 <h3 id="25-エラーメッセージルール">2.5 エラーメッセージルール</h3>
 <p class="section-lead">エラー文言の作成時に守る原則を定める。次の箇条書きはエラー ID との対応付け・内部情報の秘匿・攻撃者へのヒント抑止の方針を示す。</p>
 <ul>
@@ -821,13 +821,13 @@
 <td>MSG-SCR-005-BADGE-OPEN-001</td>
 <td>BADGE</td>
 <td>対応中</td>
-<td>状況バッジ(<code>T_inquiries.status='open'</code>)</td>
+<td>状況バッジ(<code>T_INQUIRIES.status='open'</code>)</td>
 </tr>
 <tr>
 <td>MSG-SCR-005-BADGE-CLOSED-001</td>
 <td>BADGE</td>
 <td>対応済み</td>
-<td>状況バッジ(<code>T_inquiries.status='closed'</code>)</td>
+<td>状況バッジ(<code>T_INQUIRIES.status='closed'</code>)</td>
 </tr>
 <tr>
 <td>MSG-SCR-005-LBL-STATUS-001</td>
@@ -1497,7 +1497,7 @@
 <td>MSG-SCR-009-STATUS-ACTIVATED</td>
 <td>LBL</td>
 <td>認証済</td>
-<td>ステータス列バッジ(<code>M_project_users.activated_at</code> 設定済み)</td>
+<td>ステータス列バッジ(<code>M_PRJ_USERS.activated_at</code> 設定済み)</td>
 </tr>
 <tr>
 <td>MSG-SCR-009-STATUS-PENDING</td>
@@ -1583,7 +1583,7 @@
 <td>MSG-SCR-009-001-VAL-NAME-UNSET</td>
 <td>VAL</td>
 <td>未設定(本人が SCR-018 で未入力)</td>
-<td>編集モードで <code>M_project_users.name=NULL</code> のとき灰色テキストで表示</td>
+<td>編集モードで <code>M_PRJ_USERS.name=NULL</code> のとき灰色テキストで表示</td>
 </tr>
 <tr>
 <td>MSG-SCR-009-001-HINT-EDIT-NAME</td>
@@ -2847,7 +2847,7 @@
 <tr>
 <td>NOTIF-LOCKOUT_NOTIFY</td>
 <td>ログインロックアウト発動(FR-007)</td>
-<td>ロック本人 + オーナー + 全プロジェクト管理者(<code>M_project_user_assignments.role='admin' AND valid=1</code> を 1 件でも保持)</td>
+<td>ロック本人 + オーナー + 全プロジェクト管理者(<code>M_PRJ_USER_ASGN.role='admin' AND valid=1</code> を 1 件でも保持)</td>
 <td>◯</td>
 <td>admin</td>
 <td><strong><code>critical</code></strong></td>
@@ -2912,7 +2912,7 @@
 <td>MSG-BILL-CONTRACT-SUSPENDED</td>
 <td>SCR-* 全画面</td>
 <td>お支払いが確認できなかったため、一部機能を制限しています。</td>
-<td><code>M_owners.contract_status=suspended</code></td>
+<td><code>M_OWNERS.contract_status=suspended</code></td>
 <td>E-BILL-CONTRACT-SUSPENDED</td>
 <td><code>critical</code>(初回)</td>
 </tr>
@@ -2968,7 +2968,7 @@
 <td>MSG-BILL-DELETE-PENDING</td>
 <td>SCR-*</td>
 <td>退会申請を受け付けました。{cutoffDate} までサービスをご利用いただけます。</td>
-<td><code>M_owners.contract_status=deleted_pending</code></td>
+<td><code>M_OWNERS.contract_status=deleted_pending</code></td>
 <td>-</td>
 <td><code>high</code></td>
 </tr>
