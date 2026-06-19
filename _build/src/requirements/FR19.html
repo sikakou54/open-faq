@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FR19: アクセス制御細部 | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/01_要件定義/FR19.html">
+<article class="content" id="content">
+<h1 id="fr19-アクセス制御細部">FR19: アクセス制御細部</h1>
+<aside class="page-summary">
+<p class="ps-lead"><strong>この要件は、ロールとプロジェクト境界に基づくアクセス制御の細部を定め、権限のない画面・データへの到達を確実に拒否することを目的とし、以下について記載します。</strong></p>
+<ul>
+<li>複数デバイスからの同時ログイン</li>
+<li>オーナーの不可制約(退会・停止・削除・降格・譲渡)と、自分自身への操作の禁止</li>
+<li>メンバーの 1 オーナー固定と、プロジェクト単位の役割選択</li>
+<li>ダッシュボードの閲覧範囲と、役割変更後のセッション・割当反映</li>
+<li>最後の割当解除時のアカウント自動無効化と、権限外 UI の非表示</li>
+</ul>
+</aside>
+<p class="doc-meta"><span><b>版数</b> v1.2</span><span><b>更新</b> 2026-06-16</span><span><b>機能グループ</b> アクセス制御細部</span><span><b>優先度</b> Must</span><span class="dm-status">承認済</span></p>
+<h2 id="1-業務要件">1. 業務要件</h2>
+<div class="table-scroll">
+<table class="br-table">
+<thead>
+<tr>
+<th>ID</th>
+<th>観点</th>
+<th>ステークホルダ</th>
+<th>業務要件</th>
+<th>関連 NFR</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="BR-162">BR-162</td>
+<td>同時ログイン</td>
+<td>アカウント利用者 / システム</td>
+<td>
+<ul class="role-req">
+<li><strong>アカウント利用者：</strong>同一アカウントで複数デバイスから同時にログインできる</li>
+<li><strong>システム：</strong>契約停止などの契機で当該アカウントの全セッションを強制ログアウトできる</li>
+</ul>
+</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-163">BR-163</td>
+<td>オーナーの不可制約</td>
+<td>システム</td>
+<td>オーナーに対する退会・停止・削除・降格・譲渡を一切受け付けない。1 契約 = 1 オーナーのため、オーナー不在(孤立)状態は発生しない。</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-164">BR-164</td>
+<td>自己操作の禁止</td>
+<td>アカウント利用者 / システム</td>
+<td>
+<ul class="role-req">
+<li><strong>アカウント利用者：</strong>自分自身の利用停止・削除・役割降格はできない</li>
+<li><strong>システム：</strong>これらの操作要求を拒否し、別の管理者またはオーナー経由での実行を促す</li>
+</ul>
+</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-165">BR-165</td>
+<td>メンバーのオーナー固定</td>
+<td>システム</td>
+<td>メンバーを 1 オーナー配下に固定する。同一メールアドレスでも別オーナー配下では別アカウントとして扱う。</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-166">BR-166</td>
+<td>役割の付与単位</td>
+<td>アカウント利用者</td>
+<td>メンバーの役割をプロジェクトごとに「割当しない / メンバー / 管理者」から選んで付与する。契約横断のプリセット役割は持たない。</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-167">BR-167</td>
+<td>ダッシュボード閲覧</td>
+<td>アカウント利用者 / システム</td>
+<td>
+<ul class="role-req">
+<li><strong>アカウント利用者：</strong>オーナー・メンバーともダッシュボード(自分の通知・お知らせ受信箱)を閲覧できる</li>
+<li><strong>システム：</strong>ダッシュボード以外の画面では、ロールとプロジェクト境界の充足を要求する</li>
+</ul>
+</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-168">BR-168</td>
+<td>役割・割当の反映タイミング</td>
+<td>システム</td>
+<td>役割やプロジェクト割当の追加・剥奪では既存セッションを即時失効させず、次回の認可チェック時点で反映する。</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-169">BR-169</td>
+<td>最後の割当解除時の無効化</td>
+<td>システム</td>
+<td>メンバーの最後の有効なプロジェクト割当が解除された時に、対象アカウントを自動で無効化し、全セッションと未使用の招待を失効する。割当のないプロジェクトへの直アクセスは拒否する。</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-170">BR-170</td>
+<td>権限外 UI の扱い</td>
+<td>アカウント利用者 / システム</td>
+<td>
+<ul class="role-req">
+<li><strong>アカウント利用者：</strong>現在の管理範囲と適用される役割をヘッダーおよびアカウントメニューで確認できる</li>
+<li><strong>システム：</strong>権限外の主ナビゲーションと操作は原則表示せず、権限のない画面への直アクセスは説明と戻り先を添えて拒否する</li>
+</ul>
+</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="2-機能要件">2. 機能要件</h2>
+<div class="table-scroll">
+<table class="req-table">
+<thead>
+<tr>
+<th>ID</th>
+<th>要件</th>
+<th>関連業務要件</th>
+<th>優先度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="FR-332">FR-332</td>
+<td>同一アカウントの複数デバイス同時ログインを可能とすること。契約停止などの契機で全セッションの強制ログアウトを実行できる</td>
+<td><a href="#BR-162">BR-162</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-333">FR-333</td>
+<td>オーナーに対する次の操作を不可とすること。1 契約 = 1 オーナーのため、オーナー不在(孤立)状態は構造的に発生しない。緊急時はサポート窓口経由の対応とする
+<ol class="alpha">
+<li>退会</li>
+<li>停止</li>
+<li>削除</li>
+<li>降格</li>
+<li>譲渡</li>
+</ol></td>
+<td><a href="#BR-163">BR-163</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-334">FR-334</td>
+<td>アカウント利用者は自分自身への次の操作を行えないこと。
+<ol class="alpha">
+<li>自分自身の利用状態変更・削除はできない</li>
+<li>自分が当該プロジェクトで管理者である最後の 1 人の場合、自身を管理者からメンバーへ降格できない(別の管理者またはオーナー経由で行う)</li>
+<li>自分自身のアカウント削除は常に不可とし、オーナーが他人を経由して自身を削除する経路も設けない(他者の削除はオーナー本人の操作のみで行う)</li>
+</ol></td>
+<td><a href="#BR-164">BR-164</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-335">FR-335</td>
+<td>メンバーを 1 オーナー配下に固定すること。同一メールアドレスでも別オーナー配下では別アカウントとして扱う</td>
+<td><a href="#BR-165">BR-165</a></td>
+<td><span class="badge badge-p1">P1</span></td>
+</tr>
+<tr>
+<td id="FR-336">FR-336</td>
+<td>プロジェクト別の役割指定を、当該プロジェクトごとに「割当しない / メンバー / 管理者」の 3 つから選んで行うこと。契約横断のプリセット役割は持たない</td>
+<td><a href="#BR-166">BR-166</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-337">FR-337</td>
+<td>ダッシュボード(自分の通知・お知らせ受信箱)を、オーナーおよびメンバーが閲覧できること。それ以外の画面は、それぞれのロールとプロジェクト境界の充足を要求する</td>
+<td><a href="#BR-167">BR-167</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-338">FR-338</td>
+<td>プロジェクト別ロールおよびプロジェクト割当の追加・剥奪は、アクティブセッションを即時失効させず、次回の認可チェック時点で反映することで足りること。反映上限時間とキャッシュ方式は基本設計を正本とする</td>
+<td><a href="#BR-168">BR-168</a></td>
+<td><span class="badge badge-p1">P1</span></td>
+</tr>
+<tr>
+<td id="FR-339">FR-339</td>
+<td>メンバーの最後の有効なプロジェクト割当を解除した場合の挙動を定めること。
+<ol class="alpha">
+<li>対象アカウントを自動で無効化する</li>
+<li>全セッションと未使用の招待を失効する</li>
+<li>割当のないプロジェクトへの直アクセスは拒否する</li>
+<li>契約横断のメンバー管理画面は提供しない</li>
+</ol></td>
+<td><a href="#BR-169">BR-169</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-340">FR-340</td>
+<td>現在の管理範囲と適用ロールを、ヘッダーの「管理範囲を切り替え」およびアカウントメニューで確認できること。独立したロールバッジを全画面へ重複表示しない。複合ロールの場合は、現在のプロジェクトで適用されるロールを表示する</td>
+<td><a href="#BR-170">BR-170</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-341">FR-341</td>
+<td>権限外の主ナビゲーションと操作の表示を制御すること。
+<ol class="alpha">
+<li>権限外の主ナビゲーションと操作は原則として表示しない</li>
+<li>共同作業上、存在を知らせる価値がある項目は読み取り専用で表示し、必要権限と依頼先を説明する</li>
+<li>権限のない画面への直アクセスを拒否する際は、同等の説明と戻り先を提示する</li>
+</ol></td>
+<td><a href="#BR-170">BR-170</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="callout tip"><i class="bi bi-lightbulb"></i><div><span class="c-title">未確定事項</span>v1.0 リリース時点で全項目確定済み。現在オープンな確認事項はありません。</div></div>
+<h2 id="更新履歴">更新履歴</h2>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>版数</th>
+<th>日付</th>
+<th>変更内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>v1.2</td>
+<td>2026-06-16</td>
+<td>記載スタイルを刷新テンプレート(業務要件 BR-161〜10 を先頭に定義、機能要件に関連業務要件列、長文要件を箇条書きへ整理、用語をアカウント利用者へ統一、HTTP ステータス・連携 IF・画面 ID・基本設計の節番号参照や将来対応記載を除去)へ移行。識別子(FR-331〜341)は不変</td>
+</tr>
+<tr>
+<td>v1.1</td>
+<td>2026-06-14</td>
+<td>契約横断メンバー画面を廃止し、最後のプロジェクト割当解除時のアカウント自動無効化を追加</td>
+</tr>
+<tr>
+<td>v1.0</td>
+<td>2026-06-10</td>
+<td>管理範囲スイッチャーとプロジェクト割当解除の権限モデルへ更新</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+</article>
+</body>
+</html>

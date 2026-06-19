@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WIDGET エンドユーザー向け FAQ ウィジェット | FAQ 設計ポータル</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"><script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";mermaid.initialize({startOnLoad:true,theme:"neutral",flowchart:{useMaxWidth:true},sequence:{useMaxWidth:true,wrap:true,actorMargin:60}});</script>
+<link rel="stylesheet" href="../style.css?v=4">
+</head><body><div class="layout">
+<aside class="sidebar"><a class="brand" href="../index.html"><div class="mark">FA</div><div><b>FAQ AI SaaS</b><span>設計ポータル</span></div></a><nav class="nav"><div class="nav-group">ドキュメント</div><div class="nav-sec" data-sec="01_requirements/index.html"><a class="nav-top" href="../01_requirements/index.html"><span class="n">要</span><span>要件定義</span><span class="caret">&#9656;</span></a><div class="nav-children"><a class="" href="../01_requirements/index.html">概要</a><a class="" href="../01_requirements/FR01.html">FR01: アカウント管理</a><a class="" href="../01_requirements/FR02.html">FR02: ユーザー管理(オーナー + メンバー)</a><a class="" href="../01_requirements/FR03.html">FR03: プロジェクト管理</a><a class="" href="../01_requirements/FR04.html">FR04: FAQ 管理</a><a class="" href="../01_requirements/FR05.html">FR05: AI 回答</a><a class="" href="../01_requirements/FR06.html">FR06: 未解決質問登録</a><a class="" href="../01_requirements/FR07.html">FR07: 未解決質問から FAQ 登録</a><a class="" href="../01_requirements/FR08.html">FR08: 処理エラー</a><a class="" href="../01_requirements/FR09.html">FR09: 利用量・課金</a><a class="" href="../01_requirements/FR10.html">FR10: 管理ダッシュボード</a><a class="" href="../01_requirements/FR11.html">FR11: 通知</a><a class="" href="../01_requirements/FR12.html">FR12: ウィジェット</a><a class="" href="../01_requirements/FR13.html">FR13: プライバシー・データ管理</a><a class="" href="../01_requirements/FR14.html">FR14: セキュリティ</a><a class="" href="../01_requirements/FR15.html">FR15: お知らせ</a><a class="" href="../01_requirements/FR16.html">FR16: 検索・全文検索</a><a class="" href="../01_requirements/FR17.html">FR17: インポート・エクスポート</a><a class="" href="../01_requirements/FR18.html">FR18: UX 細部・データ運用</a><a class="" href="../01_requirements/FR19.html">FR19: アクセス制御細部</a><a class="" href="../01_requirements/FR20.html">FR20: AI 推論動作</a><a class="" href="../01_requirements/FR21.html">FR21: 画面・機能要件一覧</a></div></div><div class="nav-sec open" data-sec="02_basic-design/index.html"><a class="nav-top" href="../02_basic-design/index.html"><span class="n">基</span><span>基本設計</span><span class="caret">&#9656;</span></a><div class="nav-children"><a class="" href="../02_basic-design/index.html">概要</a><div class="nav-sec open" data-sec="02_basic-design/01_screen-design.html"><a class="nav-top" href="../02_basic-design/01_screen-design.html"><span class="n">01</span><span>画面設計</span><span class="caret">&#9656;</span></a><div class="nav-children"><a class="" href="../02_basic-design/01_screen-design.html">概要</a><a class="" href="../02_basic-design/SCR-001.html">SCR-001 ログイン</a><a class="" href="../02_basic-design/SCR-002.html">SCR-002 アカウント登録</a><a class="" href="../02_basic-design/SCR-003.html">SCR-003 パスワード再設定</a><a class="" href="../02_basic-design/SCR-004.html">SCR-004 プロジェクト</a><a class="" href="../02_basic-design/SCR-004-001.html">SCR-004-001 プロジェクト作成・編集モーダル</a><a class="" href="../02_basic-design/SCR-005.html">SCR-005 要対応の質問一覧</a><a class="" href="../02_basic-design/SCR-005-001.html">SCR-005-001 要対応の質問詳細</a><a class="" href="../02_basic-design/SCR-006.html">SCR-006 FAQ一覧</a><a class="" href="../02_basic-design/SCR-006-001.html">SCR-006-001 FAQ編集</a><a class="" href="../02_basic-design/SCR-006-002.html">SCR-006-002 FAQ CSVインポートモーダル</a><a class="" href="../02_basic-design/SCR-007.html">SCR-007 ウィジェット設定</a><a class="" href="../02_basic-design/SCR-008.html">SCR-008 概要(プロジェクト)</a><a class="" href="../02_basic-design/SCR-009.html">SCR-009 メンバー(プロジェクト)</a><a class="" href="../02_basic-design/SCR-009-001.html">SCR-009-001 メンバー招待・編集モーダル</a><a class="" href="../02_basic-design/SCR-010.html">SCR-010 利用規約閲覧</a><a class="" href="../02_basic-design/SCR-011.html">SCR-011 お知らせ一覧</a><a class="" href="../02_basic-design/SCR-012.html">SCR-012 お知らせ詳細</a><a class="" href="../02_basic-design/SCR-013.html">SCR-013 メール確認</a><a class="" href="../02_basic-design/SCR-014.html">SCR-014 退会申請</a><a class="" href="../02_basic-design/SCR-015.html">SCR-015 規約再同意割込み</a><a class="" href="../02_basic-design/SCR-016.html">SCR-016 利用状況</a><a class="" href="../02_basic-design/SCR-017.html">SCR-017 個人設定</a><a class="" href="../02_basic-design/SCR-018.html">SCR-018 メンバーアカウント有効化</a><a class="" href="../02_basic-design/SCR-019.html">SCR-019 連絡先メール確認完了</a><a class="" href="../02_basic-design/SCR-020.html">SCR-020 プライバシーポリシー閲覧</a><a class="" href="../02_basic-design/SCR-021.html">SCR-021 利用量と上限</a><a class="" href="../02_basic-design/SCR-021-001.html">SCR-021-001 質問数上限設定モーダル</a><a class="" href="../02_basic-design/SCR-022.html">SCR-022 請求</a><a class="" href="../02_basic-design/SCR-023.html">SCR-023 設定</a><a class="cur active" href="../02_basic-design/SCR-WIDGET.html">SCR-WIDGET FAQ ウィジェット</a></div></div><div class="nav-sec" data-sec="02_basic-design/02_api-design.html"><a class="nav-top" href="../02_basic-design/02_api-design.html"><span class="n">02</span><span>API設計</span><span class="caret">&#9656;</span></a><div class="nav-children"><a class="" href="../02_basic-design/02_api-design.html">概要</a><a class="" href="../02_basic-design/API-common.html">共通仕様・規約</a><a class="" href="../02_basic-design/API-auth.html">認証・セッション</a><a class="" href="../02_basic-design/API-project.html">プロジェクト</a><a class="" href="../02_basic-design/API-member.html">メンバー</a><a class="" href="../02_basic-design/API-faq.html">FAQ</a><a class="" href="../02_basic-design/API-inquiry.html">未解決質問</a><a class="" href="../02_basic-design/API-widget.html">ウィジェット配信</a><a class="" href="../02_basic-design/API-dashboard.html">ダッシュボード</a><a class="" href="../02_basic-design/API-billing.html">利用量・課金</a><a class="" href="../02_basic-design/API-inbox.html">お知らせ受信箱</a><a class="" href="../02_basic-design/API-terms.html">規約・退会</a><a class="" href="../02_basic-design/API-ai.html">AI 推論 IF</a><a class="" href="../02_basic-design/API-mail.html">メール配信 IF</a><a class="" href="../02_basic-design/API-webhook.html">外部 Webhook</a></div></div><div class="nav-sec" data-sec="02_basic-design/03_database-design.html"><a class="nav-top" href="../02_basic-design/03_database-design.html"><span class="n">03</span><span>データベース設計</span><span class="caret">&#9656;</span></a><div class="nav-children"><a class="" href="../02_basic-design/03_database-design.html">概要</a><a class="" href="../02_basic-design/TBL-M-USER.html">M_USER</a><a class="" href="../02_basic-design/TBL-M-CONTRACT.html">M_CONTRACT</a><a class="" href="../02_basic-design/TBL-M-002.html">M_PRJ_USERS</a><a class="" href="../02_basic-design/TBL-M-004.html">M_PROJECTS</a><a class="" href="../02_basic-design/TBL-M-005.html">M_ALLOWED_DOMAINS</a><a class="" href="../02_basic-design/TBL-M-006.html">M_FAQS</a><a class="" href="../02_basic-design/TBL-M-007.html">M_EMAIL_SUPPRESS</a><a class="" href="../02_basic-design/TBL-M-008.html">M_OWNER_QUOTA_OVR</a><a class="" href="../02_basic-design/TBL-M-009.html">M_PRJ_QUOTA_LIMITS</a><a class="" href="../02_basic-design/TBL-M-010.html">M_SERVICE_ANNOUNCE</a><a class="" href="../02_basic-design/TBL-M-011.html">M_ANNOUNCE_AUD</a><a class="" href="../02_basic-design/TBL-M-012.html">M_TERMS_VER</a><a class="" href="../02_basic-design/TBL-T-001.html">T_SESSIONS</a><a class="" href="../02_basic-design/TBL-T-002.html">T_ACCESS_TOKENS</a><a class="" href="../02_basic-design/TBL-T-003.html">T_PRJ_LEGACY_KEYS</a><a class="" href="../02_basic-design/TBL-T-004.html">T_QLOG_FAQ_REFS</a><a class="" href="../02_basic-design/TBL-T-005.html">T_INQUIRIES</a><a class="" href="../02_basic-design/TBL-T-006.html">T_BILL_SUBS</a><a class="" href="../02_basic-design/TBL-T-007.html">T_BILL_INVOICES</a><a class="" href="../02_basic-design/TBL-T-008.html">T_USAGE_METER</a><a class="" href="../02_basic-design/TBL-T-009.html">T_ANNOUNCE_RCPT</a><a class="" href="../02_basic-design/TBL-T-010.html">T_INBOX_MSG</a><a class="" href="../02_basic-design/TBL-T-011.html">T_WITHDRAW_REQ</a><a class="" href="../02_basic-design/TBL-T-012.html">T_TERMS_AGREE</a><a class="" href="../02_basic-design/TBL-H-001.html">H_FAQ_REV</a><a class="" href="../02_basic-design/TBL-H-002.html">H_QUESTION_LOGS</a><a class="" href="../02_basic-design/TBL-H-003.html">H_NOTIF_LOGS</a><a class="" href="../02_basic-design/TBL-H-004.html">H_AUDIT_LOGS</a><a class="" href="../02_basic-design/TBL-H-005.html">H_ERROR_LOGS</a><a class="" href="../02_basic-design/TBL-TP-001.html">TP_FAQ_FTS</a><a class="" href="../02_basic-design/TBL-TP-002.html">TP_AI_THRESH_CACHE</a></div></div><a class="" href="../02_basic-design/04_usecase-design.html">04 ユースケース・シーケンス</a><a class="" href="../02_basic-design/05_billing-design.html">05 課金・請求設計</a><a class="" href="../02_basic-design/06_mail-design.html">06 メール設計</a><a class="" href="../02_basic-design/07_auth-design.html">07 認証・認可設計</a></div></div><div class="nav-sec" data-sec="03_future/index.html"><a class="nav-top" href="../03_future/index.html"><span class="n">将</span><span>将来対応</span><span class="caret">&#9656;</span></a><div class="nav-children"><a class="" href="../03_future/index.html">概要</a><a class="" href="../03_future/FUT01.html">FUT01: 認証・セキュリティ強化</a><a class="" href="../03_future/FUT02.html">FUT02: 検索・AI 強化</a><a class="" href="../03_future/FUT03.html">FUT03: 国際化・リージョン</a><a class="" href="../03_future/FUT04.html">FUT04: プラン・課金・ブランド</a><a class="" href="../03_future/FUT05.html">FUT05: 通知・FAQ 運用・連携</a><a class="" href="../03_future/FUT06.html">FUT06: 個別チャット</a><a class="" href="../03_future/FUT06-detail.html">FUT06: 個別チャット詳細設計</a><a class="" href="../03_future/FUT06-req.html">FUT06: 個別チャット要件</a></div></div></nav></aside>
+<main class="main"><article class="content">
+<div class="crumb"><span class="pill">基本設計</span><a class="muted" href="../02_basic-design/01_screen-design.html">画面設計</a><span class="muted">/</span><span class="muted">WIDGET エンドユーザー向け FAQ ウィジェット</span></div>
+<h1>WIDGET エンドユーザー向け FAQ ウィジェット</h1>
+
+
+<aside class="page-summary">
+<p class="ps-lead"><strong>このページは、ウィジェット利用者(エンドユーザー)が顧客サイト上で FAQ 検索・AI 回答・問い合わせを行う埋め込み UI を定義します(固有の SCR ID を持たない状態定義)。</strong> 画面概要 / 画面遷移図 / 画面レイアウト / 画面項目定義 / 入出力一覧 / 画面イベント一覧 の 6 セクションで記述します。</p>
+</aside>
+<p class="doc-meta"><span><b>版数</b> v1.0</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<h2 id="1-画面概要">1. 画面概要</h2>
+<p class="section-lead">ウィジェット利用者(エンドユーザー)が顧客サイトに埋め込まれたウィジェットから FAQ 検索・AI 回答の確認・未解決時の連絡先確認を、同じ会話欄で行う UI です。初期表示は右下固定の丸型ランチャーバッジで、操作でチャット UI を展開します。</p>
+<table>
+<thead>
+<tr>
+<th>画面 ID</th>
+<th>画面名</th>
+<th>機能概要</th>
+</tr>
+</thead>
+<tbody>
+<tr><td id="WIDGET"><code>WIDGET</code></td><td>エンドユーザー向け FAQ ウィジェット</td><td>エンドユーザーが FAQ 検索・AI 回答・問い合わせを行うウィジェット</td></tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>関連</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>FR / BR</td><td><span>FR-050</span>〜<span>FR-057</span>, <span>FR-070</span>〜<span>FR-077</span>, <span>FR-122</span>, <span>FR-136</span>, <span>FR-150</span>〜<span>FR-156</span> / <span>BR(ウィジェット)</span></td></tr>
+<tr><td>関連画面</td><td><a href="SCR-007.html"><code>SCR-007</code> ウィジェット設定</a>(管理コンソール側でタイトル・連絡先メール等を設定)</td></tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr>
+<th>ステークホルダ</th>
+<th>対象</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>ウィジェット利用者(エンドユーザー)</td><td>◯</td></tr>
+</tbody>
+</table>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>本 UI は管理コンソールではなく顧客サイトへ埋め込まれるウィジェットです。固有の SCR ID は持たず、開閉状態と会話内容の状態を分けて管理する状態定義として扱います。管理用の問い合わせ ID はウィジェットに表示しません。配信・公開 API の詳細は DD12 を正本とします。</div></div>
+
+<h2 id="2-画面遷移図">2. 画面遷移図</h2>
+<p class="section-lead">本ウィジェットの状態遷移を、状態名と契機(操作・結果)で示します。固有 SCR ID を持たないため、開閉状態と会話状態を遷移ノードとして表します。</p>
+<pre class="mermaid">flowchart LR
+  W0["起動前（丸型ランチャーバッジ）"]
+  W1["展開中 / 通常（質問受付）"]
+  W2["未解決（連絡先表示）"]
+  W3["制限中（受付停止 / 429）"]
+  W0 --&gt;|バッジをクリック / Enter / Space| W1
+  W1 --&gt;|閉じるボタン| W0
+  W1 --&gt;|AI 回答 type=unanswered| W2
+  W2 --&gt;|別の質問を送信| W1
+  W2 --&gt;|閉じるボタン| W0
+  W1 --&gt;|質問数上限 / 支払ゲート（429）| W3
+  W3 --&gt;|閉じるボタン| W0
+</pre>
+
+<h2 id="3-画面レイアウト">3. 画面レイアウト</h2>
+<div style="background:#f5f6f8;padding:24px;border-radius:12px;font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN',Meiryo,sans-serif;color:#3a3f46;-webkit-font-smoothing:antialiased;--accent:#5e6ad2">
+<div style="max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:32px">
+
+  
+
+  <div style="display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap">
+
+    <!-- 展開時 -->
+    <section style="flex:1;min-width:560px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:13px"><span style="font-size:11px;font-weight:700;color:var(--accent,#5e6ad2);background:color-mix(in srgb,var(--accent,#5e6ad2) 10%,#fff);border-radius:6px;padding:3px 8px">状態 1</span><span style="font-size:13.5px;font-weight:600;color:#16191d">展開時 — 回答 + フィードバック</span></div>
+      <div style="height:600px;border:1px solid #e6e8eb;border-radius:14px;box-shadow:0 1px 2px rgba(16,24,40,.04),0 6px 20px rgba(16,24,40,.05);overflow:hidden;position:relative;background:linear-gradient(160deg,#eef1f6,#e3e7ef)">
+        <!-- fake host site -->
+        <div style="position:absolute;inset:0;padding:24px">
+          <div style="width:160px;height:14px;border-radius:4px;background:rgba(22,25,29,.12);margin-bottom:18px"></div>
+          <div style="width:70%;height:9px;border-radius:4px;background:rgba(22,25,29,.08);margin-bottom:10px"></div>
+          <div style="width:60%;height:9px;border-radius:4px;background:rgba(22,25,29,.08);margin-bottom:10px"></div>
+          <div style="width:65%;height:9px;border-radius:4px;background:rgba(22,25,29,.08)"></div>
+        </div>
+        <!-- widget -->
+        <div style="position:absolute;right:24px;bottom:24px;width:360px;background:#fff;border-radius:18px;box-shadow:0 18px 50px rgba(16,24,40,.22);overflow:hidden;display:flex;flex-direction:column;max-height:524px">
+          <div style="background:var(--accent,#5e6ad2);padding:16px 18px;color:#fff;display:flex;align-items:center;justify-content:between;gap:10px"><div style="flex:1"><div style="font-size:15px;font-weight:700">何かお困りですか?</div><div style="font-size:11.5px;opacity:.85;margin-top:2px">FAQ から自動でお答えします</div></div><span style="width:26px;height:26px;border-radius:7px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path></svg></span></div>
+          <div style="flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:12px;background:#fbfbfc">
+            <div style="align-self:flex-end;max-width:82%;background:var(--accent,#5e6ad2);color:#fff;border-radius:14px 14px 4px 14px;padding:10px 13px;font-size:12.5px;line-height:1.55">料金プランの変更方法を教えてください</div>
+            <div style="align-self:flex-start;max-width:88%;display:flex;flex-direction:column;gap:8px">
+              <div style="background:#fff;border:1px solid #eef0f2;border-radius:14px 14px 14px 4px;padding:12px 14px;font-size:12.5px;color:#16191d;line-height:1.7">プランの変更は、管理画面の<b>「請求」→「プランを変更」</b>から行えます。変更は次回請求日から適用されます。</div>
+              <div style="display:flex;align-items:center;gap:8px;padding-left:4px"><span style="font-size:11px;color:#9aa0a8">この回答は役に立ちましたか?</span><span style="width:28px;height:28px;border-radius:8px;border:1px solid #e6e8eb;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1a7f37" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 11v9H4a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1z"></path><path d="M7 11l4-8a2 2 0 0 1 3 1.8V8h4.5a2 2 0 0 1 2 2.3l-1.2 7A2 2 0 0 1 17.3 19H7"></path></svg></span><span style="width:28px;height:28px;border-radius:8px;border:1px solid #e6e8eb;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9aa0a8" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17 13V4h3a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1z"></path><path d="M17 13l-4 8a2 2 0 0 1-3-1.8V16H5.5a2 2 0 0 1-2-2.3l1.2-7A2 2 0 0 1 6.7 5H17"></path></svg></span></div>
+            </div>
+            <div style="align-self:flex-start;display:flex;flex-wrap:wrap;gap:6px;padding-top:2px">
+              <span style="padding:6px 11px;border:1px solid #e6e8eb;border-radius:999px;background:#fff;font-size:11.5px;color:var(--accent,#5e6ad2);font-weight:600;cursor:pointer">支払い方法を変更したい</span>
+              <span style="padding:6px 11px;border:1px solid #e6e8eb;border-radius:999px;background:#fff;font-size:11.5px;color:var(--accent,#5e6ad2);font-weight:600;cursor:pointer">領収書がほしい</span>
+            </div>
+          </div>
+          <div style="border-top:1px solid #eef0f2;padding:12px 14px;display:flex;align-items:center;gap:8px;background:#fff"><div style="flex:1;height:38px;border:1px solid #e6e8eb;border-radius:999px;background:#fbfbfc;display:flex;align-items:center;padding:0 14px;font-size:12px;color:#b5bac0">メッセージを入力…</div><span style="width:38px;height:38px;border-radius:999px;background:var(--accent,#5e6ad2);display:flex;align-items:center;justify-content:center;flex:none;cursor:pointer"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 14-7-7 14-2-5z"></path></svg></span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 最小化時 -->
+    <section style="flex:none;width:340px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:13px"><span style="font-size:11px;font-weight:700;color:var(--accent,#5e6ad2);background:color-mix(in srgb,var(--accent,#5e6ad2) 10%,#fff);border-radius:6px;padding:3px 8px">状態 2</span><span style="font-size:13.5px;font-weight:600;color:#16191d">最小化時 — 起動ボタン</span></div>
+      <div style="height:600px;border:1px solid #e6e8eb;border-radius:14px;box-shadow:0 1px 2px rgba(16,24,40,.04),0 6px 20px rgba(16,24,40,.05);overflow:hidden;position:relative;background:linear-gradient(160deg,#eef1f6,#e3e7ef)">
+        <div style="position:absolute;inset:0;padding:24px">
+          <div style="width:140px;height:14px;border-radius:4px;background:rgba(22,25,29,.12);margin-bottom:18px"></div>
+          <div style="width:80%;height:9px;border-radius:4px;background:rgba(22,25,29,.08);margin-bottom:10px"></div>
+          <div style="width:72%;height:9px;border-radius:4px;background:rgba(22,25,29,.08)"></div>
+        </div>
+        <div style="position:absolute;right:24px;bottom:24px;display:flex;flex-direction:column;align-items:flex-end;gap:12px">
+          <div style="background:#fff;border:1px solid #eef0f2;border-radius:14px;box-shadow:0 8px 24px rgba(16,24,40,.14);padding:11px 14px;font-size:12.5px;color:#16191d;max-width:220px;line-height:1.5">ご質問はこちらから 👋</div>
+          <span style="width:60px;height:60px;border-radius:999px;background:var(--accent,#5e6ad2);box-shadow:0 10px 26px color-mix(in srgb,var(--accent,#5e6ad2) 45%,transparent);display:flex;align-items:center;justify-content:center;cursor:pointer"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8z"></path></svg></span>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+</div>
+
+<h2 id="4-画面項目定義">4. 画面項目定義</h2>
+<p class="section-lead">本ウィジェットの入出力項目(ランチャーバッジ・ヘッダー・会話履歴・入力・送信・連絡先表示)を定義します。項目の正本は本表です。管理用の問い合わせ ID は描画しません。</p>
+<table>
+<thead>
+<tr>
+<th>項目 ID</th>
+<th>項目</th>
+<th>説明</th>
+<th>種類</th>
+<th>表示条件</th>
+<th>表示</th>
+</tr>
+</thead>
+<tbody>
+<tr><td id="IT-01"><code>IT-01</code></td><td>丸型ランチャーバッジ</td><td>右下固定・直径 56px のバッジでチャット UI を開く。<code>aria-label="FAQチャットを開く"</code></td><td>ボタン</td><td>—</td><td>チャットアイコン</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>ヘッダー</td><td>ウィジェットタイトル・現在状態・閉じるボタンを表示する。利用規約等の導線は表示しない</td><td>見出し</td><td>—</td><td>タイトル、状態(オンライン / 質問受付中 / 新しい質問の受付を停止中 等)</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>閉じるボタン</td><td>チャット UI を閉じてバッジ表示へ戻る。<code>aria-label="FAQチャットを閉じる"</code></td><td>アイコンボタン</td><td>—</td><td>閉じるアイコン</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>会話履歴</td><td>質問・AI 回答・システム返信を時系列で表示する</td><td>タイムライン</td><td>—</td><td>質問 / AI 回答 / システム返信の時系列</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>質問入力</td><td>FAQ 質問のテキストを入力する。通常状態・未解決表示後は入力可</td><td>テキストエリア</td><td>受付制限中(質問数上限到達または支払方法ゲート)の場合は無効化</td><td>—</td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>送信</td><td>入力した質問を送信する。通常状態・未解決表示後は活性</td><td>ボタン</td><td>受付制限中(質問数上限到達または支払方法ゲート)の場合は無効化</td><td>送信</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>AI 回答</td><td>登録 FAQ に基づく回答を同じ会話欄に追加表示する</td><td>ラベル</td><td>—</td><td>AI 回答文</td></tr>
+<tr><td id="IT-08"><code>IT-08</code></td><td>連絡先メール表示</td><td>未解決・制限中に確認済みプロジェクト連絡先メールを案内表示する</td><td>ラベル</td><td>未解決・制限中、かつ連絡先設定済みの場合のみ表示</td><td>「必要に応じて、下記のお問い合わせ先までメールでご連絡ください。」+ 連絡先メールアドレス</td></tr>
+<tr><td id="IT-09"><code>IT-09</code></td><td>受付停止メッセージ</td><td>受付停止と問い合わせ先を表示する(連絡先未設定時は再試行案内に差し替え)</td><td>アラート</td><td>受付制限中の場合に表示</td><td>「ただいま新しいご質問をお受けできません。お手数ですが、下記のお問い合わせ先までメールでご連絡ください。」+ 連絡先メールアドレス</td></tr>
+</tbody>
+</table>
+
+<h2 id="5-入出力一覧">5. 入出力一覧</h2>
+<p class="section-lead">本ウィジェットが呼び出す公開 API の一覧です。公開 API のベースは <code>/widget/v1/...</code>、正本は <a href="02_api-design.html">02_API設計 §5.5(ウィジェット API 群)</a>です(各 API の節は下表の行リンク先を正とします)。ウィジェットはサーバ経由でテーブルへアクセスし、直接の永続更新は行いません。</p>
+<table>
+<thead>
+<tr>
+<th rowspan="2">入出力名</th>
+<th rowspan="2">説明</th>
+<th rowspan="2">種別</th>
+<th rowspan="2">I/O</th>
+<th colspan="4">アクセス種別(CRUD)</th>
+<th rowspan="2">備考</th>
+</tr>
+<tr>
+<th>C</th>
+<th>R</th>
+<th>U</th>
+<th>D</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>ウィジェット起動</td><td>セッションを確立しウィジェット設定を取得する</td><td>API</td><td>入力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /widget/v1/bootstrap</code>(<a href="02_api-design.html#API-WGT-001">API 設計 5.5.1</a>)</td></tr>
+<tr><td>質問送信</td><td>質問を送信し AI 回答を取得する(<code>type=unanswered</code> で未解決遷移)</td><td>API</td><td>入出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /widget/v1/ask</code>(<a href="02_api-design.html">API 設計 5.5.2</a>)</td></tr>
+<tr><td>未解決質問登録</td><td>未解決時に質問ログ・未解決質問を登録する(問い合わせ ID は非表示)</td><td>API</td><td>出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /widget/v1/inquiries</code>(<a href="02_api-design.html">API 設計 5.5.3</a>)</td></tr>
+</tbody>
+</table>
+
+<h2 id="6-画面イベント一覧">6. 画面イベント一覧</h2>
+<p class="section-lead">本ウィジェットで発生するイベントと発生タイミング・概要の一覧です。</p>
+<table>
+<thead>
+<tr>
+<th>イベント ID</th>
+<th>イベント</th>
+<th>トリガー</th>
+<th>処理</th>
+<th>関連項目</th>
+</tr>
+</thead>
+<tbody>
+<tr><td><code>EV-01</code></td><td>チャット UI を開く</td><td>ランチャーバッジのクリック / Enter / Space 時</td><td><ul><li>バッジを非表示にしチャット UI を展開</li><li><code>POST /widget/v1/bootstrap</code> でセッション・設定を取得</li></ul></td><td><a href="#IT-01">IT-01</a>, <a href="#IT-02">IT-02</a></td></tr>
+<tr><td><code>EV-02</code></td><td>チャット UI を閉じる</td><td>ヘッダー閉じるボタン押下時</td><td><ul><li>チャット UI を閉じバッジへ戻る</li><li>会話履歴・入力内容・受付状態は保持</li></ul></td><td><a href="#IT-03">IT-03</a>, <a href="#IT-04">IT-04</a></td></tr>
+<tr><td><code>EV-03</code></td><td>質問送信(通常)</td><td>送信ボタン押下時</td><td><ul><li><code>POST /widget/v1/ask</code> で質問送信</li><li>AI 回答を同じ会話欄に追加</li></ul></td><td><a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a>, <a href="#IT-07">IT-07</a></td></tr>
+<tr><td><code>EV-04</code></td><td>未解決応答</td><td>AI 回答が <code>type=unanswered</code> の時</td><td><ul><li>回答不可の旨と確認済み連絡先メールをシステム返信で表示</li><li>問い合わせ ID は非表示で別質問は継続可能</li></ul></td><td><a href="#IT-07">IT-07</a>, <a href="#IT-08">IT-08</a></td></tr>
+<tr><td><code>EV-05</code></td><td>受付停止(制限中)</td><td>質問数上限 100% 到達時、または支払方法ゲート(無料枠超過 + 支払方法未登録)による受付停止時(いずれも 429 応答)</td><td><ul><li>受付停止と問い合わせ先をシステム返信で表示し、入力欄と送信ボタンを無効化する</li><li><strong>いずれの契機も契約は <code>active</code> のままで、ウィジェット新規質問受付のみを停止する 429 系</strong>(質問数上限は <code>E-QUOTA-QUESTIONS-LIMIT</code>)</li><li>決済失敗等によるサスペンション(契約 <code>suspended</code> / 423)とは別状態(<span>10_課金・請求設計 §4 支払方法ゲート</span>)</li></ul></td><td><a href="#IT-05">IT-05</a>, <a href="#IT-06">IT-06</a>, <a href="#IT-09">IT-09</a></td></tr>
+</tbody>
+</table>
+<div class="footer">FAQ AI ウィジェット SaaS / メインシステム &mdash; 基本設計 ・ new 形式ポータル</div>
+</article></main>
+<aside class="rightbar"><div class="rb-title">このページ</div><nav class="toc"><a class="back" href="../02_basic-design/01_screen-design.html">&larr; 画面設計へ</a><a class="" href="#1-画面概要">1. 画面概要</a><a class="" href="#2-画面遷移図">2. 画面遷移図</a><a class="" href="#3-画面レイアウト">3. 画面レイアウト</a><a class="" href="#4-画面項目定義">4. 画面項目定義</a><a class="" href="#5-入出力一覧">5. 入出力一覧</a><a class="" href="#6-画面イベント一覧">6. 画面イベント一覧</a></nav></aside>
+</div>
+<script>(function(){function init(){var ls=[].slice.call(document.querySelectorAll(".rightbar .toc a[href^=\"#\"]"));if(!ls.length)return;var map=ls.map(function(a){var id=decodeURIComponent(a.getAttribute("href").slice(1));return{a:a,el:document.getElementById(id)};}).filter(function(x){return x.el;});function on(){var y=window.scrollY+130,cur=null;map.forEach(function(x){if(x.el.getBoundingClientRect().top+window.scrollY<=y)cur=x;});ls.forEach(function(a){a.classList.remove("active");});if(cur)cur.a.classList.add("active");}window.addEventListener("scroll",on,{passive:true});window.addEventListener("resize",on);on();}if(document.readyState!=="loading")init();else document.addEventListener("DOMContentLoaded",init);})();</script><script>(function(){var K="portal-nav-open",S="portal-nav-scroll";var sb=document.querySelector(".sidebar");function sid(s){return s.getAttribute("data-sec")||"";}try{var o=JSON.parse(localStorage.getItem(K)||"[]");document.querySelectorAll(".nav-sec").forEach(function(s){if(o.indexOf(sid(s))>=0)s.classList.add("open");});}catch(e){}function save(){try{var o=[];document.querySelectorAll(".nav-sec.open").forEach(function(s){o.push(sid(s));});localStorage.setItem(K,JSON.stringify(o));}catch(e){}}document.querySelectorAll(".nav-sec > .nav-top .caret").forEach(function(c){c.addEventListener("click",function(e){e.preventDefault();e.stopPropagation();c.closest(".nav-sec").classList.toggle("open");save();});});document.querySelectorAll(".nav a[href]").forEach(function(a){a.addEventListener("click",save);});try{var v=sessionStorage.getItem(S);if(v&&sb)sb.scrollTop=parseInt(v,10);}catch(e){}if(sb)sb.addEventListener("scroll",function(){try{sessionStorage.setItem(S,sb.scrollTop);}catch(e){}},{passive:true});})();</script>
+</body></html>

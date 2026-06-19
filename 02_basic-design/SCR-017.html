@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCR-017 個人設定 | FAQ 設計ポータル</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"><script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";mermaid.initialize({startOnLoad:true,theme:"neutral",flowchart:{useMaxWidth:true},sequence:{useMaxWidth:true,wrap:true,actorMargin:60}});</script>
+<link rel="stylesheet" href="../style.css?v=4">
+</head><body><div class="layout">
+<aside class="sidebar"><a class="brand" href="../index.html"><div class="mark">FA</div><div><b>FAQ AI SaaS</b><span>設計ポータル</span></div></a><nav class="nav"><div class="nav-group">ドキュメント</div><div class="nav-sec" data-sec="01_requirements/index.html"><a class="nav-top" href="../01_requirements/index.html"><span class="n">要</span><span>要件定義</span><span class="caret">&#9656;</span></a><div class="nav-children"><a class="" href="../01_requirements/index.html">概要</a><a class="" href="../01_requirements/FR01.html">FR01: アカウント管理</a><a class="" href="../01_requirements/FR02.html">FR02: ユーザー管理(オーナー + メンバー)</a><a class="" href="../01_requirements/FR03.html">FR03: プロジェクト管理</a><a class="" href="../01_requirements/FR04.html">FR04: FAQ 管理</a><a class="" href="../01_requirements/FR05.html">FR05: AI 回答</a><a class="" href="../01_requirements/FR06.html">FR06: 未解決質問登録</a><a class="" href="../01_requirements/FR07.html">FR07: 未解決質問から FAQ 登録</a><a class="" href="../01_requirements/FR08.html">FR08: 処理エラー</a><a class="" href="../01_requirements/FR09.html">FR09: 利用量・課金</a><a class="" href="../01_requirements/FR10.html">FR10: 管理ダッシュボード</a><a class="" href="../01_requirements/FR11.html">FR11: 通知</a><a class="" href="../01_requirements/FR12.html">FR12: ウィジェット</a><a class="" href="../01_requirements/FR13.html">FR13: プライバシー・データ管理</a><a class="" href="../01_requirements/FR14.html">FR14: セキュリティ</a><a class="" href="../01_requirements/FR15.html">FR15: お知らせ</a><a class="" href="../01_requirements/FR16.html">FR16: 検索・全文検索</a><a class="" href="../01_requirements/FR17.html">FR17: インポート・エクスポート</a><a class="" href="../01_requirements/FR18.html">FR18: UX 細部・データ運用</a><a class="" href="../01_requirements/FR19.html">FR19: アクセス制御細部</a><a class="" href="../01_requirements/FR20.html">FR20: AI 推論動作</a><a class="" href="../01_requirements/FR21.html">FR21: 画面・機能要件一覧</a></div></div><div class="nav-sec open" data-sec="02_basic-design/index.html"><a class="nav-top" href="../02_basic-design/index.html"><span class="n">基</span><span>基本設計</span><span class="caret">&#9656;</span></a><div class="nav-children"><a class="" href="../02_basic-design/index.html">概要</a><div class="nav-sec open" data-sec="02_basic-design/01_screen-design.html"><a class="nav-top" href="../02_basic-design/01_screen-design.html"><span class="n">01</span><span>画面設計</span><span class="caret">&#9656;</span></a><div class="nav-children"><a class="" href="../02_basic-design/01_screen-design.html">概要</a><a class="" href="../02_basic-design/SCR-001.html">SCR-001 ログイン</a><a class="" href="../02_basic-design/SCR-002.html">SCR-002 アカウント登録</a><a class="" href="../02_basic-design/SCR-003.html">SCR-003 パスワード再設定</a><a class="" href="../02_basic-design/SCR-004.html">SCR-004 プロジェクト</a><a class="" href="../02_basic-design/SCR-004-001.html">SCR-004-001 プロジェクト作成・編集モーダル</a><a class="" href="../02_basic-design/SCR-005.html">SCR-005 要対応の質問一覧</a><a class="" href="../02_basic-design/SCR-005-001.html">SCR-005-001 要対応の質問詳細</a><a class="" href="../02_basic-design/SCR-006.html">SCR-006 FAQ一覧</a><a class="" href="../02_basic-design/SCR-006-001.html">SCR-006-001 FAQ編集</a><a class="" href="../02_basic-design/SCR-006-002.html">SCR-006-002 FAQ CSVインポートモーダル</a><a class="" href="../02_basic-design/SCR-007.html">SCR-007 ウィジェット設定</a><a class="" href="../02_basic-design/SCR-008.html">SCR-008 概要(プロジェクト)</a><a class="" href="../02_basic-design/SCR-009.html">SCR-009 メンバー(プロジェクト)</a><a class="" href="../02_basic-design/SCR-009-001.html">SCR-009-001 メンバー招待・編集モーダル</a><a class="" href="../02_basic-design/SCR-010.html">SCR-010 利用規約閲覧</a><a class="" href="../02_basic-design/SCR-011.html">SCR-011 お知らせ一覧</a><a class="" href="../02_basic-design/SCR-012.html">SCR-012 お知らせ詳細</a><a class="" href="../02_basic-design/SCR-013.html">SCR-013 メール確認</a><a class="" href="../02_basic-design/SCR-014.html">SCR-014 退会申請</a><a class="" href="../02_basic-design/SCR-015.html">SCR-015 規約再同意割込み</a><a class="" href="../02_basic-design/SCR-016.html">SCR-016 利用状況</a><a class="cur active" href="../02_basic-design/SCR-017.html">SCR-017 個人設定</a><a class="" href="../02_basic-design/SCR-018.html">SCR-018 メンバーアカウント有効化</a><a class="" href="../02_basic-design/SCR-019.html">SCR-019 連絡先メール確認完了</a><a class="" href="../02_basic-design/SCR-020.html">SCR-020 プライバシーポリシー閲覧</a><a class="" href="../02_basic-design/SCR-021.html">SCR-021 利用量と上限</a><a class="" href="../02_basic-design/SCR-021-001.html">SCR-021-001 質問数上限設定モーダル</a><a class="" href="../02_basic-design/SCR-022.html">SCR-022 請求</a><a class="" href="../02_basic-design/SCR-023.html">SCR-023 設定</a><a class="" href="../02_basic-design/SCR-WIDGET.html">SCR-WIDGET FAQ ウィジェット</a></div></div><div class="nav-sec" data-sec="02_basic-design/02_api-design.html"><a class="nav-top" href="../02_basic-design/02_api-design.html"><span class="n">02</span><span>API設計</span><span class="caret">&#9656;</span></a><div class="nav-children"><a class="" href="../02_basic-design/02_api-design.html">概要</a><a class="" href="../02_basic-design/API-common.html">共通仕様・規約</a><a class="" href="../02_basic-design/API-auth.html">認証・セッション</a><a class="" href="../02_basic-design/API-project.html">プロジェクト</a><a class="" href="../02_basic-design/API-member.html">メンバー</a><a class="" href="../02_basic-design/API-faq.html">FAQ</a><a class="" href="../02_basic-design/API-inquiry.html">未解決質問</a><a class="" href="../02_basic-design/API-widget.html">ウィジェット配信</a><a class="" href="../02_basic-design/API-dashboard.html">ダッシュボード</a><a class="" href="../02_basic-design/API-billing.html">利用量・課金</a><a class="" href="../02_basic-design/API-inbox.html">お知らせ受信箱</a><a class="" href="../02_basic-design/API-terms.html">規約・退会</a><a class="" href="../02_basic-design/API-ai.html">AI 推論 IF</a><a class="" href="../02_basic-design/API-mail.html">メール配信 IF</a><a class="" href="../02_basic-design/API-webhook.html">外部 Webhook</a></div></div><div class="nav-sec" data-sec="02_basic-design/03_database-design.html"><a class="nav-top" href="../02_basic-design/03_database-design.html"><span class="n">03</span><span>データベース設計</span><span class="caret">&#9656;</span></a><div class="nav-children"><a class="" href="../02_basic-design/03_database-design.html">概要</a><a class="" href="../02_basic-design/TBL-M-USER.html">M_USER</a><a class="" href="../02_basic-design/TBL-M-CONTRACT.html">M_CONTRACT</a><a class="" href="../02_basic-design/TBL-M-002.html">M_PRJ_USERS</a><a class="" href="../02_basic-design/TBL-M-004.html">M_PROJECTS</a><a class="" href="../02_basic-design/TBL-M-005.html">M_ALLOWED_DOMAINS</a><a class="" href="../02_basic-design/TBL-M-006.html">M_FAQS</a><a class="" href="../02_basic-design/TBL-M-007.html">M_EMAIL_SUPPRESS</a><a class="" href="../02_basic-design/TBL-M-008.html">M_OWNER_QUOTA_OVR</a><a class="" href="../02_basic-design/TBL-M-009.html">M_PRJ_QUOTA_LIMITS</a><a class="" href="../02_basic-design/TBL-M-010.html">M_SERVICE_ANNOUNCE</a><a class="" href="../02_basic-design/TBL-M-011.html">M_ANNOUNCE_AUD</a><a class="" href="../02_basic-design/TBL-M-012.html">M_TERMS_VER</a><a class="" href="../02_basic-design/TBL-T-001.html">T_SESSIONS</a><a class="" href="../02_basic-design/TBL-T-002.html">T_ACCESS_TOKENS</a><a class="" href="../02_basic-design/TBL-T-003.html">T_PRJ_LEGACY_KEYS</a><a class="" href="../02_basic-design/TBL-T-004.html">T_QLOG_FAQ_REFS</a><a class="" href="../02_basic-design/TBL-T-005.html">T_INQUIRIES</a><a class="" href="../02_basic-design/TBL-T-006.html">T_BILL_SUBS</a><a class="" href="../02_basic-design/TBL-T-007.html">T_BILL_INVOICES</a><a class="" href="../02_basic-design/TBL-T-008.html">T_USAGE_METER</a><a class="" href="../02_basic-design/TBL-T-009.html">T_ANNOUNCE_RCPT</a><a class="" href="../02_basic-design/TBL-T-010.html">T_INBOX_MSG</a><a class="" href="../02_basic-design/TBL-T-011.html">T_WITHDRAW_REQ</a><a class="" href="../02_basic-design/TBL-T-012.html">T_TERMS_AGREE</a><a class="" href="../02_basic-design/TBL-H-001.html">H_FAQ_REV</a><a class="" href="../02_basic-design/TBL-H-002.html">H_QUESTION_LOGS</a><a class="" href="../02_basic-design/TBL-H-003.html">H_NOTIF_LOGS</a><a class="" href="../02_basic-design/TBL-H-004.html">H_AUDIT_LOGS</a><a class="" href="../02_basic-design/TBL-H-005.html">H_ERROR_LOGS</a><a class="" href="../02_basic-design/TBL-TP-001.html">TP_FAQ_FTS</a><a class="" href="../02_basic-design/TBL-TP-002.html">TP_AI_THRESH_CACHE</a></div></div><a class="" href="../02_basic-design/04_usecase-design.html">04 ユースケース・シーケンス</a><a class="" href="../02_basic-design/05_billing-design.html">05 課金・請求設計</a><a class="" href="../02_basic-design/06_mail-design.html">06 メール設計</a><a class="" href="../02_basic-design/07_auth-design.html">07 認証・認可設計</a></div></div><div class="nav-sec" data-sec="03_future/index.html"><a class="nav-top" href="../03_future/index.html"><span class="n">将</span><span>将来対応</span><span class="caret">&#9656;</span></a><div class="nav-children"><a class="" href="../03_future/index.html">概要</a><a class="" href="../03_future/FUT01.html">FUT01: 認証・セキュリティ強化</a><a class="" href="../03_future/FUT02.html">FUT02: 検索・AI 強化</a><a class="" href="../03_future/FUT03.html">FUT03: 国際化・リージョン</a><a class="" href="../03_future/FUT04.html">FUT04: プラン・課金・ブランド</a><a class="" href="../03_future/FUT05.html">FUT05: 通知・FAQ 運用・連携</a><a class="" href="../03_future/FUT06.html">FUT06: 個別チャット</a><a class="" href="../03_future/FUT06-detail.html">FUT06: 個別チャット詳細設計</a><a class="" href="../03_future/FUT06-req.html">FUT06: 個別チャット要件</a></div></div></nav></aside>
+<main class="main"><article class="content">
+<div class="crumb"><span class="pill">基本設計</span><a class="muted" href="../02_basic-design/01_screen-design.html">画面設計</a><span class="muted">/</span><span class="muted">SCR-017 個人設定</span></div>
+<h1>SCR-017 個人設定</h1>
+
+
+<aside class="page-summary">
+<p class="ps-lead"><strong>このページは、認証済みの利用者が自身のプロフィール・セキュリティ・参加プロジェクトを編集する画面 SCR-017 を定義します。</strong> 画面概要 / 画面遷移図 / 画面レイアウト / 画面項目定義 / 入出力一覧 / 画面イベント一覧 の 6 セクションで記述します。</p>
+</aside>
+<p class="doc-meta"><span><b>版数</b> v1.0</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<h2 id="1-画面概要">1. 画面概要</h2>
+<p class="section-lead">ヘッダ右上のアカウントメニュー「個人設定」から開く全画面で、自分のプロフィール・セキュリティ・参加プロジェクトをタブで扱う画面です。契約連絡先と退会は SCR-023 設定へ分離します。</p>
+<table>
+<thead>
+<tr>
+<th>画面 ID</th>
+<th>画面名</th>
+<th>機能概要</th>
+</tr>
+</thead>
+<tbody>
+<tr><td id="SCR-017"><code>SCR-017</code></td><td>個人設定</td><td>自分のプロフィール・セキュリティ・参加プロジェクトを編集する</td></tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>関連</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>FR / BR</td><td><span>FR-001</span>, <span>FR-005</span>, <span>FR-006</span>, <span>FR-340</span> / —</td></tr>
+<tr><td>関連画面</td><td><a href="SCR-013.html"><code>SCR-013</code> メールアドレス変更確認</a>(確認メール再利用) / <a href="SCR-023.html"><code>SCR-023</code> 設定</a></td></tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr>
+<th>ステークホルダ</th>
+<th>対象</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>オーナー</td><td>◯</td></tr>
+<tr><td>プロジェクト管理者(<code>admin</code>)</td><td>◯</td></tr>
+<tr><td>メンバー(<code>member</code>)</td><td>◯</td></tr>
+</tbody>
+</table>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>認証済みであれば全ロールが利用でき、自分の情報のみ編集可能です。誤操作防止としてパスワード変更は再認証(現パスワード再入力)を要し、メールアドレス変更は再認証 + 新メールアドレスの確認メールを要します(再認証の正本は <span>08_認証・認可設計 §2</span>)。個人ごとの通知受信オプトアウトは本画面では扱わず、プロジェクト関連通知は常時 ON 固定です。</div></div>
+
+<h2 id="2-画面遷移図">2. 画面遷移図</h2>
+<p class="section-lead">本画面からの画面遷移を、画面 ID・画面名とイベント(操作)で示します。</p>
+<pre class="mermaid">flowchart LR
+  S1["SCR-017 個人設定"]
+  S2["SCR-013 メールアドレス変更確認"]
+  S3["SCR-008 概要（プロジェクト）"]
+  S1 --&gt;|メールアドレス変更 → 確認メール| S2
+  S1 --&gt;|参加プロジェクト名クリック| S3
+</pre>
+
+<h2 id="3-画面レイアウト">3. 画面レイアウト</h2>
+<div style="background:#f5f6f8;padding:24px;border-radius:12px;font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN',Meiryo,sans-serif;color:#3a3f46;-webkit-font-smoothing:antialiased;--accent:#5e6ad2">
+<div style="max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:40px">
+
+  
+
+  <section>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:13px">
+      <span style="font-size:11px;font-weight:700;color:var(--accent,#5e6ad2);background:color-mix(in srgb,var(--accent,#5e6ad2) 10%,#fff);border-radius:6px;padding:3px 8px">状態 1</span>
+      <span style="font-size:13.5px;font-weight:600;color:#16191d">プロフィールタブ</span>
+    </div>
+    <div style="background:#fff;border:1px solid #e6e8eb;border-radius:14px;box-shadow:0 1px 2px rgba(16,24,40,.04),0 6px 20px rgba(16,24,40,.05);overflow:hidden">
+      <div style="display:flex;align-items:center;justify-content:space-between;height:54px;padding:0 16px;border-bottom:1px solid #eef0f2;background:#fff">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:15px;color:#16191d"><span style="width:23px;height:23px;border-radius:7px;background:var(--accent,#5e6ad2);display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:800">o</span>open-faq</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <button style="position:relative;width:34px;height:34px;border-radius:8px;border:none;background:transparent;display:inline-flex;align-items:center;justify-content:center;color:#5b616a;cursor:pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9z"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg><span style="position:absolute;top:3px;right:3px;min-width:16px;height:16px;padding:0 3px;border-radius:999px;background:#e5484d;color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid #fff">3</span></button>
+          <button style="display:inline-flex;align-items:center;gap:8px;padding:4px 10px 4px 4px;border:1px solid #e6e8eb;border-radius:999px;background:#fff;cursor:pointer;font-family:inherit"><span style="width:26px;height:26px;border-radius:999px;background:color-mix(in srgb,var(--accent,#5e6ad2) 18%,#fff);color:var(--accent,#5e6ad2);font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center">A</span><span style="font-size:12.5px;color:#3a3f46">admin@example.com</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9aa0a8" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></button>
+        </div>
+      </div>
+      <div style="max-width:780px;margin:0 auto;padding:26px 24px 36px">
+        <nav style="display:flex;align-items:center;gap:7px;font-size:12px;color:#9aa0a8;margin-bottom:14px"><span>アカウント</span><span>/</span><span style="color:#3a3f46">個人設定</span></nav>
+        <h1 style="margin:0 0 4px;font-size:20px;font-weight:700;color:#16191d;letter-spacing:-.01em">個人設定</h1>
+        <p style="margin:0 0 18px;font-size:13px;color:#71767e">あなたのアカウント情報を管理します</p>
+
+        <div style="display:flex;gap:4px;border-bottom:1px solid #eef0f2;margin-bottom:22px">
+          <span style="padding:10px 14px;font-size:13px;font-weight:600;color:var(--accent,#5e6ad2);border-bottom:2px solid var(--accent,#5e6ad2);margin-bottom:-1px;cursor:pointer">プロフィール</span>
+          <span style="padding:10px 14px;font-size:13px;color:#71767e;cursor:pointer">セキュリティ</span>
+          <span style="padding:10px 14px;font-size:13px;color:#71767e;cursor:pointer">参加プロジェクト</span>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px">
+          <span style="width:60px;height:60px;border-radius:999px;background:color-mix(in srgb,var(--accent,#5e6ad2) 16%,#fff);color:var(--accent,#5e6ad2);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:22px">A</span>
+          <button style="padding:8px 14px;border:1px solid #e6e8eb;border-radius:8px;background:#fff;font-size:12.5px;font-weight:600;color:#3a3f46;cursor:pointer;font-family:inherit">画像を変更</button>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div>
+            <label style="display:block;font-size:12.5px;font-weight:600;color:#3a3f46;margin-bottom:7px">表示名</label>
+            <div style="height:40px;border:1px solid #e6e8eb;border-radius:8px;background:#fff;display:flex;align-items:center;padding:0 12px;font-size:13px;color:#16191d;max-width:420px">管理者 太郎</div>
+          </div>
+          <div>
+            <label style="display:block;font-size:12.5px;font-weight:600;color:#3a3f46;margin-bottom:7px">メールアドレス</label>
+            <div style="height:40px;border:1px solid #e6e8eb;border-radius:8px;background:#fbfbfc;display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-size:13px;color:#16191d;max-width:420px">admin@example.com<span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;color:#1a7f37;font-weight:600"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4 10-10"></path></svg>確認済</span></div>
+          </div>
+          <div>
+            <label style="display:block;font-size:12.5px;font-weight:600;color:#3a3f46;margin-bottom:7px">言語</label>
+            <div style="height:40px;border:1px solid #e6e8eb;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-size:13px;color:#16191d;max-width:420px">日本語<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9aa0a8" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></div>
+          </div>
+          <div style="display:flex;gap:8px;padding-top:6px">
+            <button style="padding:8px 16px;border:none;border-radius:8px;background:var(--accent,#5e6ad2);color:#fff;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 1px 2px rgba(16,24,40,.12);font-family:inherit">保存する</button>
+            <button style="padding:8px 16px;border:1px solid #e6e8eb;border-radius:8px;background:#fff;font-size:13px;font-weight:600;color:#3a3f46;cursor:pointer;font-family:inherit">変更を破棄</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+</div>
+
+<h2 id="4-画面項目定義">4. 画面項目定義</h2>
+<p class="section-lead">本画面の入出力項目を、プロフィール・セキュリティ・参加プロジェクトの 3 タブに分けて定義します。項目の正本は本表です。</p>
+<table>
+<thead>
+<tr>
+<th>項目 ID</th>
+<th>項目</th>
+<th>説明</th>
+<th>種類</th>
+<th>表示条件</th>
+<th>表示</th>
+</tr>
+</thead>
+<tbody>
+<tr><td id="IT-01"><code>IT-01</code></td><td>表示名</td><td>自分の表示名を編集する(必須。1〜100 文字)</td><td>テキストボックス</td><td>プロフィールタブ</td><td>—</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>メールアドレス</td><td>自分のメールアドレスを編集する(必須。変更時は確認メールを送信)</td><td>テキストボックス(メールアドレス)</td><td>プロフィールタブ</td><td>—</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>パスワードを変更する</td><td>再認証(現パスワード再入力)を経てパスワード(旧 + 新 + 確認)を変更する</td><td>ボタン</td><td>セキュリティタブ</td><td>「パスワードを変更する」</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>参加プロジェクト一覧</td><td>自分が参加するプロジェクト名と適用ロールを一覧表示する(プロジェクト名はプロジェクトホームへのリンク)</td><td>テーブル</td><td>参加プロジェクトタブ</td><td>プロジェクト名 / 適用ロール</td></tr>
+</tbody>
+</table>
+<div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">補足</span>アクティブセッション一覧の表示と自己セッション終了は MVP 対象外です(<span>05_future</span>、FR-332 改訂)。複数デバイス同時ログインは可能です。</div></div>
+
+<h2 id="5-入出力一覧">5. 入出力一覧</h2>
+<p class="section-lead">本画面が読み書きするテーブルと、呼び出す API の一覧です。テーブルの正本は <a href="03_database-design.html">03_テーブル設計</a>、メール確認 API の正本は <a href="02_api-design.html">02_API設計 §5.1.6</a> です。</p>
+<table>
+<thead>
+<tr>
+<th rowspan="2">入出力名</th>
+<th rowspan="2">説明</th>
+<th rowspan="2">種別</th>
+<th rowspan="2">I/O</th>
+<th colspan="4">アクセス種別(CRUD)</th>
+<th rowspan="2">備考</th>
+</tr>
+<tr>
+<th>C</th>
+<th>R</th>
+<th>U</th>
+<th>D</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>オーナー / プロジェクトユーザー</td><td>自身の表示名・メールアドレス・パスワードを参照・更新する(対象マスタはログイン中の actor 種別で特定。両マスタは完全分離)</td><td>テーブル</td><td>入力 / 出力</td><td>—</td><td>◯</td><td>◯</td><td>—</td><td><code>M_CONTRACT</code>(<a href="03_database-design.html#TBL-M-001">テーブル設計 3.2</a>)/ <code>M_PRJ_USERS</code>(<a href="03_database-design.html#TBL-M-002">テーブル設計 3.1</a>)</td></tr>
+<tr><td>プロジェクト割当</td><td>参加プロジェクト一覧・適用ロールを取得する</td><td>テーブル</td><td>入力</td><td>—</td><td>◯</td><td>—</td><td>—</td><td><code>M_PRJ_USERS</code>(<a href="03_database-design.html#TBL-M-003">テーブル設計 3.3</a>)</td></tr>
+<tr><td>メールアドレス変更確認</td><td>確認トークンを検証してメールアドレス変更を確定する</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /auth/email-verifications/{token}</code>(<a href="02_api-design.html">API 設計 5.1.6</a>)</td></tr>
+</tbody>
+</table>
+
+<h2 id="6-画面イベント一覧">6. 画面イベント一覧</h2>
+<p class="section-lead">本画面で発生するイベントと発生タイミング・概要の一覧です。</p>
+<table>
+<thead>
+<tr>
+<th>イベント ID</th>
+<th>イベント</th>
+<th>トリガー</th>
+<th>処理</th>
+<th>関連項目</th>
+</tr>
+</thead>
+<tbody>
+<tr><td><code>EV-01</code></td><td>個人設定初期表示</td><td>画面遷移・リロード時</td><td>自分のプロフィール・参加プロジェクト一覧を取得し各タブに表示</td><td><a href="#IT-01">IT-01</a>, <a href="#IT-02">IT-02</a>, <a href="#IT-04">IT-04</a></td></tr>
+<tr><td><code>EV-02</code></td><td>プロフィール保存</td><td>「保存」押下時(プロフィールタブ)</td><td><ul><li>表示名・メールアドレスを検証して更新</li><li>メールアドレス変更時は再認証 + 新メールアドレスの確認メールを送信(SCR-013 再利用)</li></ul></td><td><a href="#IT-01">IT-01</a>, <a href="#IT-02">IT-02</a></td></tr>
+<tr><td><code>EV-03</code></td><td>パスワード変更</td><td>「パスワードを変更する」押下時</td><td><ul><li>旧 / 新パスワード + 確認を入力</li><li>再認証(現パスワード再入力)を経て更新</li></ul></td><td><a href="#IT-03">IT-03</a></td></tr>
+<tr><td><code>EV-04</code></td><td>プロジェクトへ遷移</td><td>参加プロジェクト名リンク押下時</td><td>該当プロジェクトの SCR-008 概要へ遷移</td><td><a href="#IT-04">IT-04</a></td></tr>
+</tbody>
+</table>
+<div class="footer">FAQ AI ウィジェット SaaS / メインシステム &mdash; 基本設計 ・ new 形式ポータル</div>
+</article></main>
+<aside class="rightbar"><div class="rb-title">このページ</div><nav class="toc"><a class="back" href="../02_basic-design/01_screen-design.html">&larr; 画面設計へ</a><a class="" href="#1-画面概要">1. 画面概要</a><a class="" href="#2-画面遷移図">2. 画面遷移図</a><a class="" href="#3-画面レイアウト">3. 画面レイアウト</a><a class="" href="#4-画面項目定義">4. 画面項目定義</a><a class="" href="#5-入出力一覧">5. 入出力一覧</a><a class="" href="#6-画面イベント一覧">6. 画面イベント一覧</a></nav></aside>
+</div>
+<script>(function(){function init(){var ls=[].slice.call(document.querySelectorAll(".rightbar .toc a[href^=\"#\"]"));if(!ls.length)return;var map=ls.map(function(a){var id=decodeURIComponent(a.getAttribute("href").slice(1));return{a:a,el:document.getElementById(id)};}).filter(function(x){return x.el;});function on(){var y=window.scrollY+130,cur=null;map.forEach(function(x){if(x.el.getBoundingClientRect().top+window.scrollY<=y)cur=x;});ls.forEach(function(a){a.classList.remove("active");});if(cur)cur.a.classList.add("active");}window.addEventListener("scroll",on,{passive:true});window.addEventListener("resize",on);on();}if(document.readyState!=="loading")init();else document.addEventListener("DOMContentLoaded",init);})();</script><script>(function(){var K="portal-nav-open",S="portal-nav-scroll";var sb=document.querySelector(".sidebar");function sid(s){return s.getAttribute("data-sec")||"";}try{var o=JSON.parse(localStorage.getItem(K)||"[]");document.querySelectorAll(".nav-sec").forEach(function(s){if(o.indexOf(sid(s))>=0)s.classList.add("open");});}catch(e){}function save(){try{var o=[];document.querySelectorAll(".nav-sec.open").forEach(function(s){o.push(sid(s));});localStorage.setItem(K,JSON.stringify(o));}catch(e){}}document.querySelectorAll(".nav-sec > .nav-top .caret").forEach(function(c){c.addEventListener("click",function(e){e.preventDefault();e.stopPropagation();c.closest(".nav-sec").classList.toggle("open");save();});});document.querySelectorAll(".nav a[href]").forEach(function(a){a.addEventListener("click",save);});try{var v=sessionStorage.getItem(S);if(v&&sb)sb.scrollTop=parseInt(v,10);}catch(e){}if(sb)sb.addEventListener("scroll",function(){try{sessionStorage.setItem(S,sb.scrollTop);}catch(e){}},{passive:true});})();</script>
+</body></html>

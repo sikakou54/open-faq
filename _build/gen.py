@@ -15,12 +15,18 @@ import os, re, html
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 NEW_ROOT   = os.path.dirname(SCRIPT_DIR)                       # .../new
 SRC_ROOT   = os.path.join(SCRIPT_DIR, "src")                   # new/_build/src(自己完結ソース)
-SRC_REQ    = os.path.join(SRC_ROOT, "要件定義")
-SRC_BD     = os.path.join(SRC_ROOT, "基本設計")
-SRC_FUT    = os.path.join(SRC_ROOT, "将来対応")
-WEBHOOK_SRC = os.path.join(SRC_ROOT, "外部Webhook.html")
-BD_PREFIX  = "02_基本設計/"                                    # new/ ルートからの基本設計配置
-FUT_PREFIX = "03_将来対応/"
+SRC_REQ    = os.path.join(SRC_ROOT, "requirements")
+SRC_BD     = os.path.join(SRC_ROOT, "basic-design")
+SRC_FUT    = os.path.join(SRC_ROOT, "future")
+WEBHOOK_SRC = os.path.join(SRC_ROOT, "webhook.html")
+REQ_PREFIX = "01_requirements/"                               # 配信ルートからの配置(ファイル名は英名・ラベルは日本語)
+BD_PREFIX  = "02_basic-design/"
+FUT_PREFIX = "03_future/"
+
+def label_from_h1(path, fallback):
+    s = open(path, encoding="utf-8").read()
+    m = re.search(r"<h1[^>]*>(.*?)</h1>", s, re.S)
+    return re.sub(r"<[^>]+>", "", m.group(1)).strip() if m else fallback
 
 # ---------- 元データのサイドバーから基本設計ナビを抽出 ----------------------
 def parse_source_nav():
@@ -48,22 +54,19 @@ def parse_source_nav():
 
 # ---------- 要件定義ナビ ----------------------------------------------------
 def fr_children():
-    files = sorted(f for f in os.listdir(SRC_REQ)
-                   if f.startswith("FR") and f.endswith(".html"))
-    kids = [("概要", "01_要件定義/index.html")]
+    files = sorted((f for f in os.listdir(SRC_REQ)
+                    if f.startswith("FR") and f.endswith(".html")), key=lambda x: x[:-5])
+    kids = [("概要", REQ_PREFIX + "index.html")]
     for f in files:
-        m = re.match(r"(FR\d+)_(.+)\.html", f)
-        kids.append((f"{m.group(1)} {m.group(2)}", f"01_要件定義/{f}"))
+        kids.append((label_from_h1(os.path.join(SRC_REQ, f), f[:-5]), REQ_PREFIX + f))
     return kids
 
 def fut_children():
-    files = sorted(f for f in os.listdir(SRC_FUT)
-                   if f.startswith("FUT") and f.endswith(".html"))
+    files = sorted((f for f in os.listdir(SRC_FUT)
+                    if f.startswith("FUT") and f.endswith(".html")), key=lambda x: x[:-5])
     kids = [("概要", FUT_PREFIX + "index.html")]
     for f in files:
-        base = f[:-5]
-        m = re.match(r"(FUT\d+)_(.+)", base)
-        kids.append((f"{m.group(1)} {m.group(2)}" if m else base, FUT_PREFIX + f))
+        kids.append((label_from_h1(os.path.join(SRC_FUT, f), f[:-5]), FUT_PREFIX + f))
     return kids
 
 # ---------- 統合ナビ(トップ = 要件定義 / 基本設計 の2本。基本設計は入れ子) ----
@@ -79,7 +82,7 @@ def build_nav():
             _, n, title, href = p
             bd_children.append((f"{n} {title}", BD_PREFIX + href))
     return [
-        {"n": "要", "title": "要件定義", "url": "01_要件定義/index.html", "children": fr_children()},
+        {"n": "要", "title": "要件定義", "url": REQ_PREFIX + "index.html", "children": fr_children()},
         {"n": "基", "title": "基本設計", "url": BD_PREFIX + "index.html", "children": bd_children},
         {"n": "将", "title": "将来対応", "url": FUT_PREFIX + "index.html", "children": fut_children()},
     ]
@@ -88,17 +91,17 @@ NAV = build_nav()
 
 # ---------- ジョブ ----------------------------------------------------------
 def bd_index(fname):
-    if fname.startswith("SCR-"): return (BD_PREFIX + "01_画面設計.html", "画面設計")
-    if fname.startswith("API-"): return (BD_PREFIX + "02_API設計.html", "API設計")
-    if fname.startswith("TBL-"): return (BD_PREFIX + "03_データベース設計.html", "データベース設計")
+    if fname.startswith("SCR-"): return (BD_PREFIX + "01_screen-design.html", "画面設計")
+    if fname.startswith("API-"): return (BD_PREFIX + "02_api-design.html", "API設計")
+    if fname.startswith("TBL-"): return (BD_PREFIX + "03_database-design.html", "データベース設計")
     return (BD_PREFIX + "index.html", "基本設計")
 
 def jobs():
     js = []
     for f in sorted(os.listdir(SRC_REQ)):
         if f.endswith(".html"):
-            js.append(dict(src=os.path.join(SRC_REQ, f), out="01_要件定義/" + f,
-                           pill="要件定義", index_url="01_要件定義/index.html",
+            js.append(dict(src=os.path.join(SRC_REQ, f), out=REQ_PREFIX + f,
+                           pill="要件定義", index_url=REQ_PREFIX + "index.html",
                            index_label="要件定義一覧"))
     for f in sorted(os.listdir(SRC_BD)):
         if f.endswith(".html"):
@@ -108,7 +111,7 @@ def jobs():
     # API-webhook は元データに欠落しているが nav に存在するため 外部Webhook.html から補完
     if os.path.exists(WEBHOOK_SRC) and not os.path.exists(os.path.join(SRC_BD, "API-webhook.html")):
         js.append(dict(src=WEBHOOK_SRC, out=BD_PREFIX + "API-webhook.html", pill="基本設計",
-                       index_url=BD_PREFIX + "02_API設計.html", index_label="API設計"))
+                       index_url=BD_PREFIX + "02_api-design.html", index_label="API設計"))
     for f in sorted(os.listdir(SRC_FUT)):
         if f.endswith(".html"):
             js.append(dict(src=os.path.join(SRC_FUT, f), out=FUT_PREFIX + f,
@@ -255,18 +258,18 @@ def render_portal_index():
 <aside class="page-summary"><p class="ps-lead"><strong>このポータルは、メインシステムの設計ドキュメントを new 形式（自己完結ページ）で集約します。</strong> 要件定義と基本設計を移行済みです。</p></aside>
 <h2 id="docs">収録ドキュメント</h2>
 <ul>
-<li><a href="01_要件定義/index.html">要件定義</a> — FR01〜FR21 + 一覧</li>
-<li><a href="02_基本設計/index.html">基本設計</a> — 画面設計 / API設計 / データベース設計 / ユースケース / 課金請求 / メール / 認証認可</li>
-<li><a href="03_将来対応/index.html">将来対応</a> — FUT01〜FUT06 + 一覧</li>
+<li><a href="01_requirements/index.html">要件定義</a> — FR01〜FR21 + 一覧</li>
+<li><a href="02_basic-design/index.html">基本設計</a> — 画面設計 / API設計 / データベース設計 / ユースケース / 課金請求 / メール / 認証認可</li>
+<li><a href="03_future/index.html">将来対応</a> — FUT01〜FUT06 + 一覧</li>
 </ul>
 <div class="callout note"><i class="bi bi-info-circle"></i><div><span class="c-title">移行ステータス</span>既存の中身を保持したまま体裁のみ new 形式へ変換しています。要件定義本文に含まれる一部の旧基本設計参照（エラー設計・トレーサビリティ等、new では別構成）は未到達となる場合があります。</div></div>
 """
     toc = build_toc(ensure_ids(body))
     page = PAGE.format(title="ポータル概要", fonts=FONTS, bi=BI, lucide_cdn="", mermaid="",
         css="style.css", sidebar=render_sidebar(prefix, cur),
-        pill="ポータル", index_href="01_要件定義/index.html", index_label="要件定義一覧",
+        pill="ポータル", index_href=REQ_PREFIX + "index.html", index_label="要件定義一覧",
         body=re.sub(r'^<div class="crumb">.*?</div>\s*', "", body, flags=re.S),
-        rightbar=render_rightbar(prefix, toc, "01_要件定義/index.html", "要件定義一覧"),
+        rightbar=render_rightbar(prefix, toc, REQ_PREFIX + "index.html", "要件定義一覧"),
         lucide_init="", spy=SPY, caret=CARET)
     open(os.path.join(NEW_ROOT, "index.html"), "w", encoding="utf-8").write(page)
 

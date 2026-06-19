@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FUT03: 国際化・リージョン | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/05_future/FUT03.html">
+<article class="content" id="content">
+<h1 id="fut03-国際化リージョン">FUT03: 国際化・リージョン</h1>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書名</td>
+<td>FUT03: 国際化・リージョン</td>
+</tr>
+<tr>
+<td>将来対応ID</td>
+<td>FUT-03</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>FAQ AI ウィジェット SaaS / メインシステム</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-17</td>
+</tr>
+<tr>
+<td>版数</td>
+<td>v1.0</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>検討中(MVP 外)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="1-概要">1. 概要</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>概要</td>
+<td>MVP では日本語のみ・日本リージョン(apac)のみ・表示 TZ JST 固定で提供する国際化・リージョン領域について、Post-MVP で多言語 UI / マルチリージョン / 管理者単位タイムゾーンを段階導入する。</td>
+</tr>
+<tr>
+<td>背景</td>
+<td>海外契約・海外拠点管理者のユースケースを取り込むには、UI 多言語化、データ越境制限、TZ 上書きの 3 軸が必要となる。</td>
+</tr>
+<tr>
+<td>期待効果</td>
+<td>海外顧客の獲得余地、越境データ保護規制(GDPR / CCPA 等)との整合性向上、海外拠点管理者の操作性向上。</td>
+</tr>
+<tr>
+<td>優先度(将来対応内)</td>
+<td>中</td>
+</tr>
+<tr>
+<td>想定時期</td>
+<td>T2(ベータ判定まで)〜 T3(GA 判定まで)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="2-関連要件候補">2. 関連要件・候補</h2>
+<h3 id="21-要件候補将来-fr">2.1 要件候補(将来 FR)</h3>
+<h4 id="国際化リージョン">国際化・リージョン</h4>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>要件候補</th>
+<th>MVP の前提</th>
+<th>判定時期</th>
+<th>判定基準 / 完了条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FUT-REQ-I18N-001</td>
+<td>多言語 UI</td>
+<td>日本語のみ</td>
+<td>ベータ / GA</td>
+<td>英語追加の需要、翻訳品質、サポート体制をもとに判定し、GA では en / ja 同等品質を目標とする</td>
+</tr>
+<tr>
+<td>FUT-REQ-I18N-002</td>
+<td>マルチリージョン</td>
+<td>日本リージョン(apac)のみ</td>
+<td>ベータ / GA</td>
+<td>ベータで region 属性導入を評価し、GA で <code>apac</code> / <code>wnam</code> / <code>eeur</code> などの選択可否を判定</td>
+</tr>
+<tr>
+<td>FUT-REQ-I18N-003</td>
+<td>管理者単位タイムゾーン上書き</td>
+<td>表示 TZ は JST 固定、データ層は UTC</td>
+<td>GA</td>
+<td>多言語化と併せて評価し、海外拠点管理者の利用頻度と UI 複雑度をもとに判定</td>
+</tr>
+</tbody>
+</table>
+<h3 id="22-基本設計論点">2.2 基本設計論点</h3>
+<h4 id="国際化リージョン-1">国際化・リージョン</h4>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>基本設計で具体化すること</th>
+<th>関連 Future 要件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>多言語 UI</td>
+<td>翻訳キー管理、文言レビュー、メール・受信箱・ウィジェットの言語選択、言語未対応時のフォールバック</td>
+<td>FUT-REQ-I18N-001</td>
+</tr>
+<tr>
+<td>マルチリージョン</td>
+<td>契約発行時の region 決定、データ配置、越境移転ガード</td>
+<td>FUT-REQ-I18N-002</td>
+</tr>
+<tr>
+<td>管理者単位 TZ</td>
+<td>契約 TZ と個人 TZ の優先順位、監査ログ時刻表示、レポート集計境界</td>
+<td>FUT-REQ-I18N-003</td>
+</tr>
+</tbody>
+</table>
+<h3 id="23-詳細設計バックログ">2.3 詳細設計バックログ</h3>
+<h4 id="マルチリージョンddl-候補">マルチリージョン(DDL 候補)</h4>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- 契約オーナー専有属性に追加(v1.11 で 2 マスタ完全分離: `M_OWNERS` / `M_PRJ_USERS` / `M_PRJ_USER_ASGN` へ再編済み)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> M_OWNERS</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">ADD</span> <span class="kw">COLUMN</span> region TEXT <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">DEFAULT</span> <span class="st">&#39;apac&#39;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">CHECK</span> (region <span class="kw">IN</span> (<span class="st">&#39;apac&#39;</span>, <span class="st">&#39;wnam&#39;</span>, <span class="st">&#39;eeur&#39;</span>));</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> owner_region_audit_logs (</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">id</span>                      TEXT <span class="kw">PRIMARY</span> <span class="kw">KEY</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  owner_id  TEXT <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">REFERENCES</span> M_OWNERS(<span class="kw">id</span>) <span class="kw">ON</span> <span class="kw">DELETE</span> <span class="kw">CASCADE</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  before_region           TEXT <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  after_region            TEXT <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  approved_by             TEXT <span class="kw">REFERENCES</span> M_OWNERS(<span class="kw">id</span>) <span class="kw">ON</span> <span class="kw">DELETE</span> <span class="kw">SET</span> <span class="kw">NULL</span>,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  reason                  TEXT <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  created_at              TEXT <span class="kw">NOT</span> <span class="kw">NULL</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div>
+<h4 id="実装設計バックログ関連分">実装設計バックログ(関連分)</h4>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>対象</th>
+<th>実装設計で具体化すること</th>
+<th>関連 Future 要件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FUT-DD-I18N-001</td>
+<td>多言語 UI</td>
+<td>i18n key 管理、メールテンプレート多言語化、fallback、翻訳差分 CI</td>
+<td>FUT-REQ-I18N-001</td>
+</tr>
+<tr>
+<td>FUT-DD-I18N-002</td>
+<td>マルチリージョン</td>
+<td><code>M_OWNERS.region</code>、routing、D1 / R2 配置、region guard、越境拒否 API</td>
+<td>FUT-REQ-I18N-002</td>
+</tr>
+<tr>
+<td>FUT-DD-I18N-003</td>
+<td>管理者単位 TZ</td>
+<td>profile setting、日付フォーマット、集計境界、監査ログ UTC 正本との変換</td>
+<td>FUT-REQ-I18N-003</td>
+</tr>
+</tbody>
+</table>
+<h4 id="api--worker-候補関連分">API / Worker 候補(関連分)</h4>
+<table>
+<thead>
+<tr>
+<th>領域</th>
+<th>候補</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>マルチリージョン</td>
+<td><code>TenantRegionGuard</code>、<code>POST /admin/v1/owners/{id}/region-approval</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="テスト検証候補関連分">テスト・検証候補(関連分)</h4>
+<table>
+<thead>
+<tr>
+<th>領域</th>
+<th>検証項目</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>多言語</td>
+<td>翻訳キー欠落、メールテンプレート、日付・数値フォーマット、a11y</td>
+</tr>
+<tr>
+<td>マルチリージョン</td>
+<td>region guard、越境拒否、D1 / R2 配置、監査ログの region 記録</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="3-影響範囲">3. 影響範囲</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>影響内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>要件</td>
+<td>NFR-1101(言語)、NFR-1102(TZ)、region 属性導入による契約モデル拡張</td>
+</tr>
+<tr>
+<td>画面</td>
+<td>UI 言語スイッチャー、契約発行画面(region 選択)、アカウント設定(個人 TZ)</td>
+</tr>
+<tr>
+<td>API</td>
+<td><code>POST /admin/v1/owners/{id}/region-approval</code>、<code>TenantRegionGuard</code> ミドルウェア(全 API)、メール送信 API の locale パラメータ</td>
+</tr>
+<tr>
+<td>テーブル</td>
+<td><code>M_OWNERS.region</code> 列追加、<code>owner_region_audit_logs</code>、翻訳キー管理テーブル(Future で具体化)</td>
+</tr>
+<tr>
+<td>運用</td>
+<td>越境移転ガードの監査、translation 差分 CI、海外メールテンプレートのレビュー、リージョン別 D1 / R2 配置運用、リージョン横断レポート集計</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-実施条件">4. 実施条件</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>実施判断条件</td>
+<td>多言語は英語追加の需要・翻訳品質・サポート体制、マルチリージョンは region 属性導入評価(ベータ)→ 選択可否(GA)、TZ 上書きは多言語化との併用評価</td>
+</tr>
+<tr>
+<td>期限</td>
+<td>T2(region 属性導入評価、英語追加判定)、T3(マルチリージョン選択、多言語 en / ja 同等品質、TZ 上書き)</td>
+</tr>
+<tr>
+<td>依存関係</td>
+<td>共有概念の 2 マスタ完全分離ユーザーモデル(<code>M_OWNERS</code> / <code>M_PRJ_USERS</code> / <code>M_PRJ_USER_ASGN</code>)拡張、PII 暗号化・鍵管理(メイン正本)とリージョン別鍵配置</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="5-関連設計">5. 関連設計</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>参照先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>要件</td>
+<td><a href="../01_requirements/index.html">../01_requirements/index.html</a></td>
+</tr>
+<tr>
+<td>基本設計</td>
+<td><a href="../02_基本設計/index.html">../02_基本設計/index.html</a></td>
+</tr>
+<tr>
+<td>詳細設計</td>
+<td><a href="../03_詳細設計/index.html">../03_詳細設計/index.html</a></td>
+</tr>
+<tr>
+<td>運用設計</td>
+<td><a href="../04_運用設計/index.html">../04_運用設計/index.html</a></td>
+</tr>
+<tr>
+<td>共有概念(正本)</td>
+<td><a href="../../共有/共有概念.html">../../共有/共有概念.html</a></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="6-未確定事項確認事項">6. 未確定事項・確認事項</h2>
+<table>
+<thead>
+<tr>
+<th>確認事項ID</th>
+<th>確認内容</th>
+<th>優先度</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FUT-I18N-Q-001</td>
+<td>翻訳キー管理ツール(i18next 等)と翻訳差分 CI 方式の選定</td>
+<td>中</td>
+<td>検討中</td>
+</tr>
+<tr>
+<td>FUT-I18N-Q-002</td>
+<td>マルチリージョン契約での region 変更可否(原則固定 / 例外手順 RB-014 連携)</td>
+<td>中</td>
+<td>検討中</td>
+</tr>
+<tr>
+<td>FUT-I18N-Q-003</td>
+<td>管理者単位 TZ と契約 TZ の優先順位、監査ログ表示時刻のルール</td>
+<td>中</td>
+<td>検討中</td>
+</tr>
+<tr>
+<td>FUT-I18N-Q-004</td>
+<td>リージョン横断レポート(課金集計等)の境界</td>
+<td>低</td>
+<td>検討中</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>

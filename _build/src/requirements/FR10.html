@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FR10: 管理ダッシュボード | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/01_要件定義/FR10.html">
+<article class="content" id="content">
+<h1 id="fr10-管理ダッシュボード">FR10: 管理ダッシュボード</h1>
+<aside class="page-summary">
+<p class="ps-lead"><strong>この要件は、アカウント利用者が管理範囲(契約全体・各プロジェクト)を切り替えながら、質問数・未解決数・公開 FAQ 件数などの利用状況を一目で把握し、対応すべき案件や FAQ 改善の起点を見つけられるようにすることを目的とし、以下について記載します。</strong></p>
+<ul>
+<li>質問数・未解決数・公開 FAQ 件数などの主要指標(KPI)の確認</li>
+<li>要対応の質問・よく聞かれる質問・未解決傾向の把握</li>
+<li>期間絞り込みと、通知失敗・バウンス件数の確認</li>
+<li>管理範囲(契約全体 / 各プロジェクト)の切替と役割に応じた表示制御</li>
+<li>画面目的の明示・最終更新時刻の扱い・各種データ状態(0 件 / 集計中 / 取得失敗等)の区別</li>
+</ul>
+</aside>
+<p class="doc-meta"><span><b>版数</b> v1.4</span><span><b>更新</b> 2026-06-16</span><span><b>機能グループ</b> 管理ダッシュボード</span><span><b>優先度</b> Must</span><span class="dm-status">承認済</span></p>
+<h2 id="1-業務要件">1. 業務要件</h2>
+<div class="table-scroll">
+<table class="br-table">
+<thead>
+<tr>
+<th>ID</th>
+<th>観点</th>
+<th>ステークホルダ</th>
+<th>業務要件</th>
+<th>関連 NFR</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="BR-096">BR-096</td>
+<td>利用状況の把握</td>
+<td>アカウント利用者</td>
+<td>日次運用の中で、対象範囲の質問数・未解決数・公開 FAQ 件数といった主要指標を一目で確認し、対応案件を俯瞰する。</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-097">BR-097</td>
+<td>要対応質問の状況確認</td>
+<td>アカウント利用者</td>
+<td>要対応の質問について、現在の対応状況を「対応中 / 対応済み」の区分で確認する。</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-098">BR-098</td>
+<td>FAQ 改善の起点把握</td>
+<td>アカウント利用者</td>
+<td>よく聞かれる質問や未解決の傾向を確認し、FAQ 改善のターゲット候補を見つける。</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-099">BR-099</td>
+<td>期間絞り込み</td>
+<td>アカウント利用者</td>
+<td>確認したい集計対象期間を指定して、利用状況を絞り込む。</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-100">BR-100</td>
+<td>通知到達性の確認</td>
+<td>アカウント利用者</td>
+<td>通知の失敗件数・バウンス件数を確認し、宛先到達性の異常に気づけるようにする。</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-101">BR-101</td>
+<td>管理範囲の切替と役割別表示</td>
+<td>オーナー / メンバー</td>
+<td>
+<ul class="role-req">
+<li><strong>オーナー：</strong>管理範囲の切替から、契約全体の利用状況と各プロジェクトの概要を行き来する。</li>
+<li><strong>メンバー：</strong>参加しているプロジェクトのみを確認し、契約全体の範囲は表示されない。</li>
+</ul>
+</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-102">BR-102</td>
+<td>表示の一貫性・誤認防止</td>
+<td>システム</td>
+<td>各画面の目的を冒頭で明示し、集計時点(最終更新時刻)や比較値の表記、各種データ状態(0 件・集計中・取得失敗等)を統一して表示することで、利用者が値を誤認しないようにする。具体の文言・配色ルールは基本設計を正本とする。</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="2-機能要件">2. 機能要件</h2>
+<div class="table-scroll">
+<table class="req-table">
+<thead>
+<tr>
+<th>ID</th>
+<th>要件</th>
+<th>関連業務要件</th>
+<th>優先度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="FR-130">FR-130</td>
+<td>質問数・未解決数を確認できること</td>
+<td><a href="#BR-096">BR-096</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-132">FR-132</td>
+<td>要対応の質問の状況を、アカウント利用者向けには「対応中 / 対応済み」で確認できること</td>
+<td><a href="#BR-097">BR-097</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-133">FR-133</td>
+<td>よく聞かれる質問や未解決傾向を確認できること</td>
+<td><a href="#BR-098">BR-098</a></td>
+<td><span class="badge badge-p1">P1</span></td>
+</tr>
+<tr>
+<td id="FR-134">FR-134</td>
+<td>期間絞り込みができること</td>
+<td><a href="#BR-099">BR-099</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-135">FR-135</td>
+<td>通知失敗・バウンス件数を確認できること</td>
+<td><a href="#BR-100">BR-100</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-135a">FR-135a</td>
+<td>管理範囲と役割に応じて表示範囲を切り替えられること。
+<ol class="alpha">
+<li>オーナーは管理範囲の切替から、契約全体の利用状況と各プロジェクトの概要を切り替えられる</li>
+<li>プロジェクト管理者・メンバーには参加プロジェクトのみを表示し、契約全体の範囲は表示しない</li>
+<li>現在の管理範囲と、適用されている役割を確認できる</li>
+</ol></td>
+<td><a href="#BR-101">BR-101</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-135b">FR-135b</td>
+<td>利用状況と概要の間を、迷わず行き来できること。
+<ol class="alpha">
+<li>契約全体の利用状況は当月固定・読み取り専用の表示とする</li>
+<li>プロジェクトを開く・作成・編集は契約範囲の「プロジェクト」に集約する</li>
+<li>各プロジェクトの概要へは、管理範囲の切替から 1 操作で遷移できる</li>
+<li>オーナーは 1 操作で利用状況へ戻れる</li>
+</ol></td>
+<td><a href="#BR-101">BR-101</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-135c">FR-135c</td>
+<td>概要画面と利用状況画面は、冒頭に目的を 1 行で宣言すること。
+<ol class="alpha">
+<li>概要は、選択中プロジェクトの利用状況の把握を目的とする</li>
+<li>利用状況は、契約全体と各プロジェクトの当月利用状況の把握を目的とする</li>
+</ol></td>
+<td><a href="#BR-102">BR-102</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-135d">FR-135d</td>
+<td>集計時点を明示し、リアルタイム値との誤認を防ぐこと。
+<ol class="alpha">
+<li>最終更新時刻を表示する画面では、いつ時点の集計かを明示する</li>
+<li>集計が遅延している場合は、利用者がリアルタイム値と誤認しないよう警告表示する</li>
+<li>読み取り専用スナップショットである利用状況には、最終更新時刻を表示しない</li>
+</ol></td>
+<td><a href="#BR-102">BR-102</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-135e">FR-135e</td>
+<td>主要指標(KPI)カード(質問数 / 未解決数 / 公開 FAQ 件数等)はクリックで該当一覧画面へ遷移できること。
+<ol class="alpha">
+<li>遷移先とフィルタ条件は基本設計の画面設計に明記する</li>
+<li>0 件・集計中・取得失敗の状態ではクリック不可とする</li>
+</ol></td>
+<td><a href="#BR-096">BR-096</a></td>
+<td><span class="badge badge-p1">P1</span></td>
+</tr>
+<tr>
+<td id="FR-135f">FR-135f</td>
+<td>比較値の表記を統一すること。
+<ol class="alpha">
+<li>比較値を表示する画面では、前月比・前週比の表記を統一する</li>
+<li>概要の KPI カードは項目名と件数だけを表示し、前月比・状態説明等のコメントやゲージは表示しない</li>
+</ol></td>
+<td><a href="#BR-102">BR-102</a></td>
+<td><span class="badge badge-p1">P1</span></td>
+</tr>
+<tr>
+<td id="FR-135g">FR-135g</td>
+<td>KPI / 一覧 / アラートの各表示要素は、0 件・未集計・集計中・取得失敗・期間外 の状態を区別して表示できること。状態ごとの文言と配色ルールは基本設計の画面設計に正本化し、各画面はそれを参照する</td>
+<td><a href="#BR-102">BR-102</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-135h">FR-135h</td>
+<td>利用状況でプロジェクトが 0 件の場合は、複雑なセットアップチェックリストを表示せず、「プロジェクトがまだありません」と「新規プロジェクトを作成」する導線を持つ空状態を表示すること</td>
+<td><a href="#BR-101">BR-101</a></td>
+<td><span class="badge badge-p2">P2</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="callout tip"><i class="bi bi-lightbulb"></i><div><span class="c-title">未確定事項</span>v1.0 リリース時点で全項目確定済み。現在オープンな確認事項はありません。</div></div>
+<h2 id="更新履歴">更新履歴</h2>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>版数</th>
+<th>日付</th>
+<th>変更内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>v1.4</td>
+<td>2026-06-16</td>
+<td>記載スタイルを刷新テンプレート v2 へ移行(業務要件 BR-096〜7 を先頭に定義、機能要件に関連業務要件列を付与、長文要件を主旨 + alpha 箇条書きへ整理、用語をアカウント利用者へ統一)。文書情報 / 機能概要 / 補足説明・統合参照 / 関連設計の各表を要約ブロック・doc-meta・各設計書参照へ振り分け。識別子(FR-130〜135h)は不変</td>
+</tr>
+<tr>
+<td>v1.3</td>
+<td>2026-06-14</td>
+<td>オーナー向け契約概要を利用状況へ簡素化し、各プロジェクトの利用状況を 1 画面へ統合</td>
+</tr>
+<tr>
+<td>v1.2</td>
+<td>2026-06-10</td>
+<td>契約概要 / プロジェクト概要を次の対応への起点に再定義し、利用量・料金請求を分離</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+</article>
+</body>
+</html>

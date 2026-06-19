@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FR08: 処理エラー | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/01_要件定義/FR08.html">
+<article class="content" id="content">
+<h1 id="fr08-処理エラー">FR08: 処理エラー</h1>
+<aside class="page-summary">
+<p class="ps-lead"><strong>この要件は、通信障害・上流障害・入力不備・認可エラーといった「処理エラー」を「未解決質問登録」と明確に区別し、ウィジェット利用者へ適切なエラー表示と再試行案内を行い、運用に必要な記録を安全に残すことを目的とし、以下について記載します。</strong></p>
+<ul>
+<li>処理エラーの検知とウィジェット利用者向けのエラー表示・応答</li>
+<li>処理エラーと未解決登録分岐(FAQ なし・信頼度不足・FAQ 矛盾)の切り分け</li>
+<li>再試行案内の表示と、再試行操作の連打防止</li>
+<li>運用確認用の記録と、記録に残さない情報(個人情報・認証情報等)の制約</li>
+</ul>
+</aside>
+<p class="doc-meta"><span><b>版数</b> v1.2</span><span><b>更新</b> 2026-06-16</span><span><b>機能グループ</b> 処理エラー</span><span><b>優先度</b> Must</span><span class="dm-status">承認済</span></p>
+<h2 id="1-業務要件">1. 業務要件</h2>
+<div class="table-scroll">
+<table class="br-table">
+<thead>
+<tr>
+<th>ID</th>
+<th>観点</th>
+<th>ステークホルダ</th>
+<th>業務要件</th>
+<th>関連 NFR</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="BR-081">BR-081</td>
+<td>処理エラーの検知と応答</td>
+<td>システム / ウィジェット利用者</td>
+<td>
+<ul class="role-req">
+<li><strong>システム：</strong>通信障害・上流障害・入力不備・認可エラー等の処理エラーが発生した時に、これを検知して状況に応じた応答を返す</li>
+<li><strong>ウィジェット利用者：</strong>処理エラーの発生時に、何が起きたかが分かるエラー表示を受け取る</li>
+</ul>
+</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-082">BR-082</td>
+<td>未解決登録との区別</td>
+<td>システム</td>
+<td>処理エラーが発生した時に、これを未解決登録分岐(FAQ なし・信頼度不足・FAQ 矛盾)と区別し、処理エラーを未解決質問として自動登録しない。</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-083">BR-083</td>
+<td>再試行案内</td>
+<td>システム / ウィジェット利用者</td>
+<td>
+<ul class="role-req">
+<li><strong>システム：</strong>自動再試行で回復しなかった時、またはウィジェット利用者による再試行が妥当な時に、再試行を案内し、再試行操作の連打を防止する</li>
+<li><strong>ウィジェット利用者：</strong>再試行が可能な場合に、その案内を受け取って操作できる</li>
+</ul>
+</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-084">BR-084</td>
+<td>運用確認用の記録</td>
+<td>システム</td>
+<td>サーバー内部起因のエラーが発生した時に、運用で確認できるよう記録する。エラー識別子をウィジェット利用者にも提示し、サポート問い合わせと記録を紐付けられるようにする。</td>
+<td>—</td>
+</tr>
+<tr>
+<td id="BR-085">BR-085</td>
+<td>記録の機密保護</td>
+<td>システム</td>
+<td>エラーを記録する時に、個人情報・認証トークン・パスワードハッシュ・カード情報を含めない。ウィジェット利用者の入力は全文保存せず、最小限の記録にとどめる。</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="callout important"><i class="bi bi-pin-angle"></i><div><span class="c-title">処理エラーと未解決登録の区別</span>FAQ が見つからない・信頼度が足りない・FAQ 矛盾を検出した場合は、処理エラーではなく通常の未解決登録分岐として扱います(<a href="#FR-111">FR-111</a>)。エラー分類・応答コード・リトライ回数・記録項目の詳細は <a href="../02_基本設計/05_エラー設計.html">エラー設計</a> を正本とします。</div></div>
+<h2 id="2-機能要件">2. 機能要件</h2>
+<div class="table-scroll">
+<table class="req-table">
+<thead>
+<tr>
+<th>ID</th>
+<th>要件</th>
+<th>関連業務要件</th>
+<th>優先度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="FR-110">FR-110</td>
+<td>処理エラー(通信障害・上流障害・入力不備・認可エラー等)を検知し、ウィジェット利用者向けにエラー表示と適切な応答ができること</td>
+<td><a href="#BR-081">BR-081</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-111">FR-111</td>
+<td>処理エラーは未解決登録分岐(FAQ なし・信頼度不足・FAQ 矛盾)と区別し、未解決質問として自動登録しないこと</td>
+<td><a href="#BR-082">BR-082</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-112">FR-112</td>
+<td>再試行案内を表示できること。
+<ol class="alpha">
+<li>自動再試行で回復しなかった場合に表示する</li>
+<li>ウィジェット利用者による再試行が妥当な場合に表示する</li>
+<li>再試行操作の連打防止を備える</li>
+</ol></td>
+<td><a href="#BR-083">BR-083</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-113">FR-113</td>
+<td>サーバー内部起因のエラーは運用確認できるように記録すること。エラー識別子をウィジェット利用者にも提示し、サポート問い合わせで紐付け可能にする</td>
+<td><a href="#BR-084">BR-084</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+<tr>
+<td id="FR-114">FR-114</td>
+<td>エラー記録の機密を保護すること。
+<ol class="alpha">
+<li>個人情報・認証トークン・パスワードハッシュ・カード情報を含めない</li>
+<li>ウィジェット利用者の入力はそのまま全文保存せず、最小限の記録にとどめる</li>
+</ol></td>
+<td><a href="#BR-085">BR-085</a></td>
+<td><span class="badge badge-p0">P0</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="callout tip"><i class="bi bi-lightbulb"></i><div><span class="c-title">未確定事項</span>v1.0 リリース時点で全項目確定済み。現在オープンな確認事項はありません。</div></div>
+<h2 id="更新履歴">更新履歴</h2>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>版数</th>
+<th>日付</th>
+<th>変更内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>v1.2</td>
+<td>2026-06-16</td>
+<td>記載スタイルを刷新テンプレート(v2)へ移行。業務要件 BR-081〜5 を先頭に定義し、機能要件(FR-110〜114)に関連業務要件列を追加。要約ブロック・doc-meta を整備し、汎用「利用者」をウィジェット利用者へ統一。長い要件を主旨 1 文 + 箇条書きへ整理。識別子(FR-110〜114)は不変</td>
+</tr>
+<tr>
+<td>v1.1</td>
+<td>2026-06-16</td>
+<td>要件定義を What 中心へ整理。基本設計の節番号・エラーカテゴリ記号参照・実装パラメータ(クールダウン秒数・記録の文字数等)を除去し、該当設計書を正本として参照化(処理エラーと未解決登録の区別など業務ルールは保持)</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+</article>
+</body>
+</html>

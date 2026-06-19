@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCR-009-001 メンバー招待 / 編集モーダル(プロジェクト単位) | 画面設計書</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="style.css?v=3">
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+</head><body><div class="layout">
+<aside class="sidebar"><div class="brand"><div class="mark">FA</div><div><b>FAQ AI SaaS</b><span>基本設計ポータル</span></div></div>
+<nav class="nav"><div class="nav-group">設計書</div><a class="nav-top" href="index.html"><span class="n">00</span><span>ポータル概要</span></a><div class="nav-sec" data-doc="01"><a class="nav-top" href="01_screen-design.html"><span class="n">01</span><span>画面設計</span><span class="caret">▸</span></a><div class="nav-children"><a href="01_screen-design.html">概要</a><a href="SCR-001.html">SCR-001 ログイン</a><a href="SCR-002.html">SCR-002 アカウント登録</a><a href="SCR-003.html">SCR-003 パスワード再設定</a><a href="SCR-004.html">SCR-004 プロジェクト</a><a href="SCR-004-001.html">SCR-004-001 プロジェクト作成・編集モーダル</a><a href="SCR-005.html">SCR-005 要対応の質問一覧</a><a href="SCR-005-001.html">SCR-005-001 要対応の質問詳細</a><a href="SCR-006.html">SCR-006 FAQ一覧</a><a href="SCR-006-001.html">SCR-006-001 FAQ編集</a><a href="SCR-006-002.html">SCR-006-002 FAQ CSVインポートモーダル</a><a href="SCR-007.html">SCR-007 ウィジェット設定</a><a href="SCR-008.html">SCR-008 概要(プロジェクト)</a><a href="SCR-009.html">SCR-009 メンバー(プロジェクト)</a><a href="SCR-009-001.html">SCR-009-001 メンバー招待・編集モーダル</a><a href="SCR-010.html">SCR-010 利用規約閲覧</a><a href="SCR-011.html">SCR-011 お知らせ一覧</a><a href="SCR-012.html">SCR-012 お知らせ詳細</a><a href="SCR-013.html">SCR-013 メール確認</a><a href="SCR-014.html">SCR-014 退会申請</a><a href="SCR-015.html">SCR-015 規約再同意割込み</a><a href="SCR-016.html">SCR-016 利用状況</a><a href="SCR-017.html">SCR-017 個人設定</a><a href="SCR-018.html">SCR-018 メンバーアカウント有効化</a><a href="SCR-019.html">SCR-019 連絡先メール確認完了</a><a href="SCR-020.html">SCR-020 プライバシーポリシー閲覧</a><a href="SCR-021.html">SCR-021 利用量と上限</a><a href="SCR-021-001.html">SCR-021-001 質問数上限設定モーダル</a><a href="SCR-022.html">SCR-022 請求</a><a href="SCR-023.html">SCR-023 設定</a><a href="SCR-WIDGET.html">SCR-WIDGET FAQ ウィジェット</a></div></div><div class="nav-sec" data-doc="02"><a class="nav-top" href="02_api-design.html"><span class="n">02</span><span>API設計</span><span class="caret">▸</span></a><div class="nav-children"><a href="02_api-design.html">概要</a><a href="API-common.html">共通仕様・規約</a><a href="API-auth.html">認証・セッション</a><a href="API-project.html">プロジェクト</a><a href="API-member.html">メンバー</a><a href="API-faq.html">FAQ</a><a href="API-inquiry.html">未解決質問</a><a href="API-widget.html">ウィジェット配信</a><a href="API-dashboard.html">ダッシュボード</a><a href="API-billing.html">利用量・課金</a><a href="API-inbox.html">お知らせ受信箱</a><a href="API-terms.html">規約・退会</a><a href="API-ai.html">AI 推論 IF</a><a href="API-mail.html">メール配信 IF</a><a href="API-webhook.html">外部 Webhook</a></div></div><div class="nav-sec" data-doc="03"><a class="nav-top" href="03_database-design.html"><span class="n">03</span><span>データベース設計</span><span class="caret">▸</span></a><div class="nav-children"><a href="03_database-design.html">概要</a><a href="TBL-M-USER.html">M_USER</a><a href="TBL-M-CONTRACT.html">M_CONTRACT</a><a href="TBL-M-002.html">M_PRJ_USERS</a><a href="TBL-M-004.html">M_PROJECTS</a><a href="TBL-M-005.html">M_ALLOWED_DOMAINS</a><a href="TBL-M-006.html">M_FAQS</a><a href="TBL-M-007.html">M_EMAIL_SUPPRESS</a><a href="TBL-M-008.html">M_OWNER_QUOTA_OVR</a><a href="TBL-M-009.html">M_PRJ_QUOTA_LIMITS</a><a href="TBL-M-010.html">M_SERVICE_ANNOUNCE</a><a href="TBL-M-011.html">M_ANNOUNCE_AUD</a><a href="TBL-M-012.html">M_TERMS_VER</a><a href="TBL-T-001.html">T_SESSIONS</a><a href="TBL-T-002.html">T_ACCESS_TOKENS</a><a href="TBL-T-003.html">T_PRJ_LEGACY_KEYS</a><a href="TBL-T-004.html">T_QLOG_FAQ_REFS</a><a href="TBL-T-005.html">T_INQUIRIES</a><a href="TBL-T-006.html">T_BILL_SUBS</a><a href="TBL-T-007.html">T_BILL_INVOICES</a><a href="TBL-T-008.html">T_USAGE_METER</a><a href="TBL-T-009.html">T_ANNOUNCE_RCPT</a><a href="TBL-T-010.html">T_INBOX_MSG</a><a href="TBL-T-011.html">T_WITHDRAW_REQ</a><a href="TBL-T-012.html">T_TERMS_AGREE</a><a href="TBL-H-001.html">H_FAQ_REV</a><a href="TBL-H-002.html">H_QUESTION_LOGS</a><a href="TBL-H-003.html">H_NOTIF_LOGS</a><a href="TBL-H-004.html">H_AUDIT_LOGS</a><a href="TBL-H-005.html">H_ERROR_LOGS</a><a href="TBL-TP-001.html">TP_FAQ_FTS</a><a href="TBL-TP-002.html">TP_AI_THRESH_CACHE</a></div></div><a class="nav-top" href="04_usecase-design.html"><span class="n">04</span><span>ユースケース・シーケンス</span></a><a class="nav-top" href="05_billing-design.html"><span class="n">05</span><span>課金・請求設計</span></a><a class="nav-top" href="06_mail-design.html"><span class="n">06</span><span>メール設計</span></a><a class="nav-top" href="07_auth-design.html"><span class="n">07</span><span>認証・認可設計</span></a></nav></aside>
+<main class="main"><article class="content" style="max-width:1180px"><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px"><span class="pill" style="font-size:11px">画面設計書</span><a href="01_screen-design.html" class="muted" style="font-size:12px;text-decoration:none">画面一覧</a><span class="muted">/</span><span class="muted" style="font-size:12px">SCR-009-001</span></div><h1>SCR-009-001 メンバー招待 / 編集モーダル(プロジェクト単位)</h1>
+
+
+<aside class="page-summary">
+<p class="ps-lead"><strong>このページは、SCR-009 から開くメンバーの招待・ロール編集・割当解除を行うモーダル SCR-009-001 を定義します。</strong> 画面概要 / 画面遷移図 / 画面レイアウト / 画面項目定義 / 入出力一覧 / 画面イベント一覧 の 6 セクションで記述します。</p>
+</aside>
+<p class="doc-meta"><span><b>版数</b> v1.0</span><span><b>更新</b> 2026-06-17</span><span class="dm-status">承認済</span></p>
+
+<h2 id="1-画面概要">1. 画面概要</h2>
+<p class="section-lead">SCR-009 から開く、メンバー招待(新規)とロール編集・招待再送・割当解除(既存)を全画面割込みモーダルで行う画面です。現在開いているプロジェクトの 1 件の割当のみを操作対象とします。</p>
+<table>
+<thead>
+<tr>
+<th>画面 ID</th>
+<th>画面名</th>
+<th>機能概要</th>
+</tr>
+</thead>
+<tbody>
+<tr><td id="SCR-009-001"><code>SCR-009-001</code></td><td>メンバー招待 / 編集モーダル(プロジェクト単位)</td><td>当該プロジェクトのメンバー招待・ロール変更・招待再送・割当解除を全画面割込みモーダルで実施する</td></tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>関連</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>FR / BR</td><td><span>FR-015</span>, <span>FR-015b</span>, <span>FR-016</span>〜<span>FR-016e</span>, <span>FR-018</span>, <span>FR-018a</span>〜<span>FR-018c</span>, <span>FR-019a</span>, <span>FR-021c</span>, <span>FR-333</span>〜<span>FR-339</span> / <span>BR-038</span>, <span>BR-039</span></td></tr>
+<tr><td>関連画面</td><td><a href="SCR-009.html"><code>SCR-009</code> メンバー(プロジェクト)</a>(呼出元) / <a href="SCR-018.html"><code>SCR-018</code> メンバーアカウント有効化</a>(招待リンク着地点)</td></tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr>
+<th>ステークホルダ</th>
+<th>対象</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>オーナー</td><td>◯</td></tr>
+<tr><td>プロジェクト管理者(<code>admin</code>)</td><td>◯</td></tr>
+<tr><td>メンバー(<code>member</code>)</td><td>—</td></tr>
+</tbody>
+</table>
+<div class="callout important"><i class="bi bi-pin-angle"></i><div><span class="c-title">重要</span>必要権限は当該プロジェクトに対する <code>admin</code>(オーナーは暗黙 <code>admin</code> として含む)です。招待モードでは氏名フィールドを表示しません(管理者は他人の氏名を事前入力できない。氏名は招待された本人が <a href="SCR-018.html">SCR-018</a> で入力。FR-016d 個人情報原則)。最後の有効割当を解除した場合のみアカウントを自動論理削除(<code>users.valid=0</code>)します。</div></div>
+
+<h2 id="2-画面遷移図">2. 画面遷移図</h2>
+<p class="section-lead">本モーダルの呼出元・遷移先を、画面 ID・画面名とイベント(操作)で示します。</p>
+<pre class="mermaid">flowchart LR
+  S1["SCR-009 メンバー（プロジェクト）"]
+  S2["SCR-009-001 メンバー招待 / 編集モーダル"]
+  S3["SCR-018 メンバーアカウント有効化"]
+  S1 --&gt;|+ メンバーを招待 / 利用者表示名クリック| S2
+  S2 --&gt;|キャンセル / 招待完了 / 保存完了 / 割当解除完了| S1
+  S2 --&gt;|招待メール送信（招待リンク）| S3
+</pre>
+
+<h2 id="3-画面レイアウト">3. 画面レイアウト</h2>
+<div style="background:#f5f6f8;padding:24px;border-radius:12px;font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN',Meiryo,sans-serif;color:#3a3f46;--accent:#5e6ad2;--row-pad:14px"><div style="max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:28px"><section style="flex:none;width:368px">
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:12px"><span style="font-size:11px;font-weight:700;color:var(--accent,#5e6ad2);background:color-mix(in srgb,var(--accent,#5e6ad2) 10%,#fff);border-radius:6px;padding:3px 8px">009-001</span><span style="font-size:13px;font-weight:600;color:#16191d">メンバー招待</span></div>
+      <div style="height:500px;background:rgba(22,25,29,.42);border:1px solid #e6e8eb;border-radius:14px;box-shadow:0 1px 2px rgba(16,24,40,.04),0 6px 20px rgba(16,24,40,.05);display:flex;align-items:center;justify-content:center;padding:20px;overflow:hidden">
+        <div style="width:320px;background:#fff;border-radius:14px;box-shadow:0 20px 50px rgba(16,24,40,.3);overflow:hidden">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid #eef0f2"><span style="font-size:15px;font-weight:700;color:#16191d">メンバーを招待</span><span style="width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;color:#9aa0a8;cursor:pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></span></div>
+          <div style="padding:18px;display:flex;flex-direction:column;gap:16px">
+            <div><label style="display:block;font-size:12px;font-weight:600;color:#3a3f46;margin-bottom:6px">メールアドレス<span style="color:#e5484d;margin-left:3px">●</span></label><div style="height:38px;border:1px solid #e6e8eb;border-radius:8px;background:#fbfbfc;display:flex;align-items:center;padding:0 11px;font-size:12.5px;color:#b5bac0">member@example.com</div></div>
+            <div><label style="display:block;font-size:12px;font-weight:600;color:#3a3f46;margin-bottom:8px">ロール</label>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <div style="display:flex;align-items:flex-start;gap:10px;padding:11px 12px;border:1.5px solid var(--accent,#5e6ad2);border-radius:9px;background:color-mix(in srgb,var(--accent,#5e6ad2) 6%,#fff);cursor:pointer"><span style="width:16px;height:16px;border-radius:999px;border:5px solid var(--accent,#5e6ad2);flex:none;margin-top:1px"></span><div><div style="font-size:12.5px;font-weight:600;color:#16191d">メンバー</div><div style="font-size:11px;color:#71767e;margin-top:1px">FAQ・質問の閲覧と対応</div></div></div>
+                <div style="display:flex;align-items:flex-start;gap:10px;padding:11px 12px;border:1px solid #e6e8eb;border-radius:9px;cursor:pointer"><span style="width:16px;height:16px;border-radius:999px;border:1.5px solid #cfd4da;flex:none;margin-top:1px"></span><div><div style="font-size:12.5px;font-weight:600;color:#16191d">管理者</div><div style="font-size:11px;color:#71767e;margin-top:1px">メンバー・設定の管理を含む</div></div></div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;gap:8px;padding:14px 18px;border-top:1px solid #eef0f2;background:#fbfbfc"><button style="padding:8px 14px;border:1px solid #e6e8eb;border-radius:8px;background:#fff;font-size:12.5px;font-weight:600;color:#3a3f46;cursor:pointer;font-family:inherit">キャンセル</button><button style="padding:8px 16px;border:none;border-radius:8px;background:var(--accent,#5e6ad2);color:#fff;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit">招待を送る</button></div>
+        </div>
+      </div>
+    </section></div></div>
+
+<h2 id="4-画面項目定義">4. 画面項目定義</h2>
+<p class="section-lead">本モーダルの表示・入力項目・操作ボタンと各バリデーション・ガードを定義します。項目の正本は本表です。招待モード / 編集モードでのみ表示する項目は備考に明記します。</p>
+<table>
+<thead>
+<tr>
+<th>項目 ID</th>
+<th>項目</th>
+<th>説明</th>
+<th>種類</th>
+<th>表示条件</th>
+<th>表示</th>
+</tr>
+</thead>
+<tbody>
+<tr><td id="IT-01"><code>IT-01</code></td><td>モード見出し</td><td>招待 / 編集のモードと対象を示すモーダル見出しを表示する</td><td>見出し</td><td>—</td><td>招待「{プロジェクト名} へメンバーを招待」/ 編集「{プロジェクト名} のメンバー編集 — {表示名}」</td></tr>
+<tr><td id="IT-02"><code>IT-02</code></td><td>モーダル閉じる(×)</td><td>変更を破棄してモーダルを閉じる</td><td>アイコンボタン</td><td>—</td><td>「×」</td></tr>
+<tr><td id="IT-03"><code>IT-03</code></td><td>自己編集警告帯</td><td>自分自身を編集する際の操作制限を警告帯で知らせる</td><td>アラート</td><td>編集モードかつ自分自身編集時のみ</td><td>「このプロジェクトのロールは変更できません / 自分のアカウントは削除できません」</td></tr>
+<tr><td id="IT-04"><code>IT-04</code></td><td>メールアドレス</td><td>招待先メールアドレスを入力する(招待モードのみ必須・編集可、編集モードでは表示のみ)</td><td>テキストボックス</td><td>編集モードでは表示のみ</td><td>プレースホルダ「member@example.com」</td></tr>
+<tr><td id="IT-05"><code>IT-05</code></td><td>表示名(氏名)</td><td>対象メンバーの氏名を読み取り専用で表示する</td><td>ラベル</td><td>編集モードのみ表示(招待モードでは表示しない / 個人情報原則)</td><td>対象メンバーの氏名。未入力時は「未設定」</td></tr>
+<tr><td id="IT-06"><code>IT-06</code></td><td>招待モード氏名注記</td><td>氏名は本人が有効化時に入力する旨を案内する</td><td>ラベル</td><td>招待モードのみ</td><td>「氏名(表示名)は招待されたご本人がメンバーアカウント有効化ページで入力します」</td></tr>
+<tr><td id="IT-07"><code>IT-07</code></td><td>このプロジェクトでのロール</td><td>当該プロジェクトでのロールを選択する(2 値必須)</td><td>ラジオ</td><td>—</td><td>「プロジェクトメンバー — FAQ / 要対応質問 / ログ参照」/「プロジェクト管理者 — プロジェクトメンバーが可能な操作に加え、招待・ロール変更ができます」。末尾にロール説明のヘルプアイコン</td></tr>
+<tr><td id="IT-08"><code>IT-08</code></td><td>招待状態</td><td>対象者が招待中(本人未有効化)であることをバッジで示す(残日数併記なし)</td><td>バッジ</td><td>編集モードで、かつ対象者が招待中(本人未有効化)の場合のみ(有効化済みでは非表示)</td><td>「招待中」</td></tr>
+<tr><td id="IT-09"><code>IT-09</code></td><td>招待メールを再送</td><td>招待メールを再送し、旧リンク失効・新リンクを発行する</td><td>ボタン</td><td>編集モードで、かつ対象者が招待中(本人未有効化)の場合のみ</td><td>「招待メールを再送する」</td></tr>
+<tr><td id="IT-10"><code>IT-10</code></td><td>プロジェクトから外す</td><td>当該 PJ の割当を解除する(最後の有効割当時はアカウントも論理削除。L1 確認)</td><td>ボタン</td><td>編集モードのみ(自分・オーナーには非表示)</td><td>「プロジェクトから外す」</td></tr>
+<tr><td id="IT-11"><code>IT-11</code></td><td>招待メールを送信</td><td>招待先へ招待メールを送信し有効化トークンを発行する(再認証)</td><td>ボタン</td><td>招待モードのみ</td><td>「招待メールを送信する」</td></tr>
+<tr><td id="IT-12"><code>IT-12</code></td><td>変更を保存</td><td>当該 PJ のロール変更を保存する(再認証)</td><td>ボタン</td><td>編集モードのみ</td><td>「変更を保存する」</td></tr>
+<tr><td id="IT-13"><code>IT-13</code></td><td>最後の管理者保護ガード</td><td>管理者が 0 人になる操作を抑止する(UI 非活性・確認・拒否)</td><td>ツールチップ</td><td>自分が唯一のプロジェクト管理者の場合 / 他メンバーの降格でプロジェクト管理者が 0 人になる場合</td><td>「あなたはこのプロジェクトで唯一の管理者です。メンバーへの降格はできません(最後の管理者保護)。」(唯一の管理者時は「プロジェクトメンバー」選択を非活性)</td></tr>
+</tbody>
+</table>
+<div class="callout warning"><i class="bi bi-exclamation-triangle"></i><div><span class="c-title">注意</span>バリデーション: メールアドレスは必須(招待モードのみ編集可)、ロールは <code>member</code> / <code>admin</code> の 2 値必須。「プロジェクトから外す」は L1 確認、最後の有効割当解除時は確認ダイアログに「このメンバーのアカウントも利用停止になります」を追記します。プロジェクト管理者降格は L2 確認 + 最後の管理者保護を行います。ロール定義は <span>04_権限設計</span> を正本とします(<code>member</code> = FAQ 管理 / 要対応質問の状況管理 / ログ参照、<code>admin</code> = それに加えメンバー招待・ロール変更・割当解除)。</div></div>
+
+<h2 id="5-入出力一覧">5. 入出力一覧</h2>
+<p class="section-lead">本モーダルが読み書きするテーブルと、呼び出す API の一覧です。テーブルの正本は <a href="03_database-design.html">03_テーブル設計</a>、API の正本は <a href="02_api-design.html">02_API設計 §5.2.2</a> / <a href="02_api-design.html">§5.2.3</a> / <a href="02_api-design.html">§5.2.4</a> です。</p>
+<table>
+<thead>
+<tr>
+<th rowspan="2">入出力名</th>
+<th rowspan="2">説明</th>
+<th rowspan="2">種別</th>
+<th rowspan="2">I/O</th>
+<th colspan="4">アクセス種別(CRUD)</th>
+<th rowspan="2">備考</th>
+</tr>
+<tr>
+<th>C</th>
+<th>R</th>
+<th>U</th>
+<th>D</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>プロジェクト割当</td><td>招待時の予約割当作成・ロール更新・割当解除(論理削除 <code>valid=0</code>)を行う</td><td>テーブル</td><td>入力 / 出力</td><td>◯</td><td>◯</td><td>◯</td><td>—</td><td><code>M_PRJ_USERS</code>(<a href="03_database-design.html#TBL-M-003">テーブル設計 3.3</a>)</td></tr>
+<tr><td>プロジェクトユーザー</td><td>招待時の予約ユーザー作成・現値読込・最後の割当解除時の論理削除(<code>valid=0</code>)を行う</td><td>テーブル</td><td>入力 / 出力</td><td>◯</td><td>◯</td><td>◯</td><td>—</td><td><code>M_PRJ_USERS</code>(<a href="03_database-design.html#TBL-M-002">テーブル設計 3.1</a>)</td></tr>
+<tr><td>アクセストークン</td><td>招待・再送時に有効化トークンを発行し旧リンクを失効する</td><td>テーブル</td><td>出力</td><td>◯</td><td>—</td><td>◯</td><td>—</td><td><code>purpose='activation'</code>(7 日)。<code>T_ACCESS_TOKENS</code>(<a href="03_database-design.html#TBL-T-002">テーブル設計 3.5</a>)</td></tr>
+<tr><td>メンバー招待</td><td>当該プロジェクトへメンバーを招待する</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /projects/{id}/members</code>(<a href="02_api-design.html">API 設計 5.2.2</a>)</td></tr>
+<tr><td>ロール変更・割当解除</td><td>当該 PJ のロール変更・割当解除を行う</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td>ロール変更 <code>PATCH /projects/{id}/members/{userId}</code> / 割当解除 <code>DELETE /projects/{id}/members/{userId}</code>(<a href="02_api-design.html">API 設計 5.2.3</a> / <a href="02_api-design.html">5.2.4</a>)</td></tr>
+<tr><td>招待メール再送</td><td>招待中メンバーへ招待メールを再送する</td><td>API</td><td>入力 / 出力</td><td>—</td><td>—</td><td>—</td><td>—</td><td><code>POST /members/{id}/resend-invitation</code>(<a href="02_api-design.html">API 設計 5.2.5</a>)</td></tr>
+</tbody>
+</table>
+
+<h2 id="6-画面イベント一覧">6. 画面イベント一覧</h2>
+<p class="section-lead">本モーダルで発生するイベントと発生タイミング・概要の一覧です。</p>
+<table>
+<thead>
+<tr>
+<th>イベント ID</th>
+<th>イベント</th>
+<th>トリガー</th>
+<th>処理</th>
+<th>関連項目</th>
+</tr>
+</thead>
+<tbody>
+<tr><td><code>EV-01</code></td><td>現値ロード</td><td>編集モードでモーダル起動時</td><td><ul><li>対象メンバーの表示名・メール・ロール・招待状態を取得し初期表示</li><li>自分自身編集時は自己編集警告帯を表示</li></ul></td><td><a href="#IT-03">IT-03</a>, <a href="#IT-04">IT-04</a>, <a href="#IT-05">IT-05</a>, <a href="#IT-07">IT-07</a>, <a href="#IT-08">IT-08</a></td></tr>
+<tr><td><code>EV-02</code></td><td>招待メール送信</td><td>「招待メールを送信」押下時(招待・再認証)</td><td><ul><li><code>POST /projects/{id}/members</code> で予約行作成</li><li><code>T_ACCESS_TOKENS.purpose='activation'</code> 発行</li><li>招待メール送信</li></ul></td><td><a href="#IT-04">IT-04</a>, <a href="#IT-07">IT-07</a>, <a href="#IT-11">IT-11</a></td></tr>
+<tr><td><code>EV-03</code></td><td>変更を保存</td><td>「変更を保存」押下時(編集・再認証)</td><td><ul><li><code>PATCH /projects/{id}/members/{userId}</code> で当該 PJ の <code>role</code> を更新</li><li>最後の管理者保護を適用</li></ul></td><td><a href="#IT-07">IT-07</a>, <a href="#IT-12">IT-12</a>, <a href="#IT-13">IT-13</a></td></tr>
+<tr><td><code>EV-04</code></td><td>招待メール再送</td><td>「招待メールを再送」押下時(編集 / <code>pending_activation</code>・再認証)</td><td><ul><li><code>POST /members/{id}/resend-invitation</code> で旧リンク失効</li><li>新リンク発行</li></ul></td><td><a href="#IT-09">IT-09</a></td></tr>
+<tr><td><code>EV-05</code></td><td>プロジェクトから外す</td><td>「プロジェクトから外す」押下時(編集・L1 確認)</td><td><ul><li><code>DELETE /projects/{id}/members/{userId}</code> で割当を <code>valid=0</code></li><li>最後の有効割当時はアカウントも論理削除</li></ul></td><td><a href="#IT-10">IT-10</a></td></tr>
+<tr><td><code>EV-06</code></td><td>モーダル閉じる</td><td>×・Escape・オーバーレイクリック時</td><td><ul><li>変更を破棄して閉じる</li><li>未保存変更があれば UnsavedChangesGuard で警告</li></ul></td><td><a href="#IT-02">IT-02</a></td></tr>
+</tbody>
+</table>
+
+
+<div class="footer">FAQ AI ウィジェット SaaS / メインシステム — 画面設計書 ・ 2026-06-19</div>
+</article></main><aside class="rightbar"><div class="rb-title">このページ</div><nav class="toc"><a class="back" href="01_screen-design.html" style="font-weight:600;color:var(--accent)">← 画面一覧へ戻る</a><a href="#1-画面概要">1. 画面概要</a><a href="#2-画面遷移図">2. 画面遷移図</a><a href="#3-画面レイアウト">3. 画面レイアウト</a><a href="#4-画面項目定義">4. 画面項目定義</a><a href="#5-入出力一覧">5. 入出力一覧</a><a href="#6-画面イベント一覧">6. 画面イベント一覧</a></nav></aside></div>
+<script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";mermaid.initialize({startOnLoad:true,theme:"neutral",flowchart:{useMaxWidth:true}});</script>
+<script>window.addEventListener('load',function(){try{window.lucide&&lucide.createIcons();}catch(e){}});</script>
+<script>/*__scrollspy*/(function(){function init(){var ls=[].slice.call(document.querySelectorAll('.rightbar .toc a[href^="#"]'));if(!ls.length)return;var map=ls.map(function(a){var id=decodeURIComponent(a.getAttribute('href').slice(1));return{a:a,el:document.getElementById(id)};}).filter(function(x){return x.el;});function on(){var y=window.scrollY+130,cur=null;map.forEach(function(x){if(x.el.getBoundingClientRect().top+window.scrollY<=y)cur=x;});ls.forEach(function(a){a.classList.remove('active');});if(cur)cur.a.classList.add('active');}window.addEventListener('scroll',on,{passive:true});window.addEventListener('resize',on);on();}if(document.readyState!=='loading')init();else document.addEventListener('DOMContentLoaded',init);})();</script><script>/*__navtree*/(function(){function init(){var file=decodeURIComponent((location.pathname.split('/').pop()||'index.html'));if(!file)file='index.html';var doc='00';if(/^SCR-/.test(file))doc='01';else if(/^TBL-/.test(file))doc='03';else if(/01_/.test(file))doc='01';else if(/02_/.test(file))doc='02';else if(/03_/.test(file))doc='03';else if(/04_/.test(file))doc='04';document.querySelectorAll('.nav-sec').forEach(function(s){if(s.getAttribute('data-doc')===doc)s.classList.add('open');});var hash=location.hash||'';document.querySelectorAll('.nav a[href]').forEach(function(a){var h=a.getAttribute('href');if(h===file||h===file+hash||(file==='index.html'&&h==='index.html')){a.classList.add('cur');}});document.querySelectorAll('.nav-sec .caret').forEach(function(c){c.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();c.closest('.nav-sec').classList.toggle('open');});});}if(document.readyState!=='loading')init();else document.addEventListener('DOMContentLoaded',init);})();</script></body></html>

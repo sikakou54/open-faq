@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FUT05: 通知・FAQ 運用・連携 | FAQ 設計ポータル</title>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>window.PORTAL_ROOT="../../";(function(){try{var t=localStorage.getItem('portal-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script src="../../assets/js/nav-data.js" defer></script>
+<script src="../../assets/js/search-index.js" defer></script>
+<script src="../../assets/js/portal.js" defer></script>
+</head>
+<body data-page-id="01_メインシステム/05_future/FUT05.html">
+<article class="content" id="content">
+<h1 id="fut05-通知faq-運用連携">FUT05: 通知・FAQ 運用・連携</h1>
+<blockquote>
+<p>個別チャット本体およびチャット固有の通知・再入室・担当者割当は <a href="FUT06.html">FUT06.html</a> を正本とする。本書では個別チャット導入後に追加可能な拡張機能だけを扱う。</p>
+</blockquote>
+<h2 id="0-文書情報">0. 文書情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文書名</td>
+<td>FUT05: 通知・FAQ 運用・連携</td>
+</tr>
+<tr>
+<td>将来対応ID</td>
+<td>FUT-05</td>
+</tr>
+<tr>
+<td>対象システム</td>
+<td>FAQ AI ウィジェット SaaS / メインシステム</td>
+</tr>
+<tr>
+<td>作成日</td>
+<td>2026-05-17</td>
+</tr>
+<tr>
+<td>版数</td>
+<td>v1.0</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>検討中(MVP 外)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="1-概要">1. 概要</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>概要</td>
+<td>MVP では 60 秒ポーリング / テキストチャットのみ / 管理者明示操作 / CSV インポート / レスポンシブ Web / メール + 受信箱に限定している通知・FAQ 運用・連携領域について、Post-MVP でリアルタイム化 / 添付・音声 / 多段承認・自動翻訳 / 外部ヘルプデスク連携 / スマホアプリ / 通知チャネル拡張を段階導入する。</td>
+</tr>
+<tr>
+<td>背景</td>
+<td>エンドユーザー体験の即時性、FAQ 運用の自動化、既存ヘルプデスクからの移行支援、モバイル利用、到達性の高い通知チャネルが必要となる。</td>
+</tr>
+<tr>
+<td>期待効果</td>
+<td>解決率向上、FAQ 運用工数削減、既存サービスからの乗り換え促進、モバイル利用率向上、重要通知の到達率向上。</td>
+</tr>
+<tr>
+<td>優先度(将来対応内)</td>
+<td>低</td>
+</tr>
+<tr>
+<td>想定時期</td>
+<td>T3(GA 判定まで)〜 Post-MVP</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="2-関連要件候補">2. 関連要件・候補</h2>
+<h3 id="21-要件候補将来-fr">2.1 要件候補(将来 FR)</h3>
+<h4 id="通知faq-運用連携クライアント">通知・FAQ 運用・連携・クライアント</h4>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>要件候補</th>
+<th>MVP の前提</th>
+<th>判定時期</th>
+<th>判定基準 / 完了条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FUT-REQ-UX-001</td>
+<td>お知らせ新着取得のリアルタイム化</td>
+<td>60 秒ポーリング</td>
+<td>GA</td>
+<td>接続維持コスト、契約別新着件数 P95、Cloudflare Workers の SSE / WebSocket サポート安定性</td>
+</tr>
+<tr>
+<td>FUT-REQ-UX-002</td>
+<td>添付ファイル / 既読同期 SSE / 音声入力・読み上げ</td>
+<td>テキストチャットのみ</td>
+<td>Post-MVP</td>
+<td>保管容量、マルウェア検査、アクセシビリティ要望をもとに判定</td>
+</tr>
+<tr>
+<td>FUT-REQ-UX-003</td>
+<td>多段承認ワークフロー / FAQ 自動翻訳 / 自動 FAQ 化 / カテゴリ階層</td>
+<td>管理者の明示操作で下書き・公開、日本語のみ</td>
+<td>Post-MVP</td>
+<td>承認者数、翻訳品質、誤公開リスクをもとに判定</td>
+</tr>
+<tr>
+<td>FUT-REQ-UX-004</td>
+<td>外部ヘルプデスク連携 / 既存 FAQ サービス移行支援</td>
+<td>CSV インポートのみ</td>
+<td>Post-MVP</td>
+<td>対象サービス、データマッピング、サポート工数をもとに判定</td>
+</tr>
+<tr>
+<td>FUT-REQ-UX-005</td>
+<td>顧客向けスマホアプリ</td>
+<td>レスポンシブ Web 管理画面 + 公開ウィジェット</td>
+<td>Post-MVP</td>
+<td>モバイル利用率、保守体制、Push 通知要否をもとに判定</td>
+</tr>
+<tr>
+<td>FUT-REQ-UX-006</td>
+<td>電話 / SMS 通知、BIMI、契約独自送信ドメイン</td>
+<td>メール + 受信箱、送信ドメインはサービス共通</td>
+<td>Post-MVP</td>
+<td>到達率、コスト、送信レピュテーション、ブランド要望をもとに判定</td>
+</tr>
+<tr>
+<td>FUT-REQ-UX-007</td>
+<td>契約全データエクスポート(契約内データの CSV 一括エクスポート、非同期ジョブ + 完了メール通知)。退避元 <strong>FR-162 / FR-311 / NFR-904 / BR-015</strong>。インフラ(<code>export-queue</code> / <code>consumers/export.ts</code> / <code>R2_EXPORTS</code> / 監査 <code>data.export.*</code>)は予約済み</td>
+<td>MVP は退会時のデータ削除のみ。契約データの一括エクスポート UI 導線(旧 SCR-023 データ出力 / 旧 SCR-014 エクスポート CTA)は撤去</td>
+<td>Post-MVP</td>
+<td>データ持ち出し / 移植性要望件数、スキーマ定義、ジョブ実行コストをもとに判定</td>
+</tr>
+</tbody>
+</table>
+<h3 id="22-基本設計論点">2.2 基本設計論点</h3>
+<h4 id="通知faq-運用連携">通知・FAQ 運用・連携</h4>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>基本設計で具体化すること</th>
+<th>関連 Future 要件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>お知らせリアルタイム化</td>
+<td>SSE / WebSocket / Durable Objects の採用判断、接続状態、ポーリングとの併用、再接続</td>
+<td>FUT-REQ-UX-001</td>
+</tr>
+<tr>
+<td>チャット拡張</td>
+<td>添付ファイル保管、マルウェア検査、音声入出力、既読同期、アクセシビリティ</td>
+<td>FUT-REQ-UX-002</td>
+</tr>
+<tr>
+<td>FAQ 運用拡張</td>
+<td>多段承認、FAQ 自動翻訳、自動 FAQ 化、カテゴリ階層、誤公開防止</td>
+<td>FUT-REQ-UX-003</td>
+</tr>
+<tr>
+<td>外部ヘルプデスク連携</td>
+<td>連携先ごとの責務、同期方向、差分検出、エラー時の再送・DLQ</td>
+<td>FUT-REQ-UX-004</td>
+</tr>
+<tr>
+<td>スマホアプリ</td>
+<td>認証、Push 通知、Web 管理画面との差分、ストア運用</td>
+<td>FUT-REQ-UX-005</td>
+</tr>
+<tr>
+<td>通知チャネル拡張</td>
+<td>SMS / 電話 / BIMI / 契約独自送信ドメインのチャネル優先順位と到達性管理</td>
+<td>FUT-REQ-UX-006</td>
+</tr>
+</tbody>
+</table>
+<h3 id="23-詳細設計バックログ">2.3 詳細設計バックログ</h3>
+<h4 id="実装設計バックログ関連分">実装設計バックログ(関連分)</h4>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>対象</th>
+<th>実装設計で具体化すること</th>
+<th>関連 Future 要件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FUT-DD-UX-001</td>
+<td>お知らせリアルタイム化</td>
+<td>Durable Object / SSE endpoint、subscription 管理、再接続、fallback polling</td>
+<td>FUT-REQ-UX-001</td>
+</tr>
+</tbody>
+</table>
+<h4 id="api--worker-候補関連分">API / Worker 候補(関連分)</h4>
+<table>
+<thead>
+<tr>
+<th>領域</th>
+<th>候補</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SSE / リアルタイム</td>
+<td><code>GET /widget/v1/questions/{id}/stream</code>、<code>GET /api/v1/inbox/stream</code>、fallback polling</td>
+</tr>
+</tbody>
+</table>
+<h4 id="テスト検証候補関連分">テスト・検証候補(関連分)</h4>
+<table>
+<thead>
+<tr>
+<th>領域</th>
+<th>検証項目</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SSE</td>
+<td>切断・再接続、途中失敗、二重課金防止、モバイルブラウザ互換</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Note</strong>: チャット拡張 / FAQ 運用拡張 / 外部ヘルプデスク連携 / スマホアプリ / 通知チャネル拡張については、MVP 後の詳細検討項目。現時点では基本設計論点と方針のみ記載。</p>
+</blockquote>
+<hr />
+<h2 id="3-影響範囲">3. 影響範囲</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>影響内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>要件</td>
+<td>お知らせ通知 FR、チャット FR、FAQ 運用 FR、外部連携 NFR、通知チャネル NFR の段階拡張</td>
+</tr>
+<tr>
+<td>画面</td>
+<td>お知らせ画面(リアルタイム接続表示)、チャット画面(添付 / 音声 / 既読)、FAQ 編集画面(多段承認 / カテゴリ階層)、外部連携設定画面、スマホアプリ全画面、通知チャネル設定画面</td>
+</tr>
+<tr>
+<td>API</td>
+<td><code>GET /api/v1/inbox/stream</code>、添付アップロード API、マルウェア検査 Worker、FAQ 多段承認 API、外部ヘルプデスク Webhook、Push 通知 API、SMS / 電話 通知 API</td>
+</tr>
+<tr>
+<td>テーブル</td>
+<td><code>inbox_subscriptions</code>(SSE 接続管理)、<code>chat_attachments</code>、<code>faq_approval_steps</code>、<code>external_integration_configs</code>、<code>mobile_devices</code>、<code>notification_channel_preferences</code> 等(Future で具体化)</td>
+</tr>
+<tr>
+<td>運用</td>
+<td>SSE 接続観測、添付ファイルマルウェア検査運用、FAQ 自動翻訳品質レビュー、外部連携 DLQ 運用、スマホアプリストア運用、SMS / 電話 通知のコスト・到達率監視、BIMI 設定運用</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-実施条件">4. 実施条件</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>実施判断条件</td>
+<td>リアルタイム化は接続維持コスト + 契約別新着件数 P95 + Cloudflare Workers 安定性、チャット拡張は保管容量 + マルウェア検査 + アクセシビリティ、FAQ 運用拡張は承認者数 + 翻訳品質 + 誤公開リスク、外部連携は対象サービス + データマッピング + サポート工数、スマホアプリはモバイル利用率 + 保守体制 + Push 要否、通知チャネル拡張は到達率 + コスト + ブランド要望</td>
+</tr>
+<tr>
+<td>期限</td>
+<td>T3(お知らせリアルタイム化)、Post-MVP(その他全項目)</td>
+</tr>
+<tr>
+<td>依存関係</td>
+<td>共有概念の通知重要度 4 値(<code>low</code> / <code>normal</code> / <code>high</code> / <code>critical</code>)、メール送信(SendGrid 等)連携</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="5-関連設計">5. 関連設計</h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>参照先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>要件</td>
+<td><a href="../01_requirements/index.html">../01_requirements/index.html</a></td>
+</tr>
+<tr>
+<td>基本設計</td>
+<td><a href="../02_基本設計/index.html">../02_基本設計/index.html</a></td>
+</tr>
+<tr>
+<td>詳細設計</td>
+<td><a href="../03_詳細設計/index.html">../03_詳細設計/index.html</a></td>
+</tr>
+<tr>
+<td>運用設計</td>
+<td><a href="../04_運用設計/index.html">../04_運用設計/index.html</a></td>
+</tr>
+<tr>
+<td>共有概念(正本)</td>
+<td><a href="../../共有/共有概念.html">../../共有/共有概念.html</a></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="6-未確定事項確認事項">6. 未確定事項・確認事項</h2>
+<table>
+<thead>
+<tr>
+<th>確認事項ID</th>
+<th>確認内容</th>
+<th>優先度</th>
+<th>ステータス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FUT-UX-Q-001</td>
+<td>お知らせリアルタイム化の採用技術(SSE / WebSocket / Durable Objects)と fallback polling 併用方式</td>
+<td>高</td>
+<td>検討中</td>
+</tr>
+<tr>
+<td>FUT-UX-Q-002</td>
+<td>チャット添付ファイル保管先(R2)とマルウェア検査ベンダー選定</td>
+<td>中</td>
+<td>検討中</td>
+</tr>
+<tr>
+<td>FUT-UX-Q-003</td>
+<td>FAQ 多段承認の承認者数・承認順序・誤公開時のロールバック手順</td>
+<td>中</td>
+<td>検討中</td>
+</tr>
+<tr>
+<td>FUT-UX-Q-004</td>
+<td>外部ヘルプデスク(Zendesk / Intercom 等)連携の同期方向と差分検出</td>
+<td>低</td>
+<td>検討中</td>
+</tr>
+<tr>
+<td>FUT-UX-Q-005</td>
+<td>スマホアプリのストア運用(iOS / Android)・Push 通知基盤</td>
+<td>低</td>
+<td>検討中</td>
+</tr>
+<tr>
+<td>FUT-UX-Q-006</td>
+<td>SMS / 電話通知の <code>critical</code> 通知重要度との連携(共有概念整合)</td>
+<td>低</td>
+<td>検討中</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+</body>
+</html>
