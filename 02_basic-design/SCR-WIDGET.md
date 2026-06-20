@@ -51,11 +51,7 @@ flowchart LR
 
 <div style="background:#f5f6f8;padding:24px;border-radius:12px;font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN',Meiryo,sans-serif;color:#3a3f46;-webkit-font-smoothing:antialiased;--accent:#5e6ad2">
 <div style="max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:32px">
-
-  
-
   <div style="display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap">
-
     <!-- 展開時 -->
     <section style="flex:1;min-width:560px">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:13px"><span style="font-size:11px;font-weight:700;color:var(--accent,#5e6ad2);background:color-mix(in srgb,var(--accent,#5e6ad2) 10%,#fff);border-radius:6px;padding:3px 8px">状態 1</span><span style="font-size:13.5px;font-weight:600;color:#16191d">展開時 — 回答 + フィードバック</span></div>
@@ -85,7 +81,6 @@ flowchart LR
         </div>
       </div>
     </section>
-
     <!-- 最小化時 -->
     <section style="flex:none;width:340px">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:13px"><span style="font-size:11px;font-weight:700;color:var(--accent,#5e6ad2);background:color-mix(in srgb,var(--accent,#5e6ad2) 10%,#fff);border-radius:6px;padding:3px 8px">状態 2</span><span style="font-size:13.5px;font-weight:600;color:#16191d">最小化時 — 起動ボタン</span></div>
@@ -101,7 +96,6 @@ flowchart LR
         </div>
       </div>
     </section>
-
   </div>
 </div>
 </div>

@@ -268,7 +268,10 @@ def restore(md, embeds, callouts, mermaids, codes):
     md = re.sub(r'PHX_MERMAID_(\d+)_PHX', lambda m: mermaid_block(int(m.group(1))), md)
     md = re.sub(r'PHX_CODE_(\d+)_PHX', lambda m: code_block(int(m.group(1))), md)
     md = re.sub(r'PHX_CALLOUT_(\d+)_PHX', lambda m: callout_block(int(m.group(1))), md)
-    md = re.sub(r'PHX_EMBED_(\d+)_PHX', lambda m: embeds[int(m.group(1))], md)
+    def embed_block(i):
+        # 埋め込み HTML 内の空行を除去(空行があると HTML ブロックが切れてコード表示になる)
+        return "\n".join(l for l in embeds[i].split("\n") if l.strip() != "")
+    md = re.sub(r'PHX_EMBED_(\d+)_PHX', lambda m: embed_block(int(m.group(1))), md)
     return md
 
 # ---------- リンク .html -> .md ----------
