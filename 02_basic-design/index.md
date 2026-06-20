@@ -86,10 +86,6 @@ flowchart LR
 
 ---
 
----
-
----
-
 <!-- portal-bottom -->
 [↑ 設計ポータル](../README.md)
 <!-- /portal-bottom -->

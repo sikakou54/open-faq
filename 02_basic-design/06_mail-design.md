@@ -6,7 +6,7 @@
 
 > **このページは、メインシステム(利用者向け FAQ ウィジェット SaaS)が送信する全メールの件名・本文・テンプレート変数・送信契機を集中定義する正本です。**
 
-*版数 v1.2 ・ 更新 2026-06-17 ・ 承認済*
+*版数 v1.3 ・ 更新 2026-06-20 ・ 承認済*
 
 > [!NOTE]
 > **本書の範囲と対象外** 本書は §4 のテンプレート ID `TPL-*` 全件の件名 / テキスト本文 / HTML 本文・送信契機(`NOTIF-*`)・配信先 / 重要度 / 添付 / リンク有効期限・メール共通要件(送信元・i18n・サニタイズ・配信信頼性)を扱います。アプリ内お知らせ受信箱(`inbox` 限定の `NOTIF-CHAT_HOLD_CHECK` 等)は 06_メッセージ一覧.html §6、画面文言(`MSG-SCR-*`)は [01_画面設計/index.md](01_screen-design.md) が正本です。配信信頼性(DMARC 等)は 09_セキュリティ設計.html §11、通知契機・配信先は 06_メッセージ一覧.html §6.1 が正本です。
@@ -88,24 +88,23 @@
 
 ## <span id="3-テンプレート一覧"></span>3. テンプレート一覧
 
-メール送信を含む全 14 テンプレートを索引します。次の表はテンプレート ID・通知 ID・重要度・配信先・強制送信可否・リンク有効期限を一覧化したもので、件名 + 本文の全文は §4 を参照します。
+メール送信を含む全 13 テンプレートを索引します。次の表はテンプレート ID・通知 ID・重要度・配信先・強制送信可否・リンク有効期限を一覧化したもので、件名 + 本文の全文は §4 を参照します。メンバー招待は §4.3 の共通メンバー招待(`TPL-ADMIN_USER_REGISTER`)に一本化する。
 
 | \# | テンプレートID | 通知ID | 重要度 | 配信先 | 強制送信 | リンク有効期限 |
 |----|----|----|----|----|----|----|
-| 1 | TPL-EMAIL_VERIFY | NOTIF-EMAIL_VERIFY | critical | admin(本人) | ◯ | 24h |
-| 2 | TPL-PASSWORD_RESET | NOTIF-PASSWORD_RESET | critical | admin(本人) | ◯ | 1h |
-| 3 | TPL-ADMIN_USER_REGISTER | NOTIF-ADMIN_USER_REGISTER | critical | admin(招待対象) | ◯ | 7d |
-| 4 | TPL-PROJECT_ADMIN_INVITE | NOTIF-PROJECT_ADMIN_INVITE | critical | admin(招待対象) | ◯ | 7d |
-| 5 | TPL-PROJECT_CONTACT_VERIFY | (オーナー操作派生) | critical | プロジェクト連絡先 | ◯ | 24h |
-| 6 | TPL-LOCKOUT_NOTIFY | NOTIF-LOCKOUT_NOTIFY | critical | ロック本人 + オーナー + 全 PJ 管理者 | ◯ | (リンクなし) |
-| 7 | TPL-DELETION_REMINDER | NOTIF-DELETION_REMINDER | high | admin(オーナー) | ◯ | 退会発効日まで |
-| 8 | TPL-BILLING_INVOICE_ISSUED | NOTIF-BILLING_INVOICE_ISSUED | high | admin(オーナー) | ◯ | 30d(PDF 再 DL) |
-| 9 | TPL-BILLING_PAYMENT_FAILED | NOTIF-BILLING_PAYMENT_FAILED | high | admin(オーナー) | ◯ | (再決済リンク) |
-| 10 | TPL-BILLING_SUSPENSION | NOTIF-BILLING_SUSPENSION | critical | admin(オーナー + 全 PJ 管理者) | ◯ | (リンクなし) |
-| 11 | TPL-PAYMENT_METHOD_REQUIRED | NOTIF-PAYMENT_METHOD_REQUIRED | critical | admin(オーナー) | ◯ | (課金設定リンク) |
-| 12 | TPL-TERMS_REVISION | NOTIF-TERMS_REVISION | critical | admin(オーナー + 全 PJ 管理者) | ◯ | 発効日 + 14d |
-| 13 | TPL-SERVICE_ANNOUNCEMENT | NOTIF-SERVICE_ANNOUNCEMENT | normal/high/critical | admin(範囲指定可) | 配信時に選択 | 入力 URL |
-| 14 | TPL-SYSTEM_NOTICE | NOTIF-SYSTEM_NOTICE | normal/high | admin(対象者) | 契機による | (画面内リンク) |
+| 1 | TPL-EMAIL_VERIFY | NOTIF-EMAIL_VERIFY | critical | 本人 | ◯ | 24h |
+| 2 | TPL-PASSWORD_RESET | NOTIF-PASSWORD_RESET | critical | 本人 | ◯ | 1h |
+| 3 | TPL-ADMIN_USER_REGISTER | NOTIF-ADMIN_USER_REGISTER | critical | 招待対象 | ◯ | 7d |
+| 4 | TPL-PROJECT_CONTACT_VERIFY | (オーナー操作派生) | critical | プロジェクト連絡先 | ◯ | 24h |
+| 5 | TPL-LOCKOUT_NOTIFY | NOTIF-LOCKOUT_NOTIFY | critical | ロック本人 + オーナー + 全メンバー | ◯ | (リンクなし) |
+| 6 | TPL-DELETION_REMINDER | NOTIF-DELETION_REMINDER | high | オーナー | ◯ | 退会発効日まで |
+| 7 | TPL-BILLING_INVOICE_ISSUED | NOTIF-BILLING_INVOICE_ISSUED | high | オーナー | ◯ | 30d(PDF 再 DL) |
+| 8 | TPL-BILLING_PAYMENT_FAILED | NOTIF-BILLING_PAYMENT_FAILED | high | オーナー | ◯ | (再決済リンク) |
+| 9 | TPL-BILLING_SUSPENSION | NOTIF-BILLING_SUSPENSION | critical | オーナー + 全メンバー | ◯ | (リンクなし) |
+| 10 | TPL-PAYMENT_METHOD_REQUIRED | NOTIF-PAYMENT_METHOD_REQUIRED | critical | オーナー | ◯ | (課金設定リンク) |
+| 11 | TPL-TERMS_REVISION | NOTIF-TERMS_REVISION | critical | オーナー + 全メンバー | ◯ | 発効日 + 14d |
+| 12 | TPL-SERVICE_ANNOUNCEMENT | NOTIF-SERVICE_ANNOUNCEMENT | normal/high/critical | 範囲指定可 | 配信時に選択 | 入力 URL |
+| 13 | TPL-SYSTEM_NOTICE | NOTIF-SYSTEM_NOTICE | normal/high | 対象者 | 契機による | (画面内リンク) |
 
 `NOTIF-CHAT_HOLD_CHECK` はチャネルが `inbox` 限定(メール送信なし)のため本書の対象外。`NOTIF-SYSTEM_NOTICE` は inbox/email 兼用で、サブ契機ごとに動的に件名・本文を組み立てるメタテンプレートとして定義する。
 
@@ -222,7 +221,7 @@ open-faq <noreply@<service-domain>>
 
 ### <span id="43-tpl-admin_user_registerメンバー招待再送-共通"></span>4.3 TPL-ADMIN_USER_REGISTER(メンバー招待・再送 共通)
 
-メンバー招待および招待再送で共通利用する `critical` メールです。アクティベーション URL(7d 有効)と招待内容(プロジェクト・ロール・招待元)を提示し、着地ページで氏名・初回パスワード・規約同意を入力させます。
+メンバー招待および招待再送で共通利用する `critical` メールです。プロジェクトへのメンバー招待はすべて本テンプレートに一本化する。アクティベーション URL(7d 有効)と招待内容(プロジェクト・招待元)を提示し、着地ページで氏名・初回パスワード・規約同意を入力させます。
 
 **発火条件**: SCR-009-001 メンバー招待モーダルの「招待メールを送信する」/「招待メールを再送する」ボタン押下時、`T_ACCESS_TOKENS.purpose='activation'` 発行時。
 
@@ -232,13 +231,12 @@ open-faq <noreply@<service-domain>>
 |----|----|
 | `{recipient_email}` | 招待対象のメールアドレス(招待時点で `M_PRJ_USERS.name=NULL` のため宛先表示は email を用いる。FR-016e) |
 | `{inviter_owner_name}` | 招待元オーナーの表示名 |
-| `{inviter_admin_name}` | 招待操作者の表示名(オーナー以外の管理者の場合) |
+| `{inviter_admin_name}` | 招待操作者の表示名(オーナー以外のメンバーの場合) |
 | `{project_name}` | 招待対象プロジェクト名 |
-| `{assigned_role_label}` | 付与ロール表示(`プロジェクト管理者` / `プロジェクトメンバー`) |
 | `{activation_url}` | アクティベーション URL(7d 有効、SCR-018 メンバーアカウント有効化ページに着地) |
 | `{expire_at_jst}` | 失効日時(JST) |
 
-**件名**: `open-faq の管理者ユーザー登録を完了してください`
+**件名**: `open-faq のメンバー登録を完了してください`
 
 **本文(テキスト版)**:
 
@@ -254,11 +252,10 @@ open-faq <noreply@<service-domain>>
 {activation_url}
 
 このリンクは {expire_at_jst}(JST) まで有効です(発行から 7 日)。
-失効後に登録する場合は、招待元の管理者へ再送をご依頼ください。
+失効後に登録する場合は、招待元のメンバーへ再送をご依頼ください。
 
 招待内容:
   - プロジェクト: {project_name}
-  - 付与ロール: {assigned_role_label}
   - 招待元オーナー: {inviter_owner_name}
   - 招待操作者: {inviter_admin_name}
 
@@ -275,62 +272,6 @@ open-faq <noreply@<service-domain>>
 **着地ページ**: SCR-018 メンバーアカウント有効化(01_画面設計/index.html §5.25)。
 
 **備考**: 再送時は **旧 `T_ACCESS_TOKENS` を失効させ新トークンを発行** したうえで本テンプレートで再送信(`MSG-SCR-009-001-TOAST-002` と整合)。本文は新規招待時と同一で、差出人による文脈は本文中の「招待操作者」フィールドで補足する。氏名は招待時点で未登録のため、宛先表示は `{recipient_email}` を用いる。
-
-------------------------------------------------------------------------
-
-### <span id="44-tpl-project_admin_inviteプロジェクト管理者招待"></span>4.4 TPL-PROJECT_ADMIN_INVITE(プロジェクト管理者招待)
-
-プロジェクト管理者(`role='admin'`)として招待する `critical` メールです。付与権限とアクティベーション URL を提示し、既存アカウントがある場合はログイン後に管理者割当を追加する経路に分岐します。
-
-**発火条件**: SCR-009-001 メンバー招待モーダルで `role='admin'` を指定して招待を実行した時、招待対象メールアドレスへ送信(FR-015 / FR-015e / FR-030a)。
-
-**テンプレート変数**:
-
-| 変数 | 説明 |
-|----|----|
-| `{recipient_email}` | 招待対象メールアドレス(表示名は未登録のため使用しない) |
-| `{inviter_owner_name}` | 招待元オーナーの表示名 |
-| `{project_name}` | 新規作成されたプロジェクト名 |
-| `{activation_url}` | アクティベーション URL(7d 有効、SCR-018 メンバーアカウント有効化ページに着地)またはログイン URL(既存アカウントの場合) |
-| `{expire_at_jst}` | 失効日時(JST) |
-
-**件名**: `{project_name} のプロジェクト管理者に招待されました`
-
-**本文(テキスト版)**:
-
-```json
-{recipient_email} 様
-
-{inviter_owner_name} 様から open-faq の {project_name} のプロジェクト管理
-者として招待されました。以下のリンクからお名前(表示名)と初回パスワード
-を設定し、利用規約・プライバシーポリシーに同意のうえ、アカウントを有効化
-してください。
-
-▶ アクティベーションを完了する
-{activation_url}
-
-このリンクは {expire_at_jst}(JST) まで有効です(発行から 7 日)。
-
-付与される権限:
-  - プロジェクト: {project_name}
-  - ロール: プロジェクト管理者(プロジェクトの設定変更、メンバー招待・
-    ロール変更、アカウント削除が可能)
-
-すでに open-faq のアカウントをお持ちの場合は、リンク先で同一メールアドレ
-スのアカウントに当該プロジェクトの管理者割当が追加されます。
-
-心当たりがない場合は本メールを破棄してください。
-
-──────────────────────────────────────────────
-このメールに直接返信しないでください。
-open-faq <noreply@<service-domain>>
-```
-
-**本文(HTML 版)**: プロジェクト名を大きく表示 + 「付与される権限」をリスト表示 + プライマリボタン「アクティベーションを完了する」。本文の必須項目に「氏名(表示名)入力 + 初回パスワード設定 + 利用規約・プライバシーポリシー同意」を含める。
-
-**着地ページ**: SCR-018 メンバーアカウント有効化(01_画面設計/index.html §5.25)。
-
-**備考**: 既存アカウントがある場合(FR-021c 名前解決)は `{activation_url}` がログイン URL になり、ログイン後に当該プロジェクトへ `M_PRJ_USER_ASGN.role='admin'` の割当(割当行)が追加される(マスタ行の追加ではなく割当の追加。SCR-018 はバイパス、氏名は既存値を保持)。
 
 ------------------------------------------------------------------------
 
@@ -378,15 +319,15 @@ open-faq <noreply@<service-domain>>
 
 **着地ページ**: **SCR-019 プロジェクト連絡先メール確認完了**(01_画面設計/index.html §5.26、共通領域、未認証可)。トークン検証成功時に `M_PROJECTS.contact_verified_at=now()` をセットし、結果(完了 / 期限切れ / 既使用)を表示する。
 
-**備考**: 受信者はオーナーや管理者である必要はなく、第三者(例: サポート窓口担当者の共有メールアドレス)でも構わない。アカウント作成や認証は不要で、トークン保有者のみが本フローを進められる。トークンは `T_ACCESS_TOKENS.purpose='contact_verify'`(24 時間)、`meta` に `projectId` を JSON 保持(FR-033a)。
+**備考**: 受信者はオーナーやメンバーである必要はなく、第三者(例: サポート窓口担当者の共有メールアドレス)でも構わない。アカウント作成や認証は不要で、トークン保有者のみが本フローを進められる。トークンは `T_ACCESS_TOKENS.purpose='contact_verify'`(24 時間)、`meta` に `projectId` を JSON 保持(FR-033a)。
 
 ------------------------------------------------------------------------
 
 ### <span id="46-tpl-lockout_notifyログインロックアウト発動"></span>4.6 TPL-LOCKOUT_NOTIFY(ログインロックアウト発動)
 
-連続ログイン失敗でロックアウトが発動したことを本人とオーナー / 全プロジェクト管理者へ知らせる `critical` メールです。ロック詳細と不正試行が疑われる場合の対応を提示します。
+連続ログイン失敗でロックアウトが発動したことを本人とオーナー / 全メンバーへ知らせる `critical` メールです。ロック詳細と不正試行が疑われる場合の対応を提示します。
 
-**発火条件**: FR-007 連続ログイン失敗閾値到達時。宛先は本人 + **オーナー(`M_OWNERS` マスタから取得)** + **当該オーナースコープのプロジェクト管理者(`M_PRJ_USER_ASGN.role='admin' AND valid=1`)**。オーナーと管理者は別マスタ(`M_OWNERS` と `M_PRJ_USERS` / 割当は `M_PRJ_USER_ASGN`)で完全分離しているため、両マスタから個別に解決しマージして送信する(オーナーは管理者クエリ単独では網羅されない)。
+**発火条件**: FR-007 連続ログイン失敗閾値到達時。宛先は本人 + **オーナー(`M_CONTRACT` 由来)** + **当該スコープの有効メンバー(`M_PRJ_USERS.valid=1`)**。正規化メールで重複排除する(オーナーはメンバー行も自動保持するため両方に出る)。
 
 **テンプレート変数**:
 
@@ -597,7 +538,7 @@ open-faq <noreply@<service-domain>>
 
 ### <span id="410-tpl-billing_suspensionサスペンション開始解除"></span>4.10 TPL-BILLING_SUSPENSION(サスペンション開始/解除)
 
-未払いによるサービス停止の開始 / 解除を通知する `critical` メールです。`{suspension_event}` が `start` / `release` のいずれかで件名・本文を分岐し、オーナー + 全プロジェクト管理者へ配信します。
+未払いによるサービス停止の開始 / 解除を通知する `critical` メールです。`{suspension_event}` が `start` / `release` のいずれかで件名・本文を分岐し、オーナー + 全メンバーへ配信します。
 
 **発火条件**: Stripe Smart Retries 最終失敗時のサスペンション開始、または支払い完了時の解除。
 
@@ -654,7 +595,7 @@ open-faq <noreply@<service-domain>>
 
 **本文(HTML 版)**: `start` は赤系警告 + 停止範囲リスト、`release` は緑系 + 簡潔な解除通知。
 
-**備考**: オーナー + 全プロジェクト管理者へ配信(`critical`)。
+**備考**: オーナー + 全メンバー(当該スコープの `M_PRJ_USERS.valid=1`)へ配信(`critical`)。正規化メールで重複排除する。
 
 ------------------------------------------------------------------------
 
@@ -668,7 +609,7 @@ open-faq <noreply@<service-domain>>
 
 | 変数                        | 説明                                        |
 |-----------------------------|---------------------------------------------|
-| `{recipient_display_name}`  | 受信者表示名(オーナー / 当該 PJ 管理者)     |
+| `{recipient_display_name}`  | 受信者表示名(オーナー)     |
 | `{project_name}`            | 無料枠を超過したプロジェクト名              |
 | `{exceeded_resource_label}` | 超過した無料枠の種別(`質問数` / `FAQ 件数`) |
 | `{stopped_at_jst}`          | ウィジェット質問受付停止日時(JST)           |
@@ -702,9 +643,9 @@ open-faq <noreply@<service-domain>>
 
 ### <span id="412-tpl-terms_revision利用規約改定告知"></span>4.12 TPL-TERMS_REVISION(利用規約改定告知)
 
-利用規約・プライバシーポリシー改定の発効 30 日前にオーナー + 全プロジェクト管理者へ送る `critical` メールです。改定要約・新規約 URL・同意期限(発効日 + 14d)・再同意 deeplink を提示します。
+利用規約・プライバシーポリシー改定の発効 30 日前にオーナー + 全メンバーへ送る `critical` メールです。改定要約・新規約 URL・同意期限(発効日 + 14d)・再同意 deeplink を提示します。
 
-**発火条件**: 利用規約・プライバシーポリシー改定の発効日 30 日前に送信(FR-011)。オーナー + 全プロジェクト管理者へ配信。
+**発火条件**: 利用規約・プライバシーポリシー改定の発効日 30 日前に送信(FR-011)。オーナー + 全メンバー(当該スコープの `M_PRJ_USERS.valid=1`)へ配信し、正規化メールで重複排除する。
 
 **テンプレート変数**:
 
@@ -817,7 +758,7 @@ open-faq 運営事務局よりお知らせいたします。
 | question_limit_threshold_reached | {related_resource}: 当月の質問数が上限の {threshold_percent}% に達しました |
 | quota_override_applied | プロジェクト上限が更新されました |
 
-> 質問数上限アラートの配信先はオーナー + 当該プロジェクトの有効な管理者。画面上で送信先は変更できず、ユーザーIDと正規化メールアドレスで重複排除する。
+> 質問数上限アラートの配信先はオーナー + 当該プロジェクトの有効メンバー(`M_PRJ_USERS.valid=1`)。画面上で送信先は変更できず、ユーザーIDと正規化メールアドレスで重複排除する。
 
 **本文(テキスト版・テンプレート骨格)**:
 
@@ -854,24 +795,24 @@ open-faq <noreply@<service-domain>>
 
 ### <span id="51-配信先解決ロジック"></span>5.1 配信先解決ロジック
 
-テンプレートごとに配信先を決める解決ロジックを定めます。次の表は通知 ID と配信先解決方法を対応させたもので、ロックアウト・課金系の `admin AND valid=1` 起点の網羅解決などを含みます。
+テンプレートごとに配信先を決める解決ロジックを定めます。次の表は通知 ID と配信先解決方法を対応させたもので、ロックアウト・課金系の有効メンバー(`valid=1`)起点の網羅解決などを含みます。
 
 | 通知 ID | 配信先解決 |
 |----|----|
 | TPL-EMAIL_VERIFY / PASSWORD_RESET | 操作者本人のメールアドレス(セッションから) |
-| TPL-ADMIN_USER_REGISTER / PROJECT_ADMIN_INVITE | 招待時に入力されたメールアドレス(`T_ACCESS_TOKENS.target_email`) |
+| TPL-ADMIN_USER_REGISTER | 招待時に入力されたメールアドレス(`T_ACCESS_TOKENS.target_email`) |
 | TPL-PROJECT_CONTACT_VERIFY | プロジェクト連絡先メールアドレス |
-| TPL-LOCKOUT_NOTIFY | ロック対象者 + 同一オーナースコープで `M_PRJ_USER_ASGN.role='admin' AND valid=1` を 1 件でも保持する全ユーザー(オーナー + 全プロジェクト管理者を網羅) |
-| TPL-DELETION_REMINDER / PAYMENT_METHOD_REQUIRED / BILLING_INVOICE_ISSUED / BILLING_PAYMENT_FAILED | 契約のオーナー(`M_OWNERS` 行が存在する主体)のみ |
-| TPL-BILLING_SUSPENSION / TERMS_REVISION | オーナー + 同一オーナースコープ配下の全プロジェクト管理者 |
+| TPL-LOCKOUT_NOTIFY | ロック対象者 + オーナー(`M_CONTRACT` 由来) + 当該スコープの有効メンバー(`M_PRJ_USERS.valid=1`)。正規化メールで重複排除(オーナー + 全メンバーを網羅) |
+| TPL-DELETION_REMINDER / PAYMENT_METHOD_REQUIRED / BILLING_INVOICE_ISSUED / BILLING_PAYMENT_FAILED | 契約のオーナー(`M_CONTRACT` 由来)のみ |
+| TPL-BILLING_SUSPENSION / TERMS_REVISION | オーナー(`M_CONTRACT` 由来) + 当該スコープの有効メンバー(`M_PRJ_USERS.valid=1`)。正規化メールで重複排除 |
 | TPL-SERVICE_ANNOUNCEMENT | 配信時に指定する範囲(全契約 / 単一契約 / 特定プロジェクト) |
-| TPL-SYSTEM_NOTICE | `question_limit_threshold_reached` はオーナー + 当該プロジェクトの `M_PRJ_USER_ASGN.role='admin' AND valid=1`。その他はサブ契機ごとに定義 |
+| TPL-SYSTEM_NOTICE | `question_limit_threshold_reached` はオーナー + 当該プロジェクトの有効メンバー(`M_PRJ_USERS.valid=1`)。その他はサブ契機ごとに定義 |
 
 ### <span id="52-重要度別の強制送信ルール共有概念正本"></span>5.2 重要度別の強制送信ルール(共有概念正本)
 
 通知重要度 4 値ごとにオプトアウト可否と強制送信の扱いを定めます。次の各項目は `critical` / `high` の強制送信と `normal` / `low` のオプトアウト方式を示し、重要度の正本ルールは 共有概念.html に従います。
 
-- `critical`: 受信オプトアウト不可、必ずメール送信。`TPL-EMAIL_VERIFY` / `PASSWORD_RESET` / `ADMIN_USER_REGISTER` / `PROJECT_ADMIN_INVITE` / `PROJECT_CONTACT_VERIFY` / `LOCKOUT_NOTIFY` / `BILLING_SUSPENSION` / `PAYMENT_METHOD_REQUIRED` / `TERMS_REVISION` / `SERVICE_ANNOUNCEMENT`(`critical` 選択時)
+- `critical`: 受信オプトアウト不可、必ずメール送信。`TPL-EMAIL_VERIFY` / `PASSWORD_RESET` / `ADMIN_USER_REGISTER` / `PROJECT_CONTACT_VERIFY` / `LOCKOUT_NOTIFY` / `BILLING_SUSPENSION` / `PAYMENT_METHOD_REQUIRED` / `TERMS_REVISION` / `SERVICE_ANNOUNCEMENT`(`critical` 選択時)
 - `high`: 強制送信(オプトアウト不可)
 - `normal`: 受信オプトアウト可能(プロジェクト関連通知トグルで一括制御)
 - `low`: 個別オプトアウト + `List-Unsubscribe` ヘッダで RFC 8058 対応
@@ -927,12 +868,9 @@ open-faq <noreply@<service-domain>>
 
 | 版数 | 日付 | 変更内容 |
 |----|----|----|
+| v1.3 | 2026-06-20 | ユーザー種別をオーナー/メンバーの2種へ統合(プロジェクト管理者を廃止)。`TPL-PROJECT_ADMIN_INVITE`(プロジェクト管理者招待)を廃止し、メンバー招待を `TPL-ADMIN_USER_REGISTER`(共通メンバー招待)へ一本化。`{assigned_role_label}` 変数と「付与ロール」記載を削除。契約横断 critical 通知(LOCKOUT_NOTIFY / BILLING_SUSPENSION / TERMS_REVISION / 質問数上限アラート)の宛先を「オーナー + 全プロジェクト管理者」から「オーナー(`M_CONTRACT` 由来) + 当該スコープの有効メンバー(`M_PRJ_USERS.valid=1`、正規化メールで重複排除)」へ更新。 |
 | v1.2 | 2026-06-17 | 記載スタイル標準(設計書シンプルテンプレ v2)へ移行。旧「1. 文書概要(目的 / 対象範囲 / 版数表 / 関連ドキュメント表)」を要約ブロック(`ps-lead`)+ `doc-meta` + 範囲 callout へ集約。各 `<h2>` / `<h3>` 直後に `section-lead` を追加。テンプレート ID(`TPL-*`)・通知 ID(`NOTIF-*`)・件名 / 本文テンプレート全文・配信契機・変数・配信運用ルールは一切改変せず保持。 |
 | v1.2 | 2026-06-17 | (旧履歴)プロジェクト管理者招待(`TPL-PROJECT_ADMIN_INVITE`)・無料枠超過支払方法登録要請(`TPL-PAYMENT_METHOD_REQUIRED`)等を含むテンプレート群を整備。 |
-
----
-
----
 
 ---
 

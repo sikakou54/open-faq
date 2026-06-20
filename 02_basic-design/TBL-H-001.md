@@ -83,10 +83,6 @@ FAQ の改訂履歴を全文スナップショットで最大 50 件保持しま
 
 ---
 
----
-
----
-
 <!-- portal-bottom -->
 [← データベース設計](03_database-design.md) ・ [基本設計](index.md) ・ [↑ 設計ポータル](../README.md)
 <!-- /portal-bottom -->

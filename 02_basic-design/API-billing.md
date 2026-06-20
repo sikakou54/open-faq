@@ -31,7 +31,7 @@
 | エンドポイント | `/usage`                                              |
 | HTTP メソッド  | GET                                                   |
 | 認証           | Cookie                                                |
-| 権限           | オーナー / 該当プロジェクトの `admin` または `member` |
+| 権限           | オーナー / 当該プロジェクトのメンバー                 |
 
 契約全体の利用状況は API-033 `GET /owner/projects/usage` を使用する。
 
@@ -483,7 +483,7 @@ GET: `{ "registered": true, "brand": "visa", "last4": "4242", "expMonth": 12, "e
 | エンドポイント | `/projects/{id}/quota-limits` |
 | HTTP メソッド | GET |
 | 認証 | Cookie |
-| 権限 | オーナー / 該当プロジェクトの `admin` または `member`(閲覧) |
+| 権限 | オーナー / 当該プロジェクトのメンバー(閲覧) |
 
 SCR-021 の表示には `used` / `limitEnabled` / `limit` / `percentage` / `yenEquivalent` だけを使用し、アラート設定・設定元は表示しない。SCR-021-001 は `limitEnabled` / `limit` / `alertThresholds` を使用する。FAQ 件数は扱わないためレスポンスに含めない。質問数の無料利用枠は課金判定用の内部データとして保持するが、本 API のレスポンスには含めない。
 
@@ -566,7 +566,7 @@ SCR-021 の表示には `used` / `limitEnabled` / `limit` / `percentage` / `yenE
 | エンドポイント | `/projects/{id}/quota-limits/questions` |
 | HTTP メソッド | PATCH |
 | 認証 | 再認証必須 |
-| 権限 | オーナー / 該当プロジェクトの `admin`(member は `E-AUTHZ-FORBIDDEN`) |
+| 権限 | オーナー / 当該プロジェクトのメンバー |
 
 `M_PRJ_QUOTA_LIMITS.resource_kind='q_monthly_limit'` かつ `source='owner'` の 1 行だけを upsert する。質問数の `free_quota` と FAQ 件数の行は更新しない。
 
@@ -576,7 +576,7 @@ SCR-021 の表示には `used` / `limitEnabled` / `limit` / `percentage` / `yenE
 
 | 処理 ID | 処理内容                                                        |
 |---------|-----------------------------------------------------------------|
-| P-01    | 認証・認可(オーナー / 該当 PJ の `admin`、再認証必須)を検証する |
+| P-01    | 認証・認可(オーナー / 当該プロジェクトのメンバー、再認証必須)を検証する |
 | P-02    | 入力(上限 ON/OFF・件数・アラート閾値)を検証し正規化する         |
 | P-03    | 質問数月次上限(`source='owner'`)を作成 / 更新する               |
 | P-04    | 参考課金額を再算出し更新後の値を返却する                        |
@@ -642,11 +642,7 @@ SCR-021 の表示には `used` / `limitEnabled` / `limit` / `percentage` / `yenE
 | HTTP ステータス | エラーコード | 内容 |
 |----|----|----|
 | 422 | (未サポート項目) | `freeQuota` / `alertEnabled` / `alertFrequency` を指定 |
-| 403 | `E-AUTHZ-FORBIDDEN` | member による変更 / 当該プロジェクトに割当のないユーザー |
-
----
-
----
+| 403 | `E-AUTHZ-FORBIDDEN` | 当該プロジェクトに割当のないユーザー |
 
 ---
 

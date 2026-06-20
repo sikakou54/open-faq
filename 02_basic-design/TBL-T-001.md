@@ -37,7 +37,7 @@
 <tr>
 <td>外部キー</td>
 <td><ul>
-<li><code>actor_type</code> + <code>actor_id</code> → <code>M_CONTRACT(id)</code> / <code>M_PRJ_USERS(id)</code>(論理参照)</li>
+<li><code>user_id → M_USER(id)</code></li>
 </ul></td>
 </tr>
 </tbody>
@@ -48,20 +48,19 @@
 | No | 論理名 | 物理名 | データ型 | 桁数 | NULL | PK | FK | UNIQUE | DEFAULT | 制約 |
 |---:|----|----|----|---:|----|----|----|----|----|----|
 | 1 | ID | `id` | TEXT | \- | NO | ○ |  |  |  |  |
-| 2 | 操作者種別 | `actor_type` | TEXT | \- | NO |  |  |  |  | `actor_type IN ('owner','project_user')` |
-| 3 | 操作者 ID | `actor_id` | TEXT | \- | NO |  |  |  |  | `actor_type` に応じ `M_CONTRACT(id)` / `M_PRJ_USERS(id)` を指す(論理参照) |
-| 4 | IP アドレス | `ip_address` | TEXT | \- | NO |  |  |  |  |  |
-| 5 | ユーザーエージェント | `user_agent` | TEXT | \- | YES |  |  |  |  |  |
-| 6 | 作成日時 | `created_at` | TEXT | \- | NO |  |  |  |  |  |
-| 7 | 最終アクセス日時 | `last_accessed_at` | TEXT | \- | NO |  |  |  |  |  |
-| 8 | 有効期限 | `expires_at` | TEXT | \- | NO |  |  |  |  |  |
-| 9 | 失効日時 | `revoked_at` | TEXT | \- | YES |  |  |  |  |  |
+| 2 | ユーザーID | `user_id` | TEXT | \- | NO |  | `M_USER(id)` |  |  |  |
+| 3 | IP アドレス | `ip_address` | TEXT | \- | NO |  |  |  |  |  |
+| 4 | ユーザーエージェント | `user_agent` | TEXT | \- | YES |  |  |  |  |  |
+| 5 | 作成日時 | `created_at` | TEXT | \- | NO |  |  |  |  |  |
+| 6 | 最終アクセス日時 | `last_accessed_at` | TEXT | \- | NO |  |  |  |  |  |
+| 7 | 有効期限 | `expires_at` | TEXT | \- | NO |  |  |  |  |  |
+| 8 | 失効日時 | `revoked_at` | TEXT | \- | YES |  |  |  |  |  |
 
 ### <span id="345-インデックス"></span>インデックス
 
 | No | インデックス名 | 対象カラム | UNIQUE | 用途 |
 |---:|----|----|----|----|
-| 1 | `idx_sessions_actor` | `(actor_type, actor_id)` WHERE `revoked_at IS NULL` |  | ユーザーの有効セッション抽出 |
+| 1 | `idx_sessions_user` | `user_id` WHERE `revoked_at IS NULL` |  | ユーザーの有効セッション抽出 |
 | 2 | `idx_sessions_expires` | `expires_at` WHERE `revoked_at IS NULL` |  | 期限切れ抽出 |
 
 ### <span id="347-コード値区分値"></span>コード値・区分値
@@ -72,11 +71,7 @@
 
 このテーブルを読み書きする画面と API です(逆引き)。
 
-**画面** [SCR-001](SCR-001.md) [SCR-004-001](SCR-004-001.md) [SCR-007](SCR-007.md) [SCR-009-001](SCR-009-001.md) [SCR-WIDGET](SCR-WIDGET.md) **API** [API-AUTH-002](02_api-design.md#API-AUTH-002) [API-AUTH-003](02_api-design.md#API-AUTH-003) [API-MBR-004](02_api-design.md#API-MBR-004) [API-PRJ-003](02_api-design.md#API-PRJ-003) [API-WGT-001](02_api-design.md#API-WGT-001)
-
----
-
----
+**画面** [SCR-001](SCR-001.md) [SCR-004-001](SCR-004-001.md) [SCR-007](SCR-007.md) [SCR-009-001](SCR-009-001.md) **API** [API-AUTH-002](02_api-design.md#API-AUTH-002) [API-AUTH-003](02_api-design.md#API-AUTH-003) [API-MBR-004](02_api-design.md#API-MBR-004) [API-PRJ-003](02_api-design.md#API-PRJ-003)
 
 ---
 

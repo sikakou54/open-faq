@@ -37,7 +37,7 @@
 <tr>
 <td>外部キー</td>
 <td><ul>
-<li><code>actor_type</code> + <code>actor_id</code> → <code>M_CONTRACT(id)</code> / <code>M_PRJ_USERS(id)</code>(論理参照)</li>
+<li><code>user_id → M_USER(id)</code></li>
 <li><code>(doc_type, terms_version)</code> → <code>M_TERMS_VER(doc_type, version)</code></li>
 </ul></td>
 </tr>
@@ -49,18 +49,17 @@
 | No | 論理名 | 物理名 | データ型 | 桁数 | NULL | PK | FK | UNIQUE | DEFAULT | 制約 |
 |---:|----|----|----|---:|----|----|----|----|----|----|
 | 1 | ID | `id` | TEXT | \- | NO | ○ |  |  |  |  |
-| 2 | 操作者種別 | `actor_type` | TEXT | \- | NO |  |  | ① |  | `actor_type IN ('owner','project_user')` |
-| 3 | 操作者 ID | `actor_id` | TEXT | \- | NO |  |  | ① |  | `actor_type` に応じ `M_CONTRACT(id)` / `M_PRJ_USERS(id)` を指す(論理参照) |
-| 4 | 文書種別 | `doc_type` | TEXT | \- | NO |  | `M_TERMS_VER(doc_type)` | ① |  |  |
-| 5 | 規約版 | `terms_version` | TEXT | \- | NO |  | `M_TERMS_VER(version)` | ① |  |  |
-| 6 | 同意日時 | `agreed_at` | TEXT | \- | NO |  |  |  |  |  |
-| 7 | 同意 IP(マスク済) | `agreed_ip_masked` | TEXT | \- | YES |  |  |  |  |  |
+| 2 | ユーザーID | `user_id` | TEXT | \- | NO |  | `M_USER(id)` | ① |  |  |
+| 3 | 文書種別 | `doc_type` | TEXT | \- | NO |  | `M_TERMS_VER(doc_type)` | ① |  |  |
+| 4 | 規約版 | `terms_version` | TEXT | \- | NO |  | `M_TERMS_VER(version)` | ① |  |  |
+| 5 | 同意日時 | `agreed_at` | TEXT | \- | NO |  |  |  |  |  |
+| 6 | 同意 IP(マスク済) | `agreed_ip_masked` | TEXT | \- | YES |  |  |  |  |  |
 
 ### <span id="3315-インデックス"></span>インデックス
 
 | No | インデックス名 | 対象カラム | UNIQUE | 用途 |
 |---:|----|----|----|----|
-| 1 | `uq_terms_actor_doc_version` | `(actor_type, actor_id, doc_type, terms_version)` | ○ | 操作者 × 文書 × 版で一意 |
+| 1 | `uq_terms_user_doc_version` | `(user_id, doc_type, terms_version)` | ○ | ユーザー × 文書 × 版で一意 |
 
 ### <span id="3317-コード値区分値"></span>コード値・区分値
 
@@ -71,10 +70,6 @@
 このテーブルを読み書きする画面と API です(逆引き)。
 
 **画面** [SCR-002](SCR-002.md) [SCR-010](SCR-010.md) [SCR-015](SCR-015.md) [SCR-018](SCR-018.md) [SCR-020](SCR-020.md) **API** [API-AUTH-001](02_api-design.md#API-AUTH-001) [API-AUTH-008](02_api-design.md#API-AUTH-008)
-
----
-
----
 
 ---
 

@@ -26,7 +26,7 @@
 | エンドポイント | `/inquiries`                    |
 | HTTP メソッド  | GET                             |
 | 認証           | Cookie                          |
-| 権限           | オーナー / 該当 PJ の `member`+ |
+| 権限           | オーナー / 当該プロジェクトのメンバー |
 
 ### 処理概要
 
@@ -104,7 +104,7 @@
 | エンドポイント | `/inquiries/{id}`               |
 | HTTP メソッド  | GET / PATCH                     |
 | 認証           | Cookie + CSRF(PATCH)            |
-| 権限           | オーナー / 該当 PJ の `member`+ |
+| 権限           | オーナー / 当該プロジェクトのメンバー |
 
 PATCH は状況の手動切替のみを更新可能とし、担当者概念は持たない。
 
@@ -171,10 +171,6 @@ GET は未解決質問の詳細、PATCH は更新後の状況。
 | `projectId` | string | 当該未解決質問が属するプロジェクトの ID |
 | `createdAt` | string (ISO 8601) | 未解決質問の登録日時 |
 | `updatedAt` | string (ISO 8601) | 状況の最終更新日時 |
-
----
-
----
 
 ---
 

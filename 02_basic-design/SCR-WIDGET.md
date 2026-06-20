@@ -187,10 +187,6 @@ flowchart LR
 
 ---
 
----
-
----
-
 <!-- portal-bottom -->
 [← 画面設計](01_screen-design.md) ・ [基本設計](index.md) ・ [↑ 設計ポータル](../README.md)
 <!-- /portal-bottom -->

@@ -95,10 +95,6 @@
 
 ---
 
----
-
----
-
 <!-- portal-bottom -->
 [← API設計](02_api-design.md) ・ [基本設計](index.md) ・ [↑ 設計ポータル](../README.md)
 <!-- /portal-bottom -->

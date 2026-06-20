@@ -75,7 +75,7 @@ def footer(gdir, glabel, fname):
     return " ・ ".join(links)
 
 NAV_RE = re.compile(r'^<!-- portal-top -->.*?<!-- /portal-top -->\n+', re.S)
-FOOT_RE = re.compile(r'\n+<!-- portal-bottom -->.*?<!-- /portal-bottom -->\n*$', re.S)
+FOOT_RE = re.compile(r'\n+(?:---\n+)*<!-- portal-bottom -->.*?<!-- /portal-bottom -->\n*$', re.S)
 
 def inject(path, gdir, glabel):
     fname = os.path.basename(path)

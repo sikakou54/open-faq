@@ -6,7 +6,7 @@
 
 **画面設計・API設計・データベース設計の 3 つの独立設計書を横断し、業務の流れ(ユースケース)を「アクター → 画面 → API → DB」のシーケンスで明確化する設計書です。** 各設計書をどう組み合わせて 1 つの業務が成立するかを、本書のシーケンス図とトレーサビリティ・マトリクスで追跡できます。
 
-*版数 v2.0(新規) ・ 更新 2026-06-19 ・ ユースケース 10 ・ 横断設計書*
+*版数 v2.2 ・ 更新 2026-06-20 ・ ユースケース 10 ・ 横断設計書*
 
 ## <span id="model"></span>0.横断設計の考え方
 
@@ -64,7 +64,7 @@
 <tr>
 <td><a href="#UC-04"><code>UC-04</code></a></td>
 <td><strong>メンバー招待〜アカウント有効化</strong></td>
-<td>オーナー / 管理者 → 被招待者</td>
+<td>オーナー / メンバー → 被招待者</td>
 <td><a href="01_screen-design.md#SCR-009-001" style="font-size:10.5px">SCR-009-001</a> <a href="01_screen-design.md#SCR-018" style="font-size:10.5px">SCR-018</a></td>
 <td style="font-size: 11.5px">FR02 ユーザー管理</td>
 </tr>
@@ -140,7 +140,7 @@ sequenceDiagram
   participant ML as メール配信IF
   U->>S2: メール/パスワード/規約同意を入力
   S2->>API: POST /auth/signup
-  API->>DB: M_CONTRACT(C) ・ T_TERMS_AGREE(C) ・ T_ACCESS_TOKENS(C)
+  API->>DB: M_USER(C) ・ M_CONTRACT(C) ・ T_TERMS_AGREE(C) ・ T_ACCESS_TOKENS(C)
   DB-->>API: 
   API->>ML: 確認メール送信(TPL-VERIFY)
   ML-->>API: 
@@ -208,31 +208,31 @@ sequenceDiagram
 
 ### <span id="UC-04"></span>UC-04 メンバー招待〜アカウント有効化
 
-**アクター** オーナー / 管理者 → 被招待者 **関連要件** FR02 ユーザー管理
+**アクター** オーナー / メンバー → 被招待者 **関連要件** FR02 ユーザー管理
 
 |  |  |
 |----|----|
-| **事前条件** | プロジェクトに admin 権限で参加している。 |
-| **事後条件** | 被招待者の `M_PRJ_USERS` が有効化され、`M_PRJ_USERS` でロールが付与される。 |
+| **事前条件** | オーナーまたは当該プロジェクトのメンバーである。 |
+| **事後条件** | 被招待者の `M_USER`(予約行)が有効化(`status='active'`)され、当該プロジェクトのメンバー割当(`M_PRJ_USERS`)が有効になる。 |
 | **関連画面** | [`SCR-009-001`](01_screen-design.md#SCR-009-001) ・ [`SCR-018`](01_screen-design.md#SCR-018) |
 
 ```mermaid
 sequenceDiagram
   autonumber
-  actor A as 管理者
+  actor A as メンバー
   actor I as 被招待者
   participant SM as モーダル SCR-009-001
   participant API as API /v1
   participant DB as DB (D1)
   participant ML as メール配信IF
-  A->>SM: メール・ロールを指定し招待
+  A->>SM: メールアドレスを指定し招待
   SM->>API: POST /projects/{id}/members
-  API->>DB: M_PRJ_USERS(CR) ・ M_PRJ_USERS(CR) ・ T_ACCESS_TOKENS(C)
+  API->>DB: M_USER(C:予約行) ・ M_PRJ_USERS(C) ・ T_ACCESS_TOKENS(C)
   DB-->>API: 
   API->>ML: 招待メール送信(H_NOTIF_LOGS(C))
   ML-->>API: 
   I->>API: 招待リンク POST /auth/invitations/{token}/activate
-  API->>DB: T_ACCESS_TOKENS(RU) ・ M_PRJ_USERS(U) ・ M_PRJ_USERS(U) ・ T_TERMS_AGREE(C)
+  API->>DB: T_ACCESS_TOKENS(RU) ・ M_USER(U) ・ M_PRJ_USERS(U) ・ T_TERMS_AGREE(C)
   DB-->>API: 
   API-->>I: 画面 SCR-018 有効化完了
 ```
@@ -314,7 +314,7 @@ sequenceDiagram
   participant AI as AI推論IF
   participant DB as DB (D1)
   W->>API: POST /widget/v1/bootstrap (公開鍵+ドメイン検証)
-  API->>DB: M_PROJECTS(R) ・ M_ALLOWED_DOMAINS(R) ・ T_SESSIONS(C)
+  API->>DB: M_PROJECTS(R) ・ M_ALLOWED_DOMAINS(R)
   DB-->>API: 
   E->>W: 質問を入力
   W->>API: POST /widget/v1/ask
@@ -423,8 +423,8 @@ sequenceDiagram
 
 | 要件群 | UC | 画面 | 中核API | 主テーブル |
 |----|----|----|----|----|
-| **FR01 アカウント管理** | UC-01 / UC-02 | SCR-001/002/013 | `POST /auth/signup ・ /auth/login` | `M_CONTRACT` ・ `T_SESSIONS` ・ `T_TERMS_AGREE` |
-| **FR02 ユーザー管理** | UC-04 | SCR-009 / SCR-009-001 / SCR-018 | `POST /projects/{id}/members` | `M_PRJ_USERS` ・ `M_PRJ_USERS` ・ `T_ACCESS_TOKENS` |
+| **FR01 アカウント管理** | UC-01 / UC-02 | SCR-001/002/013 | `POST /auth/signup ・ /auth/login` | `M_USER` ・ `M_CONTRACT` ・ `T_SESSIONS` ・ `T_TERMS_AGREE` |
+| **FR02 ユーザー管理** | UC-04 | SCR-009 / SCR-009-001 / SCR-018 | `POST /projects/{id}/members` | `M_USER` ・ `M_PRJ_USERS` ・ `T_ACCESS_TOKENS` |
 | **FR03 プロジェクト管理** | UC-03 | SCR-004 / SCR-004-001 | `POST/PATCH/DELETE /projects` | `M_PROJECTS` ・ `M_ALLOWED_DOMAINS` |
 | **FR04 FAQ管理** | UC-05 | SCR-006 / SCR-006-001 | `PATCH /faqs/{id}` | `M_FAQS` ・ `H_FAQ_REV` ・ `TP_FAQ_FTS` |
 | **FR05 / FR20 AI回答** | UC-07 | WIDGET | `POST /widget/v1/ask` | `H_QUESTION_LOGS` ・ `M_FAQS` ・ `T_USAGE_METER` |
@@ -437,10 +437,6 @@ sequenceDiagram
 
 > [!TIP]
 > **縦串が一直線に追える** 要件(FR)から DB テーブルまで、各層の設計書を本マトリクスとシーケンス図がつなぎます。逆方向(テーブル → 使用元 API / 画面)は [データベース設計書 §6](03_database-design.md#def) の「使用元」で追跡できます。
-
----
-
----
 
 ---
 

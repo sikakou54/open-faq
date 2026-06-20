@@ -37,7 +37,7 @@
 <tr>
 <td>外部キー</td>
 <td><ul>
-<li><code>actor_type</code> + <code>actor_id</code> → <code>M_CONTRACT(id)</code> / <code>M_PRJ_USERS(id)</code>(論理参照)</li>
+<li><code>user_id → M_USER(id)</code>(<code>contact_verify</code> は主体ユーザーが無く NULL。対象プロジェクトは <code>meta</code>)</li>
 </ul></td>
 </tr>
 </tbody>
@@ -48,14 +48,13 @@
 | No | 論理名 | 物理名 | データ型 | 桁数 | NULL | PK | FK | UNIQUE | DEFAULT | 制約 |
 |---:|----|----|----|---:|----|----|----|----|----|----|
 | 1 | ID | `id` | TEXT | \- | NO | ○ |  |  |  |  |
-| 2 | 操作者種別 | `actor_type` | TEXT | \- | NO |  |  |  |  | `actor_type IN ('owner','project_user')` |
-| 3 | 操作者 ID | `actor_id` | TEXT | \- | NO |  |  |  |  | `actor_type` に応じ `M_CONTRACT(id)` / `M_PRJ_USERS(id)` を指す(論理参照) |
-| 4 | トークンハッシュ | `token_hash` | TEXT | \- | NO |  |  | ○ |  |  |
-| 5 | 用途 | `purpose` | TEXT | \- | NO |  |  |  |  | `purpose IN ('email_verify','password_reset','activation','contact_verify')` |
-| 6 | メタ情報 | `meta` | TEXT | \- | YES |  |  |  |  |  |
-| 7 | 作成日時 | `created_at` | TEXT | \- | NO |  |  |  |  |  |
-| 8 | 有効期限 | `expires_at` | TEXT | \- | NO |  |  |  |  |  |
-| 9 | 使用日時 | `used_at` | TEXT | \- | YES |  |  |  |  |  |
+| 2 | ユーザーID | `user_id` | TEXT | \- | YES |  | `M_USER(id)` |  |  | `contact_verify` は主体ユーザーが無く NULL(対象は `meta`) |
+| 3 | トークンハッシュ | `token_hash` | TEXT | \- | NO |  |  | ○ |  |  |
+| 4 | 用途 | `purpose` | TEXT | \- | NO |  |  |  |  | `purpose IN ('email_verify','password_reset','activation','contact_verify')` |
+| 5 | メタ情報 | `meta` | TEXT | \- | YES |  |  |  |  |  |
+| 6 | 作成日時 | `created_at` | TEXT | \- | NO |  |  |  |  |  |
+| 7 | 有効期限 | `expires_at` | TEXT | \- | NO |  |  |  |  |  |
+| 8 | 使用日時 | `used_at` | TEXT | \- | YES |  |  |  |  |  |
 
 ### <span id="355-インデックス"></span>インデックス
 
@@ -78,10 +77,6 @@
 このテーブルを読み書きする画面と API です(逆引き)。
 
 **画面** [SCR-002](SCR-002.md) [SCR-003](SCR-003.md) [SCR-004-001](SCR-004-001.md) [SCR-007](SCR-007.md) [SCR-009-001](SCR-009-001.md) [SCR-013](SCR-013.md) [SCR-014](SCR-014.md) [SCR-018](SCR-018.md) [SCR-019](SCR-019.md) **API** [API-AUTH-001](02_api-design.md#API-AUTH-001) [API-AUTH-004](02_api-design.md#API-AUTH-004) [API-AUTH-005](02_api-design.md#API-AUTH-005) [API-AUTH-006](02_api-design.md#API-AUTH-006) [API-AUTH-007](02_api-design.md#API-AUTH-007) [API-AUTH-008](02_api-design.md#API-AUTH-008) [API-AUTH-009](02_api-design.md#API-AUTH-009) [API-MBR-002](02_api-design.md#API-MBR-002) [API-MBR-004](02_api-design.md#API-MBR-004) [API-MBR-005](02_api-design.md#API-MBR-005) [API-PRJ-003](02_api-design.md#API-PRJ-003)
-
----
-
----
 
 ---
 
