@@ -123,7 +123,7 @@ FAQ 本体と改訂履歴・全文検索、質問ログ、参照 FAQ、未解決
 
 ### <span id="rel"></span>4.1 親子関係の図解(ドメイン別)
 
-全テーブルの親子関係を、テーブル一覧(§3)の機能ドメインに沿って図と表で示します(§3 の「認証・アカウント・契約」は、認証系を独立節として切り出しています)。各表は当該節に属する子テーブルの外部キーを**すべて**列挙します。多態参照(`*_id` + `*_type`)は `owner`→`M_CONTRACT` / `project_user`→`M_PRJ_USERS` を指します。
+全テーブルの親子関係を、テーブル一覧(§3)の機能ドメインに沿って図と表で示します(§3 の「認証・アカウント・契約」は認証系を独立節として切り出し、「FAQ・質問・未解決」は FAQ / 質問ログ・参照 FAQ / 未解決質問の 3 節に分割しています)。各表は当該節に属する子テーブルの外部キーを**すべて**列挙します。多態参照(`*_id` + `*_type`)は `owner`→`M_CONTRACT` / `project_user`→`M_PRJ_USERS` を指します。
 
 **(1) アカウント・契約・メンバー**
 
@@ -245,9 +245,9 @@ erDiagram
 | [`M_PROJECTS`](TBL-M-004.md) | [`M_ALLOWED_DOMAINS`](TBL-M-005.md)(`project_id`) | 1:N | ウィジェット埋め込み許可ドメイン |
 | [`M_PROJECTS`](TBL-M-004.md) | [`T_PRJ_LEGACY_KEYS`](TBL-T-003.md)(`project_id`) | 1:N | ローテーション時の旧公開キー(24 時間有効) |
 
-**(6) FAQ・質問・未解決**
+**(6) FAQ**
 
-FAQ・質問ログ・未解決質問は `M_PROJECTS` と `M_CONTRACT`(契約境界)に帰属する。質問ログは参照 FAQ(`T_QLOG_FAQ_REFS`)で `M_FAQS` と M:N に結ばれ、未解決化で `T_INQUIRIES` へ、未解決質問は FAQ 化(`source_inquiry_id`)で `M_FAQS` を生む。
+FAQ 本体 `M_FAQS` は `M_PROJECTS`(契約境界 `M_CONTRACT`)に帰属し、改訂履歴(`H_FAQ_REV`)と全文検索索引(`TP_FAQ_FTS`)を従える。未解決質問の FAQ 化(`source_inquiry_id`)で `T_INQUIRIES`(→ (8))から生まれ、質問ログから参照 FAQ(`T_QLOG_FAQ_REFS`、→ (7))として被参照される。
 
 ```mermaid
 erDiagram
@@ -258,25 +258,11 @@ erDiagram
   H_FAQ_REV { TEXT id PK
     TEXT faq_id FK "→M_FAQS.id" }
   TP_FAQ_FTS { INTEGER rowid PK }
-  H_QUESTION_LOGS { TEXT id PK
-    TEXT contract_id FK "→M_CONTRACT.id"
-    TEXT project_id FK "→M_PROJECTS.id" }
-  T_QLOG_FAQ_REFS { TEXT id PK
-    TEXT question_log_id FK "→H_QUESTION_LOGS.id"
-    TEXT faq_id FK "→M_FAQS.id" }
-  T_INQUIRIES { TEXT id PK
-    TEXT contract_id FK "→M_CONTRACT.id"
-    TEXT project_id FK "→M_PROJECTS.id"
-    TEXT question_log_id FK "→H_QUESTION_LOGS.id" }
   M_PROJECTS ||--o{ M_FAQS : "FAQ"
+  T_INQUIRIES ||--o| M_FAQS : "FAQ化"
   M_FAQS ||--o{ H_FAQ_REV : "改訂"
   M_FAQS ||--o| TP_FAQ_FTS : "全文索引"
-  M_PROJECTS ||--o{ H_QUESTION_LOGS : "質問ログ"
-  H_QUESTION_LOGS ||--o{ T_QLOG_FAQ_REFS : "参照FAQ"
   M_FAQS ||--o{ T_QLOG_FAQ_REFS : "被参照"
-  M_PROJECTS ||--o{ T_INQUIRIES : "未解決"
-  H_QUESTION_LOGS ||--o| T_INQUIRIES : "未解決化"
-  T_INQUIRIES ||--o| M_FAQS : "FAQ化"
 ```
 
 | 親 | 子(FK カラム) | 多重度 | 説明 |
@@ -288,15 +274,54 @@ erDiagram
 | [`M_FAQS`](TBL-M-006.md) | [`H_FAQ_REV`](TBL-H-001.md)(`faq_id`) | 1:N | 改訂履歴(最大 50 件) |
 | `M_CONTRACT` / `M_PRJ_USERS` | [`H_FAQ_REV`](TBL-H-001.md)(`created_by_id`) | 1:N | 改訂者(多態) |
 | [`M_FAQS`](TBL-M-006.md) | [`TP_FAQ_FTS`](TBL-TP-001.md)(`rowid`) | 1:1 | 全文検索索引(`rowid` 同期。物理 FK ではない) |
+
+**(7) 質問ログ・参照 FAQ**
+
+ウィジェット利用者の質問ログ `H_QUESTION_LOGS` は `M_PROJECTS`(契約境界 `M_CONTRACT`)に帰属し、AI が参照した FAQ を中間テーブル `T_QLOG_FAQ_REFS` で `M_FAQS`(→ (6))と M:N に結ぶ。未解決化すると `T_INQUIRIES`(→ (8))を生む。
+
+```mermaid
+erDiagram
+  H_QUESTION_LOGS { TEXT id PK
+    TEXT contract_id FK "→M_CONTRACT.id"
+    TEXT project_id FK "→M_PROJECTS.id" }
+  T_QLOG_FAQ_REFS { TEXT id PK
+    TEXT question_log_id FK "→H_QUESTION_LOGS.id"
+    TEXT faq_id FK "→M_FAQS.id" }
+  M_PROJECTS ||--o{ H_QUESTION_LOGS : "質問ログ"
+  H_QUESTION_LOGS ||--o{ T_QLOG_FAQ_REFS : "参照FAQ"
+  M_FAQS ||--o{ T_QLOG_FAQ_REFS : "被参照"
+  H_QUESTION_LOGS ||--o| T_INQUIRIES : "未解決化"
+```
+
+| 親 | 子(FK カラム) | 多重度 | 説明 |
+|----|----|----|----|
 | [`M_CONTRACT`](TBL-M-002.md) | [`H_QUESTION_LOGS`](TBL-H-002.md)(`contract_id`) | 1:N | 契約境界 |
 | [`M_PROJECTS`](TBL-M-004.md) | [`H_QUESTION_LOGS`](TBL-H-002.md)(`project_id`) | 1:N | 質問ログ |
 | [`H_QUESTION_LOGS`](TBL-H-002.md) | [`T_QLOG_FAQ_REFS`](TBL-T-004.md)(`question_log_id`) | 1:N | 参照 FAQ(M:N 中間) |
 | [`M_FAQS`](TBL-M-006.md) | [`T_QLOG_FAQ_REFS`](TBL-T-004.md)(`faq_id`) | 1:N | 被参照 FAQ(M:N 中間) |
+
+**(8) 未解決質問**
+
+未解決質問 `T_INQUIRIES` は `M_PROJECTS`(契約境界 `M_CONTRACT`)に帰属し、発生元の質問ログ `H_QUESTION_LOGS`(→ (7))を `question_log_id` で保持する。FAQ 化されると `M_FAQS`(→ (6))を `source_inquiry_id` 経由で生む。
+
+```mermaid
+erDiagram
+  T_INQUIRIES { TEXT id PK
+    TEXT contract_id FK "→M_CONTRACT.id"
+    TEXT project_id FK "→M_PROJECTS.id"
+    TEXT question_log_id FK "→H_QUESTION_LOGS.id" }
+  M_PROJECTS ||--o{ T_INQUIRIES : "未解決"
+  H_QUESTION_LOGS ||--o| T_INQUIRIES : "未解決化"
+  T_INQUIRIES ||--o| M_FAQS : "FAQ化"
+```
+
+| 親 | 子(FK カラム) | 多重度 | 説明 |
+|----|----|----|----|
 | [`M_CONTRACT`](TBL-M-002.md) | [`T_INQUIRIES`](TBL-T-005.md)(`contract_id`) | 1:N | 契約境界 |
 | [`M_PROJECTS`](TBL-M-004.md) | [`T_INQUIRIES`](TBL-T-005.md)(`project_id`) | 1:N | 未解決質問 |
 | [`H_QUESTION_LOGS`](TBL-H-002.md) | [`T_INQUIRIES`](TBL-T-005.md)(`question_log_id`) | 1:0..1 | 未解決化の発生元質問ログ(NULL 可) |
 
-**(7) 利用量・課金・上限**
+**(9) 利用量・課金・上限**
 
 利用量計測・サブスク・請求書・利用上限はすべて契約 `M_CONTRACT` に帰属し、利用量計測(`T_USAGE_METER`)と上限設定(`M_PRJ_QUOTA_LIMITS`)はプロジェクト単位でも紐づく。
 
@@ -335,7 +360,7 @@ erDiagram
 | [`M_PROJECTS`](TBL-M-004.md) | [`M_PRJ_QUOTA_LIMITS`](TBL-M-009.md)(`project_id`) | 1:N | 月次上限・無料枠・アラート設定 |
 | [`M_CONTRACT`](TBL-M-002.md) | [`M_OWNER_QUOTA_OVR`](TBL-M-008.md)(`contract_id`) | 1:0..1 | 契約単位のレート制限上書き |
 
-**(8) お知らせ・通知**
+**(10) お知らせ・通知**
 
 運営お知らせ本体 `M_SERVICE_ANNOUNCE` から配信対象(`M_ANNOUNCE_AUD`)・受信者集計(`T_ANNOUNCE_RCPT`)へ展開し、利用者の受信箱(`T_INBOX_MSG`)とメール通知ログ(`H_NOTIF_LOGS`)は契約に帰属する。
 
@@ -372,7 +397,7 @@ erDiagram
 | [`M_CONTRACT`](TBL-M-002.md) | [`H_NOTIF_LOGS`](TBL-H-003.md)(`contract_id`) | 1:N | メール通知ログ |
 | [`T_INQUIRIES`](TBL-T-005.md) | [`H_NOTIF_LOGS`](TBL-H-003.md)(`inquiry_id`) | 1:N | 問い合わせ起点の通知(NULL 可) |
 
-**(9) 退会・データ管理**
+**(11) 退会・データ管理**
 
 退会申請 `T_WITHDRAW_REQ` は契約 `M_CONTRACT` に紐づき(90 日猶予)、申請者(`applied_by`)は多態参照で主体を指す。
 
@@ -390,7 +415,7 @@ erDiagram
 | [`M_CONTRACT`](TBL-M-002.md) | [`T_WITHDRAW_REQ`](TBL-T-011.md)(`contract_id`) | 1:N | 退会申請(90 日猶予) |
 | `M_CONTRACT` / `M_PRJ_USERS` | [`T_WITHDRAW_REQ`](TBL-T-011.md)(`applied_by_id`) | 1:N | 申請者(多態) |
 
-**(10) システム・ログ・運用**
+**(12) システム・ログ・運用**
 
 監査ログ(`H_AUDIT_LOGS`)と AI しきい値キャッシュ(`TP_AI_THRESH_CACHE`)は契約(一部プロジェクト)に紐づく。エラーログ(`H_ERROR_LOGS`)とメールサプレスリスト(`M_EMAIL_SUPPRESS`、全契約横断)は外部キーを持たない独立テーブル。
 
