@@ -151,7 +151,7 @@ flowchart LR
 <td>ランチャーバッジを押下</td>
 <td><ul>
 <li>バッジを非表示にしチャット UI を展開</li>
-<li><code>POST /widget/v1/bootstrap</code> でセッション・設定を取得</li>
+<li><a href="API-widget.md#API-WGT-001">ウィジェット起動</a> API でセッション・設定を取得</li>
 </ul></td>
 </tr>
 <tr>
@@ -164,7 +164,7 @@ flowchart LR
 <td><code>EV-03</code></td>
 <td><a href="#IT-06">IT-06</a></td>
 <td>送信ボタンを押下</td>
-<td><code>POST /widget/v1/ask</code> で質問送信し、AI 回答を同じ会話欄に追加</td>
+<td><a href="API-widget.md#API-WGT-002">ウィジェット質問送信</a> API で質問送信し、AI 回答を同じ会話欄に追加</td>
 </tr>
 <tr>
 <td><code>EV-04</code></td>
