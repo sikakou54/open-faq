@@ -49,7 +49,7 @@ flowchart LR
 
 ## <span id="3-画面レイアウト"></span>3. 画面レイアウト
 
-![SCR-WIDGET 画面レイアウト](../assets/mocks/SCR-WIDGET-1.png)
+![SCR-WIDGET 画面レイアウト](mocks/SCR-WIDGET-1.png)
 
 <details>
 <summary>画面モック HTML（ソース）</summary>

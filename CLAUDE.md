@@ -17,8 +17,8 @@ CLAUDE.md                 # 保守ルール正本(本書)
 01_requirements/          # 要件定義 : index.md + FR01.md〜FR21.md
 02_basic-design/          # 基本設計 : index.md + 画面設計(SCR-*)/ API設計(API-*)/ DB設計(TBL-*)
                           #            + 01_screen-design 〜 07_auth-design.md
+└── mocks/                #   画面モックのレンダリング画像(SCR-*.png。各 SCR から mocks/ で参照)
 03_future/                # 将来対応 : index.md + FUT01.md〜FUT06(-req/-detail).md
-assets/mocks/             # 画面モックのレンダリング画像(SCR-*.png)
 _build/                   # ツール(配信対象外)
 ├── html2md.py            #   HTML→Markdown 変換器(移行の記録 / provenance)
 ├── portal_nav.py         #   ポータルナビ付与 + README 生成器(下記)
@@ -62,7 +62,7 @@ python3 _build/portal_nav.py
 
 ## 画面モックの画像化
 
-GitHub は埋め込み HTML の `style=`/`class=` を除去するため、画面モック(`02_basic-design/SCR-*.md` の §3 画面レイアウト)は **PNG 画像で表示**し、編集可能な HTML 原本は同位置の `<details>` 内に ` ```html ` で保持する。画像は `assets/mocks/<画面>-<n>.png`。
+GitHub は埋め込み HTML の `style=`/`class=` を除去するため、画面モック(`02_basic-design/SCR-*.md` の §3 画面レイアウト)は **PNG 画像で表示**し、編集可能な HTML 原本は同位置の `<details>` 内に ` ```html ` で保持する。画像は `02_basic-design/mocks/<画面>-<n>.png` に置き、各 SCR からは `mocks/<画面>-<n>.png`(子階層相対・`../` なし)で参照する。**`../` 親参照にすると Cursor / VS Code のプレビューが画像を読み込めない**ため、必ず各ページと同階層配下に置く。
 
 モックを編集したら、`<details>` 内の HTML を直してから再生成する(ルートで):
 

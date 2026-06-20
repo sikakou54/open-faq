@@ -12,7 +12,8 @@ from html2md import find_block_end
 
 ROOT = os.getcwd()
 BD = "02_basic-design"
-ASSETS = "assets/mocks"
+# 画像は各ページと同階層配下に置く(Cursor/VS Code プレビューは ../ 親参照画像を読めないため)
+ASSETS = "02_basic-design/mocks"
 WORK = "/tmp/mockwork"
 os.makedirs(os.path.join(ROOT, ASSETS), exist_ok=True)
 os.makedirs(WORK, exist_ok=True)
@@ -73,7 +74,7 @@ def main():
             doc = HEAD.replace("__LUCIDE__", lucide) + src + TAIL.replace("__LUCIDEINIT__", lucideinit)
             hpath = os.path.join(WORK, f"{stem}-{i}.html")
             open(hpath, "w", encoding="utf-8").write(doc)
-            png_rel = f"../{ASSETS}/{stem}-{i}.png"
+            png_rel = f"mocks/{stem}-{i}.png"      # SCR ページから見た子階層相対(../ なし)
             png_abs = os.path.join(ROOT, ASSETS, f"{stem}-{i}.png")
             manifest.append({"html": hpath, "png": png_abs, "lucide": needs_lucide})
             label = f"{stem} 画面レイアウト" + (f"({i})" if len(blocks) > 1 else "")
