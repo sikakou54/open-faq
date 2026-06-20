@@ -51,64 +51,6 @@ flowchart LR
 
 ![SCR-WIDGET 画面レイアウト](mocks/SCR-WIDGET-1.png)
 
-<details>
-<summary>画面モック HTML（ソース）</summary>
-
-```html
-<div style="background:#f5f6f8;padding:24px;border-radius:12px;font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN',Meiryo,sans-serif;color:#3a3f46;-webkit-font-smoothing:antialiased;--accent:#5e6ad2">
-<div style="max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:32px">
-  <div style="display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap">
-    <!-- 展開時 -->
-    <section style="flex:1;min-width:560px">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:13px"><span style="font-size:11px;font-weight:700;color:var(--accent,#5e6ad2);background:color-mix(in srgb,var(--accent,#5e6ad2) 10%,#fff);border-radius:6px;padding:3px 8px">状態 1</span><span style="font-size:13.5px;font-weight:600;color:#16191d">展開時 — 回答 + フィードバック</span></div>
-      <div style="height:600px;border:1px solid #e6e8eb;border-radius:14px;box-shadow:0 1px 2px rgba(16,24,40,.04),0 6px 20px rgba(16,24,40,.05);overflow:hidden;position:relative;background:linear-gradient(160deg,#eef1f6,#e3e7ef)">
-        <!-- fake host site -->
-        <div style="position:absolute;inset:0;padding:24px">
-          <div style="width:160px;height:14px;border-radius:4px;background:rgba(22,25,29,.12);margin-bottom:18px"></div>
-          <div style="width:70%;height:9px;border-radius:4px;background:rgba(22,25,29,.08);margin-bottom:10px"></div>
-          <div style="width:60%;height:9px;border-radius:4px;background:rgba(22,25,29,.08);margin-bottom:10px"></div>
-          <div style="width:65%;height:9px;border-radius:4px;background:rgba(22,25,29,.08)"></div>
-        </div>
-        <!-- widget -->
-        <div style="position:absolute;right:24px;bottom:24px;width:360px;background:#fff;border-radius:18px;box-shadow:0 18px 50px rgba(16,24,40,.22);overflow:hidden;display:flex;flex-direction:column;max-height:524px">
-          <div style="background:var(--accent,#5e6ad2);padding:16px 18px;color:#fff;display:flex;align-items:center;justify-content:between;gap:10px"><div style="flex:1"><div style="font-size:15px;font-weight:700">何かお困りですか?</div><div style="font-size:11.5px;opacity:.85;margin-top:2px">FAQ から自動でお答えします</div></div><span style="width:26px;height:26px;border-radius:7px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path></svg></span></div>
-          <div style="flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:12px;background:#fbfbfc">
-            <div style="align-self:flex-end;max-width:82%;background:var(--accent,#5e6ad2);color:#fff;border-radius:14px 14px 4px 14px;padding:10px 13px;font-size:12.5px;line-height:1.55">料金プランの変更方法を教えてください</div>
-            <div style="align-self:flex-start;max-width:88%;display:flex;flex-direction:column;gap:8px">
-              <div style="background:#fff;border:1px solid #eef0f2;border-radius:14px 14px 14px 4px;padding:12px 14px;font-size:12.5px;color:#16191d;line-height:1.7">プランの変更は、管理画面の<b>「請求」→「プランを変更」</b>から行えます。変更は次回請求日から適用されます。</div>
-              <div style="display:flex;align-items:center;gap:8px;padding-left:4px"><span style="font-size:11px;color:#9aa0a8">この回答は役に立ちましたか?</span><span style="width:28px;height:28px;border-radius:8px;border:1px solid #e6e8eb;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1a7f37" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 11v9H4a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1z"></path><path d="M7 11l4-8a2 2 0 0 1 3 1.8V8h4.5a2 2 0 0 1 2 2.3l-1.2 7A2 2 0 0 1 17.3 19H7"></path></svg></span><span style="width:28px;height:28px;border-radius:8px;border:1px solid #e6e8eb;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9aa0a8" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17 13V4h3a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1z"></path><path d="M17 13l-4 8a2 2 0 0 1-3-1.8V16H5.5a2 2 0 0 1-2-2.3l1.2-7A2 2 0 0 1 6.7 5H17"></path></svg></span></div>
-            </div>
-            <div style="align-self:flex-start;display:flex;flex-wrap:wrap;gap:6px;padding-top:2px">
-              <span style="padding:6px 11px;border:1px solid #e6e8eb;border-radius:999px;background:#fff;font-size:11.5px;color:var(--accent,#5e6ad2);font-weight:600;cursor:pointer">支払い方法を変更したい</span>
-              <span style="padding:6px 11px;border:1px solid #e6e8eb;border-radius:999px;background:#fff;font-size:11.5px;color:var(--accent,#5e6ad2);font-weight:600;cursor:pointer">領収書がほしい</span>
-            </div>
-          </div>
-          <div style="border-top:1px solid #eef0f2;padding:12px 14px;display:flex;align-items:center;gap:8px;background:#fff"><div style="flex:1;height:38px;border:1px solid #e6e8eb;border-radius:999px;background:#fbfbfc;display:flex;align-items:center;padding:0 14px;font-size:12px;color:#b5bac0">メッセージを入力…</div><span style="width:38px;height:38px;border-radius:999px;background:var(--accent,#5e6ad2);display:flex;align-items:center;justify-content:center;flex:none;cursor:pointer"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 14-7-7 14-2-5z"></path></svg></span></div>
-        </div>
-      </div>
-    </section>
-    <!-- 最小化時 -->
-    <section style="flex:none;width:340px">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:13px"><span style="font-size:11px;font-weight:700;color:var(--accent,#5e6ad2);background:color-mix(in srgb,var(--accent,#5e6ad2) 10%,#fff);border-radius:6px;padding:3px 8px">状態 2</span><span style="font-size:13.5px;font-weight:600;color:#16191d">最小化時 — 起動ボタン</span></div>
-      <div style="height:600px;border:1px solid #e6e8eb;border-radius:14px;box-shadow:0 1px 2px rgba(16,24,40,.04),0 6px 20px rgba(16,24,40,.05);overflow:hidden;position:relative;background:linear-gradient(160deg,#eef1f6,#e3e7ef)">
-        <div style="position:absolute;inset:0;padding:24px">
-          <div style="width:140px;height:14px;border-radius:4px;background:rgba(22,25,29,.12);margin-bottom:18px"></div>
-          <div style="width:80%;height:9px;border-radius:4px;background:rgba(22,25,29,.08);margin-bottom:10px"></div>
-          <div style="width:72%;height:9px;border-radius:4px;background:rgba(22,25,29,.08)"></div>
-        </div>
-        <div style="position:absolute;right:24px;bottom:24px;display:flex;flex-direction:column;align-items:flex-end;gap:12px">
-          <div style="background:#fff;border:1px solid #eef0f2;border-radius:14px;box-shadow:0 8px 24px rgba(16,24,40,.14);padding:11px 14px;font-size:12.5px;color:#16191d;max-width:220px;line-height:1.5">ご質問はこちらから 👋</div>
-          <span style="width:60px;height:60px;border-radius:999px;background:var(--accent,#5e6ad2);box-shadow:0 10px 26px color-mix(in srgb,var(--accent,#5e6ad2) 45%,transparent);display:flex;align-items:center;justify-content:center;cursor:pointer"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8z"></path></svg></span>
-        </div>
-      </div>
-    </section>
-  </div>
-</div>
-</div>
-```
-
-</details>
-
 ## <span id="4-画面項目定義"></span>4. 画面項目定義
 
 本ウィジェットの入出力項目(ランチャーバッジ・ヘッダー・会話履歴・入力・送信・連絡先表示)を定義します。項目の正本は本表です。管理用の問い合わせ ID は描画しません。

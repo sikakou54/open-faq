@@ -1,0 +1,56 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#fff}
+body{font-family:'Noto Sans JP','Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;color:#3a3f46;-webkit-font-smoothing:antialiased}
+#wrap{display:inline-block}
+.scr-mock,.screen{background:#fff}
+.le-cap{font-size:12px;font-weight:700;color:#16191d;margin:0 0 8px}
+.screen{border:1px solid #e6e8eb;border-radius:12px;overflow:hidden;width:1024px}
+.screen-header{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#fbfbfc;border-bottom:1px solid #eef0f2;font-size:12px}
+.scr-name{font-weight:700;color:#16191d}.scr-user{color:#8a9099;font-size:11px}
+.modal-overlay{background:rgba(16,24,40,.35);padding:28px;display:flex;justify-content:center}
+.modal-card{background:#fff;border-radius:12px;box-shadow:0 12px 40px rgba(16,24,40,.18);padding:22px}
+.panel{border:1px solid #eef0f2;border-radius:9px;padding:12px;margin:10px 0;background:#fbfbfc}
+.panel-title{font-weight:700;font-size:12px;margin-bottom:6px}
+.field{margin:10px 0;font-size:12px}.req{color:#e5484d}
+.btn{border:none;border-radius:9px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+.btn.primary{background:#5e6ad2;color:#fff}
+.link{color:#5e6ad2;text-decoration:none}
+input[type=checkbox]{transform:translateY(1px)}
+table{border-collapse:collapse}
+</style>
+
+</head><body><div id="wrap"><div class="layout-embed">
+<div class="le-cap">上限 ON 状態 — 件数入力が活性・課金額をリアルタイム併記</div>
+<div class="scr-mock"><div class="screen" id="scr-021-001" role="region" aria-labelledby="scr-021-001-title">
+  <div class="screen-header">
+    <div><span class="scr-name" id="scr-021-001-title">質問数上限設定モーダル</span></div>
+    <div class="scr-user">利用者: オーナー / プロジェクト管理者(利用量と上限の「アラート設定」から起動)</div>
+  </div>
+  <div class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="scr-021-001-modal-title">
+    <div class="modal-card" style="width: 580px;">
+      <h3 id="scr-021-001-modal-title">質問数の上限設定</h3>
+      <p class="small">質問数の今月の利用上限とアラートを設定します。</p>
+      <div class="field"><label>上限設定</label><div style="display:flex; gap:12px;"><label><input type="radio" name="limitEnabled" checked=""> ON</label><label><input type="radio" name="limitEnabled"> OFF</label></div></div>
+      <div class="field">
+        <label>今月の利用上限</label>
+        <div style="display:flex; gap:8px; align-items:center;"><div class="input" style="width:140px;"><strong>5,000</strong> 件</div><span class="small">5,000件 - 1,000件(無料枠) = 4,000件 (¥2,000 / 月)</span></div>
+      </div>
+      <hr>
+      <div class="field">
+        <label>アラート設定</label>
+        <div style="display:flex; gap:14px; flex-wrap:wrap;">
+          <label><input type="checkbox"> 25%</label>
+          <label><input type="checkbox"> 50%</label>
+          <label><input type="checkbox" checked=""> 80%</label>
+          <label><input type="checkbox"> 90%</label>
+          <label><input type="checkbox" checked=""> 100%</label>
+        </div>
+      </div>
+      <div class="small" style="margin:6px 0;">複数選択できます。選択した割合に到達すると、オーナーとプロジェクト管理者へメールでお知らせします。</div>
+      <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:10px;"><button class="btn">キャンセル</button><button class="btn primary">保存</button></div>
+    </div>
+  </div>
+</div></div>
+</div></div></body></html>

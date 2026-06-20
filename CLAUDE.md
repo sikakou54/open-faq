@@ -17,7 +17,7 @@ CLAUDE.md                 # 保守ルール正本(本書)
 01_requirements/          # 要件定義 : index.md + FR01.md〜FR21.md
 02_basic-design/          # 基本設計 : index.md + 画面設計(SCR-*)/ API設計(API-*)/ DB設計(TBL-*)
                           #            + 01_screen-design 〜 07_auth-design.md
-└── mocks/                #   画面モックのレンダリング画像(SCR-*.png。各 SCR から mocks/ で参照)
+└── mocks/                #   画面モック: 画像 SCR-*.png と HTML ソース SCR-*.html(同名ペア)
 03_future/                # 将来対応 : index.md + FUT01.md〜FUT06(-req/-detail).md
 _build/                   # ツール(配信対象外)
 ├── html2md.py            #   HTML→Markdown 変換器(移行の記録 / provenance)
@@ -62,17 +62,17 @@ python3 _build/portal_nav.py
 
 ## 画面モックの画像化
 
-GitHub は埋め込み HTML の `style=`/`class=` を除去するため、画面モック(`02_basic-design/SCR-*.md` の §3 画面レイアウト)は **PNG 画像で表示**し、編集可能な HTML 原本は同位置の `<details>` 内に ` ```html ` で保持する。画像は `02_basic-design/mocks/<画面>-<n>.png` に置き、各 SCR からは `mocks/<画面>-<n>.png`(子階層相対・`../` なし)で参照する。**`../` 親参照にすると Cursor / VS Code のプレビューが画像を読み込めない**ため、必ず各ページと同階層配下に置く。
+GitHub は埋め込み HTML の `style=`/`class=` を除去するため、画面モック(`02_basic-design/SCR-*.md` の §3 画面レイアウト)は **PNG 画像で表示**する。HTML ソースは MD に埋め込まず、**`02_basic-design/mocks/<画面>-<n>.html`** に外出しして保持する(MD は画像 1 行のみ)。画像も同じ `02_basic-design/mocks/<画面>-<n>.png` に置き、各 SCR からは `mocks/<画面>-<n>.png`(子階層相対・`../` なし)で参照する。**`../` 親参照にすると Cursor / VS Code のプレビューが画像を読み込めない**ため、必ず各ページと同階層配下に置く。
 
-モックを編集したら、`<details>` 内の HTML を直してから再生成する(ルートで):
+`mocks/<画面>-<n>.html` は単体で開けて図と同じ見た目になる完結 HTML(クロップ用に `#wrap` を持つ)。**モックを変更するときはこの .html を直接編集**し、PNG を再生成する(ルートで):
 
 ```sh
-python3 _build/imagify_mocks.py    # <details> 原本から画像化 HTML を生成し md を更新
-node    _build/render_mocks.js /tmp/mockwork/manifest.json "<chrome 実行パス>"
+node ~/.claude/skills/html-to-png/scripts/html_to_png.js 02_basic-design/mocks --selector "#wrap"
 ```
 
-- `render_mocks.js` は `puppeteer-core` とローカルの Chromium(例: puppeteer キャッシュの `chrome-mac-arm64`)を使う。`mermaid` は画像化せず ` ```mermaid ` のまま(GitHub が描画)。
-- `imagify_mocks.py` は冪等(既存の画像 + `<details>` を作り直す)。新規モックは §3 に元 HTML(`<div style=…>` 等)を置いて再生成すればよい。
+`mocks/*.html` → 同名 `mocks/*.png` を一括レンダリングする(html-to-png グローバルスキル / `puppeteer-core` + ローカル Chromium)。新規モックは `mocks/<画面>-<n>.html` を追加し、対応する SCR の §3 に `![…](mocks/<画面>-<n>.png)` を置いて上記で描画する。`mermaid` は画像化せず ` ```mermaid ` のまま(GitHub が描画)。
+
+> 移行時のスクリプト `_build/imagify_mocks.py`(MD 埋め込み div を画像化)・`_build/externalize_mocks.py`(`<details>` ソースを外出し)・`_build/render_mocks.js`(manifest 描画)は provenance として残置。通常運用は上記スキルで足りる。
 
 ## ページ形式
 
@@ -158,7 +158,7 @@ callout は GitHub Alert 記法で表す。
 ### 画面設計(`02_basic-design/SCR-*.md`、1 画面 = 1 ファイル)
 
 - 親画面 `SCR-<番号>.md`、従属画面・モーダル `SCR-<番号>-NNN.md`(3 桁連番)。
-- 6 セクション固定: `1. 画面概要` / `2. 画面遷移図`(mermaid flowchart)/ `3. 画面レイアウト`(モック = **PNG 画像** + `<details>` に HTML ソース)/ `4. 画面項目定義`(項目 ID `IT-01`…)/ `5. 入出力一覧`(CRUD マトリクス)/ `6. 画面イベント一覧`(イベント ID `EV-01`…、`関連項目` で §4 の `IT-` に紐づけ)。
+- 6 セクション固定: `1. 画面概要` / `2. 画面遷移図`(mermaid flowchart)/ `3. 画面レイアウト`(モック = **PNG 画像のみ**。HTML ソースは `mocks/<画面>-<n>.html` に外出し、MD には非表示)/ `4. 画面項目定義`(項目 ID `IT-01`…)/ `5. 入出力一覧`(CRUD マトリクス)/ `6. 画面イベント一覧`(イベント ID `EV-01`…、`関連項目` で §4 の `IT-` に紐づけ)。
 - 意味のある状態・入力・業務ロジックを持つモーダルは独立 SCR ファイルにする。単純な確認ダイアログは独立させない。
 
 ### テーブル設計(`02_basic-design/TBL-*.md`、1 テーブル = 1 ファイル)
