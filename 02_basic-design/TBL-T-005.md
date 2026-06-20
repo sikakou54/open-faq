@@ -88,6 +88,8 @@ FAQ 登録前の未解決質問を保持します。
 
 ---
 
+---
+
 <!-- portal-bottom -->
 [← データベース設計](03_database-design.md) ・ [基本設計](index.md) ・ [↑ 設計ポータル](../README.md)
 <!-- /portal-bottom -->

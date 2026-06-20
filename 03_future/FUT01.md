@@ -161,6 +161,8 @@ CREATE TABLE owner_key_versions (
 
 ---
 
+---
+
 <!-- portal-bottom -->
 [将来対応](index.md) ・ [↑ 設計ポータル](../README.md)
 <!-- /portal-bottom -->

@@ -176,6 +176,8 @@ GET は未解決質問の詳細、PATCH は更新後の状況。
 
 ---
 
+---
+
 <!-- portal-bottom -->
 [← API設計](02_api-design.md) ・ [基本設計](index.md) ・ [↑ 設計ポータル](../README.md)
 <!-- /portal-bottom -->

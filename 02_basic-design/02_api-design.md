@@ -192,6 +192,8 @@ Stripe / Resend からの Webhook 受信。
 
 ---
 
+---
+
 <!-- portal-bottom -->
 [基本設計](index.md) ・ [↑ 設計ポータル](../README.md)
 <!-- /portal-bottom -->

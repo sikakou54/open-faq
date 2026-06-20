@@ -49,6 +49,12 @@ flowchart LR
 
 ## <span id="3-画面レイアウト"></span>3. 画面レイアウト
 
+![SCR-WIDGET 画面レイアウト](../assets/mocks/SCR-WIDGET-1.png)
+
+<details>
+<summary>画面モック HTML（ソース）</summary>
+
+```html
 <div style="background:#f5f6f8;padding:24px;border-radius:12px;font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN',Meiryo,sans-serif;color:#3a3f46;-webkit-font-smoothing:antialiased;--accent:#5e6ad2">
 <div style="max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:32px">
   <div style="display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap">
@@ -99,6 +105,9 @@ flowchart LR
   </div>
 </div>
 </div>
+```
+
+</details>
 
 ## <span id="4-画面項目定義"></span>4. 画面項目定義
 
@@ -249,6 +258,8 @@ flowchart LR
 </tr>
 </tbody>
 </table>
+
+---
 
 ---
 

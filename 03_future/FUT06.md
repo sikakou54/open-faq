@@ -95,6 +95,8 @@ MVP の未解決時フローは次のとおりとする。
 
 ---
 
+---
+
 <!-- portal-bottom -->
 [将来対応](index.md) ・ [↑ 設計ポータル](../README.md)
 <!-- /portal-bottom -->

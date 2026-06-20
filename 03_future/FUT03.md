@@ -142,6 +142,8 @@ CREATE TABLE owner_region_audit_logs (
 
 ---
 
+---
+
 <!-- portal-bottom -->
 [将来対応](index.md) ・ [↑ 設計ポータル](../README.md)
 <!-- /portal-bottom -->

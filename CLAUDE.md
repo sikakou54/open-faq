@@ -18,9 +18,12 @@ CLAUDE.md                 # 保守ルール正本(本書)
 02_basic-design/          # 基本設計 : index.md + 画面設計(SCR-*)/ API設計(API-*)/ DB設計(TBL-*)
                           #            + 01_screen-design 〜 07_auth-design.md
 03_future/                # 将来対応 : index.md + FUT01.md〜FUT06(-req/-detail).md
+assets/mocks/             # 画面モックのレンダリング画像(SCR-*.png)
 _build/                   # ツール(配信対象外)
 ├── html2md.py            #   HTML→Markdown 変換器(移行の記録 / provenance)
-└── portal_nav.py         #   ポータルナビ付与 + README 生成器(下記)
+├── portal_nav.py         #   ポータルナビ付与 + README 生成器(下記)
+├── imagify_mocks.py      #   画面モック(埋め込み HTML)を画像化し <details> に原本を残す
+└── render_mocks.js       #   モック HTML を PNG へレンダリング(puppeteer-core + Chromium)
 ```
 
 - ファイル名は ID ベースの英名(例 `FR01.md` / `SCR-001.md` / `TBL-M-001.md` / `API-auth.md` / `FUT06-detail.md`)。
@@ -57,13 +60,27 @@ python3 _build/portal_nav.py
 
 ---
 
+## 画面モックの画像化
+
+GitHub は埋め込み HTML の `style=`/`class=` を除去するため、画面モック(`02_basic-design/SCR-*.md` の §3 画面レイアウト)は **PNG 画像で表示**し、編集可能な HTML 原本は同位置の `<details>` 内に ` ```html ` で保持する。画像は `assets/mocks/<画面>-<n>.png`。
+
+モックを編集したら、`<details>` 内の HTML を直してから再生成する(ルートで):
+
+```sh
+python3 _build/imagify_mocks.py    # <details> 原本から画像化 HTML を生成し md を更新
+node    _build/render_mocks.js /tmp/mockwork/manifest.json "<chrome 実行パス>"
+```
+
+- `render_mocks.js` は `puppeteer-core` とローカルの Chromium(例: puppeteer キャッシュの `chrome-mac-arm64`)を使う。`mermaid` は画像化せず ` ```mermaid ` のまま(GitHub が描画)。
+- `imagify_mocks.py` は冪等(既存の画像 + `<details>` を作り直す)。新規モックは §3 に元 HTML(`<div style=…>` 等)を置いて再生成すればよい。
+
 ## ページ形式
 
 各ページは**自己完結 Markdown**(ナビのマーカ + 本文)。
 
 - 外部依存なし。図は ` ```mermaid ` コードフェンスで記述し、対応ビューア(GitHub 等)でそのまま描画される。
 - **絵文字は使わない。**
-- 画面モック(ワイヤーフレーム)は元の HTML を**そのまま埋め込む**(`<div style="…">` / `<div class="scr-mock">` 等)。Markdown ビューアによっては素のまま表示されるが、構造・内容は保持する。
+- 画面モック(ワイヤーフレーム)は **PNG 画像で表示**し、元の HTML は同じ位置の `<details>` 内に ` ```html ` で保持する。GitHub は埋め込み HTML の CSS を除去するため、見た目を保つには画像化が必須(下記「画面モックの画像化」)。
 
 ### 相互参照アンカー(最重要)
 
@@ -141,7 +158,7 @@ callout は GitHub Alert 記法で表す。
 ### 画面設計(`02_basic-design/SCR-*.md`、1 画面 = 1 ファイル)
 
 - 親画面 `SCR-<番号>.md`、従属画面・モーダル `SCR-<番号>-NNN.md`(3 桁連番)。
-- 6 セクション固定: `1. 画面概要` / `2. 画面遷移図`(mermaid flowchart)/ `3. 画面レイアウト`(モック = 埋め込み HTML)/ `4. 画面項目定義`(項目 ID `IT-01`…)/ `5. 入出力一覧`(CRUD マトリクス)/ `6. 画面イベント一覧`(イベント ID `EV-01`…、`関連項目` で §4 の `IT-` に紐づけ)。
+- 6 セクション固定: `1. 画面概要` / `2. 画面遷移図`(mermaid flowchart)/ `3. 画面レイアウト`(モック = **PNG 画像** + `<details>` に HTML ソース)/ `4. 画面項目定義`(項目 ID `IT-01`…)/ `5. 入出力一覧`(CRUD マトリクス)/ `6. 画面イベント一覧`(イベント ID `EV-01`…、`関連項目` で §4 の `IT-` に紐づけ)。
 - 意味のある状態・入力・業務ロジックを持つモーダルは独立 SCR ファイルにする。単純な確認ダイアログは独立させない。
 
 ### テーブル設計(`02_basic-design/TBL-*.md`、1 テーブル = 1 ファイル)

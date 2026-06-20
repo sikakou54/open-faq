@@ -102,7 +102,7 @@ def build_readme():
     L.append("かつての静的 HTML ポータルを Markdown へ全面変換し、Markdown を正本とした。本書がポータルのトップ(旧サイドバー相当の全文書索引)である。")
     L.append("")
     L.append("- 図は ` ```mermaid ` コードブロックで保持(GitHub 等でそのまま描画)。")
-    L.append("- 画面モック(ワイヤーフレーム)は元の HTML 構造をそのまま埋め込み。")
+    L.append("- 画面モック(ワイヤーフレーム)は PNG 画像で表示(元の HTML は `<details>` 内に保持)。")
     L.append("- 相互参照は `<span id=\"…\">` アンカーで保持(例 `FR-005` / `BR-028` / `API-AUTH-001` / `TBL-M-001`)。")
     L.append("- 各ページ上部にパンくず、下部に戻り導線を付与。")
     L.append("")
