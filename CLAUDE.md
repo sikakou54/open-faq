@@ -1,138 +1,156 @@
 # FAQ 設計ポータル 保守ルール
 
-本書(CLAUDE.md)はリポジトリの**保守・運用ルールの正本**であり、エージェントが自動読込する指示ファイルである。運用ルールは本書に集約し、ポータル(設計書 HTML 群)とは独立して維持する(ポータル内にルールの HTML ページは置かない)。
+本書(CLAUDE.md)はリポジトリの**保守・運用ルールの正本**であり、エージェントが自動読込する指示ファイルである。
 
-本リポジトリは「FAQ AI ウィジェット SaaS / メインシステム」の設計ドキュメントを **new 形式の静的ポータル**として管理する。リポジトリルートがそのままサイトで、`index.html` が入口、`file://` でも動作する。
+本リポジトリは「FAQ AI ウィジェット SaaS / メインシステム」の設計ドキュメントを **Markdown** で管理する。
+かつての静的 HTML ポータル(`gen.py` による生成)を Markdown へ全面変換し、**Markdown を正本**とした。元の HTML サイトと同じディレクトリ構成・ポータル形式を維持しており、ルートの [`README.md`](README.md) がポータルのトップ(旧サイドバー相当の全文書索引)である。
 
 ---
 
-## 構成(リポジトリルート)
+## 構成
 
-ファイル名はすべて英名(ASCII)。ページの表示タイトル・サイドバーのラベルは日本語のまま。
+ファイル名はすべて英名(ASCII)。ページの表示タイトル・見出しは日本語。配置は旧 HTML サイトと同一(ルート直下に `01_〜03_`)。
 
 ```text
-CLAUDE.md            # 保守ルール正本(本書 / 唯一の Markdown)
-index.html           # ポータルトップ(00 概要)
-style.css            # 唯一の共通スタイルシート
-01_requirements/     # 要件定義  : index.html + FR01.html〜FR21.html
-02_basic-design/     # 基本設計  : index + 画面設計(SCR-*) / API設計(API-*) / DB設計(TBL-*)
-                     #             + 01_screen-design 〜 07_auth-design.html
-03_future/           # 将来対応  : index.html + FUT01.html〜FUT06(-req/-detail).html
-_build/              # ビルド資材(配信対象外。下記参照)
-├── gen.py           #   静的ジェネレータ
-└── src/             #   生成元ソース(自己完結。外部フォルダに依存しない)
-    ├── requirements/ #     FR*.html(本文ソース)
-    ├── basic-design/ #     SCR*/API*/TBL*/0x_*-design.html(本文ソース)
-    ├── future/       #     FUT*.html(本文ソース)
-    └── webhook.html
+README.md                 # ポータルトップ(全文書ツリー = 旧サイドバー相当。自動生成)
+CLAUDE.md                 # 保守ルール正本(本書)
+01_requirements/          # 要件定義 : index.md + FR01.md〜FR21.md
+02_basic-design/          # 基本設計 : index.md + 画面設計(SCR-*)/ API設計(API-*)/ DB設計(TBL-*)
+                          #            + 01_screen-design 〜 07_auth-design.md
+03_future/                # 将来対応 : index.md + FUT01.md〜FUT06(-req/-detail).md
+_build/                   # ツール(配信対象外)
+├── html2md.py            #   HTML→Markdown 変換器(移行の記録 / provenance)
+└── portal_nav.py         #   ポータルナビ付与 + README 生成器(下記)
 ```
 
-- ファイル名は ID ベースの英名(例 `FR01.html` / `FUT06-detail.html` / `01_screen-design.html`)。表示タイトル・ナビラベルは各ページの `<h1>`(日本語)から生成する。
-- `02_basic-design/` は**フラット構成**(全ページ同一階層)。内部リンクは兄弟参照(例 `SCR-002.html` / `TBL-M-USER.html`)。
-- `_build/` 配下はツール・生成元であり**配信(閲覧)対象ではない**。サイト本体は `index.html` / `style.css` / `01_〜03_` のみ。
+- ファイル名は ID ベースの英名(例 `FR01.md` / `SCR-001.md` / `TBL-M-001.md` / `API-auth.md` / `FUT06-detail.md`)。
+- `02_basic-design/` は**フラット構成**(全ページ同一階層)。内部リンクは兄弟参照(例 `SCR-002.md` / `TBL-M-001.md`)。
+- ページ間リンクはすべて `.md`。同一グループ内は兄弟参照、グループをまたぐ参照は相対パス(例 `../01_requirements/index.md`)。
+
+> [!NOTE]
+> 旧配信用 HTML(`index.html` / 生成された `01_〜03_` の HTML / `style.css`)と生成器 `gen.py` は廃止・削除済み。`_build/` 配下はツールであり閲覧対象ではない。
 
 ---
 
-## ページ形式(new 形式・最重要)
+## ポータル形式(ナビゲーション)
 
-各ページは**自己完結 HTML**である。共通シェル(サイドバー / パンくず / 右 TOC / フッター / スクリプト)を各ページに**焼き込む**(旧 `portal.js` 注入方式は廃止)。
+HTML 時代のサイドバー / パンくず / 戻り導線を Markdown で再現する。
 
-- 共通スタイルは**ルートの `style.css` のみ**。各ページは `../style.css?v=N` を参照する。
-- 外部依存は CDN のみ:Noto Sans JP / Bootstrap Icons / lucide(画面モック)/ mermaid(図)。**ローカル画像・追加 JS/CSS は持たない。**
-- **絵文字は使わない。** アイコンは Bootstrap Icons(`<i class="bi bi-...">`)、画面モックは lucide(`<i data-lucide="...">`)。
-- ページ間リンクはすべて `.html`。
+- **ポータルトップ** = ルート [`README.md`](README.md)。3 グループ(要件定義 / 基本設計 / 将来対応)の全文書を入れ子で索引する(基本設計は 画面設計 / API設計 / データベース設計 / 横断設計 に細分)。
+- **各グループの一覧** = 各 `index.md`(および 基本設計の `01_screen-design.md` / `02_api-design.md` / `03_database-design.md` が画面/API/テーブルの一覧を兼ねる)。
+- **各ページの上下ナビ** = 全ページの先頭にパンくず、末尾に戻り導線を、次のマーカで囲って埋め込む:
+  - 先頭: `<!-- portal-top -->` 〜 `<!-- /portal-top -->`(例 `[設計ポータル](../README.md) ／ [基本設計](index.md) ／ [画面設計](01_screen-design.md) ／ **SCR-001 ログイン**`)
+  - 末尾: `<!-- portal-bottom -->` 〜 `<!-- /portal-bottom -->`(戻り導線)
+- 右 TOC(「このページ」)はビューア(GitHub 等)が見出しから自動生成するため埋め込まない。見出しには相互参照アンカー(下記)が付く。
 
-### ページの編集・追加(生成フロー)
+### ナビ・README の再生成
 
-サイト本体(`01_〜03_`)は `_build/gen.py` が `_build/src/` から生成する。**生成物を直接手編集しない**(再生成で上書きされる)。
+ナビとマーカ内・README は **`_build/portal_nav.py` が自動管理**する。ページを追加・削除・改題したら、ルートで再生成する(冪等):
 
-1. **本文を編集**: `_build/src/<グループ>/<ファイル>.html` の `<article class="content">…</article>` の中身を編集する。
-2. **ページを追加**: 同じ `_build/src/<グループ>/` に本文 HTML を追加する(`<article class="content">` を持つ形。既存ソースに倣う)。サイドバーの並びはファイル名昇順・ID 順。
-3. **再生成**: リポジトリルートで次を実行する。
+```sh
+python3 _build/portal_nav.py
+```
 
-   ```sh
-   python3 _build/gen.py
-   ```
-
-   要件定義 + 基本設計 + 将来対応の全ページを統一シェルで再生成する(冪等)。サイドバー・右 TOC・パンくず・カレント表示・mermaid/lucide の読込はジェネレータが自動付与する。
-4. CSS を変更したら `_build/gen.py` 内の `?v=N` を上げてキャッシュを無効化する。
-
-> ジェネレータは `_build/src/` のみを参照し、外部フォルダに依存しない。リポジトリ単体で再生成できる。
+- パンくず/フッターは `portal-top` / `portal-bottom` マーカ間を毎回入れ替える。**本文編集はマーカの外側**(`# タイトル` 以降)で行う。
+- 並びはファイル名の自然順(親 `SCR-004` → 子 `SCR-004-001`)。API・テーブルは `portal_nav.py` 内の `API_ORDER` / `TBL_ORDER` の機能順。
+- ラベルは各ページの `<h1>`(`#` 見出し)から取得する。
 
 ---
 
-## ナビゲーション(左ペイン)
+## ページ形式
 
-トップメニューは **要件定義 / 基本設計 / 将来対応** の 3 グループ。`基本設計` は入れ子で、配下に `画面設計(→SCR)` / `API設計(→API)` / `データベース設計(→TBL)` のサブセクションと `04 ユースケース` 〜 `07 認証認可` のリーフを持つ。
+各ページは**自己完結 Markdown**(ナビのマーカ + 本文)。
 
-- 現在地のパスは自動展開し、カレント項目とグループ見出しをアクティブ表示する。
-- 展開状態(localStorage)とスクロール位置(sessionStorage)はページ遷移後も保持する。
-- ナビ定義はジェネレータが `_build/src/basic-design/` のサイドバー構造を解析して自動生成する(手書きの nav 定義ファイルは持たない)。
+- 外部依存なし。図は ` ```mermaid ` コードフェンスで記述し、対応ビューア(GitHub 等)でそのまま描画される。
+- **絵文字は使わない。**
+- 画面モック(ワイヤーフレーム)は元の HTML を**そのまま埋め込む**(`<div style="…">` / `<div class="scr-mock">` 等)。Markdown ビューアによっては素のまま表示されるが、構造・内容は保持する。
+
+### 相互参照アンカー(最重要)
+
+定義箇所には `<span id="ID"></span>` を埋め込んでアンカーを保持する(例: 表セル先頭の `<span id="BR-028"></span>BR-028`、見出しの `## <span id="API-AUTH-001"></span>…`)。参照側は通常の Markdown リンクで送る。
+
+- 同一ページ: `[FR-005](#FR-005)`
+- 他ページ(同一グループ): `[API-AUTH-002](API-auth.md#API-AUTH-002)`
+- 他グループ: `[NFR-304](../01_requirements/index.md#NFR-304)`(NFR の正本は要件定義 index)
+
+新しい定義行・見出しを追加するときは、対応する `<span id="…"></span>` を必ず付ける。
+
+### ページの編集・追加
+
+Markdown が正本なので、**該当 `.md` の本文を直接編集する**(ナビのマーカ外)。ページ追加は当該グループのディレクトリに `.md` を追加し、`python3 _build/portal_nav.py` を実行してナビ・README を更新する。
 
 ---
 
 ## 記載スタイル標準(全ページ共通)
 
-`<article class="content">` 内のみを対象に、以下の固定骨格で書く。目的は「冒頭で全体像が掴め、結論が先に読め、ページ間で構成が揃う」こと。
+冒頭で全体像が掴め、結論が先に読め、ページ間で構成が揃うことを目的に、以下の固定骨格で書く。
 
-1. **`<h1>` タイトル** — ID 接頭辞 + 簡潔名(例 `FR05: AI 回答`)。
-2. **ページ要約 `aside.page-summary`** — H1 直後。`<p class="ps-lead"><strong>このページは〜を定義します。</strong></p>` の平易な要点。要約内のラベルは見出しタグではなく `<p class="ps-label">` を使う(目次を汚さない)。
-3. **文書メタ `<p class="doc-meta">`** — `版数 / 更新 / ステータス` 等を 1 行。
-4. **本編(`<h2>` 以降)** — 各層の定型(下記)。更新履歴は末尾 `<h2>更新履歴</h2>` + 表。
+1. **`#` タイトル** — ID 接頭辞 + 簡潔名(例 `# FR05: AI 回答`)。
+2. **ページ要約(引用ブロック)** — タイトル直後。`> **このページは〜を定義します。**` の平易な要点(必要なら箇条書きを続ける)。
+3. **文書メタ** — `*版数 v1.1 ・ 更新 2026-06-16 ・ ステータス 承認済*` のように 1 行(斜体)。
+4. **本編(`##` 以降)** — 各層の定型(下記)。更新履歴は末尾 `## 更新履歴` + 表。
 
 ### 文章ルール
 
-- 結論先出し。基本設計・画面設計は各 `<h2>`/`<h3>` 直後に `<p class="section-lead">` で 1〜2 文の説明を置いてから表へ入る(**表をいきなり置かない**)。**要件定義層は section-lead を置かない**。
+- 結論先出し。基本設計・画面設計は各 `##`/`###` 直後に 1〜2 文の説明(リード文)を置いてから表へ入る(**表をいきなり置かない**)。**要件定義層はリード文を置かない**。
 - 一文一義・能動・平易。略語は初出で説明するか正本へリンク。
 - 並列で属性 1 種なら箇条書き、2 列以上なら表。
 
-### 注記(callout)
+### 注記(GitHub Alert)
 
-`<div class="callout 種別"><i class="bi bi-..."></i><div><span class="c-title">見出し</span>本文</div></div>`
+callout は GitHub Alert 記法で表す。
 
-| 種別 | クラス | アイコン | 用途 |
-|---|---|---|---|
-| 補足 | `callout note` | `bi-info-circle` | 補足・前提 |
-| 重要 | `callout important` | `bi-pin-angle` | 見落とすと困る正本ルール |
-| 注意 | `callout warning` | `bi-exclamation-triangle` | 破壊的操作・誤りやすい点 |
-| ヒント | `callout tip` | `bi-lightbulb` | 推奨・ベストプラクティス |
+| 用途 | 記法 |
+|---|---|
+| 補足・前提 | `> [!NOTE]` |
+| 見落とすと困る正本ルール | `> [!IMPORTANT]` |
+| 破壊的操作・誤りやすい点 | `> [!WARNING]` |
+| 推奨・ベストプラクティス | `> [!TIP]` |
+
+見出し+本文は `> [!NOTE]` の次行に `> **見出し** 本文` の形で書く。
 
 ### 表の作法
 
 - 列順は「識別子 → 名称 → 説明 → 値 / 制約 → 参照」。
-- コード値・ID・列名は `<code>`。空欄は `—`(全角ダッシュ)。
-- 正本でない値の再掲は禁止。`<a href="...html">` で正本へ送る。
+- コード値・ID・列名はインラインコード(`` `status` ``)。空欄は `—`(全角ダッシュ)。
+- 原則 GitHub Flavored Markdown のパイプ表。**セル内に箇条書き・改行・行/列結合(rowspan/colspan)が必要な表は、生 HTML テーブルのまま記述する**(アンカーと構造を保持するため)。
+- 正本でない値の再掲は禁止。リンクで正本へ送る。
+
+### コード・図
+
+- JSON / DDL 等は ` ```json ` / ` ```sql ` 等のコードフェンス。
+- フロー・シーケンス・ER 図は ` ```mermaid ` フェンス(`flowchart` / `sequenceDiagram` / `erDiagram`)。リクエストには応答線を対で描く。
 
 ---
 
 ## 各層テンプレート
 
-### 要件定義(`01_requirements/FRxx.html`)
+### 要件定義(`01_requirements/FRxx.md`)
 
-- 骨格: `<h1>FRxx: 名称` → `aside.page-summary`(`ps-lead` + 概要 `<ul>`)→ `doc-meta`(版数 / 更新 / 機能グループ / 優先度 / ステータス)→ `1. 業務要件` → `2. 機能要件` → 未確定事項(callout)→ 更新履歴。**section-lead は置かない。**
-- **業務要件**: 表 `<table class="br-table">`(列 = `ID(BR) / 観点 / ステークホルダ / 業務要件 / 関連 NFR`)。ID = `BR-###` 連番、定義セルは `<td id="BR-###">`(アンカーのみ非リンク)。主語は本文に書かずステークホルダ列へ。役割で内容が異なる場合は `<ul class="role-req">`。関連は NFR のみ。
-- **機能要件**: 表 `<table class="req-table">`(列 = `ID(FR) / 要件 / 関連業務要件 / 優先度`)。ID = `FR-###`、定義セルは `<td id="FR-###">`。優先度はバッジ(`<span class="badge badge-p0">P0</span>` / `badge-p1` / `badge-p2`)。長い要件は `<ol class="alpha">`((a)(b)(c)、入れ子は `<ol class="alpha-sub">`=(a-1))で整理。
+- 骨格: `# FRxx: 名称` → 要約(引用ブロック)→ 文書メタ(版数 / 更新 / 機能グループ / 優先度 / ステータス)→ `## 1. 業務要件` → `## 2. 機能要件` → 未確定事項(callout)→ 更新履歴。**リード文は置かない。**
+- **業務要件**: 表(列 = `ID(BR) / 観点 / ステークホルダ / 業務要件 / 関連 NFR`)。ID = `BR-###` 連番、定義セルは `<span id="BR-###"></span>BR-###`。主語はステークホルダ列へ。役割で内容が異なる場合は箇条書き。関連は NFR のみ。
+- **機能要件**: 表(列 = `ID(FR) / 要件 / 関連業務要件 / 優先度`)。ID = `FR-###`、定義セルは `<span id="FR-###"></span>FR-###`。優先度は `P0` / `P1` / `P2`。長い要件は番号付き箇条書きで整理。
 - ID は連番。欠番(廃番)は再利用しない。**FR-ID は全層で多数が相互参照するため機械的な全面リナンバリングは行わない**(参照整合が壊れる)。
 
-### 基本設計の文書(`02_basic-design/0x_*-design.html`、API-*、TBL-*)
+### 基本設計の文書(`02_basic-design/0x_*-design.md`、API-*、TBL-*)
 
-- 各節は **タイトル → 説明(`section-lead`)→ 表 → 補足(callout)** の順。概要は `ps-lead` の目的 1 文 + `doc-meta` のみ。
+- 各節は **タイトル → 説明(リード文)→ 表 → 補足(callout)** の順。
 - **内容は原則すべて表**。散文・箇条書きは最小限。
-- **フロー解説はシーケンス図(mermaid)** で示す: `<pre class="mermaid">sequenceDiagram …</pre>`(矢印は HTML エスケープ `-&gt;&gt;` / `--&gt;&gt;`)。リクエストには応答線を対で描く。DDL・API スキーマ等は `<pre><code>` で保持。
+- フロー解説はシーケンス図(mermaid)。DDL・API スキーマ等はコードフェンス。
 
-### 画面設計(`02_basic-design/SCR-*.html`、1 画面 = 1 ファイル)
+### 画面設計(`02_basic-design/SCR-*.md`、1 画面 = 1 ファイル)
 
-- 親画面 `SCR-<番号>.html`、従属画面・モーダル `SCR-<番号>-NNN.html`(3 桁連番。`-M` サフィックスは使わない)。
-- 6 セクション固定: `1. 画面概要` / `2. 画面遷移図`(mermaid flowchart)/ `3. 画面レイアウト`(`<div class="scr-mock">` のワイヤーフレーム。lucide アイコン)/ `4. 画面項目定義`(項目 ID `IT-01`…)/ `5. 入出力一覧`(CRUD マトリクス)/ `6. 画面イベント一覧`(イベント ID `EV-01`…、`関連項目` で §4 の `IT-` に紐づけ)。
+- 親画面 `SCR-<番号>.md`、従属画面・モーダル `SCR-<番号>-NNN.md`(3 桁連番)。
+- 6 セクション固定: `1. 画面概要` / `2. 画面遷移図`(mermaid flowchart)/ `3. 画面レイアウト`(モック = 埋め込み HTML)/ `4. 画面項目定義`(項目 ID `IT-01`…)/ `5. 入出力一覧`(CRUD マトリクス)/ `6. 画面イベント一覧`(イベント ID `EV-01`…、`関連項目` で §4 の `IT-` に紐づけ)。
 - 意味のある状態・入力・業務ロジックを持つモーダルは独立 SCR ファイルにする。単純な確認ダイアログは独立させない。
 
-### テーブル設計(`02_basic-design/TBL-*.html`、1 テーブル = 1 ファイル)
+### テーブル設計(`02_basic-design/TBL-*.md`、1 テーブル = 1 ファイル)
 
-- ファイル名 `TBL-<分類>-<連番>.html`。分類接頭辞は **`M_`(マスタ)/ `T_`(トランザクション)/ `H_`(履歴)/ `TP_`(ワーク・一時)**。
-- 各テーブルは 概要 / カラム定義 / 主キー / 外部キー / インデックス / 制約 / コード値の構成で表記する。
-- **データモデルの正本は `02_basic-design/03_database-design.html` および各 `TBL-*`**。利用者モデルは `M_USER`(利用者マスタ)+ `M_CONTRACT`(契約マスタ)を中核とする。詳細・最新は当該設計書を参照(本書には再掲しない)。
+- ファイル名 `TBL-<分類>-<連番>.md`。分類接頭辞は **`M_`(マスタ)/ `T_`(トランザクション)/ `H_`(履歴)/ `TP_`(ワーク・一時)**。
+- 各テーブルは 概要 / カラム定義 / 主キー / 外部キー / インデックス / 制約 / コード値 の構成で表記する。
+- **データモデルの正本は `02_basic-design/03_database-design.md` および各 `TBL-*`**。利用者モデルは `M_USER`(利用者マスタ)+ `M_CONTRACT`(契約マスタ)を中核とする。
 
-### 将来対応(`03_future/FUTxx.html`)
+### 将来対応(`03_future/FUTxx.md`)
 
 - MVP 後の候補・バックログ。FUT カテゴリ別。要件定義テンプレートに準じる。
 
@@ -141,42 +159,50 @@ _build/              # ビルド資材(配信対象外。下記参照)
 ## ID・用語
 
 - ID 体系: `FR-###` / `BR-###` / `NFR-###`(要件)、`SCR-<番号>(-NNN)`(画面)、`IT-##` / `EV-##`(画面内連番)、`API-*`(API)、`TBL-<分類>-<連番>`(テーブル)、`FUT##`(将来対応)。
-- 定義セルはアンカーのみ(非リンク)。参照は定義へリンク(同一ページ `#ID`、他ページ `相対パス#ID`、NFR は `01_requirements/index.html#NFR-###`)。
+- 定義箇所は `<span id="ID"></span>`(アンカー)。参照は定義へリンク(同一ページ `#ID`、他ページ `相対パス.md#ID`、NFR は `../01_requirements/index.md#NFR-###`)。
 - 用語: ログイン可能なアカウント保有者は「アカウント利用者」、ウィジェットのエンドユーザーは「ウィジェット利用者」と区別する。
 
 ---
 
 ## 検証
 
-ページを編集・再生成したら、配信ポータル(`_build` を除く)に**移行範囲内の壊れリンクが無い**ことを確認する。ルートで次を実行:
+ページを編集・追加したら、`python3 _build/portal_nav.py` でナビ・README を更新したうえで、**移行範囲内の壊れリンク・壊れアンカーが無い**ことを確認する。ルートで次を実行:
 
 ```sh
 python3 - <<'PY'
-import os,re,html
-files=[os.path.join(r,f) for r,_,fs in os.walk(".")
-       if "/_build" not in r and "/.git" not in r and not r.startswith("./.git")
-       for f in fs if f.endswith(".html")]
-broken=[]
+import os,re,glob,html
+files=sorted(set(glob.glob("0[123]_*/*.md")+["README.md"]))
+ids={f:set(re.findall(r'id="([^"]+)"',open(f,encoding="utf-8").read())) for f in files}
+def links(s):
+    for m in re.finditer(r'\]\(([^)\s]+)\)',s): yield m.group(1)
+    for m in re.finditer(r'href="([^"]+)"',s): yield m.group(1)
+bf=[]; ba=[]
 for p in files:
-    root=os.path.dirname(p); s=open(p,encoding="utf-8").read()
-    for m in re.finditer(r'href="([^"]+)"', s):
-        h=html.unescape(m.group(1))
-        if h.startswith(("http","#","mailto:")): continue
-        path=h.split("#")[0].split("?")[0]
-        if not path or path.endswith(".css"): continue
-        if not os.path.exists(os.path.normpath(os.path.join(root,path))):
-            broken.append((os.path.relpath(p,"."), h))
-print("broken:", len(broken))
-for x in broken: print("  ", x)
+    d=os.path.dirname(p); s=open(p,encoding="utf-8").read()
+    for raw in links(s):
+        h=html.unescape(raw)
+        if h.startswith(("http","mailto:")): continue
+        path,_,frag=h.partition("#")
+        if path=="":
+            if frag and frag not in ids[p]: ba.append((p,h)); continue
+        else:
+            t=os.path.normpath(os.path.join(d,path))
+            if not os.path.exists(t): bf.append((p,h))
+            elif frag and t in ids and frag not in ids[t]: ba.append((p,h))
+print("broken file links:",len(bf))
+for x in bf: print("  F",*x)
+print("broken anchor links:",len(ba))
+for x in ba: print("  A",*x)
 PY
 ```
 
-旧基本設計世代(`M_OWNERS` モデル・11 文書体系)から移行した要件定義本文には、現構成に存在しない旧ドキュメント(詳細設計 / 運用設計 / 共有概念 / 旧基本設計の一部)への参照が残ることがある。これらは中身を忠実保持した結果のリンク切れであり、整合を取る場合は参照先を現構成へ張り替えるか、リンクをテキスト化する。
+> [!NOTE]
+> 旧基本設計世代(`M_OWNERS` モデル・11 文書体系)から移行した本文には、現構成に存在しない旧ドキュメント(詳細設計 / 運用設計 / エラー設計 / メッセージ一覧 / 共有概念 等)への参照や、元から定義されていなかったアンカー(`01_requirements/index.md#NFR-3xx` の多く、`02_api-design.md#API-*` / `03_database-design.md#TBL-*` 等)が残る。これらは中身を忠実保持した結果のリンク切れであり、**HTML 時点から壊れていたもの**。整合を取る場合は参照先を現構成へ張り替えるか、リンクをテキスト化する。
 
 ---
 
 ## 注意
 
-- 生成物(`01_〜03_` の HTML)を直接編集しない。本文変更は `_build/src/` を編集して `python3 _build/gen.py` で再生成する。
-- 変更により削除・改名した識別子(FR ID・列挙値・列名・画面/項目ラベル等)は、ソース内を検索して取りこぼしを修正する。
-- 運用ルールの更新は本書 `CLAUDE.md` を直接編集する(ポータルには展開しない)。
+- Markdown が正本。本文変更は該当 `.md` の本文(ナビのマーカ外)を直接編集する。ナビ・README は `_build/portal_nav.py` で再生成する。
+- 定義行・見出しを追加したら `<span id="…"></span>` を必ず付ける。削除・改名した識別子(FR ID・列挙値・列名・画面/項目ラベル等)は、`01_〜03_` 内を検索して取りこぼしを修正する。
+- 運用ルールの更新は本書 `CLAUDE.md` を直接編集する。
