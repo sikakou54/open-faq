@@ -32,6 +32,7 @@
 - `p7_linkgraph.json` … P7 リンクグラフ(UC/EVT/API/TBL 構造化リンク + 要件→UC 逆引き。機械可読)
 - `p7_gaps.json` … P7 ギャップ一覧(分類別。機械可読)
 - `06_remaining_issues.md` … 各フェーズ検出課題(GitHub MCP 復旧後に Issue 化)
+- `gh_issues.sh` … Issue 一括起票+解決済み Close スクリプト(冪等)。gh 認証復旧後に `bash 99_management/gh_issues.sh` を実行
 - `07_coverage_gap_report.md` … 要件↔UC 被覆ギャップ精査レポート(P7 後続)。§7 第1段: UC→要件 128→0。§8 第2段: FR→UC 62→164・受容30・UC新設57(UC-248〜304)。**FR↔UC ギャップ解消(残0/0)**
 - `p8_fr_uc_proposal.json` / `p8_new_uc_map.json` / `p8_uc_rules.json` / `p8_tbl_orphan.json` … 第2段 FR→UC 候補・新設UCマップ / 第3段 UC→RULE マップ / 構造ギャップ TBL逆引き(機械可読)
 - `05_agent_work_summary.md` … 各 Agent 作業サマリ(随時)
