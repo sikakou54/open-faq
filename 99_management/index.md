@@ -10,7 +10,7 @@
 | P0 骨格・クロスウォーク | (本作業・完了) | done |
 | 基盤 ディレクトリ改称+portal_nav/CLAUDE | #4 | open |
 | P1 要件定義 個別ID分割・再採番・RULE抽出 | #5 | DONE(0/0) |
-| P2 業務ユースケース UC-001 導出 | #6 | open |
+| P2 業務ユースケース UC-001 導出 | #6 | DONE(0/0) |
 | P3 画面設計 移設・SCR採番・EVT個別化 | #7 | open |
 | P4 API設計 エンドポイント別分割 | #8 | open |
 | P5 DB設計 移設・TBL採番 | #9 | open |
@@ -22,9 +22,11 @@
 
 ## 正本
 - ID リナンバ: `01_crosswalk.md` / `crosswalk.json`(旧→新 534 件)
+- 業務 UC リナンバ: `uc_crosswalk.json`(旧 UC-SCR-*-EV* / UC-SYSTEM-* → 新 UC-001..247・P2 成果)
 - トレーサビリティ: `02_traceability_matrix.md`(P7 で生成)
 
 ## ファイル
 - `01_crosswalk.md` / `crosswalk.json` … 旧→新 ID 対応
+- `uc_crosswalk.json` … 旧業務 UC → 新 UC-NNN 対応(P2)
 - `02_traceability_matrix.md` … 要件→UC→SCR→EVT→API→TBL(P7)
 - `05_agent_work_summary.md` … 各 Agent 作業サマリ(随時)
