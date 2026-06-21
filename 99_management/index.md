@@ -2,22 +2,29 @@
 
 要件定義書・基本設計書 再構成プロジェクトの一時管理ディレクトリ。**最終成果物ではない。** 作業完了時に内容を正式設計書 / GitHub Issues へ移管し、本ディレクトリは削除する。
 
-## 進捗(レジューム用)
-- [x] P0 骨格・クロスウォーク確定(`01_crosswalk.md` / `crosswalk.json`、旧→新 ID 534 件)
-- [ ] P1 要件定義 個別 ID 分割・フラット再採番・RULE 抽出
-- [ ] P2 業務ユースケース UC-001 導出(要件定義書内)
-- [ ] P3 画面設計 移設・SCR 採番・EVT 個別化
-- [ ] P4 API 設計 エンドポイント別分割・API 採番
-- [ ] P5 DB 設計 移設・TBL 採番・監査項目
-- [ ] P6 権限/エラー/メッセージ + シーケンス 抽出生成
-- [ ] P7 トレーサビリティマトリクス・ギャップ検出
-- [ ] P8 統括統合 portal_nav/CLAUDE/検証/99_management 削除/全 Issue Close
+## 再開起点
+全タスクは GitHub Issues に登録済み(エピック #3)。下表の Issue を上から順に消化する。
+
+| フェーズ | Issue | 状態 |
+|---|---|---|
+| P0 骨格・クロスウォーク | (本作業・完了) | done |
+| 基盤 ディレクトリ改称+portal_nav/CLAUDE | #4 | open |
+| P1 要件定義 個別ID分割・再採番・RULE抽出 | #5 | open |
+| P2 業務ユースケース UC-001 導出 | #6 | open |
+| P3 画面設計 移設・SCR採番・EVT個別化 | #7 | open |
+| P4 API設計 エンドポイント別分割 | #8 | open |
+| P5 DB設計 移設・TBL採番 | #9 | open |
+| P6 権限/エラー/メッセージ+SEQ | #10 | open |
+| P7 トレーサビリティ・ギャップ検出 | #11 | open |
+| P8 統括統合・検証・99_management削除・全Close | #12 | open |
+
+エピック: #3 / 検出課題・差し戻しは随時 `[設計再構成][区分]` で個別 Issue 化。
 
 ## 正本
-- 計画: リポジトリ外プラン(承認済)。本ディレクトリ `01_crosswalk.md` が ID リナンバの正本。
-- 全タスクは GitHub Issues(ラベル `design-restructure`)に登録済み。各 Issue がフェーズ・課題の単位。
+- ID リナンバ: `01_crosswalk.md` / `crosswalk.json`(旧→新 534 件)
+- トレーサビリティ: `02_traceability_matrix.md`(P7 で生成)
 
 ## ファイル
 - `01_crosswalk.md` / `crosswalk.json` … 旧→新 ID 対応
-- `02_traceability_matrix.md` … 要件→UC→SCR→EVT→API→TBL(P7 で生成)
+- `02_traceability_matrix.md` … 要件→UC→SCR→EVT→API→TBL(P7)
 - `05_agent_work_summary.md` … 各 Agent 作業サマリ(随時)
