@@ -73,7 +73,7 @@ FAQ 登録前の未解決質問を保持します。
 | `status` | `open`   | 対応必要 |
 | `status` | `closed` | 終了     |
 
-状態遷移詳細は §4.5.2 参照(共有概念正本)。
+状態は `status`(`open` / `closed`)で管理する。
 
 ### <span id="usedby"></span>使用元(画面 / API)
 

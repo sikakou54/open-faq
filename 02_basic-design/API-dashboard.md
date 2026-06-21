@@ -106,7 +106,7 @@
 | `　└ failedCount` | integer | 配信失敗件数 |
 | `　└ bouncedCount` | integer | バウンス件数 |
 
-`notification.failedCount` / `bouncedCount` は `H_NOTIF_LOGS` の配信失敗・バウンス集計(列定義は [03_テーブル設計/index.md](03_database-design.md))。メンバーが `projectId` 指定で呼んだ場合、本ブロックは `null` を返す。
+`notification.failedCount` / `bouncedCount` は `H_NOTIF_LOGS` の配信失敗・バウンス集計(列定義は [データベース設計.md](03_database-design.md))。メンバーが `projectId` 指定で呼んだ場合、本ブロックは `null` を返す。
 
 ### エラー
 
