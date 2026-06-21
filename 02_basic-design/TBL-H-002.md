@@ -37,7 +37,6 @@
 <tr>
 <td>外部キー</td>
 <td><ul>
-<li><code>contract_id</code> → <code>M_CONTRACT(id)</code></li>
 <li><code>project_id</code> → <code>M_PROJECTS(id)</code></li>
 </ul></td>
 </tr>
@@ -49,31 +48,30 @@
 | No | 論理名 | 物理名 | データ型 | 桁数 | NULL | PK | FK | UNIQUE | DEFAULT | 制約 |
 |---:|----|----|----|---:|----|----|----|----|----|----|
 | 1 | ID | `id` | TEXT | \- | NO | ○ |  |  |  |  |
-| 2 | 契約 owner ID | `contract_id` | TEXT | \- | NO |  | `M_CONTRACT(id)` |  |  |  |
-| 3 | プロジェクト ID | `project_id` | TEXT | \- | NO |  | `M_PROJECTS(id)` |  |  |  |
-| 4 | 質問本文 | `user_question` | TEXT | \- | NO |  |  |  |  | `length(user_question) BETWEEN 1 AND 2000` |
-| 5 | AI 応答 | `ai_response` | TEXT | \- | YES |  |  |  |  |  |
-| 6 | 解決フラグ | `is_resolved` | INTEGER | \- | NO |  |  |  | `0` |  |
-| 7 | 課金確定フラグ | `metering_billable` | INTEGER | \- | NO |  |  |  | `0` |  |
-| 8 | 信頼度スコア | `confidence_score` | REAL | \- | YES |  |  |  |  |  |
-| 9 | 関連度スコア | `relevance_score` | REAL | \- | YES |  |  |  |  |  |
-| 10 | AI モデル | `ai_model` | TEXT | \- | YES |  |  |  |  |  |
-| 11 | 入力トークン数 | `ai_token_count_input` | INTEGER | \- | YES |  |  |  |  |  |
-| 12 | 出力トークン数 | `ai_token_count_output` | INTEGER | \- | YES |  |  |  |  |  |
-| 13 | 結果種別 | `result_type` | TEXT | \- | YES |  |  |  |  | `result_type IN ('answered','unanswered','error')`(NULL 許容) |
-| 14 | 結果理由コード | `result_reason_code` | TEXT | \- | YES |  |  |  |  |  |
-| 15 | PII マスク済 | `pii_masked` | INTEGER | \- | NO |  |  |  | `0` |  |
-| 16 | セッション ID | `session_id` | TEXT | \- | YES |  |  |  |  |  |
-| 17 | IP アドレス | `ip_address` | TEXT | \- | YES |  |  |  |  |  |
-| 18 | 有効フラグ | `valid` | INTEGER | \- | NO |  |  |  | `1` | `valid IN (0,1)` |
-| 19 | 作成日時 | `created_at` | TEXT | \- | NO |  |  |  |  |  |
-| 20 | 更新日時 | `updated_at` | TEXT | \- | NO |  |  |  | `datetime('now')` |  |
+| 2 | プロジェクト ID | `project_id` | TEXT | \- | NO |  | `M_PROJECTS(id)` |  |  |  |
+| 3 | 質問本文 | `user_question` | TEXT | \- | NO |  |  |  |  | `length(user_question) BETWEEN 1 AND 2000` |
+| 4 | AI 応答 | `ai_response` | TEXT | \- | YES |  |  |  |  |  |
+| 5 | 解決フラグ | `is_resolved` | INTEGER | \- | NO |  |  |  | `0` |  |
+| 6 | 課金確定フラグ | `metering_billable` | INTEGER | \- | NO |  |  |  | `0` |  |
+| 7 | 信頼度スコア | `confidence_score` | REAL | \- | YES |  |  |  |  |  |
+| 8 | 関連度スコア | `relevance_score` | REAL | \- | YES |  |  |  |  |  |
+| 9 | AI モデル | `ai_model` | TEXT | \- | YES |  |  |  |  |  |
+| 10 | 入力トークン数 | `ai_token_count_input` | INTEGER | \- | YES |  |  |  |  |  |
+| 11 | 出力トークン数 | `ai_token_count_output` | INTEGER | \- | YES |  |  |  |  |  |
+| 12 | 結果種別 | `result_type` | TEXT | \- | YES |  |  |  |  | `result_type IN ('answered','unanswered','error')`(NULL 許容) |
+| 13 | 結果理由コード | `result_reason_code` | TEXT | \- | YES |  |  |  |  |  |
+| 14 | PII マスク済 | `pii_masked` | INTEGER | \- | NO |  |  |  | `0` |  |
+| 15 | セッション ID | `session_id` | TEXT | \- | YES |  |  |  |  |  |
+| 16 | IP アドレス | `ip_address` | TEXT | \- | YES |  |  |  |  |  |
+| 17 | 有効フラグ | `valid` | INTEGER | \- | NO |  |  |  | `1` | `valid IN (0,1)` |
+| 18 | 作成日時 | `created_at` | TEXT | \- | NO |  |  |  |  |  |
+| 19 | 更新日時 | `updated_at` | TEXT | \- | NO |  |  |  | `datetime('now')` |  |
 
 ### <span id="3125-インデックス"></span>インデックス
 
 | No | インデックス名 | 対象カラム | UNIQUE | 用途 |
 |---:|----|----|----|----|
-| 1 | `idx_qlog_owner_created` | `(contract_id, created_at DESC)` |  | オーナー別新着 |
+| 1 | `idx_qlog_project_created` | `(project_id, created_at DESC)` |  | プロジェクト別新着 |
 | 2 | `idx_qlog_project_billable_created` | `(project_id, metering_billable, created_at DESC)` |  | プロジェクト × 課金確定 |
 | 3 | `idx_qlog_valid` | `valid` WHERE `valid = 0` |  | 論理削除対象抽出 |
 

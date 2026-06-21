@@ -6,7 +6,7 @@
 
 **メインシステムのデータベース(Cloudflare D1 / SQLite)全 32 テーブルを機能ドメイン別に定義する設計書です。** 全ユーザーは `M_USER`、契約は `M_CONTRACT`(オーナー判定 + プロジェクトの親)で管理します。各テーブルの詳細はテーブル名のリンクから辿れます。
 
-*版数 v3.4 ・ 更新 2026-06-21 ・ テーブル数 32 ・ 独立設計書*
+*版数 v3.5 ・ 更新 2026-06-21 ・ テーブル数 32 ・ 独立設計書*
 
 ## <span id="store"></span>1.データストア構成
 
@@ -217,7 +217,6 @@ erDiagram
 ```mermaid
 erDiagram
   H_QUESTION_LOGS { TEXT id PK
-    TEXT contract_id FK "→M_CONTRACT.id"
     TEXT project_id FK "→M_PROJECTS.id" }
   T_QLOG_FAQ_REFS { TEXT id PK
     TEXT question_log_id FK "→H_QUESTION_LOGS.id"
@@ -236,7 +235,6 @@ erDiagram
 ```mermaid
 erDiagram
   T_INQUIRIES { TEXT id PK
-    TEXT contract_id FK "→M_CONTRACT.id"
     TEXT project_id FK "→M_PROJECTS.id"
     TEXT question_log_id FK "→H_QUESTION_LOGS.id" }
   M_PROJECTS { TEXT id PK }
@@ -262,18 +260,14 @@ erDiagram
   T_BILL_INVOICES { TEXT id PK
     TEXT contract_id FK "→M_CONTRACT.id" }
   T_USAGE_METER { TEXT id PK
-    TEXT contract_id FK "→M_CONTRACT.id"
     TEXT project_id FK "→M_PROJECTS.id" }
   M_PRJ_QUOTA_LIMITS { TEXT id PK
-    TEXT contract_id FK "→M_CONTRACT.id"
     TEXT project_id FK "→M_PROJECTS.id" }
   M_OWNER_QUOTA_OVR { TEXT id PK
     TEXT contract_id FK "→M_CONTRACT.id" }
   M_CONTRACT ||--o{ T_BILL_SUBS : "サブスク"
   M_CONTRACT ||--o{ T_BILL_INVOICES : "請求書"
-  M_CONTRACT ||--o{ T_USAGE_METER : "計測"
-  M_PROJECTS ||--o{ T_USAGE_METER : "PJ計測"
-  M_CONTRACT ||--o{ M_PRJ_QUOTA_LIMITS : "契約境界"
+  M_PROJECTS ||--o{ T_USAGE_METER : "計測"
   M_PROJECTS ||--o{ M_PRJ_QUOTA_LIMITS : "上限設定"
   M_CONTRACT ||--o| M_OWNER_QUOTA_OVR : "レート上書き"
 ```

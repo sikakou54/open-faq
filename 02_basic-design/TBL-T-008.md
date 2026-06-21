@@ -37,7 +37,6 @@
 <tr>
 <td>外部キー</td>
 <td><ul>
-<li><code>contract_id</code> → <code>M_CONTRACT(id)</code></li>
 <li><code>project_id</code> → <code>M_PROJECTS(id)</code></li>
 </ul></td>
 </tr>
@@ -49,23 +48,21 @@
 | No | 論理名 | 物理名 | データ型 | 桁数 | NULL | PK | FK | UNIQUE | DEFAULT | 制約 |
 |---:|----|----|----|---:|----|----|----|----|----|----|
 | 1 | ID | `id` | TEXT | \- | NO | ○ |  |  |  |  |
-| 2 | 契約 owner ID | `contract_id` | TEXT | \- | NO |  | `M_CONTRACT(id)` | ① |  |  |
-| 3 | プロジェクト ID | `project_id` | TEXT | \- | NO |  | `M_PROJECTS(id)` | ② |  |  |
-| 4 | 請求年月 | `billing_ym` | TEXT | \- | NO |  |  | ② |  |  |
-| 5 | 質問数 | `question_count` | INTEGER | \- | NO |  |  |  | `0` |  |
-| 6 | FAQ 数(スナップショット) | `faq_cnt_snapshot` | INTEGER | \- | NO |  |  |  | `0` |  |
-| 7 | AI 入力トークン | `ai_token_input` | INTEGER | \- | NO |  |  |  | `0` |  |
-| 8 | AI 出力トークン | `ai_token_output` | INTEGER | \- | NO |  |  |  | `0` |  |
-| 9 | AI コスト(円) | `ai_cost_yen` | INTEGER | \- | NO |  |  |  | `0` |  |
-| 10 | 確定日時 | `finalized_at` | TEXT | \- | YES |  |  |  |  |  |
-| 11 | 更新日時 | `updated_at` | TEXT | \- | NO |  |  |  |  |  |
+| 2 | プロジェクト ID | `project_id` | TEXT | \- | NO |  | `M_PROJECTS(id)` | ① |  |  |
+| 3 | 請求年月 | `billing_ym` | TEXT | \- | NO |  |  | ① |  |  |
+| 4 | 質問数 | `question_count` | INTEGER | \- | NO |  |  |  | `0` |  |
+| 5 | FAQ 数(スナップショット) | `faq_cnt_snapshot` | INTEGER | \- | NO |  |  |  | `0` |  |
+| 6 | AI 入力トークン | `ai_token_input` | INTEGER | \- | NO |  |  |  | `0` |  |
+| 7 | AI 出力トークン | `ai_token_output` | INTEGER | \- | NO |  |  |  | `0` |  |
+| 8 | AI コスト(円) | `ai_cost_yen` | INTEGER | \- | NO |  |  |  | `0` |  |
+| 9 | 確定日時 | `finalized_at` | TEXT | \- | YES |  |  |  |  |  |
+| 10 | 更新日時 | `updated_at` | TEXT | \- | NO |  |  |  |  |  |
 
 ### <span id="3225-インデックス"></span>インデックス
 
 | No | インデックス名 | 対象カラム | UNIQUE | 用途 |
 |---:|----|----|----|----|
-| 1 | `uq_usage_metering_owner_project_month` | `(contract_id, project_id, billing_ym)` | ○ | プロジェクト × 月次一意 |
-| 2 | `idx_usage_metering_owner_month` | `(contract_id, billing_ym)` |  | 契約集計(請求 SUM)用 |
+| 1 | `uq_usage_metering_project_month` | `(project_id, billing_ym)` | ○ | プロジェクト × 月次一意 |
 
 ### <span id="3227-コード値区分値"></span>コード値・区分値
 

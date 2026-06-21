@@ -37,7 +37,6 @@ FAQ 登録前の未解決質問を保持します。
 <tr>
 <td>外部キー</td>
 <td><ul>
-<li><code>contract_id</code> → <code>M_CONTRACT(id)</code></li>
 <li><code>project_id</code> → <code>M_PROJECTS(id)</code></li>
 <li><code>question_log_id</code> → <code>H_QUESTION_LOGS(id)</code></li>
 </ul></td>
@@ -50,24 +49,22 @@ FAQ 登録前の未解決質問を保持します。
 | No | 論理名 | 物理名 | データ型 | 桁数 | NULL | PK | FK | UNIQUE | DEFAULT | 制約 |
 |---:|----|----|----|---:|----|----|----|----|----|----|
 | 1 | ID | `id` | TEXT | \- | NO | ○ |  |  |  |  |
-| 2 | 契約 owner ID | `contract_id` | TEXT | \- | NO |  | `M_CONTRACT(id)` |  |  |  |
-| 3 | プロジェクト ID | `project_id` | TEXT | \- | NO |  | `M_PROJECTS(id)` |  |  |  |
-| 4 | 問い合わせコード | `inquiry_code` | TEXT | \- | NO |  |  | ○ |  |  |
-| 5 | 元質問ログ ID | `question_log_id` | TEXT | \- | YES |  | `H_QUESTION_LOGS(id)` |  |  |  |
-| 6 | 質問本文 | `user_question` | TEXT | \- | NO |  |  |  |  |  |
-| 7 | 状況 | `status` | TEXT | \- | NO |  |  |  | `'open'` | `status IN ('open','closed')` |
-| 8 | 有効フラグ | `valid` | INTEGER | \- | NO |  |  |  | `1` | `valid IN (0,1)` |
-| 9 | 作成日時 | `created_at` | TEXT | \- | NO |  |  |  |  |  |
-| 10 | 更新日時 | `updated_at` | TEXT | \- | NO |  |  |  |  |  |
+| 2 | プロジェクト ID | `project_id` | TEXT | \- | NO |  | `M_PROJECTS(id)` |  |  |  |
+| 3 | 問い合わせコード | `inquiry_code` | TEXT | \- | NO |  |  | ○ |  |  |
+| 4 | 元質問ログ ID | `question_log_id` | TEXT | \- | YES |  | `H_QUESTION_LOGS(id)` |  |  |  |
+| 5 | 質問本文 | `user_question` | TEXT | \- | NO |  |  |  |  |  |
+| 6 | 状況 | `status` | TEXT | \- | NO |  |  |  | `'open'` | `status IN ('open','closed')` |
+| 7 | 有効フラグ | `valid` | INTEGER | \- | NO |  |  |  | `1` | `valid IN (0,1)` |
+| 8 | 作成日時 | `created_at` | TEXT | \- | NO |  |  |  |  |  |
+| 9 | 更新日時 | `updated_at` | TEXT | \- | NO |  |  |  |  |  |
 
 ### <span id="3145-インデックス"></span>インデックス
 
 | No | インデックス名 | 対象カラム | UNIQUE | 用途 |
 |---:|----|----|----|----|
-| 1 | `idx_inquiries_status_created` | `(contract_id, status, created_at DESC)` |  | 契約境界 + 状況別新着 |
-| 2 | `idx_inquiries_project_status` | `(project_id, status)` |  | プロジェクト × 状況 |
-| 3 | `uq_inquiries_code` | `inquiry_code` | ○ | 問い合わせコード一意 |
-| 4 | `idx_inquiries_valid` | `valid` WHERE `valid = 0` |  | 論理削除対象抽出 |
+| 1 | `idx_inquiries_project_status_created` | `(project_id, status, created_at DESC)` |  | プロジェクト × 状況別新着 |
+| 2 | `uq_inquiries_code` | `inquiry_code` | ○ | 問い合わせコード一意 |
+| 3 | `idx_inquiries_valid` | `valid` WHERE `valid = 0` |  | 論理削除対象抽出 |
 
 ### <span id="3147-コード値区分値"></span>コード値・区分値
 
