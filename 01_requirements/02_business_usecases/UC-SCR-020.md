@@ -30,7 +30,7 @@
 | 事前条件 | SCR-020 の URL にアクセスした(認証不要) |
 | トリガー | 画面 SCR-020 を開く(初期表示) |
 | 事後条件 | 最新版全文(IT-02)を表示する。ログイン済みのときは同意状態バッジ(IT-01)を表示し、未ログインのときはバッジを非表示にする |
-| 関連 | [SCR-020](../../02_basic_design/01_screens/SCR-020.md#SCR-020) ・ [API-TRM-002](../../02_basic_design/03_apis/API-terms.md#API-TRM-002) ・ [FR-099](../FR13.md#FR-099) ・ [FR-101](../FR13.md#FR-101) |
+| 関連 | [SCR-020](../../02_basic_design/01_screens/SCR-020.md#SCR-020) ・ [API-TRM-002](../../02_basic_design/03_apis/API-terms.md#API-TRM-002) ・ [FR-137](../01_specifications/FR-137.md#FR-137) ・ [FR-139](../01_specifications/FR-139.md#FR-139) |
 
 基本フロー
 

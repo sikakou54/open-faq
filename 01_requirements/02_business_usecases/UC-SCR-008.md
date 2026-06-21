@@ -35,7 +35,7 @@
 | 事前条件 | ログイン済みで、当該プロジェクトへの割当がある |
 | トリガー | 画面 SCR-008 を開く(初期表示) |
 | 事後条件 | KPI カード(IT-05〜IT-07)に集計値を表示し、最終更新タイムスタンプ(IT-03)を表示する。契約停止・利用枠超過・質問数上限到達の各条件でアラート(IT-04)・バナー(IT-08 / IT-09)を表示する |
-| 関連 | [SCR-008](../../02_basic_design/01_screens/SCR-008.md#SCR-008) ・ [API-DASH-001](../../02_basic_design/03_apis/API-dashboard.md#API-DASH-001) ・ [FR-077](../FR10.md#FR-077) |
+| 関連 | [SCR-008](../../02_basic_design/01_screens/SCR-008.md#SCR-008) ・ [API-DASH-001](../../02_basic_design/03_apis/API-dashboard.md#API-DASH-001) ・ [FR-100](../01_specifications/FR-100.md#FR-100) |
 
 基本フロー
 

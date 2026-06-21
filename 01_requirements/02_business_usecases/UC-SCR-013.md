@@ -32,7 +32,7 @@
 | 事前条件 | SCR-002 完了後に遷移、または確認リンクから到達した |
 | トリガー | EV-01: 初期表示 |
 | 事後条件 | トークンなし(SCR-002 完了後)は送信済み状態(IT-01・IT-02・IT-03・IT-04・IT-05)を表示する。トークンありは検証し、成功時は確認成功(IT-06・IT-08)、失敗時は確認失敗(IT-07・IT-09)を表示する |
-| 関連 | [SCR-013](../../02_basic_design/01_screens/SCR-013.md#SCR-013) ・ [API-AUTH-006](../../02_basic_design/03_apis/API-auth.md#API-AUTH-006) ・ [FR-003](../FR01.md#FR-003) |
+| 関連 | [SCR-013](../../02_basic_design/01_screens/SCR-013.md#SCR-013) ・ [API-AUTH-006](../../02_basic_design/03_apis/API-auth.md#API-AUTH-006) ・ [FR-003](../01_specifications/FR-003.md#FR-003) |
 
 **基本フロー**
 1. 画面が URL パラメータ(確認トークンの有無)を確認する。
@@ -76,7 +76,7 @@ sequenceDiagram
 | 事前条件 | 送信済み状態で、再送ボタン(IT-04)が活性表示されている |
 | トリガー | EV-02: 再送ボタン(IT-04)を押下 |
 | 事後条件 | 成功時は確認メールを再送し、ボタンを非活性化してカウントダウン(レート制限 5 分)を表示する |
-| 関連 | [SCR-013](../../02_basic_design/01_screens/SCR-013.md#SCR-013) ・ [API-AUTH-001](../../02_basic_design/03_apis/API-auth.md#API-AUTH-001) ・ [FR-003](../FR01.md#FR-003) |
+| 関連 | [SCR-013](../../02_basic_design/01_screens/SCR-013.md#SCR-013) ・ [API-AUTH-001](../../02_basic_design/03_apis/API-auth.md#API-AUTH-001) ・ [FR-003](../01_specifications/FR-003.md#FR-003) |
 
 **基本フロー**
 1. 利用者が再送ボタン(IT-04)を押下する。
@@ -158,7 +158,7 @@ sequenceDiagram
 | 事前条件 | 確認成功状態(IT-06・IT-08)が表示されている |
 | トリガー | EV-05: ログインする(IT-08)を押下 |
 | 事後条件 | SCR-001 ログインへ遷移する |
-| 関連 | [SCR-013](../../02_basic_design/01_screens/SCR-013.md#SCR-013) ・ [FR-003](../FR01.md#FR-003) |
+| 関連 | [SCR-013](../../02_basic_design/01_screens/SCR-013.md#SCR-013) ・ [FR-003](../01_specifications/FR-003.md#FR-003) |
 
 クライアント内処理のみ(バックエンド連携なし)。
 

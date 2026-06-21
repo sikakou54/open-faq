@@ -33,7 +33,7 @@
 | 事前条件 | ログイン後の操作中に、未同意の規約改定がある状態で割込み表示された |
 | トリガー | EV-01: 初期表示 |
 | 事後条件 | 改定対象文書(利用規約 / プライバシーポリシー、または両方)の主な変更点(IT-01)を全画面モーダルで表示し、改定対象外の文書の同意チェックは非表示にする |
-| 関連 | [SCR-015](../../02_basic_design/01_screens/SCR-015.md#SCR-015) ・ [API-TRM-001](../../02_basic_design/03_apis/API-terms.md#API-TRM-001) ・ [API-TRM-002](../../02_basic_design/03_apis/API-terms.md#API-TRM-002) ・ [FR-010](../FR01.md#FR-010) ・ [FR-101](../FR13.md#FR-101) |
+| 関連 | [SCR-015](../../02_basic_design/01_screens/SCR-015.md#SCR-015) ・ [API-TRM-001](../../02_basic_design/03_apis/API-terms.md#API-TRM-001) ・ [API-TRM-002](../../02_basic_design/03_apis/API-terms.md#API-TRM-002) ・ [FR-010](../01_specifications/FR-010.md#FR-010) ・ [FR-139](../01_specifications/FR-139.md#FR-139) |
 
 **基本フロー**
 1. 画面が利用規約 最新版取得 API([API-TRM-001](../../02_basic_design/03_apis/API-terms.md#API-TRM-001))とプライバシーポリシー 最新版取得 API([API-TRM-002](../../02_basic_design/03_apis/API-terms.md#API-TRM-002))を呼び出す。
@@ -114,7 +114,7 @@ sequenceDiagram
 | 事前条件 | 利用規約が改定対象で同意チェック(IT-02)が表示されている |
 | トリガー | EV-04: 利用規約同意(IT-02)をチェック |
 | 事後条件 | チェック状態を切り替え、両チェックの充足状態に応じて「同意して続行する」(IT-04)の活性 / 非活性を更新する |
-| 関連 | [SCR-015](../../02_basic_design/01_screens/SCR-015.md#SCR-015) ・ [FR-010](../FR01.md#FR-010) |
+| 関連 | [SCR-015](../../02_basic_design/01_screens/SCR-015.md#SCR-015) ・ [FR-010](../01_specifications/FR-010.md#FR-010) |
 
 クライアント内処理のみ(バックエンド連携なし)。同意記録の永続化は EV-06 の同意 API で行います。
 
@@ -135,7 +135,7 @@ sequenceDiagram
 | 事前条件 | プライバシーポリシーが改定対象で同意チェック(IT-03)が表示されている |
 | トリガー | EV-05: プライバシーポリシー同意(IT-03)をチェック |
 | 事後条件 | チェック状態を切り替え、両チェックの充足状態に応じて「同意して続行する」(IT-04)の活性 / 非活性を更新する |
-| 関連 | [SCR-015](../../02_basic_design/01_screens/SCR-015.md#SCR-015) ・ [FR-010](../FR01.md#FR-010) |
+| 関連 | [SCR-015](../../02_basic_design/01_screens/SCR-015.md#SCR-015) ・ [FR-010](../01_specifications/FR-010.md#FR-010) |
 
 クライアント内処理のみ(バックエンド連携なし)。同意記録の永続化は EV-06 の同意 API で行います。
 
@@ -156,7 +156,7 @@ sequenceDiagram
 | 事前条件 | 改定対象の同意チェックが充足し、「同意して続行する」(IT-04)が活性化している |
 | トリガー | EV-06: 同意して続行する(IT-04)を押下 |
 | 事後条件 | 改定対象文書の同意を `T_TERMS_AGREE` に記録し、完了後は割込み前の操作へ戻る。失敗時はモーダルを維持しエラーを表示する |
-| 関連 | [SCR-015](../../02_basic_design/01_screens/SCR-015.md#SCR-015) ・ [API-TRM-003](../../02_basic_design/03_apis/API-terms.md#API-TRM-003) ・ [API-TRM-004](../../02_basic_design/03_apis/API-terms.md#API-TRM-004) ・ [FR-010](../FR01.md#FR-010) ・ [FR-099](../FR13.md#FR-099) |
+| 関連 | [SCR-015](../../02_basic_design/01_screens/SCR-015.md#SCR-015) ・ [API-TRM-003](../../02_basic_design/03_apis/API-terms.md#API-TRM-003) ・ [API-TRM-004](../../02_basic_design/03_apis/API-terms.md#API-TRM-004) ・ [FR-010](../01_specifications/FR-010.md#FR-010) ・ [FR-137](../01_specifications/FR-137.md#FR-137) |
 
 **基本フロー**
 1. 利用者が「同意して続行する」(IT-04)を押下する。

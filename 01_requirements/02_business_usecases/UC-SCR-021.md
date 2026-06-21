@@ -30,7 +30,7 @@
 | 事前条件 | ログイン済みで、当該プロジェクトへの割当がある |
 | トリガー | 画面 SCR-021 を開く(初期表示) |
 | 事後条件 | 当月利用を IT-03・IT-04 に表示し、月次上限設定を IT-03 に反映する。上限 ON/OFF に応じて IT-03・IT-04 の表示を切り替える。集計前 / 取得失敗時は空状態(IT-06)を表示する |
-| 関連 | [SCR-021](../../02_basic_design/01_screens/SCR-021.md#SCR-021) ・ [API-BIL-001](../../02_basic_design/03_apis/API-billing.md#API-BIL-001) ・ [API-BIL-006](../../02_basic_design/03_apis/API-billing.md#API-BIL-006) ・ [FR-065](../FR09.md#FR-065) ・ [FR-066](../FR09.md#FR-066) |
+| 関連 | [SCR-021](../../02_basic_design/01_screens/SCR-021.md#SCR-021) ・ [API-BIL-001](../../02_basic_design/03_apis/API-billing.md#API-BIL-001) ・ [API-BIL-006](../../02_basic_design/03_apis/API-billing.md#API-BIL-006) ・ [FR-088](../01_specifications/FR-088.md#FR-088) ・ [FR-089](../01_specifications/FR-089.md#FR-089) |
 
 基本フロー
 

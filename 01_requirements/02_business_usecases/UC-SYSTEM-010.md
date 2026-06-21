@@ -15,7 +15,7 @@
 | 項目 | 内容 |
 |---|---|
 | 目的 | 質問発生時に利用量をリアルタイム集計し、閾値判定と管理画面サマリ反映を行う |
-| 関連要件 | [FR-070](../FR09.md#FR-070) リアルタイム集計・5 分以内反映 ・ [FR-064](../FR09.md#FR-064) 利用量集計 |
+| 関連要件 | [FR-093](../01_specifications/FR-093.md#FR-093) リアルタイム集計・5 分以内反映 ・ [FR-087](../01_specifications/FR-087.md#FR-087) 利用量集計 |
 | 主テーブル | `T_USAGE_METER(CU)` ・ `M_PRJ_QUOTA_LIMITS(R)` |
 | 関連 API | [API-BIL-001](../../02_basic_design/03_apis/API-billing.md#API-BIL-001) 利用量参照 ・ [API-DASH-001](../../02_basic_design/03_apis/API-dashboard.md#API-DASH-001) ダッシュボードサマリ |
 
@@ -45,7 +45,7 @@
    1. 選択アラート閾値(25 / 50 / 80 / 90 / 100%)到達: アラート通知契機を [UC-SYSTEM-008](UC-SYSTEM-008.md#UC-SYSTEM-008) へ引き渡す。
    2. 100% 到達: ウィジェット受付停止契機を [UC-SYSTEM-011](UC-SYSTEM-011.md#UC-SYSTEM-011) へ引き渡す。
    3. 125% 到達: 集計遅延・誤差対策の最終ガードとして追加通知契機を引き渡す。
-5. 集計結果を管理画面向け利用量サマリへ 5 分以内の遅延で反映する([FR-070](../FR09.md#FR-070))。利用量画面([API-BIL-001](../../02_basic_design/03_apis/API-billing.md#API-BIL-001))・ダッシュボード([API-DASH-001](../../02_basic_design/03_apis/API-dashboard.md#API-DASH-001))で確認できる。
+5. 集計結果を管理画面向け利用量サマリへ 5 分以内の遅延で反映する([FR-093](../01_specifications/FR-093.md#FR-093))。利用量画面([API-BIL-001](../../02_basic_design/03_apis/API-billing.md#API-BIL-001))・ダッシュボード([API-DASH-001](../../02_basic_design/03_apis/API-dashboard.md#API-DASH-001))で確認できる。
 
 > [!NOTE]
 > 上限オフのプロジェクトは利用率の算出・アラート・上限到達停止を行わない。月次境界経過後の確定請求は [UC-SYSTEM-004](UC-SYSTEM-004.md#UC-SYSTEM-004) が扱う。本ユースケースは発生時計測・閾値判定・サマリ反映を範囲とする。
@@ -59,7 +59,7 @@
 
 - 当月質問数が `T_USAGE_METER` に計測され、課金対象 / 対象外が区別されて保持される。
 - 閾値到達・100% 停止・125% の各契機が、担当ユースケースへ引き渡される。
-- 集計結果が管理画面向けサマリへ 5 分以内に反映される([FR-070](../FR09.md#FR-070))。
+- 集計結果が管理画面向けサマリへ 5 分以内に反映される([FR-093](../01_specifications/FR-093.md#FR-093))。
 
 ## 8. シーケンス図
 

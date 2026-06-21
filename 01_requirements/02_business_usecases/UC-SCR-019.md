@@ -29,7 +29,7 @@
 | 事前条件 | 連絡先メールの確認リンク(`purpose='contact_verify'` のトークン付き URL)からアクセスした |
 | トリガー | EV-01: 初期表示 |
 | 事後条件 | 成功(200)時は連絡先メール確認日時(`M_PROJECTS.contact_verified_at`)を設定し IT-01 確認完了画面を表示する。期限切れ / 無効(410)は IT-02、使用済み(409)は IT-03 を表示する |
-| 関連 | [SCR-019](../../02_basic_design/01_screens/SCR-019.md#SCR-019) ・ [API-AUTH-009](../../02_basic_design/03_apis/API-auth.md#API-AUTH-009) ・ [FR-022a](../FR03.md#FR-022a) ・ [FR-022c](../FR03.md#FR-022c) |
+| 関連 | [SCR-019](../../02_basic_design/01_screens/SCR-019.md#SCR-019) ・ [API-AUTH-009](../../02_basic_design/03_apis/API-auth.md#API-AUTH-009) ・ [FR-043](../01_specifications/FR-043.md#FR-043) ・ [FR-044](../01_specifications/FR-044.md#FR-044) |
 
 **基本フロー**
 1. 画面が URL パスパラメータのトークンを取得する。
@@ -74,7 +74,7 @@ sequenceDiagram
 | 事前条件 | IT-01 確認完了画面が表示され、閉じるボタン(IT-04)が表示されている |
 | トリガー | EV-02: 閉じる(IT-04)を押下 |
 | 事後条件 | タブ / ウィンドウを閉じる。閉じられない場合は静的な完了メッセージを表示し続ける |
-| 関連 | [SCR-019](../../02_basic_design/01_screens/SCR-019.md#SCR-019) ・ [FR-022a](../FR03.md#FR-022a) |
+| 関連 | [SCR-019](../../02_basic_design/01_screens/SCR-019.md#SCR-019) ・ [FR-043](../01_specifications/FR-043.md#FR-043) |
 
 クライアント内処理のみ(バックエンド連携なし)。
 

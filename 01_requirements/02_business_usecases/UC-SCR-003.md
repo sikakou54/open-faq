@@ -36,7 +36,7 @@
 | 事前条件 | SCR-003 の URL にアクセスした(段階 1) |
 | トリガー | EV-01: 初期表示(段階 1) |
 | 事後条件 | タイムライン(IT-01、段階 1 強調)、メールアドレス入力(IT-02)、送信ボタン(IT-03)を表示する |
-| 関連 | [SCR-003](../../02_basic_design/01_screens/SCR-003.md#SCR-003) ・ [FR-004](../FR01.md#FR-004) |
+| 関連 | [SCR-003](../../02_basic_design/01_screens/SCR-003.md#SCR-003) ・ [FR-004](../01_specifications/FR-004.md#FR-004) |
 
 クライアント内処理のみ(バックエンド連携なし)。
 
@@ -57,7 +57,7 @@
 | 事前条件 | 段階 1 のメールアドレス入力(IT-02)が表示されている |
 | トリガー | EV-02: 送信ボタン(IT-03)を押下 |
 | 事後条件 | 形式正常時は再設定要求 API を発行し、メールアドレスの存在有無を区別しない一律応答後に送信済み案内(IT-04)と再送ボタン(IT-05、カウントダウン付き)を表示する |
-| 関連 | [SCR-003](../../02_basic_design/01_screens/SCR-003.md#SCR-003) ・ [API-AUTH-004](../../02_basic_design/03_apis/API-auth.md#API-AUTH-004) ・ [FR-004](../FR01.md#FR-004) |
+| 関連 | [SCR-003](../../02_basic_design/01_screens/SCR-003.md#SCR-003) ・ [API-AUTH-004](../../02_basic_design/03_apis/API-auth.md#API-AUTH-004) ・ [FR-004](../01_specifications/FR-004.md#FR-004) |
 
 **基本フロー**
 1. 画面が IT-02 の形式バリデーションを実行する。
@@ -101,7 +101,7 @@ sequenceDiagram
 | 事前条件 | 段階 1 送信済みで、再送ボタン(IT-05)が表示されている |
 | トリガー | EV-03: 再送ボタン(IT-05)を押下 |
 | 事後条件 | カウントダウン完了後に再設定要求 API を再発行し、応答受取後にカウントダウンをリセットして IT-05 を再び非活性にする |
-| 関連 | [SCR-003](../../02_basic_design/01_screens/SCR-003.md#SCR-003) ・ [API-AUTH-004](../../02_basic_design/03_apis/API-auth.md#API-AUTH-004) ・ [FR-004](../FR01.md#FR-004) |
+| 関連 | [SCR-003](../../02_basic_design/01_screens/SCR-003.md#SCR-003) ・ [API-AUTH-004](../../02_basic_design/03_apis/API-auth.md#API-AUTH-004) ・ [FR-004](../01_specifications/FR-004.md#FR-004) |
 
 **基本フロー**
 1. 5 分のレート制限カウントダウン中は IT-05 が非活性のため操作できない。
@@ -140,7 +140,7 @@ sequenceDiagram
 | 事前条件 | メールの再設定リンク(トークン付き URL)からアクセスした(段階 2) |
 | トリガー | EV-04: 初期表示(段階 2) |
 | 事後条件 | トークン有効時はタイムライン(段階 2 強調)と新パスワードフォーム(IT-06・IT-07・IT-08)を表示する。無効 / 期限切れ時は IT-09 エラーアラートと再送リンクを表示する |
-| 関連 | [SCR-003](../../02_basic_design/01_screens/SCR-003.md#SCR-003) ・ [API-AUTH-010](../../02_basic_design/03_apis/API-auth.md#API-AUTH-010) ・ [FR-004](../FR01.md#FR-004) |
+| 関連 | [SCR-003](../../02_basic_design/01_screens/SCR-003.md#SCR-003) ・ [API-AUTH-010](../../02_basic_design/03_apis/API-auth.md#API-AUTH-010) ・ [FR-004](../01_specifications/FR-004.md#FR-004) |
 
 **基本フロー**
 1. 画面が再設定リンクの URL トークンを取得する。
@@ -181,7 +181,7 @@ sequenceDiagram
 | 事前条件 | 段階 2 で IT-09 エラーアラートと再送リンクが表示されている |
 | トリガー | EV-05: 再送リンク(IT-09)を押下 |
 | 事後条件 | 再設定要求 API を発行し、応答受取後に段階 1 送信済み状態(IT-04・IT-05 表示)へ遷移する |
-| 関連 | [SCR-003](../../02_basic_design/01_screens/SCR-003.md#SCR-003) ・ [API-AUTH-004](../../02_basic_design/03_apis/API-auth.md#API-AUTH-004) ・ [FR-004](../FR01.md#FR-004) |
+| 関連 | [SCR-003](../../02_basic_design/01_screens/SCR-003.md#SCR-003) ・ [API-AUTH-004](../../02_basic_design/03_apis/API-auth.md#API-AUTH-004) ・ [FR-004](../01_specifications/FR-004.md#FR-004) |
 
 **基本フロー**
 1. 利用者が IT-09 の再送リンクを押下する。
@@ -219,7 +219,7 @@ sequenceDiagram
 | 事前条件 | 段階 2 の新パスワードフォーム(IT-06)が表示されている |
 | トリガー | EV-06: 新パスワード(IT-06)を入力 |
 | 事後条件 | 入力のたびに強度バーと不足要件メッセージ(IT-06)をリアルタイム更新する |
-| 関連 | [SCR-003](../../02_basic_design/01_screens/SCR-003.md#SCR-003) ・ [FR-006](../FR01.md#FR-006) |
+| 関連 | [SCR-003](../../02_basic_design/01_screens/SCR-003.md#SCR-003) ・ [FR-006](../01_specifications/FR-006.md#FR-006) |
 
 クライアント内処理のみ(バックエンド連携なし)。
 
@@ -240,7 +240,7 @@ sequenceDiagram
 | 事前条件 | 段階 2 で新パスワード(IT-06)と確認(IT-07)を入力している |
 | トリガー | EV-07: 設定ボタン(IT-08)を押下 |
 | 事後条件 | 検証成功時はパスワードハッシュを更新し当該ユーザーの全セッションを失効させ、完了画面(IT-10)を表示する。検証失敗時は不足要件 / 不一致エラーを表示しリクエストを中断する |
-| 関連 | [SCR-003](../../02_basic_design/01_screens/SCR-003.md#SCR-003) ・ [API-AUTH-010](../../02_basic_design/03_apis/API-auth.md#API-AUTH-010) ・ [FR-006](../FR01.md#FR-006) |
+| 関連 | [SCR-003](../../02_basic_design/01_screens/SCR-003.md#SCR-003) ・ [API-AUTH-010](../../02_basic_design/03_apis/API-auth.md#API-AUTH-010) ・ [FR-006](../01_specifications/FR-006.md#FR-006) |
 
 **基本フロー**
 1. 画面が IT-06 の強度要件(FR-006: 12 文字以上・3 種類以上の文字種)を検証する。
@@ -285,7 +285,7 @@ sequenceDiagram
 | 事前条件 | パスワード設定完了画面(IT-10)が表示されている |
 | トリガー | EV-08: ログインボタン(IT-10)を押下 |
 | 事後条件 | SCR-001 ログインへ遷移する |
-| 関連 | [SCR-003](../../02_basic_design/01_screens/SCR-003.md#SCR-003) ・ [FR-004](../FR01.md#FR-004) |
+| 関連 | [SCR-003](../../02_basic_design/01_screens/SCR-003.md#SCR-003) ・ [FR-004](../01_specifications/FR-004.md#FR-004) |
 
 クライアント内処理のみ(バックエンド連携なし)。
 
@@ -306,7 +306,7 @@ sequenceDiagram
 | 事前条件 | 段階 1 フォームが表示されている |
 | トリガー | EV-09: ログインに戻る(IT-11)を押下 |
 | 事後条件 | SCR-001 ログインへ遷移する |
-| 関連 | [SCR-003](../../02_basic_design/01_screens/SCR-003.md#SCR-003) ・ [FR-004](../FR01.md#FR-004) |
+| 関連 | [SCR-003](../../02_basic_design/01_screens/SCR-003.md#SCR-003) ・ [FR-004](../01_specifications/FR-004.md#FR-004) |
 
 クライアント内処理のみ(バックエンド連携なし)。
 

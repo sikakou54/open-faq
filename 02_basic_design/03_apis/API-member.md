@@ -125,7 +125,7 @@
 | 認証           | Cookie + CSRF + 再認証必須                               |
 | 権限           | オーナー / 当該プロジェクトのメンバー                    |
 
-既存のメンバーアカウントの場合は `M_PRJ_USERS` 行のみ追加。新規メールアドレスの場合は予約 `M_USER`(**`name`/`password_hash`=NULL** / **`status='pending_activation'`** / `valid=1`)を作成 + `M_PRJ_USERS` を `valid=0` で同時 INSERT + 招待メール送信(7 日有効、`T_ACCESS_TOKENS.purpose='activation'`、`meta={"invitedProjectId": "..."}` を JSON 保持)。氏名・パスワードは未設定で、招待された本人が SCR-018 メンバーアカウント有効化ページで設定し有効化する(API-AUTH-008)。**氏名(`displayName`)は受け付けない**(FR-013d / FR-013e)。
+既存のメンバーアカウントの場合は `M_PRJ_USERS` 行のみ追加。新規メールアドレスの場合は予約 `M_USER`(**`name`/`password_hash`=NULL** / **`status='pending_activation'`** / `valid=1`)を作成 + `M_PRJ_USERS` を `valid=0` で同時 INSERT + 招待メール送信(7 日有効、`T_ACCESS_TOKENS.purpose='activation'`、`meta={"invitedProjectId": "..."}` を JSON 保持)。氏名・パスワードは未設定で、招待された本人が SCR-018 メンバーアカウント有効化ページで設定し有効化する(API-AUTH-008)。**氏名(`displayName`)は受け付けない**(FR-022 / FR-023)。
 
 ### 処理概要
 
@@ -443,7 +443,7 @@
 {}
 ```
 
-氏名 `displayName` を受け付けない(FR-013b / FR-013d)。
+氏名 `displayName` を受け付けない(FR-020 / FR-022)。
 
 ### レスポンス(200)
 

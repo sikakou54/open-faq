@@ -35,7 +35,7 @@
 | 事前条件 | 顧客サイトにウィジェットスクリプトが組み込まれている |
 | トリガー | 顧客サイトの読み込み(初期表示) |
 | 事後条件 | ランチャーバッジ(IT-01)を右下固定で表示する |
-| 関連 | [SCR-WIDGET](../../02_basic_design/01_screens/SCR-WIDGET.md#WIDGET) ・ [FR-034](../FR05.md#FR-034) |
+| 関連 | [SCR-WIDGET](../../02_basic_design/01_screens/SCR-WIDGET.md#WIDGET) ・ [FR-057](../01_specifications/FR-057.md#FR-057) |
 
 クライアント内処理のみ(この段階ではサーバ連携を行わない。セッション確立は EV-02 で行う)。
 
@@ -58,7 +58,7 @@
 | 事前条件 | ランチャーバッジ(IT-01)が表示されている |
 | トリガー | ランチャーバッジ(IT-01)を押下する(Enter / Space キーによる起動も同等) |
 | 事後条件 | バッジを非表示にしてチャット UI を展開し、セッションを確立してウィジェット設定(タイトル・連絡先メール等)を取得する |
-| 関連 | [SCR-WIDGET](../../02_basic_design/01_screens/SCR-WIDGET.md#WIDGET) ・ [API-WGT-001](../../02_basic_design/03_apis/API-widget.md#API-WGT-001) ・ [FR-034](../FR05.md#FR-034) |
+| 関連 | [SCR-WIDGET](../../02_basic_design/01_screens/SCR-WIDGET.md#WIDGET) ・ [API-WGT-001](../../02_basic_design/03_apis/API-widget.md#API-WGT-001) ・ [FR-057](../01_specifications/FR-057.md#FR-057) |
 
 基本フロー
 
@@ -124,7 +124,7 @@ sequenceDiagram
 | 事前条件 | チャット UI を展開しており、受付制限中ではない |
 | トリガー | 質問入力(IT-05)に質問文を入力する |
 | 事後条件 | 入力内容を質問入力欄に保持する。受付制限中は入力欄が無効化され操作できない |
-| 関連 | [SCR-WIDGET](../../02_basic_design/01_screens/SCR-WIDGET.md#WIDGET) ・ [FR-034](../FR05.md#FR-034) |
+| 関連 | [SCR-WIDGET](../../02_basic_design/01_screens/SCR-WIDGET.md#WIDGET) ・ [FR-057](../01_specifications/FR-057.md#FR-057) |
 
 クライアント内処理のみ(バックエンド連携なし)。
 
@@ -147,7 +147,7 @@ sequenceDiagram
 | 事前条件 | 質問を入力しており、受付制限中ではない(送信ボタンが活性) |
 | トリガー | 「送信」(IT-06)を押下する |
 | 事後条件 | 質問を送信し、AI 回答(IT-07)を同じ会話欄に追加表示する。応答種別に応じて未解決(EV-06)・受付制限(EV-07)・処理エラー(EV-08)へ続く |
-| 関連 | [SCR-WIDGET](../../02_basic_design/01_screens/SCR-WIDGET.md#WIDGET) ・ [API-WGT-002](../../02_basic_design/03_apis/API-widget.md#API-WGT-002) ・ [FR-038](../FR05.md#FR-038) |
+| 関連 | [SCR-WIDGET](../../02_basic_design/01_screens/SCR-WIDGET.md#WIDGET) ・ [API-WGT-002](../../02_basic_design/03_apis/API-widget.md#API-WGT-002) ・ [FR-061](../01_specifications/FR-061.md#FR-061) |
 
 基本フロー
 
@@ -196,7 +196,7 @@ sequenceDiagram
 | 事前条件 | 質問送信(EV-05)の応答が未解決(`type=unanswered`)である |
 | トリガー | ウィジェット質問送信 API のレスポンスが `type=unanswered`(EV-05 の結果として続いて処理) |
 | 事後条件 | 回答できなかった旨をシステム返信として表示し、質問ログと未解決質問を登録する。連絡先メール設定済みのときは連絡先メール(IT-08)を案内表示する。別の質問の入力・送信は引き続き可能 |
-| 関連 | [SCR-WIDGET](../../02_basic_design/01_screens/SCR-WIDGET.md#WIDGET) ・ [API-WGT-003](../../02_basic_design/03_apis/API-widget.md#API-WGT-003) ・ [FR-045](../FR06.md#FR-045) |
+| 関連 | [SCR-WIDGET](../../02_basic_design/01_screens/SCR-WIDGET.md#WIDGET) ・ [API-WGT-003](../../02_basic_design/03_apis/API-widget.md#API-WGT-003) ・ [FR-068](../01_specifications/FR-068.md#FR-068) |
 
 基本フロー
 
@@ -240,7 +240,7 @@ sequenceDiagram
 | 事前条件 | 質問送信(EV-05)で質問数上限到達または支払方法ゲートによる 429 を受信した |
 | トリガー | ウィジェット質問送信 API から 429 を受信(EV-05 の結果として続いて処理) |
 | 事後条件 | 受付停止メッセージ(IT-09)をシステム返信として表示し、連絡先メール設定済みのときは連絡先メール(IT-08)を案内表示する。質問入力欄(IT-05)・送信ボタン(IT-06)を無効化する |
-| 関連 | [SCR-WIDGET](../../02_basic_design/01_screens/SCR-WIDGET.md#WIDGET) ・ [API-WGT-002](../../02_basic_design/03_apis/API-widget.md#API-WGT-002) ・ [FR-073](../FR09.md#FR-073) |
+| 関連 | [SCR-WIDGET](../../02_basic_design/01_screens/SCR-WIDGET.md#WIDGET) ・ [API-WGT-002](../../02_basic_design/03_apis/API-widget.md#API-WGT-002) ・ [FR-096](../01_specifications/FR-096.md#FR-096) |
 
 基本フロー
 

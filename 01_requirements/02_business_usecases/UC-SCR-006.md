@@ -198,7 +198,7 @@ sequenceDiagram
 | 事前条件 | FAQ 一覧を表示している |
 | トリガー | 行選択チェックボックス(IT-10)を操作する |
 | 事後条件 | 選択件数を「{件数} 件選択中」で表示し、1 件以上選択時は一括操作バー(IT-12)を表示、0 件で非表示にする |
-| 関連 | [SCR-006](../../02_basic_design/01_screens/SCR-006.md#SCR-006) ・ [FR-134](../FR18.md#FR-134) |
+| 関連 | [SCR-006](../../02_basic_design/01_screens/SCR-006.md#SCR-006) ・ [FR-173](../01_specifications/FR-173.md#FR-173) |
 
 基本フロー
 
@@ -208,7 +208,7 @@ sequenceDiagram
 
 異常系フロー
 
-- 上限超過: 既に 50 件(FR-134)選択済みのとき、追加選択を受け付けずその旨を表示する。
+- 上限超過: 既に 50 件(FR-173)選択済みのとき、追加選択を受け付けずその旨を表示する。
 
 ### <span id="UC-SCR-006-EV06"></span>UC-SCR-006-EV06 「+ 新規作成」を押下
 
@@ -364,12 +364,12 @@ sequenceDiagram
 | 事前条件 | 1 件以上の FAQ を選択し、一括操作バー(IT-12)を表示している |
 | トリガー | 一括操作バーの「削除する」を押下する |
 | 事後条件 | 確認後、選択中 FAQ を論理削除する。一覧を再取得し、選択を解除する |
-| 関連 | [SCR-006](../../02_basic_design/01_screens/SCR-006.md#SCR-006) ・ [API-FAQ-002](../../02_basic_design/03_apis/API-faq.md#API-FAQ-002) ・ [API-FAQ-001](../../02_basic_design/03_apis/API-faq.md#API-FAQ-001) ・ [FR-135](../FR18.md#FR-135) |
+| 関連 | [SCR-006](../../02_basic_design/01_screens/SCR-006.md#SCR-006) ・ [API-FAQ-002](../../02_basic_design/03_apis/API-faq.md#API-FAQ-002) ・ [API-FAQ-001](../../02_basic_design/03_apis/API-faq.md#API-FAQ-001) ・ [FR-174](../01_specifications/FR-174.md#FR-174) |
 
 基本フロー
 
 1. 利用者が一括操作バーの「削除する」を押下する。
-2. 画面は確認ダイアログを表示し、削除対象件数と「削除すると復元できません」の警告を示す(FR-135)。
+2. 画面は確認ダイアログを表示し、削除対象件数と「削除すると復元できません」の警告を示す(FR-174)。
 3. 利用者が確認(OK)する。
 4. 画面は選択中の各 FAQ ID に対して FAQ 削除(DELETE)を実行し、選択件数分の論理削除を行う。
 5. 画面は一覧を再取得して表示を更新し、選択を解除する。
@@ -389,7 +389,7 @@ sequenceDiagram
   participant API as API
   participant DB as DB
   U->>S: 「削除する」を押下(IT-12)
-  S-->>U: 確認ダイアログ(件数・警告 FR-135)
+  S-->>U: 確認ダイアログ(件数・警告 FR-174)
   alt キャンセル
     U->>S: キャンセル
     S-->>U: 状態不変(選択・一括操作バー維持)

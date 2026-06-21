@@ -30,7 +30,7 @@
 | 事前条件 | ログイン済みで、オーナーである |
 | トリガー | 画面 SCR-016 を開く(初期表示) |
 | 事後条件 | 契約全体サマリー(IT-01)とプロジェクト別利用状況(IT-03)を表示する。支払方法未登録・支払い失敗時は支払い警告(IT-02)を表示し、プロジェクト 0 件時は空状態(IT-04)を表示し IT-03 を表示しない |
-| 関連 | [SCR-016](../../02_basic_design/01_screens/SCR-016.md#SCR-016) ・ [API-BIL-002](../../02_basic_design/03_apis/API-billing.md#API-BIL-002) ・ [API-BIL-001](../../02_basic_design/03_apis/API-billing.md#API-BIL-001) ・ [FR-077](../FR10.md#FR-077) |
+| 関連 | [SCR-016](../../02_basic_design/01_screens/SCR-016.md#SCR-016) ・ [API-BIL-002](../../02_basic_design/03_apis/API-billing.md#API-BIL-002) ・ [API-BIL-001](../../02_basic_design/03_apis/API-billing.md#API-BIL-001) ・ [FR-100](../01_specifications/FR-100.md#FR-100) |
 
 基本フロー
 

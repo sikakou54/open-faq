@@ -35,7 +35,7 @@
 | 事前条件 | ログイン済みで、当該プロジェクトへの割当がある |
 | トリガー | 画面 SCR-005 を開く(初期表示) |
 | 事後条件 | 取得結果を一覧表示する。1 件以上のとき件数表示(IT-08)を更新し、0 件のとき空状態(IT-09)を表示する |
-| 関連 | [SCR-005](../../02_basic_design/01_screens/SCR-005.md#SCR-005) ・ [API-INQ-001](../../02_basic_design/03_apis/API-inquiry.md#API-INQ-001) ・ [FR-045](../FR06.md#FR-045) |
+| 関連 | [SCR-005](../../02_basic_design/01_screens/SCR-005.md#SCR-005) ・ [API-INQ-001](../../02_basic_design/03_apis/API-inquiry.md#API-INQ-001) ・ [FR-068](../01_specifications/FR-068.md#FR-068) |
 
 基本フロー
 

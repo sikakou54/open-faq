@@ -34,7 +34,7 @@
 | 事前条件 | ログイン済みで、オーナーである |
 | トリガー | 画面 SCR-022 を開く(初期表示) |
 | 事後条件 | 請求見込み・次回請求日・請求状態・プロジェクト別内訳・支払方法(IT-01〜IT-05)と請求履歴(IT-07)を表示する。支払い失敗・支払方法未登録時は復旧バナー(IT-09)を表示する |
-| 関連 | [SCR-022](../../02_basic_design/01_screens/SCR-022.md#SCR-022) ・ [API-BIL-003](../../02_basic_design/03_apis/API-billing.md#API-BIL-003) ・ [API-BIL-004](../../02_basic_design/03_apis/API-billing.md#API-BIL-004) ・ [FR-066](../FR09.md#FR-066) |
+| 関連 | [SCR-022](../../02_basic_design/01_screens/SCR-022.md#SCR-022) ・ [API-BIL-003](../../02_basic_design/03_apis/API-billing.md#API-BIL-003) ・ [API-BIL-004](../../02_basic_design/03_apis/API-billing.md#API-BIL-004) ・ [FR-089](../01_specifications/FR-089.md#FR-089) |
 
 基本フロー
 
@@ -80,7 +80,7 @@ sequenceDiagram
 | 事前条件 | 請求画面を表示している |
 | トリガー | 「支払方法を変更」(IT-06)を押下する |
 | 事後条件 | 再認証成功時は支払方法を登録・更新し、IT-05 を最新の情報へ更新する。失敗時は操作を中断する |
-| 関連 | [SCR-022](../../02_basic_design/01_screens/SCR-022.md#SCR-022) ・ [API-AUTH-005](../../02_basic_design/03_apis/API-auth.md#API-AUTH-005) ・ [API-BIL-005](../../02_basic_design/03_apis/API-billing.md#API-BIL-005) ・ [FR-067](../FR09.md#FR-067) |
+| 関連 | [SCR-022](../../02_basic_design/01_screens/SCR-022.md#SCR-022) ・ [API-AUTH-005](../../02_basic_design/03_apis/API-auth.md#API-AUTH-005) ・ [API-BIL-005](../../02_basic_design/03_apis/API-billing.md#API-BIL-005) ・ [FR-090](../01_specifications/FR-090.md#FR-090) |
 
 基本フロー
 
@@ -212,7 +212,7 @@ sequenceDiagram
 | 事前条件 | 支払い失敗・支払方法未登録の復旧バナー(IT-09)を表示している |
 | トリガー | バナー CTA「支払い方法を登録」(IT-10)を押下する |
 | 事後条件 | 再認証成功時は支払方法を登録し、IT-05 を最新化し、IT-09 バナーを非表示にする。失敗時は操作を中断する |
-| 関連 | [SCR-022](../../02_basic_design/01_screens/SCR-022.md#SCR-022) ・ [API-AUTH-005](../../02_basic_design/03_apis/API-auth.md#API-AUTH-005) ・ [API-BIL-005](../../02_basic_design/03_apis/API-billing.md#API-BIL-005) ・ [FR-067](../FR09.md#FR-067) |
+| 関連 | [SCR-022](../../02_basic_design/01_screens/SCR-022.md#SCR-022) ・ [API-AUTH-005](../../02_basic_design/03_apis/API-auth.md#API-AUTH-005) ・ [API-BIL-005](../../02_basic_design/03_apis/API-billing.md#API-BIL-005) ・ [FR-090](../01_specifications/FR-090.md#FR-090) |
 
 基本フロー
 

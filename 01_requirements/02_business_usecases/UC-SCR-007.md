@@ -38,7 +38,7 @@
 | 事前条件 | ログイン済みで、当該プロジェクトへの割当がある |
 | トリガー | 画面 SCR-007 を開く(初期表示) |
 | 事後条件 | 公開キー(IT-02)・主色(IT-05)・表示位置(IT-10)・見出し(IT-11)・初期メッセージ(IT-12)・埋め込みコード(IT-08)を表示する。ローテーション猶予中に旧キー使用を検知している場合は旧キー使用中バッジ(IT-03)を表示する |
-| 関連 | [SCR-007](../../02_basic_design/01_screens/SCR-007.md#SCR-007) ・ [API-PRJ-003](../../02_basic_design/03_apis/API-project.md#API-PRJ-003) ・ [FR-020](../FR03.md#FR-020) |
+| 関連 | [SCR-007](../../02_basic_design/01_screens/SCR-007.md#SCR-007) ・ [API-PRJ-003](../../02_basic_design/03_apis/API-project.md#API-PRJ-003) ・ [FR-040](../01_specifications/FR-040.md#FR-040) |
 
 基本フロー
 

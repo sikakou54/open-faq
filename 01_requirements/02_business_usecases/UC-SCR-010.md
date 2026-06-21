@@ -30,7 +30,7 @@
 | 事前条件 | SCR-010 の URL にアクセスした(認証不要) |
 | トリガー | 画面 SCR-010 を開く(初期表示) |
 | 事後条件 | 最新版全文(IT-02)を表示する。ログイン済みのときは同意状態バッジ(IT-01)を表示し、未ログインのときはバッジを非表示にする |
-| 関連 | [SCR-010](../../02_basic_design/01_screens/SCR-010.md#SCR-010) ・ [API-TRM-001](../../02_basic_design/03_apis/API-terms.md#API-TRM-001) ・ [FR-101](../FR13.md#FR-101) |
+| 関連 | [SCR-010](../../02_basic_design/01_screens/SCR-010.md#SCR-010) ・ [API-TRM-001](../../02_basic_design/03_apis/API-terms.md#API-TRM-001) ・ [FR-139](../01_specifications/FR-139.md#FR-139) |
 
 基本フロー
 
@@ -97,7 +97,7 @@ sequenceDiagram
 | 事前条件 | 利用規約最新版全文を表示しており、ログイン済みでボタンが活性である |
 | トリガー | 「同意して続ける」(IT-03)を押下する |
 | 事後条件 | 最新版バージョンへの同意を記録する(冪等)。同意状態バッジ(IT-01)を緑バッジに更新し、遷移元画面(またはトップ)へ戻る |
-| 関連 | [SCR-010](../../02_basic_design/01_screens/SCR-010.md#SCR-010) ・ [API-TRM-003](../../02_basic_design/03_apis/API-terms.md#API-TRM-003) ・ [FR-101](../FR13.md#FR-101) |
+| 関連 | [SCR-010](../../02_basic_design/01_screens/SCR-010.md#SCR-010) ・ [API-TRM-003](../../02_basic_design/03_apis/API-terms.md#API-TRM-003) ・ [FR-139](../01_specifications/FR-139.md#FR-139) |
 
 基本フロー
 

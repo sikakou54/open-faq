@@ -32,7 +32,7 @@
 | 事前条件 | ログイン済みで、オーナーである |
 | トリガー | 画面 SCR-004 を開く(初期表示) |
 | 事後条件 | 取得結果を一覧表示する。取得中は IT-08 ローディング状態(スケルトン 3 行)、0 件のときは IT-07 空状態を表示する |
-| 関連 | [SCR-004](../../02_basic_design/01_screens/SCR-004.md#SCR-004) ・ [API-PRJ-001](../../02_basic_design/03_apis/API-project.md#API-PRJ-001) ・ [FR-019](../FR03.md#FR-019) |
+| 関連 | [SCR-004](../../02_basic_design/01_screens/SCR-004.md#SCR-004) ・ [API-PRJ-001](../../02_basic_design/03_apis/API-project.md#API-PRJ-001) ・ [FR-037](../01_specifications/FR-037.md#FR-037) |
 
 基本フロー
 

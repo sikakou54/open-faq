@@ -38,7 +38,7 @@
 | 事前条件 | ログイン済みで、お知らせの閲覧資格がある |
 | トリガー | 画面 SCR-011 を開く(初期表示) |
 | 事後条件 | クイックフィルタ「未読のみ」を既定条件に一覧を表示し、未読件数(IT-04)を更新する。0 件のときは空状態(IT-17)を表示する |
-| 関連 | [SCR-011](../../02_basic_design/01_screens/SCR-011.md#SCR-011) ・ [API-ANN-001](../../02_basic_design/03_apis/API-inbox.md#API-ANN-001) ・ [API-ANN-004](../../02_basic_design/03_apis/API-inbox.md#API-ANN-004) ・ [FR-116](../FR15.md#FR-116) ・ [FR-117](../FR15.md#FR-117) |
+| 関連 | [SCR-011](../../02_basic_design/01_screens/SCR-011.md#SCR-011) ・ [API-ANN-001](../../02_basic_design/03_apis/API-inbox.md#API-ANN-001) ・ [API-ANN-004](../../02_basic_design/03_apis/API-inbox.md#API-ANN-004) ・ [FR-155](../01_specifications/FR-155.md#FR-155) ・ [FR-156](../01_specifications/FR-156.md#FR-156) |
 
 基本フロー
 
@@ -191,19 +191,19 @@ sequenceDiagram
 | 事前条件 | お知らせ一覧を表示している |
 | トリガー | 選択チェックボックス(IT-11)を操作する |
 | 事後条件 | 1 件以上選択時に一括操作バー(IT-12)を表示し、すべての選択を解除したとき非表示にする |
-| 関連 | [SCR-011](../../02_basic_design/01_screens/SCR-011.md#SCR-011) ・ [FR-134](../FR18.md#FR-134) |
+| 関連 | [SCR-011](../../02_basic_design/01_screens/SCR-011.md#SCR-011) ・ [FR-173](../01_specifications/FR-173.md#FR-173) |
 
 クライアント内処理のみ(バックエンド連携なし)。
 
 基本フロー
 
-1. 利用者が選択チェックボックス(IT-11)をオンにし、対象行を選択状態にする(最大 100 件: FR-134)。
+1. 利用者が選択チェックボックス(IT-11)をオンにし、対象行を選択状態にする(最大 100 件: FR-173)。
 2. 1 件以上選択されたとき、画面は一括操作バー(IT-12)を表示する。
 3. すべての選択を解除したとき、画面は一括操作バー(IT-12)を非表示にする。
 
 異常系フロー
 
-- 上限超過: 既に 100 件(FR-134)選択済みのとき、追加選択を受け付けずその旨を表示する。
+- 上限超過: 既に 100 件(FR-173)選択済みのとき、追加選択を受け付けずその旨を表示する。
 
 ### <span id="UC-SCR-011-EV06"></span>UC-SCR-011-EV06 お知らせ ID リンクを押下
 
@@ -215,7 +215,7 @@ sequenceDiagram
 | 事前条件 | お知らせ一覧に対象お知らせが表示されている |
 | トリガー | お知らせ ID(IT-08)のリンクを押下する |
 | 事後条件 | 該当行を既読化し、詳細画面(SCR-012)へ遷移する |
-| 関連 | [SCR-011](../../02_basic_design/01_screens/SCR-011.md#SCR-011) ・ [API-ANN-002](../../02_basic_design/03_apis/API-inbox.md#API-ANN-002) ・ [SCR-012](../../02_basic_design/01_screens/SCR-012.md#SCR-012) ・ [FR-117](../FR15.md#FR-117) |
+| 関連 | [SCR-011](../../02_basic_design/01_screens/SCR-011.md#SCR-011) ・ [API-ANN-002](../../02_basic_design/03_apis/API-inbox.md#API-ANN-002) ・ [SCR-012](../../02_basic_design/01_screens/SCR-012.md#SCR-012) ・ [FR-156](../01_specifications/FR-156.md#FR-156) |
 
 基本フロー
 
@@ -256,7 +256,7 @@ sequenceDiagram
 | 事前条件 | 1 件以上のお知らせを選択し、一括操作バー(IT-12)を表示している |
 | トリガー | 一括操作バーの「既読化する」(IT-13)を押下する |
 | 事後条件 | 選択行を既読化する。一覧を再取得し未読件数(IT-04)を更新し、選択を解除して一括操作バー(IT-12)を非表示にする |
-| 関連 | [SCR-011](../../02_basic_design/01_screens/SCR-011.md#SCR-011) ・ [API-ANN-003](../../02_basic_design/03_apis/API-inbox.md#API-ANN-003) ・ [API-ANN-001](../../02_basic_design/03_apis/API-inbox.md#API-ANN-001) ・ [FR-117](../FR15.md#FR-117) |
+| 関連 | [SCR-011](../../02_basic_design/01_screens/SCR-011.md#SCR-011) ・ [API-ANN-003](../../02_basic_design/03_apis/API-inbox.md#API-ANN-003) ・ [API-ANN-001](../../02_basic_design/03_apis/API-inbox.md#API-ANN-001) ・ [FR-156](../01_specifications/FR-156.md#FR-156) |
 
 基本フロー
 
@@ -301,7 +301,7 @@ sequenceDiagram
 | 事前条件 | お知らせ一覧を表示している |
 | トリガー | 「表示中の未読を既読化」(IT-14)を押下する |
 | 事後条件 | 現在のフィルタ条件で表示中の未読を既読化する。一覧を再取得し未読件数(IT-04)を更新する |
-| 関連 | [SCR-011](../../02_basic_design/01_screens/SCR-011.md#SCR-011) ・ [API-ANN-003](../../02_basic_design/03_apis/API-inbox.md#API-ANN-003) ・ [API-ANN-001](../../02_basic_design/03_apis/API-inbox.md#API-ANN-001) ・ [FR-117](../FR15.md#FR-117) |
+| 関連 | [SCR-011](../../02_basic_design/01_screens/SCR-011.md#SCR-011) ・ [API-ANN-003](../../02_basic_design/03_apis/API-inbox.md#API-ANN-003) ・ [API-ANN-001](../../02_basic_design/03_apis/API-inbox.md#API-ANN-001) ・ [FR-156](../01_specifications/FR-156.md#FR-156) |
 
 基本フロー
 
@@ -346,12 +346,12 @@ sequenceDiagram
 | 事前条件 | お知らせ一覧を表示している |
 | トリガー | 「すべての未読を既読化」(IT-15)を押下する |
 | 事後条件 | 確認後、フィルタを無視して全未読を既読化する。一覧を再取得し未読件数(IT-04)を更新する |
-| 関連 | [SCR-011](../../02_basic_design/01_screens/SCR-011.md#SCR-011) ・ [API-ANN-003](../../02_basic_design/03_apis/API-inbox.md#API-ANN-003) ・ [API-ANN-001](../../02_basic_design/03_apis/API-inbox.md#API-ANN-001) ・ [FR-135](../FR18.md#FR-135) |
+| 関連 | [SCR-011](../../02_basic_design/01_screens/SCR-011.md#SCR-011) ・ [API-ANN-003](../../02_basic_design/03_apis/API-inbox.md#API-ANN-003) ・ [API-ANN-001](../../02_basic_design/03_apis/API-inbox.md#API-ANN-001) ・ [FR-174](../01_specifications/FR-174.md#FR-174) |
 
 基本フロー
 
 1. 利用者が「すべての未読を既読化」(IT-15)を押下する。
-2. 画面は確認ダイアログを表示する(FR-135)。
+2. 画面は確認ダイアログを表示する(FR-174)。
 3. 利用者が OK を押下する。
 4. 画面はフィルタを無視してお知らせ一括既読 API で全未読を既読化する。
 5. 成功時、画面は一覧を再取得して未読件数(IT-04)を更新する。
@@ -368,7 +368,7 @@ sequenceDiagram
   participant API as API
   participant DB as DB
   U->>S: 「すべての未読を既読化」を押下(IT-15)
-  S-->>U: 確認ダイアログ(FR-135)
+  S-->>U: 確認ダイアログ(FR-174)
   alt キャンセル
     U->>S: キャンセル
     S-->>U: 状態不変(処理中断)

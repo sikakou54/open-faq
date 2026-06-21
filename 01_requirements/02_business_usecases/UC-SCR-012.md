@@ -31,7 +31,7 @@
 | 事前条件 | ログイン済みで、一覧(SCR-011)から対象お知らせを選択している |
 | トリガー | 画面 SCR-012 を開く(初期表示) |
 | 事後条件 | 本文・メタ情報(種別・重要度・配信日時・既読日時)を表示する。初回表示(未読)のときは自動既読化し、既読日時(IT-06)を更新表示する |
-| 関連 | [SCR-012](../../02_basic_design/01_screens/SCR-012.md#SCR-012) ・ [API-ANN-001](../../02_basic_design/03_apis/API-inbox.md#API-ANN-001) ・ [API-ANN-002](../../02_basic_design/03_apis/API-inbox.md#API-ANN-002) ・ [FR-117](../FR15.md#FR-117) ・ [FR-118](../FR15.md#FR-118) |
+| 関連 | [SCR-012](../../02_basic_design/01_screens/SCR-012.md#SCR-012) ・ [API-ANN-001](../../02_basic_design/03_apis/API-inbox.md#API-ANN-001) ・ [API-ANN-002](../../02_basic_design/03_apis/API-inbox.md#API-ANN-002) ・ [FR-156](../01_specifications/FR-156.md#FR-156) ・ [FR-157](../01_specifications/FR-157.md#FR-157) |
 
 基本フロー
 

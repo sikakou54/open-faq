@@ -35,7 +35,7 @@
 | 事前条件 | ログイン済みで、オーナーである |
 | トリガー | 画面 SCR-014 を開く(初期表示) |
 | 事後条件 | 退会時の影響(サービス停止・データ削除・請求・メンバー失効)を集約した警告パネル(IT-01)を表示する。オーナー以外は権限不足画面を表示し本画面を表示しない |
-| 関連 | [SCR-014](../../02_basic_design/01_screens/SCR-014.md#SCR-014) ・ [FR-009](../FR01.md#FR-009) |
+| 関連 | [SCR-014](../../02_basic_design/01_screens/SCR-014.md#SCR-014) ・ [FR-009](../01_specifications/FR-009.md#FR-009) |
 
 基本フロー
 
@@ -105,7 +105,7 @@
 | 事前条件 | 退会内容の確認ダイアログが表示中(EV-03 実行済み)。再認証用パスワード(IT-06)が入力されている |
 | トリガー | 確認ダイアログの「OK」を押下する |
 | 事後条件 | 再認証成功時は退会申請を `T_WITHDRAW_REQ` に登録し、契約状態 `M_CONTRACT.status` を `deleted_pending` へ更新する。完了後は SCR-017 個人設定へ遷移する。失敗時は確認ダイアログへ戻る |
-| 関連 | [SCR-014](../../02_basic_design/01_screens/SCR-014.md#SCR-014) ・ [API-AUTH-005](../../02_basic_design/03_apis/API-auth.md#API-AUTH-005) ・ [API-TRM-005](../../02_basic_design/03_apis/API-terms.md#API-TRM-005) ・ [FR-009](../FR01.md#FR-009) |
+| 関連 | [SCR-014](../../02_basic_design/01_screens/SCR-014.md#SCR-014) ・ [API-AUTH-005](../../02_basic_design/03_apis/API-auth.md#API-AUTH-005) ・ [API-TRM-005](../../02_basic_design/03_apis/API-terms.md#API-TRM-005) ・ [FR-009](../01_specifications/FR-009.md#FR-009) |
 
 基本フロー
 

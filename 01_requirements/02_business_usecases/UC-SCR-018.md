@@ -40,7 +40,7 @@
 | 事前条件 | 招待メール内リンク(`purpose='activation'` の有効トークン付き URL)からアクセスした |
 | トリガー | EV-01: 初期表示 |
 | 事後条件 | 成功時は招待情報パネル(IT-02)・メールアドレス(IT-03)・入力フォームを表示する。無効 / 期限切れ(410)は IT-11、使用済みは IT-12 を表示する |
-| 関連 | [SCR-018](../../02_basic_design/01_screens/SCR-018.md#SCR-018) ・ [API-AUTH-007](../../02_basic_design/03_apis/API-auth.md#API-AUTH-007) ・ [FR-013](../FR02.md#FR-013) |
+| 関連 | [SCR-018](../../02_basic_design/01_screens/SCR-018.md#SCR-018) ・ [API-AUTH-007](../../02_basic_design/03_apis/API-auth.md#API-AUTH-007) ・ [FR-018](../01_specifications/FR-018.md#FR-018) |
 
 **基本フロー**
 1. 画面が招待トークン検証・プレビュー API(`POST /auth/invitations/{token}/preview` = [API-AUTH-007](../../02_basic_design/03_apis/API-auth.md#API-AUTH-007))を実行する。
@@ -81,9 +81,9 @@ sequenceDiagram
 | 事前条件 | 入力フォームが表示されている |
 | トリガー | EV-02: 氏名(IT-04)を入力 |
 | 事後条件 | 必須・1〜100 文字・前後空白トリムを検証し、不正ならエラーを表示する |
-| 関連 | [SCR-018](../../02_basic_design/01_screens/SCR-018.md#SCR-018) ・ [FR-013d](../FR02.md#FR-013d) |
+| 関連 | [SCR-018](../../02_basic_design/01_screens/SCR-018.md#SCR-018) ・ [FR-022](../01_specifications/FR-022.md#FR-022) |
 
-クライアント内処理のみ(バックエンド連携なし)。氏名は招待された本人のみが入力します(FR-013d 個人情報原則)。
+クライアント内処理のみ(バックエンド連携なし)。氏名は招待された本人のみが入力します(FR-022 個人情報原則)。
 
 **基本フロー**
 1. 利用者が氏名(IT-04)を入力する。
@@ -102,7 +102,7 @@ sequenceDiagram
 | 事前条件 | 入力フォームが表示されている |
 | トリガー | EV-03: 初回パスワード(IT-05)を入力 |
 | 事後条件 | FR-006 強度要件を検証して強度メーターを更新し、要件未達の場合はエラーを表示する |
-| 関連 | [SCR-018](../../02_basic_design/01_screens/SCR-018.md#SCR-018) ・ [FR-006](../FR01.md#FR-006) |
+| 関連 | [SCR-018](../../02_basic_design/01_screens/SCR-018.md#SCR-018) ・ [FR-006](../01_specifications/FR-006.md#FR-006) |
 
 クライアント内処理のみ(バックエンド連携なし)。
 
@@ -123,7 +123,7 @@ sequenceDiagram
 | 事前条件 | 入力フォームが表示されている |
 | トリガー | EV-04: パスワード(確認)(IT-06)を入力 |
 | 事後条件 | 初回パスワード(IT-05)との一致を検証し、不一致ならエラーを表示する |
-| 関連 | [SCR-018](../../02_basic_design/01_screens/SCR-018.md#SCR-018) ・ [FR-006](../FR01.md#FR-006) |
+| 関連 | [SCR-018](../../02_basic_design/01_screens/SCR-018.md#SCR-018) ・ [FR-006](../01_specifications/FR-006.md#FR-006) |
 
 クライアント内処理のみ(バックエンド連携なし)。
 
@@ -144,7 +144,7 @@ sequenceDiagram
 | 事前条件 | 入力フォームが表示されている |
 | トリガー | EV-05: 利用規約同意(IT-07)をチェック |
 | 事後条件 | チェック状態を保持する。未チェックのまま有効化を試みた場合は必須エラーを表示する |
-| 関連 | [SCR-018](../../02_basic_design/01_screens/SCR-018.md#SCR-018) ・ [FR-099](../FR13.md#FR-099) |
+| 関連 | [SCR-018](../../02_basic_design/01_screens/SCR-018.md#SCR-018) ・ [FR-137](../01_specifications/FR-137.md#FR-137) |
 
 クライアント内処理のみ(バックエンド連携なし)。同意記録の永続化は EV-10 の有効化 API で行います。
 
@@ -186,7 +186,7 @@ sequenceDiagram
 | 事前条件 | 入力フォームが表示されている |
 | トリガー | EV-07: プライバシーポリシー同意(IT-08)をチェック |
 | 事後条件 | チェック状態を保持する。未チェックのまま有効化を試みた場合は必須エラーを表示する |
-| 関連 | [SCR-018](../../02_basic_design/01_screens/SCR-018.md#SCR-018) ・ [FR-099](../FR13.md#FR-099) |
+| 関連 | [SCR-018](../../02_basic_design/01_screens/SCR-018.md#SCR-018) ・ [FR-137](../01_specifications/FR-137.md#FR-137) |
 
 クライアント内処理のみ(バックエンド連携なし)。同意記録の永続化は EV-10 の有効化 API で行います。
 
@@ -228,7 +228,7 @@ sequenceDiagram
 | 事前条件 | Turnstile ウィジェット(IT-09)が表示されている |
 | トリガー | EV-09: Turnstile を実行 |
 | 事後条件 | CAPTCHA トークンを取得する。検証失敗時はエラーを表示し「登録を完了する」(IT-10)を無効化する |
-| 関連 | [SCR-018](../../02_basic_design/01_screens/SCR-018.md#SCR-018) ・ [FR-111](../FR14.md#FR-111) |
+| 関連 | [SCR-018](../../02_basic_design/01_screens/SCR-018.md#SCR-018) ・ [FR-149](../01_specifications/FR-149.md#FR-149) |
 
 クライアント内処理のみ(バックエンド連携なし)。トークンの最終的な妥当性確認は EV-10 の有効化 API で行います。
 
@@ -249,7 +249,7 @@ sequenceDiagram
 | 事前条件 | 氏名・初回パスワード・確認・規約同意・Turnstile が入力・取得されている |
 | トリガー | EV-10: 登録を完了する(IT-10)を押下 |
 | 事後条件 | 成功時は予約 `M_USER` への氏名・パスワードハッシュ設定・`status='active'` 化、`M_PRJ_USERS.valid=1` 化、`T_TERMS_AGREE` 2 件登録、トークン消費を同一トランザクションで行い、IT-13 完了画面を表示する。失敗時は内容を確定しない |
-| 関連 | [SCR-018](../../02_basic_design/01_screens/SCR-018.md#SCR-018) ・ [API-AUTH-008](../../02_basic_design/03_apis/API-auth.md#API-AUTH-008) ・ [FR-013](../FR02.md#FR-013) ・ [FR-099](../FR13.md#FR-099) |
+| 関連 | [SCR-018](../../02_basic_design/01_screens/SCR-018.md#SCR-018) ・ [API-AUTH-008](../../02_basic_design/03_apis/API-auth.md#API-AUTH-008) ・ [FR-018](../01_specifications/FR-018.md#FR-018) ・ [FR-137](../01_specifications/FR-137.md#FR-137) |
 
 **基本フロー**
 1. 全項目のクライアント側バリデーション(EV-02〜EV-09 の各検証)を実行し、エラーがある場合は送信せずエラーを表示する。

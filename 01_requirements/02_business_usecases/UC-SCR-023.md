@@ -34,7 +34,7 @@
 | 事前条件 | ログイン済みで、オーナーである |
 | トリガー | 画面 SCR-023 を開く(初期表示) |
 | 事後条件 | 契約名(IT-05)・連絡先メール(IT-01)・タイムゾーン(IT-06)を取得して各項目へ表示する。オーナー以外は権限不足を表示し本画面を描画しない |
-| 関連 | [SCR-023](../../02_basic_design/01_screens/SCR-023.md#SCR-023) ・ [API-AUTH-014](../../02_basic_design/03_apis/API-auth.md#API-AUTH-014) ・ [FR-009](../FR01.md#FR-009) |
+| 関連 | [SCR-023](../../02_basic_design/01_screens/SCR-023.md#SCR-023) ・ [API-AUTH-014](../../02_basic_design/03_apis/API-auth.md#API-AUTH-014) ・ [FR-009](../01_specifications/FR-009.md#FR-009) |
 
 基本フロー
 
@@ -96,7 +96,7 @@ sequenceDiagram
 | 事前条件 | SCR-023 が表示済みで、入力にバリデーションエラーがない |
 | トリガー | 「変更を保存」(IT-02)を押下する |
 | 事後条件 | 成功時は連絡先メール・タイムゾーンを更新し、成功トーストを表示して IT-01・IT-06 を更新後の値で再描画する。失敗時は値を保持しエラー表示する |
-| 関連 | [SCR-023](../../02_basic_design/01_screens/SCR-023.md#SCR-023) ・ [API-AUTH-015](../../02_basic_design/03_apis/API-auth.md#API-AUTH-015) ・ [FR-009](../FR01.md#FR-009) |
+| 関連 | [SCR-023](../../02_basic_design/01_screens/SCR-023.md#SCR-023) ・ [API-AUTH-015](../../02_basic_design/03_apis/API-auth.md#API-AUTH-015) ・ [FR-009](../01_specifications/FR-009.md#FR-009) |
 
 基本フロー
 

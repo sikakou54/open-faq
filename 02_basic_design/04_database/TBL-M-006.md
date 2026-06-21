@@ -51,8 +51,8 @@ FAQ 本体(質問・回答・公開状態)を保持します。契約境界は `
 |---:|----|----|----|---:|----|----|----|----|----|----|
 | 1 | ID | `id` | TEXT | \- | NO | ○ |  |  |  |  |
 | 2 | プロジェクト ID | `project_id` | TEXT | \- | NO |  | `M_PROJECTS(id)` |  |  |  |
-| 3 | 質問(タイトル) | `title` | TEXT | \- | NO |  |  |  |  | `length(title) BETWEEN 1 AND 500`(FAQ 質問、FR-025) |
-| 4 | 回答(本文) | `body` | TEXT | \- | NO |  |  |  |  | `length(body) BETWEEN 1 AND 5000`(FAQ 回答、FR-025) |
+| 3 | 質問(タイトル) | `title` | TEXT | \- | NO |  |  |  |  | `length(title) BETWEEN 1 AND 500`(FAQ 質問、FR-047) |
+| 4 | 回答(本文) | `body` | TEXT | \- | NO |  |  |  |  | `length(body) BETWEEN 1 AND 5000`(FAQ 回答、FR-047) |
 | 5 | カテゴリ | `category` | TEXT | \- | YES |  |  |  |  |  |
 | 6 | 状態 | `status` | TEXT | \- | NO |  |  |  | `'draft'` | `status IN ('draft','published','hidden','deleted')` |
 | 7 | バージョン | `version` | INTEGER | \- | NO |  |  |  | `1` |  |

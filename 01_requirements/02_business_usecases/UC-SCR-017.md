@@ -35,7 +35,7 @@
 | 事前条件 | ログイン済みである |
 | トリガー | 画面 SCR-017 を開く(初期表示) |
 | 事後条件 | 自身の表示名・メールアドレスおよび参加プロジェクト一覧を取得し、プロフィールタブを初期選択状態で表示する |
-| 関連 | [SCR-017](../../02_basic_design/01_screens/SCR-017.md#SCR-017) ・ [FR-001](../FR01.md#FR-001) ・ [FR-151](../FR19.md#FR-151) |
+| 関連 | [SCR-017](../../02_basic_design/01_screens/SCR-017.md#SCR-017) ・ [FR-001](../01_specifications/FR-001.md#FR-001) ・ [FR-190](../01_specifications/FR-190.md#FR-190) |
 
 基本フロー
 
@@ -95,7 +95,7 @@ sequenceDiagram
 | 事前条件 | プロフィールタブを表示している |
 | トリガー | 表示名(IT-01)を入力する |
 | 事後条件 | 1〜100 文字の範囲内ならフィールドエラーを消去し、範囲外なら入力欄下部にエラーを表示する |
-| 関連 | [SCR-017](../../02_basic_design/01_screens/SCR-017.md#SCR-017) ・ [FR-001](../FR01.md#FR-001) |
+| 関連 | [SCR-017](../../02_basic_design/01_screens/SCR-017.md#SCR-017) ・ [FR-001](../01_specifications/FR-001.md#FR-001) |
 
 クライアント内処理のみ(バックエンド連携なし)。
 
@@ -119,7 +119,7 @@ sequenceDiagram
 | 事前条件 | プロフィールタブを表示している |
 | トリガー | メールアドレス(IT-02)を入力する |
 | 事後条件 | メールアドレス形式として正当ならフィールドエラーを消去し、不正なら入力欄下部にエラーを表示する |
-| 関連 | [SCR-017](../../02_basic_design/01_screens/SCR-017.md#SCR-017) ・ [FR-005](../FR01.md#FR-005) |
+| 関連 | [SCR-017](../../02_basic_design/01_screens/SCR-017.md#SCR-017) ・ [FR-005](../01_specifications/FR-005.md#FR-005) |
 
 クライアント内処理のみ(バックエンド連携なし)。
 
@@ -143,7 +143,7 @@ sequenceDiagram
 | 事前条件 | プロフィールタブで表示名(IT-01)・メールアドレス(IT-02)を入力している |
 | トリガー | 「保存する」(IT-06)を押下する |
 | 事後条件 | メールアドレス未変更時は表示名・メールアドレスを更新して保存完了を表示する。メールアドレス変更時は再認証通過後に新メールアドレスへ確認メールを送信し、SCR-013 メールアドレス変更確認フローへ引き渡す |
-| 関連 | [SCR-017](../../02_basic_design/01_screens/SCR-017.md#SCR-017) ・ [API-AUTH-012](../../02_basic_design/03_apis/API-auth.md#API-AUTH-012) ・ [API-AUTH-005](../../02_basic_design/03_apis/API-auth.md#API-AUTH-005) ・ [SCR-013](../../02_basic_design/01_screens/SCR-013.md#SCR-013) ・ [FR-005](../FR01.md#FR-005) |
+| 関連 | [SCR-017](../../02_basic_design/01_screens/SCR-017.md#SCR-017) ・ [API-AUTH-012](../../02_basic_design/03_apis/API-auth.md#API-AUTH-012) ・ [API-AUTH-005](../../02_basic_design/03_apis/API-auth.md#API-AUTH-005) ・ [SCR-013](../../02_basic_design/01_screens/SCR-013.md#SCR-013) ・ [FR-005](../01_specifications/FR-005.md#FR-005) |
 
 基本フロー
 
@@ -197,7 +197,7 @@ sequenceDiagram
 | 事前条件 | セキュリティタブを表示している |
 | トリガー | 「パスワードを変更する」(IT-03)を押下する |
 | 事後条件 | 再認証通過後、新パスワード・確認パスワードの入力を受けて自身のパスワードを更新する |
-| 関連 | [SCR-017](../../02_basic_design/01_screens/SCR-017.md#SCR-017) ・ [API-AUTH-005](../../02_basic_design/03_apis/API-auth.md#API-AUTH-005) ・ [API-AUTH-013](../../02_basic_design/03_apis/API-auth.md#API-AUTH-013) ・ [FR-005](../FR01.md#FR-005) ・ [FR-006](../FR01.md#FR-006) |
+| 関連 | [SCR-017](../../02_basic_design/01_screens/SCR-017.md#SCR-017) ・ [API-AUTH-005](../../02_basic_design/03_apis/API-auth.md#API-AUTH-005) ・ [API-AUTH-013](../../02_basic_design/03_apis/API-auth.md#API-AUTH-013) ・ [FR-005](../01_specifications/FR-005.md#FR-005) ・ [FR-006](../01_specifications/FR-006.md#FR-006) |
 
 基本フロー
 
