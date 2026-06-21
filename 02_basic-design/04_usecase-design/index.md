@@ -6,10 +6,10 @@
 
 > **このページは、システム全体のユースケース(利用者が画面で実行する操作 + システムが自律的・内部的に実行する処理)を一元的に索引する正本カタログです。** 画面起点 UC は「1 画面イベント = 1 ユースケース」、システム起点 UC は「1 処理 = 1 ユースケース」で定義します。
 
-*版数 v3.1 ・ 更新 2026-06-21 ・ 画面起点 229 ・ システム起点 18 ・ 横断フロー 10 ・ ステータス ドラフト*
+*版数 v3.2 ・ 更新 2026-06-21 ・ 画面起点 229 ・ システム起点 18 ・ 業務 13 ・ ステータス ドラフト*
 
 > [!NOTE]
-> **本カタログの範囲** 画面起点 UC は全 30 画面の画面イベント(`SCR-*.md` §6 の `EV-xx`)と 1 対 1 で対応します(合計 229 UC)。システム起点 UC は画面操作を伴わない自律処理を 1 処理 = 1 UC で定義します(18 UC)。複数画面・非同期処理をまたぐ横断的な業務フロー(粗粒度の 10 UC)は本書 [§3 横断ユースケースフロー](#flows) に統合しています。
+> **本カタログの範囲** 画面起点 UC は全 30 画面の画面イベント(`SCR-*.md` §6 の `EV-xx`)と 1 対 1 で対応します(合計 229 UC)。システム起点 UC は画面操作を伴わない自律処理を 1 処理 = 1 UC で定義します(18 UC)。アクター(役割)が達成する業務目的は、詳細 UC と重複しない業務粒度で [§3 業務ユースケース](#biz)(13 UC)に定義します。
 
 ## <span id="map"></span>0. 体系と採番
 
@@ -17,6 +17,7 @@
 |---|---|---|---|
 | 画面起点 | `UC-<SCRID>.md`(例 `UC-SCR-006.md`) | `UC-<SCRID>-EV<nn>` | 画面の各 `EV-xx` と 1:1 |
 | システム起点 | `UC-SYSTEM-<nnn>.md`(1 ファイル 1 UC) | `UC-SYSTEM-<nnn>` | 1 自律処理 = 1 UC |
+| 業務起点 | `UC-BIZ-<nnn>.md`(1 ファイル 1 UC) | `UC-BIZ-<nnn>` | アクターの業務目的(詳細 UC へトレース) |
 
 各画面 UC ファイルの冒頭(§0)に「イベント↔ユースケース対応表」を備え、`EV-xx` と `UC-<SCRID>-EV<nn>` の 1:1 を可視化しています。
 
@@ -104,52 +105,75 @@
 | [UC-SYSTEM-017](UC-SYSTEM-017.md#UC-SYSTEM-017) | 受信箱の重複集約 | 定期/集約 | FR11 / FR15 |
 | [UC-SYSTEM-018](UC-SYSTEM-018.md#UC-SYSTEM-018) | 監査ログ整合性検証(日次) | 定期バッチ(日次) | NFR(監査) |
 
-## <span id="flows"></span>3. 横断ユースケースフロー
+## <span id="biz"></span>3. 業務ユースケース(アクター別)
 
-複数画面・API・非同期処理にまたがる主要 10 業務フローの一覧です。各横断 UC の詳細(概要 / 利用者 / 事前・事後条件 / トリガー / 基本フロー / 異常系フロー / シーケンス図)は、個別ファイル `UC-01.md`〜`UC-10.md`(1 UC = 1 ファイル)に定義します。画面イベント単位の詳細は §1、システム自律処理は §2 を参照してください。
+アクター(役割)が達成する業務目的を、画面・システムの詳細手順と重複しない業務粒度で定義します。各業務ユースケースは画面起点 UC(§1)・システム起点 UC(§2)へトレースし、業務レベルのアクティビティ図を持ちます(詳細シーケンスは持ちません)。詳細は個別ファイル `UC-BIZ-001.md`〜`UC-BIZ-013.md`(1 UC = 1 ファイル)に定義します。
 
-### <span id="flow-list"></span>3.1 横断ユースケース一覧
+### <span id="biz-account"></span>3.1 アカウント利用者(共通)
 
-| UC ID | ユースケース | アクター | 主な画面 | 関連要件 |
-|---|---|---|---|---|
-| [UC-01](UC-01.md#UC-01) | アカウント新規登録〜メール確認 | 契約オーナー(新規) | [SCR-002](../01_screen-design/index.md#SCR-002) ・ [SCR-013](../01_screen-design/index.md#SCR-013) | FR01 アカウント管理 |
-| [UC-02](UC-02.md#UC-02) | ログイン | 全認証ユーザー | [SCR-001](../01_screen-design/index.md#SCR-001) | FR01 アカウント管理 |
-| [UC-03](UC-03.md#UC-03) | プロジェクト作成 | オーナー | [SCR-004](../01_screen-design/index.md#SCR-004) ・ [SCR-004-001](../01_screen-design/index.md#SCR-004-001) | FR03 プロジェクト管理 |
-| [UC-04](UC-04.md#UC-04) | メンバー招待〜アカウント有効化 | オーナー / メンバー → 被招待者 | [SCR-009-001](../01_screen-design/index.md#SCR-009-001) ・ [SCR-018](../01_screen-design/index.md#SCR-018) | FR02 ユーザー管理 |
-| [UC-05](UC-05.md#UC-05) | FAQ 作成・公開 | オーナー / メンバー+ | [SCR-006](../01_screen-design/index.md#SCR-006) ・ [SCR-006-001](../01_screen-design/index.md#SCR-006-001) | FR04 FAQ 管理 |
-| [UC-06](UC-06.md#UC-06) | FAQ CSV 一括インポート(非同期) | オーナー / メンバー+ | [SCR-006-002](../01_screen-design/index.md#SCR-006-002) | FR17 インポート・エクスポート |
-| [UC-07](UC-07.md#UC-07) | エンドユーザー質問 → AI 回答 | ウィジェット利用者(公開) | [WIDGET](../01_screen-design/index.md#WIDGET) | FR05 AI 回答 / FR20 AI 推論動作 |
-| [UC-08](UC-08.md#UC-08) | 未解決質問 → FAQ 化 | オーナー / メンバー+ | [SCR-005](../01_screen-design/index.md#SCR-005) ・ [SCR-005-001](../01_screen-design/index.md#SCR-005-001) ・ [SCR-006-001](../01_screen-design/index.md#SCR-006-001) | FR06 未解決質問登録 / FR07 未解決質問から FAQ 登録 |
-| [UC-09](UC-09.md#UC-09) | 利用量超過 → 支払方法ゲート | オーナー | [SCR-021](../01_screen-design/index.md#SCR-021) ・ [SCR-022](../01_screen-design/index.md#SCR-022) | FR09 利用量・課金 |
-| [UC-10](UC-10.md#UC-10) | 退会申請(90 日猶予) | オーナー | [SCR-023](../01_screen-design/index.md#SCR-023) ・ [SCR-014](../01_screen-design/index.md#SCR-014) | FR01 アカウント管理 / FR13 プライバシー・データ管理 |
+| 業務 UC | 業務目的 | 関連要件 |
+|---|---|---|
+| [UC-BIZ-001](UC-BIZ-001.md#UC-BIZ-001) | サービスにアクセスする(ログイン・規約同意) | FR01 / FR14 |
+| [UC-BIZ-002](UC-BIZ-002.md#UC-BIZ-002) | アカウント設定と通知を管理する | FR13 / FR15 |
+
+### <span id="biz-owner"></span>3.2 契約オーナー
+
+| 業務 UC | 業務目的 | 関連要件 |
+|---|---|---|
+| [UC-BIZ-003](UC-BIZ-003.md#UC-BIZ-003) | サービス利用を開始する(契約開設・本人確認) | FR01 |
+| [UC-BIZ-004](UC-BIZ-004.md#UC-BIZ-004) | FAQ 提供基盤を構築する(プロジェクト・ウィジェット設置) | FR03 / FR12 |
+| [UC-BIZ-005](UC-BIZ-005.md#UC-BIZ-005) | チームを編成して共同運用する(メンバー招待・権限) | FR02 |
+| [UC-BIZ-006](UC-BIZ-006.md#UC-BIZ-006) | 利用量と費用を管理する(利用状況・上限・請求) | FR09 / FR10 |
+| [UC-BIZ-007](UC-BIZ-007.md#UC-BIZ-007) | サービス利用を終了する(退会・データ消去) | FR01 / FR13 |
+
+### <span id="biz-member"></span>3.3 プロジェクトメンバー
+
+| 業務 UC | 業務目的 | 関連要件 |
+|---|---|---|
+| [UC-BIZ-008](UC-BIZ-008.md#UC-BIZ-008) | FAQ を整備して公開する(作成・編集・一括・CSV) | FR04 / FR16 / FR17 / FR18 |
+| [UC-BIZ-009](UC-BIZ-009.md#UC-BIZ-009) | 問い合わせから FAQ を改善する(未解決→FAQ化) | FR06 / FR07 |
+| [UC-BIZ-010](UC-BIZ-010.md#UC-BIZ-010) | ウィジェットの応答を最適化する(設定・しきい値) | FR12 / FR20 |
+
+### <span id="biz-widget"></span>3.4 ウィジェット利用者
+
+| 業務 UC | 業務目的 | 関連要件 |
+|---|---|---|
+| [UC-BIZ-011](UC-BIZ-011.md#UC-BIZ-011) | 疑問をその場で自己解決する | FR05 / FR20 / FR06 |
+
+### <span id="biz-ops"></span>3.5 運営
+
+| 業務 UC | 業務目的 | 関連要件 |
+|---|---|---|
+| [UC-BIZ-012](UC-BIZ-012.md#UC-BIZ-012) | 利用者へ重要連絡を届ける(お知らせ配信・通知・再送) | FR11 / FR15 |
+| [UC-BIZ-013](UC-BIZ-013.md#UC-BIZ-013) | データ保護と健全性を維持する(削除・監査・アクセス制御) | FR13 / FR14 / NFR(監査) |
 
 ## <span id="trace"></span>4. 要件トレーサビリティ(機能グループ別)
 
-各機能要件グループ(FR01〜FR21)が、少なくとも 1 つ以上のユースケースに対応していることを示します。横断フロー列は §3 の該当 UC を指します。
+各機能要件グループ(FR01〜FR21)が、少なくとも 1 つ以上のユースケースに対応していることを示します。業務 UC 列は §3 の該当業務ユースケースを指します。
 
-| 機能グループ | 対応する画面起点 UC | 対応するシステム起点 UC | 横断フロー |
+| 機能グループ | 対応する画面起点 UC | 対応するシステム起点 UC | 業務 UC |
 |---|---|---|---|
-| FR01 アカウント管理 | UC-SCR-001 / 002 / 003 / 013 / 014 / 023 | UC-SYSTEM-003 / 013 / 015 | [UC-01](UC-01.md#UC-01) / [UC-02](UC-02.md#UC-02) / [UC-10](UC-10.md#UC-10) |
-| FR02 ユーザー管理 | UC-SCR-009 / 009-001 / 018 | UC-SYSTEM-007 | [UC-04](UC-04.md#UC-04) |
-| FR03 プロジェクト管理 | UC-SCR-004 / 004-001 | — | [UC-03](UC-03.md#UC-03) |
-| FR04 FAQ 管理 | UC-SCR-006 / 006-001 | — | [UC-05](UC-05.md#UC-05) |
-| FR05 AI 回答 | UC-SCR-WIDGET | UC-SYSTEM-016 | [UC-07](UC-07.md#UC-07) |
-| FR06 未解決質問登録 | UC-SCR-WIDGET / 005 / 005-001 | — | [UC-08](UC-08.md#UC-08) |
-| FR07 未解決質問から FAQ 登録 | UC-SCR-005-001 / 006-001 | — | [UC-08](UC-08.md#UC-08) |
+| FR01 アカウント管理 | UC-SCR-001 / 002 / 003 / 013 / 014 / 023 | UC-SYSTEM-003 / 013 / 015 | [UC-BIZ-001](UC-BIZ-001.md#UC-BIZ-001) / [UC-BIZ-003](UC-BIZ-003.md#UC-BIZ-003) / [UC-BIZ-007](UC-BIZ-007.md#UC-BIZ-007) |
+| FR02 ユーザー管理 | UC-SCR-009 / 009-001 / 018 | UC-SYSTEM-007 | [UC-BIZ-005](UC-BIZ-005.md#UC-BIZ-005) |
+| FR03 プロジェクト管理 | UC-SCR-004 / 004-001 | — | [UC-BIZ-004](UC-BIZ-004.md#UC-BIZ-004) |
+| FR04 FAQ 管理 | UC-SCR-006 / 006-001 | — | [UC-BIZ-008](UC-BIZ-008.md#UC-BIZ-008) |
+| FR05 AI 回答 | UC-SCR-WIDGET | UC-SYSTEM-016 | [UC-BIZ-011](UC-BIZ-011.md#UC-BIZ-011) |
+| FR06 未解決質問登録 | UC-SCR-WIDGET / 005 / 005-001 | — | [UC-BIZ-009](UC-BIZ-009.md#UC-BIZ-009) / [UC-BIZ-011](UC-BIZ-011.md#UC-BIZ-011) |
+| FR07 未解決質問から FAQ 登録 | UC-SCR-005-001 / 006-001 | — | [UC-BIZ-009](UC-BIZ-009.md#UC-BIZ-009) |
 | FR08 処理エラー | UC-SCR-WIDGET(EV-08)ほか各 UC の異常系フロー | UC-SYSTEM-009 | — |
-| FR09 利用量・課金 | UC-SCR-016 / 021 / 021-001 / 022 | UC-SYSTEM-004 / 008 / 010 / 011 / 012 | [UC-09](UC-09.md#UC-09) |
-| FR10 管理ダッシュボード | UC-SCR-008 / 016 | UC-SYSTEM-010 | — |
-| FR11 通知 | UC-SCR-011 / 012 | UC-SYSTEM-002 / 006 / 007 / 009 / 017 | — |
-| FR12 ウィジェット | UC-SCR-007 / WIDGET | UC-SYSTEM-011 | [UC-07](UC-07.md#UC-07) |
-| FR13 プライバシー・データ管理 | UC-SCR-014 / 017 / 020 | UC-SYSTEM-003 | [UC-10](UC-10.md#UC-10) |
-| FR14 セキュリティ | UC-SCR-001 | UC-SYSTEM-013 / 014 / 015 | [UC-02](UC-02.md#UC-02) |
-| FR15 お知らせ | UC-SCR-010 / 011 / 012 / 020 | UC-SYSTEM-005 / 017 | — |
-| FR16 検索エンジン・全文検索 | UC-SCR-005 / 006 | — | — |
-| FR17 インポート・エクスポート | UC-SCR-006 / 006-002 | UC-SYSTEM-001 | [UC-06](UC-06.md#UC-06) |
-| FR18 UX 細部・データ運用 | UC-SCR-006 / 006-001 | — | — |
-| FR19 アクセス制御細部 | UC-SCR-007 / 009-001 / 021(各 UC の権限ガード異常系) | UC-SYSTEM-015 | — |
-| FR20 AI 推論動作 | UC-SCR-WIDGET | UC-SYSTEM-016 | [UC-07](UC-07.md#UC-07) |
-| FR21 画面・機能要件一覧 | 全 30 画面の UC-SCR 群(本 §1) | — | §3 全フロー |
+| FR09 利用量・課金 | UC-SCR-016 / 021 / 021-001 / 022 | UC-SYSTEM-004 / 008 / 010 / 011 / 012 | [UC-BIZ-006](UC-BIZ-006.md#UC-BIZ-006) |
+| FR10 管理ダッシュボード | UC-SCR-008 / 016 | UC-SYSTEM-010 | [UC-BIZ-006](UC-BIZ-006.md#UC-BIZ-006) |
+| FR11 通知 | UC-SCR-011 / 012 | UC-SYSTEM-002 / 006 / 007 / 009 / 017 | [UC-BIZ-012](UC-BIZ-012.md#UC-BIZ-012) |
+| FR12 ウィジェット | UC-SCR-007 / WIDGET | UC-SYSTEM-011 | [UC-BIZ-004](UC-BIZ-004.md#UC-BIZ-004) / [UC-BIZ-010](UC-BIZ-010.md#UC-BIZ-010) |
+| FR13 プライバシー・データ管理 | UC-SCR-014 / 017 / 020 | UC-SYSTEM-003 | [UC-BIZ-002](UC-BIZ-002.md#UC-BIZ-002) / [UC-BIZ-007](UC-BIZ-007.md#UC-BIZ-007) / [UC-BIZ-013](UC-BIZ-013.md#UC-BIZ-013) |
+| FR14 セキュリティ | UC-SCR-001 | UC-SYSTEM-013 / 014 / 015 | [UC-BIZ-001](UC-BIZ-001.md#UC-BIZ-001) / [UC-BIZ-013](UC-BIZ-013.md#UC-BIZ-013) |
+| FR15 お知らせ | UC-SCR-010 / 011 / 012 / 020 | UC-SYSTEM-005 / 017 | [UC-BIZ-002](UC-BIZ-002.md#UC-BIZ-002) / [UC-BIZ-012](UC-BIZ-012.md#UC-BIZ-012) |
+| FR16 検索エンジン・全文検索 | UC-SCR-005 / 006 | — | [UC-BIZ-008](UC-BIZ-008.md#UC-BIZ-008) |
+| FR17 インポート・エクスポート | UC-SCR-006 / 006-002 | UC-SYSTEM-001 | [UC-BIZ-008](UC-BIZ-008.md#UC-BIZ-008) |
+| FR18 UX 細部・データ運用 | UC-SCR-006 / 006-001 | — | [UC-BIZ-008](UC-BIZ-008.md#UC-BIZ-008) |
+| FR19 アクセス制御細部 | UC-SCR-007 / 009-001 / 021(各 UC の権限ガード異常系) | UC-SYSTEM-015 | [UC-BIZ-013](UC-BIZ-013.md#UC-BIZ-013) |
+| FR20 AI 推論動作 | UC-SCR-WIDGET | UC-SYSTEM-016 | [UC-BIZ-010](UC-BIZ-010.md#UC-BIZ-010) / [UC-BIZ-011](UC-BIZ-011.md#UC-BIZ-011) |
+| FR21 画面・機能要件一覧 | 全 30 画面の UC-SCR 群(本 §1) | — | 全業務 UC(本 §3) |
 
 > [!NOTE]
 > **監査・整合性** 監査ログの整合性検証(NFR 監査要件)は [UC-SYSTEM-018](UC-SYSTEM-018.md#UC-SYSTEM-018) が担います。各操作の監査記録は対応する画面起点・システム起点 UC の事後条件に記載します。
