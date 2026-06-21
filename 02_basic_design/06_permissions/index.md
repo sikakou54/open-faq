@@ -4,9 +4,80 @@
 
 # 権限設計
 
-> **このセクションは再構成プロジェクトで整備予定です。**
+> **このページは、ロール別操作権限の一覧と、UC / 画面(SCR)/ 画面イベント(EVT)/ API から権限への対応表です。** 認証主体は全ユーザー共通の `M_USER` で、オーナー(`M_CONTRACT.user_id` 一致)/ メンバー(`M_PRJ_USERS` 有効割当)を導出します。各権限ルールは `PERM-NNN.md` で個別定義し、拒否時のエラーは [エラー設計](../07_errors/index.md)、画面文言・メールは [メッセージ設計](../08_messages/index.md) を参照します。
 
-*ステータス 準備中*
+*ステータス ドラフト ・ 再構成 P6b*
+
+## <span id="reading"></span>読み順
+
+要件定義(FR / BR / RULE)＞ 本権限設計 ＞ API設計 / エラー設計 / メッセージ設計。認可判定の各段は [PERM-002](PERM-002.md#PERM-002) を参照する。
+
+## <span id="list"></span>1. ロール別操作権限一覧(11)
+
+権限ルールの索引です。各 PERM の定義(ロール×操作可否表・結線)は個別ファイルが正本です。ロールはオーナー / メンバー(割当あり)/ メンバー(割当なし)/ 未認証 / ウィジェット利用者の 5 区分です。
+
+| PERM ID | 権限ルール | 概要 | 由来要件 |
+|----|----|----|----|
+| <span id="PERM-001"></span>[PERM-001](PERM-001.md#PERM-001) | ユーザー種別とオーナー判定 | 認可の起点となるユーザー種別(オーナー / メンバー / ウィジェット利用者)の判定方法と権限の表し方を定義します。 | [FR-013](../../01_requirements/01_specifications/FR-013.md#FR-013) [FR-014](../../01_requirements/01_specifications/FR-014.md#FR-014) [FR-016](../../01_requirements/01_specifications/FR-016.md#FR-016) [FR-035](../../01_requirements/01_specifications/FR-035.md#FR-035) [FR-186](../../01_requirements/01_specifications/FR-186.md#FR-186) |
+| <span id="PERM-002"></span>[PERM-002](PERM-002.md#PERM-002) | 認可判定の順序 | 1 リクエストを許可するまでに通す認可判定の段(セッション → 契約状態 → オーナー判定 → 境界 → 専有 → 再認証 → 利用上限)と、各段の拒否時エラーを定義します。 | [FR-188](../../01_requirements/01_specifications/FR-188.md#FR-188) [FR-189](../../01_requirements/01_specifications/FR-189.md#FR-189) [FR-191](../../01_requirements/01_specifications/FR-191.md#FR-191) |
+| <span id="PERM-003"></span>[PERM-003](PERM-003.md#PERM-003) | オーナー専有機能 | 非オーナーに付与してはならないオーナー専有機能(課金・契約設定・プロジェクト CRUD・退会・規約再同意)と、その判定段を定義します。 | [FR-015](../../01_requirements/01_specifications/FR-015.md#FR-015) [BR-017](../../01_requirements/01_specifications/BR-017.md#BR-017) |
+| <span id="PERM-004"></span>[PERM-004](PERM-004.md#PERM-004) | オーナー保護・自己操作禁止 | 運用が止まらないための保護制約(オーナーへの退会・停止・削除・降格・譲渡の禁止、自己操作の禁止)を定義します。 | [FR-183](../../01_requirements/01_specifications/FR-183.md#FR-183) [FR-184](../../01_requirements/01_specifications/FR-184.md#FR-184) |
+| <span id="PERM-005"></span>[PERM-005](PERM-005.md#PERM-005) | オーナー境界・プロジェクト境界判定 | 他契約・他プロジェクトのデータへ越境させない境界チェック(契約境界キー一致・プロジェクト割当)と、404 偽装による拒否を定義します。 | [FR-185](../../01_requirements/01_specifications/FR-185.md#FR-185) [FR-189](../../01_requirements/01_specifications/FR-189.md#FR-189) |
+| <span id="PERM-006"></span>[PERM-006](PERM-006.md#PERM-006) | 重要操作の再認証 | 不可逆・高リスクな操作の直前に求める再認証(当該操作 1 回 + 15 分以内)と、対象 5 操作を定義します。 | [FR-005](../../01_requirements/01_specifications/FR-005.md#FR-005) [BR-002](../../01_requirements/01_specifications/BR-002.md#BR-002) |
+| <span id="PERM-007"></span>[PERM-007](PERM-007.md#PERM-007) | セッションとログイン失敗ロックアウト | セッションの寿命(無操作 30 分・絶対 12 時間)・複数デバイス同時ログイン・失効優先順位と、5 回連続失敗による 15 分ロックアウトを定義します。 | [FR-007](../../01_requirements/01_specifications/FR-007.md#FR-007) [FR-008](../../01_requirements/01_specifications/FR-008.md#FR-008) [FR-011](../../01_requirements/01_specifications/FR-011.md#FR-011) [FR-182](../../01_requirements/01_specifications/FR-182.md#FR-182) [FR-188](../../01_requirements/01_specifications/FR-188.md#FR-188) [BR-004](../../01_requirements/01_specifications/BR-004.md#BR-004) [BR-005](../../01_requirements/01_specifications/BR-005.md#BR-005) [BR-006](../../01_requirements/01_specifications/BR-006.md#BR-006) |
+| <span id="PERM-008"></span>[PERM-008](PERM-008.md#PERM-008) | アカウント状態と利用可否 | アカウント状態(有効 / 招待中 / メール未確認 / ロック中 / 無効化)ごとのログイン可否と利用範囲を定義します。 | [FR-003](../../01_requirements/01_specifications/FR-003.md#FR-003) [FR-021](../../01_requirements/01_specifications/FR-021.md#FR-021) [FR-031](../../01_requirements/01_specifications/FR-031.md#FR-031) [FR-189](../../01_requirements/01_specifications/FR-189.md#FR-189) |
+| <span id="PERM-009"></span>[PERM-009](PERM-009.md#PERM-009) | 契約状態によるアクセス制限 | 契約状態(停止中 / 退会申請中 / 退会済み)ごとに管理画面で許す操作とセッションの扱いを定義します。 | [FR-098](../../01_requirements/01_specifications/FR-098.md#FR-098) |
+| <span id="PERM-010"></span>[PERM-010](PERM-010.md#PERM-010) | 規約再同意の認可割込み | 規約・プライバシーポリシー改定時に、ログイン後の認可フローへ再同意画面を割り込ませる発火条件と段階適用を定義します。 | [FR-010](../../01_requirements/01_specifications/FR-010.md#FR-010) [FR-015](../../01_requirements/01_specifications/FR-015.md#FR-015) |
+| <span id="PERM-011"></span>[PERM-011](PERM-011.md#PERM-011) | critical 通知の宛先解決 | critical 通知を「誰に送るか」を決める宛先解決(オーナー + 当該プロジェクトの有効メンバーの 2 マスタ合算・重複排除)を定義します。 | [FR-034](../../01_requirements/01_specifications/FR-034.md#FR-034) [FR-185](../../01_requirements/01_specifications/FR-185.md#FR-185) |
+
+## <span id="stages"></span>2. 認可判定の順序(正本)
+
+1 リクエストを許可するまでに通す認可判定の段です。上から評価し、各段の拒否時エラーは [エラー設計](../07_errors/index.md) が正本です。詳細は [PERM-002](PERM-002.md#PERM-002)。
+
+| \# | 判定段 | 内容 | 拒否時のエラー |
+|----|----|----|----|
+| 1 | セッション検証 | 無操作 30 分 / 絶対 12 時間を満たす有効セッションか | [`E-AUTH-SESSION-EXPIRED`](../07_errors/index.md) |
+| 2 | アカウント有効性 | アカウントが利用可能状態か(無効化済みなら再ログインへ誘導) | — |
+| 3 | 規約再同意ゲート | 改定済みで未同意の文書があれば SCR-020 割込みへ | `E-AUTHZ-TERMS` |
+| 4 | 契約状態ゲート | `suspended` / `deleted_pending` / `deleted` 時はアクセス制限を適用 | [ERR-006](../07_errors/ERR-006.md#ERR-006) 等 |
+| 5 | オーナー判定(isOwner bypass) | `M_CONTRACT.user_id` 一致で自契約配下を無条件許可 | — |
+| 6 | オーナー境界判定 | 非オーナーは契約境界キー一致を要求。不一致は 404 偽装 | `E-AUTHZ-OWNER-BOUNDARY` |
+| 7 | プロジェクト境界判定 | 対象プロジェクトへの割当があること。割当なしは 404 偽装 | [ERR-021](../07_errors/ERR-021.md#ERR-021) / [ERR-032](../07_errors/ERR-032.md#ERR-032) |
+| 8 | オーナー専有機能判定 | 専有機能を非オーナーが要求した場合は 403 | [ERR-017](../07_errors/ERR-017.md#ERR-017) |
+| 9 | オーナー保護・自己操作禁止 | 不可制約に該当すれば拒否 | [ERR-023](../07_errors/ERR-023.md#ERR-023) / [ERR-024](../07_errors/ERR-024.md#ERR-024) |
+| 10 | 再認証判定 | 重要操作で再認証が「当該操作 1 回 + 15 分以内」を満たすか | `E-AUTH-REAUTH-REQUIRED` |
+| 11 | 利用上限判定 | 認可通過後に上限を確認(レート = 契約単位、上限・無料枠 = プロジェクト単位) | [課金・請求設計書](../05_billing-design.md) |
+
+## <span id="trace"></span>3. UC / 画面 / EVT / API ↔ 権限 対応表
+
+各権限ルールが適用される画面・イベント・API・業務ユースケースの結線一覧です。結線の無い欄は `—` とします。
+
+| PERM ID | 対応業務UC | 対応画面SCR | 対応EVT | 対応API |
+|----|----|----|----|----|
+| [PERM-001](PERM-001.md#PERM-001) | — | [SCR-013](../01_screens/SCR-013.md#SCR-013) | — | [API-002](../03_apis/API-002.md#API-002) |
+| [PERM-002](PERM-002.md#PERM-002) | — | — | — | — |
+| [PERM-003](PERM-003.md#PERM-003) | — | [SCR-005](../01_screens/SCR-005.md#SCR-005) [SCR-019](../01_screens/SCR-019.md#SCR-019) [SCR-028](../01_screens/SCR-028.md#SCR-028) | — | [API-014](../03_apis/API-014.md#API-014) [API-015](../03_apis/API-015.md#API-015) [API-017](../03_apis/API-017.md#API-017) [API-018](../03_apis/API-018.md#API-018) [API-045](../03_apis/API-045.md#API-045) [API-056](../03_apis/API-056.md#API-056) |
+| [PERM-004](PERM-004.md#PERM-004) | — | [SCR-013](../01_screens/SCR-013.md#SCR-013) | — | [API-023](../03_apis/API-023.md#API-023) [API-024](../03_apis/API-024.md#API-024) |
+| [PERM-005](PERM-005.md#PERM-005) | — | [SCR-013](../01_screens/SCR-013.md#SCR-013) | — | [API-018](../03_apis/API-018.md#API-018) [API-021](../03_apis/API-021.md#API-021) [API-047](../03_apis/API-047.md#API-047) |
+| [PERM-006](PERM-006.md#PERM-006) | — | [SCR-019](../01_screens/SCR-019.md#SCR-019) | — | [API-005](../03_apis/API-005.md#API-005) [API-012](../03_apis/API-012.md#API-012) [API-013](../03_apis/API-013.md#API-013) [API-045](../03_apis/API-045.md#API-045) [API-056](../03_apis/API-056.md#API-056) |
+| [PERM-007](PERM-007.md#PERM-007) | — | [SCR-001](../01_screens/SCR-001.md#SCR-001) | [EVT-004](../02_screen_events/EVT-004.md#EVT-004) | [API-002](../03_apis/API-002.md#API-002) [API-003](../03_apis/API-003.md#API-003) |
+| [PERM-008](PERM-008.md#PERM-008) | — | [SCR-018](../01_screens/SCR-018.md#SCR-018) [SCR-023](../01_screens/SCR-023.md#SCR-023) | [EVT-151](../02_screen_events/EVT-151.md#EVT-151) [EVT-190](../02_screen_events/EVT-190.md#EVT-190) | [API-006](../03_apis/API-006.md#API-006) [API-008](../03_apis/API-008.md#API-008) [API-023](../03_apis/API-023.md#API-023) |
+| [PERM-009](PERM-009.md#PERM-009) | — | — | — | [API-002](../03_apis/API-002.md#API-002) [API-037](../03_apis/API-037.md#API-037) |
+| [PERM-010](PERM-010.md#PERM-010) | — | [SCR-020](../01_screens/SCR-020.md#SCR-020) | [EVT-135](../02_screen_events/EVT-135.md#EVT-135) [EVT-169](../02_screen_events/EVT-169.md#EVT-169) | [API-052](../03_apis/API-052.md#API-052) [API-054](../03_apis/API-054.md#API-054) [API-055](../03_apis/API-055.md#API-055) |
+| [PERM-011](PERM-011.md#PERM-011) | — | — | — | [API-021](../03_apis/API-021.md#API-021) [API-024](../03_apis/API-024.md#API-024) |
+
+## <span id="flow"></span>4. 認証フロー(参照)
+
+認証(本人確認)の各フロー — ログイン / ログアウト / パスワード再設定 / 招待受諾(メンバー有効化)/ メール確認 / 強制ログアウト — のシーケンスは、各画面起点の業務ユースケース([業務ユースケース設計](../../01_requirements/02_business_usecases/index.md))のシーケンス図が正本です。本権限設計は判定段とロール別可否を正本化します。
+
+| 認証フロー | 主な根拠要件 | 関連 PERM |
+|----|----|----|
+| ログイン | [FR-001](../../01_requirements/01_specifications/FR-001.md#FR-001) | [PERM-007](PERM-007.md#PERM-007) |
+| ログイン失敗ロックアウト | [RULE-001](../../01_requirements/01_specifications/RULE-001.md#RULE-001) | [PERM-007](PERM-007.md#PERM-007) |
+| パスワード再設定 | [RULE-003](../../01_requirements/01_specifications/RULE-003.md#RULE-003) | [PERM-008](PERM-008.md#PERM-008) |
+| 招待受諾(メンバー有効化) | [RULE-007](../../01_requirements/01_specifications/RULE-007.md#RULE-007) | [PERM-008](PERM-008.md#PERM-008) |
+| メール確認 | [FR-003](../../01_requirements/01_specifications/FR-003.md#FR-003) | [PERM-008](PERM-008.md#PERM-008) |
+| 強制ログアウト(契約停止時) | [RULE-016](../../01_requirements/01_specifications/RULE-016.md#RULE-016) | [PERM-007](PERM-007.md#PERM-007) [PERM-009](PERM-009.md#PERM-009) |
 
 ---
 

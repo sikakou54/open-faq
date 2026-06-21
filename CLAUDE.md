@@ -23,8 +23,9 @@ CLAUDE.md                       # 保守ルール正本(本書)
 ├── 03_database-design/         #   DB設計 : index.md(テーブル一覧)+ TBL-*.md
 ├── 04_usecase-design/          #   ユースケース : index.md(一覧)+ 業務 UC-BIZ-* / 画面 UC-SCR-* / システム UC-SYSTEM-*
 ├── 05_billing-design.md        #   横断設計(単独ファイル)
-├── 06_mail-design.md
-└── 07_auth-design.md
+├── 06_permissions/             #   権限設計 : index.md + PERM-*.md(ロール別操作権限。旧 07_auth-design.md を移管)
+├── 07_errors/                  #   エラー設計 : index.md + ERR-*.md(API エラーコードを正規化・採番)
+└── 08_messages/                #   メッセージ設計 : index.md + MSG-*.md(メールテンプレ。旧 06_mail-design.md を移管)
 03_future/                      # 将来対応 : index.md + FUT01.md〜FUT06(-req/-detail).md
 _build/                         # ツール(配信対象外)
 ├── portal_nav.py               #   ポータルナビ付与 + README 生成器(下記)

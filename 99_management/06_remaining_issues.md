@@ -65,3 +65,16 @@
 | needs-review | 論理名の出典 | 各 TBL の H1・項目セクションの論理名は `index.md` テーブル一覧(カタログ正本)から取得。一部は各ページ §概要 の論理名と微差あり(例 `M_PRJ_QUOTA_LIMITS`= index「プロジェクト別利用設定」/ ページ概要「プロジェクト別利用上限・無料枠」) | カタログ正本へ寄せる方針で問題ないが、ページ §概要 の論理名を index と一致させるか後続で統一 |
 | needs-review | 論理削除/監査の自動判定 | 「論理削除」「監査項目」はカラム定義から機械判定(`valid`/`status='deleted'`/`deleted_at`、`created_at`/`updated_at`/`*_by_*`/`actor_id`)。追記専用ログや特殊な削除方式の取りこぼし可能性 | 履歴系(`H_*`)・FTS(`TP_FAQ_FTS`)等の削除/保持方針を手動確認 |
 | cleanup | 既存セクションアンカー | 各 TBL ページの `### 概要/カラム定義/…` の `<span id>` は移行由来で不統一(`概要` と `3231-概要` が混在)。参照は解決するため検証 0/0 だが見た目が不揃い | 必要なら後続でセクションアンカーを統一(`#overview` 等) |
+
+## P6b(権限・エラー・メッセージ設計)由来
+> 権限を `PERM-001..011`(11)へ個別化(旧 `07_auth-design.md` を移管・削除)。API の `## エラー`(59 ファイル・77 行)を正規化し `ERR-001..035`(35)へ採番、各 API のエラーコードセルへ `ERR-NNN` をインライン併記。メールテンプレを `MSG-001..013`(13)へ個別化(旧 `06_mail-design.md` を移管・削除)。`06_permissions/` / `07_errors/` / `08_messages/` に各 index(ロール×操作可否・認可判定段・UC/SCR/EVT/API↔権限 対応表 / エラー一覧・EVT/API↔エラー 対応表 / メッセージ一覧・共通基準・配信運用)。削除 2 ファイルへの全リンクを新移管先へ張替(UC-241..244 / SCR-023 / SCR-024 / API-017 / 05_billing / index)。検証 0/0。再現スクリプト `_build/p6b_permissions.py` / `_build/p6b_errors.py` / `_build/p6b_messages.py` / `_build/p6b_relink.py`。
+
+| 区分 | 対象 | 内容 | 推奨対応 |
+|---|---|---|---|
+| design-gap | ERR 未採番の認可エラー | 認可判定段(PERM-002)が参照する `E-AUTH-SESSION-EXPIRED` / `E-AUTH-REAUTH-REQUIRED` / `E-AUTHZ-OWNER-BOUNDARY` / `E-AUTHZ-PROJECT-DENIED` / `E-AUTHZ-TERMS` / `E-BIZ-CONTRACT-DELETED` は、どの API の `## エラー` 表にも現れないため ERR-NNN 未採番(PERM/index ではインライン code で表示・壊れリンクなし)。401/403/404 偽装で API レスポンスに乗る想定だが API 側の `## エラー` 表が未記載 | 該当 API(認可ミドルウェア横断)の `## エラー` 表へ当該コードを追記 → `p6b_errors.py` 再実行で ERR 採番・PERM の判定段リンクを ERR-NNN 化 |
+| needs-review | 契約停止エラーの命名差 | 契約停止エラーは旧 auth-design §7 が `E-BIZ-CONTRACT-SUSPENDED`、API(API-002 等)・ERR-006 は `E-BILL-CONTRACT-SUSPENDED`。同一概念で接頭辞 `E-BIZ`/`E-BILL` が混在 | どちらかへ命名統一(`E-BILL-*` が API 実体に一致)。統一後 PERM-009 / ERR-006 の記述を合わせる |
+| needs-review | ERR 採番の粒度 | エラー表由来のため `(未サポート項目)`(ERR-031, 422)・`(冪等)`(ERR-035, 200)など厳密にはエラーでない応答も ERR 化。主コードがバッククォート無しの行は説明文をそのまま ID 名に採用 | 純粋なエラーのみに絞るか、応答コード(非エラー)を別系列にするか方針確定 |
+| migration | 05_billing の業務ルール | 05_billing-design.md の定量ルール(無料枠 1,000 件・上限 100%/125% 停止・決済猶予 7 日・アラート閾値・受信履歴 30 日・退会猶予 90 日)は既存 `RULE-008/010/011/013..017` で網羅済み。**新規 RULE 起票は不要**と判断。05_billing は横断設計として存置(削除対象外)し、RULE 正本へリンクで送る現行方針を維持 | 対応不要(記録のみ)。FAQ 件数無料枠(100 件・5 円)= RULE-010/011 との突合のみ後続で再確認 |
+| needs-review | PERM の UC 逆引き | PERM-NNN の「対応業務UC」は P6b では未結線(`—`)。SCR/EVT/API は結線済。UC↔権限の逆引きは要件↔UC 逆引き(P7)と同様に後続フェーズ範囲 | P7 で UC→PERM(または PERM→UC)を結線 |
+| cleanup | MSG index の節番号 | `08_messages/index.md` の共通基準・配信運用は旧 mail-design の節番号(§2.1 / §5.1 / §6.1)を `<span id>` ごと転記。本文「§4」は MSG-NNN を指す。アンカーは解決(0/0)だが番号体系が新構成と不揃い | 後続で MSG index の節番号を新構成(§2..§5)に振り直し |
+| needs-review | EVT↔ERR 結線 | ERR の「対応EVT」は API→EVT(index 対応表)経由の機械導出。1 API が複数 EVT を持つ場合は全 EVT を列挙しており、特定エラーが特定 EVT のみで起きる絞り込みは未実施 | 精緻な EVT 単位のエラー結線が必要なら手動精査 |
