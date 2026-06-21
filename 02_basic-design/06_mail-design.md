@@ -833,7 +833,7 @@ open-faq <noreply@<service-domain>>
 
 - 全送信は `H_NOTIF_LOGS` に行を記録(03 テーブル設計参照)
 - 列: `id` / `user_id` / `template_id` / `subject` / `recipient_email` / `sent_at` / `delivery_status`(`queued` / `sent` / `bounced` / `failed`)/ `provider_message_id` / `error_text`
-- 保持期間: 90 日(NFR-704 一般ログ準拠)
+- 保持期間: 90 日(NFR-059 一般ログ準拠)
 
 ### <span id="55-テスト送信"></span>5.5 テスト送信
 
