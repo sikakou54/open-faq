@@ -6,7 +6,7 @@
 
 **メインシステムが提供する全 51 の REST API を 14 機能グループに整理した独立設計書です。** 各 API の詳細(基本情報 / 処理概要 / I/O / リクエスト・レスポンス / エラー)は、旧設計書と同じ構成で **グループ別の個別ページ**に展開しています。画面からの呼び出しは [画面設計書](01_screen-design.md)、テーブルは [データベース設計書](03_database-design.md) を参照してください。
 
-*版数 v2.1 ・ 更新 2026-06-19 ・ API数 51 ・ 独立設計書*
+*版数 v2.2 ・ 更新 2026-06-21 ・ API数 53 ・ 独立設計書*
 
 ## <span id="ov"></span>0.API 設計の方針
 
@@ -45,6 +45,10 @@
 | <span id="API-AUTH-009"></span>[`API-AUTH-009`](API-auth.md#API-AUTH-009) | **プロジェクト連絡先メール確認** POST `/auth/contact-verifications/{token}` | — | [`T_ACCESS_TOKENS`](TBL-T-002.md)-RU- [`M_PROJECTS`](TBL-M-004.md)-RU- [`H_AUDIT_LOGS`](TBL-H-003.md)C--- |
 | <span id="API-AUTH-010"></span>[`API-AUTH-010`](API-auth.md#API-AUTH-010) | **パスワード再設定確定** POST `/auth/password-reset` | —(公開) | [`T_ACCESS_TOKENS`](TBL-T-002.md)-RU- [`M_CONTRACT`](TBL-M-002.md)-RU- [`M_PRJ_USERS`](TBL-M-003.md)-RU- [`T_SESSIONS`](TBL-T-001.md)--U- |
 | <span id="API-AUTH-011"></span>[`API-AUTH-011`](API-auth.md#API-AUTH-011) | **連絡先確認メール再送** POST `/auth/contact-verifications/resend` | オーナー専有 | [`M_PROJECTS`](TBL-M-004.md)-R-- [`T_ACCESS_TOKENS`](TBL-T-002.md)C-U- [`H_NOTIF_LOGS`](TBL-H-002.md)C--- |
+| <span id="API-AUTH-012"></span>[`API-AUTH-012`](API-auth.md#API-AUTH-012) | **自己プロフィール更新** PATCH `/me/profile` | 認証済み | [`M_CONTRACT`](TBL-M-002.md)-RU- [`M_PRJ_USERS`](TBL-M-003.md)-RU- [`T_ACCESS_TOKENS`](TBL-T-002.md)C-R- |
+| <span id="API-AUTH-013"></span>[`API-AUTH-013`](API-auth.md#API-AUTH-013) | **自己パスワード変更** PATCH `/me/password` | 認証済み | [`T_ACCESS_TOKENS`](TBL-T-002.md)-R-- [`M_CONTRACT`](TBL-M-002.md)-RU- [`M_PRJ_USERS`](TBL-M-003.md)-RU- |
+| <span id="API-AUTH-014"></span>[`API-AUTH-014`](API-auth.md#API-AUTH-014) | **契約設定取得** GET `/owner/settings` | オーナー専有 | [`M_CONTRACT`](TBL-M-002.md)-R-- |
+| <span id="API-AUTH-015"></span>[`API-AUTH-015`](API-auth.md#API-AUTH-015) | **契約設定更新** PATCH `/owner/settings` | オーナー専有 | [`M_CONTRACT`](TBL-M-002.md)-RU- |
 
 ### <span id="g-2"></span>1.2 プロジェクト
 
