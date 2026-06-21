@@ -9,7 +9,7 @@
 *版数 v1.3 ・ 更新 2026-06-20 ・ 承認済*
 
 > [!NOTE]
-> **本書の範囲と対象外** 本書は §4 のテンプレート ID `TPL-*` 全件の件名 / テキスト本文 / HTML 本文・送信契機(`NOTIF-*`)・配信先 / 重要度 / 添付 / リンク有効期限・メール共通要件(送信元・i18n・サニタイズ・配信信頼性)を扱います。アプリ内お知らせ受信箱(`inbox` 限定の `NOTIF-CHAT_HOLD_CHECK` 等)は 本書、画面文言(`MSG-SCR-*`)は [画面設計.md](01_screen-design.md) が正本です。配信信頼性(DMARC 等)は 要件のセキュリティ NFR、通知契機・配信先は 本書 が正本です。
+> **本書の範囲と対象外** 本書は §4 のテンプレート ID `TPL-*` 全件の件名 / テキスト本文 / HTML 本文・送信契機(`NOTIF-*`)・配信先 / 重要度 / 添付 / リンク有効期限・メール共通要件(送信元・i18n・サニタイズ・配信信頼性)を扱います。アプリ内お知らせ受信箱(`inbox` 限定の `NOTIF-CHAT_HOLD_CHECK` 等)は 本書、画面文言(`MSG-SCR-*`)は [画面設計.md](01_screen-design/index.md) が正本です。配信信頼性(DMARC 等)は 要件のセキュリティ NFR、通知契機・配信先は 本書 が正本です。
 
 ## <span id="2-共通基準"></span>2. 共通基準
 
@@ -269,7 +269,7 @@ open-faq <noreply@<service-domain>>
 
 **本文(HTML 版)**: 招待内容を背景色 `#eef6ff` のパネルで表示 + プライマリボタン「アカウント登録を完了する」+ 失効日時を強調表示。本文の必須項目に「氏名(表示名)入力 + 初回パスワード設定 + 利用規約・プライバシーポリシー同意」を含める。
 
-**着地ページ**: SCR-018 メンバーアカウント有効化([画面設計書](01_screen-design.md))。
+**着地ページ**: SCR-018 メンバーアカウント有効化([画面設計書](01_screen-design/index.md))。
 
 **備考**: 再送時は **旧 `T_ACCESS_TOKENS` を失効させ新トークンを発行** したうえで本テンプレートで再送信(`MSG-SCR-009-001-TOAST-002` と整合)。本文は新規招待時と同一で、差出人による文脈は本文中の「招待操作者」フィールドで補足する。氏名は招待時点で未登録のため、宛先表示は `{recipient_email}` を用いる。
 
@@ -317,7 +317,7 @@ open-faq <noreply@<service-domain>>
 
 **本文(HTML 版)**: プロジェクト名を強調 + 確認用プライマリボタン + 確認前は非表示である旨を注記。
 
-**着地ページ**: **SCR-019 プロジェクト連絡先メール確認完了**([画面設計書](01_screen-design.md)、共通領域、未認証可)。トークン検証成功時に `M_PROJECTS.contact_verified_at=now()` をセットし、結果(完了 / 期限切れ / 既使用)を表示する。
+**着地ページ**: **SCR-019 プロジェクト連絡先メール確認完了**([画面設計書](01_screen-design/index.md)、共通領域、未認証可)。トークン検証成功時に `M_PROJECTS.contact_verified_at=now()` をセットし、結果(完了 / 期限切れ / 既使用)を表示する。
 
 **備考**: 受信者はオーナーやメンバーである必要はなく、第三者(例: サポート窓口担当者の共有メールアドレス)でも構わない。アカウント作成や認証は不要で、トークン保有者のみが本フローを進められる。トークンは `T_ACCESS_TOKENS.purpose='contact_verify'`(24 時間)、`meta` に `projectId` を JSON 保持(FR-022a)。
 
@@ -810,7 +810,7 @@ open-faq <noreply@<service-domain>>
 
 ### <span id="52-重要度別の強制送信ルール共有概念正本"></span>5.2 重要度別の強制送信ルール(共有概念正本)
 
-通知重要度 4 値ごとにオプトアウト可否と強制送信の扱いを定めます。次の各項目は `critical` / `high` の強制送信と `normal` / `low` のオプトアウト方式を示し、重要度の正本ルールは [`M_CONTRACT`](TBL-M-002.md) に従います。
+通知重要度 4 値ごとにオプトアウト可否と強制送信の扱いを定めます。次の各項目は `critical` / `high` の強制送信と `normal` / `low` のオプトアウト方式を示し、重要度の正本ルールは [`M_CONTRACT`](03_database-design/TBL-M-002.md) に従います。
 
 - `critical`: 受信オプトアウト不可、必ずメール送信。`TPL-EMAIL_VERIFY` / `PASSWORD_RESET` / `ADMIN_USER_REGISTER` / `PROJECT_CONTACT_VERIFY` / `LOCKOUT_NOTIFY` / `BILLING_SUSPENSION` / `PAYMENT_METHOD_REQUIRED` / `TERMS_REVISION` / `SERVICE_ANNOUNCEMENT`(`critical` 選択時)
 - `high`: 強制送信(オプトアウト不可)
@@ -829,7 +829,7 @@ open-faq <noreply@<service-domain>>
 
 ### <span id="54-配信ログ"></span>5.4 配信ログ
 
-全送信を記録する配信ログの保存先・列構成・保持期間を定めます。次の各項目は `H_NOTIF_LOGS` に記録する内容を示し、テーブル定義は [データベース設計.md](03_database-design.md) が正本です。
+全送信を記録する配信ログの保存先・列構成・保持期間を定めます。次の各項目は `H_NOTIF_LOGS` に記録する内容を示し、テーブル定義は [データベース設計.md](03_database-design/index.md) が正本です。
 
 - 全送信は `H_NOTIF_LOGS` に行を記録(03 テーブル設計参照)
 - 列: `id` / `user_id` / `template_id` / `subject` / `recipient_email` / `sent_at` / `delivery_status`(`queued` / `sent` / `bounced` / `failed`)/ `provider_message_id` / `error_text`
@@ -862,7 +862,7 @@ open-faq <noreply@<service-domain>>
 
 - 軽微な文言修正(誤字 / 表現変更): 本書 §4 のみ更新 + 変更履歴に記載
 - 件名変更 / 主要 CTA 変更: 本書 §4 + ステージング再送テスト
-- 配信先・重要度変更: 本書 §5.1 / §5.2 + [`M_CONTRACT`](TBL-M-002.md) の整合確認
+- 配信先・重要度変更: 本書 §5.1 / §5.2 + [`M_CONTRACT`](03_database-design/TBL-M-002.md) の整合確認
 
 ## <span id="更新履歴"></span>更新履歴
 
