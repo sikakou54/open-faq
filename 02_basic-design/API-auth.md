@@ -666,8 +666,8 @@
 - `displayName`: 必須、1〜100 文字(前後空白トリム)
 - `password`: 12 文字以上、英大文字 / 小文字 / 数字 / 記号のうち 3 種類以上(FR-006)
 - `passwordConfirm`: `password` と一致
-- `termsAgreed` / `privacyAgreed`: 両方 `true` 必須(FR-160 / FR-164)
-- `turnstileToken`: 検証成功(FR-177)
+- `termsAgreed` / `privacyAgreed`: 両方 `true` 必須(FR-099 / FR-101)
+- `turnstileToken`: 検証成功(FR-111)
 
 ### レスポンス(200)
 
