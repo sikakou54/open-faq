@@ -22,32 +22,45 @@ table{border-collapse:collapse}
 </style>
 
 </head><body><div id="wrap"><div style="background:#f5f6f8;padding:24px;border-radius:12px;font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN',Meiryo,sans-serif;color:#3a3f46;--accent:#5e6ad2;--row-pad:14px"><div style="max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:28px"><section style="flex:1;min-width:520px">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:13px"><span style="font-size:11px;font-weight:700;color:var(--accent,#5e6ad2);background:color-mix(in srgb,var(--accent,#5e6ad2) 10%,#fff);border-radius:6px;padding:3px 8px">SCR-010 / 020</span><span style="font-size:13.5px;font-weight:600;color:#16191d">文書閲覧(利用規約 / プライバシー)</span></div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:13px"><span style="font-size:11px;font-weight:700;color:var(--accent,#5e6ad2);background:color-mix(in srgb,var(--accent,#5e6ad2) 10%,#fff);border-radius:6px;padding:3px 8px">SCR-020</span><span style="font-size:13.5px;font-weight:600;color:#16191d">プライバシーポリシー閲覧</span></div>
       <div style="background:#fff;border:1px solid #e6e8eb;border-radius:14px;box-shadow:0 1px 2px rgba(16,24,40,.04),0 6px 20px rgba(16,24,40,.05);overflow:hidden">
         <div style="display:flex;align-items:center;height:54px;padding:0 16px;border-bottom:1px solid #eef0f2"><span style="display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:15px;color:#16191d"><span style="width:23px;height:23px;border-radius:7px;background:var(--accent,#5e6ad2);display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:800">o</span>open-faq</span></div>
         <div style="display:flex;min-height:520px">
           <aside style="width:200px;flex:none;border-right:1px solid #eef0f2;padding:18px 14px;background:#fbfbfc">
             <div style="font-size:10.5px;font-weight:700;letter-spacing:.04em;color:#9aa0a8;margin-bottom:10px">目次</div>
             <div style="display:flex;flex-direction:column;gap:3px">
-              <span style="padding:6px 10px;border-radius:7px;background:color-mix(in srgb,var(--accent,#5e6ad2) 12%,#fff);color:var(--accent,#5e6ad2);font-weight:600;font-size:12px;cursor:pointer">第 1 条 総則</span>
-              <span style="padding:6px 10px;border-radius:7px;color:#3a3f46;font-size:12px;cursor:pointer">第 2 条 利用登録</span>
-              <span style="padding:6px 10px;border-radius:7px;color:#3a3f46;font-size:12px;cursor:pointer">第 3 条 禁止事項</span>
-              <span style="padding:6px 10px;border-radius:7px;color:#3a3f46;font-size:12px;cursor:pointer">第 4 条 料金・支払い</span>
-              <span style="padding:6px 10px;border-radius:7px;color:#3a3f46;font-size:12px;cursor:pointer">第 5 条 免責事項</span>
+              <span style="padding:6px 10px;border-radius:7px;background:color-mix(in srgb,var(--accent,#5e6ad2) 12%,#fff);color:var(--accent,#5e6ad2);font-weight:600;font-size:12px;cursor:pointer">第 1 条 収集する情報</span>
+              <span style="padding:6px 10px;border-radius:7px;color:#3a3f46;font-size:12px;cursor:pointer">第 2 条 利用目的</span>
+              <span style="padding:6px 10px;border-radius:7px;color:#3a3f46;font-size:12px;cursor:pointer">第 3 条 第三者提供</span>
+              <span style="padding:6px 10px;border-radius:7px;color:#3a3f46;font-size:12px;cursor:pointer">第 4 条 Cookie</span>
+              <span style="padding:6px 10px;border-radius:7px;color:#3a3f46;font-size:12px;cursor:pointer">第 5 条 お問い合わせ</span>
             </div>
           </aside>
           <main style="flex:1;min-width:0;padding:26px 30px">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><h1 style="margin:0;font-size:21px;font-weight:700;color:#16191d;letter-spacing:-.01em">利用規約</h1><span style="font-size:11.5px;color:#9aa0a8">発効日: 2026-04-01 ・ v3.2</span></div>
-            <div style="font-size:13px;color:#3a3f46;line-height:1.9;max-width:560px">
-              <h3 style="margin:22px 0 8px;font-size:14px;font-weight:700;color:#16191d">第 1 条(総則)</h3>
-              <p style="margin:0 0 12px">本規約は、株式会社 Acme(以下「当社」)が提供する FAQ ウィジェットサービス「open-faq」(以下「本サービス」)の利用条件を定めるものです。利用者は本規約に同意のうえ本サービスを利用するものとします。</p>
-              <h3 style="margin:22px 0 8px;font-size:14px;font-weight:700;color:#16191d">第 2 条(利用登録)</h3>
-              <p style="margin:0 0 12px">本サービスの利用を希望する者は、当社所定の方法により利用登録を申請し、当社がこれを承認することによって利用契約が成立します。</p>
-              <p style="margin:0 0 12px">当社は、申請者に当社が定める事由があると判断した場合、利用登録の申請を承認しないことがあります。</p>
+            <!-- IT-01: 同意状態バッジ (ログイン済み時のみ表示) -->
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+              <!-- 同意済みバッジ -->
+              <span style="display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;color:#18794e;background:#e8f8f0;border:1px solid #b2dfc8;border-radius:20px;padding:4px 10px">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="6" fill="#18794e"/><path d="M3.5 6l1.8 1.8 3.2-3.6" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                同意済み <span style="font-weight:400;color:#4a9e75">2026-04-01 同意</span>
+              </span>
+              <!-- 未同意バッジ (もう一方の状態のサンプル) -->
+              <span style="display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;color:#c62a2f;background:#fff0f0;border:1px solid #f5b8b8;border-radius:20px;padding:4px 10px">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="6" fill="#c62a2f"/><path d="M6 3.5v3M6 8.5v.01" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/></svg>
+                再同意が必要 <a href="#" style="color:#c62a2f;font-weight:600;margin-left:2px">再同意する</a>
+              </span>
             </div>
-            <div style="margin-top:26px;padding-top:18px;border-top:1px solid #eef0f2;display:flex;align-items:center;gap:12px">
-              <button style="padding:10px 20px;border:none;border-radius:8px;background:var(--accent,#5e6ad2);color:#fff;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 1px 2px rgba(16,24,40,.12);font-family:inherit">同意して続ける</button>
-              <span style="font-size:11.5px;color:#9aa0a8">最後までスクロールすると同意できます</span>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><h1 style="margin:0;font-size:21px;font-weight:700;color:#16191d;letter-spacing:-.01em">プライバシーポリシー</h1><span style="font-size:11.5px;color:#9aa0a8">発効日: 2026-04-01 ・ v2.0</span></div>
+            <div style="font-size:13px;color:#3a3f46;line-height:1.9;max-width:560px">
+              <h3 style="margin:22px 0 8px;font-size:14px;font-weight:700;color:#16191d">第 1 条(収集する情報)</h3>
+              <p style="margin:0 0 12px">当社は、本サービスの提供にあたり、氏名・メールアドレス・ご利用ログ・Cookie 情報など、サービスの提供・改善に必要な範囲で個人情報を取得します。</p>
+              <h3 style="margin:22px 0 8px;font-size:14px;font-weight:700;color:#16191d">第 2 条(利用目的)</h3>
+              <p style="margin:0 0 12px">取得した個人情報は、本サービスの提供・運営、ご本人への連絡、サービス改善・統計分析、法令上の義務の履行を目的として利用します。目的外の利用は行いません。</p>
+              <p style="margin:0 0 12px">ご本人の同意なく、上記目的の範囲を超えて個人情報を利用することはありません。</p>
+            </div>
+            <!-- IT-03: 利用規約リンク (常時表示) -->
+            <div style="margin-top:26px;padding-top:14px;border-top:1px solid #eef0f2;font-size:12px;color:#9aa0a8">
+              関連: <a href="#" style="color:#5e6ad2;text-decoration:none;font-weight:600">利用規約</a>
             </div>
           </main>
         </div>
