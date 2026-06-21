@@ -511,7 +511,7 @@
 | 認証           | 未認証可(トークン認証のみ)            |
 | 権限           | —                                     |
 
-トークン形式 = `activation` purpose の `T_ACCESS_TOKENS.token_hash` 検証。検証成功時は招待情報を返し、SCR-018 の招待情報パネル表示に使用する。Turnstile 不要(プレビューは情報取得のみで状態変更なし)。
+トークン形式 = `activation` purpose の `T_ACCESS_TOKENS.token_hash` 検証。検証成功時は招待情報を返し、SCR-023 の招待情報パネル表示に使用する。Turnstile 不要(プレビューは情報取得のみで状態変更なし)。
 
 ### 処理概要
 

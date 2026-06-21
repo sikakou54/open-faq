@@ -72,7 +72,7 @@
 
 このテーブルを読み書きする画面と API です(逆引き)。
 
-**画面** [SCR-008](../01_screens/SCR-008.md) [SCR-016](../01_screens/SCR-016.md) [SCR-021-001](../01_screens/SCR-021-001.md) [SCR-021](../01_screens/SCR-021.md) [SCR-022](../01_screens/SCR-022.md) [SCR-WIDGET](../01_screens/SCR-WIDGET.md) **API** [API-DASH-001](../03_apis/index.md#API-DASH-001) [API-BIL-001](../03_apis/index.md#API-BIL-001) [API-BIL-002](../03_apis/index.md#API-BIL-002) [API-BIL-003](../03_apis/index.md#API-BIL-003) [API-BIL-006](../03_apis/index.md#API-BIL-006) [API-WGT-002](../03_apis/index.md#API-WGT-002)
+**画面** [SCR-012](../01_screens/SCR-012.md) [SCR-021](../01_screens/SCR-021.md) [SCR-027](../01_screens/SCR-027.md) [SCR-026](../01_screens/SCR-026.md) [SCR-028](../01_screens/SCR-028.md) [SCR-030](../01_screens/SCR-030.md) **API** [API-DASH-001](../03_apis/index.md#API-DASH-001) [API-BIL-001](../03_apis/index.md#API-BIL-001) [API-BIL-002](../03_apis/index.md#API-BIL-002) [API-BIL-003](../03_apis/index.md#API-BIL-003) [API-BIL-006](../03_apis/index.md#API-BIL-006) [API-WGT-002](../03_apis/index.md#API-WGT-002)
 
 ---
 

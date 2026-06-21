@@ -86,7 +86,7 @@
 
 このテーブルを読み書きする画面と API です(逆引き)。
 
-**画面** [SCR-011](../01_screens/SCR-011.md) [SCR-012](../01_screens/SCR-012.md) **API** [API-ANN-001](../03_apis/index.md#API-ANN-001) [API-ANN-002](../03_apis/index.md#API-ANN-002) [API-ANN-003](../03_apis/index.md#API-ANN-003) [API-ANN-004](../03_apis/index.md#API-ANN-004)
+**画面** [SCR-016](../01_screens/SCR-016.md) [SCR-017](../01_screens/SCR-017.md) **API** [API-ANN-001](../03_apis/index.md#API-ANN-001) [API-ANN-002](../03_apis/index.md#API-ANN-002) [API-ANN-003](../03_apis/index.md#API-ANN-003) [API-ANN-004](../03_apis/index.md#API-ANN-004)
 
 ---
 

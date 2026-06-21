@@ -119,13 +119,13 @@
 | 項目           | 内容                                                     |
 |----------------|----------------------------------------------------------|
 | API ID         | API-MBR-002                                              |
-| API 名         | プロジェクト単発招待(SCR-009-001 招待モード正本)         |
+| API 名         | プロジェクト単発招待(SCR-014 招待モード正本)         |
 | エンドポイント | `/projects/{id}/members`                                 |
 | HTTP メソッド  | POST                                                     |
 | 認証           | Cookie + CSRF + 再認証必須                               |
 | 権限           | オーナー / 当該プロジェクトのメンバー                    |
 
-既存のメンバーアカウントの場合は `M_PRJ_USERS` 行のみ追加。新規メールアドレスの場合は予約 `M_USER`(**`name`/`password_hash`=NULL** / **`status='pending_activation'`** / `valid=1`)を作成 + `M_PRJ_USERS` を `valid=0` で同時 INSERT + 招待メール送信(7 日有効、`T_ACCESS_TOKENS.purpose='activation'`、`meta={"invitedProjectId": "..."}` を JSON 保持)。氏名・パスワードは未設定で、招待された本人が SCR-018 メンバーアカウント有効化ページで設定し有効化する(API-AUTH-008)。**氏名(`displayName`)は受け付けない**(FR-022 / FR-023)。
+既存のメンバーアカウントの場合は `M_PRJ_USERS` 行のみ追加。新規メールアドレスの場合は予約 `M_USER`(**`name`/`password_hash`=NULL** / **`status='pending_activation'`** / `valid=1`)を作成 + `M_PRJ_USERS` を `valid=0` で同時 INSERT + 招待メール送信(7 日有効、`T_ACCESS_TOKENS.purpose='activation'`、`meta={"invitedProjectId": "..."}` を JSON 保持)。氏名・パスワードは未設定で、招待された本人が SCR-023 メンバーアカウント有効化ページで設定し有効化する(API-AUTH-008)。**氏名(`displayName`)は受け付けない**(FR-022 / FR-023)。
 
 ### 処理概要
 
@@ -207,7 +207,7 @@
 | 項目           | 内容                                                     |
 |----------------|----------------------------------------------------------|
 | API ID         | API-MBR-003                                              |
-| API 名         | メンバー情報更新(SCR-009-001 編集モード正本)             |
+| API 名         | メンバー情報更新(SCR-014 編集モード正本)             |
 | エンドポイント | `/projects/{id}/members/{userId}`                        |
 | HTTP メソッド  | PATCH                                                    |
 | 認証           | Cookie + CSRF + 再認証必須                               |
@@ -267,7 +267,7 @@
 |---------|--------|------------------------------------|
 | `email` | string | 更新後のメールアドレス(必須)       |
 
-- 表示名(`displayName`)はメンバー本人が SCR-018 有効化ページで入力するため、本 API では受け付けない
+- 表示名(`displayName`)はメンバー本人が SCR-023 有効化ページで入力するため、本 API では受け付けない
 - メンバーは当該プロジェクト内で同一権限を持ち、役割の区別は存在しない
 
 ### レスポンス(200)

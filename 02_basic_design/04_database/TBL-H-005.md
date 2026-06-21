@@ -82,7 +82,7 @@
 
 このテーブルを読み書きする画面と API です(逆引き)。
 
-**画面** [SCR-005-001](../01_screens/SCR-005-001.md) **API** [API-FAQ-001](../03_apis/index.md#API-FAQ-001)
+**画面** [SCR-007](../01_screens/SCR-007.md) **API** [API-FAQ-001](../03_apis/index.md#API-FAQ-001)
 
 ---
 

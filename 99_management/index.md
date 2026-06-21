@@ -11,7 +11,7 @@
 | 基盤 ディレクトリ改称+portal_nav/CLAUDE | #4 | open |
 | P1 要件定義 個別ID分割・再採番・RULE抽出 | #5 | DONE(0/0) |
 | P2 業務ユースケース UC-001 導出 | #6 | DONE(0/0) |
-| P3 画面設計 移設・SCR採番・EVT個別化 | #7 | open |
+| P3 画面設計 移設・SCR採番・EVT個別化 | #7 | DONE(0/0) |
 | P4 API設計 エンドポイント別分割 | #8 | open |
 | P5 DB設計 移設・TBL採番 | #9 | open |
 | P6 権限/エラー/メッセージ+SEQ | #10 | open |

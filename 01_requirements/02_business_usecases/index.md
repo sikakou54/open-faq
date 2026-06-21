@@ -64,53 +64,53 @@
 | [SCR-001](../../02_basic_design/01_screens/SCR-001.md#SCR-001) | ログイン | 6 | UC-001〜UC-006 |
 | [SCR-002](../../02_basic_design/01_screens/SCR-002.md#SCR-002) | アカウント登録 | 12 | UC-007〜UC-018 |
 | [SCR-003](../../02_basic_design/01_screens/SCR-003.md#SCR-003) | パスワード再設定 | 9 | UC-019〜UC-027 |
-| [SCR-013](../../02_basic_design/01_screens/SCR-013.md#SCR-013) | メール確認 | 5 | UC-151〜UC-155 |
-| [SCR-015](../../02_basic_design/01_screens/SCR-015.md#SCR-015) | 規約再同意割込み | 6 | UC-164〜UC-169 |
-| [SCR-018](../../02_basic_design/01_screens/SCR-018.md#SCR-018) | メンバーアカウント有効化 | 13 | UC-181〜UC-193 |
-| [SCR-019](../../02_basic_design/01_screens/SCR-019.md#SCR-019) | プロジェクト連絡先メール確認完了 | 2 | UC-194〜UC-195 |
+| [SCR-018](../../02_basic_design/01_screens/SCR-018.md#SCR-018) | メール確認 | 5 | UC-151〜UC-155 |
+| [SCR-020](../../02_basic_design/01_screens/SCR-020.md#SCR-020) | 規約再同意割込み | 6 | UC-164〜UC-169 |
+| [SCR-023](../../02_basic_design/01_screens/SCR-023.md#SCR-023) | メンバーアカウント有効化 | 13 | UC-181〜UC-193 |
+| [SCR-024](../../02_basic_design/01_screens/SCR-024.md#SCR-024) | プロジェクト連絡先メール確認完了 | 2 | UC-194〜UC-195 |
 
 ### <span id="ws-owner"></span>契約ワークスペース
 
 | 画面 | 画面名 | UC 数 | 操作粒度 UC |
 |---|---|---|---|
 | [SCR-004](../../02_basic_design/01_screens/SCR-004.md#SCR-004) | プロジェクト | 5 | UC-028〜UC-032 |
-| [SCR-004-001](../../02_basic_design/01_screens/SCR-004-001.md#SCR-004-001) | プロジェクト作成・編集モーダル | 13 | UC-033〜UC-045 |
-| [SCR-014](../../02_basic_design/01_screens/SCR-014.md#SCR-014) | 退会申請 | 8 | UC-156〜UC-163 |
-| [SCR-016](../../02_basic_design/01_screens/SCR-016.md#SCR-016) | 利用状況 | 3 | UC-170〜UC-172 |
-| [SCR-022](../../02_basic_design/01_screens/SCR-022.md#SCR-022) | 請求 | 7 | UC-208〜UC-214 |
-| [SCR-023](../../02_basic_design/01_screens/SCR-023.md#SCR-023) | 設定 | 7 | UC-215〜UC-221 |
+| [SCR-005](../../02_basic_design/01_screens/SCR-005.md#SCR-005) | プロジェクト作成・編集モーダル | 13 | UC-033〜UC-045 |
+| [SCR-019](../../02_basic_design/01_screens/SCR-019.md#SCR-019) | 退会申請 | 8 | UC-156〜UC-163 |
+| [SCR-021](../../02_basic_design/01_screens/SCR-021.md#SCR-021) | 利用状況 | 3 | UC-170〜UC-172 |
+| [SCR-028](../../02_basic_design/01_screens/SCR-028.md#SCR-028) | 請求 | 7 | UC-208〜UC-214 |
+| [SCR-029](../../02_basic_design/01_screens/SCR-029.md#SCR-029) | 設定 | 7 | UC-215〜UC-221 |
 
 ### <span id="ws-project"></span>プロジェクトワークスペース
 
 | 画面 | 画面名 | UC 数 | 操作粒度 UC |
 |---|---|---|---|
-| [SCR-005](../../02_basic_design/01_screens/SCR-005.md#SCR-005) | 要対応の質問一覧 | 8 | UC-046〜UC-053 |
-| [SCR-005-001](../../02_basic_design/01_screens/SCR-005-001.md#SCR-005-001) | 要対応の質問詳細 | 8 | UC-054〜UC-061 |
-| [SCR-006](../../02_basic_design/01_screens/SCR-006.md#SCR-006) | FAQ 一覧 | 14 | UC-062〜UC-075 |
-| [SCR-006-001](../../02_basic_design/01_screens/SCR-006-001.md#SCR-006-001) | FAQ 編集 | 14 | UC-076〜UC-089 |
-| [SCR-006-002](../../02_basic_design/01_screens/SCR-006-002.md#SCR-006-002) | FAQ CSV インポートモーダル | 6 | UC-090〜UC-095 |
-| [SCR-007](../../02_basic_design/01_screens/SCR-007.md#SCR-007) | ウィジェット設定 | 11 | UC-096〜UC-106 |
-| [SCR-008](../../02_basic_design/01_screens/SCR-008.md#SCR-008) | 概要(プロジェクト) | 8 | UC-107〜UC-114 |
-| [SCR-009](../../02_basic_design/01_screens/SCR-009.md#SCR-009) | メンバー(プロジェクト) | 8 | UC-115〜UC-122 |
-| [SCR-009-001](../../02_basic_design/01_screens/SCR-009-001.md#SCR-009-001) | メンバー招待 / 編集モーダル | 10 | UC-123〜UC-132 |
-| [SCR-021](../../02_basic_design/01_screens/SCR-021.md#SCR-021) | 利用量と上限(プロジェクト単位) | 3 | UC-199〜UC-201 |
-| [SCR-021-001](../../02_basic_design/01_screens/SCR-021-001.md#SCR-021-001) | 質問数上限設定モーダル | 6 | UC-202〜UC-207 |
+| [SCR-006](../../02_basic_design/01_screens/SCR-006.md#SCR-006) | 要対応の質問一覧 | 8 | UC-046〜UC-053 |
+| [SCR-007](../../02_basic_design/01_screens/SCR-007.md#SCR-007) | 要対応の質問詳細 | 8 | UC-054〜UC-061 |
+| [SCR-008](../../02_basic_design/01_screens/SCR-008.md#SCR-008) | FAQ 一覧 | 14 | UC-062〜UC-075 |
+| [SCR-009](../../02_basic_design/01_screens/SCR-009.md#SCR-009) | FAQ 編集 | 14 | UC-076〜UC-089 |
+| [SCR-010](../../02_basic_design/01_screens/SCR-010.md#SCR-010) | FAQ CSV インポートモーダル | 6 | UC-090〜UC-095 |
+| [SCR-011](../../02_basic_design/01_screens/SCR-011.md#SCR-011) | ウィジェット設定 | 11 | UC-096〜UC-106 |
+| [SCR-012](../../02_basic_design/01_screens/SCR-012.md#SCR-012) | 概要(プロジェクト) | 8 | UC-107〜UC-114 |
+| [SCR-013](../../02_basic_design/01_screens/SCR-013.md#SCR-013) | メンバー(プロジェクト) | 8 | UC-115〜UC-122 |
+| [SCR-014](../../02_basic_design/01_screens/SCR-014.md#SCR-014) | メンバー招待 / 編集モーダル | 10 | UC-123〜UC-132 |
+| [SCR-026](../../02_basic_design/01_screens/SCR-026.md#SCR-026) | 利用量と上限(プロジェクト単位) | 3 | UC-199〜UC-201 |
+| [SCR-027](../../02_basic_design/01_screens/SCR-027.md#SCR-027) | 質問数上限設定モーダル | 6 | UC-202〜UC-207 |
 
 ### <span id="ws-common"></span>共通領域
 
 | 画面 | 画面名 | UC 数 | 操作粒度 UC |
 |---|---|---|---|
-| [SCR-010](../../02_basic_design/01_screens/SCR-010.md#SCR-010) | 利用規約閲覧 | 3 | UC-133〜UC-135 |
-| [SCR-011](../../02_basic_design/01_screens/SCR-011.md#SCR-011) | お知らせ一覧 | 11 | UC-136〜UC-146 |
-| [SCR-012](../../02_basic_design/01_screens/SCR-012.md#SCR-012) | お知らせ詳細 | 4 | UC-147〜UC-150 |
-| [SCR-017](../../02_basic_design/01_screens/SCR-017.md#SCR-017) | 個人設定 | 8 | UC-173〜UC-180 |
-| [SCR-020](../../02_basic_design/01_screens/SCR-020.md#SCR-020) | プライバシーポリシー閲覧 | 3 | UC-196〜UC-198 |
+| [SCR-015](../../02_basic_design/01_screens/SCR-015.md#SCR-015) | 利用規約閲覧 | 3 | UC-133〜UC-135 |
+| [SCR-016](../../02_basic_design/01_screens/SCR-016.md#SCR-016) | お知らせ一覧 | 11 | UC-136〜UC-146 |
+| [SCR-017](../../02_basic_design/01_screens/SCR-017.md#SCR-017) | お知らせ詳細 | 4 | UC-147〜UC-150 |
+| [SCR-022](../../02_basic_design/01_screens/SCR-022.md#SCR-022) | 個人設定 | 8 | UC-173〜UC-180 |
+| [SCR-025](../../02_basic_design/01_screens/SCR-025.md#SCR-025) | プライバシーポリシー閲覧 | 3 | UC-196〜UC-198 |
 
 ### <span id="ws-widget"></span>ウィジェット
 
 | 画面 | 画面名 | UC 数 | 操作粒度 UC |
 |---|---|---|---|
-| [SCR-WIDGET](../../02_basic_design/01_screens/SCR-WIDGET.md#WIDGET) | エンドユーザー向け FAQ ウィジェット | 8 | UC-222〜UC-229 |
+| [SCR-030](../../02_basic_design/01_screens/SCR-030.md#SCR-030) | エンドユーザー向け FAQ ウィジェット | 8 | UC-222〜UC-229 |
 
 ## <span id="system"></span>3. システム起点ユースケース
 

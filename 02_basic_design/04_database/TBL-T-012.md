@@ -69,7 +69,7 @@
 
 このテーブルを読み書きする画面と API です(逆引き)。
 
-**画面** [SCR-002](../01_screens/SCR-002.md) [SCR-010](../01_screens/SCR-010.md) [SCR-015](../01_screens/SCR-015.md) [SCR-018](../01_screens/SCR-018.md) [SCR-020](../01_screens/SCR-020.md) **API** [API-AUTH-001](../03_apis/index.md#API-AUTH-001) [API-AUTH-008](../03_apis/index.md#API-AUTH-008)
+**画面** [SCR-002](../01_screens/SCR-002.md) [SCR-015](../01_screens/SCR-015.md) [SCR-020](../01_screens/SCR-020.md) [SCR-023](../01_screens/SCR-023.md) [SCR-025](../01_screens/SCR-025.md) **API** [API-AUTH-001](../03_apis/index.md#API-AUTH-001) [API-AUTH-008](../03_apis/index.md#API-AUTH-008)
 
 ---
 

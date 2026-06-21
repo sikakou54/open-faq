@@ -1,0 +1,48 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#fff}
+body{font-family:'Noto Sans JP','Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;color:#3a3f46;-webkit-font-smoothing:antialiased}
+#wrap{display:inline-block}
+.scr-mock,.screen{background:#fff}
+.le-cap{font-size:12px;font-weight:700;color:#16191d;margin:0 0 8px}
+.screen{border:1px solid #e6e8eb;border-radius:12px;overflow:hidden;width:1024px}
+.screen-header{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#fbfbfc;border-bottom:1px solid #eef0f2;font-size:12px}
+.scr-name{font-weight:700;color:#16191d}.scr-user{color:#8a9099;font-size:11px}
+.modal-overlay{background:rgba(16,24,40,.35);padding:28px;display:flex;justify-content:center}
+.modal-card{background:#fff;border-radius:12px;box-shadow:0 12px 40px rgba(16,24,40,.18);padding:22px}
+.panel{border:1px solid #eef0f2;border-radius:9px;padding:12px;margin:10px 0;background:#fbfbfc}
+.panel-title{font-weight:700;font-size:12px;margin-bottom:6px}
+.field{margin:10px 0;font-size:12px}.req{color:#e5484d}
+.btn{border:none;border-radius:9px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+.btn.primary{background:#5e6ad2;color:#fff}
+.link{color:#5e6ad2;text-decoration:none}
+input[type=checkbox]{transform:translateY(1px)}
+table{border-collapse:collapse}
+</style>
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+</head><body><div id="wrap"><div class="layout-embed">
+<div class="le-cap">連絡先メール確認完了</div>
+<div class="scr-mock"><div class="screen" id="scr-019" role="region" aria-labelledby="scr-019-title"><div class="role-screen-note"><strong>外部確認ステップ:</strong> 実際の到達者は連絡先メール所有者です。メンバーは完了状態を確認します。</div>
+<div class="screen-header"><div><span class="scr-name" id="scr-019-title">プロジェクト連絡先メール確認完了(TPL-PROJECT_CONTACT_VERIFY 着地 / 共通領域)</span></div><div class="scr-user">利用者: プロジェクト連絡先メール所有者(未認証 / `T_ACCESS_TOKENS.purpose='contact_verify'` 有効時のみ到達可能、アカウント不要)</div></div>
+<div class="public-form-layout"> <div class="simple-header"><i data-lucide="mail"></i>お問い合わせ先メール確認 — open-faq</div> <div style="width: 480px;">
+  <!-- (a) 完了状態 -->
+  <div class="auth-card xwide" style="width: auto;">
+    <h3><i data-lucide="check-circle"></i> お問い合わせ先メールアドレスを確認しました</h3>
+    <div class="alert-bar success" role="status">プロジェクト「サポートサイト」のお問い合わせ先メールアドレスを確認しました。FAQ ウィジェット上にお問い合わせ先として表示されるようになります</div>
+    <button class="btn" style="width: 100%; margin-top: 8px;">閉じる</button>
+  </div>
+  <!-- (b) トークン期限切れ -->
+  <div class="auth-card xwide" style="width: auto; margin-top: 12px;">
+    <h3>確認リンクの有効期限が切れています</h3>
+    <div class="alert-bar danger" role="alert">確認リンクが期限切れ、または無効です(有効期限 24 時間)。プロジェクトのオーナーまたはメンバーに再送をご依頼ください</div>
+  </div>
+  <!-- (c) 既使用 -->
+  <div class="auth-card xwide" style="width: auto; margin-top: 12px;">
+    <h3>このリンクは既に使用済みです</h3>
+    <div class="alert-bar warn" role="status">このリンクは既に使用済みです。確認は完了しています</div>
+  </div>
+</div> <div class="simple-footer">FAQ AI ウィジェット SaaS — open-faq</div> </div>
+<div class="note" style="margin-top: 10px;"><strong>備考(v1.7 新規)</strong><ul style="margin: 4px 0 0; padding-left: 18px;"><li>未認証画面(連絡先確認トークン認証のみ、Cookie セッションなし)。URL = <code>/auth/contact-verify?token=...</code></li><li>TPL-PROJECT_CONTACT_VERIFY 確認メールのリンクから到達(`T_ACCESS_TOKENS.purpose='contact_verify'`、24h、`meta.projectId` を JSON 保持)</li><li>「閉じる」押下前にバックグラウンドで `POST /auth/contact-verifications/{token}` を実行 → 同一トランザクションで `UPDATE M_PROJECTS SET contact_verified_at=?` + `consumeToken('contact_verify')`(FR-033a)</li><li>連絡先メール所有者はアカウントを持つ必要がない(第三者の共有メールアドレスでも本フローを進められる)。入力フォームを持たない確認専用ページ</li><li>サイドメニュー除外(未認証画面のため、01_画面設計/index.html §4.4.5)</li></ul></div>
+</div></div>
+</div></div><script>lucide.createIcons();</script></body></html>

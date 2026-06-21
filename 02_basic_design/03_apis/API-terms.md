@@ -80,7 +80,7 @@
 | `bodyHtml` | string | 利用規約の本文 HTML |
 | `diffSummary` | string | 主な変更点(`M_TERMS_VER.diff_summary`。NULL の場合は省略) |
 
-(最新版のみ。`diffSummary` は `M_TERMS_VER.diff_summary`。SCR-015 の「主な変更点」表示に用いる。NULL の場合は省略)
+(最新版のみ。`diffSummary` は `M_TERMS_VER.diff_summary`。SCR-020 の「主な変更点」表示に用いる。NULL の場合は省略)
 
 ## <span id="API-TRM-002"></span>API-TRM-002 プライバシーポリシー 最新版取得
 
@@ -146,7 +146,7 @@
 | `bodyHtml` | string | プライバシーポリシーの本文 HTML |
 | `diffSummary` | string | 主な変更点(`M_TERMS_VER.diff_summary`。NULL の場合は省略) |
 
-(最新版のみ。`diffSummary` は `M_TERMS_VER.diff_summary`。SCR-015 の「主な変更点」表示に用いる。NULL の場合は省略)
+(最新版のみ。`diffSummary` は `M_TERMS_VER.diff_summary`。SCR-020 の「主な変更点」表示に用いる。NULL の場合は省略)
 
 ## <span id="API-TRM-003"></span>API-TRM-003 利用規約 同意
 
@@ -264,7 +264,7 @@
 |-----------|--------|------------------------------------------------|
 | `version` | string | 同意対象のプライバシーポリシーバージョン(必須) |
 
-`T_TERMS_AGREE` に `(user_id, doc_type='privacy_policy', terms_version)` で 1 行記録(冪等: 既存同意があれば 200)。SCR-015 / SCR-018 では利用規約・プライバシーポリシー双方の同意が必須条件であり、改定再同意では改定された文書の agree のみを呼び出す。
+`T_TERMS_AGREE` に `(user_id, doc_type='privacy_policy', terms_version)` で 1 行記録(冪等: 既存同意があれば 200)。SCR-020 / SCR-023 では利用規約・プライバシーポリシー双方の同意が必須条件であり、改定再同意では改定された文書の agree のみを呼び出す。
 
 ### レスポンス(200)
 

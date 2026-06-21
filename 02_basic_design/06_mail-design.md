@@ -223,7 +223,7 @@ open-faq <noreply@<service-domain>>
 
 メンバー招待および招待再送で共通利用する `critical` メールです。プロジェクトへのメンバー招待はすべて本テンプレートに一本化する。アクティベーション URL(7d 有効)と招待内容(プロジェクト・招待元)を提示し、着地ページで氏名・初回パスワード・規約同意を入力させます。
 
-**発火条件**: SCR-009-001 メンバー招待モーダルの「招待メールを送信する」/「招待メールを再送する」ボタン押下時、`T_ACCESS_TOKENS.purpose='activation'` 発行時。
+**発火条件**: SCR-014 メンバー招待モーダルの「招待メールを送信する」/「招待メールを再送する」ボタン押下時、`T_ACCESS_TOKENS.purpose='activation'` 発行時。
 
 **テンプレート変数**:
 
@@ -233,7 +233,7 @@ open-faq <noreply@<service-domain>>
 | `{inviter_owner_name}` | 招待元オーナーの表示名 |
 | `{inviter_admin_name}` | 招待操作者の表示名(オーナー以外のメンバーの場合) |
 | `{project_name}` | 招待対象プロジェクト名 |
-| `{activation_url}` | アクティベーション URL(7d 有効、SCR-018 メンバーアカウント有効化ページに着地) |
+| `{activation_url}` | アクティベーション URL(7d 有効、SCR-023 メンバーアカウント有効化ページに着地) |
 | `{expire_at_jst}` | 失効日時(JST) |
 
 **件名**: `open-faq のメンバー登録を完了してください`
@@ -269,7 +269,7 @@ open-faq <noreply@<service-domain>>
 
 **本文(HTML 版)**: 招待内容を背景色 `#eef6ff` のパネルで表示 + プライマリボタン「アカウント登録を完了する」+ 失効日時を強調表示。本文の必須項目に「氏名(表示名)入力 + 初回パスワード設定 + 利用規約・プライバシーポリシー同意」を含める。
 
-**着地ページ**: SCR-018 メンバーアカウント有効化([画面設計書](01_screens/index.md))。
+**着地ページ**: SCR-023 メンバーアカウント有効化([画面設計書](01_screens/index.md))。
 
 **備考**: 再送時は **旧 `T_ACCESS_TOKENS` を失効させ新トークンを発行** したうえで本テンプレートで再送信(`MSG-SCR-009-001-TOAST-002` と整合)。本文は新規招待時と同一で、差出人による文脈は本文中の「招待操作者」フィールドで補足する。氏名は招待時点で未登録のため、宛先表示は `{recipient_email}` を用いる。
 
@@ -279,7 +279,7 @@ open-faq <noreply@<service-domain>>
 
 プロジェクトのお問い合わせ先メールアドレスをウィジェット表示前に確認する `critical` メールです。確認 URL(24h 有効)を提示し、受信者はアカウントを持たない第三者でも構いません。
 
-**発火条件**: SCR-004-001 プロジェクト作成・編集モーダルで連絡先メールアドレスが新規入力 / 変更された時、ウィジェット上での表示前確認用に送信。
+**発火条件**: SCR-005 プロジェクト作成・編集モーダルで連絡先メールアドレスが新規入力 / 変更された時、ウィジェット上での表示前確認用に送信。
 
 **テンプレート変数**:
 
@@ -317,7 +317,7 @@ open-faq <noreply@<service-domain>>
 
 **本文(HTML 版)**: プロジェクト名を強調 + 確認用プライマリボタン + 確認前は非表示である旨を注記。
 
-**着地ページ**: **SCR-019 プロジェクト連絡先メール確認完了**([画面設計書](01_screens/index.md)、共通領域、未認証可)。トークン検証成功時に `M_PROJECTS.contact_verified_at=now()` をセットし、結果(完了 / 期限切れ / 既使用)を表示する。
+**着地ページ**: **SCR-024 プロジェクト連絡先メール確認完了**([画面設計書](01_screens/index.md)、共通領域、未認証可)。トークン検証成功時に `M_PROJECTS.contact_verified_at=now()` をセットし、結果(完了 / 期限切れ / 既使用)を表示する。
 
 **備考**: 受信者はオーナーやメンバーである必要はなく、第三者(例: サポート窓口担当者の共有メールアドレス)でも構わない。アカウント作成や認証は不要で、トークン保有者のみが本フローを進められる。トークンは `T_ACCESS_TOKENS.purpose='contact_verify'`(24 時間)、`meta` に `projectId` を JSON 保持(FR-043)。
 
@@ -384,7 +384,7 @@ open-faq <noreply@<service-domain>>
 
 退会申請後の節目(発効 7 日前 / 発効当日 / 完全削除 3 日前)で送る `high` メールです。`{withdrawal_phase}` でフェーズ別に件名・本文を出し分ける単一テンプレートです。
 
-**発火条件**: SCR-014 退会申請後、退会発効日(申請当月末)の 7 日前 / 当日 / データ完全削除 3 日前の 3 回送信。退会発効(サービス停止)からデータ完全削除までの猶予は 90 日(FR-009 / 削除データ保持期間 90 日)。
+**発火条件**: SCR-019 退会申請後、退会発効日(申請当月末)の 7 日前 / 当日 / データ完全削除 3 日前の 3 回送信。退会発効(サービス停止)からデータ完全削除までの猶予は 90 日(FR-009 / 削除データ保持期間 90 日)。
 
 **テンプレート変数**:
 
@@ -445,7 +445,7 @@ open-faq <noreply@<service-domain>>
 | `{question_count}`         | 質問数                          |
 | `{overage_amount_jpy}`     | 上限超過分(¥0 の場合は記載省略) |
 | `{invoice_pdf_url}`        | 明細 PDF DL URL(30d 有効)       |
-| `{billing_screen_url}`     | SCR-022 請求 deeplink           |
+| `{billing_screen_url}`     | SCR-028 請求 deeplink           |
 
 **件名**: `{billing_period_label} の請求書が発行されました(¥{invoice_amount_jpy})`
 
@@ -498,7 +498,7 @@ open-faq <noreply@<service-domain>>
 | `{failure_reason}` | Stripe 失敗理由(`card_declined` 等の人間可読版) |
 | `{retry_count}` | 再試行回数(1〜3) |
 | `{next_retry_at_jst}` | 次回再試行日時(JST、最終再試行時は「再試行なし」) |
-| `{payment_method_url}` | SCR-022 請求の支払い方法変更 URL |
+| `{payment_method_url}` | SCR-028 請求の支払い方法変更 URL |
 | `{suspension_at_jst}` | サスペンション開始予定日時(最終再試行失敗時) |
 
 **件名**: `【重要】請求のお支払いに失敗しました({billing_period_label})`
@@ -613,7 +613,7 @@ open-faq <noreply@<service-domain>>
 | `{project_name}`            | 無料枠を超過したプロジェクト名              |
 | `{exceeded_resource_label}` | 超過した無料枠の種別(`質問数` / `FAQ 件数`) |
 | `{stopped_at_jst}`          | ウィジェット質問受付停止日時(JST)           |
-| `{billing_setup_url}`       | 請求 URL(SCR-022)                           |
+| `{billing_setup_url}`       | 請求 URL(SCR-028)                           |
 
 **件名**: `【重要】{project_name} が無料枠を超過しました — お支払い方法の登録が必要です`
 
@@ -656,7 +656,7 @@ open-faq <noreply@<service-domain>>
 | `{summary_text}`           | 改定要約(HTML sanitize 済)        |
 | `{new_terms_url}`          | 新規約 URL                        |
 | `{consent_deadline_jst}`   | 同意期限(発効日 + 14d、JST)       |
-| `{consent_screen_url}`     | SCR-015 規約再同意割込み deeplink |
+| `{consent_screen_url}`     | SCR-020 規約再同意割込み deeplink |
 
 **件名**: `【重要】利用規約改定のお知らせ(発効日: {effective_at_jst})`
 
@@ -749,7 +749,7 @@ open-faq 運営事務局よりお知らせいたします。
 | `{threshold_percent}` | 到達したアラート閾値(`25` / `50` / `80` / `90` / `100`) |
 | `{used_count}` | 到達時点の当月質問数 |
 | `{limit_count}` | 設定中の当月質問数上限 |
-| `{action_url}` | 対応画面 URL(上限系は SCR-021、請求系は SCR-022、個人設定は SCR-017) |
+| `{action_url}` | 対応画面 URL(上限系は SCR-026、請求系は SCR-028、個人設定は SCR-022) |
 
 **件名**: サブ契機ごとに以下のマッピング(上限系はプロジェクト名を含める):
 

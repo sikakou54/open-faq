@@ -485,7 +485,7 @@ GET: `{ "registered": true, "brand": "visa", "last4": "4242", "expMonth": 12, "e
 | 認証 | Cookie |
 | 権限 | オーナー / 当該プロジェクトのメンバー(閲覧) |
 
-SCR-021 の表示には `used` / `limitEnabled` / `limit` / `percentage` / `yenEquivalent` だけを使用し、アラート設定・設定元は表示しない。SCR-021-001 は `limitEnabled` / `limit` / `alertThresholds` を使用する。FAQ 件数は扱わないためレスポンスに含めない。質問数の無料利用枠は課金判定用の内部データとして保持するが、本 API のレスポンスには含めない。
+SCR-026 の表示には `used` / `limitEnabled` / `limit` / `percentage` / `yenEquivalent` だけを使用し、アラート設定・設定元は表示しない。SCR-027 は `limitEnabled` / `limit` / `alertThresholds` を使用する。FAQ 件数は扱わないためレスポンスに含めない。質問数の無料利用枠は課金判定用の内部データとして保持するが、本 API のレスポンスには含めない。
 
 ### 処理概要
 
@@ -551,7 +551,7 @@ SCR-021 の表示には `used` / `limitEnabled` / `limit` / `percentage` / `yenE
 | `　└ yenEquivalent` | integer | 上限消化時の参考課金額(OFF 時は `null`) |
 | `　└ source` | enum | 上限設定元。`owner` |
 
-`yenEquivalent` は上限件数をすべて利用した場合の最大課金額の参考値で、`billableCount = max(0, limit - 適用中の質問数無料利用枠)`、`yenEquivalent = billableCount × 質問単価` により算出する。画面では「5,000件 - 1,000件(無料枠) = 4,000件 (¥2,000 / 月)」の形式で表示する。上限 OFF 時は `limitEnabled=false`、`limit=null`、`percentage=null`、`yenEquivalent=null` を返す。SCR-021 は「今月の利用上限」を「OFF」と表示し、「利用量」には割合・件数比・ProgressBar・状態バッジを描画しない。
+`yenEquivalent` は上限件数をすべて利用した場合の最大課金額の参考値で、`billableCount = max(0, limit - 適用中の質問数無料利用枠)`、`yenEquivalent = billableCount × 質問単価` により算出する。画面では「5,000件 - 1,000件(無料枠) = 4,000件 (¥2,000 / 月)」の形式で表示する。上限 OFF 時は `limitEnabled=false`、`limit=null`、`percentage=null`、`yenEquivalent=null` を返す。SCR-026 は「今月の利用上限」を「OFF」と表示し、「利用量」には割合・件数比・ProgressBar・状態バッジを描画しない。
 
 ## <span id="API-BIL-007"></span>API-BIL-007 プロジェクト上限・アラート更新
 

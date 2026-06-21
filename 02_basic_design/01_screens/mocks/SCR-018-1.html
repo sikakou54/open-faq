@@ -20,57 +20,15 @@ body{font-family:'Noto Sans JP','Hiragino Kaku Gothic ProN','Hiragino Sans',Meir
 input[type=checkbox]{transform:translateY(1px)}
 table{border-collapse:collapse}
 </style>
-<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
-</head><body><div id="wrap"><div class="layout-embed">
-<div class="le-cap">メンバーアカウント有効化</div>
-<div class="scr-mock"><div class="screen" id="scr-018" role="region" aria-labelledby="scr-018-title">
-<div class="screen-header"><div><span class="scr-name" id="scr-018-title">メンバーアカウント有効化(招待リンク先 / 共通領域)</span></div><div class="scr-user">利用者: 招待トークン保有者(未認証 / `T_ACCESS_TOKENS.purpose='activation'` 有効時のみ到達可能)</div></div>
-<div class="public-form-layout"> <div class="simple-header"><i data-lucide="mail-check"></i>アカウントを有効化 — open-faq</div> <div style="width: 480px;">
-  <!-- (a) 有効状態(トークン検証 OK) -->
-  <div class="auth-card xwide" style="width: auto;">
-    <h3>アカウントを有効化する</h3>
-    <p class="page-description" style="margin: 0 0 12px; font-size: var(--fs-sm); color: var(--text-secondary);">お名前と初回パスワードを設定し、利用規約に同意してアカウントを有効化してください</p>
-    <ol class="timeline" role="list" aria-label="ステップ"><li class="step done" aria-current="false"><span class="marker">●</span><div><div class="step-label">① メールリンクをクリック</div></div></li><li class="step current" aria-current="step"><span class="marker">●</span><div><div class="step-label">② 氏名・パスワード・規約同意を入力</div></div></li><li class="step future"><span class="marker">○</span><div><div class="step-label">③ ログイン</div></div></li></ol>
-    <div class="panel" style="background: var(--info-bg); border-color: var(--info-border);"><div class="panel-title" style="color: var(--info);">招待内容</div><div class="small" style="margin-top: 4px;">プロジェクト: <strong>サポートサイト</strong></div><div class="small">招待元: 山田 一郎</div></div>
-    <div class="field" style="margin-top: 10px;"><label>メールアドレス(変更不可)</label><div>tanaka@example.com</div></div>
-    <div class="field"><label>氏名(表示名)<span class="req">●</span></label><div class="input"><span class="placeholder">例: 山田 太郎</span></div><div class="helper">1〜100 文字 / 招待された方ご本人がお名前を入力してください。お名前は個人設定でいつでも変更できます</div></div>
-    <div class="field"><label>初回パスワード<span class="req">●</span></label><div class="input"><span class="placeholder">12 文字以上、英大文字・小文字・数字・記号のうち 3 種類以上</span></div></div>
-    <div class="field"><label>パスワード(確認)<span class="req">●</span></label><div class="input"><span class="placeholder">もう一度入力</span></div></div>
-    <div class="field"><label class="checkbox"><input type="checkbox">利用規約に同意します <span class="req">●</span> <a class="link">全文を見る →</a></label></div>
-    <div class="field"><label class="checkbox"><input type="checkbox">プライバシーポリシーに同意します <span class="req">●</span> <a class="link">全文を見る →</a></label></div>
-    <div class="field"><div class="small" style="color: var(--text-muted);">[Turnstile CAPTCHA]</div></div>
-    <button class="btn primary" style="width: 100%; margin-top: 8px;">登録を完了する</button>
-  </div>
-  <!-- (a-2) 有効状態(入力バリデーションエラー / API 400・入力可能のまま) -->
-  <div class="auth-card xwide" style="width: auto; margin-top: 12px;">
-    <h3>アカウントを有効化する(入力エラー)</h3>
-    <p class="page-description" style="margin: 0 0 12px; font-size: var(--fs-sm); color: var(--text-secondary);">未入力・形式不正のフィールドにエラーを表示します(API 400 はフィールド単位エラー表示・入力可能のまま)</p>
-    <div class="field"><label>氏名(表示名)<span class="req">●</span></label><div class="input" style="border-color:var(--danger)"><span class="placeholder"> </span></div><div style="color:var(--danger);font-size:11px;margin-top:4px"><i data-lucide="alert-circle"></i> 氏名を入力してください(1〜100 文字)</div></div>
-    <div class="field"><label>初回パスワード<span class="req">●</span></label><div class="input" style="border-color:var(--danger)"><span class="placeholder">●●●●●●</span></div><div style="color:var(--danger);font-size:11px;margin-top:4px"><i data-lucide="alert-circle"></i> 12 文字以上、英大文字・小文字・数字・記号のうち 3 種類以上にしてください</div></div>
-    <div class="field"><label>パスワード(確認)<span class="req">●</span></label><div class="input" style="border-color:var(--danger)"><span class="placeholder">●●●●●●</span></div><div style="color:var(--danger);font-size:11px;margin-top:4px"><i data-lucide="alert-circle"></i> パスワードが一致しません</div></div>
-    <div class="field"><label class="checkbox"><input type="checkbox">利用規約に同意します <span class="req">●</span></label><div style="color:var(--danger);font-size:11px;margin-top:4px"><i data-lucide="alert-circle"></i> 利用規約への同意が必要です</div></div>
-    <div class="field"><label class="checkbox"><input type="checkbox">プライバシーポリシーに同意します <span class="req">●</span></label><div style="color:var(--danger);font-size:11px;margin-top:4px"><i data-lucide="alert-circle"></i> プライバシーポリシーへの同意が必要です</div></div>
-    <button class="btn primary" style="width: 100%; margin-top: 8px;">登録を完了する</button>
-  </div>
-  <!-- (b) トークン期限切れ / 無効 -->
-  <div class="auth-card xwide" style="width: auto; margin-top: 12px;">
-    <h3>招待リンクの有効期限が切れています</h3>
-    <div class="alert-bar danger" role="alert">招待リンクが期限切れ、または無効です(有効期限 7 日)。招待元へ再送をご依頼ください</div>
-    <a class="link" style="display: inline-block; margin-top: 8px;">ログイン画面へ →</a>
-  </div>
-  <!-- (c) 既使用 -->
-  <div class="auth-card xwide" style="width: auto; margin-top: 12px;">
-    <h3>このリンクは既に使用済みです</h3>
-    <div class="alert-bar warn" role="status">このリンクは既に使用済みです。ログイン画面からお進みください</div>
-    <a class="link" style="display: inline-block; margin-top: 8px;">ログイン画面へ →</a>
-  </div>
-  <!-- (d) 完了 -->
-  <div class="auth-card xwide" style="width: auto; margin-top: 12px;">
-    <h3>アカウントを有効化しました</h3>
-    <div class="alert-bar success" role="status"><i data-lucide="check-circle"></i> アカウントを有効化しました。ログインしてサービスをご利用ください</div>
-    <button class="btn primary" style="width: 100%; margin-top: 8px;">ログインする</button>
-  </div>
-</div> <div class="simple-footer">FAQ AI ウィジェット SaaS — open-faq</div> </div>
-<div class="note" style="margin-top: 10px;"><strong>備考(v1.6 新規)</strong><ul style="margin: 4px 0 0; padding-left: 18px;"><li>未認証画面(招待トークン認証のみ、Cookie セッションなし)。URL = <code>/auth/activate?token=...</code></li><li>招待メール (TPL-ADMIN_USER_REGISTER / TPL-PROJECT_ADMIN_INVITE) のリンクから到達。両テンプレート共通の着地ページ</li><li>「登録を完了する」押下時は `POST /auth/invitations/{token}/activate` 経由で同一トランザクションで `UPDATE M_PRJ_USERS SET name=?, password_hash=?, status='active'` + `INSERT INTO T_TERMS_AGREE` + `UPDATE M_PRJ_USERS SET valid=1` + `consumeToken('activation')` を実行(FR-016e)</li><li>サイドメニュー除外(未認証画面のため。01_画面設計/index.html §4.4.5)</li></ul></div>
-</div></div>
-</div></div><script>lucide.createIcons();</script></body></html>
+
+</head><body><div id="wrap"><div style="background:#f5f6f8;padding:24px;border-radius:12px;font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN',Meiryo,sans-serif;color:#3a3f46;--accent:#5e6ad2;--row-pad:14px"><div style="max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:28px"><section style="flex:none;width:360px">
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:12px"><span style="font-size:11px;font-weight:700;color:var(--accent,#5e6ad2);background:color-mix(in srgb,var(--accent,#5e6ad2) 10%,#fff);border-radius:6px;padding:3px 8px">SCR-013</span><span style="font-size:13px;font-weight:600;color:#16191d">メール確認</span></div>
+      <div style="height:500px;background:radial-gradient(120% 80% at 50% 0%,color-mix(in srgb,var(--accent,#5e6ad2) 7%,#fff) 0%,#fbfbfc 60%);border:1px solid #e6e8eb;border-radius:14px;box-shadow:0 1px 2px rgba(16,24,40,.04),0 6px 20px rgba(16,24,40,.05);display:flex;align-items:center;justify-content:center;padding:24px">
+        <div style="width:300px;background:#fff;border:1px solid #eef0f2;border-radius:14px;box-shadow:0 4px 18px rgba(16,24,40,.06);padding:30px 24px;text-align:center">
+          <div style="width:56px;height:56px;border-radius:999px;background:color-mix(in srgb,var(--accent,#5e6ad2) 10%,#fff);color:var(--accent,#5e6ad2);display:flex;align-items:center;justify-content:center;margin:0 auto 16px"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg></div>
+          <h2 style="margin:0 0 10px;font-size:16px;font-weight:700;color:#16191d">確認メールを送信しました</h2>
+          <p style="margin:0 0 6px;font-size:12.5px;color:#71767e;line-height:1.7"><b style="color:#16191d">owner@example.com</b> 宛に確認リンクをお送りしました。メール内のリンクをクリックして登録を完了してください。</p>
+          <div style="margin-top:18px;padding-top:16px;border-top:1px solid #f1f3f5;font-size:12px;color:#71767e">メールが届かない場合は <a style="color:var(--accent,#5e6ad2);text-decoration:none;cursor:pointer;font-weight:600">再送信</a></div>
+        </div>
+      </div>
+    </section></div></div></div></body></html>
