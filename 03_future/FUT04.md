@@ -116,10 +116,7 @@ CREATE TABLE plan_entitlements (
 | 種別 | 参照先 |
 |----|----|
 | 要件 | [../01_requirements/index.md](../01_requirements/index.md) |
-| 基本設計 | [../02_基本設計/index.md](../02_基本設計/index.md) |
-| 詳細設計 | [../03_詳細設計/index.md](../03_詳細設計/index.md) |
-| 運用設計 | [../04_運用設計/index.md](../04_運用設計/index.md) |
-| 共有概念(正本) | [../../共有/共有概念.md](../../共有/共有概念.md) |
+| 基本設計 | [../02_basic-design/index.md](../02_basic-design/index.md) |
 
 ------------------------------------------------------------------------
 
