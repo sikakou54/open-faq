@@ -202,11 +202,8 @@ erDiagram
     TEXT faq_id FK "→M_FAQS.id" }
   M_PROJECTS { TEXT id PK }
   T_INQUIRIES { TEXT id PK }
-  T_QLOG_FAQ_REFS { TEXT id PK
-    TEXT faq_id FK "→M_FAQS.id" }
   M_PROJECTS ||--o{ M_FAQS : "FAQ"
   M_FAQS ||--o{ H_FAQ_REV : "改訂"
-  M_FAQS ||--o{ T_QLOG_FAQ_REFS : "被参照"
   T_INQUIRIES ||--o{ H_INQUIRY_FAQ : "FAQ化"
   M_FAQS ||--o{ H_INQUIRY_FAQ : "FAQ化履歴"
 ```
