@@ -1,0 +1,59 @@
+{
+ "TBL-008": {
+  "phys": "M_OWNER_QUOTA_OVR",
+  "api": [],
+  "uc": []
+ },
+ "TBL-010": {
+  "phys": "M_SERVICE_ANNOUNCE",
+  "api": [],
+  "uc": []
+ },
+ "TBL-011": {
+  "phys": "M_ANNOUNCE_AUD",
+  "api": [],
+  "uc": []
+ },
+ "TBL-012": {
+  "phys": "M_TERMS_VER",
+  "api": [
+   "API-052",
+   "API-053"
+  ],
+  "uc": [
+   "UC-133",
+   "UC-164",
+   "UC-196"
+  ]
+ },
+ "TBL-015": {
+  "phys": "T_PRJ_LEGACY_KEYS",
+  "api": [],
+  "uc": []
+ },
+ "TBL-016": {
+  "phys": "T_QLOG_FAQ_REFS",
+  "api": [],
+  "uc": []
+ },
+ "TBL-021": {
+  "phys": "T_ANNOUNCE_RCPT",
+  "api": [],
+  "uc": []
+ },
+ "TBL-028": {
+  "phys": "H_ERROR_LOGS",
+  "api": [],
+  "uc": []
+ },
+ "TBL-029": {
+  "phys": "H_INQUIRY_FAQ",
+  "api": [],
+  "uc": []
+ },
+ "TBL-031": {
+  "phys": "TP_AI_THRESH_CACHE",
+  "api": [],
+  "uc": []
+ }
+}
