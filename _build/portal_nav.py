@@ -19,7 +19,7 @@ API_ORDER = ["common","auth","project","member","faq","inquiry","widget",
              "dashboard","billing","inbox","terms","ai","mail","webhook"]
 TBL_ORDER = ([f"M-{i:03d}" for i in range(1,13)] +
              [f"T-{i:03d}" for i in range(1,13)] +
-             [f"H-{i:03d}" for i in range(1,7)] +
+             [f"H-{i:03d}" for i in range(2,7)] +
              ["TP-001","TP-002"])
 CROSS = ["04_usecase-design.md","05_billing-design.md",
          "06_mail-design.md","07_auth-design.md"]

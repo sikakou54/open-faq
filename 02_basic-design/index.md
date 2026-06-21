@@ -43,7 +43,7 @@ FAQ AI ウィジェット SaaS / メインシステム(利用者向け)の基本
 | `FR01` | **アカウント管理** | 新規登録 / ログイン / 再認証 / ログアウト | SCR-001〜003 / 013 | `POST /auth/signup` ・ `/auth/login` | `M_CONTRACT` `T_SESSIONS` `T_ACCESS_TOKENS` `T_TERMS_AGREE` | [UC-01 / UC-02](04_usecase-design.md#UC-01) |
 | `FR02` | **ユーザー管理** | プロジェクト単位のメンバー管理 | SCR-009 / 009-001 / 018 | `POST /projects/{id}/members` | `M_PRJ_USERS` `M_PRJ_USERS` | [UC-04](04_usecase-design.md#UC-04) |
 | `FR03` | **プロジェクト管理** | プロジェクト作成 / 編集 / 削除 | SCR-004 / 004-001 | `POST/PATCH/DELETE /projects` | `M_PROJECTS` `M_ALLOWED_DOMAINS` | [UC-03](04_usecase-design.md#UC-03) |
-| `FR04` | **FAQ管理** | FAQ CRUD + 公開 + 改版 | SCR-006 / 006-001 | `PATCH /faqs/{id}` | `M_FAQS` `H_FAQ_REV` `TP_FAQ_FTS` | [UC-05](04_usecase-design.md#UC-05) |
+| `FR04` | **FAQ管理** | FAQ CRUD + 公開 | SCR-006 / 006-001 | `PATCH /faqs/{id}` | `M_FAQS` `TP_FAQ_FTS` | [UC-05](04_usecase-design.md#UC-05) |
 | `FR05` | **AI回答** | AI 推論 + 信頼度しきい値判定 | WIDGET | `POST /widget/v1/ask` | `H_QUESTION_LOGS` `M_FAQS` `TP_AI_THRESH_CACHE` | [UC-07](04_usecase-design.md#UC-07) |
 | `FR06` | **未解決質問登録** | 未解決質問の登録 / 一覧 | SCR-005 / 005-001 | `GET /inquiries` | `T_INQUIRIES` `H_QUESTION_LOGS` | [UC-08](04_usecase-design.md#UC-08) |
 | `FR07` | **未解決→FAQ登録** | 未解決 → FAQ 候補化 / 公開 | SCR-005 / 006-001 | `POST /faqs` | `M_FAQS` `T_INQUIRIES` | [UC-08](04_usecase-design.md#UC-08) |
@@ -56,7 +56,7 @@ FAQ AI ウィジェット SaaS / メインシステム(利用者向け)の基本
 | `FR14` | **セキュリティ** | 不正利用検知 / 鍵管理 / 監査 | (横断) | — | `H_AUDIT_LOGS` `M_EMAIL_SUPPRESS` | — |
 | `FR15` | **お知らせ** | お知らせ配信 / 既読 | SCR-011 / 012 | `GET /me/announcements` | `M_SERVICE_ANNOUNCE` `T_ANNOUNCE_RCPT` `M_ANNOUNCE_AUD` | — |
 | `FR16` | **検索・全文検索** | FTS 検索 | SCR-006 | `GET /projects/{id}/faqs/search` | `TP_FAQ_FTS` `M_FAQS` | — |
-| `FR17` | **インポート・エクスポート** | FAQ の CSV 入出力 / ログ出力 | SCR-006 / 006-002 | `POST /faqs/import` ・ `/faqs/export` | `M_FAQS` `H_FAQ_REV` | [UC-06](04_usecase-design.md#UC-06) |
+| `FR17` | **インポート・エクスポート** | FAQ の CSV 入出力 / ログ出力 | SCR-006 / 006-002 | `POST /faqs/import` ・ `/faqs/export` | `M_FAQS` | [UC-06](04_usecase-design.md#UC-06) |
 | `FR18` | **UX細部・データ運用** | UX 細部要件 / データ運用要件 | 全画面 | — | (横断) | — |
 | `FR19` | **アクセス制御細部** | アクセス制御細部要件 | (横断) | — | (権限設計) | — |
 | `FR20` | **AI推論動作** | AI 推論動作要件 | WIDGET | `POST /widget/v1/ask` | `TP_AI_THRESH_CACHE` | [UC-07](04_usecase-design.md#UC-07) |

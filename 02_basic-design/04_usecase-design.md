@@ -244,7 +244,7 @@ sequenceDiagram
 |  |  |
 |----|----|
 | **事前条件** | プロジェクトに編集権限で参加している。 |
-| **事後条件** | `M_FAQS` が `status=published` となり、改訂が `H_FAQ_REV` に追記される。 |
+| **事後条件** | `M_FAQS` が `status=published` となる。 |
 | **関連画面** | [`SCR-006`](01_screen-design.md#SCR-006) ・ [`SCR-006-001`](01_screen-design.md#SCR-006-001) |
 
 ```mermaid
@@ -260,7 +260,7 @@ sequenceDiagram
   SE-->>S6: 
   M->>SE: 質問・回答・状態=公開 を保存
   SE->>API: PATCH /faqs/{id} (version 楽観ロック)
-  API->>DB: M_FAQS(U:published, publishedAt) ・ H_FAQ_REV(C)
+  API->>DB: M_FAQS(U:published, publishedAt)
   DB-->>API: 
   API-->>SE: 200 更新後FAQ
   Note over API,DB: TP_FAQ_FTS は published 連動で更新
@@ -290,7 +290,7 @@ sequenceDiagram
   API->>Q: 取込ジョブ受付
   Q-->>API: 
   API-->>SM: 202 jobId / processing
-  Q->>DB: 行単位 M_FAQS(CRU) ・ H_FAQ_REV(C)
+  Q->>DB: 行単位 M_FAQS(CRU)
   DB-->>Q: 
   Q-->>SM: 完了通知(成功件数/失敗明細)
 ```
@@ -355,7 +355,7 @@ sequenceDiagram
   DB-->>API: 
   M->>SE: 「FAQ化」→ 内容を編集し公開
   SE->>API: POST /faqs (未解決質問の内容をコピー)
-  API->>DB: M_FAQS(C) ・ H_FAQ_REV(C) ・ H_INQUIRY_FAQ(C) ・ T_INQUIRIES(U:resolved)
+  API->>DB: M_FAQS(C) ・ H_INQUIRY_FAQ(C) ・ T_INQUIRIES(U:resolved)
   DB-->>API: 
   API-->>SE: 201 作成FAQ
 ```
@@ -426,14 +426,14 @@ sequenceDiagram
 | **FR01 アカウント管理** | UC-01 / UC-02 | SCR-001/002/013 | `POST /auth/signup ・ /auth/login` | `M_USER` ・ `M_CONTRACT` ・ `T_SESSIONS` ・ `T_TERMS_AGREE` |
 | **FR02 ユーザー管理** | UC-04 | SCR-009 / SCR-009-001 / SCR-018 | `POST /projects/{id}/members` | `M_USER` ・ `M_PRJ_USERS` ・ `T_ACCESS_TOKENS` |
 | **FR03 プロジェクト管理** | UC-03 | SCR-004 / SCR-004-001 | `POST/PATCH/DELETE /projects` | `M_PROJECTS` ・ `M_ALLOWED_DOMAINS` |
-| **FR04 FAQ管理** | UC-05 | SCR-006 / SCR-006-001 | `PATCH /faqs/{id}` | `M_FAQS` ・ `H_FAQ_REV` ・ `TP_FAQ_FTS` |
+| **FR04 FAQ管理** | UC-05 | SCR-006 / SCR-006-001 | `PATCH /faqs/{id}` | `M_FAQS` ・ `TP_FAQ_FTS` |
 | **FR05 / FR20 AI回答** | UC-07 | WIDGET | `POST /widget/v1/ask` | `H_QUESTION_LOGS` ・ `M_FAQS` ・ `T_USAGE_METER` |
 | **FR06 / FR07 未解決→FAQ** | UC-08 | SCR-005 / SCR-005-001 | `GET/PATCH /inquiries ・ POST /faqs` | `T_INQUIRIES` ・ `M_FAQS` ・ `H_QUESTION_LOGS` |
 | **FR09 利用量・課金** | UC-09 / UC-10(課金) | SCR-021 / SCR-022 | `GET /billing/summary ・ /quota-limits` | `T_USAGE_METER` ・ `T_BILL_SUBS` ・ `M_PRJ_QUOTA_LIMITS` |
 | **FR11 / FR15 通知・お知らせ** | — | SCR-011 / SCR-012 | `GET /me/announcements` | `T_INBOX_MSG` ・ `M_SERVICE_ANNOUNCE` |
 | **FR12 ウィジェット** | UC-07 | SCR-007 / WIDGET | `POST /widget/v1/bootstrap ・ /widget-key/rotate` | `M_PROJECTS` ・ `M_ALLOWED_DOMAINS` ・ `T_PRJ_LEGACY_KEYS` |
 | **FR13 プライバシー・データ** | UC-10(退会) | SCR-023 / SCR-014 | `POST /withdrawal-requests` | `T_WITHDRAW_REQ` ・ `M_CONTRACT` |
-| **FR17 インポート・エクスポート** | UC-06 | SCR-006-002 | `POST /faqs/import` | `M_FAQS` ・ `H_FAQ_REV` |
+| **FR17 インポート・エクスポート** | UC-06 | SCR-006-002 | `POST /faqs/import` | `M_FAQS` |
 
 > [!TIP]
 > **縦串が一直線に追える** 要件(FR)から DB テーブルまで、各層の設計書を本マトリクスとシーケンス図がつなぎます。逆方向(テーブル → 使用元 API / 画面)は [データベース設計書 §6](03_database-design.md#def) の「使用元」で追跡できます。
