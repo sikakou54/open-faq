@@ -23,6 +23,7 @@ _build/                   # ツール(配信対象外)
 ├── html2md.py            #   HTML→Markdown 変換器(移行の記録 / provenance)
 ├── portal_nav.py         #   ポータルナビ付与 + README 生成器(下記)
 ├── imagify_mocks.py      #   画面モック(埋め込み HTML)を画像化し <details> に原本を残す
+├── externalize_mocks.py  #   <details> 内のモック HTML を mocks/ へ外出し(移行時)
 └── render_mocks.js       #   モック HTML を PNG へレンダリング(puppeteer-core + Chromium)
 ```
 
