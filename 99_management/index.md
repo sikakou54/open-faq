@@ -15,7 +15,7 @@
 | P4 API設計 エンドポイント別分割 | #8 | DONE(0/0) |
 | P5 DB設計 移設・TBL採番 | #9 | DONE(0/0) |
 | P6 権限/エラー/メッセージ+SEQ | #10 | DONE(0/0) |
-| P7 トレーサビリティ・ギャップ検出 | #11 | open |
+| P7 トレーサビリティ・ギャップ検出 | #11 | DONE(0/0) |
 | P8 統括統合・検証・99_management削除・全Close | #12 | open |
 
 エピック: #3 / 検出課題・差し戻しは随時 `[設計再構成][区分]` で個別 Issue 化。
@@ -28,5 +28,7 @@
 ## ファイル
 - `01_crosswalk.md` / `crosswalk.json` … 旧→新 ID 対応
 - `uc_crosswalk.json` … 旧業務 UC → 新 UC-NNN 対応(P2)
-- `02_traceability_matrix.md` … 要件→UC→SCR→EVT→API→TBL(P7)
+- `02_traceability_matrix.md` … 要件→UC→SCR→EVT→API→TBL(P7・UC 単位 247 行)
+- `p7_linkgraph.json` … P7 リンクグラフ(UC/EVT/API/TBL 構造化リンク + 要件→UC 逆引き。機械可読)
+- `p7_gaps.json` … P7 ギャップ一覧(分類別。機械可読)
 - `05_agent_work_summary.md` … 各 Agent 作業サマリ(随時)
