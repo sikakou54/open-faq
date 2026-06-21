@@ -167,8 +167,10 @@ def build_readme():
     L.append("### ユースケース設計"); L.append("")
     ud = f"{BD}/04_usecase-design"
     L.append(li(f"{ud}/index.md", "ユースケース一覧"))
-    if os.path.exists(f"{ud}/sequence-design.md"):
-        L.append(li(f"{ud}/sequence-design.md"))
+    flow = sorted([os.path.basename(p) for p in glob.glob(f"{ud}/*.md")
+                   if re.match(r'UC-\d+\.md$', os.path.basename(p))], key=natkey)
+    for f in flow:
+        L.append(li(f"{ud}/{f}"))
     for f in names(ud, "UC-SCR-"):
         L.append(li(f"{ud}/{f}"))
     for f in names(ud, "UC-SYSTEM-"):

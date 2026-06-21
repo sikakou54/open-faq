@@ -127,6 +127,16 @@
 ### ユースケース設計
 
 - [ユースケース一覧](02_basic-design/04_usecase-design/index.md)
+- [UC-01: アカウント新規登録〜メール確認](02_basic-design/04_usecase-design/UC-01.md)
+- [UC-02: ログイン](02_basic-design/04_usecase-design/UC-02.md)
+- [UC-03: プロジェクト作成](02_basic-design/04_usecase-design/UC-03.md)
+- [UC-04: メンバー招待〜アカウント有効化](02_basic-design/04_usecase-design/UC-04.md)
+- [UC-05: FAQ 作成・公開](02_basic-design/04_usecase-design/UC-05.md)
+- [UC-06: FAQ CSV 一括インポート(非同期)](02_basic-design/04_usecase-design/UC-06.md)
+- [UC-07: エンドユーザー質問 → AI 回答](02_basic-design/04_usecase-design/UC-07.md)
+- [UC-08: 未解決質問 → FAQ 化](02_basic-design/04_usecase-design/UC-08.md)
+- [UC-09: 利用量超過 → 支払方法ゲート](02_basic-design/04_usecase-design/UC-09.md)
+- [UC-10: 退会申請(90 日猶予)](02_basic-design/04_usecase-design/UC-10.md)
 - [UC-SCR-001: ログイン ユースケース](02_basic-design/04_usecase-design/UC-SCR-001.md)
 - [UC-SCR-002: アカウント登録 ユースケース](02_basic-design/04_usecase-design/UC-SCR-002.md)
 - [UC-SCR-003: パスワード再設定 ユースケース](02_basic-design/04_usecase-design/UC-SCR-003.md)
