@@ -6,10 +6,10 @@
 
 > **このページは、システム全体のユースケース(利用者が画面で実行する操作 + システムが自律的・内部的に実行する処理)を一元的に索引する正本カタログです。** 画面起点 UC は「1 画面イベント = 1 ユースケース」、システム起点 UC は「1 処理 = 1 ユースケース」で定義します。
 
-*版数 v1.0 ・ 更新 2026-06-21 ・ ステータス ドラフト(パイロット)*
+*版数 v2.0 ・ 更新 2026-06-21 ・ 画面起点 229 ・ システム起点 18 ・ ステータス ドラフト*
 
 > [!NOTE]
-> **本カタログの範囲** 画面イベント一覧の見直し済みを前提に、画面起点 UC は各画面の `EV-xx` と 1:1 で対応させます。本パイロットでは代表 3 画面(SCR-001 / SCR-006 / SCR-006-001)とシステム起点 UC の代表 3 件を詳細化し、残りの画面・システム UC は同一テンプレートで後続展開します(下表で「後続」と表記)。横断的な業務フロー(複数画面・非同期処理をまたぐ流れ)は [ユースケース・シーケンス設計書](../02_basic-design/04_usecase-design.md) を参照します。
+> **本カタログの範囲** 画面起点 UC は全 30 画面の画面イベント(`SCR-*.md` §6 の `EV-xx`)と 1 対 1 で対応します(合計 229 UC)。システム起点 UC は画面操作を伴わない自律処理を 1 処理 = 1 UC で定義します(18 UC)。横断的な業務フロー(複数画面・非同期処理をまたぐ流れ)は [ユースケース・シーケンス設計書](../02_basic-design/04_usecase-design.md) を参照します。
 
 ## <span id="map"></span>0. 体系と採番
 
@@ -18,108 +18,122 @@
 | 画面起点 | `UC-<SCRID>.md`(例 `UC-SCR-006.md`) | `UC-<SCRID>-EV<nn>` | 画面の各 `EV-xx` と 1:1 |
 | システム起点 | `UC-SYSTEM-<nnn>.md`(1 ファイル 1 UC) | `UC-SYSTEM-<nnn>` | 1 自律処理 = 1 UC |
 
+各画面 UC ファイルの冒頭(§0)に「イベント↔ユースケース対応表」を備え、`EV-xx` と `UC-<SCRID>-EV<nn>` の 1:1 を可視化しています。
+
 ## <span id="screen"></span>1. 画面起点ユースケース
 
-各画面の画面イベント一覧(`SCR-*.md` §6)に 1:1 で対応します。
+全 30 画面をワークスペース別に索引します。各 UC ファイルがその画面の全イベントに 1:1 対応した UC 群を持ちます。
 
-### <span id="UC-SCR-001"></span>SCR-001 ログイン
+### <span id="ws-auth"></span>認証・規約フロー
 
-[`UC-SCR-001.md`](UC-SCR-001.md)(画面: [SCR-001](../02_basic-design/SCR-001.md#SCR-001) ・ 関連: FR01 アカウント管理)
+| 画面 | 画面名 | UC ファイル | UC 数 |
+|---|---|---|---|
+| [SCR-001](../02_basic-design/SCR-001.md#SCR-001) | ログイン | [UC-SCR-001](UC-SCR-001.md) | 6 |
+| [SCR-002](../02_basic-design/SCR-002.md#SCR-002) | アカウント登録 | [UC-SCR-002](UC-SCR-002.md) | 12 |
+| [SCR-003](../02_basic-design/SCR-003.md#SCR-003) | パスワード再設定 | [UC-SCR-003](UC-SCR-003.md) | 9 |
+| [SCR-013](../02_basic-design/SCR-013.md#SCR-013) | メール確認 | [UC-SCR-013](UC-SCR-013.md) | 5 |
+| [SCR-015](../02_basic-design/SCR-015.md#SCR-015) | 規約再同意割込み | [UC-SCR-015](UC-SCR-015.md) | 6 |
+| [SCR-018](../02_basic-design/SCR-018.md#SCR-018) | メンバーアカウント有効化 | [UC-SCR-018](UC-SCR-018.md) | 13 |
+| [SCR-019](../02_basic-design/SCR-019.md#SCR-019) | プロジェクト連絡先メール確認完了 | [UC-SCR-019](UC-SCR-019.md) | 2 |
 
-| イベント | ユースケース | 種別 |
-|---|---|---|
-| EV-01 初期表示 | [UC-SCR-001-EV01](UC-SCR-001.md#UC-SCR-001-EV01) | API/DB 連携 |
-| EV-02 メールアドレスを入力 | [UC-SCR-001-EV02](UC-SCR-001.md#UC-SCR-001-EV02) | クライアント内処理のみ |
-| EV-03 パスワードを入力 | [UC-SCR-001-EV03](UC-SCR-001.md#UC-SCR-001-EV03) | クライアント内処理のみ |
-| EV-04 「ログイン」を押下 | [UC-SCR-001-EV04](UC-SCR-001.md#UC-SCR-001-EV04) | API/DB 連携 |
-| EV-05 「パスワードを忘れた場合」を押下 | [UC-SCR-001-EV05](UC-SCR-001.md#UC-SCR-001-EV05) | クライアント内処理のみ |
-| EV-06 「アカウント登録」を押下 | [UC-SCR-001-EV06](UC-SCR-001.md#UC-SCR-001-EV06) | クライアント内処理のみ |
+### <span id="ws-owner"></span>契約ワークスペース
 
-### <span id="UC-SCR-006"></span>SCR-006 FAQ 一覧
+| 画面 | 画面名 | UC ファイル | UC 数 |
+|---|---|---|---|
+| [SCR-004](../02_basic-design/SCR-004.md#SCR-004) | プロジェクト | [UC-SCR-004](UC-SCR-004.md) | 5 |
+| [SCR-004-001](../02_basic-design/SCR-004-001.md#SCR-004-001) | プロジェクト作成・編集モーダル | [UC-SCR-004-001](UC-SCR-004-001.md) | 13 |
+| [SCR-014](../02_basic-design/SCR-014.md#SCR-014) | 退会申請 | [UC-SCR-014](UC-SCR-014.md) | 8 |
+| [SCR-016](../02_basic-design/SCR-016.md#SCR-016) | 利用状況 | [UC-SCR-016](UC-SCR-016.md) | 3 |
+| [SCR-022](../02_basic-design/SCR-022.md#SCR-022) | 請求 | [UC-SCR-022](UC-SCR-022.md) | 7 |
+| [SCR-023](../02_basic-design/SCR-023.md#SCR-023) | 設定 | [UC-SCR-023](UC-SCR-023.md) | 7 |
 
-[`UC-SCR-006.md`](UC-SCR-006.md)(画面: [SCR-006](../02_basic-design/SCR-006.md#SCR-006) ・ 関連: FR04 FAQ 管理 / FR17 インポート・エクスポート)
+### <span id="ws-project"></span>プロジェクトワークスペース
 
-| イベント | ユースケース | 種別 |
-|---|---|---|
-| EV-01 初期表示 | [UC-SCR-006-EV01](UC-SCR-006.md#UC-SCR-006-EV01) | API/DB 連携 |
-| EV-02 キーワードを入力 | [UC-SCR-006-EV02](UC-SCR-006.md#UC-SCR-006-EV02) | API/DB 連携 |
-| EV-03 カテゴリを選択 | [UC-SCR-006-EV03](UC-SCR-006.md#UC-SCR-006-EV03) | API/DB 連携 |
-| EV-04 並び順を変更 | [UC-SCR-006-EV04](UC-SCR-006.md#UC-SCR-006-EV04) | API/DB 連携 |
-| EV-05 行を選択 | [UC-SCR-006-EV05](UC-SCR-006.md#UC-SCR-006-EV05) | クライアント内処理のみ |
-| EV-06 「+ 新規作成」を押下 | [UC-SCR-006-EV06](UC-SCR-006.md#UC-SCR-006-EV06) | クライアント内処理のみ |
-| EV-07 FAQ ID リンクを押下 | [UC-SCR-006-EV07](UC-SCR-006.md#UC-SCR-006-EV07) | クライアント内処理のみ |
-| EV-08 「公開する」を押下 | [UC-SCR-006-EV08](UC-SCR-006.md#UC-SCR-006-EV08) | API/DB 連携 |
-| EV-09 「非公開化する」を押下 | [UC-SCR-006-EV09](UC-SCR-006.md#UC-SCR-006-EV09) | API/DB 連携 |
-| EV-10 「削除する」を押下 | [UC-SCR-006-EV10](UC-SCR-006.md#UC-SCR-006-EV10) | API/DB 連携 |
-| EV-11 「選択を解除」を押下 | [UC-SCR-006-EV11](UC-SCR-006.md#UC-SCR-006-EV11) | クライアント内処理のみ |
-| EV-12 「CSV をインポート」を押下 | [UC-SCR-006-EV12](UC-SCR-006.md#UC-SCR-006-EV12) | クライアント内処理のみ |
-| EV-13 「CSV をエクスポート」を押下 | [UC-SCR-006-EV13](UC-SCR-006.md#UC-SCR-006-EV13) | API/DB 連携 |
-| EV-14 空状態の「+ 新規作成」を押下 | [UC-SCR-006-EV14](UC-SCR-006.md#UC-SCR-006-EV14) | クライアント内処理のみ |
+| 画面 | 画面名 | UC ファイル | UC 数 |
+|---|---|---|---|
+| [SCR-005](../02_basic-design/SCR-005.md#SCR-005) | 要対応の質問一覧 | [UC-SCR-005](UC-SCR-005.md) | 8 |
+| [SCR-005-001](../02_basic-design/SCR-005-001.md#SCR-005-001) | 要対応の質問詳細 | [UC-SCR-005-001](UC-SCR-005-001.md) | 8 |
+| [SCR-006](../02_basic-design/SCR-006.md#SCR-006) | FAQ 一覧 | [UC-SCR-006](UC-SCR-006.md) | 14 |
+| [SCR-006-001](../02_basic-design/SCR-006-001.md#SCR-006-001) | FAQ 編集 | [UC-SCR-006-001](UC-SCR-006-001.md) | 14 |
+| [SCR-006-002](../02_basic-design/SCR-006-002.md#SCR-006-002) | FAQ CSV インポートモーダル | [UC-SCR-006-002](UC-SCR-006-002.md) | 6 |
+| [SCR-007](../02_basic-design/SCR-007.md#SCR-007) | ウィジェット設定 | [UC-SCR-007](UC-SCR-007.md) | 11 |
+| [SCR-008](../02_basic-design/SCR-008.md#SCR-008) | 概要(プロジェクト) | [UC-SCR-008](UC-SCR-008.md) | 8 |
+| [SCR-009](../02_basic-design/SCR-009.md#SCR-009) | メンバー(プロジェクト) | [UC-SCR-009](UC-SCR-009.md) | 8 |
+| [SCR-009-001](../02_basic-design/SCR-009-001.md#SCR-009-001) | メンバー招待 / 編集モーダル | [UC-SCR-009-001](UC-SCR-009-001.md) | 10 |
+| [SCR-021](../02_basic-design/SCR-021.md#SCR-021) | 利用量と上限(プロジェクト単位) | [UC-SCR-021](UC-SCR-021.md) | 3 |
+| [SCR-021-001](../02_basic-design/SCR-021-001.md#SCR-021-001) | 質問数上限設定モーダル | [UC-SCR-021-001](UC-SCR-021-001.md) | 6 |
 
-### <span id="UC-SCR-006-001"></span>SCR-006-001 FAQ 編集
+### <span id="ws-common"></span>共通領域
 
-[`UC-SCR-006-001.md`](UC-SCR-006-001.md)(画面: [SCR-006-001](../02_basic-design/SCR-006-001.md#SCR-006-001) ・ 関連: FR04 FAQ 管理 / FR07 未解決質問から FAQ 登録)
+| 画面 | 画面名 | UC ファイル | UC 数 |
+|---|---|---|---|
+| [SCR-010](../02_basic-design/SCR-010.md#SCR-010) | 利用規約閲覧 | [UC-SCR-010](UC-SCR-010.md) | 3 |
+| [SCR-011](../02_basic-design/SCR-011.md#SCR-011) | お知らせ一覧 | [UC-SCR-011](UC-SCR-011.md) | 11 |
+| [SCR-012](../02_basic-design/SCR-012.md#SCR-012) | お知らせ詳細 | [UC-SCR-012](UC-SCR-012.md) | 4 |
+| [SCR-017](../02_basic-design/SCR-017.md#SCR-017) | 個人設定 | [UC-SCR-017](UC-SCR-017.md) | 8 |
+| [SCR-020](../02_basic-design/SCR-020.md#SCR-020) | プライバシーポリシー閲覧 | [UC-SCR-020](UC-SCR-020.md) | 3 |
 
-| イベント | ユースケース | 種別 |
-|---|---|---|
-| EV-01 初期表示 | [UC-SCR-006-001-EV01](UC-SCR-006-001.md#UC-SCR-006-001-EV01) | API/DB 連携 |
-| EV-02 質問を入力 | [UC-SCR-006-001-EV02](UC-SCR-006-001.md#UC-SCR-006-001-EV02) | クライアント内処理のみ |
-| EV-03 回答を入力 | [UC-SCR-006-001-EV03](UC-SCR-006-001.md#UC-SCR-006-001-EV03) | クライアント内処理のみ |
-| EV-04 カテゴリを入力 | [UC-SCR-006-001-EV04](UC-SCR-006-001.md#UC-SCR-006-001-EV04) | クライアント内処理のみ |
-| EV-05 「状態」を選択 | [UC-SCR-006-001-EV05](UC-SCR-006-001.md#UC-SCR-006-001-EV05) | クライアント内処理のみ |
-| EV-06 自動保存タイマー発火(30 秒) | [UC-SCR-006-001-EV06](UC-SCR-006-001.md#UC-SCR-006-001-EV06) | API/DB 連携 |
-| EV-07 「保存」を押下 | [UC-SCR-006-001-EV07](UC-SCR-006-001.md#UC-SCR-006-001-EV07) | API/DB 連携 |
-| EV-08 「削除」を押下 | [UC-SCR-006-001-EV08](UC-SCR-006-001.md#UC-SCR-006-001-EV08) | クライアント内処理のみ |
-| EV-09 削除確認ダイアログの「OK」を押下 | [UC-SCR-006-001-EV09](UC-SCR-006-001.md#UC-SCR-006-001-EV09) | API/DB 連携 |
-| EV-10 「キャンセル」を押下 | [UC-SCR-006-001-EV10](UC-SCR-006-001.md#UC-SCR-006-001-EV10) | クライアント内処理のみ |
-| EV-11 「登録元未解決質問」リンクを押下 | [UC-SCR-006-001-EV11](UC-SCR-006-001.md#UC-SCR-006-001-EV11) | クライアント内処理のみ |
-| EV-12 削除確認ダイアログの「キャンセル」を押下 | [UC-SCR-006-001-EV12](UC-SCR-006-001.md#UC-SCR-006-001-EV12) | クライアント内処理のみ |
-| EV-13 キャンセル確認ダイアログの「OK」を押下 | [UC-SCR-006-001-EV13](UC-SCR-006-001.md#UC-SCR-006-001-EV13) | クライアント内処理のみ |
-| EV-14 キャンセル確認ダイアログの「キャンセル」を押下 | [UC-SCR-006-001-EV14](UC-SCR-006-001.md#UC-SCR-006-001-EV14) | クライアント内処理のみ |
+### <span id="ws-widget"></span>ウィジェット
 
-### 後続展開(残り画面)
-
-残りの画面(SCR-002〜SCR-005-001, SCR-007〜SCR-023, SCR-WIDGET 等)は、同一テンプレートで `UC-<SCRID>.md` を順次作成します。各画面の `EV-xx` と 1:1 対応を維持し、本カタログに追記します。
+| 画面 | 画面名 | UC ファイル | UC 数 |
+|---|---|---|---|
+| [SCR-WIDGET](../02_basic-design/SCR-WIDGET.md#WIDGET) | エンドユーザー向け FAQ ウィジェット | [UC-SCR-WIDGET](UC-SCR-WIDGET.md) | 8 |
 
 ## <span id="system"></span>2. システム起点ユースケース
 
-画面操作を伴わず、システムが定期・イベント駆動・非同期・Webhook 受信で実行する処理です。本パイロットでは ◯ の 3 件を詳細化済みです。
+画面操作を伴わず、システムが定期・イベント駆動・非同期・Webhook 受信で実行する処理です。
 
-| UC-SYSTEM ID | 名称 | トリガー種別 | 関連(機能グループ) | 状態 |
-|---|---|---|---|---|
-| [UC-SYSTEM-001](UC-SYSTEM-001.md#UC-SYSTEM-001) | 非同期 CSV インポートジョブ | 非同期ジョブ | FR17 インポート・エクスポート | ◯ 詳細化済 |
-| [UC-SYSTEM-002](UC-SYSTEM-002.md#UC-SYSTEM-002) | Resend Webhook 受信(配信状態更新) | Webhook 受信 | FR11 通知 | ◯ 詳細化済 |
-| [UC-SYSTEM-003](UC-SYSTEM-003.md#UC-SYSTEM-003) | 90 日物理削除バッチ | 定期バッチ | FR13 プライバシー・データ管理 | ◯ 詳細化済 |
-| UC-SYSTEM-004 | 月次請求確定バッチ | 定期バッチ(月次) | FR09 利用量・課金 | 後続 |
-| UC-SYSTEM-005 | 運営お知らせ配信 | スケジュール/イベント | FR15 お知らせ | 後続 |
-| UC-SYSTEM-006 | 運用イベントのシステム通知自動生成 | イベントドリブン | FR11 通知 | 後続 |
-| UC-SYSTEM-007 | メンバー割当変更通知 | イベントドリブン | FR02 ユーザー管理 | 後続 |
-| UC-SYSTEM-008 | 質問数上限アラート通知 | イベントドリブン | FR09 利用量・課金 | 後続 |
-| UC-SYSTEM-009 | 通知再送 | 定期バッチ(失敗検出) | FR11 通知 | 後続 |
-| UC-SYSTEM-010 | 利用量リアルタイム集計・UI 反映 | 同期内部処理 | FR09 / FR10 | 後続 |
-| UC-SYSTEM-011 | 上限到達ウィジェット受付停止 | 同期内部処理 | FR09 / FR12 | 後続 |
-| UC-SYSTEM-012 | 決済失敗→猶予→サスペンション | イベント+定期 | FR09 利用量・課金 | 後続 |
-| UC-SYSTEM-013 | セッション失効・再認証 | 定期/検証時 | FR01 / FR14 | 後続 |
-| UC-SYSTEM-014 | ログイン失敗ロックアウト・解除 | イベント+時間 | FR14 セキュリティ | 後続 |
-| UC-SYSTEM-015 | 契約停止時セッション一斉無効化 | イベント(状態遷移) | FR01 / FR14 | 後続 |
-| UC-SYSTEM-016 | AI しきい値変更の伝播・フォールバック | イベント | FR20 AI 推論動作 | 後続 |
-| UC-SYSTEM-017 | 受信箱の重複集約 | 定期/集約 | FR11 / FR15 | 後続 |
-| UC-SYSTEM-018 | 監査ログ整合性検証(日次) | 定期バッチ(日次) | NFR(監査) | 後続 |
+| UC-SYSTEM ID | 名称 | トリガー種別 | 関連(機能グループ) |
+|---|---|---|---|
+| [UC-SYSTEM-001](UC-SYSTEM-001.md#UC-SYSTEM-001) | 非同期 CSV インポートジョブ | 非同期ジョブ | FR17 インポート・エクスポート |
+| [UC-SYSTEM-002](UC-SYSTEM-002.md#UC-SYSTEM-002) | Resend Webhook 受信(配信状態更新) | Webhook 受信 | FR11 通知 |
+| [UC-SYSTEM-003](UC-SYSTEM-003.md#UC-SYSTEM-003) | 90 日物理削除バッチ | 定期バッチ | FR13 プライバシー・データ管理 |
+| [UC-SYSTEM-004](UC-SYSTEM-004.md#UC-SYSTEM-004) | 月次請求確定バッチ | 定期バッチ(月次) | FR09 利用量・課金 |
+| [UC-SYSTEM-005](UC-SYSTEM-005.md#UC-SYSTEM-005) | 運営お知らせ配信 | スケジュール/イベント | FR15 お知らせ |
+| [UC-SYSTEM-006](UC-SYSTEM-006.md#UC-SYSTEM-006) | 運用イベントのシステム通知自動生成 | イベントドリブン | FR11 通知 |
+| [UC-SYSTEM-007](UC-SYSTEM-007.md#UC-SYSTEM-007) | メンバー割当変更通知 | イベントドリブン | FR02 ユーザー管理 |
+| [UC-SYSTEM-008](UC-SYSTEM-008.md#UC-SYSTEM-008) | 質問数上限アラート通知 | イベントドリブン | FR09 利用量・課金 |
+| [UC-SYSTEM-009](UC-SYSTEM-009.md#UC-SYSTEM-009) | 通知再送 | 定期バッチ(失敗検出) | FR11 通知 |
+| [UC-SYSTEM-010](UC-SYSTEM-010.md#UC-SYSTEM-010) | 利用量リアルタイム集計・UI 反映 | 同期内部処理 | FR09 / FR10 |
+| [UC-SYSTEM-011](UC-SYSTEM-011.md#UC-SYSTEM-011) | 上限到達ウィジェット受付停止 | 同期内部処理 | FR09 / FR12 |
+| [UC-SYSTEM-012](UC-SYSTEM-012.md#UC-SYSTEM-012) | 決済失敗→猶予→サスペンション | イベント+定期 | FR09 利用量・課金 |
+| [UC-SYSTEM-013](UC-SYSTEM-013.md#UC-SYSTEM-013) | セッション失効・再認証 | 定期/検証時 | FR01 / FR14 |
+| [UC-SYSTEM-014](UC-SYSTEM-014.md#UC-SYSTEM-014) | ログイン失敗ロックアウト・解除 | イベント+時間 | FR14 セキュリティ |
+| [UC-SYSTEM-015](UC-SYSTEM-015.md#UC-SYSTEM-015) | 契約停止時セッション一斉無効化 | イベント(状態遷移) | FR01 / FR14 |
+| [UC-SYSTEM-016](UC-SYSTEM-016.md#UC-SYSTEM-016) | AI しきい値変更の伝播・フォールバック | イベント | FR20 AI 推論動作 |
+| [UC-SYSTEM-017](UC-SYSTEM-017.md#UC-SYSTEM-017) | 受信箱の重複集約 | 定期/集約 | FR11 / FR15 |
+| [UC-SYSTEM-018](UC-SYSTEM-018.md#UC-SYSTEM-018) | 監査ログ整合性検証(日次) | 定期バッチ(日次) | NFR(監査) |
 
-## <span id="trace"></span>3. 要件トレーサビリティ(パイロット範囲)
+## <span id="trace"></span>3. 要件トレーサビリティ(機能グループ別)
 
-パイロットで詳細化した要件と UC の対応です。残りの要件は後続展開で各 UC に対応付けます。
+各機能要件グループ(FR01〜FR21)が、少なくとも 1 つ以上のユースケースに対応していることを示します。
 
-| 要件群 | 主な要件 | 対応ユースケース |
+| 機能グループ | 対応する画面起点 UC | 対応するシステム起点 UC |
 |---|---|---|
-| FR01 アカウント管理 | ログイン(FR-004)・ロックアウト(FR-007) | UC-SCR-001-EV01 / EV04 |
-| FR01 / FR14 | セッション失効(FR-008) | UC-SYSTEM-013(後続) |
-| FR04 FAQ 管理 | 一覧・検索・絞込・並替・一括状態変更・削除(FR-025〜033) | UC-SCR-006-EV01〜EV11 / UC-SCR-006-001-EV01〜EV09 |
-| FR07 未解決質問から FAQ 登録 | 未解決起点の FAQ 作成(FR-053〜058) | UC-SCR-006-001-EV01 / EV07 / EV11 |
-| FR17 インポート・エクスポート | CSV インポート/エクスポート(FR-130 ほか) | UC-SCR-006-EV12 / EV13 ・ UC-SYSTEM-001 |
-| FR18 UX 細部 | 一括選択上限(FR-134)・削除確認(FR-135) | UC-SCR-006-EV05 / EV10 |
-| FR11 通知 | バウンス・苦情検知と送信停止(FR-084) | UC-SYSTEM-002 |
-| FR13 プライバシー・データ管理 | 退会後 90 日猶予削除(FR-100) | UC-SYSTEM-003 |
+| FR01 アカウント管理 | UC-SCR-001 / 002 / 003 / 013 / 014 / 023 | UC-SYSTEM-003 / 013 / 015 |
+| FR02 ユーザー管理 | UC-SCR-009 / 009-001 / 018 | UC-SYSTEM-007 |
+| FR03 プロジェクト管理 | UC-SCR-004 / 004-001 | — |
+| FR04 FAQ 管理 | UC-SCR-006 / 006-001 | — |
+| FR05 AI 回答 | UC-SCR-WIDGET | UC-SYSTEM-016 |
+| FR06 未解決質問登録 | UC-SCR-WIDGET / 005 / 005-001 | — |
+| FR07 未解決質問から FAQ 登録 | UC-SCR-005-001 / 006-001 | — |
+| FR08 処理エラー | UC-SCR-WIDGET(EV-08)ほか各 UC の異常系フロー | UC-SYSTEM-009 |
+| FR09 利用量・課金 | UC-SCR-016 / 021 / 021-001 / 022 | UC-SYSTEM-004 / 008 / 010 / 011 / 012 |
+| FR10 管理ダッシュボード | UC-SCR-008 / 016 | UC-SYSTEM-010 |
+| FR11 通知 | UC-SCR-011 / 012 | UC-SYSTEM-002 / 006 / 007 / 009 / 017 |
+| FR12 ウィジェット | UC-SCR-007 / WIDGET | UC-SYSTEM-011 |
+| FR13 プライバシー・データ管理 | UC-SCR-014 / 017 / 020 | UC-SYSTEM-003 |
+| FR14 セキュリティ | UC-SCR-001 | UC-SYSTEM-013 / 014 / 015 |
+| FR15 お知らせ | UC-SCR-010 / 011 / 012 / 020 | UC-SYSTEM-005 / 017 |
+| FR16 検索エンジン・全文検索 | UC-SCR-005 / 006 | — |
+| FR17 インポート・エクスポート | UC-SCR-006 / 006-002 | UC-SYSTEM-001 |
+| FR18 UX 細部・データ運用 | UC-SCR-006 / 006-001 | — |
+| FR19 アクセス制御細部 | UC-SCR-007 / 009-001 / 021(各 UC の権限ガード異常系) | UC-SYSTEM-015 |
+| FR20 AI 推論動作 | UC-SCR-WIDGET | UC-SYSTEM-016 |
+| FR21 画面・機能要件一覧 | 全 30 画面の UC-SCR 群(本 §1) | — |
+
+> [!NOTE]
+> **監査・整合性** 監査ログの整合性検証(NFR 監査要件)は [UC-SYSTEM-018](UC-SYSTEM-018.md#UC-SYSTEM-018) が担います。各操作の監査記録は対応する画面起点・システム起点 UC の事後条件に記載します。
 
 ---
 
