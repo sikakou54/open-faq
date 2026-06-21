@@ -8,6 +8,7 @@
 ## 要件定義
 
 - [概要・一覧](01_requirements/index.md)
+- [要件定義書 再構成結果](01_requirements/99_restructure_result.md)
 
 ### 要件仕様
 
@@ -707,6 +708,7 @@
 
 - [概要・一覧](02_basic_design/index.md)
 - [課金・請求設計書](02_basic_design/05_billing-design.md)
+- [基本設計書 再構成結果](02_basic_design/99_restructure_result.md)
 
 ### 画面設計
 

@@ -8,7 +8,7 @@
 | フェーズ | Issue | 状態 |
 |---|---|---|
 | P0 骨格・クロスウォーク | (本作業・完了) | done |
-| 基盤 ディレクトリ改称+portal_nav/CLAUDE | #4 | open |
+| 基盤 ディレクトリ改称+portal_nav/CLAUDE | #4 | DONE(c6ef921・P8でCLAUDE全面改訂) |
 | P1 要件定義 個別ID分割・再採番・RULE抽出 | #5 | DONE(0/0) |
 | P2 業務ユースケース UC-001 導出 | #6 | DONE(0/0) |
 | P3 画面設計 移設・SCR採番・EVT個別化 | #7 | DONE(0/0) |
@@ -16,7 +16,7 @@
 | P5 DB設計 移設・TBL採番 | #9 | DONE(0/0) |
 | P6 権限/エラー/メッセージ+SEQ | #10 | DONE(0/0) |
 | P7 トレーサビリティ・ギャップ検出 | #11 | DONE(0/0) |
-| P8 統括統合・検証・99_management削除・全Close | #12 | open |
+| P8 統括統合・検証・99_management削除・全Close | #12 | 文書整備DONE(0/0・CLAUDE改訂・両99_restructure_result作成)。Issue Close と本DIR削除はオーナー確認待ち |
 
 エピック: #3 / 検出課題・差し戻しは随時 `[設計再構成][区分]` で個別 Issue 化。
 
