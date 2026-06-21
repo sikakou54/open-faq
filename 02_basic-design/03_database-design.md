@@ -197,16 +197,15 @@ erDiagram
     TEXT project_id FK "→M_PROJECTS.id" }
   H_FAQ_REV { TEXT id PK
     TEXT faq_id FK "→M_FAQS.id" }
-  TP_FAQ_FTS { INTEGER rowid PK }
   H_INQUIRY_FAQ { TEXT id PK
     TEXT inquiry_id FK "→T_INQUIRIES.id"
     TEXT faq_id FK "→M_FAQS.id" }
   M_PROJECTS { TEXT id PK }
   T_INQUIRIES { TEXT id PK }
-  T_QLOG_FAQ_REFS { TEXT id PK }
+  T_QLOG_FAQ_REFS { TEXT id PK
+    TEXT faq_id FK "→M_FAQS.id" }
   M_PROJECTS ||--o{ M_FAQS : "FAQ"
   M_FAQS ||--o{ H_FAQ_REV : "改訂"
-  M_FAQS ||--o| TP_FAQ_FTS : "全文索引"
   M_FAQS ||--o{ T_QLOG_FAQ_REFS : "被参照"
   T_INQUIRIES ||--o{ H_INQUIRY_FAQ : "FAQ化"
   M_FAQS ||--o{ H_INQUIRY_FAQ : "FAQ化履歴"
@@ -223,7 +222,8 @@ erDiagram
     TEXT faq_id FK "→M_FAQS.id" }
   M_PROJECTS { TEXT id PK }
   M_FAQS { TEXT id PK }
-  T_INQUIRIES { TEXT id PK }
+  T_INQUIRIES { TEXT id PK
+    TEXT question_log_id FK "→H_QUESTION_LOGS.id" }
   M_PROJECTS ||--o{ H_QUESTION_LOGS : "質問ログ"
   H_QUESTION_LOGS ||--o{ T_QLOG_FAQ_REFS : "参照FAQ"
   M_FAQS ||--o{ T_QLOG_FAQ_REFS : "被参照"
