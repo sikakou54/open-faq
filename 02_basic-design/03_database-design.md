@@ -199,6 +199,9 @@ erDiagram
   H_FAQ_REV { TEXT id PK
     TEXT faq_id FK "→M_FAQS.id" }
   TP_FAQ_FTS { INTEGER rowid PK }
+  M_PROJECTS { TEXT id PK }
+  T_INQUIRIES { TEXT id PK }
+  T_QLOG_FAQ_REFS { TEXT id PK }
   M_PROJECTS ||--o{ M_FAQS : "FAQ"
   T_INQUIRIES ||--o| M_FAQS : "FAQ化"
   M_FAQS ||--o{ H_FAQ_REV : "改訂"
@@ -216,6 +219,9 @@ erDiagram
   T_QLOG_FAQ_REFS { TEXT id PK
     TEXT question_log_id FK "→H_QUESTION_LOGS.id"
     TEXT faq_id FK "→M_FAQS.id" }
+  M_PROJECTS { TEXT id PK }
+  M_FAQS { TEXT id PK }
+  T_INQUIRIES { TEXT id PK }
   M_PROJECTS ||--o{ H_QUESTION_LOGS : "質問ログ"
   H_QUESTION_LOGS ||--o{ T_QLOG_FAQ_REFS : "参照FAQ"
   M_FAQS ||--o{ T_QLOG_FAQ_REFS : "被参照"
@@ -230,6 +236,9 @@ erDiagram
     TEXT contract_id FK "→M_CONTRACT.id"
     TEXT project_id FK "→M_PROJECTS.id"
     TEXT question_log_id FK "→H_QUESTION_LOGS.id" }
+  M_PROJECTS { TEXT id PK }
+  H_QUESTION_LOGS { TEXT id PK }
+  M_FAQS { TEXT id PK }
   M_PROJECTS ||--o{ T_INQUIRIES : "未解決"
   H_QUESTION_LOGS ||--o| T_INQUIRIES : "未解決化"
   T_INQUIRIES ||--o| M_FAQS : "FAQ化"
@@ -278,6 +287,7 @@ erDiagram
   H_NOTIF_LOGS { TEXT id PK
     TEXT contract_id FK "→M_CONTRACT.id"
     TEXT inquiry_id FK "→T_INQUIRIES.id" }
+  T_INQUIRIES { TEXT id PK }
   M_SERVICE_ANNOUNCE ||--o{ M_ANNOUNCE_AUD : "配信対象"
   M_CONTRACT ||--o{ M_ANNOUNCE_AUD : "対象契約"
   M_SERVICE_ANNOUNCE ||--o{ T_ANNOUNCE_RCPT : "fan-out"
