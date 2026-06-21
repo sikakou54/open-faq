@@ -18,6 +18,17 @@
 |----|
 | [FR-010](FR-010.md#FR-010) |
 
+## <span id="適用"></span>適用UC
+
+本ルールは由来要件(FR)を実現する次の業務ユースケースに適用される。
+
+| 適用UC | 名称 |
+|----|----|
+| [UC-164](../02_business_usecases/UC-164.md#UC-164) | 初期表示 |
+| [UC-167](../02_business_usecases/UC-167.md#UC-167) | 利用規約同意をチェック |
+| [UC-168](../02_business_usecases/UC-168.md#UC-168) | プライバシーポリシー同意をチェック |
+| [UC-169](../02_business_usecases/UC-169.md#UC-169) | 「同意して続行する」を押下 |
+
 ---
 
 <!-- portal-bottom -->

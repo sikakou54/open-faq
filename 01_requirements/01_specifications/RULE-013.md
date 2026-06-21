@@ -18,6 +18,19 @@
 |----|
 | [FR-089](FR-089.md#FR-089), [FR-094](FR-094.md#FR-094) |
 
+## <span id="適用"></span>適用UC
+
+本ルールは由来要件(FR)を実現する次の業務ユースケースに適用される。
+
+| 適用UC | 名称 |
+|----|----|
+| [UC-199](../02_business_usecases/UC-199.md#UC-199) | 初期表示 |
+| [UC-204](../02_business_usecases/UC-204.md#UC-204) | 「今月の利用上限」を入力 |
+| [UC-206](../02_business_usecases/UC-206.md#UC-206) | 「保存」を押下 |
+| [UC-208](../02_business_usecases/UC-208.md#UC-208) | 初期表示 |
+| [UC-237](../02_business_usecases/UC-237.md#UC-237) | 質問数上限アラート通知 |
+| [UC-240](../02_business_usecases/UC-240.md#UC-240) | 上限到達ウィジェット受付停止 |
+
 ---
 
 <!-- portal-bottom -->

@@ -18,6 +18,16 @@ FAQ の文字数上限は質問 500 文字 / 回答 5,000 文字とする。
 |----|
 | [FR-054](FR-054.md#FR-054) |
 
+## <span id="適用"></span>適用UC
+
+本ルールは由来要件(FR)を実現する次の業務ユースケースに適用される。
+
+| 適用UC | 名称 |
+|----|----|
+| [UC-059](../02_business_usecases/UC-059.md#UC-059) | 登録先 FAQ リンクを押下 |
+| [UC-060](../02_business_usecases/UC-060.md#UC-060) | 候補 FAQ リンクを押下 |
+| [UC-061](../02_business_usecases/UC-061.md#UC-061) | 「FAQ 登録へ」を押下 |
+
 ---
 
 <!-- portal-bottom -->

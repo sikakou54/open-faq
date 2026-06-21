@@ -18,6 +18,18 @@
 |----|
 | [FR-005](FR-005.md#FR-005) |
 
+## <span id="適用"></span>適用UC
+
+本ルールは由来要件(FR)を実現する次の業務ユースケースに適用される。
+
+| 適用UC | 名称 |
+|----|----|
+| [UC-176](../02_business_usecases/UC-176.md#UC-176) | メールアドレスを入力 |
+| [UC-177](../02_business_usecases/UC-177.md#UC-177) | 「保存する」を押下(プロフィール) |
+| [UC-178](../02_business_usecases/UC-178.md#UC-178) | 「パスワードを変更する」を押下 |
+| [UC-206](../02_business_usecases/UC-206.md#UC-206) | 「保存」を押下 |
+| [UC-242](../02_business_usecases/UC-242.md#UC-242) | セッション失効・再認証 |
+
 ---
 
 <!-- portal-bottom -->

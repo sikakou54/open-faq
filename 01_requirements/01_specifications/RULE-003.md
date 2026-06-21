@@ -18,6 +18,20 @@
 |----|
 | [FR-006](FR-006.md#FR-006) |
 
+## <span id="適用"></span>適用UC
+
+本ルールは由来要件(FR)を実現する次の業務ユースケースに適用される。
+
+| 適用UC | 名称 |
+|----|----|
+| [UC-009](../02_business_usecases/UC-009.md#UC-009) | パスワードを入力 |
+| [UC-010](../02_business_usecases/UC-010.md#UC-010) | パスワード(確認)を入力 |
+| [UC-024](../02_business_usecases/UC-024.md#UC-024) | 新パスワードを入力 |
+| [UC-025](../02_business_usecases/UC-025.md#UC-025) | 「新しいパスワードを設定する」を押下 |
+| [UC-178](../02_business_usecases/UC-178.md#UC-178) | 「パスワードを変更する」を押下 |
+| [UC-183](../02_business_usecases/UC-183.md#UC-183) | 初回パスワードを入力 |
+| [UC-184](../02_business_usecases/UC-184.md#UC-184) | パスワード(確認)を入力 |
+
 ---
 
 <!-- portal-bottom -->

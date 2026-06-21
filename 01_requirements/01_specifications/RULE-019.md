@@ -18,6 +18,15 @@
 |----|
 | [FR-173](FR-173.md#FR-173) |
 
+## <span id="適用"></span>適用UC
+
+本ルールは由来要件(FR)を実現する次の業務ユースケースに適用される。
+
+| 適用UC | 名称 |
+|----|----|
+| [UC-066](../02_business_usecases/UC-066.md#UC-066) | 行を選択 |
+| [UC-140](../02_business_usecases/UC-140.md#UC-140) | 行を選択 |
+
 ---
 
 <!-- portal-bottom -->
