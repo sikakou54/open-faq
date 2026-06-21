@@ -134,7 +134,7 @@ v1.0 リリース時点で技術的負債は記録なし。
 | ドキュメント | 役割 | リンク |
 |----|----|----|
 | 要件定義 | WHAT | [../01_requirements/index.md](../01_requirements/index.md) |
-| 基本設計 | HOW(全体) | [../02_basic-design/index.md](../02_basic-design/index.md) |
+| 基本設計 | HOW(全体) | [../02_basic_design/index.md](../02_basic_design/index.md) |
 
 ------------------------------------------------------------------------
 

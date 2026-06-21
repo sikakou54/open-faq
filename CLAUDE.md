@@ -205,8 +205,8 @@ callout は GitHub Alert 記法で表す。
 ```sh
 python3 - <<'PY'
 import os,re,glob,html
-files=sorted(set(glob.glob("01_requirements/*.md")+glob.glob("02_basic-design/**/*.md",recursive=True)
-                 +glob.glob("03_future/*.md")+["README.md"]))
+files=sorted(set(glob.glob("01_requirements/**/*.md",recursive=True)+glob.glob("02_basic_design/**/*.md",recursive=True)
+                 +glob.glob("03_future/**/*.md",recursive=True)+["README.md"]))
 ids={f:set(re.findall(r'id="([^"]+)"',open(f,encoding="utf-8").read())) for f in files}
 def links(s):
     for m in re.finditer(r'\]\(([^)\s]+)\)',s): yield m.group(1)

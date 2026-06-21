@@ -142,7 +142,7 @@ CREATE TABLE owner_key_versions (
 | 種別 | 参照先 |
 |----|----|
 | 要件 | [../01_requirements/index.md](../01_requirements/index.md) |
-| 基本設計 | [../02_basic-design/index.md](../02_basic-design/index.md) |
+| 基本設計 | [../02_basic_design/index.md](../02_basic_design/index.md) |
 
 ------------------------------------------------------------------------
 
