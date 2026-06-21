@@ -354,8 +354,8 @@ sequenceDiagram
   API->>DB: T_INQUIRIES(R) ・ H_QUESTION_LOGS(R)
   DB-->>API: 
   M->>SE: 「FAQ化」→ 内容を編集し公開
-  SE->>API: POST /faqs (source_inquiry_id)
-  API->>DB: M_FAQS(C) ・ H_FAQ_REV(C) ・ T_INQUIRIES(U:resolved)
+  SE->>API: POST /faqs (未解決質問の内容をコピー)
+  API->>DB: M_FAQS(C) ・ H_FAQ_REV(C) ・ H_INQUIRY_FAQ_MIGR(C) ・ T_INQUIRIES(U:resolved)
   DB-->>API: 
   API-->>SE: 201 作成FAQ
 ```

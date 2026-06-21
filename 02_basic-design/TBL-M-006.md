@@ -6,7 +6,7 @@
 
 マスタ <span id="39-M_FAQS"></span>
 
-FAQ 本体(質問・回答・公開状態)を保持します。
+FAQ 本体(質問・回答・公開状態)を保持します。契約境界は `project_id` → `M_PROJECTS.contract_id` で導出します(本テーブルに `contract_id` は保持しません)。未解決質問からの FAQ 化は内容をコピーして登録し、移行履歴は [`H_INQUIRY_FAQ_MIGR`](TBL-H-006.md) が保持します(本テーブルは元未解決質問へのキー参照を持ちません)。
 
 ### <span id="391-概要"></span>概要
 
@@ -37,9 +37,7 @@ FAQ 本体(質問・回答・公開状態)を保持します。
 <tr>
 <td>外部キー</td>
 <td><ul>
-<li><code>contract_id</code> → <code>M_CONTRACT(id)</code></li>
 <li><code>project_id</code> → <code>M_PROJECTS(id)</code></li>
-<li><code>source_inquiry_id</code> → <code>T_INQUIRIES(id)</code></li>
 <li><code>created_by_type</code> + <code>created_by_id</code> → <code>M_CONTRACT(id)</code> / <code>M_PRJ_USERS(id)</code>(論理参照)</li>
 <li><code>updated_by_type</code> + <code>updated_by_id</code> → <code>M_CONTRACT(id)</code> / <code>M_PRJ_USERS(id)</code>(論理参照)</li>
 </ul></td>
@@ -52,32 +50,28 @@ FAQ 本体(質問・回答・公開状態)を保持します。
 | No | 論理名 | 物理名 | データ型 | 桁数 | NULL | PK | FK | UNIQUE | DEFAULT | 制約 |
 |---:|----|----|----|---:|----|----|----|----|----|----|
 | 1 | ID | `id` | TEXT | \- | NO | ○ |  |  |  |  |
-| 2 | 契約 owner ID | `contract_id` | TEXT | \- | NO |  | `M_CONTRACT(id)` |  |  |  |
-| 3 | プロジェクト ID | `project_id` | TEXT | \- | NO |  | `M_PROJECTS(id)` |  |  |  |
-| 4 | 質問(タイトル) | `title` | TEXT | \- | NO |  |  |  |  | `length(title) BETWEEN 1 AND 500`(FAQ 質問、FR-040) |
-| 5 | 回答(本文) | `body` | TEXT | \- | NO |  |  |  |  | `length(body) BETWEEN 1 AND 5000`(FAQ 回答、FR-040) |
-| 6 | カテゴリ | `category` | TEXT | \- | YES |  |  |  |  |  |
-| 7 | 状態 | `status` | TEXT | \- | NO |  |  |  | `'draft'` | `status IN ('draft','published','hidden','deleted')` |
-| 8 | バージョン | `version` | INTEGER | \- | NO |  |  |  | `1` |  |
-| 9 | タグ | `tags` | TEXT | \- | YES |  |  |  |  |  |
-| 10 | 元未解決質問 ID | `source_inquiry_id` | TEXT | \- | YES |  | `T_INQUIRIES(id)` |  |  |  |
-| 11 | 有効フラグ | `valid` | INTEGER | \- | NO |  |  |  | `1` | `valid IN (0,1)` |
-| 12 | 作成者種別 | `created_by_type` | TEXT | \- | YES |  |  |  |  | `created_by_type IN ('owner','project_user')` |
-| 13 | 作成者 ID | `created_by_id` | TEXT | \- | YES |  |  |  |  | `created_by_type` に応じ `M_CONTRACT(id)` / `M_PRJ_USERS(id)` を指す(論理参照) |
-| 14 | 更新者種別 | `updated_by_type` | TEXT | \- | YES |  |  |  |  | `updated_by_type IN ('owner','project_user')` |
-| 15 | 更新者 ID | `updated_by_id` | TEXT | \- | YES |  |  |  |  | `updated_by_type` に応じ `M_CONTRACT(id)` / `M_PRJ_USERS(id)` を指す(論理参照) |
-| 16 | 作成日時 | `created_at` | TEXT | \- | NO |  |  |  |  |  |
-| 17 | 更新日時 | `updated_at` | TEXT | \- | NO |  |  |  |  |  |
+| 2 | プロジェクト ID | `project_id` | TEXT | \- | NO |  | `M_PROJECTS(id)` |  |  |  |
+| 3 | 質問(タイトル) | `title` | TEXT | \- | NO |  |  |  |  | `length(title) BETWEEN 1 AND 500`(FAQ 質問、FR-040) |
+| 4 | 回答(本文) | `body` | TEXT | \- | NO |  |  |  |  | `length(body) BETWEEN 1 AND 5000`(FAQ 回答、FR-040) |
+| 5 | カテゴリ | `category` | TEXT | \- | YES |  |  |  |  |  |
+| 6 | 状態 | `status` | TEXT | \- | NO |  |  |  | `'draft'` | `status IN ('draft','published','hidden','deleted')` |
+| 7 | バージョン | `version` | INTEGER | \- | NO |  |  |  | `1` |  |
+| 8 | タグ | `tags` | TEXT | \- | YES |  |  |  |  |  |
+| 9 | 有効フラグ | `valid` | INTEGER | \- | NO |  |  |  | `1` | `valid IN (0,1)` |
+| 10 | 作成者種別 | `created_by_type` | TEXT | \- | YES |  |  |  |  | `created_by_type IN ('owner','project_user')` |
+| 11 | 作成者 ID | `created_by_id` | TEXT | \- | YES |  |  |  |  | `created_by_type` に応じ `M_CONTRACT(id)` / `M_PRJ_USERS(id)` を指す(論理参照) |
+| 12 | 更新者種別 | `updated_by_type` | TEXT | \- | YES |  |  |  |  | `updated_by_type IN ('owner','project_user')` |
+| 13 | 更新者 ID | `updated_by_id` | TEXT | \- | YES |  |  |  |  | `updated_by_type` に応じ `M_CONTRACT(id)` / `M_PRJ_USERS(id)` を指す(論理参照) |
+| 14 | 作成日時 | `created_at` | TEXT | \- | NO |  |  |  |  |  |
+| 15 | 更新日時 | `updated_at` | TEXT | \- | NO |  |  |  |  |  |
 
 ### <span id="395-インデックス"></span>インデックス
 
 | No | インデックス名 | 対象カラム | UNIQUE | 用途 |
 |---:|----|----|----|----|
-| 1 | `idx_faqs_owner_project` | `(contract_id, project_id)` |  | 契約境界 + プロジェクト |
-| 2 | `idx_faqs_project_status` | `(project_id, status)` |  | プロジェクト × 状態 |
-| 3 | `idx_faqs_source_inquiry` | `source_inquiry_id` |  | 元未解決質問逆引き |
-| 4 | `idx_faqs_category` | `(project_id, category)` WHERE `category IS NOT NULL` |  | カテゴリ別 |
-| 5 | `idx_faqs_valid` | `valid` WHERE `valid = 0` |  | 論理削除対象抽出 |
+| 1 | `idx_faqs_project_status` | `(project_id, status)` |  | プロジェクト × 状態 |
+| 2 | `idx_faqs_category` | `(project_id, category)` WHERE `category IS NOT NULL` |  | カテゴリ別 |
+| 3 | `idx_faqs_valid` | `valid` WHERE `valid = 0` |  | 論理削除対象抽出 |
 
 ### <span id="397-コード値区分値"></span>コード値・区分値
 
