@@ -32,6 +32,6 @@
 - `p7_linkgraph.json` … P7 リンクグラフ(UC/EVT/API/TBL 構造化リンク + 要件→UC 逆引き。機械可読)
 - `p7_gaps.json` … P7 ギャップ一覧(分類別。機械可読)
 - `06_remaining_issues.md` … 各フェーズ検出課題(GitHub MCP 復旧後に Issue 化)
-- `07_coverage_gap_report.md` … 要件↔UC 被覆ギャップ精査レポート(P7 後続)。§7 第1段: UC→要件 128→0。§8 第2段: FR→UC 62→107・受容30・UC新設候補57(判断待ち)
-- `p8_fr_uc_proposal.json` … 第2段の FR→UC 候補導出データ(機械可読)
+- `07_coverage_gap_report.md` … 要件↔UC 被覆ギャップ精査レポート(P7 後続)。§7 第1段: UC→要件 128→0。§8 第2段: FR→UC 62→164・受容30・UC新設57(UC-248〜304)。**FR↔UC ギャップ解消(残0/0)**
+- `p8_fr_uc_proposal.json` / `p8_new_uc_map.json` … 第2段の FR→UC 候補導出・新設UCマップ(機械可読)
 - `05_agent_work_summary.md` … 各 Agent 作業サマリ(随時)
