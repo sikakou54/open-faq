@@ -16,9 +16,9 @@
 |----|----|----|
 | 課金モデル | 完全従量課金 + 月次無料枠(無料トライアルなし) | — |
 | 月次境界 | JST 暦月。無料枠は毎月 1 日 00:00 JST にリセット(BR-059) | — |
-| 無料枠 / 月次上限件数 | 質問数:無料枠 **1,000 件 / 月**・超過単価 0.5 円 / 件。FAQ 件数:無料枠 **100 件**・超過単価 5 円 / 件 / 月。プロジェクト単位で [`M_PRJ_QUOTA_LIMITS`](04_database/TBL-M-009.md) に保持。 | プロジェクト |
-| レート制限(DDoS / Bot / 暴走対策) | `M_OWNER_QUOTA_OVR` で保持([TBL-M-008](04_database/TBL-M-008.md) 正本)。上限件数・無料枠とは別軸 | 契約 |
-| 利用量計測 / 請求集計 | `T_USAGE_METER` をプロジェクト単位で計測し、契約単位で集計して請求([TBL-T-008](04_database/TBL-T-008.md) 正本) | 計測=プロジェクト / 請求=契約 |
+| 無料枠 / 月次上限件数 | 質問数:無料枠 **1,000 件 / 月**・超過単価 0.5 円 / 件。FAQ 件数:無料枠 **100 件**・超過単価 5 円 / 件 / 月。プロジェクト単位で [`M_PRJ_QUOTA_LIMITS`](04_database/TBL-009.md) に保持。 | プロジェクト |
+| レート制限(DDoS / Bot / 暴走対策) | `M_OWNER_QUOTA_OVR` で保持([TBL-008](04_database/TBL-008.md) 正本)。上限件数・無料枠とは別軸 | 契約 |
+| 利用量計測 / 請求集計 | `T_USAGE_METER` をプロジェクト単位で計測し、契約単位で集計して請求([TBL-020](04_database/TBL-020.md) 正本) | 計測=プロジェクト / 請求=契約 |
 
 > [!NOTE]
 > **テーブル定義は 03 が正本** `T_BILL_SUBS` / `T_BILL_INVOICES` / `T_USAGE_METER` / `M_OWNER_QUOTA_OVR` / `M_PRJ_QUOTA_LIMITS` のカラム・制約・コード値は [データベース設計 §2 テーブル一覧](04_database/index.md)(各テーブルファイル)を正本とする。本ページは判定ロジックと状態遷移のみを扱う。
@@ -96,7 +96,7 @@
 
 ## <span id="5-契約状態ライフサイクル"></span>5. 契約状態ライフサイクル
 
-`M_CONTRACT.status` は `active` / `suspended` / `deleted_pending` / `deleted` の 4 値。状態定義そのものは[`M_CONTRACT`](04_database/TBL-M-002.md)に従う、本ページは課金起因のサスペンション遷移と退会起因の削除遷移を記述する。決済失敗の猶予は **7 日**、退会の猶予は **90 日**で、両者は別の期間である。
+`M_CONTRACT.status` は `active` / `suspended` / `deleted_pending` / `deleted` の 4 値。状態定義そのものは[`M_CONTRACT`](04_database/TBL-002.md)に従う、本ページは課金起因のサスペンション遷移と退会起因の削除遷移を記述する。決済失敗の猶予は **7 日**、退会の猶予は **90 日**で、両者は別の期間である。
 
 | 状態 | 意味 | アカウント利用者の可否 | ウィジェット応答 |
 |----|----|----|----|
@@ -106,7 +106,7 @@
 | `deleted` | 削除済み | × | 停止。`status='deleted'` 設定時は `M_CONTRACT.valid=0` を同時セット |
 
 > [!IMPORTANT]
-> **status は `M_CONTRACT` 定義に従う** 4 値の定義・`valid` との整合・テーブル CHECK 制約は [`M_CONTRACT`](04_database/TBL-M-002.md) および [データベース設計書](04_database/index.md) を正本とする。本ページは課金 / 退会起因の遷移条件のみを扱う。
+> **status は `M_CONTRACT` 定義に従う** 4 値の定義・`valid` との整合・テーブル CHECK 制約は [`M_CONTRACT`](04_database/TBL-002.md) および [データベース設計書](04_database/index.md) を正本とする。本ページは課金 / 退会起因の遷移条件のみを扱う。
 
 ### <span id="51-決済失敗からサスペンションへ"></span>5.1 決済失敗からサスペンションへ(7 日猶予)
 

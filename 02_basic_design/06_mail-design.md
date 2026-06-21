@@ -810,7 +810,7 @@ open-faq <noreply@<service-domain>>
 
 ### <span id="52-重要度別の強制送信ルール共有概念正本"></span>5.2 重要度別の強制送信ルール(共有概念正本)
 
-通知重要度 4 値ごとにオプトアウト可否と強制送信の扱いを定めます。次の各項目は `critical` / `high` の強制送信と `normal` / `low` のオプトアウト方式を示し、重要度の正本ルールは [`M_CONTRACT`](04_database/TBL-M-002.md) に従います。
+通知重要度 4 値ごとにオプトアウト可否と強制送信の扱いを定めます。次の各項目は `critical` / `high` の強制送信と `normal` / `low` のオプトアウト方式を示し、重要度の正本ルールは [`M_CONTRACT`](04_database/TBL-002.md) に従います。
 
 - `critical`: 受信オプトアウト不可、必ずメール送信。`TPL-EMAIL_VERIFY` / `PASSWORD_RESET` / `ADMIN_USER_REGISTER` / `PROJECT_CONTACT_VERIFY` / `LOCKOUT_NOTIFY` / `BILLING_SUSPENSION` / `PAYMENT_METHOD_REQUIRED` / `TERMS_REVISION` / `SERVICE_ANNOUNCEMENT`(`critical` 選択時)
 - `high`: 強制送信(オプトアウト不可)
@@ -862,7 +862,7 @@ open-faq <noreply@<service-domain>>
 
 - 軽微な文言修正(誤字 / 表現変更): 本書 §4 のみ更新 + 変更履歴に記載
 - 件名変更 / 主要 CTA 変更: 本書 §4 + ステージング再送テスト
-- 配信先・重要度変更: 本書 §5.1 / §5.2 + [`M_CONTRACT`](04_database/TBL-M-002.md) の整合確認
+- 配信先・重要度変更: 本書 §5.1 / §5.2 + [`M_CONTRACT`](04_database/TBL-002.md) の整合確認
 
 ## <span id="更新履歴"></span>更新履歴
 
