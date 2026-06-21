@@ -43,6 +43,8 @@
 | <span id="API-AUTH-007"></span>[`API-AUTH-007`](API-auth.md#API-AUTH-007) | **招待トークン検証・プレビュー** POST `/auth/invitations/{token}/preview` | — | [`T_ACCESS_TOKENS`](TBL-T-002.md)-R-- [`M_PROJECTS`](TBL-M-004.md)-R-- [`M_PRJ_USERS`](TBL-M-003.md)-R-- [`M_PRJ_USERS`](TBL-M-003.md)-R-- [`M_CONTRACT`](TBL-M-002.md)-R-- |
 | <span id="API-AUTH-008"></span>[`API-AUTH-008`](API-auth.md#API-AUTH-008) | **メンバーアカウント有効化** POST `/auth/invitations/{token}/activate` | — | [`T_ACCESS_TOKENS`](TBL-T-002.md)-RU- [`M_USER`](TBL-M-001.md)--U- [`M_PRJ_USERS`](TBL-M-003.md)--U- [`T_TERMS_AGREE`](TBL-T-012.md)C--- [`H_AUDIT_LOGS`](TBL-H-003.md)C--- |
 | <span id="API-AUTH-009"></span>[`API-AUTH-009`](API-auth.md#API-AUTH-009) | **プロジェクト連絡先メール確認** POST `/auth/contact-verifications/{token}` | — | [`T_ACCESS_TOKENS`](TBL-T-002.md)-RU- [`M_PROJECTS`](TBL-M-004.md)-RU- [`H_AUDIT_LOGS`](TBL-H-003.md)C--- |
+| <span id="API-AUTH-010"></span>[`API-AUTH-010`](API-auth.md#API-AUTH-010) | **パスワード再設定確定** POST `/auth/password-reset` | —(公開) | [`T_ACCESS_TOKENS`](TBL-T-002.md)-RU- [`M_CONTRACT`](TBL-M-002.md)-RU- [`M_PRJ_USERS`](TBL-M-003.md)-RU- [`T_SESSIONS`](TBL-T-001.md)--U- |
+| <span id="API-AUTH-011"></span>[`API-AUTH-011`](API-auth.md#API-AUTH-011) | **連絡先確認メール再送** POST `/auth/contact-verifications/resend` | オーナー専有 | [`M_PROJECTS`](TBL-M-004.md)-R-- [`T_ACCESS_TOKENS`](TBL-T-002.md)C-U- [`H_NOTIF_LOGS`](TBL-H-002.md)C--- |
 
 ### <span id="g-2"></span>1.2 プロジェクト
 

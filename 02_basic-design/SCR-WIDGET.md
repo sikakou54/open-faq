@@ -66,6 +66,7 @@ flowchart LR
 | <span id="IT-07"></span>`IT-07` | AI 回答 | 登録 FAQ に基づく回答を同じ会話欄に追加表示する | ラベル | — | AI 回答文 |
 | <span id="IT-08"></span>`IT-08` | 連絡先メール表示 | 未解決・制限中に確認済みプロジェクト連絡先メールを案内表示する | ラベル | 未解決・制限中、かつ連絡先設定済みの場合のみ表示 | 「必要に応じて、下記のお問い合わせ先までメールでご連絡ください。」+ 連絡先メールアドレス |
 | <span id="IT-09"></span>`IT-09` | 受付停止メッセージ | 受付停止と問い合わせ先を表示する(連絡先未設定時は再試行案内に差し替え) | アラート | 受付制限中の場合に表示 | 「ただいま新しいご質問をお受けできません。お手数ですが、下記のお問い合わせ先までメールでご連絡ください。」+ 連絡先メールアドレス |
+| <span id="IT-10"></span>`IT-10` | エラーメッセージ | 処理エラー発生時(通信障害・上流障害・認可エラー等)にエラー内容と再試行案内を表示するアラート領域 | アラート | 処理エラー発生時に表示 | エラー内容を説明するメッセージ + 再試行案内 |
 
 ## <span id="5-入出力一覧"></span>5. 入出力一覧
 
@@ -105,22 +106,22 @@ flowchart LR
 <td>質問を送信し AI 回答を取得する(<code>type=unanswered</code> で未解決遷移)</td>
 <td>API</td>
 <td>入出力</td>
+<td>◯</td>
+<td>◯</td>
 <td>—</td>
 <td>—</td>
-<td>—</td>
-<td>—</td>
-<td><code>POST /widget/v1/ask</code>(<a href="02_api-design.md">API 設計 5.5.2</a>)</td>
+<td><code>POST /widget/v1/ask</code>(<a href="API-widget.md#API-WGT-002">ウィジェット質問送信</a>)</td>
 </tr>
 <tr>
 <td>未解決質問登録</td>
 <td>未解決時に質問ログ・未解決質問を登録する(問い合わせ ID は非表示)</td>
 <td>API</td>
 <td>出力</td>
+<td>◯</td>
+<td>◯</td>
 <td>—</td>
 <td>—</td>
-<td>—</td>
-<td>—</td>
-<td><code>POST /widget/v1/inquiries</code>(<a href="02_api-design.md">API 設計 5.5.3</a>)</td>
+<td><code>POST /widget/v1/inquiries</code>(<a href="API-widget.md#API-WGT-003">ウィジェット未解決質問登録</a>)</td>
 </tr>
 </tbody>
 </table>
@@ -147,67 +148,75 @@ flowchart LR
 <tbody>
 <tr>
 <td><code>EV-01</code></td>
-<td><a href="#IT-01">IT-01</a></td>
-<td>ランチャーバッジを押下</td>
-<td><ul>
-<li>バッジを非表示にしチャット UI を展開する</li>
-<li><a href="API-widget.md#API-WGT-001">ウィジェット起動</a> API でセッションを確立し、ウィジェット設定(タイトル・連絡先メール等)を取得する</li>
-<li>失敗時: エラーメッセージを表示し、再試行案内を行う(EV-07 に準ずる)</li>
-</ul></td>
+<td>—</td>
+<td>初期表示</td>
+<td>ウィジェットスクリプトが顧客サイトに組み込まれると、ランチャーバッジ(<a href="#IT-01">IT-01</a>)を右下固定で表示する</td>
 </tr>
 <tr>
 <td><code>EV-02</code></td>
+<td><a href="#IT-01">IT-01</a></td>
+<td>ランチャーバッジを押下</td>
+<td><ul>
+<li>バッジを非表示にしチャット UI を展開する(キーボード操作 Enter / Space キーによる起動も同等に扱う)</li>
+<li><a href="API-widget.md#API-WGT-001">ウィジェット起動</a> API でセッションを確立し、ウィジェット設定(タイトル・連絡先メール等)を取得する</li>
+<li>失敗時: エラーメッセージを会話欄に表示し、再試行案内を行う(連打防止付き)</li>
+</ul></td>
+</tr>
+<tr>
+<td><code>EV-03</code></td>
 <td><a href="#IT-03">IT-03</a></td>
 <td>ヘッダーの閉じるボタンを押下</td>
 <td>チャット UI を閉じてランチャーバッジ表示へ戻る。同一ページ内では会話履歴・入力内容・受付状態を保持する</td>
 </tr>
 <tr>
-<td><code>EV-03</code></td>
+<td><code>EV-04</code></td>
 <td><a href="#IT-05">IT-05</a></td>
 <td>質問を入力</td>
-<td>テキストエリアに質問文を入力する。受付制限中(<code>EV-06</code> 後)は入力欄が無効化されているため操作不可</td>
+<td>テキストエリアに質問文を入力する。受付制限中(<code>EV-07</code> 後)は入力欄が無効化されているため操作不可</td>
 </tr>
 <tr>
-<td><code>EV-04</code></td>
+<td><code>EV-05</code></td>
 <td><a href="#IT-06">IT-06</a></td>
 <td>「送信」を押下</td>
 <td><ul>
 <li><a href="API-widget.md#API-WGT-002">ウィジェット質問送信</a> API で質問を送信し、AI 回答を同じ会話欄に追加表示する</li>
 <li>受付制限中は送信ボタンが無効化されているため操作不可</li>
-<li>回答結果が未解決(<code>type=unanswered</code>)の場合は EV-05 へ遷移する</li>
-<li>処理エラーの場合は EV-07 へ遷移する</li>
-</ul></td>
-</tr>
-<tr>
-<td><code>EV-05</code></td>
-<td>—</td>
-<td>AI 回答(未解決)を受信</td>
-<td><ul>
-<li><a href="API-widget.md#API-WGT-002">ウィジェット質問送信</a> API のレスポンスが <code>type=unanswered</code> の場合に発生する</li>
-<li>回答できなかった旨をシステム返信として会話欄に追加表示する</li>
-<li>確認済みプロジェクト連絡先メールが設定済みの場合は連絡先メールを案内表示する(IT-08)</li>
-<li>管理用の問い合わせ ID はウィジェットに表示しない</li>
-<li>別の質問の入力・送信は引き続き可能(EV-03 / EV-04 へ戻れる)</li>
+<li>回答結果が未解決(<code>type=unanswered</code>)の場合は続けて EV-06 の処理が発生する</li>
+<li>受付制限(429)を受信した場合は続けて EV-07 の処理が発生する</li>
+<li>処理エラーの場合は続けて EV-08 の処理が発生する</li>
 </ul></td>
 </tr>
 <tr>
 <td><code>EV-06</code></td>
-<td>—</td>
-<td>受付制限(429)を受信</td>
+<td><a href="#IT-08">IT-08</a></td>
+<td>AI 回答(未解決)を受信</td>
 <td><ul>
-<li><a href="API-widget.md#API-WGT-002">ウィジェット質問送信</a> API から質問数上限到達または支払方法ゲートによる 429 を受信した場合に発生する</li>
-<li>受付停止メッセージをシステム返信として会話欄に追加表示する(IT-09)</li>
-<li>確認済みプロジェクト連絡先メールが設定済みの場合は連絡先メールを案内表示する(IT-08)</li>
-<li>質問入力欄(IT-05)および送信ボタン(IT-06)を無効化する</li>
+<li><a href="API-widget.md#API-WGT-002">ウィジェット質問送信</a> API のレスポンスが <code>type=unanswered</code> の場合に発生する(EV-05 の結果として続いて処理される)</li>
+<li>回答できなかった旨をシステム返信として会話欄に追加表示する</li>
+<li><a href="API-widget.md#API-WGT-003">ウィジェット未解決質問登録</a> API を呼び出し、質問ログと未解決質問を登録する</li>
+<li>確認済みプロジェクト連絡先メールが設定済みの場合は連絡先メールを案内表示する(<a href="#IT-08">IT-08</a>)</li>
+<li>管理用の問い合わせ ID はウィジェットに表示しない</li>
+<li>別の質問の入力・送信は引き続き可能(EV-04 / EV-05 へ戻れる)</li>
 </ul></td>
 </tr>
 <tr>
 <td><code>EV-07</code></td>
-<td>—</td>
+<td><a href="#IT-09">IT-09</a></td>
+<td>受付制限(429)を受信</td>
+<td><ul>
+<li><a href="API-widget.md#API-WGT-002">ウィジェット質問送信</a> API から質問数上限到達または支払方法ゲートによる 429 を受信した場合に発生する(EV-05 の結果として続いて処理される)</li>
+<li>受付停止メッセージをシステム返信として会話欄に追加表示する(<a href="#IT-09">IT-09</a>)</li>
+<li>確認済みプロジェクト連絡先メールが設定済みの場合は連絡先メールを案内表示する(<a href="#IT-08">IT-08</a>)</li>
+<li>質問入力欄(<a href="#IT-05">IT-05</a>)および送信ボタン(<a href="#IT-06">IT-06</a>)を無効化する</li>
+</ul></td>
+</tr>
+<tr>
+<td><code>EV-08</code></td>
+<td><a href="#IT-10">IT-10</a></td>
 <td>処理エラーを受信</td>
 <td><ul>
 <li><a href="API-widget.md#API-WGT-001">ウィジェット起動</a> または <a href="API-widget.md#API-WGT-002">ウィジェット質問送信</a> API の処理エラー(通信障害・上流障害・認可エラー等)が発生した場合に発生する</li>
-<li>何が起きたか分かるエラーメッセージを会話欄または UI 内に表示する</li>
+<li>エラーメッセージを会話欄または UI 内に表示する(<a href="#IT-10">IT-10</a>)</li>
 <li>再試行が妥当な場合は再試行案内を表示する(連打防止付き)</li>
 <li>処理エラーは未解決質問として自動登録しない(未解決登録分岐とは区別する)</li>
 </ul></td>
