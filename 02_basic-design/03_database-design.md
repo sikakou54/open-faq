@@ -102,7 +102,7 @@ FAQ 本体と改訂履歴・全文検索、質問ログ、参照 FAQ、未解決
 
 ## <span id="er"></span>3.ER 図(親子関係)
 
-全 31 テーブルの親子関係を、機能ドメイン別の ER 図と外部キー表で示します。
+全 31 テーブルの親子関係を、機能ドメイン別の ER 図で示します。
 
 **(1) アカウント・契約・メンバー**
 
@@ -130,13 +130,6 @@ erDiagram
   M_PROJECTS ||--o{ M_PRJ_USERS : "割当先"
 ```
 
-| 親 | 子(FK カラム) | 多重度 | 説明 |
-|----|----|----|----|
-| [`M_USER`](TBL-M-001.md) | [`M_CONTRACT`](TBL-M-002.md)(`user_id`) | 1:0..1 | オーナー判定。一致するユーザーが当該契約のオーナー |
-| [`M_USER`](TBL-M-001.md) | [`M_PRJ_USERS`](TBL-M-003.md)(`user_id`) | 1:N | ユーザーの参加プロジェクト割当 |
-| [`M_CONTRACT`](TBL-M-002.md) | [`M_PROJECTS`](TBL-M-004.md)(`contract_id`) | 1:N | 契約はプロジェクトを保有 |
-| [`M_PROJECTS`](TBL-M-004.md) | [`M_PRJ_USERS`](TBL-M-003.md)(`project_id`) | 1:N | 割当先プロジェクト |
-
 **(2) 認証 — セッション**
 
 ```mermaid
@@ -149,10 +142,6 @@ erDiagram
   M_USER ||--o{ T_SESSIONS : "ユーザー"
 ```
 
-| 親 | 子(FK カラム) | 多重度 | 説明 |
-|----|----|----|----|
-| [`M_USER`](TBL-M-001.md) | [`T_SESSIONS`](TBL-T-001.md)(`user_id`) | 1:N | ログインセッション(認証主体 = `M_USER`) |
-
 **(3) 認証 — トークン**
 
 ```mermaid
@@ -164,10 +153,6 @@ erDiagram
   }
   M_USER ||--o{ T_ACCESS_TOKENS : "ユーザー"
 ```
-
-| 親 | 子(FK カラム) | 多重度 | 説明 |
-|----|----|----|----|
-| [`M_USER`](TBL-M-001.md) | [`T_ACCESS_TOKENS`](TBL-T-002.md)(`user_id`) | 1:N | 招待・再設定・確認トークン(認証主体 = `M_USER`。`user_id` は NULL 可、`contact_verify` は NULL で対象は `meta`) |
 
 **(4) 認証 — 規約同意**
 
@@ -187,11 +172,6 @@ erDiagram
   M_TERMS_VER ||--o{ T_TERMS_AGREE : "版"
 ```
 
-| 親 | 子(FK カラム) | 多重度 | 説明 |
-|----|----|----|----|
-| [`M_USER`](TBL-M-001.md) | [`T_TERMS_AGREE`](TBL-T-012.md)(`user_id`) | 1:N | 規約同意履歴(認証主体 = `M_USER`) |
-| [`M_TERMS_VER`](TBL-M-012.md) | [`T_TERMS_AGREE`](TBL-T-012.md)(`doc_type, terms_version`) | 1:N | 同意した規約版(複合 FK) |
-
 **(5) プロジェクト・ウィジェット**
 
 ```mermaid
@@ -207,12 +187,6 @@ erDiagram
   M_PROJECTS ||--o{ M_ALLOWED_DOMAINS : "許可ドメイン"
   M_PROJECTS ||--o{ T_PRJ_LEGACY_KEYS : "旧鍵"
 ```
-
-| 親 | 子(FK カラム) | 多重度 | 説明 |
-|----|----|----|----|
-| [`M_CONTRACT`](TBL-M-002.md) | [`M_PROJECTS`](TBL-M-004.md)(`contract_id`) | 1:N | 契約はプロジェクトを保有 |
-| [`M_PROJECTS`](TBL-M-004.md) | [`M_ALLOWED_DOMAINS`](TBL-M-005.md)(`project_id`) | 1:N | ウィジェット埋め込み許可ドメイン |
-| [`M_PROJECTS`](TBL-M-004.md) | [`T_PRJ_LEGACY_KEYS`](TBL-T-003.md)(`project_id`) | 1:N | ローテーション時の旧公開キー(24 時間有効) |
 
 **(6) FAQ**
 
@@ -232,16 +206,6 @@ erDiagram
   M_FAQS ||--o{ T_QLOG_FAQ_REFS : "被参照"
 ```
 
-| 親 | 子(FK カラム) | 多重度 | 説明 |
-|----|----|----|----|
-| [`M_CONTRACT`](TBL-M-002.md) | [`M_FAQS`](TBL-M-006.md)(`contract_id`) | 1:N | 契約境界 |
-| [`M_PROJECTS`](TBL-M-004.md) | [`M_FAQS`](TBL-M-006.md)(`project_id`) | 1:N | プロジェクトの FAQ |
-| [`T_INQUIRIES`](TBL-T-005.md) | [`M_FAQS`](TBL-M-006.md)(`source_inquiry_id`) | 0..1:N | FAQ 化の発生元未解決質問(NULL 可) |
-| `M_CONTRACT` / `M_PRJ_USERS` | [`M_FAQS`](TBL-M-006.md)(`created_by_id` / `updated_by_id`) | 1:N | 作成者・更新者(多態) |
-| [`M_FAQS`](TBL-M-006.md) | [`H_FAQ_REV`](TBL-H-001.md)(`faq_id`) | 1:N | 改訂履歴(最大 50 件) |
-| `M_CONTRACT` / `M_PRJ_USERS` | [`H_FAQ_REV`](TBL-H-001.md)(`created_by_id`) | 1:N | 改訂者(多態) |
-| [`M_FAQS`](TBL-M-006.md) | [`TP_FAQ_FTS`](TBL-TP-001.md)(`rowid`) | 1:1 | 全文検索索引(`rowid` 同期。物理 FK ではない) |
-
 **(7) 質問ログ・参照 FAQ**
 
 ```mermaid
@@ -258,13 +222,6 @@ erDiagram
   H_QUESTION_LOGS ||--o| T_INQUIRIES : "未解決化"
 ```
 
-| 親 | 子(FK カラム) | 多重度 | 説明 |
-|----|----|----|----|
-| [`M_CONTRACT`](TBL-M-002.md) | [`H_QUESTION_LOGS`](TBL-H-002.md)(`contract_id`) | 1:N | 契約境界 |
-| [`M_PROJECTS`](TBL-M-004.md) | [`H_QUESTION_LOGS`](TBL-H-002.md)(`project_id`) | 1:N | 質問ログ |
-| [`H_QUESTION_LOGS`](TBL-H-002.md) | [`T_QLOG_FAQ_REFS`](TBL-T-004.md)(`question_log_id`) | 1:N | 参照 FAQ(M:N 中間) |
-| [`M_FAQS`](TBL-M-006.md) | [`T_QLOG_FAQ_REFS`](TBL-T-004.md)(`faq_id`) | 1:N | 被参照 FAQ(M:N 中間) |
-
 **(8) 未解決質問**
 
 ```mermaid
@@ -277,12 +234,6 @@ erDiagram
   H_QUESTION_LOGS ||--o| T_INQUIRIES : "未解決化"
   T_INQUIRIES ||--o| M_FAQS : "FAQ化"
 ```
-
-| 親 | 子(FK カラム) | 多重度 | 説明 |
-|----|----|----|----|
-| [`M_CONTRACT`](TBL-M-002.md) | [`T_INQUIRIES`](TBL-T-005.md)(`contract_id`) | 1:N | 契約境界 |
-| [`M_PROJECTS`](TBL-M-004.md) | [`T_INQUIRIES`](TBL-T-005.md)(`project_id`) | 1:N | 未解決質問 |
-| [`H_QUESTION_LOGS`](TBL-H-002.md) | [`T_INQUIRIES`](TBL-T-005.md)(`question_log_id`) | 1:0..1 | 未解決化の発生元質問ログ(NULL 可) |
 
 **(9) 利用量・課金・上限**
 
@@ -311,16 +262,6 @@ erDiagram
   M_CONTRACT ||--o| M_OWNER_QUOTA_OVR : "レート上書き"
 ```
 
-| 親 | 子(FK カラム) | 多重度 | 説明 |
-|----|----|----|----|
-| [`M_CONTRACT`](TBL-M-002.md) | [`T_BILL_SUBS`](TBL-T-006.md)(`contract_id`) | 1:N | Stripe サブスクリプション |
-| [`M_CONTRACT`](TBL-M-002.md) | [`T_BILL_INVOICES`](TBL-T-007.md)(`contract_id`) | 1:N | 月次請求書(7 年保持) |
-| [`M_CONTRACT`](TBL-M-002.md) | [`T_USAGE_METER`](TBL-T-008.md)(`contract_id`) | 1:N | 契約単位の利用量集計 |
-| [`M_PROJECTS`](TBL-M-004.md) | [`T_USAGE_METER`](TBL-T-008.md)(`project_id`) | 1:N | プロジェクト単位の計測 |
-| [`M_CONTRACT`](TBL-M-002.md) | [`M_PRJ_QUOTA_LIMITS`](TBL-M-009.md)(`contract_id`) | 1:N | 契約境界 |
-| [`M_PROJECTS`](TBL-M-004.md) | [`M_PRJ_QUOTA_LIMITS`](TBL-M-009.md)(`project_id`) | 1:N | 月次上限・無料枠・アラート設定 |
-| [`M_CONTRACT`](TBL-M-002.md) | [`M_OWNER_QUOTA_OVR`](TBL-M-008.md)(`contract_id`) | 1:0..1 | 契約単位のレート制限上書き |
-
 **(10) お知らせ・通知**
 
 ```mermaid
@@ -345,17 +286,6 @@ erDiagram
   T_INQUIRIES ||--o{ H_NOTIF_LOGS : "問合せ通知"
 ```
 
-| 親 | 子(FK カラム) | 多重度 | 説明 |
-|----|----|----|----|
-| [`M_SERVICE_ANNOUNCE`](TBL-M-010.md) | [`M_ANNOUNCE_AUD`](TBL-M-011.md)(`announcement_id`) | 1:N | 配信対象指定(複合 PK①) |
-| [`M_CONTRACT`](TBL-M-002.md) | [`M_ANNOUNCE_AUD`](TBL-M-011.md)(`contract_id`) | 1:N | 対象契約(複合 PK②) |
-| `M_CONTRACT` / `M_PRJ_USERS` | [`M_SERVICE_ANNOUNCE`](TBL-M-010.md)(`created_by_id`) | 1:N | 作成者(多態。Control Plane) |
-| [`M_SERVICE_ANNOUNCE`](TBL-M-010.md) | [`T_ANNOUNCE_RCPT`](TBL-T-009.md)(`announcement_id`) | 1:N | 受信者集計(fan-out) |
-| [`M_CONTRACT`](TBL-M-002.md) | [`T_INBOX_MSG`](TBL-T-010.md)(`contract_id`) | 1:N | 受信箱 |
-| `M_CONTRACT` / `M_PRJ_USERS` | [`T_INBOX_MSG`](TBL-T-010.md)(`recipient_id`) | 1:N | 受信者(多態) |
-| [`M_CONTRACT`](TBL-M-002.md) | [`H_NOTIF_LOGS`](TBL-H-003.md)(`contract_id`) | 1:N | メール通知ログ |
-| [`T_INQUIRIES`](TBL-T-005.md) | [`H_NOTIF_LOGS`](TBL-H-003.md)(`inquiry_id`) | 1:N | 問い合わせ起点の通知(NULL 可) |
-
 **(11) 退会・データ管理**
 
 ```mermaid
@@ -366,11 +296,6 @@ erDiagram
     TEXT applied_by_id FK "→M_CONTRACT/M_PRJ_USERS" }
   M_CONTRACT ||--o{ T_WITHDRAW_REQ : "退会申請"
 ```
-
-| 親 | 子(FK カラム) | 多重度 | 説明 |
-|----|----|----|----|
-| [`M_CONTRACT`](TBL-M-002.md) | [`T_WITHDRAW_REQ`](TBL-T-011.md)(`contract_id`) | 1:N | 退会申請(90 日猶予) |
-| `M_CONTRACT` / `M_PRJ_USERS` | [`T_WITHDRAW_REQ`](TBL-T-011.md)(`applied_by_id`) | 1:N | 申請者(多態) |
 
 **(12) システム・ログ・運用**
 
@@ -390,14 +315,6 @@ erDiagram
   M_CONTRACT ||--o{ TP_AI_THRESH_CACHE : "しきい値"
   M_PROJECTS ||--o{ TP_AI_THRESH_CACHE : "PJしきい値"
 ```
-
-| 親 | 子(FK カラム) | 多重度 | 説明 |
-|----|----|----|----|
-| [`M_CONTRACT`](TBL-M-002.md) | [`H_AUDIT_LOGS`](TBL-H-004.md)(`contract_id`) | 1:N | 操作監査ログ(NULL 可) |
-| `M_CONTRACT` / `M_PRJ_USERS` | [`H_AUDIT_LOGS`](TBL-H-004.md)(`actor_id`) | 1:N | 操作者(多態) |
-| [`M_CONTRACT`](TBL-M-002.md) | [`TP_AI_THRESH_CACHE`](TBL-TP-002.md)(`contract_id`) | 1:N | AI しきい値キャッシュ(NULL 可) |
-| [`M_PROJECTS`](TBL-M-004.md) | [`TP_AI_THRESH_CACHE`](TBL-TP-002.md)(`project_id`) | 1:N | プロジェクト別しきい値(NULL 可) |
-| — | [`H_ERROR_LOGS`](TBL-H-005.md) / [`M_EMAIL_SUPPRESS`](TBL-M-007.md) | — | 外部キーを持たない独立テーブル |
 
 ## <span id="rule"></span>4.命名・分類規約
 
