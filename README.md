@@ -127,7 +127,6 @@
 ### ユースケース設計
 
 - [ユースケース一覧](02_basic-design/04_usecase-design/index.md)
-- [ユースケース・シーケンス設計書](02_basic-design/04_usecase-design/sequence-design.md)
 - [UC-SCR-001: ログイン ユースケース](02_basic-design/04_usecase-design/UC-SCR-001.md)
 - [UC-SCR-002: アカウント登録 ユースケース](02_basic-design/04_usecase-design/UC-SCR-002.md)
 - [UC-SCR-003: パスワード再設定 ユースケース](02_basic-design/04_usecase-design/UC-SCR-003.md)

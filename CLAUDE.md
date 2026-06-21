@@ -21,7 +21,7 @@ CLAUDE.md                       # 保守ルール正本(本書)
 │   └── mocks/                  #     画面モック: 画像 SCR-*.png と HTML ソース SCR-*.html(同名ペア)
 ├── 02_api-design/              #   API設計 : index.md(API一覧)+ API-*.md
 ├── 03_database-design/         #   DB設計 : index.md(テーブル一覧)+ TBL-*.md
-├── 04_usecase-design/          #   ユースケース : index.md(一覧)+ sequence-design.md + UC-SCR-* / UC-SYSTEM-*
+├── 04_usecase-design/          #   ユースケース : index.md(一覧 + 横断フロー)+ UC-SCR-* / UC-SYSTEM-*
 ├── 05_billing-design.md        #   横断設計(単独ファイル)
 ├── 06_mail-design.md
 └── 07_auth-design.md
@@ -181,7 +181,7 @@ callout は GitHub Alert 記法で表す。
 
 ### ユースケース(`02_basic-design/04_usecase-design/`)
 
-- **正本カタログ** = `index.md`(画面起点 UC 索引 / システム起点 UC 索引 / 要件トレーサビリティ)。横断フロー(粗粒度の業務シーケンス)は同フォルダ `sequence-design.md`。
+- **正本カタログ** = `index.md`(画面起点 UC 索引 / システム起点 UC 索引 / 横断ユースケースフロー `UC-01`〜`UC-10` のシーケンス図 / 要件トレーサビリティ)。
 - **画面起点** = `UC-<SCRID>.md`(1 画面 = 1 ファイル)。画面の各 `EV-xx`(画面イベント一覧 §6)と **1 対 1** で `### <span id="UC-<SCRID>-EV<nn>"></span>UC-<SCRID>-EV<nn> 名称` を列挙する。冒頭に「イベント↔UC 対応表」を置く。
 - **システム起点** = `UC-SYSTEM-<nnn>.md`(画面操作を伴わないバッチ・Webhook・非同期ジョブ等を 1 ファイル 1 UC)。
 - 各 UC の必須項目: 概要 / 利用者 / 事前条件 / トリガー / 基本フロー / 異常系フロー / 事後条件 / シーケンス図(mermaid)。
