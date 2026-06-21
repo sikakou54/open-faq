@@ -11,6 +11,7 @@ import os, re, glob
 ROOT = os.getcwd()
 GROUPS = [("01_requirements", "要件定義"),
           ("02_basic-design", "基本設計"),
+          ("04_usecases", "ユースケース"),
           ("03_future", "将来対応")]
 SUBIDX = {"01_screen-design.md": "画面設計",
           "02_api-design.md": "API設計",
@@ -148,6 +149,24 @@ def build_readme():
         if os.path.exists(f"02_basic-design/{f}"):
             L.append(li("02_basic-design", f))
     L.append("")
+
+    # ユースケース
+    if os.path.isdir("04_usecases"):
+        L.append("## ユースケース")
+        L.append("")
+        if os.path.exists("04_usecases/index.md"):
+            L.append(li("04_usecases", "index.md", "概要・一覧"))
+        L.append("")
+        L.append("### 画面起点")
+        L.append("")
+        for f in sorted([x for x in collect("04_usecases") if x.startswith("UC-SCR-")], key=natkey):
+            L.append(li("04_usecases", f))
+        L.append("")
+        L.append("### システム起点")
+        L.append("")
+        for f in sorted([x for x in collect("04_usecases") if x.startswith("UC-SYSTEM-")], key=natkey):
+            L.append(li("04_usecases", f))
+        L.append("")
 
     # 将来対応
     L.append("## 将来対応")

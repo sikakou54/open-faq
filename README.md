@@ -131,6 +131,22 @@
 - [メール設計書](02_basic-design/06_mail-design.md)
 - [認証・認可設計書](02_basic-design/07_auth-design.md)
 
+## ユースケース
+
+- [概要・一覧](04_usecases/index.md)
+
+### 画面起点
+
+- [UC-SCR-001: ログイン ユースケース](04_usecases/UC-SCR-001.md)
+- [UC-SCR-006: FAQ 一覧 ユースケース](04_usecases/UC-SCR-006.md)
+- [UC-SCR-006-001: FAQ 編集 ユースケース](04_usecases/UC-SCR-006-001.md)
+
+### システム起点
+
+- [UC-SYSTEM-001: 非同期 CSV インポートジョブ](04_usecases/UC-SYSTEM-001.md)
+- [UC-SYSTEM-002: Resend Webhook 受信(配信状態更新)](04_usecases/UC-SYSTEM-002.md)
+- [UC-SYSTEM-003: 90 日物理削除バッチ](04_usecases/UC-SYSTEM-003.md)
+
 ## 将来対応
 
 - [概要・一覧](03_future/index.md)

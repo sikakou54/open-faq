@@ -19,6 +19,7 @@ CLAUDE.md                 # 保守ルール正本(本書)
                           #            + 01_screen-design 〜 07_auth-design.md
 └── mocks/                #   画面モック: 画像 SCR-*.png と HTML ソース SCR-*.html(同名ペア)
 03_future/                # 将来対応 : index.md + FUT01.md〜FUT06(-req/-detail).md
+04_usecases/              # ユースケース : index.md + 画面起点(UC-SCR-*)/ システム起点(UC-SYSTEM-*)
 _build/                   # ツール(配信対象外)
 ├── html2md.py            #   HTML→Markdown 変換器(移行の記録 / provenance)
 ├── portal_nav.py         #   ポータルナビ付与 + README 生成器(下記)
@@ -40,7 +41,7 @@ _build/                   # ツール(配信対象外)
 
 HTML 時代のサイドバー / パンくず / 戻り導線を Markdown で再現する。
 
-- **ポータルトップ** = ルート [`README.md`](README.md)。3 グループ(要件定義 / 基本設計 / 将来対応)の全文書を入れ子で索引する(基本設計は 画面設計 / API設計 / データベース設計 / 横断設計 に細分)。
+- **ポータルトップ** = ルート [`README.md`](README.md)。4 グループ(要件定義 / 基本設計 / ユースケース / 将来対応)の全文書を入れ子で索引する(基本設計は 画面設計 / API設計 / データベース設計 / 横断設計 に細分。ユースケースは 画面起点 / システム起点 に細分)。
 - **各グループの一覧** = 各 `index.md`(および 基本設計の `01_screen-design.md` / `02_api-design.md` / `03_database-design.md` が画面/API/テーブルの一覧を兼ねる)。
 - **各ページの上下ナビ** = 全ページの先頭にパンくず、末尾に戻り導線を、次のマーカで囲って埋め込む:
   - 先頭: `<!-- portal-top -->` 〜 `<!-- /portal-top -->`(例 `[設計ポータル](../README.md) ／ [基本設計](index.md) ／ [画面設計](01_screen-design.md) ／ **SCR-001 ログイン**`)
@@ -173,6 +174,14 @@ callout は GitHub Alert 記法で表す。
 
 - MVP 後の候補・バックログ。FUT カテゴリ別。要件定義テンプレートに準じる。
 
+### ユースケース(`04_usecases/`)
+
+- **正本カタログ** = `index.md`(画面起点 UC 索引 / システム起点 UC 索引 / 要件トレーサビリティ)。
+- **画面起点** = `UC-<SCRID>.md`(1 画面 = 1 ファイル)。画面の各 `EV-xx`(画面イベント一覧 §6)と **1 対 1** で `### <span id="UC-<SCRID>-EV<nn>"></span>UC-<SCRID>-EV<nn> 名称` を列挙する。冒頭に「イベント↔UC 対応表」を置く。
+- **システム起点** = `UC-SYSTEM-<nnn>.md`(画面操作を伴わないバッチ・Webhook・非同期ジョブ等を 1 ファイル 1 UC)。
+- 各 UC の必須項目: 概要 / 利用者 / 事前条件 / トリガー / 基本フロー / 異常系フロー / 事後条件 / シーケンス図(mermaid)。
+- シーケンス図は基本設計レベルの抽象度(`利用者 / 画面 / API / DB / 外部・バッチ・通知`、`テーブル名(CRUD)` 表記)。**SQL・クラス/メソッド名・ORM・ループ・フレームワーク固有処理は書かない。** 純クライアント処理のみのイベントは「クライアント内処理のみ」と明記し図を省略する。
+
 ---
 
 ## ID・用語
@@ -190,7 +199,7 @@ callout は GitHub Alert 記法で表す。
 ```sh
 python3 - <<'PY'
 import os,re,glob,html
-files=sorted(set(glob.glob("0[123]_*/*.md")+["README.md"]))
+files=sorted(set(glob.glob("0[1234]_*/*.md")+["README.md"]))
 ids={f:set(re.findall(r'id="([^"]+)"',open(f,encoding="utf-8").read())) for f in files}
 def links(s):
     for m in re.finditer(r'\]\(([^)\s]+)\)',s): yield m.group(1)
@@ -232,5 +241,5 @@ PY
 ## 注意
 
 - Markdown が正本。本文変更は該当 `.md` の本文(ナビのマーカ外)を直接編集する。ナビ・README は `_build/portal_nav.py` で再生成する。
-- 定義行・見出しを追加したら `<span id="…"></span>` を必ず付ける。削除・改名した識別子(FR ID・列挙値・列名・画面/項目ラベル等)は、`01_〜03_` 内を検索して取りこぼしを修正する。
+- 定義行・見出しを追加したら `<span id="…"></span>` を必ず付ける。削除・改名した識別子(FR ID・列挙値・列名・画面/項目ラベル等)は、`01_〜04_` 内を検索して取りこぼしを修正する。
 - 運用ルールの更新は本書 `CLAUDE.md` を直接編集する。
