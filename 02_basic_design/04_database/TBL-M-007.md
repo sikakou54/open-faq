@@ -47,7 +47,7 @@
 
 このテーブルを読み書きする画面と API です(逆引き)。
 
-**画面** — **API** [API-WHK-001](../03_apis/index.md#API-WHK-001)
+**画面** — **API** [API-059](../03_apis/index.md#API-059)
 
 ---
 

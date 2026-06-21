@@ -48,7 +48,7 @@
 
 ### <span id="使用元"></span>使用元(画面 / API)
 
-**画面** [SCR-001](../01_screens/SCR-001.md) [SCR-002](../01_screens/SCR-002.md) [SCR-022](../01_screens/SCR-022.md) [SCR-023](../01_screens/SCR-023.md) **API** [API-AUTH-001](../03_apis/index.md#API-AUTH-001) [API-AUTH-002](../03_apis/index.md#API-AUTH-002) [API-MBR-002](../03_apis/index.md#API-MBR-002)
+**画面** [SCR-001](../01_screens/SCR-001.md) [SCR-002](../01_screens/SCR-002.md) [SCR-022](../01_screens/SCR-022.md) [SCR-023](../01_screens/SCR-023.md) **API** [API-001](../03_apis/index.md#API-001) [API-002](../03_apis/index.md#API-002) [API-021](../03_apis/index.md#API-021)
 
 ---
 

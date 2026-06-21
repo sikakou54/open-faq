@@ -48,7 +48,7 @@ FTS5 contentless 同期トリガ 3 個(基本設計が正本):
 
 このテーブルを読み書きする画面と API です(逆引き)。
 
-**画面** — **API** [API-FAQ-007](../03_apis/index.md#API-FAQ-007)
+**画面** — **API** [API-031](../03_apis/index.md#API-031)
 
 ---
 

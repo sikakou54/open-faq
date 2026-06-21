@@ -79,7 +79,7 @@ FAQ 登録前の未解決質問を保持します。
 
 このテーブルを読み書きする画面と API です(逆引き)。
 
-**画面** [SCR-005](../01_screens/SCR-005.md) [SCR-007](../01_screens/SCR-007.md) [SCR-006](../01_screens/SCR-006.md) [SCR-009](../01_screens/SCR-009.md) [SCR-011](../01_screens/SCR-011.md) [SCR-012](../01_screens/SCR-012.md) [SCR-030](../01_screens/SCR-030.md) **API** [API-DASH-001](../03_apis/index.md#API-DASH-001) [API-INQ-001](../03_apis/index.md#API-INQ-001) [API-INQ-002](../03_apis/index.md#API-INQ-002) [API-PRJ-003](../03_apis/index.md#API-PRJ-003) [API-WGT-002](../03_apis/index.md#API-WGT-002) [API-WGT-003](../03_apis/index.md#API-WGT-003)
+**画面** [SCR-005](../01_screens/SCR-005.md) [SCR-007](../01_screens/SCR-007.md) [SCR-006](../01_screens/SCR-006.md) [SCR-009](../01_screens/SCR-009.md) [SCR-011](../01_screens/SCR-011.md) [SCR-012](../01_screens/SCR-012.md) [SCR-030](../01_screens/SCR-030.md) **API** [API-040](../03_apis/index.md#API-040) [API-034](../03_apis/index.md#API-034) [API-035](../03_apis/index.md#API-035) [API-018](../03_apis/index.md#API-018) [API-038](../03_apis/index.md#API-038) [API-039](../03_apis/index.md#API-039)
 
 ---
 

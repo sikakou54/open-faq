@@ -87,7 +87,7 @@
 
 このテーブルを読み書きする画面と API です(逆引き)。
 
-**画面** [SCR-012](../01_screens/SCR-012.md) [SCR-014](../01_screens/SCR-014.md) **API** [API-DASH-001](../03_apis/index.md#API-DASH-001) [API-MBR-002](../03_apis/index.md#API-MBR-002) [API-MBR-005](../03_apis/index.md#API-MBR-005) [API-WHK-001](../03_apis/index.md#API-WHK-001)
+**画面** [SCR-012](../01_screens/SCR-012.md) [SCR-014](../01_screens/SCR-014.md) **API** [API-040](../03_apis/index.md#API-040) [API-021](../03_apis/index.md#API-021) [API-024](../03_apis/index.md#API-024) [API-059](../03_apis/index.md#API-059)
 
 ---
 
