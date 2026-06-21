@@ -1,12 +1,12 @@
 <!-- portal-top -->
-[設計ポータル](../README.md) ／ [基本設計](index.md) ／ [データベース設計](03_database-design.md) ／ **TBL-H-006 H_INQUIRY_FAQ_MIGR**
+[設計ポータル](../README.md) ／ [基本設計](index.md) ／ [データベース設計](03_database-design.md) ／ **TBL-H-006 H_INQUIRY_FAQ**
 <!-- /portal-top -->
 
-# TBL-H-006 H_INQUIRY_FAQ_MIGR
+# TBL-H-006 H_INQUIRY_FAQ
 
-履歴 <span id="316-H_INQUIRY_FAQ_MIGR"></span>
+履歴 <span id="316-H_INQUIRY_FAQ"></span>
 
-未解決質問から FAQ への移行(FAQ 化)履歴を保持します。FAQ 化は未解決質問の内容を `M_FAQS` へ**コピー**して行い、両者にキーの相互参照は持たせません。どの未解決質問がどの FAQ になったかの追跡は本テーブルが正本です。
+未解決質問から FAQ への移行(FAQ 化)履歴を保持します。
 
 ### <span id="3161-概要"></span>概要
 
@@ -24,7 +24,7 @@
 <tbody>
 <tr>
 <td>テーブル名</td>
-<td><code>H_INQUIRY_FAQ_MIGR</code></td>
+<td><code>H_INQUIRY_FAQ</code></td>
 </tr>
 <tr>
 <td>論理名</td>
@@ -67,9 +67,9 @@
 
 | No | インデックス名 | 対象カラム | UNIQUE | 用途 |
 |---:|----|----|----|----|
-| 1 | `idx_inq_faq_migr_inquiry` | `inquiry_id` |  | 未解決質問からの逆引き |
-| 2 | `idx_inq_faq_migr_faq` | `faq_id` |  | FAQ からの逆引き |
-| 3 | `idx_inq_faq_migr_project` | `(project_id, created_at DESC)` |  | プロジェクト別の移行新着 |
+| 1 | `idx_inq_faq_inquiry` | `inquiry_id` |  | 未解決質問からの逆引き |
+| 2 | `idx_inq_faq_faq` | `faq_id` |  | FAQ からの逆引き |
+| 3 | `idx_inq_faq_project` | `(project_id, created_at DESC)` |  | プロジェクト別の移行新着 |
 
 ### <span id="3167-コード値区分値"></span>コード値・区分値
 

@@ -56,7 +56,7 @@ FAQ 本体と改訂履歴・全文検索、質問ログ、参照 FAQ、未解決
 | [`H_QUESTION_LOGS`](TBL-H-002.md) | 質問ログ | 履歴 | ウィジェット利用者の質問と AI 推論結果。 |
 | [`T_QLOG_FAQ_REFS`](TBL-T-004.md) | 参照 FAQ(M:N) | トランザクション | 質問ログと参照 FAQ の中間テーブル。 |
 | [`T_INQUIRIES`](TBL-T-005.md) | 未解決質問 | トランザクション | FAQ 登録前の未解決質問。 |
-| [`H_INQUIRY_FAQ_MIGR`](TBL-H-006.md) | 未解決質問 FAQ 化履歴 | 履歴 | 未解決質問から FAQ への移行履歴(データコピー方式)。 |
+| [`H_INQUIRY_FAQ`](TBL-H-006.md) | 未解決質問 FAQ 化履歴 | 履歴 | 未解決質問から FAQ への移行履歴(データコピー方式)。 |
 
 #### 利用量・課金・上限 (5)
 
@@ -198,7 +198,7 @@ erDiagram
   H_FAQ_REV { TEXT id PK
     TEXT faq_id FK "→M_FAQS.id" }
   TP_FAQ_FTS { INTEGER rowid PK }
-  H_INQUIRY_FAQ_MIGR { TEXT id PK
+  H_INQUIRY_FAQ { TEXT id PK
     TEXT inquiry_id FK "→T_INQUIRIES.id"
     TEXT faq_id FK "→M_FAQS.id" }
   M_PROJECTS { TEXT id PK }
@@ -208,8 +208,8 @@ erDiagram
   M_FAQS ||--o{ H_FAQ_REV : "改訂"
   M_FAQS ||--o| TP_FAQ_FTS : "全文索引"
   M_FAQS ||--o{ T_QLOG_FAQ_REFS : "被参照"
-  T_INQUIRIES ||--o{ H_INQUIRY_FAQ_MIGR : "FAQ化"
-  M_FAQS ||--o{ H_INQUIRY_FAQ_MIGR : "FAQ化履歴"
+  T_INQUIRIES ||--o{ H_INQUIRY_FAQ : "FAQ化"
+  M_FAQS ||--o{ H_INQUIRY_FAQ : "FAQ化履歴"
 ```
 
 **(7) 質問ログ・参照 FAQ**
@@ -242,13 +242,13 @@ erDiagram
   M_PROJECTS { TEXT id PK }
   H_QUESTION_LOGS { TEXT id PK }
   M_FAQS { TEXT id PK }
-  H_INQUIRY_FAQ_MIGR { TEXT id PK
+  H_INQUIRY_FAQ { TEXT id PK
     TEXT inquiry_id FK "→T_INQUIRIES.id"
     TEXT faq_id FK "→M_FAQS.id" }
   M_PROJECTS ||--o{ T_INQUIRIES : "未解決"
   H_QUESTION_LOGS ||--o| T_INQUIRIES : "未解決化"
-  T_INQUIRIES ||--o{ H_INQUIRY_FAQ_MIGR : "FAQ化"
-  M_FAQS ||--o{ H_INQUIRY_FAQ_MIGR : "FAQ化履歴"
+  T_INQUIRIES ||--o{ H_INQUIRY_FAQ : "FAQ化"
+  M_FAQS ||--o{ H_INQUIRY_FAQ : "FAQ化履歴"
 ```
 
 **(9) 利用量・課金・上限**

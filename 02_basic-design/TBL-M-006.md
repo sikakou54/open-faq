@@ -6,7 +6,7 @@
 
 マスタ <span id="39-M_FAQS"></span>
 
-FAQ 本体(質問・回答・公開状態)を保持します。契約境界は `project_id` → `M_PROJECTS.contract_id` で導出します(本テーブルに `contract_id` は保持しません)。未解決質問からの FAQ 化は内容をコピーして登録し、移行履歴は [`H_INQUIRY_FAQ_MIGR`](TBL-H-006.md) が保持します(本テーブルは元未解決質問へのキー参照を持ちません)。
+FAQ 本体(質問・回答・公開状態)を保持します。契約境界は `project_id` → `M_PROJECTS.contract_id` で導出します。
 
 ### <span id="391-概要"></span>概要
 

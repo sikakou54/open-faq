@@ -121,7 +121,7 @@
 - [TBL-H-003 H_NOTIF_LOGS](02_basic-design/TBL-H-003.md)
 - [TBL-H-004 H_AUDIT_LOGS](02_basic-design/TBL-H-004.md)
 - [TBL-H-005 H_ERROR_LOGS](02_basic-design/TBL-H-005.md)
-- [TBL-H-006 H_INQUIRY_FAQ_MIGR](02_basic-design/TBL-H-006.md)
+- [TBL-H-006 H_INQUIRY_FAQ](02_basic-design/TBL-H-006.md)
 - [TBL-TP-001 TP_FAQ_FTS](02_basic-design/TBL-TP-001.md)
 - [TBL-TP-002 TP_AI_THRESH_CACHE](02_basic-design/TBL-TP-002.md)
 
