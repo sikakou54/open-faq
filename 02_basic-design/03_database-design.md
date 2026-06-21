@@ -320,8 +320,6 @@ erDiagram
   TP_AI_THRESH_CACHE { TEXT id PK
     TEXT contract_id FK "→M_CONTRACT.id"
     TEXT project_id FK "→M_PROJECTS.id" }
-  H_ERROR_LOGS { TEXT id PK }
-  M_EMAIL_SUPPRESS { TEXT id PK }
   M_CONTRACT ||--o{ H_AUDIT_LOGS : "監査"
   M_CONTRACT ||--o{ TP_AI_THRESH_CACHE : "しきい値"
   M_PROJECTS ||--o{ TP_AI_THRESH_CACHE : "PJしきい値"
