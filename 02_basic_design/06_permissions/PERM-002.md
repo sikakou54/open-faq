@@ -32,7 +32,7 @@
 
 | 観点 | 結線 |
 |----|----|
-| 対応業務UC | — |
+| 対応業務UC | [UC-173](../../01_requirements/02_business_usecases/UC-173.md#UC-173) |
 | 対応画面SCR | — |
 | 対応EVT | — |
 | 対応API | — |

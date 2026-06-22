@@ -21,7 +21,7 @@
 | 退会済み(deleted): ログイン | 不可 | 不可 | — | 不可 | — |
 
 > [!NOTE]
-> **支払方法ゲートは契約停止ではない** 支払方法未登録 + 無料枠超過によるウィジェット受付停止は契約サスペンションではありません(`status` は `active` のまま)。本制限の対象外で管理画面は通常どおり利用できます。拒否時は `E-BIZ-CONTRACT-SUSPENDED` / `E-BIZ-CONTRACT-DELETED`。契約状態遷移は [課金・請求設計書](../05_billing-design.md) が正本。
+> **支払方法ゲートは契約停止ではない** 支払方法未登録 + 無料枠超過によるウィジェット受付停止は契約サスペンションではありません(`status` は `active` のまま)。本制限の対象外で管理画面は通常どおり利用できます。拒否時は `E-BILL-CONTRACT-SUSPENDED` / `E-BIZ-CONTRACT-DELETED`。契約状態遷移は [課金・請求設計書](../05_billing-design.md) が正本。
 
 ## <span id="trace"></span>2. 対応 UC / SCR / EVT / API
 
@@ -29,7 +29,7 @@
 
 | 観点 | 結線 |
 |----|----|
-| 対応業務UC | — |
+| 対応業務UC | [UC-241](../../01_requirements/02_business_usecases/UC-241.md#UC-241) |
 | 対応画面SCR | — |
 | 対応EVT | — |
 | 対応API | [API-002](../03_apis/API-002.md#API-002) [API-037](../03_apis/API-037.md#API-037) |

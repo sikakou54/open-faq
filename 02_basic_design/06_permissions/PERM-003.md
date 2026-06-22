@@ -30,7 +30,7 @@
 
 | 観点 | 結線 |
 |----|----|
-| 対応業務UC | — |
+| 対応業務UC | [UC-248](../../01_requirements/02_business_usecases/UC-248.md#UC-248) |
 | 対応画面SCR | [SCR-005](../01_screens/SCR-005.md#SCR-005) [SCR-019](../01_screens/SCR-019.md#SCR-019) [SCR-028](../01_screens/SCR-028.md#SCR-028) |
 | 対応EVT | — |
 | 対応API | [API-014](../03_apis/API-014.md#API-014) [API-015](../03_apis/API-015.md#API-015) [API-017](../03_apis/API-017.md#API-017) [API-018](../03_apis/API-018.md#API-018) [API-045](../03_apis/API-045.md#API-045) [API-056](../03_apis/API-056.md#API-056) |
