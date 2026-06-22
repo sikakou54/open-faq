@@ -40,7 +40,7 @@
 | FUT-REQ-SEC-001 | 個別チャット本文の列単位暗号化 | 平文保存 + DB 操作者 2 名以下・月次棚卸し・全クエリ監査の補完策 | GA | AES-256-GCM + オーナー派生鍵による列単位暗号化方式が承認され、staging 復元 E2E スモークが合格すること |
 | FUT-REQ-SEC-002 | 利用者側 admin / operator MFA | パスワード再入力、ロックアウト、Turnstile、操作通知、監査ログでリスク受容 | 限定公開 / ベータ / GA | 限定公開で admin opt-in、ベータで契約単位強制可、GA で新規契約既定 ON とするか判定 |
 | FUT-REQ-SEC-005 | SSO / ソーシャルログイン / パスキー | 自前アカウント + パスワード + メール確認 | Post-MVP | エンタープライズ要望、認証リスク低減効果、サポート負荷をもとに判定 |
-| FUT-REQ-SEC-006 | データ保持期間の利用者側調整 UI(短縮 / 長期化) | MVP は NFR-056 によりシステム固定値で固定し UI を提供しない。短縮はサポート窓口経由で対応、長期化は契約調整で対応 | Post-MVP | エンタープライズ顧客のコンプライアンス要件・契約条項としてのデータ保持カスタマイズ需要、長期化承認フロー整備、電子帳簿保存法等の法定下限を下回らないガード設計を踏まえて再開判定 |
+| FUT-REQ-SEC-006 | データ保持期間の利用者側調整 UI(短縮 / 長期化) | MVP は NFR-046 によりシステム固定値で固定し UI を提供しない。短縮はサポート窓口経由で対応、長期化は契約調整で対応 | Post-MVP | エンタープライズ顧客のコンプライアンス要件・契約条項としてのデータ保持カスタマイズ需要、長期化承認フロー整備、電子帳簿保存法等の法定下限を下回らないガード設計を踏まえて再開判定 |
 
 ### <span id="22-基本設計論点"></span>2.2 基本設計論点
 
@@ -48,7 +48,7 @@
 
 | 項目 | 基本設計で具体化すること | 関連 Future 要件 |
 |----|----|----|
-| 利用者側 admin / operator MFA | SCR-017 個人設定での MFA 登録・解除・リカバリ、SCR-023 設定での契約単位強制状態、未設定ユーザーのログイン制御 | FUT-REQ-SEC-002 |
+| 利用者側 admin / operator MFA | SCR-022 個人設定での MFA 登録・解除・リカバリ、SCR-029 設定での契約単位強制状態、未設定ユーザーのログイン制御 | FUT-REQ-SEC-002 |
 | SSO / パスキー | 認証プロバイダ選定、既存自前認証との併存、招待・退会・ロックアウトとの状態整合 | FUT-REQ-SEC-005 |
 | 個別チャット列単位暗号化 | 鍵階層、検索・復元・監査への影響、障害時の復旧設計、運用者が本文を扱う導線の制限 | FUT-REQ-SEC-001 |
 
@@ -120,7 +120,7 @@ CREATE TABLE owner_key_versions (
 | 種別 | 影響内容 |
 |----|----|
 | 要件 | FR-005(MFA 段階導入)、NFR-028(個別チャット平文 → 暗号化)、SSO / パスキーは新規要件として追加 |
-| 画面 | SCR-017 個人設定(MFA 登録・解除・回復コード)、SCR-023 設定(MFA 強制ポリシー)、ログイン画面(MFA 入力)、招待受諾フロー(契約単位強制下) |
+| 画面 | SCR-022 個人設定(MFA 登録・解除・回復コード)、SCR-029 設定(MFA 強制ポリシー)、ログイン画面(MFA 入力)、招待受諾フロー(契約単位強制下) |
 | API | `POST /api/v1/settings/mfa-policy`、`POST /api/v1/auth/mfa/setup`、`POST /api/v1/auth/mfa/recovery-code`、SSO 連携 OAuth / OIDC エンドポイント |
 | テーブル | `M_OWNERS.mfa_enforcement` 列追加、`owner_mfa_policy_audit_logs`、`chat_messages.body_ciphertext` / `body_nonce` / `body_key_version`、`owner_key_versions` |
 | 運用 | MFA 未設定者向けの猶予期間運用、回復コード再発行手順、鍵ローテーション Runbook、列単位暗号化への dual read 期間運用、SSO IdP との連携運用 |
@@ -142,7 +142,7 @@ CREATE TABLE owner_key_versions (
 | 種別 | 参照先 |
 |----|----|
 | 要件 | [../01_requirements/index.md](../01_requirements/index.md) |
-| 基本設計 | [../02_basic-design/index.md](../02_basic-design/index.md) |
+| 基本設計 | [../02_basic_design/index.md](../02_basic_design/index.md) |
 
 ------------------------------------------------------------------------
 

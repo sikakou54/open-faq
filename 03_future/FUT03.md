@@ -99,7 +99,7 @@ CREATE TABLE owner_region_audit_logs (
 
 | 種別 | 影響内容 |
 |----|----|
-| 要件 | NFR-069(言語)、NFR-070(TZ)、region 属性導入による契約モデル拡張 |
+| 要件 | NFR-059(言語)、NFR-060(TZ)、region 属性導入による契約モデル拡張 |
 | 画面 | UI 言語スイッチャー、契約発行画面(region 選択)、アカウント設定(個人 TZ) |
 | API | `POST /admin/v1/owners/{id}/region-approval`、`TenantRegionGuard` ミドルウェア(全 API)、メール送信 API の locale パラメータ |
 | テーブル | `M_OWNERS.region` 列追加、`owner_region_audit_logs`、翻訳キー管理テーブル(Future で具体化) |
@@ -122,7 +122,7 @@ CREATE TABLE owner_region_audit_logs (
 | 種別 | 参照先 |
 |----|----|
 | 要件 | [../01_requirements/index.md](../01_requirements/index.md) |
-| 基本設計 | [../02_basic-design/index.md](../02_basic-design/index.md) |
+| 基本設計 | [../02_basic_design/index.md](../02_basic_design/index.md) |
 
 ------------------------------------------------------------------------
 

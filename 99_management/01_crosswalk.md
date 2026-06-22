@@ -1,0 +1,151 @@
+# クロスウォーク(旧→新 ID 対応・全リナンバの正本)
+
+*再構成プロジェクト P0 成果。機械可読版は `crosswalk.json`。本作業ディレクトリ `99_management` は最終削除対象。*
+
+## 採番方針
+フラット連番(ゼロ詰め3桁・欠番なし・文書出現順)。`BR/FR/NFR/RULE/UC/SCR/EVT/API/TBL/SEQ/PERM/ERR/MSG`。
+
+## 件数
+- NFR: 79 → NFR-001..079(P0 想定 74 から、範囲行 NFR-029〜033 等の 1 行 1 ID 展開で +5。中身の追加・欠落なし。最終確定 79)
+- BR: 146 → BR-001..146
+- FR: 194(a/b/c 接尾辞を通し番号へ展開)→ FR-001..194
+- SCR: 30 → SCR-001..030
+- 画面イベント: 229 → EVT-001..229(`SCR/EV-xx` を保持)
+- API: 59 → API-001..059
+- TBL: 31 → TBL-001..031
+- UC(業務): P2 で UC-BIZ/UC-SCR/UC-SYSTEM から操作粒度へ再導出 → UC-001..
+- RULE/SEQ/PERM/ERR/MSG: 各フェーズで新規採番
+
+## SCR 対応
+| 旧 | 新 |
+|---|---|
+| SCR-001 | SCR-001 |
+| SCR-002 | SCR-002 |
+| SCR-003 | SCR-003 |
+| SCR-004 | SCR-004 |
+| SCR-004-001 | SCR-005 |
+| SCR-005 | SCR-006 |
+| SCR-005-001 | SCR-007 |
+| SCR-006 | SCR-008 |
+| SCR-006-001 | SCR-009 |
+| SCR-006-002 | SCR-010 |
+| SCR-007 | SCR-011 |
+| SCR-008 | SCR-012 |
+| SCR-009 | SCR-013 |
+| SCR-009-001 | SCR-014 |
+| SCR-010 | SCR-015 |
+| SCR-011 | SCR-016 |
+| SCR-012 | SCR-017 |
+| SCR-013 | SCR-018 |
+| SCR-014 | SCR-019 |
+| SCR-015 | SCR-020 |
+| SCR-016 | SCR-021 |
+| SCR-017 | SCR-022 |
+| SCR-018 | SCR-023 |
+| SCR-019 | SCR-024 |
+| SCR-020 | SCR-025 |
+| SCR-021 | SCR-026 |
+| SCR-021-001 | SCR-027 |
+| SCR-022 | SCR-028 |
+| SCR-023 | SCR-029 |
+| SCR-WIDGET | SCR-030 |
+
+## API 対応(抜粋・全件は crosswalk.json)
+| 旧 | 新 |
+|---|---|
+| API-AUTH-001 | API-001 |
+| API-AUTH-002 | API-002 |
+| API-AUTH-003 | API-003 |
+| API-AUTH-004 | API-004 |
+| API-AUTH-005 | API-005 |
+| API-AUTH-006 | API-006 |
+| API-AUTH-007 | API-007 |
+| API-AUTH-008 | API-008 |
+| API-AUTH-009 | API-009 |
+| API-AUTH-010 | API-010 |
+| API-AUTH-011 | API-011 |
+| API-AUTH-012 | API-012 |
+| API-AUTH-013 | API-013 |
+| API-AUTH-014 | API-014 |
+| API-AUTH-015 | API-015 |
+| API-PRJ-001 | API-016 |
+| API-PRJ-002 | API-017 |
+| API-PRJ-003 | API-018 |
+| API-PRJ-004 | API-019 |
+| API-MBR-001 | API-020 |
+| API-MBR-002 | API-021 |
+| API-MBR-003 | API-022 |
+| API-MBR-004 | API-023 |
+| API-MBR-005 | API-024 |
+| API-FAQ-001 | API-025 |
+| API-FAQ-002 | API-026 |
+| API-FAQ-003 | API-027 |
+| API-FAQ-004 | API-028 |
+| API-FAQ-005 | API-029 |
+| API-FAQ-006 | API-030 |
+| API-FAQ-007 | API-031 |
+| API-FAQ-008 | API-032 |
+| API-FAQ-009 | API-033 |
+| API-INQ-001 | API-034 |
+| API-INQ-002 | API-035 |
+| API-INQ-003 | API-036 |
+| API-WGT-001 | API-037 |
+| API-WGT-002 | API-038 |
+| API-WGT-003 | API-039 |
+| API-DASH-001 | API-040 |
+| API-BIL-001 | API-041 |
+| API-BIL-002 | API-042 |
+| API-BIL-003 | API-043 |
+| API-BIL-004 | API-044 |
+| API-BIL-005 | API-045 |
+| API-BIL-006 | API-046 |
+| API-BIL-007 | API-047 |
+| API-ANN-001 | API-048 |
+| API-ANN-002 | API-049 |
+| API-ANN-003 | API-050 |
+| API-ANN-004 | API-051 |
+| API-TRM-001 | API-052 |
+| API-TRM-002 | API-053 |
+| API-TRM-003 | API-054 |
+| API-TRM-004 | API-055 |
+| API-TRM-005 | API-056 |
+| API-AI-001 | API-057 |
+| API-MAIL-001 | API-058 |
+| API-WHK-001 | API-059 |
+
+## TBL 対応
+| 旧 | 新 |
+|---|---|
+| TBL-M-001 | TBL-001 |
+| TBL-M-002 | TBL-002 |
+| TBL-M-003 | TBL-003 |
+| TBL-M-004 | TBL-004 |
+| TBL-M-005 | TBL-005 |
+| TBL-M-006 | TBL-006 |
+| TBL-M-007 | TBL-007 |
+| TBL-M-008 | TBL-008 |
+| TBL-M-009 | TBL-009 |
+| TBL-M-010 | TBL-010 |
+| TBL-M-011 | TBL-011 |
+| TBL-M-012 | TBL-012 |
+| TBL-T-001 | TBL-013 |
+| TBL-T-002 | TBL-014 |
+| TBL-T-003 | TBL-015 |
+| TBL-T-004 | TBL-016 |
+| TBL-T-005 | TBL-017 |
+| TBL-T-006 | TBL-018 |
+| TBL-T-007 | TBL-019 |
+| TBL-T-008 | TBL-020 |
+| TBL-T-009 | TBL-021 |
+| TBL-T-010 | TBL-022 |
+| TBL-T-011 | TBL-023 |
+| TBL-T-012 | TBL-024 |
+| TBL-H-001 | TBL-025 |
+| TBL-H-002 | TBL-026 |
+| TBL-H-003 | TBL-027 |
+| TBL-H-004 | TBL-028 |
+| TBL-H-005 | TBL-029 |
+| TBL-TP-001 | TBL-030 |
+| TBL-TP-002 | TBL-031 |
+
+> FR/BR/NFR/EVT の全対応は `crosswalk.json` を正本とする(件数が大きいため本書では省略)。

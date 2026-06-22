@@ -1,0 +1,880 @@
+{
+"FR-012": {
+"fg": "ユーザー管理(オーナー + メンバー)",
+"cand": [
+"UC-182"
+],
+"method": "fg-screen-kw"
+},
+"FR-013": {
+"fg": "ユーザー管理(オーナー + メンバー)",
+"cand": [
+"UC-236"
+],
+"method": "br-bridge"
+},
+"FR-015": {
+"fg": "ユーザー管理(オーナー + メンバー)",
+"cand": [],
+"method": "NONE"
+},
+"FR-016": {
+"fg": "ユーザー管理(オーナー + メンバー)",
+"cand": [
+"UC-236"
+],
+"method": "br-bridge"
+},
+"FR-017": {
+"fg": "ユーザー管理(オーナー + メンバー)",
+"cand": [
+"UC-236"
+],
+"method": "br-bridge"
+},
+"FR-019": {
+"fg": "ユーザー管理(オーナー + メンバー)",
+"cand": [
+"UC-123",
+"UC-181"
+],
+"method": "br-bridge"
+},
+"FR-020": {
+"fg": "ユーザー管理(オーナー + メンバー)",
+"cand": [],
+"method": "NONE"
+},
+"FR-021": {
+"fg": "ユーザー管理(オーナー + メンバー)",
+"cand": [
+"UC-123",
+"UC-181"
+],
+"method": "br-bridge"
+},
+"FR-023": {
+"fg": "ユーザー管理(オーナー + メンバー)",
+"cand": [
+"UC-123",
+"UC-181"
+],
+"method": "br-bridge"
+},
+"FR-024": {
+"fg": "ユーザー管理(オーナー + メンバー)",
+"cand": [
+"UC-128",
+"UC-130"
+],
+"method": "br-bridge"
+},
+"FR-025": {
+"fg": "ユーザー管理(オーナー + メンバー)",
+"cand": [
+"UC-182"
+],
+"method": "fg-screen-kw"
+},
+"FR-026": {
+"fg": "ユーザー管理(オーナー + メンバー)",
+"cand": [
+"UC-129"
+],
+"method": "fg-screen-kw"
+},
+"FR-028": {
+"fg": "ユーザー管理(オーナー + メンバー)",
+"cand": [],
+"method": "NONE"
+},
+"FR-029": {
+"fg": "ユーザー管理(オーナー + メンバー)",
+"cand": [
+"UC-129"
+],
+"method": "fg-screen-kw"
+},
+"FR-032": {
+"fg": "ユーザー管理(オーナー + メンバー)",
+"cand": [
+"UC-123",
+"UC-181"
+],
+"method": "br-bridge"
+},
+"FR-033": {
+"fg": "ユーザー管理(オーナー + メンバー)",
+"cand": [
+"UC-112",
+"UC-113"
+],
+"method": "global-kw"
+},
+"FR-034": {
+"fg": "ユーザー管理(オーナー + メンバー)",
+"cand": [],
+"method": "NONE"
+},
+"FR-035": {
+"fg": "ユーザー管理(オーナー + メンバー)",
+"cand": [
+"UC-236"
+],
+"method": "br-bridge"
+},
+"FR-038": {
+"fg": "プロジェクト管理",
+"cand": [],
+"method": "NONE"
+},
+"FR-039": {
+"fg": "プロジェクト管理",
+"cand": [
+"UC-232"
+],
+"method": "global-kw"
+},
+"FR-041": {
+"fg": "プロジェクト管理",
+"cand": [
+"UC-059",
+"UC-060",
+"UC-061"
+],
+"method": "global-kw"
+},
+"FR-042": {
+"fg": "プロジェクト管理",
+"cand": [],
+"method": "NONE"
+},
+"FR-045": {
+"fg": "プロジェクト管理",
+"cand": [
+"UC-059",
+"UC-060",
+"UC-061"
+],
+"method": "global-kw"
+},
+"FR-046": {
+"fg": "プロジェクト管理",
+"cand": [],
+"method": "NONE"
+},
+"FR-048": {
+"fg": "FAQ 管理",
+"cand": [
+"UC-059",
+"UC-060",
+"UC-061"
+],
+"method": "fg-screen-kw"
+},
+"FR-049": {
+"fg": "FAQ 管理",
+"cand": [
+"UC-059",
+"UC-060",
+"UC-061"
+],
+"method": "fg-screen-kw"
+},
+"FR-050": {
+"fg": "FAQ 管理",
+"cand": [
+"UC-059",
+"UC-060",
+"UC-061"
+],
+"method": "fg-screen-kw"
+},
+"FR-051": {
+"fg": "FAQ 管理",
+"cand": [
+"UC-059",
+"UC-060",
+"UC-061"
+],
+"method": "fg-screen-kw"
+},
+"FR-052": {
+"fg": "FAQ 管理",
+"cand": [
+"UC-059",
+"UC-060",
+"UC-061"
+],
+"method": "fg-screen-kw"
+},
+"FR-054": {
+"fg": "FAQ 管理",
+"cand": [
+"UC-059",
+"UC-060",
+"UC-061"
+],
+"method": "fg-screen-kw"
+},
+"FR-055": {
+"fg": "FAQ 管理",
+"cand": [
+"UC-059",
+"UC-060",
+"UC-061"
+],
+"method": "fg-screen-kw"
+},
+"FR-056": {
+"fg": "FAQ 管理",
+"cand": [
+"UC-059",
+"UC-060",
+"UC-061"
+],
+"method": "fg-screen-kw"
+},
+"FR-058": {
+"fg": "AI 回答",
+"cand": [
+"UC-227"
+],
+"method": "fg-screen-kw"
+},
+"FR-059": {
+"fg": "AI 回答",
+"cand": [
+"UC-227"
+],
+"method": "fg-screen-kw"
+},
+"FR-060": {
+"fg": "AI 回答",
+"cand": [
+"UC-059",
+"UC-060",
+"UC-061"
+],
+"method": "global-kw"
+},
+"FR-062": {
+"fg": "AI 回答",
+"cand": [
+"UC-044",
+"UC-112",
+"UC-113"
+],
+"method": "global-kw"
+},
+"FR-063": {
+"fg": "AI 回答",
+"cand": [
+"UC-050",
+"UC-068",
+"UC-044"
+],
+"method": "global-kw"
+},
+"FR-064": {
+"fg": "AI 回答",
+"cand": [],
+"method": "NONE"
+},
+"FR-065": {
+"fg": "AI 回答",
+"cand": [
+"UC-227"
+],
+"method": "fg-screen-kw"
+},
+"FR-066": {
+"fg": "AI 回答",
+"cand": [
+"UC-227"
+],
+"method": "fg-screen-kw"
+},
+"FR-067": {
+"fg": "AI 回答",
+"cand": [
+"UC-227"
+],
+"method": "fg-screen-kw"
+},
+"FR-069": {
+"fg": "未解決質問登録",
+"cand": [
+"UC-046",
+"UC-054"
+],
+"method": "br-bridge"
+},
+"FR-070": {
+"fg": "未解決質問登録",
+"cand": [],
+"method": "NONE"
+},
+"FR-071": {
+"fg": "未解決質問登録",
+"cand": [
+"UC-050"
+],
+"method": "fg-screen-kw"
+},
+"FR-072": {
+"fg": "未解決質問登録",
+"cand": [
+"UC-055",
+"UC-056"
+],
+"method": "fg-screen-kw"
+},
+"FR-073": {
+"fg": "未解決質問登録",
+"cand": [
+"UC-056",
+"UC-059",
+"UC-060"
+],
+"method": "fg-screen-kw"
+},
+"FR-074": {
+"fg": "未解決質問登録",
+"cand": [
+"UC-055",
+"UC-056",
+"UC-059"
+],
+"method": "fg-screen-kw"
+},
+"FR-076": {
+"fg": "未解決質問から FAQ 登録",
+"cand": [
+"UC-059",
+"UC-060",
+"UC-061"
+],
+"method": "global-kw"
+},
+"FR-077": {
+"fg": "未解決質問から FAQ 登録",
+"cand": [
+"UC-059",
+"UC-060",
+"UC-061"
+],
+"method": "global-kw"
+},
+"FR-078": {
+"fg": "未解決質問から FAQ 登録",
+"cand": [
+"UC-059",
+"UC-060",
+"UC-061"
+],
+"method": "global-kw"
+},
+"FR-079": {
+"fg": "未解決質問から FAQ 登録",
+"cand": [
+"UC-059",
+"UC-060",
+"UC-061"
+],
+"method": "global-kw"
+},
+"FR-080": {
+"fg": "未解決質問から FAQ 登録",
+"cand": [
+"UC-055",
+"UC-056",
+"UC-059"
+],
+"method": "global-kw"
+},
+"FR-081": {
+"fg": "未解決質問から FAQ 登録",
+"cand": [
+"UC-059",
+"UC-060",
+"UC-061"
+],
+"method": "global-kw"
+},
+"FR-082": {
+"fg": "処理エラー",
+"cand": [],
+"method": "NONE"
+},
+"FR-083": {
+"fg": "処理エラー",
+"cand": [
+"UC-059",
+"UC-060",
+"UC-061"
+],
+"method": "global-kw"
+},
+"FR-084": {
+"fg": "処理エラー",
+"cand": [],
+"method": "NONE"
+},
+"FR-085": {
+"fg": "処理エラー",
+"cand": [],
+"method": "NONE"
+},
+"FR-086": {
+"fg": "処理エラー",
+"cand": [],
+"method": "NONE"
+},
+"FR-095": {
+"fg": "利用量",
+"cand": [],
+"method": "NONE"
+},
+"FR-099": {
+"fg": "利用量",
+"cand": [],
+"method": "NONE"
+},
+"FR-101": {
+"fg": "管理ダッシュボード",
+"cand": [
+"UC-055",
+"UC-056"
+],
+"method": "global-kw"
+},
+"FR-102": {
+"fg": "管理ダッシュボード",
+"cand": [],
+"method": "NONE"
+},
+"FR-103": {
+"fg": "管理ダッシュボード",
+"cand": [],
+"method": "NONE"
+},
+"FR-104": {
+"fg": "管理ダッシュボード",
+"cand": [],
+"method": "NONE"
+},
+"FR-105": {
+"fg": "管理ダッシュボード",
+"cand": [],
+"method": "NONE"
+},
+"FR-106": {
+"fg": "管理ダッシュボード",
+"cand": [
+"UC-044"
+],
+"method": "global-kw"
+},
+"FR-107": {
+"fg": "管理ダッシュボード",
+"cand": [],
+"method": "NONE"
+},
+"FR-108": {
+"fg": "管理ダッシュボード",
+"cand": [],
+"method": "NONE"
+},
+"FR-109": {
+"fg": "管理ダッシュボード",
+"cand": [
+"UC-111"
+],
+"method": "fg-screen-kw"
+},
+"FR-110": {
+"fg": "管理ダッシュボード",
+"cand": [],
+"method": "NONE"
+},
+"FR-111": {
+"fg": "管理ダッシュボード",
+"cand": [],
+"method": "NONE"
+},
+"FR-112": {
+"fg": "管理ダッシュボード",
+"cand": [
+"UC-029",
+"UC-032"
+],
+"method": "global-kw"
+},
+"FR-116": {
+"fg": "通知",
+"cand": [],
+"method": "NONE"
+},
+"FR-117": {
+"fg": "通知",
+"cand": [],
+"method": "NONE"
+},
+"FR-118": {
+"fg": "通知",
+"cand": [],
+"method": "NONE"
+},
+"FR-119": {
+"fg": "通知",
+"cand": [],
+"method": "NONE"
+},
+"FR-124": {
+"fg": "通知",
+"cand": [
+"UC-231"
+],
+"method": "br-bridge"
+},
+"FR-126": {
+"fg": "ウィジェット",
+"cand": [],
+"method": "NONE"
+},
+"FR-127": {
+"fg": "ウィジェット",
+"cand": [],
+"method": "NONE"
+},
+"FR-128": {
+"fg": "ウィジェット",
+"cand": [
+"UC-239"
+],
+"method": "global-kw"
+},
+"FR-129": {
+"fg": "ウィジェット",
+"cand": [],
+"method": "NONE"
+},
+"FR-130": {
+"fg": "ウィジェット",
+"cand": [],
+"method": "NONE"
+},
+"FR-131": {
+"fg": "ウィジェット",
+"cand": [],
+"method": "NONE"
+},
+"FR-132": {
+"fg": "ウィジェット",
+"cand": [],
+"method": "NONE"
+},
+"FR-133": {
+"fg": "ウィジェット",
+"cand": [
+"UC-239"
+],
+"method": "global-kw"
+},
+"FR-134": {
+"fg": "ウィジェット",
+"cand": [
+"UC-165",
+"UC-166",
+"UC-198"
+],
+"method": "global-kw"
+},
+"FR-135": {
+"fg": "ウィジェット",
+"cand": [],
+"method": "NONE"
+},
+"FR-136": {
+"fg": "ウィジェット",
+"cand": [
+"UC-050",
+"UC-068",
+"UC-044"
+],
+"method": "global-kw"
+},
+"FR-140": {
+"fg": "プライバシー",
+"cand": [],
+"method": "NONE"
+},
+"FR-141": {
+"fg": "プライバシー",
+"cand": [
+"UC-059",
+"UC-060",
+"UC-061"
+],
+"method": "global-kw"
+},
+"FR-142": {
+"fg": "プライバシー",
+"cand": [],
+"method": "NONE"
+},
+"FR-143": {
+"fg": "セキュリティ",
+"cand": [],
+"method": "NONE"
+},
+"FR-144": {
+"fg": "セキュリティ",
+"cand": [
+"UC-010",
+"UC-184"
+],
+"method": "fg-screen-kw"
+},
+"FR-145": {
+"fg": "セキュリティ",
+"cand": [
+"UC-007",
+"UC-016"
+],
+"method": "br-bridge"
+},
+"FR-146": {
+"fg": "セキュリティ",
+"cand": [],
+"method": "NONE"
+},
+"FR-148": {
+"fg": "セキュリティ",
+"cand": [],
+"method": "NONE"
+},
+"FR-150": {
+"fg": "セキュリティ",
+"cand": [
+"UC-007",
+"UC-016"
+],
+"method": "br-bridge"
+},
+"FR-151": {
+"fg": "セキュリティ",
+"cand": [
+"UC-247"
+],
+"method": "br-bridge"
+},
+"FR-152": {
+"fg": "セキュリティ",
+"cand": [],
+"method": "NONE"
+},
+"FR-153": {
+"fg": "セキュリティ",
+"cand": [],
+"method": "NONE"
+},
+"FR-154": {
+"fg": "セキュリティ",
+"cand": [],
+"method": "NONE"
+},
+"FR-158": {
+"fg": "お知らせ",
+"cand": [
+"UC-147"
+],
+"method": "br-bridge"
+},
+"FR-159": {
+"fg": "お知らせ",
+"cand": [],
+"method": "NONE"
+},
+"FR-160": {
+"fg": "お知らせ",
+"cand": [],
+"method": "NONE"
+},
+"FR-161": {
+"fg": "お知らせ",
+"cand": [],
+"method": "NONE"
+},
+"FR-162": {
+"fg": "お知らせ",
+"cand": [
+"UC-246"
+],
+"method": "br-bridge"
+},
+"FR-163": {
+"fg": "お知らせ",
+"cand": [
+"UC-246"
+],
+"method": "br-bridge"
+},
+"FR-165": {
+"fg": "お知らせ",
+"cand": [],
+"method": "NONE"
+},
+"FR-166": {
+"fg": "お知らせ",
+"cand": [],
+"method": "NONE"
+},
+"FR-167": {
+"fg": "お知らせ",
+"cand": [],
+"method": "NONE"
+},
+"FR-168": {
+"fg": "検索",
+"cand": [
+"UC-059",
+"UC-060",
+"UC-061"
+],
+"method": "global-kw"
+},
+"FR-170": {
+"fg": "インポート",
+"cand": [
+"UC-059",
+"UC-060",
+"UC-068"
+],
+"method": "fg-screen-kw"
+},
+"FR-171": {
+"fg": "UX 細部",
+"cand": [
+"UC-059",
+"UC-060",
+"UC-068"
+],
+"method": "fg-screen-kw"
+},
+"FR-172": {
+"fg": "UX 細部",
+"cand": [
+"UC-059",
+"UC-060",
+"UC-068"
+],
+"method": "fg-screen-kw"
+},
+"FR-175": {
+"fg": "UX 細部",
+"cand": [],
+"method": "NONE"
+},
+"FR-176": {
+"fg": "UX 細部",
+"cand": [
+"UC-029",
+"UC-032"
+],
+"method": "global-kw"
+},
+"FR-177": {
+"fg": "UX 細部",
+"cand": [],
+"method": "NONE"
+},
+"FR-178": {
+"fg": "UX 細部",
+"cand": [
+"UC-059",
+"UC-060",
+"UC-068"
+],
+"method": "fg-screen-kw"
+},
+"FR-179": {
+"fg": "UX 細部",
+"cand": [],
+"method": "NONE"
+},
+"FR-180": {
+"fg": "UX 細部",
+"cand": [],
+"method": "NONE"
+},
+"FR-181": {
+"fg": "UX 細部",
+"cand": [],
+"method": "NONE"
+},
+"FR-182": {
+"fg": "アクセス制御細部",
+"cand": [],
+"method": "NONE"
+},
+"FR-183": {
+"fg": "アクセス制御細部",
+"cand": [],
+"method": "NONE"
+},
+"FR-184": {
+"fg": "アクセス制御細部",
+"cand": [],
+"method": "NONE"
+},
+"FR-185": {
+"fg": "アクセス制御細部",
+"cand": [],
+"method": "NONE"
+},
+"FR-186": {
+"fg": "アクセス制御細部",
+"cand": [],
+"method": "NONE"
+},
+"FR-187": {
+"fg": "アクセス制御細部",
+"cand": [],
+"method": "NONE"
+},
+"FR-188": {
+"fg": "アクセス制御細部",
+"cand": [],
+"method": "NONE"
+},
+"FR-189": {
+"fg": "アクセス制御細部",
+"cand": [],
+"method": "NONE"
+},
+"FR-191": {
+"fg": "アクセス制御細部",
+"cand": [
+"UC-173"
+],
+"method": "br-bridge"
+},
+"FR-192": {
+"fg": "AI 推論動作",
+"cand": [
+"UC-227",
+"UC-245"
+],
+"method": "global-kw"
+},
+"FR-194": {
+"fg": "AI 推論動作",
+"cand": [
+"UC-227",
+"UC-245"
+],
+"method": "global-kw"
+}
+}

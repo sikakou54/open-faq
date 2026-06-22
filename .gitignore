@@ -7,3 +7,6 @@
 
 # Claude Code 作業ファイル(ローカル状態)
 .claude/
+
+# P3 再構成スクリプトの完了マーカ(ローカル状態。コミットしない)
+_build/.p3_scr_renamed
