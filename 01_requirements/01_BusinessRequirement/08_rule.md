@@ -26,8 +26,8 @@
 
 | 適用UC | 名称 |
 |----|----|
-| [UC-004](../04_business_usecases/UC-004.md#UC-004) | 「ログイン」を押下 |
-| [UC-243](../04_business_usecases/UC-243.md#UC-243) | ログイン失敗ロックアウト・解除 |
+| [UC-001](../04_business_usecases/UC-001.md#UC-001) | 未認証ユーザーがログインする |
+| [UC-073](../04_business_usecases/UC-073.md#UC-073) | システムがログイン失敗をロックアウトし解除する |
 
 ### <span id="RULE-002"></span>RULE-002: 再認証の有効範囲
 
@@ -45,11 +45,10 @@
 
 | 適用UC | 名称 |
 |----|----|
-| [UC-176](../04_business_usecases/UC-176.md#UC-176) | メールアドレスを入力 |
-| [UC-177](../04_business_usecases/UC-177.md#UC-177) | 「保存する」を押下(プロフィール) |
-| [UC-178](../04_business_usecases/UC-178.md#UC-178) | 「パスワードを変更する」を押下 |
-| [UC-206](../04_business_usecases/UC-206.md#UC-206) | 「保存」を押下 |
-| [UC-242](../04_business_usecases/UC-242.md#UC-242) | セッション失効・再認証 |
+| [UC-009](../04_business_usecases/UC-009.md#UC-009) | アカウント利用者が個人プロフィールを編集する |
+| [UC-010](../04_business_usecases/UC-010.md#UC-010) | アカウント利用者が自身のパスワードを変更する |
+| [UC-035](../04_business_usecases/UC-035.md#UC-035) | 管理者が利用上限とアラート閾値を設定する |
+| [UC-072](../04_business_usecases/UC-072.md#UC-072) | システムがセッション失効を判定し再認証へ誘導する |
 
 ### <span id="RULE-003"></span>RULE-003: パスワードポリシー
 
@@ -67,13 +66,10 @@
 
 | 適用UC | 名称 |
 |----|----|
-| [UC-009](../04_business_usecases/UC-009.md#UC-009) | パスワードを入力 |
-| [UC-010](../04_business_usecases/UC-010.md#UC-010) | パスワード(確認)を入力 |
-| [UC-024](../04_business_usecases/UC-024.md#UC-024) | 新パスワードを入力 |
-| [UC-025](../04_business_usecases/UC-025.md#UC-025) | 「新しいパスワードを設定する」を押下 |
-| [UC-178](../04_business_usecases/UC-178.md#UC-178) | 「パスワードを変更する」を押下 |
-| [UC-183](../04_business_usecases/UC-183.md#UC-183) | 初回パスワードを入力 |
-| [UC-184](../04_business_usecases/UC-184.md#UC-184) | パスワード(確認)を入力 |
+| [UC-002](../04_business_usecases/UC-002.md#UC-002) | オーナーがアカウントを新規登録する |
+| [UC-005](../04_business_usecases/UC-005.md#UC-005) | 未認証ユーザーが新しいパスワードを設定する |
+| [UC-010](../04_business_usecases/UC-010.md#UC-010) | アカウント利用者が自身のパスワードを変更する |
+| [UC-006](../04_business_usecases/UC-006.md#UC-006) | 招待メンバーがアカウントを有効化する |
 
 ### <span id="RULE-004"></span>RULE-004: 無操作タイムアウト
 
@@ -91,8 +87,8 @@
 
 | 適用UC | 名称 |
 |----|----|
-| [UC-242](../04_business_usecases/UC-242.md#UC-242) | セッション失効・再認証 |
-| [UC-244](../04_business_usecases/UC-244.md#UC-244) | 契約停止時セッション一斉無効化 |
+| [UC-072](../04_business_usecases/UC-072.md#UC-072) | システムがセッション失効を判定し再認証へ誘導する |
+| [UC-074](../04_business_usecases/UC-074.md#UC-074) | システムが契約停止時にセッションを一斉無効化する |
 
 ### <span id="RULE-005"></span>RULE-005: 絶対タイムアウト
 
@@ -110,8 +106,8 @@
 
 | 適用UC | 名称 |
 |----|----|
-| [UC-242](../04_business_usecases/UC-242.md#UC-242) | セッション失効・再認証 |
-| [UC-244](../04_business_usecases/UC-244.md#UC-244) | 契約停止時セッション一斉無効化 |
+| [UC-072](../04_business_usecases/UC-072.md#UC-072) | システムがセッション失効を判定し再認証へ誘導する |
+| [UC-074](../04_business_usecases/UC-074.md#UC-074) | システムが契約停止時にセッションを一斉無効化する |
 
 ### <span id="RULE-006"></span>RULE-006: 規約改定の予告・同意期限
 
@@ -129,10 +125,7 @@
 
 | 適用UC | 名称 |
 |----|----|
-| [UC-164](../04_business_usecases/UC-164.md#UC-164) | 初期表示 |
-| [UC-167](../04_business_usecases/UC-167.md#UC-167) | 利用規約同意をチェック |
-| [UC-168](../04_business_usecases/UC-168.md#UC-168) | プライバシーポリシー同意をチェック |
-| [UC-169](../04_business_usecases/UC-169.md#UC-169) | 「同意して続行する」を押下 |
+| [UC-013](../04_business_usecases/UC-013.md#UC-013) | アカウント利用者が改定文書へ再同意する |
 
 ### <span id="RULE-007"></span>RULE-007: 招待リンク有効期限
 
@@ -150,7 +143,7 @@
 
 | 適用UC | 名称 |
 |----|----|
-| [UC-236](../04_business_usecases/UC-236.md#UC-236) | メンバー割当変更通知 |
+| [UC-066](../04_business_usecases/UC-066.md#UC-066) | システムがメンバー割当変更を通知する |
 
 ### <span id="RULE-008"></span>RULE-008: アカウント論理削除の猶予
 
@@ -168,7 +161,7 @@
 
 | 適用UC | 名称 |
 |----|----|
-| [UC-130](../04_business_usecases/UC-130.md#UC-130) | 割当解除の確認ダイアログで「外す」を押下 |
+| [UC-021](../04_business_usecases/UC-021.md#UC-021) | 管理者がメンバーをプロジェクトから外す |
 
 ### <span id="RULE-009"></span>RULE-009: プロジェクト連絡先確認メール有効期限
 
@@ -186,8 +179,7 @@
 
 | 適用UC | 名称 |
 |----|----|
-| [UC-194](../04_business_usecases/UC-194.md#UC-194) | 初期表示 |
-| [UC-195](../04_business_usecases/UC-195.md#UC-195) | 「閉じる」を押下 |
+| [UC-007](../04_business_usecases/UC-007.md#UC-007) | 対象ユーザーが連絡先メールアドレスを確認する |
 
 ### <span id="RULE-010"></span>RULE-010: FAQ 件数上限
 
@@ -205,9 +197,8 @@
 
 | 適用UC | 名称 |
 |----|----|
-| [UC-059](../04_business_usecases/UC-059.md#UC-059) | 登録先 FAQ リンクを押下 |
-| [UC-060](../04_business_usecases/UC-060.md#UC-060) | 候補 FAQ リンクを押下 |
-| [UC-061](../04_business_usecases/UC-061.md#UC-061) | 「FAQ 登録へ」を押下 |
+| [UC-031](../04_business_usecases/UC-031.md#UC-031) | 管理者が未解決質問の詳細を確認する |
+| [UC-025](../04_business_usecases/UC-025.md#UC-025) | 管理者がFAQを作成・編集する |
 
 ### <span id="RULE-011"></span>RULE-011: FAQ 文字数上限
 
@@ -225,9 +216,8 @@ FAQ の文字数上限は質問 500 文字 / 回答 5,000 文字とする。
 
 | 適用UC | 名称 |
 |----|----|
-| [UC-059](../04_business_usecases/UC-059.md#UC-059) | 登録先 FAQ リンクを押下 |
-| [UC-060](../04_business_usecases/UC-060.md#UC-060) | 候補 FAQ リンクを押下 |
-| [UC-061](../04_business_usecases/UC-061.md#UC-061) | 「FAQ 登録へ」を押下 |
+| [UC-031](../04_business_usecases/UC-031.md#UC-031) | 管理者が未解決質問の詳細を確認する |
+| [UC-025](../04_business_usecases/UC-025.md#UC-025) | 管理者がFAQを作成・編集する |
 
 ### <span id="RULE-012"></span>RULE-012: AI しきい値既定値
 
@@ -245,8 +235,8 @@ FAQ の文字数上限は質問 500 文字 / 回答 5,000 文字とする。
 
 | 適用UC | 名称 |
 |----|----|
-| [UC-245](../04_business_usecases/UC-245.md#UC-245) | AI しきい値変更の伝播・フォールバック |
-| [UC-258](../04_business_usecases/UC-258.md#UC-258) | 信頼度・関連度しきい値を3階層で調整する |
+| [UC-052](../04_business_usecases/UC-052.md#UC-052) | システムがAIしきい値変更を推論へ伝播する |
+| [UC-082](../04_business_usecases/UC-082.md#UC-082) | 管理者が信頼度・関連度しきい値を3階層で調整する |
 
 ### <span id="RULE-013"></span>RULE-013: 質問数上限の停止・追加通知
 
@@ -264,12 +254,11 @@ FAQ の文字数上限は質問 500 文字 / 回答 5,000 文字とする。
 
 | 適用UC | 名称 |
 |----|----|
-| [UC-199](../04_business_usecases/UC-199.md#UC-199) | 初期表示 |
-| [UC-204](../04_business_usecases/UC-204.md#UC-204) | 「今月の利用上限」を入力 |
-| [UC-206](../04_business_usecases/UC-206.md#UC-206) | 「保存」を押下 |
-| [UC-208](../04_business_usecases/UC-208.md#UC-208) | 初期表示 |
-| [UC-237](../04_business_usecases/UC-237.md#UC-237) | 質問数上限アラート通知 |
-| [UC-240](../04_business_usecases/UC-240.md#UC-240) | 上限到達ウィジェット受付停止 |
+| [UC-034](../04_business_usecases/UC-034.md#UC-034) | 管理者が利用量と上限を閲覧する |
+| [UC-035](../04_business_usecases/UC-035.md#UC-035) | 管理者が利用上限とアラート閾値を設定する |
+| [UC-037](../04_business_usecases/UC-037.md#UC-037) | オーナーが請求情報を閲覧する |
+| [UC-057](../04_business_usecases/UC-057.md#UC-057) | システムが質問数上限アラートを通知する |
+| [UC-058](../04_business_usecases/UC-058.md#UC-058) | システムが上限到達時にウィジェット受付を停止する |
 
 ### <span id="RULE-014"></span>RULE-014: 質問数アラート閾値
 
@@ -287,8 +276,8 @@ FAQ の文字数上限は質問 500 文字 / 回答 5,000 文字とする。
 
 | 適用UC | 名称 |
 |----|----|
-| [UC-206](../04_business_usecases/UC-206.md#UC-206) | 「保存」を押下 |
-| [UC-237](../04_business_usecases/UC-237.md#UC-237) | 質問数上限アラート通知 |
+| [UC-035](../04_business_usecases/UC-035.md#UC-035) | 管理者が利用上限とアラート閾値を設定する |
+| [UC-057](../04_business_usecases/UC-057.md#UC-057) | システムが質問数上限アラートを通知する |
 
 ### <span id="RULE-015"></span>RULE-015: 無料枠
 
@@ -320,7 +309,7 @@ FAQ の文字数上限は質問 500 文字 / 回答 5,000 文字とする。
 
 | 適用UC | 名称 |
 |----|----|
-| [UC-241](../04_business_usecases/UC-241.md#UC-241) | 決済失敗→猶予→サスペンション |
+| [UC-060](../04_business_usecases/UC-060.md#UC-060) | システムが決済失敗から猶予を経てサスペンションへ移行する |
 
 ### <span id="RULE-017"></span>RULE-017: 課金通知の受信履歴保持
 
@@ -338,7 +327,7 @@ FAQ の文字数上限は質問 500 文字 / 回答 5,000 文字とする。
 
 | 適用UC | 名称 |
 |----|----|
-| [UC-264](../04_business_usecases/UC-264.md#UC-264) | 課金プロバイダ通知を受信・検証・再処理する |
+| [UC-061](../04_business_usecases/UC-061.md#UC-061) | システムが課金プロバイダ通知を受信・検証・再処理する |
 
 ### <span id="RULE-018"></span>RULE-018: 公開キーローテーション猶予
 
@@ -370,8 +359,8 @@ FAQ の文字数上限は質問 500 文字 / 回答 5,000 文字とする。
 
 | 適用UC | 名称 |
 |----|----|
-| [UC-066](../04_business_usecases/UC-066.md#UC-066) | 行を選択 |
-| [UC-140](../04_business_usecases/UC-140.md#UC-140) | 行を選択 |
+| [UC-024](../04_business_usecases/UC-024.md#UC-024) | 管理者がFAQ一覧を閲覧する |
+| [UC-045](../04_business_usecases/UC-045.md#UC-045) | アカウント利用者がお知らせ一覧を閲覧する |
 
 ### <span id="RULE-020"></span>RULE-020: AI 推論タイムアウト
 

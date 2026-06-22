@@ -26,7 +26,7 @@
 
 | 観点 | 結線 |
 |----|----|
-| 対応業務UC | [UC-164](../../01_requirements/04_business_usecases/UC-164.md#UC-164) [UC-167](../../01_requirements/04_business_usecases/UC-167.md#UC-167) [UC-168](../../01_requirements/04_business_usecases/UC-168.md#UC-168) [UC-169](../../01_requirements/04_business_usecases/UC-169.md#UC-169) [UC-248](../../01_requirements/04_business_usecases/UC-248.md#UC-248) |
+| 対応業務UC | [UC-013](../../01_requirements/04_business_usecases/UC-013.md#UC-013) [UC-078](../../01_requirements/04_business_usecases/UC-078.md#UC-078) |
 | 対応画面SCR | [SCR-020](../01_screens/SCR-020.md#SCR-020) |
 | 対応EVT | [EVT-135](../02_screen_events/EVT-135.md#EVT-135) [EVT-169](../02_screen_events/EVT-169.md#EVT-169) |
 | 対応API | [API-052](../03_apis/API-052.md#API-052) [API-054](../03_apis/API-054.md#API-054) [API-055](../03_apis/API-055.md#API-055) |
