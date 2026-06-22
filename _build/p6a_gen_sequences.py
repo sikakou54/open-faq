@@ -18,6 +18,21 @@ import json
 import os
 import re
 import subprocess
+import sys
+
+# ---------------------------------------------------------------------------
+# SUPERSEDED / 再実行禁止 (2026-06-23)
+# SEQ-*.md は基本設計レベル(ユーザー / 画面 / サーバー の 3 系統)へ手保守移行済み。
+# 本生成器は旧 5 系統モデル(利用者 / 画面 / API / DB / 外部・バッチ・通知)を
+# git a412652 から再生成するため、再実行すると現行の図・書式を巻き戻す。
+# provenance 保持のためコードは残すが、既定では実行を中止する。
+# 意図して再生成する場合のみ環境変数 SEQ_GEN_FORCE=1 を付ける。
+# ---------------------------------------------------------------------------
+if os.environ.get("SEQ_GEN_FORCE") != "1":
+    sys.exit(
+        "[p6a_gen_sequences] 実行中止: SEQ は手保守へ移行済み(再実行で巻き戻し)。"
+        " 意図的に再生成する場合のみ SEQ_GEN_FORCE=1 を設定してください。"
+    )
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HIST = "a412652"
