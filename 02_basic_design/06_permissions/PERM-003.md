@@ -39,7 +39,7 @@
 
 | 由来要件 |
 |----|
-| [FR-015](../../01_requirements/01_specifications/01_account.md#FR-015) [BR-017](../../01_requirements/01_specifications/01_account.md#BR-017) |
+| [FR-015](../../01_requirements/01_specifications/01_account-fr.md#FR-015) [BR-017](../../01_requirements/01_specifications/01_account-br.md#BR-017) |
 
 ---
 

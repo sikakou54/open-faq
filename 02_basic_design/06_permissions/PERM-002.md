@@ -41,7 +41,7 @@
 
 | 由来要件 |
 |----|
-| [FR-188](../../01_requirements/01_specifications/01_account.md#FR-188) [FR-189](../../01_requirements/01_specifications/01_account.md#FR-189) [FR-191](../../01_requirements/01_specifications/01_account.md#FR-191) |
+| [FR-188](../../01_requirements/01_specifications/01_account-fr.md#FR-188) [FR-189](../../01_requirements/01_specifications/01_account-fr.md#FR-189) [FR-191](../../01_requirements/01_specifications/01_account-fr.md#FR-191) |
 
 ---
 
