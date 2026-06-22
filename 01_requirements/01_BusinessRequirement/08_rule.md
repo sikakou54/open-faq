@@ -143,7 +143,8 @@
 
 | 適用UC | 名称 |
 |----|----|
-| [UC-066](../04_business_usecases/UC-066.md#UC-066) | システムがメンバー割当変更を通知する |
+| [UC-019](../04_business_usecases/UC-019.md#UC-019) | 管理者がメンバーを招待する |
+| [UC-006](../04_business_usecases/UC-006.md#UC-006) | 招待メンバーがアカウントを有効化する |
 
 ### <span id="RULE-008"></span>RULE-008: アカウント論理削除の猶予
 
