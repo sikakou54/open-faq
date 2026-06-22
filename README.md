@@ -343,7 +343,7 @@
 - [FR-182: 同一アカウントの複数デバイス同時ログインを可能と](01_requirements/01_specifications/FR-182.md)
 - [FR-183: オーナーに対する次の操作を不可と](01_requirements/01_specifications/FR-183.md)
 - [FR-184: アカウント利用者は自分自身への次の操作を行えない](01_requirements/01_specifications/FR-184.md)
-- [FR-185: メールアドレスは 1 アカウント(`M_USER`)に一意と](01_requirements/01_specifications/FR-185.md)
+- [FR-185: メールアドレスは 1 アカウントに一意](01_requirements/01_specifications/FR-185.md)
 - [FR-186: プロジェクトごとのメンバー割当を「割当しない / メンバー」から選んで行](01_requirements/01_specifications/FR-186.md)
 - [FR-187: ダッシュボード(自分の通知・お知らせ受信箱)を、オーナーおよびメンバーが](01_requirements/01_specifications/FR-187.md)
 - [FR-188: プロジェクト割当の追加・剥奪は、アクティブセッションを即時失効させず、次](01_requirements/01_specifications/FR-188.md)
