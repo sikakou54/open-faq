@@ -37,7 +37,7 @@
 
 | 由来要件 |
 |----|
-| [FR-007](../../01_requirements/01_specifications/FR-007.md#FR-007) [FR-008](../../01_requirements/01_specifications/FR-008.md#FR-008) [FR-011](../../01_requirements/01_specifications/FR-011.md#FR-011) [FR-182](../../01_requirements/01_specifications/FR-182.md#FR-182) [FR-188](../../01_requirements/01_specifications/FR-188.md#FR-188) [BR-004](../../01_requirements/01_specifications/BR-004.md#BR-004) [BR-005](../../01_requirements/01_specifications/BR-005.md#BR-005) [BR-006](../../01_requirements/01_specifications/BR-006.md#BR-006) |
+| [FR-007](../../01_requirements/01_specifications/01_account.md#FR-007) [FR-008](../../01_requirements/01_specifications/01_account.md#FR-008) [FR-011](../../01_requirements/01_specifications/01_account.md#FR-011) [FR-182](../../01_requirements/01_specifications/01_account.md#FR-182) [FR-188](../../01_requirements/01_specifications/01_account.md#FR-188) [BR-004](../../01_requirements/01_specifications/01_account.md#BR-004) [BR-005](../../01_requirements/01_specifications/01_account.md#BR-005) [BR-006](../../01_requirements/01_specifications/01_account.md#BR-006) |
 
 ---
 

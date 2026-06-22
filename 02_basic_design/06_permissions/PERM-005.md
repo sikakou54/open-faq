@@ -36,7 +36,7 @@
 
 | 由来要件 |
 |----|
-| [FR-185](../../01_requirements/01_specifications/FR-185.md#FR-185) [FR-189](../../01_requirements/01_specifications/FR-189.md#FR-189) |
+| [FR-185](../../01_requirements/01_specifications/01_account.md#FR-185) [FR-189](../../01_requirements/01_specifications/01_account.md#FR-189) |
 
 ---
 
