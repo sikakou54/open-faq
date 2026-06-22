@@ -19,8 +19,10 @@
 | パス | 内容 |
 |----|----|
 | [`index.md`](index.md) | システム概要 / 背景・目的 / スコープ / 利用者・ロール / 制約・前提 / 読み順 / 要件仕様・業務UCへのポインタ |
-| [`01_specifications/`](01_specifications/index.md) | 要件仕様。`BR-*` / `FR-*` / `NFR-*` / `RULE-*` を 1 要件 = 1 ファイルで定義 |
-| [`02_business_usecases/`](02_business_usecases/index.md) | 業務ユースケース。`UC-*` を 1 UC = 1 ファイルで定義(画面起点 + システム起点) |
+| [`01_BusinessRequirement/`](01_BusinessRequirement/index.md) | 業務要件 `BR-*`(カテゴリ別 HTML テーブル)と業務ルール `RULE-*`(`08_rule.md`) |
+| [`02_FunctionalRequirement/`](02_FunctionalRequirement/index.md) | 機能要件 `FR-*`(カテゴリ別ファイルの節) |
+| [`03_NonFunctionalRequirement/`](03_NonFunctionalRequirement/index.md) | 非機能要件 `NFR-*`(`07_nfr.md` の分類節) |
+| [`04_business_usecases/`](04_business_usecases/index.md) | 業務ユースケース。`UC-*` を 1 UC = 1 ファイルで定義(画面起点 + システム起点) |
 
 ## 3. ID リナンバ要約
 

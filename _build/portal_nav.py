@@ -13,8 +13,10 @@ GROUPS = [("01_requirements", "要件定義"),
           ("02_basic_design", "基本設計"),
           ("03_future", "将来対応")]
 LABELS = {
-    "01_requirements/01_specifications": "要件仕様",
-    "01_requirements/02_business_usecases": "業務ユースケース",
+    "01_requirements/01_BusinessRequirement": "業務要件",
+    "01_requirements/02_FunctionalRequirement": "機能要件",
+    "01_requirements/03_NonFunctionalRequirement": "非機能要件",
+    "01_requirements/04_business_usecases": "業務ユースケース",
     "02_basic_design/01_screens": "画面設計",
     "02_basic_design/02_screen_events": "画面イベント設計",
     "02_basic_design/03_apis": "API設計",

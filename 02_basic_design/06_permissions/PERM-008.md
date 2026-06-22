@@ -29,7 +29,7 @@
 
 | 観点 | 結線 |
 |----|----|
-| 対応業務UC | [UC-016](../../01_requirements/02_business_usecases/UC-016.md#UC-016) [UC-123](../../01_requirements/02_business_usecases/UC-123.md#UC-123) [UC-130](../../01_requirements/02_business_usecases/UC-130.md#UC-130) [UC-151](../../01_requirements/02_business_usecases/UC-151.md#UC-151) [UC-152](../../01_requirements/02_business_usecases/UC-152.md#UC-152) [UC-155](../../01_requirements/02_business_usecases/UC-155.md#UC-155) [UC-181](../../01_requirements/02_business_usecases/UC-181.md#UC-181) |
+| 対応業務UC | [UC-016](../../01_requirements/04_business_usecases/UC-016.md#UC-016) [UC-123](../../01_requirements/04_business_usecases/UC-123.md#UC-123) [UC-130](../../01_requirements/04_business_usecases/UC-130.md#UC-130) [UC-151](../../01_requirements/04_business_usecases/UC-151.md#UC-151) [UC-152](../../01_requirements/04_business_usecases/UC-152.md#UC-152) [UC-155](../../01_requirements/04_business_usecases/UC-155.md#UC-155) [UC-181](../../01_requirements/04_business_usecases/UC-181.md#UC-181) |
 | 対応画面SCR | [SCR-018](../01_screens/SCR-018.md#SCR-018) [SCR-023](../01_screens/SCR-023.md#SCR-023) |
 | 対応EVT | [EVT-151](../02_screen_events/EVT-151.md#EVT-151) [EVT-190](../02_screen_events/EVT-190.md#EVT-190) |
 | 対応API | [API-006](../03_apis/API-006.md#API-006) [API-008](../03_apis/API-008.md#API-008) [API-023](../03_apis/API-023.md#API-023) |
@@ -38,7 +38,7 @@
 
 | 由来要件 |
 |----|
-| [FR-003](../../01_requirements/01_specifications/01_account-fr.md#FR-003) [FR-021](../../01_requirements/01_specifications/01_account-fr.md#FR-021) [FR-031](../../01_requirements/01_specifications/01_account-fr.md#FR-031) [FR-189](../../01_requirements/01_specifications/01_account-fr.md#FR-189) |
+| [FR-003](../../01_requirements/02_FunctionalRequirement/01_account-fr.md#FR-003) [FR-021](../../01_requirements/02_FunctionalRequirement/01_account-fr.md#FR-021) [FR-031](../../01_requirements/02_FunctionalRequirement/01_account-fr.md#FR-031) [FR-189](../../01_requirements/02_FunctionalRequirement/01_account-fr.md#FR-189) |
 
 ---
 

@@ -88,8 +88,8 @@ MVP の未解決時フローは次のとおりとする。
 
 - [FUT06-req.md](FUT06-req.md): 要件詳細
 - [FUT06-detail.md](FUT06-detail.md): 詳細設計
-- [FR05.md](../01_requirements/01_specifications/index.md): MVP の未解決時動作
-- [FR12.md](../01_requirements/01_specifications/index.md): MVP ウィジェット表示
+- [FR05.md](../01_requirements/02_FunctionalRequirement/index.md): MVP の未解決時動作
+- [FR12.md](../01_requirements/02_FunctionalRequirement/index.md): MVP ウィジェット表示
 
 ---
 

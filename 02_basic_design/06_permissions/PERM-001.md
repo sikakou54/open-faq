@@ -28,7 +28,7 @@
 
 | 観点 | 結線 |
 |----|----|
-| 対応業務UC | [UC-236](../../01_requirements/02_business_usecases/UC-236.md#UC-236) |
+| 対応業務UC | [UC-236](../../01_requirements/04_business_usecases/UC-236.md#UC-236) |
 | 対応画面SCR | [SCR-013](../01_screens/SCR-013.md#SCR-013) |
 | 対応EVT | — |
 | 対応API | [API-002](../03_apis/API-002.md#API-002) |
@@ -37,7 +37,7 @@
 
 | 由来要件 |
 |----|
-| [FR-013](../../01_requirements/01_specifications/01_account-fr.md#FR-013) [FR-014](../../01_requirements/01_specifications/01_account-fr.md#FR-014) [FR-016](../../01_requirements/01_specifications/01_account-fr.md#FR-016) [FR-035](../../01_requirements/01_specifications/01_account-fr.md#FR-035) [FR-186](../../01_requirements/01_specifications/01_account-fr.md#FR-186) |
+| [FR-013](../../01_requirements/02_FunctionalRequirement/01_account-fr.md#FR-013) [FR-014](../../01_requirements/02_FunctionalRequirement/01_account-fr.md#FR-014) [FR-016](../../01_requirements/02_FunctionalRequirement/01_account-fr.md#FR-016) [FR-035](../../01_requirements/02_FunctionalRequirement/01_account-fr.md#FR-035) [FR-186](../../01_requirements/02_FunctionalRequirement/01_account-fr.md#FR-186) |
 
 ---
 

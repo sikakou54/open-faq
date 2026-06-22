@@ -17,10 +17,11 @@
 README.md                          # ポータルトップ(全文書ツリー = 旧サイドバー相当。自動生成)
 CLAUDE.md                          # 保守ルール正本(本書)
 01_requirements/                   # 要件定義
-├── index.md                       #   システム概要 / 背景・目的 / スコープ / 利用者・ロール / 制約・前提 / 読み順 / 要件仕様・業務UCへのポインタ
-├── 01_specifications/             #   要件仕様 : index.md + カテゴリ別・種別別ファイル(01_account 〜 06_security の -br/-fr、
-│                                  #            07_nfr / 08_rule)。BR と FR はカテゴリごとに別ファイル。各 ID は節(#<ID>)で保持
-├── 02_business_usecases/          #   業務ユースケース : index.md + UC-001..(UC-001.. = 画面起点 / 末尾の連番 = システム起点)
+├── index.md                       #   システム概要 / 背景・目的 / スコープ / 利用者・ロール / 制約・前提 / 各要件フォルダ・業務UCへのポインタ
+├── 01_BusinessRequirement/        #   業務要件 : index.md + BR(01_account 〜 06_security の -br、カテゴリ別 HTML テーブル)+ 業務ルール RULE(08_rule.md)
+├── 02_FunctionalRequirement/      #   機能要件 : index.md + FR(01_account 〜 06_security の -fr、各 ID は節で保持)
+├── 03_NonFunctionalRequirement/   #   非機能要件 : index.md + 07_nfr.md(分類節・通し連番)
+├── 04_business_usecases/          #   業務ユースケース : index.md + UC-001..(UC-001.. = 画面起点 / 末尾の連番 = システム起点)
 └── 99_restructure_result.md       #   再構成結果サマリ(要件定義視点)
 02_basic_design/                   # 基本設計
 ├── index.md                       #   基本設計トップ
@@ -39,7 +40,7 @@ CLAUDE.md                          # 保守ルール正本(本書)
 _build/                            # ツール(配信対象外。portal_nav.py / 再構成スクリプト等)
 ```
 
-- ファイル名は原則 ID 1 件 = 1 ファイル(例 `UC-001.md` / `SCR-001.md` / `EVT-001.md` / `API-001.md` / `TBL-001.md` / `SEQ-001.md` / `PERM-001.md` / `ERR-001.md` / `MSG-001.md`)。**ただし要件仕様(BR/FR/NFR/RULE)はファイル数削減のためカテゴリ別・種別別ファイルへ統合**し、各 ID は当該ファイル内の節 `## <span id="ID"></span>ID: 名称` として保持する(`01_specifications/` 配下。ID・アンカー・採番は不変)。
+- ファイル名は原則 ID 1 件 = 1 ファイル(例 `UC-001.md` / `SCR-001.md` / `EVT-001.md` / `API-001.md` / `TBL-001.md` / `SEQ-001.md` / `PERM-001.md` / `ERR-001.md` / `MSG-001.md`)。**ただし要件仕様(BR/FR/NFR/RULE)はファイル数削減のためカテゴリ別・種別別ファイルへ統合**し、各 ID は当該ファイル内で保持する(種別ごとに `01_BusinessRequirement/`(BR + RULE)/ `02_FunctionalRequirement/`(FR)/ `03_NonFunctionalRequirement/`(NFR)へ分割。ID・アンカー・採番は不変)。**BR は HTML テーブルの行(ID セルに `<span id="ID"></span>`)**、FR / NFR / RULE は節 `## <span id="ID"></span>ID: 名称` で保持する。
 - ページ間リンクはすべて `.md`。同一フォルダ内は兄弟参照、フォルダ / グループをまたぐ参照は相対パス(下記「相互参照アンカー」)。
 
 ### 採番ルール(最重要)
@@ -48,10 +49,10 @@ _build/                            # ツール(配信対象外。portal_nav.py /
 
 | 系列 | 接頭辞 | 範囲(現状) | 備考 |
 |----|----|----|----|
-| 業務要件 | `BR-` | `BR-001`〜 | 要件仕様(カテゴリ別ファイルへ統合・節で保持) |
-| 機能要件 | `FR-` | `FR-001`〜 | 要件仕様(カテゴリ別ファイルへ統合・節で保持) |
-| 非機能要件 | `NFR-` | `NFR-001`〜 | 要件仕様(分類別ではなく通し連番。`07_nfr.md` に分類節で統合) |
-| 業務ルール | `RULE-` | `RULE-001`〜 | FR / BR から抽出した定量しきい値・ポリシー(`08_rule.md` に統合) |
+| 業務要件 | `BR-` | `BR-001`〜 | `01_BusinessRequirement/` のカテゴリ別 HTML テーブルに統合(行で保持) |
+| 機能要件 | `FR-` | `FR-001`〜 | `02_FunctionalRequirement/` のカテゴリ別ファイルへ統合(節で保持) |
+| 非機能要件 | `NFR-` | `NFR-001`〜 | 分類別ではなく通し連番。`03_NonFunctionalRequirement/07_nfr.md` に分類節で統合 |
+| 業務ルール | `RULE-` | `RULE-001`〜 | FR / BR から抽出した定量しきい値・ポリシー(`01_BusinessRequirement/08_rule.md` に統合) |
 | 業務ユースケース | `UC-` | `UC-001`〜 | 前半 = 画面起点 / 後半 = システム起点(バッチ・Webhook・非同期) |
 | 画面 | `SCR-` | `SCR-001`〜 | 1 画面 = 1 ファイル(フラット。`-NNN` 従属は廃止) |
 | 画面イベント | `EVT-` | `EVT-001`〜 | UC と原則 1:1 |
@@ -118,10 +119,10 @@ node ~/.claude/skills/html-to-png/scripts/html_to_png.js 02_basic_design/01_scre
 定義箇所には `<span id="ID"></span>` を埋め込んでアンカーを保持する(例: 見出しの `# <span id="FR-001"></span>FR-001: …`、表セル先頭の `<span id="TBL-001"></span>`)。参照側は通常の Markdown リンクで送る。
 
 - 同一ページ: `[FR-001](#FR-001)`
-- 要件仕様(カテゴリ別・種別別ファイル内の節へ): `[FR-007](02_faq-ai-fr.md#FR-007)` / `[BR-001](01_account-br.md#BR-001)`(同一フォルダ)。**ファイル名は ID ではなくカテゴリ + 種別**、アンカーは `#<ID>`。対応表は `01_specifications/index.md`。
+- 要件仕様(種別フォルダ内のファイルへ): 同一種別フォルダ内は兄弟参照 `[FR-007](02_faq-ai-fr.md#FR-007)`(FR フォルダ内)/ `[BR-001](01_account-br.md#BR-001)`(BR フォルダ内)。種別をまたぐときは相対パス `[FR-001](../02_FunctionalRequirement/01_account-fr.md#FR-001)` / `[RULE-001](../01_BusinessRequirement/08_rule.md#RULE-001)`。**ファイル名は ID ではなくカテゴリ + 種別**、アンカーは `#<ID>`。一覧は各種別フォルダ(`01_BusinessRequirement` / `02_FunctionalRequirement` / `03_NonFunctionalRequirement`)の `index.md`。
 - 同一フォルダの他ページ(その他系列): `[SCR-002](SCR-002.md#SCR-002)`(画面フォルダ内)
 - 基本設計の別フォルダ: 画面イベント → 画面 `[SCR-001](../01_screens/SCR-001.md#SCR-001)` / API → テーブル `[TBL-001](../04_database/TBL-001.md#TBL-001)` / シーケンス → API `[API-002](../03_apis/API-002.md#API-002)`
-- グループをまたぐ: 業務UC → 要件 `[FR-001](../01_specifications/01_account-fr.md#FR-001)` / 画面 → 業務UC `[UC-001](../../01_requirements/02_business_usecases/UC-001.md#UC-001)` / API → 業務UC `[UC-016](../../01_requirements/02_business_usecases/UC-016.md#UC-016)`
+- グループをまたぐ: 業務UC → 要件 `[FR-001](../02_FunctionalRequirement/01_account-fr.md#FR-001)` / 画面 → 業務UC `[UC-001](../../01_requirements/04_business_usecases/UC-001.md#UC-001)` / API → 業務UC `[UC-016](../../01_requirements/04_business_usecases/UC-016.md#UC-016)`
 
 新しい定義行・見出しを追加するときは、対応する `<span id="…"></span>` を必ず付ける。
 
@@ -173,33 +174,32 @@ callout は GitHub Alert 記法で表す。見出し+本文は次行に `> **見
 
 ## 各層テンプレート
 
-### 要件仕様(`01_requirements/01_specifications/`)
+### 要件仕様(`01_BusinessRequirement/` / `02_FunctionalRequirement/` / `03_NonFunctionalRequirement/`)
 
-BR / FR / NFR / RULE を**カテゴリ別・種別別ファイルへ統合**し、各要件は節として保持する。業務要件(BR)と機能要件(FR)は**カテゴリごとに別ファイル**(`-br` / `-fr`)へ分離する。ファイル構成は次の 14 + `index.md`:
+BR / FR / NFR / RULE を**種別フォルダ + カテゴリ別・種別別ファイルへ統合**する。種別ごとに 3 フォルダへ分割し、各フォルダは自身の `index.md` で一覧する。**業務要件(BR)はカテゴリ別ファイル内の HTML テーブル(1 行 = 1 要件)で一覧化**し、FR / NFR / RULE は各要件を節として保持する。業務要件(BR)と機能要件(FR)は**カテゴリごとに別ファイル**(`-br` / `-fr`)へ分離する。フォルダ・ファイル構成:
 
-| ファイル | 内容 |
-|----|----|
-| `01_account-br.md` / `01_account-fr.md` | アカウント・ユーザー・アクセス制御(BR / FR) |
-| `02_faq-ai-br.md` / `02_faq-ai-fr.md` | FAQ・AI 回答・未解決質問・処理エラー(BR / FR) |
-| `03_usage-br.md` / `03_usage-fr.md` | 利用量・課金・ダッシュボード・運用(BR / FR) |
-| `04_widget-br.md` / `04_widget-fr.md` | ウィジェット・検索・入出力(BR / FR) |
-| `05_notification-br.md` / `05_notification-fr.md` | 通知・お知らせ(BR / FR) |
-| `06_security-br.md` / `06_security-fr.md` | セキュリティ・プライバシー(BR / FR) |
-| `07_nfr.md` | 非機能要件(`## <分類>` 節別) |
-| `08_rule.md` | 業務ルール |
+| フォルダ | ファイル | 内容 |
+|----|----|----|
+| `01_BusinessRequirement/` | `01_account-br.md` 〜 `06_security-br.md`(6) | 業務要件 BR(カテゴリ別 HTML テーブル) |
+| `01_BusinessRequirement/` | `08_rule.md` | 業務ルール RULE(`## <分類>` ではなく RULE 節) |
+| `02_FunctionalRequirement/` | `01_account-fr.md` 〜 `06_security-fr.md`(6) | 機能要件 FR(カテゴリ別・節) |
+| `03_NonFunctionalRequirement/` | `07_nfr.md` | 非機能要件 NFR(`## <分類>` 節別) |
 
-- ファイル先頭はカテゴリ + 種別の `# 見出し` + 要約 + メタ。カテゴリ↔種別↔要件の対応は `index.md`。BR/FR ファイルは単一種別なので種別節は持たず、要件節を直接並べる。
-- 各要件節の骨格: `## <span id="ID"></span>ID: 名称` → 要約 → メタ → `### 要件`(RULE は `### ルール`)→ **`### シーケンス`(FR のみ)**。**リード文は置かない。** ID アンカーは要件見出しに付け、節見出し(要件 / シーケンス / ルール / 適用UC 等)には付けない(ファイル内で重複するため)。
+カテゴリは 6 種(`01_account` アカウント・ユーザー・アクセス制御 / `02_faq-ai` FAQ・AI 回答・未解決質問・処理エラー / `03_usage` 利用量・課金・ダッシュボード・運用 / `04_widget` ウィジェット・検索・入出力 / `05_notification` 通知・お知らせ / `06_security` セキュリティ・プライバシー)。
+
+- ファイル先頭はカテゴリ + 種別の `# 見出し` + 要約 + メタ。カテゴリ↔種別↔要件の対応は各種別フォルダの `index.md`。BR/FR ファイルは単一種別なので種別節は持たない。**BR ファイルは要件を HTML テーブルで直接並べ**、FR ファイルは要件節を直接並べる。
+- **BR ファイルの表骨格**: ファイル先頭の `# 見出し` + 要約 + メタ(掲載要件は全件 優先度 P0 ・ ステータス ドラフト と 1 行で明示)に続けて HTML テーブル 1 つ。列は `ID / 名称 / 機能グループ / 要件`(列順は識別子→名称→値→説明)。**ID セル先頭に `<span id="BR-NNN"></span>BR-NNN`** を置きアンカーを保持する(他層からの参照先)。`要件` セルで役割別の箇条書きが要るときは `<ul><li>` を使う(GFM ではなく生 HTML テーブル)。**リード文は置かない。**
+- 各要件節の骨格(FR / NFR / RULE): `## <span id="ID"></span>ID: 名称` → 要約 → メタ → `### 要件`(RULE は `### ルール`)→ **`### シーケンス`(FR のみ)**。**リード文は置かない。** ID アンカーは要件見出しに付け、節見出し(要件 / シーケンス / ルール / 適用UC 等)には付けない(ファイル内で重複するため)。
 - **要件は後工程へのリンク・参照を持たない**: 要件本文に、後工程(機能要件・業務ルール・基本設計・業務UC)へのリンクや「…を正本とする」等の委譲文を書かない。**BR / FR は `### 関連` セクションを持たない**(対応業務UC・関連 NFR・関連業務要件は記載しない)。要件→下流のトレースは下流側(UC の `対応要件ID`、SCR/PERM の由来要件)からの逆引きで辿る。
 - **BR と FR の記載粒度(重複を作らない)**: BR=業務意図(誰が・何のために・何を可能にするか + 業務上の制約/リスク/方針の質的言明)を **1〜2 文**で。FR=システム機能の細粒度。**数値しきい値・手順番号・対象操作の列挙・状態名・画面/UI 文言・FR とほぼ同文の機能記述は BR に書かず**、対応 FR(数値は `08_rule.md` の RULE)へ委ねる。FR に無い業務理由・価値・ステークホルダ別役割・固有方針は BR に残す。FR から BR の業務観点を再掲しない。
-- **業務要件 `BR-*`**: `### 要件` のみ(関連セクションなし)。要件本文は役割別の箇条書き可(上記粒度に従い実装詳細は持たない)。
+- **業務要件 `BR-*`**: 表の 1 行(`ID / 名称 / 機能グループ / 要件`)。関連列は持たない。`要件` セルは役割別の箇条書き可(上記粒度に従い実装詳細は持たない)。優先度は全件 P0 のためファイル先頭メタに 1 回記載し、列には持たない。
 - **機能要件 `FR-*`**: `### 要件` + `### シーケンス`(関連セクションなし)。優先度 `P0`/`P1`/`P2` とカテゴリ振り分け根拠の `機能グループ` はメタに記載。
 - **FR の `### シーケンス`**: アクターは固定3者 `ユーザー / UI / サーバー`(`actor U as ユーザー` / `participant UI as UI` / `participant S as サーバー`)の mermaid `sequenceDiagram`。`autonumber` を付け、要求に応答線を対で描く。分岐は `alt/else/end`。数値しきい値・状態名・テーブル/API ID・SQL は書かず相互作用の流れに限定し、無人処理は `Note over S: トリガ` で S 中心に。図中に Markdown リンク・`id=` を書かない。UC 単位の詳細シーケンスは `02_basic_design/05_sequences/`(`SEQ-*`)が正本。
 - **非機能要件 `NFR-*`**: メタに `分類`。`07_nfr.md` 内で分類節へ配置。**分類別番号帯は使わず通し連番**。
 - **業務ルール `RULE-*`**: FR / BR 文中の定量しきい値・ポリシーを抽出。`### ルール` + `### 適用UC`(適用される業務UC)。
-- 要件を追加するときは当該カテゴリファイルの種別節へ `## <span id="ID"></span>…` を追加し、`機能グループ` / `分類` で振り分ける。FR には `### シーケンス` も付ける。
+- 要件を追加するとき: **BR は当該カテゴリファイルの表へ `<tr>` 行を 1 つ追加**(ID セルに `<span id="BR-NNN"></span>`、`機能グループ` 列で振り分け)。FR / NFR / RULE は種別節へ `## <span id="ID"></span>…` を追加し、`機能グループ` / `分類` で振り分ける(FR には `### シーケンス` も付ける)。`01_BusinessRequirement/index.md` の業務要件はカテゴリ単位の集約テーブル(`BR-ACCOUNT` 等のカテゴリ集約コードで 1 カテゴリ = 1 行)で索引し、件数列も更新する。
 
-### 業務ユースケース(`01_requirements/02_business_usecases/`)
+### 業務ユースケース(`01_requirements/04_business_usecases/`)
 
 **1 UC = 1 ファイル**。前半が画面起点(画面イベント由来)、後半がシステム起点(バッチ・Webhook・非同期ジョブ)。**15 項目**を満たす:
 

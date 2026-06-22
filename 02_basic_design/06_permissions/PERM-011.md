@@ -26,7 +26,7 @@
 
 | 観点 | 結線 |
 |----|----|
-| 対応業務UC | [UC-251](../../01_requirements/02_business_usecases/UC-251.md#UC-251) |
+| 対応業務UC | [UC-251](../../01_requirements/04_business_usecases/UC-251.md#UC-251) |
 | 対応画面SCR | — |
 | 対応EVT | — |
 | 対応API | [API-021](../03_apis/API-021.md#API-021) [API-024](../03_apis/API-024.md#API-024) |
@@ -35,7 +35,7 @@
 
 | 由来要件 |
 |----|
-| [FR-034](../../01_requirements/01_specifications/01_account-fr.md#FR-034) [FR-185](../../01_requirements/01_specifications/01_account-fr.md#FR-185) |
+| [FR-034](../../01_requirements/02_FunctionalRequirement/01_account-fr.md#FR-034) [FR-185](../../01_requirements/02_FunctionalRequirement/01_account-fr.md#FR-185) |
 
 ---
 

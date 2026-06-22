@@ -28,7 +28,7 @@
 
 | 観点 | 結線 |
 |----|----|
-| 対応業務UC | [UC-004](../../01_requirements/02_business_usecases/UC-004.md#UC-004) [UC-242](../../01_requirements/02_business_usecases/UC-242.md#UC-242) [UC-243](../../01_requirements/02_business_usecases/UC-243.md#UC-243) [UC-244](../../01_requirements/02_business_usecases/UC-244.md#UC-244) |
+| 対応業務UC | [UC-004](../../01_requirements/04_business_usecases/UC-004.md#UC-004) [UC-242](../../01_requirements/04_business_usecases/UC-242.md#UC-242) [UC-243](../../01_requirements/04_business_usecases/UC-243.md#UC-243) [UC-244](../../01_requirements/04_business_usecases/UC-244.md#UC-244) |
 | 対応画面SCR | [SCR-001](../01_screens/SCR-001.md#SCR-001) |
 | 対応EVT | [EVT-004](../02_screen_events/EVT-004.md#EVT-004) |
 | 対応API | [API-002](../03_apis/API-002.md#API-002) [API-003](../03_apis/API-003.md#API-003) |
@@ -37,7 +37,7 @@
 
 | 由来要件 |
 |----|
-| [FR-007](../../01_requirements/01_specifications/01_account-fr.md#FR-007) [FR-008](../../01_requirements/01_specifications/01_account-fr.md#FR-008) [FR-011](../../01_requirements/01_specifications/01_account-fr.md#FR-011) [FR-182](../../01_requirements/01_specifications/01_account-fr.md#FR-182) [FR-188](../../01_requirements/01_specifications/01_account-fr.md#FR-188) [BR-004](../../01_requirements/01_specifications/01_account-br.md#BR-004) [BR-005](../../01_requirements/01_specifications/01_account-br.md#BR-005) [BR-006](../../01_requirements/01_specifications/01_account-br.md#BR-006) |
+| [FR-007](../../01_requirements/02_FunctionalRequirement/01_account-fr.md#FR-007) [FR-008](../../01_requirements/02_FunctionalRequirement/01_account-fr.md#FR-008) [FR-011](../../01_requirements/02_FunctionalRequirement/01_account-fr.md#FR-011) [FR-182](../../01_requirements/02_FunctionalRequirement/01_account-fr.md#FR-182) [FR-188](../../01_requirements/02_FunctionalRequirement/01_account-fr.md#FR-188) [BR-004](../../01_requirements/01_BusinessRequirement/01_account-br.md#BR-004) [BR-005](../../01_requirements/01_BusinessRequirement/01_account-br.md#BR-005) [BR-006](../../01_requirements/01_BusinessRequirement/01_account-br.md#BR-006) |
 
 ---
 

@@ -32,7 +32,7 @@
 
 | 観点 | 結線 |
 |----|----|
-| 対応業務UC | [UC-173](../../01_requirements/02_business_usecases/UC-173.md#UC-173) |
+| 対応業務UC | [UC-173](../../01_requirements/04_business_usecases/UC-173.md#UC-173) |
 | 対応画面SCR | — |
 | 対応EVT | — |
 | 対応API | — |
@@ -41,7 +41,7 @@
 
 | 由来要件 |
 |----|
-| [FR-188](../../01_requirements/01_specifications/01_account-fr.md#FR-188) [FR-189](../../01_requirements/01_specifications/01_account-fr.md#FR-189) [FR-191](../../01_requirements/01_specifications/01_account-fr.md#FR-191) |
+| [FR-188](../../01_requirements/02_FunctionalRequirement/01_account-fr.md#FR-188) [FR-189](../../01_requirements/02_FunctionalRequirement/01_account-fr.md#FR-189) [FR-191](../../01_requirements/02_FunctionalRequirement/01_account-fr.md#FR-191) |
 
 ---
 

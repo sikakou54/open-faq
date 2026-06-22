@@ -29,7 +29,7 @@
 
 | 観点 | 結線 |
 |----|----|
-| 対応業務UC | [UC-176](../../01_requirements/02_business_usecases/UC-176.md#UC-176) [UC-177](../../01_requirements/02_business_usecases/UC-177.md#UC-177) [UC-178](../../01_requirements/02_business_usecases/UC-178.md#UC-178) [UC-206](../../01_requirements/02_business_usecases/UC-206.md#UC-206) [UC-242](../../01_requirements/02_business_usecases/UC-242.md#UC-242) |
+| 対応業務UC | [UC-176](../../01_requirements/04_business_usecases/UC-176.md#UC-176) [UC-177](../../01_requirements/04_business_usecases/UC-177.md#UC-177) [UC-178](../../01_requirements/04_business_usecases/UC-178.md#UC-178) [UC-206](../../01_requirements/04_business_usecases/UC-206.md#UC-206) [UC-242](../../01_requirements/04_business_usecases/UC-242.md#UC-242) |
 | 対応画面SCR | [SCR-019](../01_screens/SCR-019.md#SCR-019) |
 | 対応EVT | — |
 | 対応API | [API-005](../03_apis/API-005.md#API-005) [API-012](../03_apis/API-012.md#API-012) [API-013](../03_apis/API-013.md#API-013) [API-045](../03_apis/API-045.md#API-045) [API-056](../03_apis/API-056.md#API-056) |
@@ -38,7 +38,7 @@
 
 | 由来要件 |
 |----|
-| [FR-005](../../01_requirements/01_specifications/01_account-fr.md#FR-005) [BR-002](../../01_requirements/01_specifications/01_account-br.md#BR-002) |
+| [FR-005](../../01_requirements/02_FunctionalRequirement/01_account-fr.md#FR-005) [BR-002](../../01_requirements/01_BusinessRequirement/01_account-br.md#BR-002) |
 
 ---
 
