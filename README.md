@@ -1296,6 +1296,7 @@
 - [ERR-033: PERMISSION_DENIED](02_basic_design/07_errors/ERR-033.md)
 - [ERR-034: SIGNATURE_INVALID](02_basic_design/07_errors/ERR-034.md)
 - [ERR-035: (冪等)](02_basic_design/07_errors/ERR-035.md)
+- [ERR-036: SESSION_EXPIRED](02_basic_design/07_errors/ERR-036.md)
 
 ### メッセージ設計
 
