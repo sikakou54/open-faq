@@ -6,7 +6,7 @@
 
 > **このページは、操作粒度の業務ユースケース(UC-001〜)を一元的に索引する正本カタログです。** 各 UC は「1 画面イベント = 1 UC」または「1 システム処理 = 1 UC」の操作粒度で、`UC-NNN.md`(1 UC = 1 ファイル・フラット連番)に定義します。
 
-*版数 v1.0 ・ 更新 2026-06-21 ・ 総数 247(画面起点 229 ・ システム起点 18)・ ステータス ドラフト ・ 再構成 P2*
+*版数 v1.0 ・ 更新 2026-06-21 ・ 総数 281(画面起点 229 ・ システム起点 18 ・ 要件起点 34)・ ステータス ドラフト ・ 再構成 P2*
 
 > [!NOTE]
 > **採番** 画面順(自然順)×イベント順で UC-001〜UC-229、続いてシステム起点を UC-230〜UC-247 に割り当てます(ゼロ詰め3桁・欠番なし)。旧 ID(`UC-SCR-*-EV*` / `UC-SYSTEM-*`)との対応は `99_management/uc_crosswalk.json` を正本とします。下流の画面・API・テーブル ID(`SCR-*` / `API-*` / `TBL-*`)は現行のままで、後続フェーズ(P3〜P5)でリナンバします。画面イベント ID(`EVT-*`)は P3 で付与します。
@@ -170,21 +170,44 @@
 
 ## <span id="req-origin"></span>5. 要件起点ユースケース(第2段新設)
 
-P7 後続(第2段)で、画面・システム起点ユースケースに未連結だった機能要件(FR)を起点に、業務ユースケース UC-248〜UC-304 を新設しました。各 UC は1 FR(および関連 BR)を起点とする操作粒度の業務ユースケースで、機械支援による生成のため要レビューです。下表は機能グループ別に対応 FR と新設 UC を索引します。
+P7 後続(第2段)で、画面・システム起点ユースケースに未連結だった機能要件(FR)を起点に業務ユースケースを新設し、後続レビューで精査しました。重複していた FR は既存の操作 UC へ結び直し、表示・UX / 非機能の FR は業務UC 対象外として要件側に分類した結果、要件起点 UC は **UC-248〜UC-281(34 件)** に整理されています。下表は各 UC と起点 FR・名称です。
 
-| 機能グループ | 対応FR | UC |
+| UC | 起点FR | 名称 |
 |---|---|---|
-| ユーザー管理(オーナー + メンバー) | [FR-015](../01_specifications/FR-015.md#FR-015) ・ [FR-020](../01_specifications/FR-020.md#FR-020) ・ [FR-028](../01_specifications/FR-028.md#FR-028) ・ [FR-033](../01_specifications/FR-033.md#FR-033) ・ [FR-034](../01_specifications/FR-034.md#FR-034) | [UC-248](UC-248.md#UC-248) ・ [UC-249](UC-249.md#UC-249) ・ [UC-250](UC-250.md#UC-250) ・ [UC-251](UC-251.md#UC-251) ・ [UC-252](UC-252.md#UC-252) |
-| プロジェクト管理 | [FR-038](../01_specifications/FR-038.md#FR-038) ・ [FR-039](../01_specifications/FR-039.md#FR-039) ・ [FR-041](../01_specifications/FR-041.md#FR-041) ・ [FR-042](../01_specifications/FR-042.md#FR-042) ・ [FR-045](../01_specifications/FR-045.md#FR-045) ・ [FR-046](../01_specifications/FR-046.md#FR-046) | [UC-253](UC-253.md#UC-253) ・ [UC-254](UC-254.md#UC-254) ・ [UC-255](UC-255.md#UC-255) ・ [UC-256](UC-256.md#UC-256) ・ [UC-257](UC-257.md#UC-257) ・ [UC-258](UC-258.md#UC-258) |
-| AI 回答 | [FR-060](../01_specifications/FR-060.md#FR-060) ・ [FR-062](../01_specifications/FR-062.md#FR-062) ・ [FR-063](../01_specifications/FR-063.md#FR-063) ・ [FR-064](../01_specifications/FR-064.md#FR-064) | [UC-259](UC-259.md#UC-259) ・ [UC-260](UC-260.md#UC-260) ・ [UC-261](UC-261.md#UC-261) ・ [UC-262](UC-262.md#UC-262) |
-| 未解決質問登録 | [FR-070](../01_specifications/FR-070.md#FR-070) | [UC-263](UC-263.md#UC-263) |
-| 未解決質問から FAQ 登録 | [FR-076](../01_specifications/FR-076.md#FR-076) ・ [FR-077](../01_specifications/FR-077.md#FR-077) ・ [FR-078](../01_specifications/FR-078.md#FR-078) ・ [FR-079](../01_specifications/FR-079.md#FR-079) ・ [FR-080](../01_specifications/FR-080.md#FR-080) ・ [FR-081](../01_specifications/FR-081.md#FR-081) | [UC-264](UC-264.md#UC-264) ・ [UC-265](UC-265.md#UC-265) ・ [UC-266](UC-266.md#UC-266) ・ [UC-267](UC-267.md#UC-267) ・ [UC-268](UC-268.md#UC-268) ・ [UC-269](UC-269.md#UC-269) |
-| 利用量 | [FR-095](../01_specifications/FR-095.md#FR-095) ・ [FR-099](../01_specifications/FR-099.md#FR-099) | [UC-270](UC-270.md#UC-270) ・ [UC-271](UC-271.md#UC-271) |
-| 管理ダッシュボード | [FR-101](../01_specifications/FR-101.md#FR-101) ・ [FR-102](../01_specifications/FR-102.md#FR-102) ・ [FR-103](../01_specifications/FR-103.md#FR-103) ・ [FR-104](../01_specifications/FR-104.md#FR-104) ・ [FR-105](../01_specifications/FR-105.md#FR-105) ・ [FR-106](../01_specifications/FR-106.md#FR-106) ・ [FR-107](../01_specifications/FR-107.md#FR-107) ・ [FR-108](../01_specifications/FR-108.md#FR-108) ・ [FR-110](../01_specifications/FR-110.md#FR-110) ・ [FR-111](../01_specifications/FR-111.md#FR-111) ・ [FR-112](../01_specifications/FR-112.md#FR-112) | [UC-272](UC-272.md#UC-272) ・ [UC-273](UC-273.md#UC-273) ・ [UC-274](UC-274.md#UC-274) ・ [UC-275](UC-275.md#UC-275) ・ [UC-276](UC-276.md#UC-276) ・ [UC-277](UC-277.md#UC-277) ・ [UC-278](UC-278.md#UC-278) ・ [UC-279](UC-279.md#UC-279) ・ [UC-280](UC-280.md#UC-280) ・ [UC-281](UC-281.md#UC-281) ・ [UC-282](UC-282.md#UC-282) |
-| 通知 | [FR-116](../01_specifications/FR-116.md#FR-116) ・ [FR-117](../01_specifications/FR-117.md#FR-117) ・ [FR-118](../01_specifications/FR-118.md#FR-118) ・ [FR-119](../01_specifications/FR-119.md#FR-119) | [UC-283](UC-283.md#UC-283) ・ [UC-284](UC-284.md#UC-284) ・ [UC-285](UC-285.md#UC-285) ・ [UC-286](UC-286.md#UC-286) |
-| ウィジェット | [FR-126](../01_specifications/FR-126.md#FR-126) ・ [FR-127](../01_specifications/FR-127.md#FR-127) ・ [FR-128](../01_specifications/FR-128.md#FR-128) ・ [FR-129](../01_specifications/FR-129.md#FR-129) ・ [FR-130](../01_specifications/FR-130.md#FR-130) ・ [FR-131](../01_specifications/FR-131.md#FR-131) ・ [FR-132](../01_specifications/FR-132.md#FR-132) ・ [FR-133](../01_specifications/FR-133.md#FR-133) ・ [FR-134](../01_specifications/FR-134.md#FR-134) ・ [FR-135](../01_specifications/FR-135.md#FR-135) ・ [FR-136](../01_specifications/FR-136.md#FR-136) | [UC-287](UC-287.md#UC-287) ・ [UC-288](UC-288.md#UC-288) ・ [UC-289](UC-289.md#UC-289) ・ [UC-290](UC-290.md#UC-290) ・ [UC-291](UC-291.md#UC-291) ・ [UC-292](UC-292.md#UC-292) ・ [UC-293](UC-293.md#UC-293) ・ [UC-294](UC-294.md#UC-294) ・ [UC-295](UC-295.md#UC-295) ・ [UC-296](UC-296.md#UC-296) ・ [UC-297](UC-297.md#UC-297) |
-| お知らせ | [FR-159](../01_specifications/FR-159.md#FR-159) ・ [FR-160](../01_specifications/FR-160.md#FR-160) ・ [FR-161](../01_specifications/FR-161.md#FR-161) ・ [FR-165](../01_specifications/FR-165.md#FR-165) ・ [FR-166](../01_specifications/FR-166.md#FR-166) ・ [FR-167](../01_specifications/FR-167.md#FR-167) | [UC-298](UC-298.md#UC-298) ・ [UC-299](UC-299.md#UC-299) ・ [UC-300](UC-300.md#UC-300) ・ [UC-301](UC-301.md#UC-301) ・ [UC-302](UC-302.md#UC-302) ・ [UC-303](UC-303.md#UC-303) |
-| 検索 | [FR-168](../01_specifications/FR-168.md#FR-168) | [UC-304](UC-304.md#UC-304) |
+| [UC-248](UC-248.md#UC-248) | [FR-015](../01_specifications/FR-015.md#FR-015) | 契約専有機能とプロジェクト利用枠を権限に応じて操作する |
+| [UC-249](UC-249.md#UC-249) | [FR-028](../01_specifications/FR-028.md#FR-028) | メンバーを別プロジェクトへ追加割当する |
+| [UC-250](UC-250.md#UC-250) | [FR-033](../01_specifications/FR-033.md#FR-033) | メンバー数しきい値の接近・急増を検知して通知する |
+| [UC-251](UC-251.md#UC-251) | [FR-034](../01_specifications/FR-034.md#FR-034) | メンバー数アラートの通知先を確定する |
+| [UC-252](UC-252.md#UC-252) | [FR-038](../01_specifications/FR-038.md#FR-038) | プロジェクト作成者オーナーに全権を付与する |
+| [UC-253](UC-253.md#UC-253) | [FR-039](../01_specifications/FR-039.md#FR-039) | プロジェクト削除時のメンバー割当と関連データを処理する |
+| [UC-254](UC-254.md#UC-254) | [FR-041](../01_specifications/FR-041.md#FR-041) | プロジェクト単位で FAQ・質問ログ・未解決質問を分けて管理する |
+| [UC-255](UC-255.md#UC-255) | [FR-045](../01_specifications/FR-045.md#FR-045) | プロジェクト削除時の関連データ取扱いを確認・選択する |
+| [UC-256](UC-256.md#UC-256) | [FR-046](../01_specifications/FR-046.md#FR-046) | プロジェクト数の急増を検知してオーナーへ通知する |
+| [UC-257](UC-257.md#UC-257) | [FR-060](../01_specifications/FR-060.md#FR-060) | 回答に利用した FAQ を記録し参照提示する |
+| [UC-258](UC-258.md#UC-258) | [FR-062](../01_specifications/FR-062.md#FR-062) | 信頼度・関連度しきい値を3階層で調整する |
+| [UC-259](UC-259.md#UC-259) | [FR-063](../01_specifications/FR-063.md#FR-063) | 回答不可時に未解決質問を登録し案内する |
+| [UC-260](UC-260.md#UC-260) | [FR-064](../01_specifications/FR-064.md#FR-064) | 処理エラー時にエラー表示を行う |
+| [UC-261](UC-261.md#UC-261) | [FR-070](../01_specifications/FR-070.md#FR-070) | 未解決質問に必要項目を記録する |
+| [UC-262](UC-262.md#UC-262) | [FR-080](../01_specifications/FR-080.md#FR-080) | FAQ 保存・公開と未解決質問の状況を連動させない |
+| [UC-263](UC-263.md#UC-263) | [FR-095](../01_specifications/FR-095.md#FR-095) | セキュリティ目的の契約単位レート制限を適用する |
+| [UC-264](UC-264.md#UC-264) | [FR-099](../01_specifications/FR-099.md#FR-099) | 課金プロバイダ通知を受信・検証・再処理する |
+| [UC-265](UC-265.md#UC-265) | [FR-101](../01_specifications/FR-101.md#FR-101) | 要対応質問の状況を対応中・対応済みで確認する |
+| [UC-266](UC-266.md#UC-266) | [FR-102](../01_specifications/FR-102.md#FR-102) | よく聞かれる質問と未解決傾向を確認する |
+| [UC-267](UC-267.md#UC-267) | [FR-103](../01_specifications/FR-103.md#FR-103) | 期間絞り込みで集計を参照する |
+| [UC-268](UC-268.md#UC-268) | [FR-104](../01_specifications/FR-104.md#FR-104) | 通知失敗・バウンス件数を確認する |
+| [UC-269](UC-269.md#UC-269) | [FR-105](../01_specifications/FR-105.md#FR-105) | 管理範囲とユーザー種別に応じて表示範囲を切り替える |
+| [UC-270](UC-270.md#UC-270) | [FR-116](../01_specifications/FR-116.md#FR-116) | アカウント認証関連通知をオプトアウト不可とする |
+| [UC-271](UC-271.md#UC-271) | [FR-117](../01_specifications/FR-117.md#FR-117) | 送信レート・バウンス率・苦情率を監視して送信抑制する |
+| [UC-272](UC-272.md#UC-272) | [FR-118](../01_specifications/FR-118.md#FR-118) | ウィジェット入力文字列を外部露出箇所に使わない |
+| [UC-273](UC-273.md#UC-273) | [FR-119](../01_specifications/FR-119.md#FR-119) | 通知配信状態を可視化する |
+| [UC-274](UC-274.md#UC-274) | [FR-127](../01_specifications/FR-127.md#FR-127) | 許可ドメイン上でのみウィジェットを動作させる |
+| [UC-275](UC-275.md#UC-275) | [FR-135](../01_specifications/FR-135.md#FR-135) | 受付制限中の案内を表示する |
+| [UC-276](UC-276.md#UC-276) | [FR-136](../01_specifications/FR-136.md#FR-136) | 未解決時にウィジェット利用者へ案内する |
+| [UC-277](UC-277.md#UC-277) | [FR-161](../01_specifications/FR-161.md#FR-161) | お知らせをアカウント利用者のみに表示する |
+| [UC-278](UC-278.md#UC-278) | [FR-165](../01_specifications/FR-165.md#FR-165) | お知らせ受信箱を利用者ごとに保持し退会時に削除する |
+| [UC-279](UC-279.md#UC-279) | [FR-166](../01_specifications/FR-166.md#FR-166) | 未読件数を遷移時取得し過大負荷なく更新する |
+| [UC-280](UC-280.md#UC-280) | [FR-167](../01_specifications/FR-167.md#FR-167) | 一括既読操作を監査ログに記録する |
+| [UC-281](UC-281.md#UC-281) | [FR-168](../01_specifications/FR-168.md#FR-168) | FAQ・質問ログを検索する |
 
 ---
 
