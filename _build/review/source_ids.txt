@@ -1,0 +1,9 @@
+# NotebookLM ソースID(notebook alias: faqrev / id: 3caccb80-db1e-46e9-878a-1b0b0b83f35c)
+# bundle_key = source_id  (Phase7 で 5 ソースを再投入し ID 更新)
+00_rules=d3910735-e3bf-4122-b78e-88c02cc92afa
+01_requirements=03aa0437-3865-4d93-99bf-b4899ca85015
+02_usecases=f8e40dc7-5ad1-4a44-9ae9-f46b824bd2bc
+03_screens_events=2dfa20c8-436f-4175-bedf-4770be48f085
+04_backend=7fdb5361-0096-4136-b50c-0bc93ca0e6ee
+05_sequences=0b1a65c1-4882-407a-9550-74f74bd35ac8
+06_cross=5d1dd327-0b9b-462d-b68a-7f2f18b3f3b4

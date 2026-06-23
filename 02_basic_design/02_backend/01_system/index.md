@@ -4,7 +4,7 @@
 
 # システム設計書
 
-> **メインシステムの全システム処理(`SYS-001`〜`SYS-015`)を一覧する独立設計書です。** 無人で動く処理(バッチ / Webhook / 非同期 / 監視 / 通知)を、画面設計の backend 版として 1 処理 = 1 ファイルで管理します。各処理は対応する業務ユースケース・[システムイベント](../02_system_events/index.md)(`SEV-*`)・API・テーブル・[シーケンス](../../03_sequences/index.md)へトレースします。
+> **メインシステムの全システム処理(`SYS-001`〜`SYS-035`)を一覧する独立設計書です。** 無人で動く処理(バッチ / Webhook / 非同期 / 監視 / 通知)を、画面設計の backend 版として 1 処理 = 1 ファイルで管理します。各処理は対応する業務ユースケース・[システムイベント](../02_system_events/index.md)(`SEV-*`)・API・テーブル・[シーケンス](../../03_sequences/index.md)へトレースします。
 
 *版数 v1.0 ・ 更新 2026-06-23 ・ システム処理 15 ・ ステータス ドラフト*
 
@@ -27,6 +27,26 @@
 | <span id="SYS-013"></span>[`SYS-013`](SYS-013.md#SYS-013) | お知らせ閲覧範囲のアカウント利用者限定 | guard | お知らせ表示のアクセス時 | [UC-086](../../../01_requirements/04_business_usecases/UC-086.md#UC-086) |
 | <span id="SYS-014"></span>[`SYS-014`](SYS-014.md#SYS-014) | お知らせ受信箱の利用者別保持と退会時削除 | cascade | お知らせ受信時 + 退会/無効化の確定時 | [UC-087](../../../01_requirements/04_business_usecases/UC-087.md#UC-087) |
 | <span id="SYS-015"></span>[`SYS-015`](SYS-015.md#SYS-015) | 管理ダッシュボード遷移時の未読お知らせ件数取得・更新 | async | 管理ダッシュボードへの遷移時 + 定期間隔 | [UC-088](../../../01_requirements/04_business_usecases/UC-088.md#UC-088) |
+| <span id="SYS-016"></span>[`SYS-016`](SYS-016.md#SYS-016) | FAQ一括取り込みジョブ非同期実行 | async | FAQ 一括取り込み依頼の受付による取り込みジョブ起動 | [UC-051](../../../01_requirements/04_business_usecases/UC-051.md#UC-051) |
+| <span id="SYS-017"></span>[`SYS-017`](SYS-017.md#SYS-017) | AIしきい値変更の伝播・フォールバック | cascade | 回答可否しきい値の変更検知 / 質問に伴う推論処理の発生 | [UC-052](../../../01_requirements/04_business_usecases/UC-052.md#UC-052) |
+| <span id="SYS-018"></span>[`SYS-018`](SYS-018.md#SYS-018) | 利用量リアルタイム集計・サマリ反映 | async | ウィジェットへの質問がプロジェクトに到達した時 | [UC-056](../../../01_requirements/04_business_usecases/UC-056.md#UC-056) |
+| <span id="SYS-019"></span>[`SYS-019`](SYS-019.md#SYS-019) | 質問数上限アラート通知 | async | 当月質問数が設定済みアラート閾値へ到達したことを検知したとき | [UC-057](../../../01_requirements/04_business_usecases/UC-057.md#UC-057) |
+| <span id="SYS-020"></span>[`SYS-020`](SYS-020.md#SYS-020) | 上限到達ウィジェット受付停止 | monitor | ウィジェット利用者の質問送信を受け付けたとき(同期判定) | [UC-058](../../../01_requirements/04_business_usecases/UC-058.md#UC-058) |
+| <span id="SYS-021"></span>[`SYS-021`](SYS-021.md#SYS-021) | 月次請求確定 | batch | 月初に前月分を対象として定期起動 | [UC-059](../../../01_requirements/04_business_usecases/UC-059.md#UC-059) |
+| <span id="SYS-022"></span>[`SYS-022`](SYS-022.md#SYS-022) | 決済失敗猶予・サスペンション移行 | monitor | 決済失敗確定 / 再決済成功 / 解除の通知受信、および猶予経過を判定する定期起動 | [UC-060](../../../01_requirements/04_business_usecases/UC-060.md#UC-060) |
+| <span id="SYS-023"></span>[`SYS-023`](SYS-023.md#SYS-023) | メール配信状態Webhook処理 | async | メール配信事業者から配信結果の通知を受信したとき | [UC-063](../../../01_requirements/04_business_usecases/UC-063.md#UC-063) |
+| <span id="SYS-024"></span>[`SYS-024`](SYS-024.md#SYS-024) | 運営お知らせ配信 | batch | 配信予定日時の到来 / 運営による即時配信の指示 | [UC-064](../../../01_requirements/04_business_usecases/UC-064.md#UC-064) |
+| <span id="SYS-025"></span>[`SYS-025`](SYS-025.md#SYS-025) | 運用イベントのシステム通知自動生成 | async | 運用イベント(利用上限接近・到達・通知失敗急増・サスペンション・復元・規約改定・価格改定 等)の発生時 | [UC-065](../../../01_requirements/04_business_usecases/UC-065.md#UC-065) |
+| <span id="SYS-026"></span>[`SYS-026`](SYS-026.md#SYS-026) | メンバー割当変更通知 | async | メンバーのプロジェクト別役割割当の追加 / 変更 / 剥奪を契機に起動 | [UC-066](../../../01_requirements/04_business_usecases/UC-066.md#UC-066) |
+| <span id="SYS-027"></span>[`SYS-027`](SYS-027.md#SYS-027) | 配信失敗通知の再送 | batch | 定期起動の再送処理(失敗分の検出) | [UC-067](../../../01_requirements/04_business_usecases/UC-067.md#UC-067) |
+| <span id="SYS-028"></span>[`SYS-028`](SYS-028.md#SYS-028) | 受信箱お知らせ重複集約 | async | 受信箱お知らせの生成要求(契約 / イベント種別)発生時 | [UC-068](../../../01_requirements/04_business_usecases/UC-068.md#UC-068) |
+| <span id="SYS-029"></span>[`SYS-029`](SYS-029.md#SYS-029) | 90日経過データ物理削除 | batch | 日次の実行スケジュールによる自動起動 | [UC-071](../../../01_requirements/04_business_usecases/UC-071.md#UC-071) |
+| <span id="SYS-030"></span>[`SYS-030`](SYS-030.md#SYS-030) | セッション失効判定・再認証誘導 | monitor | アカウント利用者の操作リクエスト受付時 / 経過時間の上限を評価する定期的なタイミング | [UC-072](../../../01_requirements/04_business_usecases/UC-072.md#UC-072) |
+| <span id="SYS-031"></span>[`SYS-031`](SYS-031.md#SYS-031) | ログイン失敗ロックアウト・解除 | monitor | ログイン試行の失敗 / ロック期間の経過判定スケジュール / 権限者による手動解除 | [UC-073](../../../01_requirements/04_business_usecases/UC-073.md#UC-073) |
+| <span id="SYS-032"></span>[`SYS-032`](SYS-032.md#SYS-032) | 契約停止時セッション一斉無効化 | cascade | 対象契約が停止(手動停止 / 規約違反停止)状態へ遷移した時 | [UC-074](../../../01_requirements/04_business_usecases/UC-074.md#UC-074) |
+| <span id="SYS-033"></span>[`SYS-033`](SYS-033.md#SYS-033) | 監査ログ整合性検証(日次) | batch | 日次の定期処理(1 日 1 回・スケジューラ起動) | [UC-075](../../../01_requirements/04_business_usecases/UC-075.md#UC-075) |
+| <span id="SYS-034"></span>[`SYS-034`](SYS-034.md#SYS-034) | 保持期間超過データの自動論理削除 | batch | 日次の定期処理 | — |
+| <span id="SYS-035"></span>[`SYS-035`](SYS-035.md#SYS-035) | 課金通知 取込失敗の再処理 | batch | 定期スケジュール | [UC-061](../../../01_requirements/04_business_usecases/UC-061.md#UC-061) |
 
 ---
 

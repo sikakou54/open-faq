@@ -4,9 +4,9 @@
 
 # システムイベント設計書
 
-> **全システムイベント(`SEV-001`〜`SEV-028`)を対応システム別に一覧します。** 各システムイベントは [システム設計](../01_system/index.md)(`SYS-*`)の 1 処理に属し、複数のイベントが 1 つの業務ユースケースを実現します(システムイベント → 業務UC は多:1)。処理内容の正本は各システム設計 §6 です。
+> **全システムイベント(`SEV-001`〜`SEV-068`)を対応システム別に一覧します。** 各システムイベントは [システム設計](../01_system/index.md)(`SYS-*`)の 1 処理に属し、複数のイベントが 1 つの業務ユースケースを実現します(システムイベント → 業務UC は多:1)。処理内容の正本は各システム設計 §6 です。
 
-*版数 v1.0 ・ 更新 2026-06-23 ・ システムイベント 28 ・ ステータス ドラフト*
+*版数 v1.0 ・ 更新 2026-06-23 ・ システムイベント 68 ・ ステータス ドラフト*
 
 ## 一覧(システム別)
 
@@ -112,6 +112,146 @@
 |---|---|---|
 | [`SEV-027`](SEV-027.md#SEV-027) | 遷移時の未読件数取得・反映 | [UC-088](../../../01_requirements/04_business_usecases/UC-088.md#UC-088) |
 | [`SEV-028`](SEV-028.md#SEV-028) | 滞在中の定期的な未読件数最新化 | [UC-088](../../../01_requirements/04_business_usecases/UC-088.md#UC-088) |
+
+### <span id="SYS-016"></span>SYS-016 FAQ一括取り込みジョブ非同期実行
+
+| SEV-ID | イベント名 | 対応業務UC |
+|---|---|---|
+| [`SEV-029`](SEV-029.md#SEV-029) | 行単位取り込み | [UC-051](../../../01_requirements/04_business_usecases/UC-051.md#UC-051) |
+| [`SEV-030`](SEV-030.md#SEV-030) | 完了通知 | [UC-051](../../../01_requirements/04_business_usecases/UC-051.md#UC-051) |
+
+### <span id="SYS-017"></span>SYS-017 AIしきい値変更の伝播・フォールバック
+
+| SEV-ID | イベント名 | 対応業務UC |
+|---|---|---|
+| [`SEV-031`](SEV-031.md#SEV-031) | しきい値変更伝播 | [UC-052](../../../01_requirements/04_business_usecases/UC-052.md#UC-052) |
+| [`SEV-032`](SEV-032.md#SEV-032) | フォールバックアラート通知 | [UC-052](../../../01_requirements/04_business_usecases/UC-052.md#UC-052) |
+
+### <span id="SYS-018"></span>SYS-018 利用量リアルタイム集計・サマリ反映
+
+| SEV-ID | イベント名 | 対応業務UC |
+|---|---|---|
+| [`SEV-033`](SEV-033.md#SEV-033) | 利用量集計・閾値判定 | [UC-056](../../../01_requirements/04_business_usecases/UC-056.md#UC-056) |
+| [`SEV-034`](SEV-034.md#SEV-034) | 利用量サマリ反映 | [UC-056](../../../01_requirements/04_business_usecases/UC-056.md#UC-056) |
+
+### <span id="SYS-019"></span>SYS-019 質問数上限アラート通知
+
+| SEV-ID | イベント名 | 対応業務UC |
+|---|---|---|
+| [`SEV-035`](SEV-035.md#SEV-035) | 上限アラートお知らせ生成 | [UC-057](../../../01_requirements/04_business_usecases/UC-057.md#UC-057) |
+| [`SEV-036`](SEV-036.md#SEV-036) | アラートメール送信・結果記録 | [UC-057](../../../01_requirements/04_business_usecases/UC-057.md#UC-057) |
+
+### <span id="SYS-020"></span>SYS-020 上限到達ウィジェット受付停止
+
+| SEV-ID | イベント名 | 対応業務UC |
+|---|---|---|
+| [`SEV-037`](SEV-037.md#SEV-037) | 受付停止 | [UC-058](../../../01_requirements/04_business_usecases/UC-058.md#UC-058) |
+| [`SEV-038`](SEV-038.md#SEV-038) | 定型文応答 | [UC-058](../../../01_requirements/04_business_usecases/UC-058.md#UC-058) |
+
+### <span id="SYS-021"></span>SYS-021 月次請求確定
+
+| SEV-ID | イベント名 | 対応業務UC |
+|---|---|---|
+| [`SEV-039`](SEV-039.md#SEV-039) | 請求確定・記録 | [UC-059](../../../01_requirements/04_business_usecases/UC-059.md#UC-059) |
+| [`SEV-040`](SEV-040.md#SEV-040) | 確定通知送信 | [UC-059](../../../01_requirements/04_business_usecases/UC-059.md#UC-059) |
+
+### <span id="SYS-022"></span>SYS-022 決済失敗猶予・サスペンション移行
+
+| SEV-ID | イベント名 | 対応業務UC |
+|---|---|---|
+| [`SEV-041`](SEV-041.md#SEV-041) | サスペンション移行 | [UC-060](../../../01_requirements/04_business_usecases/UC-060.md#UC-060) |
+| [`SEV-042`](SEV-042.md#SEV-042) | 通常状態復帰 | [UC-060](../../../01_requirements/04_business_usecases/UC-060.md#UC-060) |
+
+### <span id="SYS-023"></span>SYS-023 メール配信状態Webhook処理
+
+| SEV-ID | イベント名 | 対応業務UC |
+|---|---|---|
+| [`SEV-043`](SEV-043.md#SEV-043) | 配信状態更新 | [UC-063](../../../01_requirements/04_business_usecases/UC-063.md#UC-063) |
+| [`SEV-044`](SEV-044.md#SEV-044) | 送信停止リスト登録 | [UC-063](../../../01_requirements/04_business_usecases/UC-063.md#UC-063) |
+
+### <span id="SYS-024"></span>SYS-024 運営お知らせ配信
+
+| SEV-ID | イベント名 | 対応業務UC |
+|---|---|---|
+| [`SEV-045`](SEV-045.md#SEV-045) | 受信箱お知らせ生成 | [UC-064](../../../01_requirements/04_business_usecases/UC-064.md#UC-064) |
+| [`SEV-046`](SEV-046.md#SEV-046) | 配信ログ記録 | [UC-064](../../../01_requirements/04_business_usecases/UC-064.md#UC-064) |
+
+### <span id="SYS-025"></span>SYS-025 運用イベントのシステム通知自動生成
+
+| SEV-ID | イベント名 | 対応業務UC |
+|---|---|---|
+| [`SEV-047`](SEV-047.md#SEV-047) | システム通知生成 | [UC-065](../../../01_requirements/04_business_usecases/UC-065.md#UC-065) |
+| [`SEV-048`](SEV-048.md#SEV-048) | 通知メール送信・配信ログ記録 | [UC-065](../../../01_requirements/04_business_usecases/UC-065.md#UC-065) |
+
+### <span id="SYS-026"></span>SYS-026 メンバー割当変更通知
+
+| SEV-ID | イベント名 | 対応業務UC |
+|---|---|---|
+| [`SEV-049`](SEV-049.md#SEV-049) | 受信箱お知らせ生成 | [UC-066](../../../01_requirements/04_business_usecases/UC-066.md#UC-066) |
+| [`SEV-050`](SEV-050.md#SEV-050) | 通知メール送信・配信記録 | [UC-066](../../../01_requirements/04_business_usecases/UC-066.md#UC-066) |
+
+### <span id="SYS-027"></span>SYS-027 配信失敗通知の再送
+
+| SEV-ID | イベント名 | 対応業務UC |
+|---|---|---|
+| [`SEV-051`](SEV-051.md#SEV-051) | 通知再送 | [UC-067](../../../01_requirements/04_business_usecases/UC-067.md#UC-067) |
+| [`SEV-052`](SEV-052.md#SEV-052) | 配信状態更新 | [UC-067](../../../01_requirements/04_business_usecases/UC-067.md#UC-067) |
+
+### <span id="SYS-028"></span>SYS-028 受信箱お知らせ重複集約
+
+| SEV-ID | イベント名 | 対応業務UC |
+|---|---|---|
+| [`SEV-053`](SEV-053.md#SEV-053) | 既存お知らせへ集約 | [UC-068](../../../01_requirements/04_business_usecases/UC-068.md#UC-068) |
+| [`SEV-054`](SEV-054.md#SEV-054) | お知らせ新規生成 | [UC-068](../../../01_requirements/04_business_usecases/UC-068.md#UC-068) |
+
+### <span id="SYS-029"></span>SYS-029 90日経過データ物理削除
+
+| SEV-ID | イベント名 | 対応業務UC |
+|---|---|---|
+| [`SEV-055`](SEV-055.md#SEV-055) | 依存順物理削除 | [UC-071](../../../01_requirements/04_business_usecases/UC-071.md#UC-071) |
+| [`SEV-056`](SEV-056.md#SEV-056) | 監査記録 | [UC-071](../../../01_requirements/04_business_usecases/UC-071.md#UC-071) |
+
+### <span id="SYS-030"></span>SYS-030 セッション失効判定・再認証誘導
+
+| SEV-ID | イベント名 | 対応業務UC |
+|---|---|---|
+| [`SEV-057`](SEV-057.md#SEV-057) | セッション無効化 | [UC-072](../../../01_requirements/04_business_usecases/UC-072.md#UC-072) |
+| [`SEV-058`](SEV-058.md#SEV-058) | 再ログイン誘導 | [UC-072](../../../01_requirements/04_business_usecases/UC-072.md#UC-072) |
+
+### <span id="SYS-031"></span>SYS-031 ログイン失敗ロックアウト・解除
+
+| SEV-ID | イベント名 | 対応業務UC |
+|---|---|---|
+| [`SEV-059`](SEV-059.md#SEV-059) | ロック発動 | [UC-073](../../../01_requirements/04_business_usecases/UC-073.md#UC-073) |
+| [`SEV-060`](SEV-060.md#SEV-060) | ロック解除 | [UC-073](../../../01_requirements/04_business_usecases/UC-073.md#UC-073) |
+
+### <span id="SYS-032"></span>SYS-032 契約停止時セッション一斉無効化
+
+| SEV-ID | イベント名 | 対応業務UC |
+|---|---|---|
+| [`SEV-061`](SEV-061.md#SEV-061) | セッション一斉無効化 | [UC-074](../../../01_requirements/04_business_usecases/UC-074.md#UC-074) |
+| [`SEV-062`](SEV-062.md#SEV-062) | 再認証・停止時制限適用 | [UC-074](../../../01_requirements/04_business_usecases/UC-074.md#UC-074) |
+
+### <span id="SYS-033"></span>SYS-033 監査ログ整合性検証(日次)
+
+| SEV-ID | イベント名 | 対応業務UC |
+|---|---|---|
+| [`SEV-063`](SEV-063.md#SEV-063) | 監査ログ整合性検証 | [UC-075](../../../01_requirements/04_business_usecases/UC-075.md#UC-075) |
+| [`SEV-064`](SEV-064.md#SEV-064) | 整合性違反通知 | [UC-075](../../../01_requirements/04_business_usecases/UC-075.md#UC-075) |
+
+### <span id="SYS-034"></span>SYS-034 保持期間超過データの自動論理削除
+
+| SEV-ID | イベント名 | 対応業務UC |
+|---|---|---|
+| [`SEV-065`](SEV-065.md#SEV-065) | 保持期間超過データの論理削除 | — |
+| [`SEV-066`](SEV-066.md#SEV-066) | 削除実行結果の記録 | — |
+
+### <span id="SYS-035"></span>SYS-035 課金通知 取込失敗の再処理
+
+| SEV-ID | イベント名 | 対応業務UC |
+|---|---|---|
+| [`SEV-067`](SEV-067.md#SEV-067) | 取込失敗通知の再処理 | [UC-061](../../../01_requirements/04_business_usecases/UC-061.md#UC-061) |
+| [`SEV-068`](SEV-068.md#SEV-068) | 再処理上限到達のエスカレーション | [UC-061](../../../01_requirements/04_business_usecases/UC-061.md#UC-061) |
 
 ---
 

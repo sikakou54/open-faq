@@ -398,6 +398,16 @@
 | [`EVT-230`](EVT-230.md#EVT-230) | 初期表示 | [UC-084](../../../01_requirements/04_business_usecases/UC-084.md#UC-084) ・ [UC-085](../../../01_requirements/04_business_usecases/UC-085.md#UC-085) |
 | [`EVT-231`](EVT-231.md#EVT-231) | 「最新の状態に更新」を押下 | [UC-084](../../../01_requirements/04_business_usecases/UC-084.md#UC-084) ・ [UC-085](../../../01_requirements/04_business_usecases/UC-085.md#UC-085) |
 
+### <span id="SCR-032"></span>SCR-032 質問ログ
+
+| EVT-ID | イベント名 | 対応業務UC |
+|---|---|---|
+| [`EVT-232`](EVT-232.md#EVT-232) | 初期表示 | [UC-083](../../../01_requirements/04_business_usecases/UC-083.md#UC-083) |
+| [`EVT-233`](EVT-233.md#EVT-233) | キーワードを入力 | [UC-083](../../../01_requirements/04_business_usecases/UC-083.md#UC-083) |
+| [`EVT-234`](EVT-234.md#EVT-234) | 対象期間を指定 | [UC-083](../../../01_requirements/04_business_usecases/UC-083.md#UC-083) |
+| [`EVT-235`](EVT-235.md#EVT-235) | 回答状態を選択 | [UC-083](../../../01_requirements/04_business_usecases/UC-083.md#UC-083) |
+| [`EVT-236`](EVT-236.md#EVT-236) | 質問ログの行を選択 | [UC-083](../../../01_requirements/04_business_usecases/UC-083.md#UC-083) |
+
 ## 2. EVT ↔ 業務UC 対応表
 
 画面イベント `EVT-NNN` と業務ユースケース `UC-PPP` の 1:1 対応です。
@@ -635,6 +645,11 @@
 | [`EVT-229`](EVT-229.md#EVT-229) | [SCR-030](../01_screens/SCR-030.md#SCR-030) | [UC-044](../../../01_requirements/04_business_usecases/UC-044.md#UC-044) |
 | [`EVT-230`](EVT-230.md#EVT-230) | [SCR-031](../01_screens/SCR-031.md#SCR-031) | [UC-084](../../../01_requirements/04_business_usecases/UC-084.md#UC-084) ・ [UC-085](../../../01_requirements/04_business_usecases/UC-085.md#UC-085) |
 | [`EVT-231`](EVT-231.md#EVT-231) | [SCR-031](../01_screens/SCR-031.md#SCR-031) | [UC-084](../../../01_requirements/04_business_usecases/UC-084.md#UC-084) ・ [UC-085](../../../01_requirements/04_business_usecases/UC-085.md#UC-085) |
+| [`EVT-232`](EVT-232.md#EVT-232) | [SCR-032](../01_screens/SCR-032.md#SCR-032) | [UC-083](../../../01_requirements/04_business_usecases/UC-083.md#UC-083) |
+| [`EVT-233`](EVT-233.md#EVT-233) | [SCR-032](../01_screens/SCR-032.md#SCR-032) | [UC-083](../../../01_requirements/04_business_usecases/UC-083.md#UC-083) |
+| [`EVT-234`](EVT-234.md#EVT-234) | [SCR-032](../01_screens/SCR-032.md#SCR-032) | [UC-083](../../../01_requirements/04_business_usecases/UC-083.md#UC-083) |
+| [`EVT-235`](EVT-235.md#EVT-235) | [SCR-032](../01_screens/SCR-032.md#SCR-032) | [UC-083](../../../01_requirements/04_business_usecases/UC-083.md#UC-083) |
+| [`EVT-236`](EVT-236.md#EVT-236) | [SCR-032](../01_screens/SCR-032.md#SCR-032) | [UC-083](../../../01_requirements/04_business_usecases/UC-083.md#UC-083) |
 
 ---
 
