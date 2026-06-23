@@ -21,8 +21,7 @@ CLAUDE.md                          # 保守ルール正本(本書)
 ├── 01_BusinessRequirement/        #   業務要件 : index.md + BR(01_account 〜 06_security の -br、カテゴリ別 HTML テーブル)+ 業務ルール RULE(08_rule.md)
 ├── 02_FunctionalRequirement/      #   機能要件 : index.md + FR(01_account 〜 06_security の -fr、各 ID は節で保持)
 ├── 03_NonFunctionalRequirement/   #   非機能要件 : index.md + 07_nfr.md(分類節・通し連番)
-├── 04_business_usecases/          #   業務ユースケース : index.md + UC-001..(業務処理粒度。画面起点→システム起点→要件起点。本文は BR/FR/RULE のみ)
-└── 99_restructure_result.md       #   再構成結果サマリ(要件定義視点)
+└── 04_business_usecases/          #   業務ユースケース : index.md + UC-001..(業務処理粒度。画面起点→システム起点→要件起点。本文は BR/FR/RULE のみ)
 02_basic_design/                   # 基本設計(frontend / backend グルーピング)
 ├── index.md                       #   基本設計トップ
 ├── 01_frontend/                   #   フロントエンド設計(利用者操作の画面まわり)
@@ -40,10 +39,9 @@ CLAUDE.md                          # 保守ルール正本(本書)
 ├── 04_permissions/                #   権限設計 : index.md + PERM-001..
 ├── 05_errors/                     #   エラー設計 : index.md + ERR-001..
 ├── 06_messages/                   #   メッセージ設計 : index.md + MSG-001..(メールテンプレ)
-├── 05_billing-design.md           #   横断設計(課金。単独ファイルで存置)
-└── 99_restructure_result.md       #   再構成結果サマリ(基本設計視点)
+└── 05_billing-design.md           #   横断設計(課金。単独ファイルで存置)
 03_future/                         # 将来対応 : index.md + FUT*
-_build/                            # ツール(配信対象外。portal_nav.py / p7_traceability.py が現行正本)
+_build/                            # ツール(配信対象外。portal_nav.py がナビ・README を生成)
 ```
 
 - ファイル名は原則 ID 1 件 = 1 ファイル(例 `UC-001.md` / `SCR-001.md` / `EVT-001.md` / `API-001.md` / `TBL-001.md` / `SEQ-001.md` / `PERM-001.md` / `ERR-001.md` / `MSG-001.md`)。**ただし要件仕様(BR/FR/NFR/RULE)はファイル数削減のためカテゴリ別・種別別ファイルへ統合**し、各 ID は当該ファイル内で保持する(種別ごとに `01_BusinessRequirement/`(BR + RULE)/ `02_FunctionalRequirement/`(FR)/ `03_NonFunctionalRequirement/`(NFR)へ分割。ID・アンカー・採番は不変)。**BR は HTML テーブルの行(ID セルに `<span id="ID"></span>`)**、FR / NFR / RULE は節 `## <span id="ID"></span>ID: 名称` で保持する。
@@ -217,7 +215,7 @@ BR / FR / NFR / RULE を**種別フォルダ + カテゴリ別・種別別ファ
 > [!IMPORTANT]
 > **UC 本文には基本設計レベルの情報を書かない。** 画面ID(`SCR`)/ 画面イベントID(`EVT`)/ API ID(`API`)/ テーブルID(`TBL`)/ シーケンスID(`SEQ`)/ エラーID(`ERR`)/ メッセージID(`MSG`)、画面名・ボタン名・フォーム名・入力項目名、API名 / エンドポイント / メソッド / ステータスコード、テーブル名・物理名・カラム名・SQL、クラス / 関数 / メソッド名、mermaid 図は **記載しない**。これらは業務語へ言い換えて除去する。
 
-- トレースは **BR / FR / RULE のみ本文保持**。画面・画面イベント・API・テーブル・シーケンスとの対応は **基本設計側の逆引き + トレーサビリティマトリクスで管理**する(UC 本文に `関連画面ID` 等は持たない)。
+- トレースは **BR / FR / RULE のみ本文保持**。画面・画面イベント・システム・システムイベント・API・テーブル・シーケンスとの対応は **基本設計側の逆引き(各設計の `対応業務UC`)で管理**する(UC 本文に `関連画面ID` 等は持たない)。
 - 基本フローは業務粒度の「誰が / システムが 〜する」で 4〜8 ステップ。UI 操作の列挙にしない。詳細シーケンスは持たず SEQ 層へトレースする。
 - 粒度: 1 画面イベント = 1 UC のような操作粒度に**しない**(統合する)。「FAQを管理する」のような umbrella にも**しない**(登録/編集/削除/公開… へ分割する)。
 
@@ -257,7 +255,7 @@ BR / FR / NFR / RULE を**種別フォルダ + カテゴリ別・種別別ファ
 - **API / DB / 認証認可 / 入力検証 / 業務処理 はすべて `サーバー` に集約**する。DB 操作は `Server->>Server: 業務処理・DB更新` のようなサーバー自己メッセージで表し、**テーブル別 `テーブル名(CRUD)` 表記は図に書かず** `関連テーブル` 欄で示す。
 - **システム起点フロー**(バッチ / Webhook / 非同期 / 通知、概ね SEQ-088 以降。SEQ-108..122 はシステム設計 `SYS-001..015` に対応)は `ユーザー / 画面` を持たず、外部システム・スケジューラ・バッチ等の実体を参加者として残す(`participant R as Resend(外部)` / `participant SCH as スケジューラ` / `participant B as 削除バッチ` 等)。内部の API/DB/処理はその実体または `サーバー` の自己メッセージへ集約する。
 - `autonumber` を付け、要求に応答線を対で描く。分岐は `alt/else/opt/loop`。**SQL・クラス / メソッド名・ORM・テーブル CRUD・コンポーネント内部 ID(旧 `API-XXX-NNN` / `IT-` / `EV-` / `E-`)は書かない。** 図中に Markdown リンク・`id=` を書かない(検証スクリプトのため)。行単位処理・冪等性・楽観ロック等の詳細は `## 詳細設計への移管候補` に逃がす。
-- SEQ 図は手保守へ移行済み。`_build/p6a_gen_sequences.py`(旧自動生成器)は**再実行禁止**(再実行すると本書式を旧 5 系統モデルへ巻き戻す)。**`_build/` の現行正本は `portal_nav.py`(ナビ・README)と `p7_traceability.py`(マトリクス)のみ**。`p9_reorg_links.py`(構造再編リンク張替)/ `p9b_system_index.py`(SYS/SEV 索引・逆引き生成)/ その他 `p*.py` はワンショット履歴(旧パス参照を含むため再実行しない)。
+- SEQ 図は手保守(mermaid を正本)。`_build/` の正本ツールは `portal_nav.py`(ナビ・README 生成)のみ。
 
 ### 権限 / エラー / メッセージ
 
@@ -276,10 +274,10 @@ BR / FR / NFR / RULE を**種別フォルダ + カテゴリ別・種別別ファ
 `要件(FR/BR/NFR/RULE) ↔ 業務UC ↔ (画面SCR ↔ 画面イベントEVT / システムSYS ↔ システムイベントSEV) ↔ API ↔ テーブルTBL` を**双方向**に結線する。画面起点UCは SCR/EVT、システム起点UCは SYS/SEV で実現する。
 
 - **要件 ↔ UC**: UC 本文の `対応する業務要件ID`(BR)/ `対応する機能要件ID`(FR)/ `関連する業務ルールID`(RULE)を正本とする(要件仕様側は下流リンクを持たない)。
-- **UC ↔ 基本設計**: **UC 本文は画面/画面イベント/システム/システムイベント/API/テーブル/シーケンスへのリンクを持たない。** 結線は基本設計側の逆引き(SCR/EVT/SYS/SEV/API の `対応業務UC`、TBL の `対応業務UC(逆引き)`、SEQ の `対応業務ユースケース`)を正本とし、複数の SCR/EVT/SYS/SEV/API/TBL/SEQ が 1 業務UCへ多:1で紐づく。これらを業務UC単位に集計したのが下記マトリクス。
+- **UC ↔ 基本設計**: **UC 本文は画面/画面イベント/システム/システムイベント/API/テーブル/シーケンスへのリンクを持たない。** 結線は基本設計側の逆引き(SCR/EVT/SYS/SEV/API の `対応業務UC`、TBL の `対応業務UC(逆引き)`、SEQ の `対応業務ユースケース`)を正本とし、複数の SCR/EVT/SYS/SEV/API/TBL/SEQ が 1 業務UCへ多:1で紐づく。
 - **順引き(基本設計内)**: SCR §1 / SYS §1 は UC、API は UC/SCR/EVT/TBL、TBL は UC/API へリンク。要件仕様(BR/FR/NFR/RULE)は下流リンクを持たない(`### 関連` を置かない)。
 - 結線できない場合は `(該当UCなし=ギャップ)` 等を明記し、放置せず課題管理へ載せる(下記)。
-- **トレーサビリティマトリクス `99_management/02_traceability_matrix.md` が UC↔基本設計の対応の正本**(1 行 = 1 業務UC、設計列は基本設計逆引きの集計)。`python3 _build/p7_traceability.py` で再生成する(UC 本文の要件列 + 基本設計の逆引きから決定論的に生成)。
+- **UC↔基本設計の対応は各設計ファイルの逆引き(`対応業務UC` 等)を辿って確認する**(専用の集計マトリクスは持たない)。設計を追加・改題したら、当該設計ファイルの `対応業務UC` を必ず付与し、双方向に辿れる状態を保つ。
 
 ---
 
@@ -325,9 +323,8 @@ PY
 
 作業中に発生した課題は GitHub Issue に登録し、解決したらクローズする。記録を残さないまま放置しない。
 
-- **登録**: その場で解決できない課題・仕様とドキュメントの矛盾・トレーサビリティギャップ・環境制約が生じたら `gh issue create` で起票する。設計再構成由来の課題は表題に `[設計再構成][区分]`(区分 = `traceability` / `design-gap` / `needs-review` / `migration` / `cleanup` 等)を付ける。本文に **背景 / 対応(具体手順)/ 完了条件** を書く。
+- **登録**: その場で解決できない課題・仕様とドキュメントの矛盾・トレーサビリティギャップ・環境制約が生じたら `gh issue create` で起票する。表題に区分(`traceability` / `design-gap` / `needs-review` 等)を付け、本文に **背景 / 対応(具体手順)/ 完了条件** を書く。
 - **クローズ**: 解決コミット本文に `Closes #<番号>` を入れるか `gh issue close <番号>` でクローズする。
-- 再構成の残課題は当面 `99_management/06_remaining_issues.md` に集約し、GitHub 再接続後に起票する。
 
 ---
 
