@@ -6,7 +6,7 @@
 
 > **このセクションは、業務ユースケースに対応するシーケンス図を 1 図 1 ファイル（`SEQ-NNN`）で管理します。**
 
-*版数 v1.0 ・ 更新 2026-06-21 ・ シーケンス 107 ・ ステータス ドラフト*
+*版数 v1.0 ・ 更新 2026-06-21 ・ シーケンス 122 ・ ステータス ドラフト*
 
 ## 1. 読み順
 
@@ -125,6 +125,21 @@
 | <span id="SEQ-105"></span>[SEQ-105](SEQ-105.md#SEQ-105) | AI しきい値変更の伝播・フォールバック | [UC-052](../../01_requirements/04_business_usecases/UC-052.md#UC-052) | — |
 | <span id="SEQ-106"></span>[SEQ-106](SEQ-106.md#SEQ-106) | 受信箱の重複集約 | [UC-068](../../01_requirements/04_business_usecases/UC-068.md#UC-068) | — |
 | <span id="SEQ-107"></span>[SEQ-107](SEQ-107.md#SEQ-107) | 監査ログ整合性検証(日次) | [UC-075](../../01_requirements/04_business_usecases/UC-075.md#UC-075) | — |
+| <span id="SEQ-108"></span>[SEQ-108](SEQ-108.md#SEQ-108) | メンバー数の上限接近・急増の検知と通知 | [UC-049](../../01_requirements/04_business_usecases/UC-049.md#UC-049) | — |
+| <span id="SEQ-109"></span>[SEQ-109](SEQ-109.md#SEQ-109) | プロジェクト数急増検知通知 | [UC-050](../../01_requirements/04_business_usecases/UC-050.md#UC-050) | — |
+| <span id="SEQ-110"></span>[SEQ-110](SEQ-110.md#SEQ-110) | 参照FAQ記録・提示 | [UC-053](../../01_requirements/04_business_usecases/UC-053.md#UC-053) | — |
+| <span id="SEQ-111"></span>[SEQ-111](SEQ-111.md#SEQ-111) | 回答不可時の未解決質問登録・案内処理 | [UC-054](../../01_requirements/04_business_usecases/UC-054.md#UC-054) | — |
+| <span id="SEQ-112"></span>[SEQ-112](SEQ-112.md#SEQ-112) | 未解決質問の記録 | [UC-055](../../01_requirements/04_business_usecases/UC-055.md#UC-055) | — |
+| <span id="SEQ-113"></span>[SEQ-113](SEQ-113.md#SEQ-113) | 課金プロバイダ通知の受信・検証・取込 | [UC-061](../../01_requirements/04_business_usecases/UC-061.md#UC-061) | — |
+| <span id="SEQ-114"></span>[SEQ-114](SEQ-114.md#SEQ-114) | 許可ドメイン照合によるウィジェット起動可否判定 | [UC-062](../../01_requirements/04_business_usecases/UC-062.md#UC-062) | — |
+| <span id="SEQ-115"></span>[SEQ-115](SEQ-115.md#SEQ-115) | アカウント認証関連通知のオプトアウト不可送信 | [UC-069](../../01_requirements/04_business_usecases/UC-069.md#UC-069) | — |
+| <span id="SEQ-116"></span>[SEQ-116](SEQ-116.md#SEQ-116) | 送信品質監視による通知送信抑制 | [UC-070](../../01_requirements/04_business_usecases/UC-070.md#UC-070) | — |
+| <span id="SEQ-117"></span>[SEQ-117](SEQ-117.md#SEQ-117) | 契約単位レート制限の適用 | [UC-076](../../01_requirements/04_business_usecases/UC-076.md#UC-076) | — |
+| <span id="SEQ-118"></span>[SEQ-118](SEQ-118.md#SEQ-118) | 外部露出箇所の入力サニタイズ | [UC-077](../../01_requirements/04_business_usecases/UC-077.md#UC-077) | — |
+| <span id="SEQ-119"></span>[SEQ-119](SEQ-119.md#SEQ-119) | プロジェクト削除に伴うメンバー割当解除 | [UC-079](../../01_requirements/04_business_usecases/UC-079.md#UC-079) | — |
+| <span id="SEQ-120"></span>[SEQ-120](SEQ-120.md#SEQ-120) | お知らせ閲覧範囲のアカウント利用者限定 | [UC-086](../../01_requirements/04_business_usecases/UC-086.md#UC-086) | — |
+| <span id="SEQ-121"></span>[SEQ-121](SEQ-121.md#SEQ-121) | お知らせ受信箱の利用者別保持と退会時削除 | [UC-087](../../01_requirements/04_business_usecases/UC-087.md#UC-087) | — |
+| <span id="SEQ-122"></span>[SEQ-122](SEQ-122.md#SEQ-122) | 管理ダッシュボード遷移時の未読お知らせ件数取得・更新 | [UC-088](../../01_requirements/04_business_usecases/UC-088.md#UC-088) | — |
 
 ---
 

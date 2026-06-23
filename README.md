@@ -412,6 +412,57 @@
 
 - [一覧](02_basic_design/02_backend/index.md)
 
+#### システム設計
+
+- [一覧](02_basic_design/02_backend/01_system/index.md)
+- [SYS-001: メンバー数の上限接近・急増の検知と通知](02_basic_design/02_backend/01_system/SYS-001.md)
+- [SYS-002: プロジェクト数急増検知通知](02_basic_design/02_backend/01_system/SYS-002.md)
+- [SYS-003: 参照FAQ記録・提示](02_basic_design/02_backend/01_system/SYS-003.md)
+- [SYS-004: 回答不可時の未解決質問登録・案内処理](02_basic_design/02_backend/01_system/SYS-004.md)
+- [SYS-005: 未解決質問の記録](02_basic_design/02_backend/01_system/SYS-005.md)
+- [SYS-006: 課金プロバイダ通知の受信・検証・取込](02_basic_design/02_backend/01_system/SYS-006.md)
+- [SYS-007: 許可ドメイン照合によるウィジェット起動可否判定](02_basic_design/02_backend/01_system/SYS-007.md)
+- [SYS-008: アカウント認証関連通知のオプトアウト不可送信](02_basic_design/02_backend/01_system/SYS-008.md)
+- [SYS-009: 送信品質監視による通知送信抑制](02_basic_design/02_backend/01_system/SYS-009.md)
+- [SYS-010: 契約単位レート制限の適用](02_basic_design/02_backend/01_system/SYS-010.md)
+- [SYS-011: 外部露出箇所の入力サニタイズ](02_basic_design/02_backend/01_system/SYS-011.md)
+- [SYS-012: プロジェクト削除に伴うメンバー割当解除](02_basic_design/02_backend/01_system/SYS-012.md)
+- [SYS-013: お知らせ閲覧範囲のアカウント利用者限定](02_basic_design/02_backend/01_system/SYS-013.md)
+- [SYS-014: お知らせ受信箱の利用者別保持と退会時削除](02_basic_design/02_backend/01_system/SYS-014.md)
+- [SYS-015: 管理ダッシュボード遷移時の未読お知らせ件数取得・更新](02_basic_design/02_backend/01_system/SYS-015.md)
+
+#### システムイベント設計
+
+- [一覧](02_basic_design/02_backend/02_system_events/index.md)
+- [SEV-001: メンバー数集計・しきい値評価](02_basic_design/02_backend/02_system_events/SEV-001.md)
+- [SEV-002: アラート通知生成・記録](02_basic_design/02_backend/02_system_events/SEV-002.md)
+- [SEV-003: プロジェクト数集計・急増判定](02_basic_design/02_backend/02_system_events/SEV-003.md)
+- [SEV-004: オーナー通知](02_basic_design/02_backend/02_system_events/SEV-004.md)
+- [SEV-005: 参照FAQ記録](02_basic_design/02_backend/02_system_events/SEV-005.md)
+- [SEV-006: 参照FAQ提示](02_basic_design/02_backend/02_system_events/SEV-006.md)
+- [SEV-007: 未解決質問登録](02_basic_design/02_backend/02_system_events/SEV-007.md)
+- [SEV-008: 回答不可案内](02_basic_design/02_backend/02_system_events/SEV-008.md)
+- [SEV-009: 未解決質問の記録](02_basic_design/02_backend/02_system_events/SEV-009.md)
+- [SEV-010: 受信検証](02_basic_design/02_backend/02_system_events/SEV-010.md)
+- [SEV-011: 取込完了](02_basic_design/02_backend/02_system_events/SEV-011.md)
+- [SEV-012: 取込失敗](02_basic_design/02_backend/02_system_events/SEV-012.md)
+- [SEV-013: 許可ドメイン照合](02_basic_design/02_backend/02_system_events/SEV-013.md)
+- [SEV-014: 許可ドメイン上での起動](02_basic_design/02_backend/02_system_events/SEV-014.md)
+- [SEV-015: オプトアウト不可判定](02_basic_design/02_backend/02_system_events/SEV-015.md)
+- [SEV-016: 認証関連通知の送信](02_basic_design/02_backend/02_system_events/SEV-016.md)
+- [SEV-017: 送信品質の評価](02_basic_design/02_backend/02_system_events/SEV-017.md)
+- [SEV-018: 通知送信の抑制](02_basic_design/02_backend/02_system_events/SEV-018.md)
+- [SEV-019: 契約単位レート制限の評価](02_basic_design/02_backend/02_system_events/SEV-019.md)
+- [SEV-020: 上限超過リクエストの抑制](02_basic_design/02_backend/02_system_events/SEV-020.md)
+- [SEV-021: 外部露出箇所のサニタイズ完了](02_basic_design/02_backend/02_system_events/SEV-021.md)
+- [SEV-022: メンバー割当の一括解除](02_basic_design/02_backend/02_system_events/SEV-022.md)
+- [SEV-023: 利用根拠を失ったメンバーの利用停止](02_basic_design/02_backend/02_system_events/SEV-023.md)
+- [SEV-024: お知らせ閲覧範囲の本人限定](02_basic_design/02_backend/02_system_events/SEV-024.md)
+- [SEV-025: お知らせ受信箱の利用者別保持](02_basic_design/02_backend/02_system_events/SEV-025.md)
+- [SEV-026: 退会・無効化確定時の受信箱削除](02_basic_design/02_backend/02_system_events/SEV-026.md)
+- [SEV-027: 遷移時の未読件数取得・反映](02_basic_design/02_backend/02_system_events/SEV-027.md)
+- [SEV-028: 滞在中の定期的な未読件数最新化](02_basic_design/02_backend/02_system_events/SEV-028.md)
+
 #### API設計
 
 - [一覧](02_basic_design/02_backend/03_apis/index.md)
@@ -474,6 +525,7 @@
 - [API-057: AI 推論 IF(`AnswerProvider`)](02_basic_design/02_backend/03_apis/API-057.md)
 - [API-058: メール配信 IF(`EmailProvider`)](02_basic_design/02_backend/03_apis/API-058.md)
 - [API-059: 外部 Webhook(Resend)](02_basic_design/02_backend/03_apis/API-059.md)
+- [API-060: 課金プロバイダ Webhook 受信](02_basic_design/02_backend/03_apis/API-060.md)
 
 #### DB設計
 
@@ -509,6 +561,7 @@
 - [H_INQUIRY_FAQ(未解決質問 FAQ 化履歴)](02_basic_design/02_backend/04_database/TBL-029.md)
 - [TP_FAQ_FTS(FAQ 全文検索)](02_basic_design/02_backend/04_database/TBL-030.md)
 - [TP_AI_THRESH_CACHE(AI しきい値キャッシュ)](02_basic_design/02_backend/04_database/TBL-031.md)
+- [T_BILLING_WEBHOOK_LOG(課金Webhook受信ログ)](02_basic_design/02_backend/04_database/TBL-032.md)
 
 ### シーケンス設計
 
@@ -620,6 +673,21 @@
 - [SEQ-105: AI しきい値変更の伝播・フォールバック](02_basic_design/03_sequences/SEQ-105.md)
 - [SEQ-106: 受信箱の重複集約](02_basic_design/03_sequences/SEQ-106.md)
 - [SEQ-107: 監査ログ整合性検証(日次)](02_basic_design/03_sequences/SEQ-107.md)
+- [SEQ-108: メンバー数の上限接近・急増の検知と通知](02_basic_design/03_sequences/SEQ-108.md)
+- [SEQ-109: プロジェクト数急増検知通知](02_basic_design/03_sequences/SEQ-109.md)
+- [SEQ-110: 参照FAQ記録・提示](02_basic_design/03_sequences/SEQ-110.md)
+- [SEQ-111: 回答不可時の未解決質問登録・案内処理](02_basic_design/03_sequences/SEQ-111.md)
+- [SEQ-112: 未解決質問の記録](02_basic_design/03_sequences/SEQ-112.md)
+- [SEQ-113: 課金プロバイダ通知の受信・検証・取込](02_basic_design/03_sequences/SEQ-113.md)
+- [SEQ-114: 許可ドメイン照合によるウィジェット起動可否判定](02_basic_design/03_sequences/SEQ-114.md)
+- [SEQ-115: アカウント認証関連通知のオプトアウト不可送信](02_basic_design/03_sequences/SEQ-115.md)
+- [SEQ-116: 送信品質監視による通知送信抑制](02_basic_design/03_sequences/SEQ-116.md)
+- [SEQ-117: 契約単位レート制限の適用](02_basic_design/03_sequences/SEQ-117.md)
+- [SEQ-118: 外部露出箇所の入力サニタイズ](02_basic_design/03_sequences/SEQ-118.md)
+- [SEQ-119: プロジェクト削除に伴うメンバー割当解除](02_basic_design/03_sequences/SEQ-119.md)
+- [SEQ-120: お知らせ閲覧範囲のアカウント利用者限定](02_basic_design/03_sequences/SEQ-120.md)
+- [SEQ-121: お知らせ受信箱の利用者別保持と退会時削除](02_basic_design/03_sequences/SEQ-121.md)
+- [SEQ-122: 管理ダッシュボード遷移時の未読お知らせ件数取得・更新](02_basic_design/03_sequences/SEQ-122.md)
 
 ### 権限設計
 

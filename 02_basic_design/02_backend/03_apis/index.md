@@ -4,7 +4,7 @@
 
 # API 設計書
 
-> **このページは、メインシステムが提供する全 59 エンドポイントの REST / 内部 IF API を、1 エンドポイント = 1 ファイル(`API-001` 〜 `API-059`)でフラット採番し索引する設計書です。** 各 API の詳細は個別ページ(基本情報 / 処理概要 / リクエスト / レスポンス / バリデーション / エラー / 利用テーブル)に展開しています。
+> **このページは、メインシステムが提供する全 60 エンドポイントの REST / 内部 IF API を、1 エンドポイント = 1 ファイル(`API-001` 〜 `API-060`)でフラット採番し索引する設計書です。** 各 API の詳細は個別ページ(基本情報 / 処理概要 / リクエスト / レスポンス / バリデーション / エラー / 利用テーブル)に展開しています。
 
 *版数 v3.0 ・ 更新 2026-06-21 ・ API数 59 ・ 再構成 P4*
 
@@ -39,7 +39,7 @@
 
 ## <span id="list"></span>1. API 一覧(機能グループ別)
 
-全 59 エンドポイントを 13 機能グループに整理します。API ID から個別ページへ移動します。
+全 60 エンドポイントを 13 機能グループに整理します。API ID から個別ページへ移動します。
 
 ### <span id="g-1"></span>1.1 認証・セッション
 
@@ -185,11 +185,12 @@ AI 推論連携インターフェース(外部 LLM)。
 
 ### <span id="g-13"></span>1.13 外部 Webhook
 
-メール配信プロバイダ(Resend)からの Webhook 受信。
+メール配信プロバイダ(Resend)・課金プロバイダからの Webhook 受信。
 
 | API ID | API / エンドポイント | 認可 | 利用テーブル |
 |---|---|---|---|
 | <span id="API-059"></span>[`API-059`](API-059.md#API-059) | **外部 Webhook(Resend)** POST `/webhooks/resend` | —(署名検証のみ) | `H_NOTIF_LOGS` `M_EMAIL_SUPPRESS` `H_AUDIT_LOGS` |
+| <span id="API-060"></span>[`API-060`](API-060.md#API-060) | **課金プロバイダ Webhook 受信** POST `/webhooks/billing` | —(署名検証のみ) | `T_BILLING_WEBHOOK_LOG` `M_CONTRACT` `T_BILL_SUBS` `T_BILL_INVOICES` `H_AUDIT_LOGS` |
 
 ## <span id="trace"></span>2. API ↔ UC / EVT / TBL 対応表
 
@@ -256,6 +257,7 @@ AI 推論連携インターフェース(外部 LLM)。
 | [`API-057`](API-057.md#API-057) | AI 推論 IF(`AnswerProvider`) | — | [UC-052](../../../01_requirements/04_business_usecases/UC-052.md#UC-052) | — |
 | [`API-058`](API-058.md#API-058) | メール配信 IF(`EmailProvider`) | — | [UC-059](../../../01_requirements/04_business_usecases/UC-059.md#UC-059) [UC-064](../../../01_requirements/04_business_usecases/UC-064.md#UC-064) [UC-065](../../../01_requirements/04_business_usecases/UC-065.md#UC-065) [UC-066](../../../01_requirements/04_business_usecases/UC-066.md#UC-066) [UC-057](../../../01_requirements/04_business_usecases/UC-057.md#UC-057) [UC-067](../../../01_requirements/04_business_usecases/UC-067.md#UC-067) | — |
 | [`API-059`](API-059.md#API-059) | 外部 Webhook(Resend) | — | [UC-063](../../../01_requirements/04_business_usecases/UC-063.md#UC-063) | `H_NOTIF_LOGS` `M_EMAIL_SUPPRESS` `H_AUDIT_LOGS` |
+| [`API-060`](API-060.md#API-060) | 課金プロバイダ Webhook 受信 | — | [UC-061](../../../01_requirements/04_business_usecases/UC-061.md#UC-061) | `T_BILLING_WEBHOOK_LOG` `M_CONTRACT` `T_BILL_SUBS` `T_BILL_INVOICES` `H_AUDIT_LOGS` |
 
 ## <span id="reading"></span>3. 読み順
 
