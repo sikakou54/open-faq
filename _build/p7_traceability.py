@@ -22,13 +22,23 @@ UCDIR = os.path.join(ROOT, "01_requirements", "04_business_usecases")
 FRDIR = os.path.join(ROOT, "01_requirements", "02_FunctionalRequirement")
 BRDIR = os.path.join(ROOT, "01_requirements", "01_BusinessRequirement")
 RULEFILE = os.path.join(BRDIR, "08_rule.md")
-SCRDIR = os.path.join(ROOT, "02_basic_design", "01_screens")
-EVTDIR = os.path.join(ROOT, "02_basic_design", "02_screen_events")
-APIDIR = os.path.join(ROOT, "02_basic_design", "03_apis")
-TBLDIR = os.path.join(ROOT, "02_basic_design", "04_database")
-SEQDIR = os.path.join(ROOT, "02_basic_design", "05_sequences")
-PERMDIR = os.path.join(ROOT, "02_basic_design", "06_permissions")
+SCRDIR = os.path.join(ROOT, "02_basic_design", "01_frontend", "01_screens")
+EVTDIR = os.path.join(ROOT, "02_basic_design", "01_frontend", "02_screen_events")
+SYSDIR = os.path.join(ROOT, "02_basic_design", "02_backend", "01_system")
+SEVDIR = os.path.join(ROOT, "02_basic_design", "02_backend", "02_system_events")
+APIDIR = os.path.join(ROOT, "02_basic_design", "02_backend", "03_apis")
+TBLDIR = os.path.join(ROOT, "02_basic_design", "02_backend", "04_database")
+SEQDIR = os.path.join(ROOT, "02_basic_design", "03_sequences")
+PERMDIR = os.path.join(ROOT, "02_basic_design", "04_permissions")
 MGMT = os.path.join(ROOT, "99_management")
+
+# 系列接頭辞 → 02_basic_design 配下の新相対サブパス(マトリクスのリンク生成用)
+PATHMAP = {
+    "SCR": "01_frontend/01_screens", "EVT": "01_frontend/02_screen_events",
+    "SYS": "02_backend/01_system", "SEV": "02_backend/02_system_events",
+    "API": "02_backend/03_apis", "TBL": "02_backend/04_database",
+    "SEQ": "03_sequences", "PERM": "04_permissions",
+}
 
 
 def read(p):
@@ -85,7 +95,7 @@ def parse():
             fr=ids_in(section(t, "対応する機能要件ID"), "FR"),
             br=ids_in(section(t, "対応する業務要件ID"), "BR"),
             rule=ids_in(section(t, "関連する業務ルールID"), "RULE"),
-            scr=[], evt=[], api=[], tbl=[], seq=[], perm=[],
+            scr=[], evt=[], sys=[], sev=[], api=[], tbl=[], seq=[], perm=[],
         )
 
     # 基本設計の逆引きを UC 単位へ反転
@@ -98,12 +108,14 @@ def parse():
 
     attach(SCRDIR, "SCR", "対応業務UC", "scr")
     attach(EVTDIR, "EVT", "対応業務UC", "evt")
+    attach(SYSDIR, "SYS", "対応業務UC", "sys")
+    attach(SEVDIR, "SEV", "対応業務UC", "sev")
     attach(APIDIR, "API", "対応業務UC", "api")
     attach(TBLDIR, "TBL", "対応業務UC(逆引き)", "tbl")
     attach(SEQDIR, "SEQ", "対応業務ユースケース", "seq")
     attach(PERMDIR, "PERM", "対応業務UC", "perm")
     for uc in g["uc"]:
-        for k in ("scr", "evt", "api", "tbl", "seq", "perm"):
+        for k in ("scr", "evt", "sys", "sev", "api", "tbl", "seq", "perm"):
             g["uc"][uc][k].sort(key=natkey)
     return g
 
@@ -122,18 +134,18 @@ def main():
             out.append(f"[{x}](../01_requirements/01_BusinessRequirement/08_rule.md#{x})")
         return " ".join(out) or "—"
 
-    def dlinks(ids, sub, sd):
-        return " ".join(f"[{x}](../02_basic_design/{sd}/{x}.md#{x})" for x in ids) or "—"
+    def dlinks(ids, prefix):
+        return " ".join(f"[{x}](../02_basic_design/{PATHMAP[prefix]}/{x}.md#{x})" for x in ids) or "—"
 
     rows = []
     for ucid in sorted(g["uc"], key=natkey):
         d = g["uc"][ucid]
         has_req = bool(d["fr"] or d["br"])
-        has_design = bool(d["scr"] or d["evt"] or d["api"] or d["tbl"] or d["seq"] or d["perm"])
+        has_design = bool(d["scr"] or d["evt"] or d["sys"] or d["sev"] or d["api"] or d["tbl"] or d["seq"] or d["perm"])
         if not has_req:
             state, note = "要件未反映", "対応要件ID 無し"
         elif not has_design:
-            state, note = "基本設計未反映", "SCR/EVT/API/TBL/SEQ/PERM いずれも無し"
+            state, note = "基本設計未反映", "SCR/EVT/SYS/SEV/API/TBL/SEQ/PERM いずれも無し"
         else:
             state, note = "OK", "—"
         rows.append((ucid, d, state, note))
@@ -145,8 +157,9 @@ def main():
     out.append("")
     out.append("# トレーサビリティマトリクス(業務UC→要件 / 基本設計)")
     out.append("")
-    out.append("> **このページは 業務UC を起点に、要件(BR/FR/RULE)と基本設計(画面 / 画面イベント / API / テーブル / シーケンス)の対応を一覧します。** "
-               "業務ユースケース(UC)単位で 1 行を起こします。要件列は UC 本文、基本設計列は各設計ファイルの逆引き(`対応業務UC`)から集計します。")
+    out.append("> **このページは 業務UC を起点に、要件(BR/FR/RULE)と基本設計(画面 / 画面イベント / システム / システムイベント / API / テーブル / シーケンス)の対応を一覧します。** "
+               "業務ユースケース(UC)単位で 1 行を起こします。要件列は UC 本文、基本設計列は各設計ファイルの逆引き(`対応業務UC`)から集計します。"
+               "システム起点(バッチ/Webhook/非同期/監視/通知)は システム(`SYS`)・システムイベント(`SEV`)列で表します。")
     out.append("")
     out.append("*再構成 P8(業務UC統合) ・ 生成 `_build/p7_traceability.py`(決定論的・冪等)*")
     out.append("")
@@ -163,18 +176,20 @@ def main():
     out.append("")
     out.append("## マトリクス")
     out.append("")
-    out.append("| 業務UC | 要件(BR/FR/RULE) | 画面 | 画面イベント | API | テーブル | シーケンス | 権限 | 状態 |")
-    out.append("|---|---|---|---|---|---|---|---|---|")
+    out.append("| 業務UC | 要件(BR/FR/RULE) | 画面 | 画面イベント | システム | システムイベント | API | テーブル | シーケンス | 権限 | 状態 |")
+    out.append("|---|---|---|---|---|---|---|---|---|---|---|")
     for ucid, d, state, note in rows:
         uc_l = f"[{ucid}](../01_requirements/04_business_usecases/{ucid}.md#{ucid})"
         out.append("| " + " | ".join([
             uc_l, req_links(d),
-            dlinks(d["scr"], "SCR", "01_screens"),
-            dlinks(d["evt"], "EVT", "02_screen_events"),
-            dlinks(d["api"], "API", "03_apis"),
-            dlinks(d["tbl"], "TBL", "04_database"),
-            dlinks(d["seq"], "SEQ", "05_sequences"),
-            dlinks(d["perm"], "PERM", "06_permissions"),
+            dlinks(d["scr"], "SCR"),
+            dlinks(d["evt"], "EVT"),
+            dlinks(d["sys"], "SYS"),
+            dlinks(d["sev"], "SEV"),
+            dlinks(d["api"], "API"),
+            dlinks(d["tbl"], "TBL"),
+            dlinks(d["seq"], "SEQ"),
+            dlinks(d["perm"], "PERM"),
             state,
         ]) + " |")
     out.append("")

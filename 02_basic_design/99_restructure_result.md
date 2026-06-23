@@ -19,14 +19,14 @@
 | パス | 内容 | 件数 |
 |----|----|----|
 | [`index.md`](index.md) | 基本設計トップ(設計書マップ / 要件落とし込み / システム全体像) | — |
-| [`01_screens/`](01_screens/index.md) | 画面設計 `SCR-*`(§6 にイベント列、§1 に対応UC) | 30 |
-| [`02_screen_events/`](02_screen_events/index.md) | 画面イベント設計 `EVT-*`(対応UC / SCR / 呼出API) | 229 |
-| [`03_apis/`](03_apis/index.md) | API設計 `API-*`(1 エンドポイント = 1 ファイル) | 59 |
-| [`04_database/`](04_database/index.md) | DB設計 `TBL-*`(1 テーブル = 1 ファイル) | 31 |
-| [`05_sequences/`](05_sequences/index.md) | シーケンス設計 `SEQ-*`(対応UC、図中の画面は新 SCR-ID) | 107 |
-| [`06_permissions/`](06_permissions/index.md) | 権限設計 `PERM-*` | 11 |
-| [`07_errors/`](07_errors/index.md) | エラー設計 `ERR-*` | 35 |
-| [`08_messages/`](08_messages/index.md) | メッセージ設計 `MSG-*`(メールテンプレ) | 13 |
+| [`01_screens/`](01_frontend/01_screens/index.md) | 画面設計 `SCR-*`(§6 にイベント列、§1 に対応UC) | 30 |
+| [`02_screen_events/`](01_frontend/02_screen_events/index.md) | 画面イベント設計 `EVT-*`(対応UC / SCR / 呼出API) | 229 |
+| [`03_apis/`](02_backend/03_apis/index.md) | API設計 `API-*`(1 エンドポイント = 1 ファイル) | 59 |
+| [`04_database/`](02_backend/04_database/index.md) | DB設計 `TBL-*`(1 テーブル = 1 ファイル) | 31 |
+| [`05_sequences/`](03_sequences/index.md) | シーケンス設計 `SEQ-*`(対応UC、図中の画面は新 SCR-ID) | 107 |
+| [`06_permissions/`](04_permissions/index.md) | 権限設計 `PERM-*` | 11 |
+| [`07_errors/`](05_errors/index.md) | エラー設計 `ERR-*` | 35 |
+| [`08_messages/`](06_messages/index.md) | メッセージ設計 `MSG-*`(メールテンプレ) | 13 |
 | [`05_billing-design.md`](05_billing-design.md) | 横断設計(課金。単独ファイルで存置) | — |
 
 ## 3. ID リナンバ要約

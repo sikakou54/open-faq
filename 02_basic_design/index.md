@@ -16,15 +16,15 @@ FAQ AI ウィジェット SaaS / メインシステム(利用者向け)の基本
 ## <span id="map"></span>1.設計書マップ
 
 <div class="card-grid cols-2">
-<a class="doc-card" href="01_screens/index.md"><span class="dc-k">01 ・ 独立</span><h4>画面設計書</h4><p>全 30 画面(SCR-001〜030・公開ウィジェット含む)をワークスペース別に整理。各画面の「アクション → API → DB」を §4 に集約。</p></a>
-<a class="doc-card" href="02_screen_events/index.md"><span class="dc-k">02 ・ 独立</span><h4>画面イベント設計書</h4><p>全画面イベント 229 件を <code>EVT-001〜229</code> として個別化。各 EVT は対応画面・対応業務UC(1:1)・対象項目・呼出API・遷移先・処理を持つ。</p></a>
-<a class="doc-card" href="03_apis/index.md"><span class="dc-k">03 ・ 独立</span><h4>API設計書</h4><p>全 51 エンドポイントを 14 機能グループに整理。各 API の権限と I/O テーブル(CRUD)を明示。</p></a>
-<a class="doc-card" href="04_database/index.md"><span class="dc-k">03 ・ 独立</span><h4>データベース設計書</h4><p>31 テーブルを 7 機能ドメインに分類。ER 図・コード値・使用元(逆引き)を併記。</p></a>
+<a class="doc-card" href="01_frontend/01_screens/index.md"><span class="dc-k">01 ・ 独立</span><h4>画面設計書</h4><p>全 30 画面(SCR-001〜030・公開ウィジェット含む)をワークスペース別に整理。各画面の「アクション → API → DB」を §4 に集約。</p></a>
+<a class="doc-card" href="01_frontend/02_screen_events/index.md"><span class="dc-k">02 ・ 独立</span><h4>画面イベント設計書</h4><p>全画面イベント 229 件を <code>EVT-001〜229</code> として個別化。各 EVT は対応画面・対応業務UC(1:1)・対象項目・呼出API・遷移先・処理を持つ。</p></a>
+<a class="doc-card" href="02_backend/03_apis/index.md"><span class="dc-k">03 ・ 独立</span><h4>API設計書</h4><p>全 51 エンドポイントを 14 機能グループに整理。各 API の権限と I/O テーブル(CRUD)を明示。</p></a>
+<a class="doc-card" href="02_backend/04_database/index.md"><span class="dc-k">03 ・ 独立</span><h4>データベース設計書</h4><p>31 テーブルを 7 機能ドメインに分類。ER 図・コード値・使用元(逆引き)を併記。</p></a>
 <a class="doc-card" href="../01_requirements/04_business_usecases/index.md"><span class="dc-k">04 ・ 横断</span><h4>ユースケース設計書</h4><p>画面起点(EV 単位 229)・システム起点(18)の全ユースケース一覧と、横断 10 フローのシーケンス図・要件トレーサビリティ。</p></a>
 <a class="doc-card" href="05_billing-design.md"><span class="dc-k">05 ・ 横断</span><h4>課金・請求設計書</h4><p>課金モデル・質問数上限・支払方法ゲート・契約状態ライフサイクル・利用量集計・Webhook 受信方針。</p></a>
-<a class="doc-card" href="06_permissions/index.md"><span class="dc-k">06 ・ 横断</span><h4>権限設計</h4><p>ロール別操作権限(PERM)。ユーザー種別・認可判定の順序・オーナー専有 / 保護・境界判定・再認証・契約状態制限・規約再同意割込み・通知宛先解決。</p></a>
-<a class="doc-card" href="07_errors/index.md"><span class="dc-k">07 ・ 横断</span><h4>エラー設計</h4><p>API エラーコード(ERR)。HTTP ステータス・分類・メッセージ・EVT / API ↔ エラー 対応表。</p></a>
-<a class="doc-card" href="08_messages/index.md"><span class="dc-k">08 ・ 横断</span><h4>メッセージ設計</h4><p>メールテンプレート(MSG)の件名・本文・送信契機・配信運用と、メール共通基準・画面メッセージ参照。</p></a>
+<a class="doc-card" href="04_permissions/index.md"><span class="dc-k">06 ・ 横断</span><h4>権限設計</h4><p>ロール別操作権限(PERM)。ユーザー種別・認可判定の順序・オーナー専有 / 保護・境界判定・再認証・契約状態制限・規約再同意割込み・通知宛先解決。</p></a>
+<a class="doc-card" href="05_errors/index.md"><span class="dc-k">07 ・ 横断</span><h4>エラー設計</h4><p>API エラーコード(ERR)。HTTP ステータス・分類・メッセージ・EVT / API ↔ エラー 対応表。</p></a>
+<a class="doc-card" href="06_messages/index.md"><span class="dc-k">08 ・ 横断</span><h4>メッセージ設計</h4><p>メールテンプレート(MSG)の件名・本文・送信契機・配信運用と、メール共通基準・画面メッセージ参照。</p></a>
 </div>
 
 ## <span id="fr"></span>2.要件定義 → 基本設計 の落とし込み
@@ -36,7 +36,7 @@ FAQ AI ウィジェット SaaS / メインシステム(利用者向け)の基本
 >
 > <div>
 >
-> 本表は要件 → 設計の入口(索引)です。アクション単位の精密な対応は [画面設計 §4](01_screens/index.md#flow)、テーブル単位の逆引きは [データベース設計 §2](04_database/index.md#map) を正本とします。
+> 本表は要件 → 設計の入口(索引)です。アクション単位の精密な対応は [画面設計 §4](01_frontend/01_screens/index.md#flow)、テーブル単位の逆引きは [データベース設計 §2](02_backend/04_database/index.md#map) を正本とします。
 >
 > </div>
 
