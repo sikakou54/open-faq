@@ -11,29 +11,29 @@
 
 ### 業務要件
 
-- [一覧](01_requirements/01_BusinessRequirement/index.md)
-- [アカウント・ユーザー・アクセス制御(業務要件)](01_requirements/01_BusinessRequirement/01_account-br.md)
-- [FAQ・AI 回答・未解決質問・処理エラー(業務要件)](01_requirements/01_BusinessRequirement/02_faq-ai-br.md)
-- [利用量・課金・ダッシュボード・運用(業務要件)](01_requirements/01_BusinessRequirement/03_usage-br.md)
-- [ウィジェット・検索・入出力(業務要件)](01_requirements/01_BusinessRequirement/04_widget-br.md)
-- [通知・お知らせ(業務要件)](01_requirements/01_BusinessRequirement/05_notification-br.md)
-- [セキュリティ・プライバシー(業務要件)](01_requirements/01_BusinessRequirement/06_security-br.md)
-- [業務ルール(要件)](01_requirements/01_BusinessRequirement/08_rule.md)
+- [一覧](01_requirements/01_business_requirement/index.md)
+- [アカウント・ユーザー・アクセス制御(業務要件)](01_requirements/01_business_requirement/01_account-br.md)
+- [FAQ・AI 回答・未解決質問・処理エラー(業務要件)](01_requirements/01_business_requirement/02_faq-ai-br.md)
+- [利用量・課金・ダッシュボード・運用(業務要件)](01_requirements/01_business_requirement/03_usage-br.md)
+- [ウィジェット・検索・入出力(業務要件)](01_requirements/01_business_requirement/04_widget-br.md)
+- [通知・お知らせ(業務要件)](01_requirements/01_business_requirement/05_notification-br.md)
+- [セキュリティ・プライバシー(業務要件)](01_requirements/01_business_requirement/06_security-br.md)
+- [業務ルール(要件)](01_requirements/01_business_requirement/08_rule.md)
 
 ### 機能要件
 
-- [一覧](01_requirements/02_FunctionalRequirement/index.md)
-- [アカウント・ユーザー・アクセス制御(機能要件)](01_requirements/02_FunctionalRequirement/01_account-fr.md)
-- [FAQ・AI 回答・未解決質問・処理エラー(機能要件)](01_requirements/02_FunctionalRequirement/02_faq-ai-fr.md)
-- [利用量・課金・ダッシュボード・運用(機能要件)](01_requirements/02_FunctionalRequirement/03_usage-fr.md)
-- [ウィジェット・検索・入出力(機能要件)](01_requirements/02_FunctionalRequirement/04_widget-fr.md)
-- [通知・お知らせ(機能要件)](01_requirements/02_FunctionalRequirement/05_notification-fr.md)
-- [セキュリティ・プライバシー(機能要件)](01_requirements/02_FunctionalRequirement/06_security-fr.md)
+- [一覧](01_requirements/02_functional_requirement/index.md)
+- [アカウント・ユーザー・アクセス制御(機能要件)](01_requirements/02_functional_requirement/01_account-fr.md)
+- [FAQ・AI 回答・未解決質問・処理エラー(機能要件)](01_requirements/02_functional_requirement/02_faq-ai-fr.md)
+- [利用量・課金・ダッシュボード・運用(機能要件)](01_requirements/02_functional_requirement/03_usage-fr.md)
+- [ウィジェット・検索・入出力(機能要件)](01_requirements/02_functional_requirement/04_widget-fr.md)
+- [通知・お知らせ(機能要件)](01_requirements/02_functional_requirement/05_notification-fr.md)
+- [セキュリティ・プライバシー(機能要件)](01_requirements/02_functional_requirement/06_security-fr.md)
 
 ### 非機能要件
 
-- [一覧](01_requirements/03_NonFunctionalRequirement/index.md)
-- [非機能要件(要件)](01_requirements/03_NonFunctionalRequirement/07_nfr.md)
+- [一覧](01_requirements/03_non_functional_requirement/index.md)
+- [非機能要件(要件)](01_requirements/03_non_functional_requirement/07_nfr.md)
 
 ### 業務ユースケース
 

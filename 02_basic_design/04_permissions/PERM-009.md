@@ -38,7 +38,7 @@
 
 | 由来要件 |
 |----|
-| [FR-098](../../01_requirements/02_FunctionalRequirement/03_usage-fr.md#FR-098) |
+| [FR-098](../../01_requirements/02_functional_requirement/03_usage-fr.md#FR-098) |
 
 ---
 

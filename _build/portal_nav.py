@@ -13,9 +13,9 @@ GROUPS = [("01_requirements", "要件定義"),
           ("02_basic_design", "基本設計"),
           ("03_future", "将来対応")]
 LABELS = {
-    "01_requirements/01_BusinessRequirement": "業務要件",
-    "01_requirements/02_FunctionalRequirement": "機能要件",
-    "01_requirements/03_NonFunctionalRequirement": "非機能要件",
+    "01_requirements/01_business_requirement": "業務要件",
+    "01_requirements/02_functional_requirement": "機能要件",
+    "01_requirements/03_non_functional_requirement": "非機能要件",
     "01_requirements/04_business_usecases": "業務ユースケース",
     "02_basic_design/01_frontend": "フロントエンド設計",
     "02_basic_design/01_frontend/01_screens": "画面設計",

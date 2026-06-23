@@ -38,7 +38,7 @@
 
 | 由来要件 |
 |----|
-| [FR-003](../../01_requirements/02_FunctionalRequirement/01_account-fr.md#FR-003) [FR-021](../../01_requirements/02_FunctionalRequirement/01_account-fr.md#FR-021) [FR-031](../../01_requirements/02_FunctionalRequirement/01_account-fr.md#FR-031) [FR-189](../../01_requirements/02_FunctionalRequirement/01_account-fr.md#FR-189) |
+| [FR-003](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-003) [FR-021](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-021) [FR-031](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-031) [FR-189](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-189) |
 
 ---
 

@@ -9,8 +9,8 @@
 | A1 | 高 | 要件 index.md がスコープで「基本設計/詳細設計を正本とする」委譲 | 委譲文を削除し「MVP 範囲のみ記載」に留める | 01_requirements/index.md | 未 |
 | A2 | 中 | index.md 更新履歴「該当設計書を正本として参照化」 | 「実装/基本設計レベルの記載を除去」に留め委譲表現を削除 | 01_requirements/index.md | 未 |
 | A3 | 中 | index.md §9「各要件は UC へトレースする」順方向誘導 | トレースは下流(UC)側逆引きが正本、の記述へ | 01_requirements/index.md | 未 |
-| A4 | 高 | FR-109/111/174/175 が「基本設計の画面設計に明記/正本化」委譲 | 業務論理を要件に残し委譲文を削除 | 02_FunctionalRequirement/03_usage-fr.md | 未 |
-| A5 | 高 | NFR-013「(詳細設計を正本)」委譲 | 「(詳細設計を正本)」を削除 | 03_NonFunctionalRequirement/07_nfr.md | 未 |
+| A4 | 高 | FR-109/111/174/175 が「基本設計の画面設計に明記/正本化」委譲 | 業務論理を要件に残し委譲文を削除 | 02_functional_requirement/03_usage-fr.md | 未 |
+| A5 | 高 | NFR-013「(詳細設計を正本)」委譲 | 「(詳細設計を正本)」を削除 | 03_non_functional_requirement/07_nfr.md | 未 |
 | A6 | 中 | UC-001/002/016 備考に フォーム/ボタン名(UI語) | 業務語へ言い換え | UC-001/002/016.md | 未 |
 | A7 | 中 | 旧 `E-` エラーID 18種が API エラー表に残存 | 旧 E- を削除し ERR-### + 正規コード名へ統一 | 03_apis/API-*.md(13ファイル) | 未 |
 | A8 | 中 | SCR-023/024/027 に旧 `MSG-SCR-*`/`E-*` ID・生SQL・メソッド名 | 旧 ID 削除、SQL/メソッド名を業務動作へ抽象化 | 01_screens/SCR-023/024/027.md | 未 |

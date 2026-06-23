@@ -21,9 +21,9 @@ BUNDLES = {
     ]),
     "01_requirements": ("要件定義: 業務要件 BR / 機能要件 FR / 非機能要件 NFR / 業務ルール RULE", [
         "01_requirements/index.md",
-        "01_requirements/01_BusinessRequirement/*.md",
-        "01_requirements/02_FunctionalRequirement/*.md",
-        "01_requirements/03_NonFunctionalRequirement/*.md",
+        "01_requirements/01_business_requirement/*.md",
+        "01_requirements/02_functional_requirement/*.md",
+        "01_requirements/03_non_functional_requirement/*.md",
     ]),
     "02_usecases": ("要件定義: 業務ユースケース UC", [
         "01_requirements/04_business_usecases/*.md",

@@ -6,10 +6,10 @@
 
 | 系列 | フォルダ | 件数 | ID レンジ | 欠番 |
 |---|---|---:|---|---|
-| BR(業務要件) | 01_requirements/01_BusinessRequirement | 146 | BR-001.. | なし |
-| RULE(業務ルール) | 01_requirements/01_BusinessRequirement/08_rule.md | 20 | RULE-001.. | なし |
-| FR(機能要件) | 01_requirements/02_FunctionalRequirement | 194 | FR-001.. | なし |
-| NFR(非機能要件) | 01_requirements/03_NonFunctionalRequirement/07_nfr.md | 79 | NFR-001.. | なし |
+| BR(業務要件) | 01_requirements/01_business_requirement | 146 | BR-001.. | なし |
+| RULE(業務ルール) | 01_requirements/01_business_requirement/08_rule.md | 20 | RULE-001.. | なし |
+| FR(機能要件) | 01_requirements/02_functional_requirement | 194 | FR-001.. | なし |
+| NFR(非機能要件) | 01_requirements/03_non_functional_requirement/07_nfr.md | 79 | NFR-001.. | なし |
 | UC(業務ユースケース) | 01_requirements/04_business_usecases | 88 | UC-001..088 | なし |
 | SCR(画面) | 02_basic_design/01_frontend/01_screens | 31 | SCR-001..031 | なし |
 | EVT(画面イベント) | 02_basic_design/01_frontend/02_screen_events | 231 | EVT-001..231 | なし |

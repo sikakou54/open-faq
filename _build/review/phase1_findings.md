@@ -20,7 +20,7 @@
 | S7 | 高 | 03_usage-fr.md:839(FR-175) | 「スコープと各画面の対応の正本は基本設計の画面設計に置く」 | スコープ対応を下流へ委譲 | 高 | 管理スコープ区分の業務要件を残し、画面対応の委譲文削除 | 対応要(grounded) |
 | S8 | 高 | 07_nfr.md:217(NFR-013) | 「パスワードは安全なハッシュ方式で保存すること(詳細設計を正本)」 | 実現手段を詳細設計へ委譲 | 高 | 「(詳細設計を正本)」を削除(要件はハッシュ保存の要求のみで完結) | 対応要(grounded) |
 
-> 検討の上 **対応不要**(要件内/索引内の正当な参照): `index.md:62`「具体要件は FR-035 を正本とする」(要件→要件)、`01_BusinessRequirement/index.md:11`「HTML テーブルを正本とする」(索引→自カテゴリ)。CLAUDE.md は同一種別内の兄弟参照を許容。
+> 検討の上 **対応不要**(要件内/索引内の正当な参照): `index.md:62`「具体要件は FR-035 を正本とする」(要件→要件)、`01_business_requirement/index.md:11`「HTML テーブルを正本とする」(索引→自カテゴリ)。CLAUDE.md は同一種別内の兄弟参照を許容。
 
 ## 指摘一覧(UC 層)
 
@@ -42,7 +42,7 @@
 
 ## フェーズ6 へ引き継ぐ修正対象(確定分)
 - `01_requirements/index.md`(S1, S2, S3)
-- `01_requirements/02_FunctionalRequirement/03_usage-fr.md`(S4 FR-109, S5 FR-111, S6 FR-174, S7 FR-175)
-- `01_requirements/03_NonFunctionalRequirement/07_nfr.md`(S8 NFR-013)
+- `01_requirements/02_functional_requirement/03_usage-fr.md`(S4 FR-109, S5 FR-111, S6 FR-174, S7 FR-175)
+- `01_requirements/03_non_functional_requirement/07_nfr.md`(S8 NFR-013)
 - `01_requirements/04_business_usecases/UC-001.md, UC-002.md, UC-016.md`(U1, U2, U3)
 - 要確認(ユーザー判断): U4(UC-033 改題要否), U5(UC-040 "主色"表現)

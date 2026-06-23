@@ -38,7 +38,7 @@
 
 | 由来要件 |
 |----|
-| [FR-005](../../01_requirements/02_FunctionalRequirement/01_account-fr.md#FR-005) [BR-002](../../01_requirements/01_BusinessRequirement/01_account-br.md#BR-002) |
+| [FR-005](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-005) [BR-002](../../01_requirements/01_business_requirement/01_account-br.md#BR-002) |
 
 ---
 
