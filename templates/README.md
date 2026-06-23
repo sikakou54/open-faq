@@ -21,9 +21,7 @@
 | 04 | [業務ルール(RULE)](04_business-rule.md) | 業務ルール | `01_requirements/01_business_requirement/08_rule.md` |
 | 05 | [業務ユースケース(UC)](05_business-usecase.md) | 業務ユースケース | `01_requirements/04_business_usecases/` |
 | 06 | [画面設計(SCR)](06_screen.md) | 画面設計 | `02_basic_design/01_frontend/01_screens/` |
-| 07 | [画面イベント設計(EVT)](07_screen-event.md) | 画面イベント設計 | `02_basic_design/01_frontend/02_screen_events/` |
 | 08 | [システム設計(SYS)](08_system.md) | システム設計 | `02_basic_design/02_backend/01_system/` |
-| 09 | [システムイベント設計(SEV)](09_system-event.md) | システムイベント設計 | `02_basic_design/02_backend/02_system_events/` |
 | 10 | [API設計(API)](10_api.md) | API設計 | `02_basic_design/02_backend/03_apis/` |
 | 11 | [DB設計(TBL)](11_database.md) | DB設計 | `02_basic_design/02_backend/04_database/` |
 | 12 | [シーケンス設計(SEQ)](12_sequence.md) | シーケンス設計 | `02_basic_design/03_sequences/` |

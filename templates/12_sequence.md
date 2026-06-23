@@ -11,7 +11,7 @@
 
 **UC 単位 1 ファイル(`SEQ-NNN`)**。骨格:
 
-- `## 項目`(SEQ ID / 対応業務ユースケース `UC` / 業務要件 `BR` / 機能要件 `FR` / 画面イベント `EVT` / 関連画面 `SCR` / 関連 API `API` / 関連テーブル `TBL` / エラー `ERR` / メッセージ `MSG`)
+- `## 項目`(SEQ ID / 対応業務ユースケース `UC` / 業務要件 `BR` / 機能要件 `FR` / 画面イベント `EVT`(プレーンテキストの ID。EVT は独立ページを持たず SCR §6 のアンカーのため、リンクにしない)/ 関連画面 `SCR` / 関連 API `API` / 関連テーブル `TBL` / エラー `ERR` / メッセージ `MSG`)
 - `## 概要`
 - `## シーケンス図`(mermaid `sequenceDiagram`)
 - (必要時のみ)`## 代替フロー` / `## 例外フロー` / `## 詳細設計への移管候補`
@@ -44,7 +44,7 @@
 | 対応業務ユースケース | [UC-001](../../01_requirements/04_business_usecases/UC-001.md#UC-001) |
 | 業務要件 | [BR-001](../../01_requirements/01_business_requirement/01_account-br.md#BR-001) |
 | 機能要件 | [FR-001](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-001) |
-| 画面イベント | [EVT-001](../01_frontend/02_screen_events/EVT-001.md#EVT-001) |
+| 画面イベント | EVT-001 |
 | 関連画面 | [SCR-001](../01_frontend/01_screens/SCR-001.md#SCR-001) |
 | 関連 API | [API-001](../02_backend/03_apis/API-001.md#API-001) |
 | 関連テーブル | [TBL-001](../02_backend/04_database/TBL-001.md#TBL-001) |

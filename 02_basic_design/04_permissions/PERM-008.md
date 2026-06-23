@@ -19,7 +19,7 @@
 > [!IMPORTANT]
 > **最後の割当解除による自動無効化** メンバーの最後の有効割当が解除されたとき、対象アカウントを自動で無効化し、全セッション・未使用招待を失効させます(FR-031 / FR-189)。一定期間(90 日)経過後にデータが消去される旨は割当解除の確認時に明示します。
 
-## <span id="trace"></span>2. 対応 UC / SCR / EVT / API
+## <span id="trace"></span>2. 対応 UC / SCR / API
 
 本権限が適用される画面・イベント・API・業務ユースケースの結線です。
 
@@ -27,7 +27,6 @@
 |----|----|
 | 対応業務UC | [UC-002](../../01_requirements/04_business_usecases/UC-002.md#UC-002) [UC-019](../../01_requirements/04_business_usecases/UC-019.md#UC-019) [UC-021](../../01_requirements/04_business_usecases/UC-021.md#UC-021) [UC-003](../../01_requirements/04_business_usecases/UC-003.md#UC-003) [UC-006](../../01_requirements/04_business_usecases/UC-006.md#UC-006) |
 | 対応画面SCR | [SCR-018](../01_frontend/01_screens/SCR-018.md#SCR-018) [SCR-023](../01_frontend/01_screens/SCR-023.md#SCR-023) |
-| 対応EVT | [EVT-151](../01_frontend/02_screen_events/EVT-151.md#EVT-151) [EVT-190](../01_frontend/02_screen_events/EVT-190.md#EVT-190) |
 | 対応API | [API-006](../02_backend/03_apis/API-006.md#API-006) [API-008](../02_backend/03_apis/API-008.md#API-008) [API-023](../02_backend/03_apis/API-023.md#API-023) |
 
 ## <span id="src"></span>3. 由来要件

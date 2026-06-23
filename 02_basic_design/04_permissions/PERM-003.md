@@ -20,7 +20,7 @@
 > [!NOTE]
 > **上限・無料枠はメンバーも変更可** プロジェクト単位の利用上限・無料枠は、オーナーまたは当該プロジェクトのメンバーが変更できます(BR-017)。
 
-## <span id="trace"></span>2. 対応 UC / SCR / EVT / API
+## <span id="trace"></span>2. 対応 UC / SCR / API
 
 本権限が適用される画面・イベント・API・業務ユースケースの結線です。
 
@@ -28,7 +28,6 @@
 |----|----|
 | 対応業務UC | [UC-078](../../01_requirements/04_business_usecases/UC-078.md#UC-078) |
 | 対応画面SCR | [SCR-005](../01_frontend/01_screens/SCR-005.md#SCR-005) [SCR-019](../01_frontend/01_screens/SCR-019.md#SCR-019) [SCR-028](../01_frontend/01_screens/SCR-028.md#SCR-028) |
-| 対応EVT | — |
 | 対応API | [API-014](../02_backend/03_apis/API-014.md#API-014) [API-015](../02_backend/03_apis/API-015.md#API-015) [API-017](../02_backend/03_apis/API-017.md#API-017) [API-018](../02_backend/03_apis/API-018.md#API-018) [API-045](../02_backend/03_apis/API-045.md#API-045) [API-056](../02_backend/03_apis/API-056.md#API-056) |
 
 ## <span id="src"></span>3. 由来要件

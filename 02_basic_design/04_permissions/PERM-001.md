@@ -18,7 +18,7 @@
 > [!IMPORTANT]
 > **オーナー判定 = isOwner bypass を先頭に** 認可権威は `M_CONTRACT.user_id` がセッションの `user_id` と一致すること(`isOwner=true`)による bypass を最優先とし、`M_PRJ_USERS` の owner 行は一覧表示・通知宛先の網羅用で専有判定には用いません。メンバー権限は `M_PRJ_USERS` の有効割当(`valid=1`)でのみ付与されます。オーナーは役割変更・降格・譲渡なし。プロジェクト内の役割差は持ちません。
 
-## <span id="trace"></span>2. 対応 UC / SCR / EVT / API
+## <span id="trace"></span>2. 対応 UC / SCR / API
 
 本権限が適用される画面・イベント・API・業務ユースケースの結線です。
 
@@ -26,7 +26,6 @@
 |----|----|
 | 対応業務UC | [UC-066](../../01_requirements/04_business_usecases/UC-066.md#UC-066) |
 | 対応画面SCR | [SCR-013](../01_frontend/01_screens/SCR-013.md#SCR-013) |
-| 対応EVT | — |
 | 対応API | [API-002](../02_backend/03_apis/API-002.md#API-002) |
 
 ## <span id="src"></span>3. 由来要件

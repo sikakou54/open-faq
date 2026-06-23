@@ -1,9 +1,9 @@
-# NotebookLM ソースID(notebook alias: faqrev / id: 3caccb80-db1e-46e9-878a-1b0b0b83f35c)
-# bundle_key = source_id  (Phase7 で 5 ソースを再投入し ID 更新)
-00_rules=978a2ff2-572d-4ee4-85ae-56d57c489191
-01_requirements=03aa0437-3865-4d93-99bf-b4899ca85015
-02_usecases=f8e40dc7-5ad1-4a44-9ae9-f46b824bd2bc
-03_screens_events=2dfa20c8-436f-4175-bedf-4770be48f085
-04_backend=7fdb5361-0096-4136-b50c-0bc93ca0e6ee
-05_sequences=0b1a65c1-4882-407a-9550-74f74bd35ac8
-06_cross=5d1dd327-0b9b-462d-b68a-7f2f18b3f3b4
+# NotebookLM ソースID(faqrev / 3caccb80-…)
+# P2-P7 修正で 03_screens_events/04_backend/06_cross 再更新
+00_rules=6504d9c3-3fac-4a1d-8244-339685232c39
+01_requirements=73d21d5c-3c87-4642-90b3-5791213035f4
+02_usecases=e065c190-6299-46cd-88a7-e473d89a45bd
+03_screens_events=0d3cd778-b787-4bab-abaa-397eeef7fab2
+04_backend=a1d71338-a5e7-467a-a900-d8e08180e83a
+05_sequences=2e332967-dafc-44ce-884b-2fbbf02737e5
+06_cross=a8398008-1116-42a1-8a9f-65960cccece4

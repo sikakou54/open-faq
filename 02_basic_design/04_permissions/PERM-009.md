@@ -19,7 +19,7 @@
 > [!NOTE]
 > **支払方法ゲートは契約停止ではない** 支払方法未登録 + 無料枠超過によるウィジェット受付停止は契約サスペンションではありません(`status` は `active` のまま)。本制限の対象外で管理画面は通常どおり利用できます。拒否時は `E-BILL-CONTRACT-SUSPENDED` / `E-BIZ-CONTRACT-DELETED`。契約状態遷移は [課金・請求設計書](../05_billing-design.md) が正本。
 
-## <span id="trace"></span>2. 対応 UC / SCR / EVT / API
+## <span id="trace"></span>2. 対応 UC / SCR / API
 
 本権限が適用される画面・イベント・API・業務ユースケースの結線です。
 
@@ -27,7 +27,6 @@
 |----|----|
 | 対応業務UC | [UC-060](../../01_requirements/04_business_usecases/UC-060.md#UC-060) |
 | 対応画面SCR | — |
-| 対応EVT | — |
 | 対応API | [API-002](../02_backend/03_apis/API-002.md#API-002) [API-037](../02_backend/03_apis/API-037.md#API-037) |
 
 ## <span id="src"></span>3. 由来要件

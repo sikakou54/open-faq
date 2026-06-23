@@ -29,15 +29,13 @@ BUNDLES = {
     "02_usecases": ("要件定義: 業務ユースケース UC", [
         "01_requirements/04_business_usecases/*.md",
     ]),
-    "03_screens_events": ("基本設計(フロント): 画面 SCR / 画面イベント EVT", [
+    "03_screens_events": ("基本設計(フロント): 画面 SCR(§6 画面イベント一覧に EVT-ID 非リンクアンカーを保持。独立 EVT ページは廃止)", [
         "02_basic_design/01_frontend/index.md",
         "02_basic_design/01_frontend/01_screens/*.md",
-        "02_basic_design/01_frontend/02_screen_events/*.md",
     ]),
-    "04_backend": ("基本設計(バック): システム SYS / システムイベント SEV / API / テーブル TBL", [
+    "04_backend": ("基本設計(バック): システム SYS(§6 システムイベント一覧に SEV-ID 非リンクアンカーを保持。独立 SEV ページは廃止)/ API / テーブル TBL", [
         "02_basic_design/02_backend/index.md",
         "02_basic_design/02_backend/01_system/*.md",
-        "02_basic_design/02_backend/02_system_events/*.md",
         "02_basic_design/02_backend/03_apis/*.md",
         "02_basic_design/02_backend/04_database/*.md",
     ]),

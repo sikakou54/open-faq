@@ -1,0 +1,9 @@
+{
+  "00_rules": "6504d9c3-3fac-4a1d-8244-339685232c39",
+  "01_requirements": "73d21d5c-3c87-4642-90b3-5791213035f4",
+  "02_usecases": "e065c190-6299-46cd-88a7-e473d89a45bd",
+  "03_screens_events": "0d3cd778-b787-4bab-abaa-397eeef7fab2",
+  "04_backend": "a1d71338-a5e7-467a-a900-d8e08180e83a",
+  "05_sequences": "2e332967-dafc-44ce-884b-2fbbf02737e5",
+  "06_cross": "a8398008-1116-42a1-8a9f-65960cccece4"
+}

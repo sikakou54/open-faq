@@ -11,7 +11,7 @@
 
 **1 エンドポイント = 1 ファイル(`API-NNN`)**。骨格:
 
-- `## 項目`(API ID / API名 / 対応業務UC / 対応画面ID / 対応画面イベントID / エンドポイント / HTTPメソッド / 認証 / 認可)
+- `## 項目`(API ID / API名 / 対応業務UC / 対応画面ID / エンドポイント / HTTPメソッド / 認証 / 認可)
 - 処理概要
 - リクエスト
 - レスポンス
@@ -43,7 +43,6 @@
 | API名 | ログイン |
 | 対応業務UC | [UC-001](../../../01_requirements/04_business_usecases/UC-001.md#UC-001) |
 | 対応画面ID | [SCR-001](../../01_frontend/01_screens/SCR-001.md#SCR-001) |
-| 対応画面イベントID | [EVT-001](../../01_frontend/02_screen_events/EVT-001.md#EVT-001) |
 | エンドポイント | … |
 | HTTPメソッド | … |
 | 認証 | … |

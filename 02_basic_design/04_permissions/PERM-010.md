@@ -16,7 +16,7 @@
 > [!IMPORTANT]
 > **同意・割込みはオーナー専有** 規約再同意の同意 / 不同意操作はオーナー専有機能です(FR-015)。再同意未完了の契約に属するメンバーは、契約側の同意完了までゲートの影響を受けます。拒否時は `E-AUTHZ-TERMS`。
 
-## <span id="trace"></span>2. 対応 UC / SCR / EVT / API
+## <span id="trace"></span>2. 対応 UC / SCR / API
 
 本権限が適用される画面・イベント・API・業務ユースケースの結線です。
 
@@ -24,7 +24,6 @@
 |----|----|
 | 対応業務UC | [UC-013](../../01_requirements/04_business_usecases/UC-013.md#UC-013) [UC-078](../../01_requirements/04_business_usecases/UC-078.md#UC-078) |
 | 対応画面SCR | [SCR-020](../01_frontend/01_screens/SCR-020.md#SCR-020) |
-| 対応EVT | [EVT-135](../01_frontend/02_screen_events/EVT-135.md#EVT-135) [EVT-169](../01_frontend/02_screen_events/EVT-169.md#EVT-169) |
 | 対応API | [API-052](../02_backend/03_apis/API-052.md#API-052) [API-054](../02_backend/03_apis/API-054.md#API-054) [API-055](../02_backend/03_apis/API-055.md#API-055) |
 
 ## <span id="src"></span>3. 由来要件

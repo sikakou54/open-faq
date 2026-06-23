@@ -2,6 +2,10 @@
 
 *正本: 本ファイル。各フェーズの依頼文 `phaseN_prompt.md`・生回答 `results/phaseN*.json/_answer.md`・整理表 `phaseN_findings.md`・横断対応表 `correspondence.md`。*
 
+> [!NOTE]
+> **追加ラウンド(EVT/SEV 独立ページ廃止・アンカー化レビュー)= 合格(収束)。** 報告は [`evtsev_review_report.md`](evtsev_review_report.md)。変更起因の不整合・回帰はゼロ(テンプレ13 / MSG13 / CLAUDE.md / apis index を修正)。
+> **既存課題 P2〜P7 も対応完了**: P2/P4/P5/P6/P7 を修正、P3 は設計判断で据置、P1 は偽陽性。NotebookLM ピンポイント再確認(`pconfirm`)で全項目「解消/妥当・新たな不整合なし」を確認。
+
 ## 連携方式(確定)
 
 - **方式B: NotebookLM CLI(`nlm`)直接駆動。** ユーザー指示によりローカル CLI を使用(human-bridge は不要化)。
