@@ -22,7 +22,7 @@
 | 10 | 再認証判定 | 重要操作で再認証が「当該操作 1 回 + 15 分以内」を満たすか | [ERR-015](../05_errors/ERR-015.md#ERR-015)(`E-AUTH-REAUTH-REQUIRED`) |
 | 11 | 利用上限判定 | 認可通過後に上限を確認(レート = 契約単位、上限・無料枠 = プロジェクト単位) | [課金・請求設計書](../05_billing-design.md) |
 
-## <span id="trace"></span>2. 対応 UC / SCR / API
+## <span id="trace"></span>2. 対応 UC / SCR / EVT / API
 
 本権限が適用される画面・イベント・API・業務ユースケースの結線です。
 
@@ -30,6 +30,7 @@
 |----|----|
 | 対応業務UC | [UC-008](../../01_requirements/04_business_usecases/UC-008.md#UC-008) |
 | 対応画面SCR | — |
+| 対応EVT | — |
 | 対応API | — |
 
 ## <span id="src"></span>3. 由来要件

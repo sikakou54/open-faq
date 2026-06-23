@@ -16,7 +16,7 @@
 > [!NOTE]
 > **宛先解決ロジックの正本** 「誰が宛先か」を決める解決ロジックは本ページが正本です。配信契機・件名・本文テンプレートは [メッセージ設計](../06_messages/index.md) が正本です。
 
-## <span id="trace"></span>2. 対応 UC / SCR / API
+## <span id="trace"></span>2. 対応 UC / SCR / EVT / API
 
 本権限が適用される画面・イベント・API・業務ユースケースの結線です。
 
@@ -24,6 +24,7 @@
 |----|----|
 | 対応業務UC | [UC-057](../../01_requirements/04_business_usecases/UC-057.md#UC-057) |
 | 対応画面SCR | — |
+| 対応EVT | — |
 | 対応API | [API-021](../02_backend/03_apis/API-021.md#API-021) [API-024](../02_backend/03_apis/API-024.md#API-024) |
 
 ## <span id="src"></span>3. 由来要件

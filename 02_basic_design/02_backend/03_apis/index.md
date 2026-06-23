@@ -189,76 +189,73 @@ AI 推論連携インターフェース(外部 LLM)。
 | <span id="API-059"></span>[`API-059`](API-059.md#API-059) | **外部 Webhook(Resend)** POST `/webhooks/resend` | —(署名検証のみ) | `H_NOTIF_LOGS` `M_EMAIL_SUPPRESS` `H_AUDIT_LOGS` |
 | <span id="API-060"></span>[`API-060`](API-060.md#API-060) | **課金プロバイダ Webhook 受信** POST `/webhooks/billing` | —(署名検証のみ) | `T_BILLING_WEBHOOK_LOG` `M_CONTRACT` `T_BILL_SUBS` `T_BILL_INVOICES` `H_AUDIT_LOGS` |
 
-## <span id="trace"></span>2. API ↔ UC / TBL 対応表
+## <span id="trace"></span>2. API ↔ UC / EVT / TBL 対応表
 
-各 API を呼び出す業務ユースケース(UC)と、参照・更新するテーブル(TBL)の結線一覧です。UC から逆引きできない API は MVP では UC 層に直接の呼び出しを持たない(内部 / 検索系)ことを示します。
+各 API を呼び出す画面イベント(EVT)・業務ユースケース(UC)と、参照・更新するテーブル(TBL)の結線一覧です。EVT・UC から逆引きできない API は MVP では画面イベント層に直接の呼び出しを持たない(内部 / 検索系)ことを示します。
 
-> [!NOTE]
-> 画面イベント(EVT)/ システムイベント(SEV)は独立した層・ページを持たず、対応する画面設計 SCR §6 / システム設計 SYS §6 のイベント一覧に内包されるため、本対応表には EVT/SEV 列を設けない。
-
-| API ID | API名 | 対応UC | 利用テーブル |
-|---|---|---|---|
-| [`API-001`](API-001.md#API-001) | 新規登録 | [UC-002](../../../01_requirements/04_business_usecases/UC-002.md#UC-002) [UC-003](../../../01_requirements/04_business_usecases/UC-003.md#UC-003) | `M_USER` `M_CONTRACT` `T_TERMS_AGREE` `T_ACCESS_TOKENS` |
-| [`API-002`](API-002.md#API-002) | ログイン | [UC-001](../../../01_requirements/04_business_usecases/UC-001.md#UC-001) [UC-072](../../../01_requirements/04_business_usecases/UC-072.md#UC-072) [UC-073](../../../01_requirements/04_business_usecases/UC-073.md#UC-073) | `M_CONTRACT` `M_PRJ_USERS` `T_SESSIONS` |
-| [`API-003`](API-003.md#API-003) | ログアウト | [UC-072](../../../01_requirements/04_business_usecases/UC-072.md#UC-072) [UC-074](../../../01_requirements/04_business_usecases/UC-074.md#UC-074) | `T_SESSIONS` |
-| [`API-004`](API-004.md#API-004) | パスワード再設定要求 | [UC-004](../../../01_requirements/04_business_usecases/UC-004.md#UC-004) | `M_CONTRACT` `M_PRJ_USERS` `T_ACCESS_TOKENS` |
-| [`API-005`](API-005.md#API-005) | 再認証 | [UC-017](../../../01_requirements/04_business_usecases/UC-017.md#UC-017) [UC-023](../../../01_requirements/04_business_usecases/UC-023.md#UC-023) [UC-009](../../../01_requirements/04_business_usecases/UC-009.md#UC-009) [UC-010](../../../01_requirements/04_business_usecases/UC-010.md#UC-010) [UC-038](../../../01_requirements/04_business_usecases/UC-038.md#UC-038) | `M_CONTRACT` `M_PRJ_USERS` `T_ACCESS_TOKENS` |
-| [`API-006`](API-006.md#API-006) | メール確認 | [UC-003](../../../01_requirements/04_business_usecases/UC-003.md#UC-003) | `T_ACCESS_TOKENS` `M_CONTRACT` |
-| [`API-007`](API-007.md#API-007) | 招待トークン検証・プレビュー | [UC-006](../../../01_requirements/04_business_usecases/UC-006.md#UC-006) | `T_ACCESS_TOKENS` `M_PROJECTS` `M_PRJ_USERS` `M_CONTRACT` |
-| [`API-008`](API-008.md#API-008) | メンバーアカウント有効化 | [UC-006](../../../01_requirements/04_business_usecases/UC-006.md#UC-006) | `T_ACCESS_TOKENS` `M_USER` `M_PRJ_USERS` `T_TERMS_AGREE` `H_AUDIT_LOGS` |
-| [`API-009`](API-009.md#API-009) | プロジェクト連絡先メール確認 | [UC-007](../../../01_requirements/04_business_usecases/UC-007.md#UC-007) | `T_ACCESS_TOKENS` `M_PROJECTS` `H_AUDIT_LOGS` |
-| [`API-010`](API-010.md#API-010) | パスワード再設定確定 | [UC-005](../../../01_requirements/04_business_usecases/UC-005.md#UC-005) | `T_ACCESS_TOKENS` `M_CONTRACT` `M_PRJ_USERS` `T_SESSIONS` |
-| [`API-011`](API-011.md#API-011) | 連絡先確認メール再送 | [UC-016](../../../01_requirements/04_business_usecases/UC-016.md#UC-016) | `M_PROJECTS` `T_ACCESS_TOKENS` `H_NOTIF_LOGS` |
-| [`API-012`](API-012.md#API-012) | 自己プロフィール更新 | [UC-009](../../../01_requirements/04_business_usecases/UC-009.md#UC-009) | `M_CONTRACT` `M_PRJ_USERS` `T_ACCESS_TOKENS` |
-| [`API-013`](API-013.md#API-013) | 自己パスワード変更 | [UC-010](../../../01_requirements/04_business_usecases/UC-010.md#UC-010) | `T_ACCESS_TOKENS` `M_CONTRACT` `M_PRJ_USERS` |
-| [`API-014`](API-014.md#API-014) | 契約設定取得 | [UC-022](../../../01_requirements/04_business_usecases/UC-022.md#UC-022) | `M_CONTRACT` |
-| [`API-015`](API-015.md#API-015) | 契約設定更新 | [UC-022](../../../01_requirements/04_business_usecases/UC-022.md#UC-022) | `M_CONTRACT` |
-| [`API-016`](API-016.md#API-016) | プロジェクト一覧 | [UC-014](../../../01_requirements/04_business_usecases/UC-014.md#UC-014) | `M_PROJECTS` `M_FAQS` `M_ALLOWED_DOMAINS` |
-| [`API-017`](API-017.md#API-017) | プロジェクト新規作成 | [UC-015](../../../01_requirements/04_business_usecases/UC-015.md#UC-015) | `M_PROJECTS` `M_ALLOWED_DOMAINS` `M_PRJ_USERS` |
-| [`API-018`](API-018.md#API-018) | プロジェクト更新・削除 | [UC-016](../../../01_requirements/04_business_usecases/UC-016.md#UC-016) [UC-017](../../../01_requirements/04_business_usecases/UC-017.md#UC-017) [UC-040](../../../01_requirements/04_business_usecases/UC-040.md#UC-040) | `M_PROJECTS` `M_ALLOWED_DOMAINS` `M_PRJ_USERS` `T_SESSIONS` `T_ACCESS_TOKENS` `M_FAQS` `H_QUESTION_LOGS` `T_INQUIRIES` `H_AUDIT_LOGS` |
-| [`API-019`](API-019.md#API-019) | ウィジェット鍵ローテーション | [UC-041](../../../01_requirements/04_business_usecases/UC-041.md#UC-041) | `M_PROJECTS` |
-| [`API-020`](API-020.md#API-020) | メンバー一覧 | [UC-018](../../../01_requirements/04_business_usecases/UC-018.md#UC-018) [UC-048](../../../01_requirements/04_business_usecases/UC-048.md#UC-048) [UC-020](../../../01_requirements/04_business_usecases/UC-020.md#UC-020) [UC-066](../../../01_requirements/04_business_usecases/UC-066.md#UC-066) | `M_PRJ_USERS` |
-| [`API-021`](API-021.md#API-021) | メンバー招待 | [UC-019](../../../01_requirements/04_business_usecases/UC-019.md#UC-019) | `M_USER` `M_PRJ_USERS` `T_ACCESS_TOKENS` `H_NOTIF_LOGS` |
-| [`API-022`](API-022.md#API-022) | メンバー情報更新 | [UC-020](../../../01_requirements/04_business_usecases/UC-020.md#UC-020) | `M_PRJ_USERS` |
-| [`API-023`](API-023.md#API-023) | プロジェクト割当解除 | [UC-021](../../../01_requirements/04_business_usecases/UC-021.md#UC-021) | `M_PRJ_USERS` `T_SESSIONS` `T_ACCESS_TOKENS` |
-| [`API-024`](API-024.md#API-024) | 招待メール再送 | [UC-019](../../../01_requirements/04_business_usecases/UC-019.md#UC-019) | `M_PRJ_USERS` `T_ACCESS_TOKENS` `H_NOTIF_LOGS` |
-| [`API-025`](API-025.md#API-025) | FAQ 一覧 | [UC-024](../../../01_requirements/04_business_usecases/UC-024.md#UC-024) [UC-027](../../../01_requirements/04_business_usecases/UC-027.md#UC-027) [UC-026](../../../01_requirements/04_business_usecases/UC-026.md#UC-026) | `M_FAQS` |
-| [`API-026`](API-026.md#API-026) | FAQ 作成・更新・削除 | [UC-026](../../../01_requirements/04_business_usecases/UC-026.md#UC-026) [UC-025](../../../01_requirements/04_business_usecases/UC-025.md#UC-025) [UC-026](../../../01_requirements/04_business_usecases/UC-026.md#UC-026) | `M_FAQS` |
-| [`API-027`](API-027.md#API-027) | FAQ 一括状態変更 | [UC-027](../../../01_requirements/04_business_usecases/UC-027.md#UC-027) | `M_FAQS` |
-| [`API-028`](API-028.md#API-028) | FAQ CSV インポート | [UC-028](../../../01_requirements/04_business_usecases/UC-028.md#UC-028) [UC-051](../../../01_requirements/04_business_usecases/UC-051.md#UC-051) | `M_FAQS` |
-| [`API-029`](API-029.md#API-029) | FAQ インポートテンプレート | [UC-028](../../../01_requirements/04_business_usecases/UC-028.md#UC-028) | — |
-| [`API-030`](API-030.md#API-030) | FAQ CSV エクスポート | [UC-029](../../../01_requirements/04_business_usecases/UC-029.md#UC-029) | `M_FAQS` |
-| [`API-031`](API-031.md#API-031) | FAQ 全文検索 | [UC-083](../../../01_requirements/04_business_usecases/UC-083.md#UC-083) | `M_FAQS` `TP_FAQ_FTS` |
-| [`API-032`](API-032.md#API-032) | 質問ログ検索 | [UC-083](../../../01_requirements/04_business_usecases/UC-083.md#UC-083) | `H_QUESTION_LOGS` |
-| [`API-033`](API-033.md#API-033) | FAQ 個別取得 | [UC-025](../../../01_requirements/04_business_usecases/UC-025.md#UC-025) | `M_FAQS` |
-| [`API-034`](API-034.md#API-034) | 未解決質問一覧 | [UC-030](../../../01_requirements/04_business_usecases/UC-030.md#UC-030) | `T_INQUIRIES` |
-| [`API-035`](API-035.md#API-035) | 未解決質問詳細・状況切替 | [UC-031](../../../01_requirements/04_business_usecases/UC-031.md#UC-031) [UC-032](../../../01_requirements/04_business_usecases/UC-032.md#UC-032) | `T_INQUIRIES` |
-| [`API-036`](API-036.md#API-036) | 未解決質問 CSV エクスポート | [UC-030](../../../01_requirements/04_business_usecases/UC-030.md#UC-030) | `T_INQUIRIES` |
-| [`API-037`](API-037.md#API-037) | ウィジェット起動 | [UC-042](../../../01_requirements/04_business_usecases/UC-042.md#UC-042) [UC-044](../../../01_requirements/04_business_usecases/UC-044.md#UC-044) | `M_PROJECTS` `M_ALLOWED_DOMAINS` `M_CONTRACT` |
-| [`API-038`](API-038.md#API-038) | ウィジェット質問送信 | [UC-043](../../../01_requirements/04_business_usecases/UC-043.md#UC-043) [UC-044](../../../01_requirements/04_business_usecases/UC-044.md#UC-044) | `H_QUESTION_LOGS` `M_FAQS` `T_USAGE_METER` `T_INQUIRIES` |
-| [`API-039`](API-039.md#API-039) | ウィジェット未解決質問登録 | [UC-044](../../../01_requirements/04_business_usecases/UC-044.md#UC-044) | `T_INQUIRIES` `H_QUESTION_LOGS` |
-| [`API-040`](API-040.md#API-040) | ダッシュボードサマリ | [UC-033](../../../01_requirements/04_business_usecases/UC-033.md#UC-033) [UC-067](../../../01_requirements/04_business_usecases/UC-067.md#UC-067) [UC-056](../../../01_requirements/04_business_usecases/UC-056.md#UC-056) | `T_USAGE_METER` `H_QUESTION_LOGS` `T_INQUIRIES` `H_NOTIF_LOGS` |
-| [`API-041`](API-041.md#API-041) | 利用量サマリ(プロジェクト) | [UC-036](../../../01_requirements/04_business_usecases/UC-036.md#UC-036) [UC-034](../../../01_requirements/04_business_usecases/UC-034.md#UC-034) [UC-048](../../../01_requirements/04_business_usecases/UC-048.md#UC-048) [UC-056](../../../01_requirements/04_business_usecases/UC-056.md#UC-056) | `T_USAGE_METER` `M_FAQS` |
-| [`API-042`](API-042.md#API-042) | 利用量サマリ(契約) | [UC-036](../../../01_requirements/04_business_usecases/UC-036.md#UC-036) | `T_USAGE_METER` `M_FAQS` |
-| [`API-043`](API-043.md#API-043) | 請求サマリ | [UC-037](../../../01_requirements/04_business_usecases/UC-037.md#UC-037) [UC-059](../../../01_requirements/04_business_usecases/UC-059.md#UC-059) | `T_BILL_SUBS` `T_USAGE_METER` |
-| [`API-044`](API-044.md#API-044) | 請求書一覧 | [UC-037](../../../01_requirements/04_business_usecases/UC-037.md#UC-037) | `T_BILL_INVOICES` |
-| [`API-045`](API-045.md#API-045) | 支払方法 取得・登録・更新 | [UC-038](../../../01_requirements/04_business_usecases/UC-038.md#UC-038) [UC-060](../../../01_requirements/04_business_usecases/UC-060.md#UC-060) | `T_BILL_SUBS` |
-| [`API-046`](API-046.md#API-046) | プロジェクト上限・アラート取得 | [UC-034](../../../01_requirements/04_business_usecases/UC-034.md#UC-034) [UC-035](../../../01_requirements/04_business_usecases/UC-035.md#UC-035) [UC-057](../../../01_requirements/04_business_usecases/UC-057.md#UC-057) [UC-058](../../../01_requirements/04_business_usecases/UC-058.md#UC-058) | `M_PRJ_QUOTA_LIMITS` `T_USAGE_METER` |
-| [`API-047`](API-047.md#API-047) | プロジェクト上限・アラート更新 | [UC-035](../../../01_requirements/04_business_usecases/UC-035.md#UC-035) | `M_PRJ_QUOTA_LIMITS` |
-| [`API-048`](API-048.md#API-048) | お知らせ一覧 | [UC-045](../../../01_requirements/04_business_usecases/UC-045.md#UC-045) [UC-047](../../../01_requirements/04_business_usecases/UC-047.md#UC-047) [UC-045](../../../01_requirements/04_business_usecases/UC-045.md#UC-045) [UC-046](../../../01_requirements/04_business_usecases/UC-046.md#UC-046) [UC-064](../../../01_requirements/04_business_usecases/UC-064.md#UC-064) [UC-065](../../../01_requirements/04_business_usecases/UC-065.md#UC-065) | `T_INBOX_MSG` |
-| [`API-049`](API-049.md#API-049) | お知らせ個別既読 | [UC-047](../../../01_requirements/04_business_usecases/UC-047.md#UC-047) [UC-046](../../../01_requirements/04_business_usecases/UC-046.md#UC-046) | `T_INBOX_MSG` |
-| [`API-050`](API-050.md#API-050) | お知らせ一括既読 | [UC-047](../../../01_requirements/04_business_usecases/UC-047.md#UC-047) | `T_INBOX_MSG` `H_AUDIT_LOGS` |
-| [`API-051`](API-051.md#API-051) | お知らせ未読件数 | [UC-045](../../../01_requirements/04_business_usecases/UC-045.md#UC-045) | `T_INBOX_MSG` |
-| [`API-052`](API-052.md#API-052) | 利用規約 最新版取得 | [UC-011](../../../01_requirements/04_business_usecases/UC-011.md#UC-011) [UC-013](../../../01_requirements/04_business_usecases/UC-013.md#UC-013) | — |
-| [`API-053`](API-053.md#API-053) | プライバシーポリシー 最新版取得 | [UC-013](../../../01_requirements/04_business_usecases/UC-013.md#UC-013) [UC-012](../../../01_requirements/04_business_usecases/UC-012.md#UC-012) | — |
-| [`API-054`](API-054.md#API-054) | 利用規約 同意 | [UC-013](../../../01_requirements/04_business_usecases/UC-013.md#UC-013) | — |
-| [`API-055`](API-055.md#API-055) | プライバシーポリシー 同意 | [UC-013](../../../01_requirements/04_business_usecases/UC-013.md#UC-013) | — |
-| [`API-056`](API-056.md#API-056) | 退会申請 | [UC-023](../../../01_requirements/04_business_usecases/UC-023.md#UC-023) | `T_WITHDRAW_REQ` `M_CONTRACT` |
-| [`API-057`](API-057.md#API-057) | AI 推論 IF(`AnswerProvider`) | [UC-052](../../../01_requirements/04_business_usecases/UC-052.md#UC-052) | — |
-| [`API-058`](API-058.md#API-058) | メール配信 IF(`EmailProvider`) | [UC-059](../../../01_requirements/04_business_usecases/UC-059.md#UC-059) [UC-064](../../../01_requirements/04_business_usecases/UC-064.md#UC-064) [UC-065](../../../01_requirements/04_business_usecases/UC-065.md#UC-065) [UC-066](../../../01_requirements/04_business_usecases/UC-066.md#UC-066) [UC-057](../../../01_requirements/04_business_usecases/UC-057.md#UC-057) [UC-067](../../../01_requirements/04_business_usecases/UC-067.md#UC-067) | — |
-| [`API-059`](API-059.md#API-059) | 外部 Webhook(Resend) | [UC-063](../../../01_requirements/04_business_usecases/UC-063.md#UC-063) | `H_NOTIF_LOGS` `M_EMAIL_SUPPRESS` `H_AUDIT_LOGS` |
-| [`API-060`](API-060.md#API-060) | 課金プロバイダ Webhook 受信 | [UC-061](../../../01_requirements/04_business_usecases/UC-061.md#UC-061) | `T_BILLING_WEBHOOK_LOG` `M_CONTRACT` `T_BILL_SUBS` `T_BILL_INVOICES` `H_AUDIT_LOGS` |
-| [`API-061`](API-061.md#API-061) | 通知配信状態サマリ | [UC-084](../../../01_requirements/04_business_usecases/UC-084.md#UC-084) [UC-085](../../../01_requirements/04_business_usecases/UC-085.md#UC-085) | `H_NOTIF_LOGS` `M_EMAIL_SUPPRESS` |
+| API ID | API名 | 対応EVT | 対応UC | 利用テーブル |
+|---|---|---|---|---|
+| [`API-001`](API-001.md#API-001) | 新規登録 | EVT-016 EVT-152 | [UC-002](../../../01_requirements/04_business_usecases/UC-002.md#UC-002) [UC-003](../../../01_requirements/04_business_usecases/UC-003.md#UC-003) | `M_USER` `M_CONTRACT` `T_TERMS_AGREE` `T_ACCESS_TOKENS` |
+| [`API-002`](API-002.md#API-002) | ログイン | EVT-004 | [UC-001](../../../01_requirements/04_business_usecases/UC-001.md#UC-001) [UC-072](../../../01_requirements/04_business_usecases/UC-072.md#UC-072) [UC-073](../../../01_requirements/04_business_usecases/UC-073.md#UC-073) | `M_CONTRACT` `M_PRJ_USERS` `T_SESSIONS` |
+| [`API-003`](API-003.md#API-003) | ログアウト | — | [UC-072](../../../01_requirements/04_business_usecases/UC-072.md#UC-072) [UC-074](../../../01_requirements/04_business_usecases/UC-074.md#UC-074) | `T_SESSIONS` |
+| [`API-004`](API-004.md#API-004) | パスワード再設定要求 | EVT-020 EVT-021 EVT-023 | [UC-004](../../../01_requirements/04_business_usecases/UC-004.md#UC-004) | `M_CONTRACT` `M_PRJ_USERS` `T_ACCESS_TOKENS` |
+| [`API-005`](API-005.md#API-005) | 再認証 | EVT-159 EVT-177 EVT-178 | [UC-017](../../../01_requirements/04_business_usecases/UC-017.md#UC-017) [UC-023](../../../01_requirements/04_business_usecases/UC-023.md#UC-023) [UC-009](../../../01_requirements/04_business_usecases/UC-009.md#UC-009) [UC-010](../../../01_requirements/04_business_usecases/UC-010.md#UC-010) [UC-038](../../../01_requirements/04_business_usecases/UC-038.md#UC-038) | `M_CONTRACT` `M_PRJ_USERS` `T_ACCESS_TOKENS` |
+| [`API-006`](API-006.md#API-006) | メール確認 | EVT-151 | [UC-003](../../../01_requirements/04_business_usecases/UC-003.md#UC-003) | `T_ACCESS_TOKENS` `M_CONTRACT` |
+| [`API-007`](API-007.md#API-007) | 招待トークン検証・プレビュー | EVT-181 | [UC-006](../../../01_requirements/04_business_usecases/UC-006.md#UC-006) | `T_ACCESS_TOKENS` `M_PROJECTS` `M_PRJ_USERS` `M_CONTRACT` |
+| [`API-008`](API-008.md#API-008) | メンバーアカウント有効化 | EVT-190 | [UC-006](../../../01_requirements/04_business_usecases/UC-006.md#UC-006) | `T_ACCESS_TOKENS` `M_USER` `M_PRJ_USERS` `T_TERMS_AGREE` `H_AUDIT_LOGS` |
+| [`API-009`](API-009.md#API-009) | プロジェクト連絡先メール確認 | EVT-194 | [UC-007](../../../01_requirements/04_business_usecases/UC-007.md#UC-007) | `T_ACCESS_TOKENS` `M_PROJECTS` `H_AUDIT_LOGS` |
+| [`API-010`](API-010.md#API-010) | パスワード再設定確定 | EVT-025 | [UC-005](../../../01_requirements/04_business_usecases/UC-005.md#UC-005) | `T_ACCESS_TOKENS` `M_CONTRACT` `M_PRJ_USERS` `T_SESSIONS` |
+| [`API-011`](API-011.md#API-011) | 連絡先確認メール再送 | EVT-040 | [UC-016](../../../01_requirements/04_business_usecases/UC-016.md#UC-016) | `M_PROJECTS` `T_ACCESS_TOKENS` `H_NOTIF_LOGS` |
+| [`API-012`](API-012.md#API-012) | 自己プロフィール更新 | EVT-177 | [UC-009](../../../01_requirements/04_business_usecases/UC-009.md#UC-009) | `M_CONTRACT` `M_PRJ_USERS` `T_ACCESS_TOKENS` |
+| [`API-013`](API-013.md#API-013) | 自己パスワード変更 | EVT-178 | [UC-010](../../../01_requirements/04_business_usecases/UC-010.md#UC-010) | `T_ACCESS_TOKENS` `M_CONTRACT` `M_PRJ_USERS` |
+| [`API-014`](API-014.md#API-014) | 契約設定取得 | EVT-215 | [UC-022](../../../01_requirements/04_business_usecases/UC-022.md#UC-022) | `M_CONTRACT` |
+| [`API-015`](API-015.md#API-015) | 契約設定更新 | EVT-217 | [UC-022](../../../01_requirements/04_business_usecases/UC-022.md#UC-022) | `M_CONTRACT` |
+| [`API-016`](API-016.md#API-016) | プロジェクト一覧 | EVT-028 | [UC-014](../../../01_requirements/04_business_usecases/UC-014.md#UC-014) | `M_PROJECTS` `M_FAQS` `M_ALLOWED_DOMAINS` |
+| [`API-017`](API-017.md#API-017) | プロジェクト新規作成 | EVT-038 | [UC-015](../../../01_requirements/04_business_usecases/UC-015.md#UC-015) | `M_PROJECTS` `M_ALLOWED_DOMAINS` `M_PRJ_USERS` |
+| [`API-018`](API-018.md#API-018) | プロジェクト更新・削除 | EVT-034 EVT-039 EVT-042 EVT-105 | [UC-016](../../../01_requirements/04_business_usecases/UC-016.md#UC-016) [UC-017](../../../01_requirements/04_business_usecases/UC-017.md#UC-017) [UC-040](../../../01_requirements/04_business_usecases/UC-040.md#UC-040) | `M_PROJECTS` `M_ALLOWED_DOMAINS` `M_PRJ_USERS` `T_SESSIONS` `T_ACCESS_TOKENS` `M_FAQS` `H_QUESTION_LOGS` `T_INQUIRIES` `H_AUDIT_LOGS` |
+| [`API-019`](API-019.md#API-019) | ウィジェット鍵ローテーション | EVT-104 | [UC-041](../../../01_requirements/04_business_usecases/UC-041.md#UC-041) | `M_PROJECTS` |
+| [`API-020`](API-020.md#API-020) | メンバー一覧 | EVT-115 EVT-116 EVT-117 EVT-124 | [UC-018](../../../01_requirements/04_business_usecases/UC-018.md#UC-018) [UC-048](../../../01_requirements/04_business_usecases/UC-048.md#UC-048) [UC-020](../../../01_requirements/04_business_usecases/UC-020.md#UC-020) [UC-066](../../../01_requirements/04_business_usecases/UC-066.md#UC-066) | `M_PRJ_USERS` |
+| [`API-021`](API-021.md#API-021) | メンバー招待 | EVT-126 | [UC-019](../../../01_requirements/04_business_usecases/UC-019.md#UC-019) | `M_USER` `M_PRJ_USERS` `T_ACCESS_TOKENS` `H_NOTIF_LOGS` |
+| [`API-022`](API-022.md#API-022) | メンバー情報更新 | EVT-128 | [UC-020](../../../01_requirements/04_business_usecases/UC-020.md#UC-020) | `M_PRJ_USERS` |
+| [`API-023`](API-023.md#API-023) | プロジェクト割当解除 | EVT-130 | [UC-021](../../../01_requirements/04_business_usecases/UC-021.md#UC-021) | `M_PRJ_USERS` `T_SESSIONS` `T_ACCESS_TOKENS` |
+| [`API-024`](API-024.md#API-024) | 招待メール再送 | EVT-127 | [UC-019](../../../01_requirements/04_business_usecases/UC-019.md#UC-019) | `M_PRJ_USERS` `T_ACCESS_TOKENS` `H_NOTIF_LOGS` |
+| [`API-025`](API-025.md#API-025) | FAQ 一覧 | EVT-062 EVT-063 EVT-064 EVT-065 | [UC-024](../../../01_requirements/04_business_usecases/UC-024.md#UC-024) [UC-027](../../../01_requirements/04_business_usecases/UC-027.md#UC-027) [UC-026](../../../01_requirements/04_business_usecases/UC-026.md#UC-026) | `M_FAQS` |
+| [`API-026`](API-026.md#API-026) | FAQ 作成・更新・削除 | EVT-071 EVT-081 EVT-082 EVT-084 | [UC-026](../../../01_requirements/04_business_usecases/UC-026.md#UC-026) [UC-025](../../../01_requirements/04_business_usecases/UC-025.md#UC-025) [UC-026](../../../01_requirements/04_business_usecases/UC-026.md#UC-026) | `M_FAQS` |
+| [`API-027`](API-027.md#API-027) | FAQ 一括状態変更 | EVT-069 EVT-070 | [UC-027](../../../01_requirements/04_business_usecases/UC-027.md#UC-027) | `M_FAQS` |
+| [`API-028`](API-028.md#API-028) | FAQ CSV インポート | EVT-093 | [UC-028](../../../01_requirements/04_business_usecases/UC-028.md#UC-028) [UC-051](../../../01_requirements/04_business_usecases/UC-051.md#UC-051) | `M_FAQS` |
+| [`API-029`](API-029.md#API-029) | FAQ インポートテンプレート | EVT-091 | [UC-028](../../../01_requirements/04_business_usecases/UC-028.md#UC-028) | — |
+| [`API-030`](API-030.md#API-030) | FAQ CSV エクスポート | EVT-074 | [UC-029](../../../01_requirements/04_business_usecases/UC-029.md#UC-029) | `M_FAQS` |
+| [`API-031`](API-031.md#API-031) | FAQ 全文検索 | — | [UC-083](../../../01_requirements/04_business_usecases/UC-083.md#UC-083) | `M_FAQS` `TP_FAQ_FTS` |
+| [`API-032`](API-032.md#API-032) | 質問ログ検索 | — | [UC-083](../../../01_requirements/04_business_usecases/UC-083.md#UC-083) | `H_QUESTION_LOGS` |
+| [`API-033`](API-033.md#API-033) | FAQ 個別取得 | EVT-076 | [UC-025](../../../01_requirements/04_business_usecases/UC-025.md#UC-025) | `M_FAQS` |
+| [`API-034`](API-034.md#API-034) | 未解決質問一覧 | EVT-046 EVT-047 EVT-048 EVT-051 EVT-052 | [UC-030](../../../01_requirements/04_business_usecases/UC-030.md#UC-030) | `T_INQUIRIES` |
+| [`API-035`](API-035.md#API-035) | 未解決質問詳細・状況切替 | EVT-054 EVT-056 EVT-057 | [UC-031](../../../01_requirements/04_business_usecases/UC-031.md#UC-031) [UC-032](../../../01_requirements/04_business_usecases/UC-032.md#UC-032) | `T_INQUIRIES` |
+| [`API-036`](API-036.md#API-036) | 未解決質問 CSV エクスポート | EVT-049 | [UC-030](../../../01_requirements/04_business_usecases/UC-030.md#UC-030) | `T_INQUIRIES` |
+| [`API-037`](API-037.md#API-037) | ウィジェット起動 | EVT-223 EVT-229 | [UC-042](../../../01_requirements/04_business_usecases/UC-042.md#UC-042) [UC-044](../../../01_requirements/04_business_usecases/UC-044.md#UC-044) | `M_PROJECTS` `M_ALLOWED_DOMAINS` `M_CONTRACT` |
+| [`API-038`](API-038.md#API-038) | ウィジェット質問送信 | EVT-226 EVT-227 EVT-228 EVT-229 | [UC-043](../../../01_requirements/04_business_usecases/UC-043.md#UC-043) [UC-044](../../../01_requirements/04_business_usecases/UC-044.md#UC-044) | `H_QUESTION_LOGS` `M_FAQS` `T_USAGE_METER` `T_INQUIRIES` |
+| [`API-039`](API-039.md#API-039) | ウィジェット未解決質問登録 | EVT-227 | [UC-044](../../../01_requirements/04_business_usecases/UC-044.md#UC-044) | `T_INQUIRIES` `H_QUESTION_LOGS` |
+| [`API-040`](API-040.md#API-040) | ダッシュボードサマリ | EVT-107 EVT-108 | [UC-033](../../../01_requirements/04_business_usecases/UC-033.md#UC-033) [UC-067](../../../01_requirements/04_business_usecases/UC-067.md#UC-067) [UC-056](../../../01_requirements/04_business_usecases/UC-056.md#UC-056) | `T_USAGE_METER` `H_QUESTION_LOGS` `T_INQUIRIES` `H_NOTIF_LOGS` |
+| [`API-041`](API-041.md#API-041) | 利用量サマリ(プロジェクト) | EVT-170 EVT-199 | [UC-036](../../../01_requirements/04_business_usecases/UC-036.md#UC-036) [UC-034](../../../01_requirements/04_business_usecases/UC-034.md#UC-034) [UC-048](../../../01_requirements/04_business_usecases/UC-048.md#UC-048) [UC-056](../../../01_requirements/04_business_usecases/UC-056.md#UC-056) | `T_USAGE_METER` `M_FAQS` |
+| [`API-042`](API-042.md#API-042) | 利用量サマリ(契約) | EVT-170 | [UC-036](../../../01_requirements/04_business_usecases/UC-036.md#UC-036) | `T_USAGE_METER` `M_FAQS` |
+| [`API-043`](API-043.md#API-043) | 請求サマリ | EVT-208 | [UC-037](../../../01_requirements/04_business_usecases/UC-037.md#UC-037) [UC-059](../../../01_requirements/04_business_usecases/UC-059.md#UC-059) | `T_BILL_SUBS` `T_USAGE_METER` |
+| [`API-044`](API-044.md#API-044) | 請求書一覧 | EVT-208 | [UC-037](../../../01_requirements/04_business_usecases/UC-037.md#UC-037) | `T_BILL_INVOICES` |
+| [`API-045`](API-045.md#API-045) | 支払方法 取得・登録・更新 | EVT-209 EVT-213 | [UC-038](../../../01_requirements/04_business_usecases/UC-038.md#UC-038) [UC-060](../../../01_requirements/04_business_usecases/UC-060.md#UC-060) | `T_BILL_SUBS` |
+| [`API-046`](API-046.md#API-046) | プロジェクト上限・アラート取得 | EVT-199 EVT-202 | [UC-034](../../../01_requirements/04_business_usecases/UC-034.md#UC-034) [UC-035](../../../01_requirements/04_business_usecases/UC-035.md#UC-035) [UC-057](../../../01_requirements/04_business_usecases/UC-057.md#UC-057) [UC-058](../../../01_requirements/04_business_usecases/UC-058.md#UC-058) | `M_PRJ_QUOTA_LIMITS` `T_USAGE_METER` |
+| [`API-047`](API-047.md#API-047) | プロジェクト上限・アラート更新 | EVT-206 | [UC-035](../../../01_requirements/04_business_usecases/UC-035.md#UC-035) | `M_PRJ_QUOTA_LIMITS` |
+| [`API-048`](API-048.md#API-048) | お知らせ一覧 | EVT-136 EVT-137 EVT-138 EVT-139 EVT-145 EVT-147 | [UC-045](../../../01_requirements/04_business_usecases/UC-045.md#UC-045) [UC-047](../../../01_requirements/04_business_usecases/UC-047.md#UC-047) [UC-045](../../../01_requirements/04_business_usecases/UC-045.md#UC-045) [UC-046](../../../01_requirements/04_business_usecases/UC-046.md#UC-046) [UC-064](../../../01_requirements/04_business_usecases/UC-064.md#UC-064) [UC-065](../../../01_requirements/04_business_usecases/UC-065.md#UC-065) | `T_INBOX_MSG` |
+| [`API-049`](API-049.md#API-049) | お知らせ個別既読 | EVT-141 EVT-147 | [UC-047](../../../01_requirements/04_business_usecases/UC-047.md#UC-047) [UC-046](../../../01_requirements/04_business_usecases/UC-046.md#UC-046) | `T_INBOX_MSG` |
+| [`API-050`](API-050.md#API-050) | お知らせ一括既読 | EVT-142 EVT-143 EVT-144 | [UC-047](../../../01_requirements/04_business_usecases/UC-047.md#UC-047) | `T_INBOX_MSG` `H_AUDIT_LOGS` |
+| [`API-051`](API-051.md#API-051) | お知らせ未読件数 | EVT-136 | [UC-045](../../../01_requirements/04_business_usecases/UC-045.md#UC-045) | `T_INBOX_MSG` |
+| [`API-052`](API-052.md#API-052) | 利用規約 最新版取得 | EVT-133 EVT-164 | [UC-011](../../../01_requirements/04_business_usecases/UC-011.md#UC-011) [UC-013](../../../01_requirements/04_business_usecases/UC-013.md#UC-013) | — |
+| [`API-053`](API-053.md#API-053) | プライバシーポリシー 最新版取得 | EVT-164 EVT-196 | [UC-013](../../../01_requirements/04_business_usecases/UC-013.md#UC-013) [UC-012](../../../01_requirements/04_business_usecases/UC-012.md#UC-012) | — |
+| [`API-054`](API-054.md#API-054) | 利用規約 同意 | EVT-135 EVT-169 | [UC-013](../../../01_requirements/04_business_usecases/UC-013.md#UC-013) | — |
+| [`API-055`](API-055.md#API-055) | プライバシーポリシー 同意 | EVT-169 | [UC-013](../../../01_requirements/04_business_usecases/UC-013.md#UC-013) | — |
+| [`API-056`](API-056.md#API-056) | 退会申請 | EVT-159 | [UC-023](../../../01_requirements/04_business_usecases/UC-023.md#UC-023) | `T_WITHDRAW_REQ` `M_CONTRACT` |
+| [`API-057`](API-057.md#API-057) | AI 推論 IF(`AnswerProvider`) | — | [UC-052](../../../01_requirements/04_business_usecases/UC-052.md#UC-052) | — |
+| [`API-058`](API-058.md#API-058) | メール配信 IF(`EmailProvider`) | — | [UC-059](../../../01_requirements/04_business_usecases/UC-059.md#UC-059) [UC-064](../../../01_requirements/04_business_usecases/UC-064.md#UC-064) [UC-065](../../../01_requirements/04_business_usecases/UC-065.md#UC-065) [UC-066](../../../01_requirements/04_business_usecases/UC-066.md#UC-066) [UC-057](../../../01_requirements/04_business_usecases/UC-057.md#UC-057) [UC-067](../../../01_requirements/04_business_usecases/UC-067.md#UC-067) | — |
+| [`API-059`](API-059.md#API-059) | 外部 Webhook(Resend) | — | [UC-063](../../../01_requirements/04_business_usecases/UC-063.md#UC-063) | `H_NOTIF_LOGS` `M_EMAIL_SUPPRESS` `H_AUDIT_LOGS` |
+| [`API-060`](API-060.md#API-060) | 課金プロバイダ Webhook 受信 | — | [UC-061](../../../01_requirements/04_business_usecases/UC-061.md#UC-061) | `T_BILLING_WEBHOOK_LOG` `M_CONTRACT` `T_BILL_SUBS` `T_BILL_INVOICES` `H_AUDIT_LOGS` |
+| [`API-061`](API-061.md#API-061) | 通知配信状態サマリ | EVT-230 EVT-231 | [UC-084](../../../01_requirements/04_business_usecases/UC-084.md#UC-084) [UC-085](../../../01_requirements/04_business_usecases/UC-085.md#UC-085) | `H_NOTIF_LOGS` `M_EMAIL_SUPPRESS` |
 
 ## <span id="reading"></span>3. 読み順
 

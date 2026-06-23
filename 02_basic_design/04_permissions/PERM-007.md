@@ -18,7 +18,7 @@
 > [!NOTE]
 > **失効の優先順位** 強制ログアウト > 絶対タイムアウト(12h) > 無操作タイムアウト(30分) > 通常セッション の順で評価します。割当変更は既存セッションを即時失効させず、次回認可チェック時(キャッシュ TTL 60 秒以内)に反映します(FR-188)。
 
-## <span id="trace"></span>2. 対応 UC / SCR / API
+## <span id="trace"></span>2. 対応 UC / SCR / EVT / API
 
 本権限が適用される画面・イベント・API・業務ユースケースの結線です。
 
@@ -26,6 +26,7 @@
 |----|----|
 | 対応業務UC | [UC-001](../../01_requirements/04_business_usecases/UC-001.md#UC-001) [UC-072](../../01_requirements/04_business_usecases/UC-072.md#UC-072) [UC-073](../../01_requirements/04_business_usecases/UC-073.md#UC-073) [UC-074](../../01_requirements/04_business_usecases/UC-074.md#UC-074) |
 | 対応画面SCR | [SCR-001](../01_frontend/01_screens/SCR-001.md#SCR-001) |
+| 対応EVT | EVT-004 |
 | 対応API | [API-002](../02_backend/03_apis/API-002.md#API-002) [API-003](../02_backend/03_apis/API-003.md#API-003) |
 
 ## <span id="src"></span>3. 由来要件
