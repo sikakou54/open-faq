@@ -21,9 +21,9 @@
 
 ## シーケンス図ルール
 
-- **アクターは基本 3 者** `ユーザー / 画面 / サーバー`(`actor U as ユーザー` / `participant Screen as <画面名>` / `participant Server as サーバー`)。**画面アクターは画面設計の具体的な画面名**を用いる(`画面 SCR-NNN` ではなく `participant Screen as ログイン` 等)。複数画面にまたがる場合も画面参加者は起点画面 1 つとし、遷移先画面はメッセージ本文で示す(SCR-ID は `関連画面` 欄でリンク)。図に名称のない画面は `画面名(要確認)`。
-- **API / DB / 認証認可 / 入力検証 / 業務処理 はすべて `サーバー` に集約**する。DB 操作は `Server->>Server: 業務処理・DB更新` のようなサーバー自己メッセージで表し、**テーブル別 `テーブル名(CRUD)` 表記は図に書かず** `関連テーブル` 欄で示す。
-- **システム起点フロー**(バッチ / Webhook / 非同期 / 通知、概ね SEQ-088 以降。SEQ-108..122 はシステム設計 `SYS-001..015` に対応)は `ユーザー / 画面` を持たず、外部システム・スケジューラ・バッチ等の実体を参加者として残す(`participant R as Resend(外部)` / `participant SCH as スケジューラ` / `participant B as 削除バッチ` 等)。内部の API/DB/処理はその実体または `サーバー` の自己メッセージへ集約する。
+- **アクターは基本 4 者** `ユーザー / 画面 / サーバー / DB`(`actor U as ユーザー` / `participant Screen as <画面名>` / `participant Server as サーバー` / `participant DB as DB`)。**画面アクターは画面設計の具体的な画面名**を用いる(`画面 SCR-NNN` ではなく `participant Screen as ログイン` 等)。複数画面にまたがる場合も画面参加者は起点画面 1 つとし、遷移先画面はメッセージ本文で示す(SCR-ID は `関連画面` 欄でリンク)。図に名称のない画面は `画面名(要確認)`。`participant DB as DB` は `participant Server as サーバー`(システム起点はサーバー役のバッチ等)の直後に置く。
+- **API / 認証認可 / 入力検証 / 業務処理 は `サーバー` に集約**し、**DB(永続データ)の参照・更新は独立した `DB` アクターへのメッセージで表す**。DB 読み書きは `Server->>DB: …` / `DB-->>Server: 取得結果(または更新完了)` の要求・応答対で描き、**テーブル別 `テーブル名(CRUD)` 表記は図に書かず** `関連テーブル` 欄で示す。**DB を触らない純粋処理(入力検証・署名検証・認証認可判定・取得済みデータの評価/判定)はサーバー自己メッセージ `Server->>Server: …` のまま残す**(`認証・データ取得` のように DB 読みを含むものは DB アクターへ送る)。図に DB の参照・更新が一切無いフロー(純粋なサニタイズ等)は `DB` アクターを置かない。
+- **システム起点フロー**(バッチ / Webhook / 非同期 / 通知、概ね SEQ-088 以降。SEQ-108..122 はシステム設計 `SYS-001..015` に対応)は `ユーザー / 画面` を持たず、外部システム・スケジューラ・バッチ等の実体を参加者として残す(`participant R as Resend(外部)` / `participant SCH as スケジューラ` / `participant B as 削除バッチ` 等)。内部の API・処理はその実体または `サーバー` の自己メッセージへ集約し、DB 参照・更新は同様に `DB` アクターへのメッセージ(`B->>DB: …` / `DB-->>B: …`)で表す。
 - `autonumber` を付け、要求に応答線を対で描く。分岐は `alt/else/opt/loop`。**SQL・クラス / メソッド名・ORM・テーブル CRUD・コンポーネント内部 ID(旧 `API-XXX-NNN` / `IT-` / `EV-` / `E-`)は書かない。** 図中に Markdown リンク・`id=` を書かない(検証スクリプトのため)。行単位処理・冪等性・楽観ロック等の詳細は `## 詳細設計への移管候補` に逃がす。
 - SEQ 図は手保守(mermaid を正本)。
 
@@ -63,9 +63,12 @@ sequenceDiagram
     actor U as ユーザー
     participant Screen as ログイン
     participant Server as サーバー
+    participant DB as DB
     U->>Screen: 操作
     Screen->>Server: 要求
-    Server->>Server: 業務処理・DB更新
+    Server->>Server: 入力検証・認証認可
+    Server->>DB: 業務データを更新
+    DB-->>Server: 更新完了
     Server-->>Screen: 応答
     Screen-->>U: 結果表示
 \`\`\`
