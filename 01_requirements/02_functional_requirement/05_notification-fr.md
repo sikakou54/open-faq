@@ -1,7 +1,3 @@
-<!-- portal-top -->
-[設計ポータル](../../README.md) ／ [要件定義](../index.md) ／ [機能要件](index.md) ／ **通知・お知らせ(機能要件)**
-<!-- /portal-top -->
-
 # 通知・お知らせ(機能要件)
 
 > **このページは、通知・お知らせ に関する機能要件を定義します。**
@@ -661,9 +657,3 @@ sequenceDiagram
   S-->>UI: 処理結果
   UI-->>U: 既読状態を反映
 ```
-
----
-
-<!-- portal-bottom -->
-[← 機能要件](index.md) ・ [要件定義](../index.md) ・ [↑ 設計ポータル](../../README.md)
-<!-- /portal-bottom -->

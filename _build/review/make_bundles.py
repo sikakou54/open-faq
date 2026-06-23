@@ -16,8 +16,9 @@ OUT = os.path.join(ROOT, "_build", "review", "bundles")
 
 # bundle_key -> (見出し, [glob パターン...])  ※ glob はリポジトリルート相対
 BUNDLES = {
-    "00_rules": ("設計ルール正本(CLAUDE.md)", [
+    "00_rules": ("設計ルール正本(CLAUDE.md)+ 各層テンプレート(templates/)", [
         "CLAUDE.md",
+        "templates/*.md",
     ]),
     "01_requirements": ("要件定義: 業務要件 BR / 機能要件 FR / 非機能要件 NFR / 業務ルール RULE", [
         "01_requirements/index.md",

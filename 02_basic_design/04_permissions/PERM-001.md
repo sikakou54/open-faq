@@ -1,7 +1,3 @@
-<!-- portal-top -->
-[設計ポータル](../../README.md) ／ [基本設計](../index.md) ／ [権限設計](index.md) ／ **PERM-001: ユーザー種別とオーナー判定**
-<!-- /portal-top -->
-
 # <span id="PERM-001"></span>PERM-001: ユーザー種別とオーナー判定
 
 > **このページは認可の起点となるユーザー種別(オーナー / メンバー / ウィジェット利用者)の判定方法と権限の表し方を定義します。**
@@ -38,9 +34,3 @@
 | 由来要件 |
 |----|
 | [FR-013](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-013) [FR-014](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-014) [FR-016](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-016) [FR-035](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-035) [FR-186](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-186) |
-
----
-
-<!-- portal-bottom -->
-[← 権限設計](index.md) ・ [基本設計](../index.md) ・ [↑ 設計ポータル](../../README.md)
-<!-- /portal-bottom -->

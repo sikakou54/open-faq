@@ -1,7 +1,3 @@
-<!-- portal-top -->
-[設計ポータル](../../../README.md) ／ [基本設計](../../index.md) ／ [バックエンド設計](../index.md) ／ **システム設計**
-<!-- /portal-top -->
-
 # システム設計書
 
 > **メインシステムの全システム処理(`SYS-001`〜`SYS-035`)を一覧する独立設計書です。** 無人で動く処理(バッチ / Webhook / 非同期 / 監視 / 通知)を、画面設計の backend 版として 1 処理 = 1 ファイルで管理します。各処理は対応する業務ユースケース・[システムイベント](../02_system_events/index.md)(`SEV-*`)・API・テーブル・[シーケンス](../../03_sequences/index.md)へトレースします。
@@ -47,9 +43,3 @@
 | <span id="SYS-033"></span>[`SYS-033`](SYS-033.md#SYS-033) | 監査ログ整合性検証(日次) | batch | 日次の定期処理(1 日 1 回・スケジューラ起動) | [UC-075](../../../01_requirements/04_business_usecases/UC-075.md#UC-075) |
 | <span id="SYS-034"></span>[`SYS-034`](SYS-034.md#SYS-034) | 保持期間超過データの自動論理削除 | batch | 日次の定期処理 | — |
 | <span id="SYS-035"></span>[`SYS-035`](SYS-035.md#SYS-035) | 課金通知 取込失敗の再処理 | batch | 定期スケジュール | [UC-061](../../../01_requirements/04_business_usecases/UC-061.md#UC-061) |
-
----
-
-<!-- portal-bottom -->
-[← バックエンド設計](../index.md) ・ [基本設計](../../index.md) ・ [↑ 設計ポータル](../../../README.md)
-<!-- /portal-bottom -->

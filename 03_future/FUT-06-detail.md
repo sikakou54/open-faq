@@ -1,22 +1,18 @@
-<!-- portal-top -->
-[設計ポータル](../README.md) ／ [将来対応](index.md) ／ **FUT06: 個別チャット詳細設計**
-<!-- /portal-top -->
-
-# FUT06: 個別チャット詳細設計
+# <span id="FUT-06-detail"></span>FUT-06 詳細設計: 個別チャット
 
 ## <span id="0-文書情報"></span>0. 文書情報
 
 | 項目 | 内容 |
 |----|----|
-| 文書名 | FUT06: 個別チャット詳細設計 |
-| 詳細設計ID | FUT06-DD |
+| 文書名 | FUT-06: 個別チャット詳細設計 |
+| 詳細設計ID | FUT-06-DD |
 | 対象システム | FAQ AI ウィジェット SaaS / メインシステム |
 | 関連機能ID | FR-103〜091（個別チャット部屋 / メッセージ / 再入室）/ AC-011 / AC-025 |
 | 作成日 | 2026-05-17 |
 | 版数 | v1.3 |
 | ステータス | Future |
 
-本書は [FUT06.md](FUT06.md) の詳細設計を定義する。
+本書は [FUT-06.md](FUT-06.md) の詳細設計を定義する。
 
 ## <span id="1-対象範囲"></span>1. 対象範囲
 
@@ -158,8 +154,8 @@ function resolveInitialAssignee(project, defaultAssigneeValid): string {
 
 | 種別       | 参照先                           |
 |------------|----------------------------------|
-| Future要件 | [FUT06-req.md](FUT06-req.md) |
-| Future概要 | [FUT06.md](FUT06.md)         |
+| Future要件 | [FUT-06-req.md](FUT-06-req.md) |
+| Future概要 | [FUT-06.md](FUT-06.md)         |
 | Future索引 | [index.md](index.md)         |
 
 ## <span id="5-テスト観点"></span>5. テスト観点
@@ -185,9 +181,3 @@ function resolveInitialAssignee(project, defaultAssigneeValid): string {
 | 確認事項ID | 確認内容                             | 優先度 | ステータス |
 |------------|--------------------------------------|--------|------------|
 | \-         | その他は v1.0 リリース時点で確定済み | 低     | 確認済     |
-
----
-
-<!-- portal-bottom -->
-[将来対応](index.md) ・ [↑ 設計ポータル](../README.md)
-<!-- /portal-bottom -->

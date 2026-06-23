@@ -1,7 +1,3 @@
-<!-- portal-top -->
-[設計ポータル](../../README.md) ／ [基本設計](../index.md) ／ [権限設計](index.md) ／ **PERM-011: critical 通知の宛先解決**
-<!-- /portal-top -->
-
 # <span id="PERM-011"></span>PERM-011: critical 通知の宛先解決
 
 > **このページはcritical 通知を「誰に送るか」を決める宛先解決(オーナー + 当該プロジェクトの有効メンバーの 2 マスタ合算・重複排除)を定義します。**
@@ -36,9 +32,3 @@
 | 由来要件 |
 |----|
 | [FR-034](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-034) [FR-185](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-185) |
-
----
-
-<!-- portal-bottom -->
-[← 権限設計](index.md) ・ [基本設計](../index.md) ・ [↑ 設計ポータル](../../README.md)
-<!-- /portal-bottom -->

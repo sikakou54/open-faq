@@ -1,7 +1,3 @@
-<!-- portal-top -->
-[設計ポータル](../../README.md) ／ [要件定義](../index.md) ／ [業務要件](index.md) ／ **FAQ・AI 回答・未解決質問・処理エラー(業務要件)**
-<!-- /portal-top -->
-
 # FAQ・AI 回答・未解決質問・処理エラー(業務要件)
 
 > **このページは、FAQ・AI 回答・未解決質問・処理エラー に関する業務要件を定義します。**
@@ -237,9 +233,3 @@
 </tr>
 </tbody>
 </table>
-
----
-
-<!-- portal-bottom -->
-[← 業務要件](index.md) ・ [要件定義](../index.md) ・ [↑ 設計ポータル](../../README.md)
-<!-- /portal-bottom -->

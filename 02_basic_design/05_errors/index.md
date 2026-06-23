@@ -1,7 +1,3 @@
-<!-- portal-top -->
-[設計ポータル](../../README.md) ／ [基本設計](../index.md) ／ **エラー設計**
-<!-- /portal-top -->
-
 # エラー設計
 
 > **このページは、API レスポンスで返すエラーコードの一覧と、EVT / API からエラーへの対応表です。** 各エラーは HTTP ステータス・分類・メッセージ・対応 API / EVT を `ERR-NNN.md` で個別定義します。エラーの正本は各 ERR ファイル、認証・認可の判定段との対応は [権限設計](../04_permissions/index.md) を参照します。
@@ -104,9 +100,3 @@ API設計 ＞ 本エラー設計 ＞ メッセージ設計。各 API の `## エ
 | `E-AUTHZ-OWNER-BOUNDARY` | [ERR-019](ERR-019.md#ERR-019) | 404 | オーナー境界違反の 404 偽装 |
 | `E-AUTHZ-PROJECT-DENIED` | [ERR-021](ERR-021.md#ERR-021) | 403 | プロジェクト割当なし |
 | `E-AUTHZ-TERMS` | — | — | エラーではなくゲート。[SCR-020](../01_frontend/01_screens/SCR-020.md#SCR-020) 再同意へ誘導 |
-
----
-
-<!-- portal-bottom -->
-[基本設計](../index.md) ・ [↑ 設計ポータル](../../README.md)
-<!-- /portal-bottom -->

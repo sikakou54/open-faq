@@ -1,14 +1,10 @@
-<!-- portal-top -->
-[設計ポータル](../README.md) ／ [将来対応](index.md) ／ **FUT06: 個別チャット**
-<!-- /portal-top -->
-
-# FUT06: 個別チャット
+# <span id="FUT-06"></span>FUT-06: 個別チャット
 
 ## <span id="0-文書情報"></span>0. 文書情報
 
 | 項目         | 内容                                                       |
 |--------------|------------------------------------------------------------|
-| 文書名       | FUT06: 個別チャット                                        |
+| 文書名       | FUT-06: 個別チャット                                        |
 | 文書種別     | Future / Post-MVP                                          |
 | 対象システム | FAQ AI ウィジェット SaaS / メインシステム                  |
 | 作成日       | 2026-06-12                                                 |
@@ -86,13 +82,7 @@ MVP の未解決時フローは次のとおりとする。
 
 ## <span id="7-関連資料"></span>7. 関連資料
 
-- [FUT06-req.md](FUT06-req.md): 要件詳細
-- [FUT06-detail.md](FUT06-detail.md): 詳細設計
+- [FUT-06-req.md](FUT-06-req.md): 要件詳細
+- [FUT-06-detail.md](FUT-06-detail.md): 詳細設計
 - [FR05.md](../01_requirements/02_functional_requirement/index.md): MVP の未解決時動作
 - [FR12.md](../01_requirements/02_functional_requirement/index.md): MVP ウィジェット表示
-
----
-
-<!-- portal-bottom -->
-[将来対応](index.md) ・ [↑ 設計ポータル](../README.md)
-<!-- /portal-bottom -->

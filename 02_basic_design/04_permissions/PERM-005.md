@@ -1,7 +1,3 @@
-<!-- portal-top -->
-[設計ポータル](../../README.md) ／ [基本設計](../index.md) ／ [権限設計](index.md) ／ **PERM-005: オーナー境界・プロジェクト境界判定**
-<!-- /portal-top -->
-
 # <span id="PERM-005"></span>PERM-005: オーナー境界・プロジェクト境界判定
 
 > **このページは他契約・他プロジェクトのデータへ越境させない境界チェック(契約境界キー一致・プロジェクト割当)と、404 偽装による拒否を定義します。**
@@ -37,9 +33,3 @@
 | 由来要件 |
 |----|
 | [FR-185](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-185) [FR-189](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-189) |
-
----
-
-<!-- portal-bottom -->
-[← 権限設計](index.md) ・ [基本設計](../index.md) ・ [↑ 設計ポータル](../../README.md)
-<!-- /portal-bottom -->

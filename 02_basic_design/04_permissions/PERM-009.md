@@ -1,7 +1,3 @@
-<!-- portal-top -->
-[設計ポータル](../../README.md) ／ [基本設計](../index.md) ／ [権限設計](index.md) ／ **PERM-009: 契約状態によるアクセス制限**
-<!-- /portal-top -->
-
 # <span id="PERM-009"></span>PERM-009: 契約状態によるアクセス制限
 
 > **このページは契約状態(停止中 / 退会申請中 / 退会済み)ごとに管理画面で許す操作とセッションの扱いを定義します。**
@@ -39,9 +35,3 @@
 | 由来要件 |
 |----|
 | [FR-098](../../01_requirements/02_functional_requirement/03_usage-fr.md#FR-098) |
-
----
-
-<!-- portal-bottom -->
-[← 権限設計](index.md) ・ [基本設計](../index.md) ・ [↑ 設計ポータル](../../README.md)
-<!-- /portal-bottom -->

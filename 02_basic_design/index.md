@@ -1,7 +1,3 @@
-<!-- portal-top -->
-[設計ポータル](../README.md) ／ **基本設計**
-<!-- /portal-top -->
-
 # 基本設計ポータル
 
 FAQ AI ウィジェット SaaS / メインシステム(利用者向け)の基本設計を、**画面 / API / データベースの 3 独立設計書** と、それらを横断する**ユースケース・シーケンス設計書** として構成しています。要件定義から DB までを縦串で追跡できます。
@@ -85,9 +81,3 @@ flowchart LR
 <div class="card"><h4>API / インフラ</h4><p>Cloudflare Workers + REST(<code>/v1</code>)+ Cron + Queues</p></div>
 <div class="card"><h4>データストア</h4><p>D1(SQLite・31 テーブル)+ KV + R2</p></div>
 </div>
-
----
-
-<!-- portal-bottom -->
-[↑ 設計ポータル](../README.md)
-<!-- /portal-bottom -->

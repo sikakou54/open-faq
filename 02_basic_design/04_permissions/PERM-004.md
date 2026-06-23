@@ -1,7 +1,3 @@
-<!-- portal-top -->
-[設計ポータル](../../README.md) ／ [基本設計](../index.md) ／ [権限設計](index.md) ／ **PERM-004: オーナー保護・自己操作禁止**
-<!-- /portal-top -->
-
 # <span id="PERM-004"></span>PERM-004: オーナー保護・自己操作禁止
 
 > **このページは運用が止まらないための保護制約(オーナーへの退会・停止・削除・降格・譲渡の禁止、自己操作の禁止)を定義します。**
@@ -37,9 +33,3 @@
 | 由来要件 |
 |----|
 | [FR-183](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-183) [FR-184](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-184) |
-
----
-
-<!-- portal-bottom -->
-[← 権限設計](index.md) ・ [基本設計](../index.md) ・ [↑ 設計ポータル](../../README.md)
-<!-- /portal-bottom -->

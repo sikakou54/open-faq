@@ -1,7 +1,3 @@
-<!-- portal-top -->
-[設計ポータル](../../README.md) ／ [基本設計](../index.md) ／ [権限設計](index.md) ／ **PERM-007: セッションとログイン失敗ロックアウト**
-<!-- /portal-top -->
-
 # <span id="PERM-007"></span>PERM-007: セッションとログイン失敗ロックアウト
 
 > **このページはセッションの寿命(無操作 30 分・絶対 12 時間)・複数デバイス同時ログイン・失効優先順位と、5 回連続失敗による 15 分ロックアウトを定義します。**
@@ -38,9 +34,3 @@
 | 由来要件 |
 |----|
 | [FR-007](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-007) [FR-008](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-008) [FR-011](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-011) [FR-182](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-182) [FR-188](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-188) [BR-004](../../01_requirements/01_business_requirement/01_account-br.md#BR-004) [BR-005](../../01_requirements/01_business_requirement/01_account-br.md#BR-005) [BR-006](../../01_requirements/01_business_requirement/01_account-br.md#BR-006) |
-
----
-
-<!-- portal-bottom -->
-[← 権限設計](index.md) ・ [基本設計](../index.md) ・ [↑ 設計ポータル](../../README.md)
-<!-- /portal-bottom -->

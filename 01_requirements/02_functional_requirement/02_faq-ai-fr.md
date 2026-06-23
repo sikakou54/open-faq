@@ -1,7 +1,3 @@
-<!-- portal-top -->
-[設計ポータル](../../README.md) ／ [要件定義](../index.md) ／ [機能要件](index.md) ／ **FAQ・AI 回答・未解決質問・処理エラー(機能要件)**
-<!-- /portal-top -->
-
 # FAQ・AI 回答・未解決質問・処理エラー(機能要件)
 
 > **このページは、FAQ・AI 回答・未解決質問・処理エラー に関する機能要件を定義します。**
@@ -1139,9 +1135,3 @@ sequenceDiagram
   end
   UI-->>U: 反映結果を表示
 ```
-
----
-
-<!-- portal-bottom -->
-[← 機能要件](index.md) ・ [要件定義](../index.md) ・ [↑ 設計ポータル](../../README.md)
-<!-- /portal-bottom -->

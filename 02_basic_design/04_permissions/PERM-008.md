@@ -1,7 +1,3 @@
-<!-- portal-top -->
-[設計ポータル](../../README.md) ／ [基本設計](../index.md) ／ [権限設計](index.md) ／ **PERM-008: アカウント状態と利用可否**
-<!-- /portal-top -->
-
 # <span id="PERM-008"></span>PERM-008: アカウント状態と利用可否
 
 > **このページはアカウント状態(有効 / 招待中 / メール未確認 / ロック中 / 無効化)ごとのログイン可否と利用範囲を定義します。**
@@ -39,9 +35,3 @@
 | 由来要件 |
 |----|
 | [FR-003](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-003) [FR-021](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-021) [FR-031](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-031) [FR-189](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-189) |
-
----
-
-<!-- portal-bottom -->
-[← 権限設計](index.md) ・ [基本設計](../index.md) ・ [↑ 設計ポータル](../../README.md)
-<!-- /portal-bottom -->

@@ -1,7 +1,3 @@
-<!-- portal-top -->
-[設計ポータル](../../README.md) ／ [基本設計](../index.md) ／ [権限設計](index.md) ／ **PERM-010: 規約再同意の認可割込み**
-<!-- /portal-top -->
-
 # <span id="PERM-010"></span>PERM-010: 規約再同意の認可割込み
 
 > **このページは規約・プライバシーポリシー改定時に、ログイン後の認可フローへ再同意画面を割り込ませる発火条件と段階適用を定義します。**
@@ -36,9 +32,3 @@
 | 由来要件 |
 |----|
 | [FR-010](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-010) [FR-015](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-015) |
-
----
-
-<!-- portal-bottom -->
-[← 権限設計](index.md) ・ [基本設計](../index.md) ・ [↑ 設計ポータル](../../README.md)
-<!-- /portal-bottom -->

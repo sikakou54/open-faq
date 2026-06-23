@@ -1,7 +1,3 @@
-<!-- portal-top -->
-[設計ポータル](../../README.md) ／ [基本設計](../index.md) ／ [権限設計](index.md) ／ **PERM-006: 重要操作の再認証**
-<!-- /portal-top -->
-
 # <span id="PERM-006"></span>PERM-006: 重要操作の再認証
 
 > **このページは不可逆・高リスクな操作の直前に求める再認証(当該操作 1 回 + 15 分以内)と、対象 5 操作を定義します。**
@@ -39,9 +35,3 @@
 | 由来要件 |
 |----|
 | [FR-005](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-005) [BR-002](../../01_requirements/01_business_requirement/01_account-br.md#BR-002) |
-
----
-
-<!-- portal-bottom -->
-[← 権限設計](index.md) ・ [基本設計](../index.md) ・ [↑ 設計ポータル](../../README.md)
-<!-- /portal-bottom -->

@@ -1,7 +1,3 @@
-<!-- portal-top -->
-[設計ポータル](../../README.md) ／ [基本設計](../index.md) ／ **権限設計**
-<!-- /portal-top -->
-
 # 権限設計
 
 > **このページは、ロール別操作権限の一覧と、UC / 画面(SCR)/ 画面イベント(EVT)/ API から権限への対応表です。** 認証主体は全ユーザー共通の `M_USER` で、オーナー(`M_CONTRACT.user_id` 一致)/ メンバー(`M_PRJ_USERS` 有効割当)を導出します。各権限ルールは `PERM-NNN.md` で個別定義し、拒否時のエラーは [エラー設計](../05_errors/index.md)、画面文言・メールは [メッセージ設計](../06_messages/index.md) を参照します。
@@ -78,9 +74,3 @@
 | 招待受諾(メンバー有効化) | [RULE-007](../../01_requirements/01_business_requirement/08_rule.md#RULE-007) | [PERM-008](PERM-008.md#PERM-008) |
 | メール確認 | [FR-003](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-003) | [PERM-008](PERM-008.md#PERM-008) |
 | 強制ログアウト(契約停止時) | [RULE-016](../../01_requirements/01_business_requirement/08_rule.md#RULE-016) | [PERM-007](PERM-007.md#PERM-007) [PERM-009](PERM-009.md#PERM-009) |
-
----
-
-<!-- portal-bottom -->
-[基本設計](../index.md) ・ [↑ 設計ポータル](../../README.md)
-<!-- /portal-bottom -->

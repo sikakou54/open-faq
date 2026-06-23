@@ -1,7 +1,3 @@
-<!-- portal-top -->
-[設計ポータル](../../README.md) ／ [基本設計](../index.md) ／ [権限設計](index.md) ／ **PERM-002: 認可判定の順序**
-<!-- /portal-top -->
-
 # <span id="PERM-002"></span>PERM-002: 認可判定の順序
 
 > **このページは1 リクエストを許可するまでに通す認可判定の段(セッション → 契約状態 → オーナー判定 → 境界 → 専有 → 再認証 → 利用上限)と、各段の拒否時エラーを定義します。**
@@ -42,9 +38,3 @@
 | 由来要件 |
 |----|
 | [FR-188](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-188) [FR-189](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-189) [FR-191](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-191) |
-
----
-
-<!-- portal-bottom -->
-[← 権限設計](index.md) ・ [基本設計](../index.md) ・ [↑ 設計ポータル](../../README.md)
-<!-- /portal-bottom -->

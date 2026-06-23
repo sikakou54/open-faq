@@ -1,7 +1,3 @@
-<!-- portal-top -->
-[設計ポータル](../../README.md) ／ [基本設計](../index.md) ／ [権限設計](index.md) ／ **PERM-003: オーナー専有機能**
-<!-- /portal-top -->
-
 # <span id="PERM-003"></span>PERM-003: オーナー専有機能
 
 > **このページは非オーナーに付与してはならないオーナー専有機能(課金・契約設定・プロジェクト CRUD・退会・規約再同意)と、その判定段を定義します。**
@@ -40,9 +36,3 @@
 | 由来要件 |
 |----|
 | [FR-015](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-015) [BR-017](../../01_requirements/01_business_requirement/01_account-br.md#BR-017) |
-
----
-
-<!-- portal-bottom -->
-[← 権限設計](index.md) ・ [基本設計](../index.md) ・ [↑ 設計ポータル](../../README.md)
-<!-- /portal-bottom -->

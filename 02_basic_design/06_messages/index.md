@@ -1,7 +1,3 @@
-<!-- portal-top -->
-[設計ポータル](../../README.md) ／ [基本設計](../index.md) ／ **メッセージ設計**
-<!-- /portal-top -->
-
 # メッセージ設計
 
 > **このページは、メインシステムが送信する全メールテンプレート(`MSG-NNN`)の一覧と、メール共通基準・配信運用ルールの正本です。** 各テンプレートの件名・本文・変数・送信契機は個別 `MSG-NNN.md` が正本です。画面に表示する確認・完了・エラーメッセージの文言は各 [画面設計](../01_frontend/01_screens/index.md)(SCR の §4 / §6)、拒否時のエラーコードは [エラー設計](../05_errors/index.md) が正本です。
@@ -195,9 +191,3 @@
 | 確認ダイアログ・完了トースト文言 | 各 [画面設計](../01_frontend/01_screens/index.md) SCR の §6 画面イベント一覧 |
 | API エラーコード(HTTP / 分類) | [エラー設計](../05_errors/index.md) |
 | お知らせ受信箱(`inbox`)メッセージ | 本書 `TPL-SYSTEM_NOTICE`([MSG-013](MSG-013.md#MSG-013))の `inbox` 生成 |
-
----
-
-<!-- portal-bottom -->
-[基本設計](../index.md) ・ [↑ 設計ポータル](../../README.md)
-<!-- /portal-bottom -->

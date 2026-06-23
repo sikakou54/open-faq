@@ -1,7 +1,3 @@
-<!-- portal-top -->
-[設計ポータル](../../../README.md) ／ [基本設計](../../index.md) ／ [フロントエンド設計](../index.md) ／ **画面イベント設計**
-<!-- /portal-top -->
-
 # 画面イベント設計
 
 > **このセクションは、各画面(SCR)の画面イベントを `EVT-NNN` として個別に定義します。** 1 画面イベント = 1 ファイル。各 EVT は対応画面・対応業務UC(UC)・対象項目・呼出API・遷移先・処理内容を持ちます。
@@ -650,9 +646,3 @@
 | [`EVT-234`](EVT-234.md#EVT-234) | [SCR-032](../01_screens/SCR-032.md#SCR-032) | [UC-083](../../../01_requirements/04_business_usecases/UC-083.md#UC-083) |
 | [`EVT-235`](EVT-235.md#EVT-235) | [SCR-032](../01_screens/SCR-032.md#SCR-032) | [UC-083](../../../01_requirements/04_business_usecases/UC-083.md#UC-083) |
 | [`EVT-236`](EVT-236.md#EVT-236) | [SCR-032](../01_screens/SCR-032.md#SCR-032) | [UC-083](../../../01_requirements/04_business_usecases/UC-083.md#UC-083) |
-
----
-
-<!-- portal-bottom -->
-[← フロントエンド設計](../index.md) ・ [基本設計](../../index.md) ・ [↑ 設計ポータル](../../../README.md)
-<!-- /portal-bottom -->

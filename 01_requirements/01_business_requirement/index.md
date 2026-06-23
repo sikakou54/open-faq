@@ -1,7 +1,3 @@
-<!-- portal-top -->
-[設計ポータル](../../README.md) ／ [要件定義](../index.md) ／ **業務要件**
-<!-- /portal-top -->
-
 # 業務要件
 
 > **このページは、業務要件(BR)と業務ルール(RULE)の一覧です。** 業務要件はカテゴリ別ファイル(`-br.md`)の HTML テーブル(1 行 = 1 要件)、業務ルールは [`08_rule.md`](08_rule.md) の節で保持する。
@@ -43,9 +39,3 @@
 - [RULE-018: 公開キーローテーション猶予](08_rule.md#RULE-018)
 - [RULE-019: 一括操作の上限](08_rule.md#RULE-019)
 - [RULE-020: AI 推論タイムアウト](08_rule.md#RULE-020)
-
----
-
-<!-- portal-bottom -->
-[要件定義](../index.md) ・ [↑ 設計ポータル](../../README.md)
-<!-- /portal-bottom -->
