@@ -1,0 +1,82 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#fff}
+body{font-family:'Noto Sans JP','Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;color:#3a3f46;-webkit-font-smoothing:antialiased}
+#wrap{display:inline-block}
+</style>
+</head><body><div id="wrap"><div style="background:#f5f6f8;padding:24px;border-radius:12px;font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN',Meiryo,sans-serif;color:#3a3f46;-webkit-font-smoothing:antialiased;--accent:#5e6ad2">
+<div style="max-width:1180px;margin:0 auto">
+  <section>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:13px">
+      <span style="font-size:11px;font-weight:700;color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,#fff);border-radius:6px;padding:3px 8px">状態 1</span>
+      <span style="font-size:13.5px;font-weight:600;color:#16191d">通常時 — 配信状態と失敗 / バウンス件数を表示</span>
+    </div>
+    <div style="background:#fff;border:1px solid #e6e8eb;border-radius:14px;box-shadow:0 1px 2px rgba(16,24,40,.04),0 6px 20px rgba(16,24,40,.05);overflow:hidden">
+      <div style="display:flex;align-items:center;justify-content:space-between;height:54px;padding:0 16px;border-bottom:1px solid #eef0f2;background:#fff">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:15px;color:#16191d"><span style="width:23px;height:23px;border-radius:7px;background:var(--accent);display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:800">o</span>open-faq</span>
+          <span style="width:1px;height:22px;background:#eef0f2"></span>
+          <span style="display:inline-flex;align-items:center;gap:7px;padding:6px 11px;border:1px solid #e6e8eb;border-radius:8px;background:#fff;font-size:13px;color:#3a3f46">サポートサイト</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <button style="display:inline-flex;align-items:center;gap:8px;padding:4px 10px 4px 4px;border:1px solid #e6e8eb;border-radius:999px;background:#fff;cursor:pointer;font-family:inherit"><span style="width:26px;height:26px;border-radius:999px;background:color-mix(in srgb,var(--accent) 18%,#fff);color:var(--accent);font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center">A</span><span style="font-size:12.5px;color:#3a3f46">admin@example.com</span></button>
+        </div>
+      </div>
+      <div style="display:flex;min-height:560px">
+        <aside style="width:240px;flex:none;background:#fbfbfc;border-right:1px solid #eef0f2;padding:12px 12px 16px;display:flex;flex-direction:column">
+          <a style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;color:#3a3f46;font-size:13.5px;text-decoration:none">概要</a>
+          <div style="font-size:10.5px;font-weight:700;letter-spacing:.04em;color:#9aa0a8;padding:14px 10px 6px">対応</div>
+          <a style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;color:#3a3f46;font-size:13.5px;text-decoration:none">要対応の質問<span style="margin-left:auto;font-size:11px;font-weight:600;background:#eef0f2;color:#6b7280;border-radius:999px;padding:1px 7px">12</span></a>
+          <div style="font-size:10.5px;font-weight:700;letter-spacing:.04em;color:#9aa0a8;padding:14px 10px 6px">通知</div>
+          <a style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;color:#3a3f46;font-size:13.5px;text-decoration:none">お知らせ<span style="margin-left:auto;font-size:11px;font-weight:600;background:#eef0f2;color:#6b7280;border-radius:999px;padding:1px 7px">3</span></a>
+          <a style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;background:color-mix(in srgb,var(--accent) 12%,#fff);color:var(--accent);font-weight:600;font-size:13.5px;text-decoration:none">通知配信状態</a>
+          <div style="font-size:10.5px;font-weight:700;letter-spacing:.04em;color:#9aa0a8;padding:14px 10px 6px">コンテンツ</div>
+          <a style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;color:#3a3f46;font-size:13.5px;text-decoration:none">FAQ</a>
+          <a style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;color:#3a3f46;font-size:13.5px;text-decoration:none">ウィジェット</a>
+        </aside>
+        <main style="flex:1;min-width:0;background:#fff;padding:18px 22px 24px;display:flex;flex-direction:column;gap:16px">
+          <nav style="display:flex;align-items:center;gap:7px;font-size:12px;color:#9aa0a8"><span>ホーム</span><span>/</span><span style="color:#3a3f46">通知配信状態</span></nav>
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px">
+            <div>
+              <h1 style="margin:0 0 4px;font-size:20px;font-weight:700;color:#16191d;letter-spacing:-.01em">通知配信状態</h1>
+              <p style="margin:0;font-size:13px;color:#71767e">当月のメール通知の配信状態と失敗 / バウンス件数を確認できます</p>
+            </div>
+            <button style="display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border:1px solid #e6e8eb;border-radius:8px;background:#fff;font-size:13px;font-weight:600;color:#3a3f46;cursor:pointer;white-space:nowrap;font-family:inherit">最新の状態に更新</button>
+          </div>
+          <div style="font-size:11.5px;color:#9aa0a8">集計対象期間: 2026-06 ・ 最終更新: 2026-06-23 10:42</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+            <div style="border:1px solid #eef0f2;border-radius:12px;padding:14px"><div style="font-size:12px;color:#71767e;margin-bottom:8px">送信済み</div><div style="font-size:24px;font-weight:700;color:#16191d">1,284</div></div>
+            <div style="border:1px solid #eef0f2;border-radius:12px;padding:14px"><div style="font-size:12px;color:#71767e;margin-bottom:8px">配信済み</div><div style="font-size:24px;font-weight:700;color:#1a7f37">1,240</div></div>
+            <div style="border:1px solid #f5c2bd;border-radius:12px;padding:14px;background:#fdecea"><div style="font-size:12px;color:#b42318;margin-bottom:8px">失敗</div><div style="font-size:24px;font-weight:700;color:#b42318">18</div></div>
+            <div style="border:1px solid #f5d8a8;border-radius:12px;padding:14px;background:#fff7e8"><div style="font-size:12px;color:#9a6700;margin-bottom:8px">バウンス</div><div style="font-size:24px;font-weight:700;color:#9a6700">26</div></div>
+          </div>
+          <div style="border:1px solid #eef0f2;border-radius:12px;overflow:hidden">
+            <div style="padding:12px 16px;border-bottom:1px solid #eef0f2;font-size:13px;font-weight:700;color:#16191d">配信状態の内訳</div>
+            <table style="width:100%;border-collapse:collapse;font-size:12.5px">
+              <thead>
+                <tr style="background:#fbfbfc;color:#71767e;text-align:left">
+                  <th style="padding:10px 16px;font-weight:600">通知種別</th>
+                  <th style="padding:10px 12px;font-weight:600;text-align:right">送信待ち</th>
+                  <th style="padding:10px 12px;font-weight:600;text-align:right">送信済み</th>
+                  <th style="padding:10px 12px;font-weight:600;text-align:right">配信済み</th>
+                  <th style="padding:10px 12px;font-weight:600;text-align:right">失敗</th>
+                  <th style="padding:10px 12px;font-weight:600;text-align:right">バウンス</th>
+                  <th style="padding:10px 12px;font-weight:600;text-align:right">苦情</th>
+                  <th style="padding:10px 16px;font-weight:600;text-align:right">送信停止</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-top:1px solid #f1f3f5"><td style="padding:10px 16px;color:#16191d">メンバー招待</td><td style="padding:10px 12px;text-align:right">2</td><td style="padding:10px 12px;text-align:right">412</td><td style="padding:10px 12px;text-align:right">402</td><td style="padding:10px 12px;text-align:right;color:#b42318">5</td><td style="padding:10px 12px;text-align:right;color:#9a6700">8</td><td style="padding:10px 12px;text-align:right">1</td><td style="padding:10px 16px;text-align:right">3</td></tr>
+                <tr style="border-top:1px solid #f1f3f5"><td style="padding:10px 16px;color:#16191d">パスワード再設定</td><td style="padding:10px 12px;text-align:right">0</td><td style="padding:10px 12px;text-align:right">351</td><td style="padding:10px 12px;text-align:right">344</td><td style="padding:10px 12px;text-align:right;color:#b42318">4</td><td style="padding:10px 12px;text-align:right;color:#9a6700">5</td><td style="padding:10px 12px;text-align:right">0</td><td style="padding:10px 16px;text-align:right">2</td></tr>
+                <tr style="border-top:1px solid #f1f3f5"><td style="padding:10px 16px;color:#16191d">上限アラート</td><td style="padding:10px 12px;text-align:right">1</td><td style="padding:10px 12px;text-align:right">298</td><td style="padding:10px 12px;text-align:right">289</td><td style="padding:10px 12px;text-align:right;color:#b42318">6</td><td style="padding:10px 12px;text-align:right;color:#9a6700">9</td><td style="padding:10px 12px;text-align:right">2</td><td style="padding:10px 16px;text-align:right">4</td></tr>
+                <tr style="border-top:1px solid #f1f3f5"><td style="padding:10px 16px;color:#16191d">運営お知らせ</td><td style="padding:10px 12px;text-align:right">3</td><td style="padding:10px 12px;text-align:right">223</td><td style="padding:10px 12px;text-align:right">205</td><td style="padding:10px 12px;text-align:right;color:#b42318">3</td><td style="padding:10px 12px;text-align:right;color:#9a6700">4</td><td style="padding:10px 12px;text-align:right">1</td><td style="padding:10px 16px;text-align:right">5</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </main>
+      </div>
+    </div>
+  </section>
+</div>
+</div></div></body></html>

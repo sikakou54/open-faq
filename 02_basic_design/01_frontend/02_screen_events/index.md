@@ -6,7 +6,7 @@
 
 > **このセクションは、各画面(SCR)の画面イベントを `EVT-NNN` として個別に定義します。** 1 画面イベント = 1 ファイル。各 EVT は対応画面・対応業務UC(UC)・対象項目・呼出API・遷移先・処理内容を持ちます。
 
-*版数 v1.0 ・ 更新 2026-06-21 ・ イベント数 229 ・ 再構成 P3*
+*版数 v1.1 ・ 更新 2026-06-23 ・ イベント数 231 ・ 再構成 P3 + 通知配信状態(SCR-031)*
 
 ## 1. 画面別 EVT 一覧
 
@@ -391,6 +391,13 @@
 | [`EVT-228`](EVT-228.md#EVT-228) | 受付制限(429)を受信 | [UC-044](../../../01_requirements/04_business_usecases/UC-044.md#UC-044) |
 | [`EVT-229`](EVT-229.md#EVT-229) | 処理エラーを受信 | [UC-044](../../../01_requirements/04_business_usecases/UC-044.md#UC-044) |
 
+### <span id="SCR-031"></span>SCR-031 通知配信状態(プロジェクト単位)
+
+| EVT-ID | イベント名 | 対応業務UC |
+|---|---|---|
+| [`EVT-230`](EVT-230.md#EVT-230) | 初期表示 | [UC-084](../../../01_requirements/04_business_usecases/UC-084.md#UC-084) ・ [UC-085](../../../01_requirements/04_business_usecases/UC-085.md#UC-085) |
+| [`EVT-231`](EVT-231.md#EVT-231) | 「最新の状態に更新」を押下 | [UC-084](../../../01_requirements/04_business_usecases/UC-084.md#UC-084) ・ [UC-085](../../../01_requirements/04_business_usecases/UC-085.md#UC-085) |
+
 ## 2. EVT ↔ 業務UC 対応表
 
 画面イベント `EVT-NNN` と業務ユースケース `UC-PPP` の 1:1 対応です。
@@ -626,6 +633,8 @@
 | [`EVT-227`](EVT-227.md#EVT-227) | [SCR-030](../01_screens/SCR-030.md#SCR-030) | [UC-044](../../../01_requirements/04_business_usecases/UC-044.md#UC-044) |
 | [`EVT-228`](EVT-228.md#EVT-228) | [SCR-030](../01_screens/SCR-030.md#SCR-030) | [UC-044](../../../01_requirements/04_business_usecases/UC-044.md#UC-044) |
 | [`EVT-229`](EVT-229.md#EVT-229) | [SCR-030](../01_screens/SCR-030.md#SCR-030) | [UC-044](../../../01_requirements/04_business_usecases/UC-044.md#UC-044) |
+| [`EVT-230`](EVT-230.md#EVT-230) | [SCR-031](../01_screens/SCR-031.md#SCR-031) | [UC-084](../../../01_requirements/04_business_usecases/UC-084.md#UC-084) ・ [UC-085](../../../01_requirements/04_business_usecases/UC-085.md#UC-085) |
+| [`EVT-231`](EVT-231.md#EVT-231) | [SCR-031](../01_screens/SCR-031.md#SCR-031) | [UC-084](../../../01_requirements/04_business_usecases/UC-084.md#UC-084) ・ [UC-085](../../../01_requirements/04_business_usecases/UC-085.md#UC-085) |
 
 ---
 

@@ -171,6 +171,7 @@
 - [SCR-028 請求](02_basic_design/01_frontend/01_screens/SCR-028.md)
 - [SCR-029 設定](02_basic_design/01_frontend/01_screens/SCR-029.md)
 - [SCR-030 エンドユーザー向け FAQ ウィジェット](02_basic_design/01_frontend/01_screens/SCR-030.md)
+- [SCR-031 通知配信状態(プロジェクト単位)](02_basic_design/01_frontend/01_screens/SCR-031.md)
 
 ##### mocks
 
@@ -407,6 +408,8 @@
 - [EVT-227: AI 回答(未解決)を受信](02_basic_design/01_frontend/02_screen_events/EVT-227.md)
 - [EVT-228: 受付制限(429)を受信](02_basic_design/01_frontend/02_screen_events/EVT-228.md)
 - [EVT-229: 処理エラーを受信](02_basic_design/01_frontend/02_screen_events/EVT-229.md)
+- [EVT-230: 初期表示](02_basic_design/01_frontend/02_screen_events/EVT-230.md)
+- [EVT-231: 「最新の状態に更新」を押下](02_basic_design/01_frontend/02_screen_events/EVT-231.md)
 
 ### バックエンド設計
 
@@ -526,6 +529,7 @@
 - [API-058: メール配信 IF(`EmailProvider`)](02_basic_design/02_backend/03_apis/API-058.md)
 - [API-059: 外部 Webhook(Resend)](02_basic_design/02_backend/03_apis/API-059.md)
 - [API-060: 課金プロバイダ Webhook 受信](02_basic_design/02_backend/03_apis/API-060.md)
+- [API-061: 通知配信状態サマリ](02_basic_design/02_backend/03_apis/API-061.md)
 
 #### DB設計
 
