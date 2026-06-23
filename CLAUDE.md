@@ -5,7 +5,7 @@
 本リポジトリは「FAQ AI ウィジェット SaaS / メインシステム」の **要件定義書**・**基本設計書** を **Markdown** で管理する。1 つの識別子(要件 / UC / 画面 / イベント / API / テーブル …)= 1 ファイルの**個別ページ構成**を正本とし、ルートの [`README.md`](README.md) がポータルのトップ(全文書索引)である。各識別子はフラット連番でゼロ詰め 3 桁・欠番なし。
 
 > [!IMPORTANT]
-> **読み順(正本)** 要件定義 ＞ 業務ユースケース ＞ 画面設計 ＞ 画面イベント ＞ API設計 ＞ DB設計 ＞ シーケンス ＞ 権限 / エラー / メッセージ。各層は前層を実現する関係で、`要件 ↔ UC ↔ SCR ↔ EVT ↔ API ↔ TBL` を双方向にトレースする。
+> **読み順(正本)** 要件定義 ＞ 業務ユースケース ＞ 画面設計 ＞ 画面イベント ＞ システム設計 ＞ システムイベント ＞ API設計 ＞ DB設計 ＞ シーケンス ＞ 権限 / エラー / メッセージ。各層は前層を実現する関係で、`要件 ↔ UC ↔ (SCR ↔ EVT / SYS ↔ SEV) ↔ API ↔ TBL` を双方向にトレースする。画面起点の業務UCは画面層(SCR/EVT)、システム起点(バッチ/Webhook/非同期/監視/通知)の業務UCはシステム層(SYS/SEV)で実現する。
 
 ---
 
@@ -23,21 +23,27 @@ CLAUDE.md                          # 保守ルール正本(本書)
 ├── 03_NonFunctionalRequirement/   #   非機能要件 : index.md + 07_nfr.md(分類節・通し連番)
 ├── 04_business_usecases/          #   業務ユースケース : index.md + UC-001..(業務処理粒度。画面起点→システム起点→要件起点。本文は BR/FR/RULE のみ)
 └── 99_restructure_result.md       #   再構成結果サマリ(要件定義視点)
-02_basic_design/                   # 基本設計
+02_basic_design/                   # 基本設計(frontend / backend グルーピング)
 ├── index.md                       #   基本設計トップ
-├── 01_screens/                    #   画面設計 : index.md + SCR-001..(§6 にイベント列、§1 に対応UC)
-│   └── mocks/                     #     画面モック: 画像 *.png と HTML ソース *.html(同名ペア)
-├── 02_screen_events/              #   画面イベント設計 : index.md + EVT-001..(対応UC / SCR / 呼出API)
-├── 03_apis/                       #   API設計 : index.md + API-001..(1 エンドポイント = 1 ファイル)
-├── 04_database/                   #   DB設計 : index.md + TBL-001..(1 テーブル = 1 ファイル)
-├── 05_sequences/                  #   シーケンス設計 : index.md + SEQ-001..(対応UC、図中の画面は新 SCR-ID)
-├── 06_permissions/                #   権限設計 : index.md + PERM-001..
-├── 07_errors/                     #   エラー設計 : index.md + ERR-001..
-├── 08_messages/                   #   メッセージ設計 : index.md + MSG-001..(メールテンプレ)
+├── 01_frontend/                   #   フロントエンド設計(利用者操作の画面まわり)
+│   ├── index.md
+│   ├── 01_screens/                #     画面設計 : index.md + SCR-001..(§6 にイベント列、§1 に対応UC)
+│   │   └── mocks/                 #       画面モック: 画像 *.png と HTML ソース *.html(同名ペア)
+│   └── 02_screen_events/          #     画面イベント設計 : index.md + EVT-001..(対応UC / SCR / 呼出API)
+├── 02_backend/                    #   バックエンド設計(サーバー側)
+│   ├── index.md
+│   ├── 01_system/                 #     システム設計 : index.md + SYS-001..(無人処理。§6 にイベント列、§1 に対応UC)
+│   ├── 02_system_events/          #     システムイベント設計 : index.md + SEV-001..(対応UC / SYS / 呼出API)
+│   ├── 03_apis/                   #     API設計 : index.md + API-001..(1 エンドポイント = 1 ファイル)
+│   └── 04_database/               #     DB設計 : index.md + TBL-001..(1 テーブル = 1 ファイル)
+├── 03_sequences/                  #   シーケンス設計 : index.md + SEQ-001..(対応UC、図中の画面は SCR-ID)
+├── 04_permissions/                #   権限設計 : index.md + PERM-001..
+├── 05_errors/                     #   エラー設計 : index.md + ERR-001..
+├── 06_messages/                   #   メッセージ設計 : index.md + MSG-001..(メールテンプレ)
 ├── 05_billing-design.md           #   横断設計(課金。単独ファイルで存置)
 └── 99_restructure_result.md       #   再構成結果サマリ(基本設計視点)
 03_future/                         # 将来対応 : index.md + FUT*
-_build/                            # ツール(配信対象外。portal_nav.py / 再構成スクリプト等)
+_build/                            # ツール(配信対象外。portal_nav.py / p7_traceability.py が現行正本)
 ```
 
 - ファイル名は原則 ID 1 件 = 1 ファイル(例 `UC-001.md` / `SCR-001.md` / `EVT-001.md` / `API-001.md` / `TBL-001.md` / `SEQ-001.md` / `PERM-001.md` / `ERR-001.md` / `MSG-001.md`)。**ただし要件仕様(BR/FR/NFR/RULE)はファイル数削減のためカテゴリ別・種別別ファイルへ統合**し、各 ID は当該ファイル内で保持する(種別ごとに `01_BusinessRequirement/`(BR + RULE)/ `02_FunctionalRequirement/`(FR)/ `03_NonFunctionalRequirement/`(NFR)へ分割。ID・アンカー・採番は不変)。**BR は HTML テーブルの行(ID セルに `<span id="ID"></span>`)**、FR / NFR / RULE は節 `## <span id="ID"></span>ID: 名称` で保持する。
@@ -54,9 +60,11 @@ _build/                            # ツール(配信対象外。portal_nav.py /
 | 非機能要件 | `NFR-` | `NFR-001`〜 | 分類別ではなく通し連番。`03_NonFunctionalRequirement/07_nfr.md` に分類節で統合 |
 | 業務ルール | `RULE-` | `RULE-001`〜 | FR / BR から抽出した定量しきい値・ポリシー(`01_BusinessRequirement/08_rule.md` に統合) |
 | 業務ユースケース | `UC-` | `UC-001`〜 | 業務処理粒度(誰が〜する)。画面起点 → システム起点 → 要件起点の順 |
-| 画面 | `SCR-` | `SCR-001`〜 | 1 画面 = 1 ファイル(フラット。`-NNN` 従属は廃止) |
-| 画面イベント | `EVT-` | `EVT-001`〜 | UC とは多:1(複数 EVT が 1 業務UCを実現) |
-| API | `API-` | `API-001`〜 | 1 エンドポイント = 1 ファイル |
+| 画面 | `SCR-` | `SCR-001`〜 | 1 画面 = 1 ファイル(フラット。`-NNN` 従属は廃止)。`01_frontend/01_screens/` |
+| 画面イベント | `EVT-` | `EVT-001`〜 | UC とは多:1(複数 EVT が 1 業務UCを実現)。`01_frontend/02_screen_events/` |
+| システム | `SYS-` | `SYS-001`〜 | 1 システム処理 = 1 ファイル(バッチ/Webhook/非同期/監視/通知の無人処理。画面 `SCR` の backend 版)。`02_backend/01_system/` |
+| システムイベント | `SEV-` | `SEV-001`〜 | SYS とは多:1(複数 SEV が 1 業務UCを実現)。画面イベント `EVT` のシステム版。`02_backend/02_system_events/` |
+| API | `API-` | `API-001`〜 | 1 エンドポイント = 1 ファイル。`02_backend/03_apis/` |
 | テーブル | `TBL-` | `TBL-001`〜 | 分類接頭辞(`M_`/`T_`/`H_`/`TP_`)は物理名に残し ID は通し連番 |
 | シーケンス | `SEQ-` | `SEQ-001`〜 | UC 単位 |
 | 権限 | `PERM-` | `PERM-001`〜 | |
@@ -96,12 +104,12 @@ python3 _build/portal_nav.py
 
 ## 画面モックの画像化
 
-GitHub は埋め込み HTML の `style=`/`class=` を除去するため、画面モック(`02_basic_design/01_screens/SCR-*.md` の §3 画面レイアウト)は **PNG 画像で表示**する。HTML ソースは MD に埋め込まず、**`02_basic_design/01_screens/mocks/<画面>-<n>.html`** に外出しして保持する(MD は画像 1 行のみ)。画像も同じ `02_basic_design/01_screens/mocks/<画面>-<n>.png` に置き、各 SCR からは `mocks/<画面>-<n>.png`(子階層相対・`../` なし)で参照する。**`../` 親参照にすると Cursor / VS Code のプレビューが画像を読み込めない**ため、必ず各ページと同階層配下に置く。
+GitHub は埋め込み HTML の `style=`/`class=` を除去するため、画面モック(`02_basic_design/01_frontend/01_screens/SCR-*.md` の §3 画面レイアウト)は **PNG 画像で表示**する。HTML ソースは MD に埋め込まず、**`02_basic_design/01_frontend/01_screens/mocks/<画面>-<n>.html`** に外出しして保持する(MD は画像 1 行のみ)。画像も同じ `02_basic_design/01_frontend/01_screens/mocks/<画面>-<n>.png` に置き、各 SCR からは `mocks/<画面>-<n>.png`(子階層相対・`../` なし)で参照する。**`../` 親参照にすると Cursor / VS Code のプレビューが画像を読み込めない**ため、必ず各ページと同階層配下に置く。
 
 `mocks/<画面>-<n>.html` は単体で開けて図と同じ見た目になる完結 HTML(クロップ用に `#wrap` を持つ)。**モックを変更するときはこの .html を直接編集**し、PNG を再生成する(ルートで):
 
 ```sh
-node ~/.claude/skills/html-to-png/scripts/html_to_png.js 02_basic_design/01_screens/mocks --selector "#wrap"
+node ~/.claude/skills/html-to-png/scripts/html_to_png.js 02_basic_design/01_frontend/01_screens/mocks --selector "#wrap"
 ```
 
 `mocks/*.html` → 同名 `mocks/*.png` を一括レンダリングする(html-to-png グローバルスキル / `puppeteer-core` + ローカル Chromium)。`mermaid` は画像化せず ` ```mermaid ` のまま(GitHub が描画)。
@@ -120,9 +128,10 @@ node ~/.claude/skills/html-to-png/scripts/html_to_png.js 02_basic_design/01_scre
 
 - 同一ページ: `[FR-001](#FR-001)`
 - 要件仕様(種別フォルダ内のファイルへ): 同一種別フォルダ内は兄弟参照 `[FR-007](02_faq-ai-fr.md#FR-007)`(FR フォルダ内)/ `[BR-001](01_account-br.md#BR-001)`(BR フォルダ内)。種別をまたぐときは相対パス `[FR-001](../02_FunctionalRequirement/01_account-fr.md#FR-001)` / `[RULE-001](../01_BusinessRequirement/08_rule.md#RULE-001)`。**ファイル名は ID ではなくカテゴリ + 種別**、アンカーは `#<ID>`。一覧は各種別フォルダ(`01_BusinessRequirement` / `02_FunctionalRequirement` / `03_NonFunctionalRequirement`)の `index.md`。
-- 同一フォルダの他ページ(その他系列): `[SCR-002](SCR-002.md#SCR-002)`(画面フォルダ内)
-- 基本設計の別フォルダ: 画面イベント → 画面 `[SCR-001](../01_screens/SCR-001.md#SCR-001)` / API → テーブル `[TBL-001](../04_database/TBL-001.md#TBL-001)` / シーケンス → API `[API-002](../03_apis/API-002.md#API-002)`
-- グループをまたぐ: 業務UC → 要件 `[FR-001](../02_FunctionalRequirement/01_account-fr.md#FR-001)` / 画面 → 業務UC `[UC-001](../../01_requirements/04_business_usecases/UC-001.md#UC-001)` / API → 業務UC `[UC-016](../../01_requirements/04_business_usecases/UC-016.md#UC-016)`
+- 同一フォルダの他ページ(その他系列): `[SCR-002](SCR-002.md#SCR-002)`(画面フォルダ内)/ `[SYS-002](SYS-002.md#SYS-002)`(システムフォルダ内)
+- 基本設計の同グルーピング内(兄弟): 画面イベント → 画面 `[SCR-001](../01_screens/SCR-001.md#SCR-001)`(`01_frontend` 内)/ システムイベント → システム `[SEV-001](../01_system/SYS-001.md#SYS-001)`(`02_backend` 内)/ API → テーブル `[TBL-001](../04_database/TBL-001.md#TBL-001)`(`02_backend` 内)/ システム → API `[API-060](../03_apis/API-060.md#API-060)`(`02_backend` 内)
+- 基本設計のグルーピングをまたぐ: シーケンス → API `[API-002](../02_backend/03_apis/API-002.md#API-002)`(`03_sequences` から)/ 画面 → API `[API-061](../../02_backend/03_apis/API-061.md#API-061)`(`01_frontend/01_screens` から)/ システム → エラー `[ERR-001](../../05_errors/ERR-001.md#ERR-001)`(`02_backend/01_system` から)
+- グループをまたぐ: 業務UC → 要件 `[FR-001](../02_FunctionalRequirement/01_account-fr.md#FR-001)` / 画面 → 業務UC `[UC-001](../../../01_requirements/04_business_usecases/UC-001.md#UC-001)`(`01_frontend/01_screens` は深さ 3)/ システム → 業務UC `[UC-061](../../../01_requirements/04_business_usecases/UC-061.md#UC-061)`(`02_backend/01_system` は深さ 3)/ シーケンス → 業務UC `[UC-001](../../01_requirements/04_business_usecases/UC-001.md#UC-001)`(`03_sequences` は深さ 2)
 
 新しい定義行・見出しを追加するときは、対応する `<span id="…"></span>` を必ず付ける。
 
@@ -194,7 +203,7 @@ BR / FR / NFR / RULE を**種別フォルダ + カテゴリ別・種別別ファ
 - **BR と FR の記載粒度(重複を作らない)**: BR=業務意図(誰が・何のために・何を可能にするか + 業務上の制約/リスク/方針の質的言明)を **1〜2 文**で。FR=システム機能の細粒度。**数値しきい値・手順番号・対象操作の列挙・状態名・画面/UI 文言・FR とほぼ同文の機能記述は BR に書かず**、対応 FR(数値は `08_rule.md` の RULE)へ委ねる。FR に無い業務理由・価値・ステークホルダ別役割・固有方針は BR に残す。FR から BR の業務観点を再掲しない。
 - **業務要件 `BR-*`**: 表の 1 行(`ID / 名称 / 機能グループ / 要件`)。関連列は持たない。`要件` セルは役割別の箇条書き可(上記粒度に従い実装詳細は持たない)。優先度は全件 P0 のためファイル先頭メタに 1 回記載し、列には持たない。
 - **機能要件 `FR-*`**: `### 要件` + `### シーケンス`(関連セクションなし)。優先度 `P0`/`P1`/`P2` とカテゴリ振り分け根拠の `機能グループ` はメタに記載。
-- **FR の `### シーケンス`**: アクターは固定3者 `ユーザー / UI / サーバー`(`actor U as ユーザー` / `participant UI as UI` / `participant S as サーバー`)の mermaid `sequenceDiagram`。`autonumber` を付け、要求に応答線を対で描く。分岐は `alt/else/end`。数値しきい値・状態名・テーブル/API ID・SQL は書かず相互作用の流れに限定し、無人処理は `Note over S: トリガ` で S 中心に。図中に Markdown リンク・`id=` を書かない。UC 単位の詳細シーケンスは `02_basic_design/05_sequences/`(`SEQ-*`)が正本。
+- **FR の `### シーケンス`**: アクターは固定3者 `ユーザー / UI / サーバー`(`actor U as ユーザー` / `participant UI as UI` / `participant S as サーバー`)の mermaid `sequenceDiagram`。`autonumber` を付け、要求に応答線を対で描く。分岐は `alt/else/end`。数値しきい値・状態名・テーブル/API ID・SQL は書かず相互作用の流れに限定し、無人処理は `Note over S: トリガ` で S 中心に。図中に Markdown リンク・`id=` を書かない。UC 単位の詳細シーケンスは `02_basic_design/03_sequences/`(`SEQ-*`)が正本。
 - **非機能要件 `NFR-*`**: メタに `分類`。`07_nfr.md` 内で分類節へ配置。**分類別番号帯は使わず通し連番**。
 - **業務ルール `RULE-*`**: FR / BR 文中の定量しきい値・ポリシーを抽出。`### ルール` + `### 適用UC`(適用される業務UC)。
 - 要件を追加するとき: **BR は当該カテゴリファイルの表へ `<tr>` 行を 1 つ追加**(ID セルに `<span id="BR-NNN"></span>`、`機能グループ` 列で振り分け)。FR / NFR / RULE は種別節へ `## <span id="ID"></span>…` を追加し、`機能グループ` / `分類` で振り分ける(FR には `### シーケンス` も付ける)。`01_BusinessRequirement/index.md` の業務要件はカテゴリ単位の集約テーブル(`BR-ACCOUNT` 等のカテゴリ集約コードで 1 カテゴリ = 1 行)で索引し、件数列も更新する。
@@ -212,39 +221,49 @@ BR / FR / NFR / RULE を**種別フォルダ + カテゴリ別・種別別ファ
 - 基本フローは業務粒度の「誰が / システムが 〜する」で 4〜8 ステップ。UI 操作の列挙にしない。詳細シーケンスは持たず SEQ 層へトレースする。
 - 粒度: 1 画面イベント = 1 UC のような操作粒度に**しない**(統合する)。「FAQを管理する」のような umbrella にも**しない**(登録/編集/削除/公開… へ分割する)。
 
-### 画面設計(`02_basic_design/01_screens/`)
+### 画面設計(`02_basic_design/01_frontend/01_screens/`)
 
 **1 画面 = 1 ファイル(フラット `SCR-NNN`)**。6 セクション固定:
 
 1. 画面概要(画面 ID 表 + `関連`(FR/BR)+ `対応業務UC` 行)/ 2. 画面遷移図(mermaid flowchart)/ 3. 画面レイアウト(モック = **PNG 画像のみ**。HTML は `mocks/` に外出し)/ 4. 画面項目定義(項目 ID `IT-01`…)/ 5. 入出力一覧(CRUD マトリクス)/ **6. 画面イベント一覧**(列に **EVT 列**(`EVT-NNN` へリンク)/ イベント ID `EV-01`… / 項目 ID(§4 の `IT-` に対応、無ければ `—`)/ イベント / 処理)。
 
-### 画面イベント設計(`02_basic_design/02_screen_events/`)
+### 画面イベント設計(`02_basic_design/01_frontend/02_screen_events/`)
 
 **1 イベント = 1 ファイル(`EVT-NNN`)**。`## 項目`(画面イベントID / イベント名 / 対応画面ID `SCR` / 対応業務UC `UC` / 対象項目ID `IT` / 呼出API `API` / 遷移先 `SCR`)+ `## 処理`(正本は SCR §6)+ 備考。複数 EVT が 1 つの業務UCを実現する(EVT→UC は多:1)。`対応業務UC` は当該イベントが属する業務処理単位(統合後 UC)を指す。
 
-### API設計(`02_basic_design/03_apis/`)
+### システム設計(`02_basic_design/02_backend/01_system/`)
+
+**1 システム処理 = 1 ファイル(フラット `SYS-NNN`)**。システム起点(バッチ / Webhook / 非同期 / 監視 / 通知の無人処理)の業務UCを実現する、画面設計(SCR)の backend 版。**モックは持たない**。6 セクション固定:
+
+1. 処理概要(処理 ID 表 = システム ID / 処理名 / 種別(`batch`/`cron`/`webhook`/`async`/`monitor`/`guard` 等)/ トリガー・スケジュール / 機能概要 + `関連` 表(FR/BR・RULE・関連システム `SYS`・**`対応業務UC` 行**))/ 2. 処理フロー図(mermaid flowchart)/ 3. 入出力(入力ソース / 出力先)/ 4. 処理項目定義(項目 ID `PR-01`…)/ 5. 入出力一覧(テーブル/呼出API/外部IF を CRUD。横断的で結線が無い箇所は `—`)/ **6. システムイベント一覧**(列に **SEV 列**(`SEV-NNN` へリンク)/ イベント ID `SE-01`… / 項目 ID(§4 の `PR-` に対応、無ければ `—`)/ イベント / 処理)。`対応業務UC` 行(§1)が p7 の読取り対象(トレース正本)。
+
+### システムイベント設計(`02_basic_design/02_backend/02_system_events/`)
+
+**1 イベント = 1 ファイル(`SEV-NNN`)**。`## 項目`(システムイベントID / イベント名 / 対応システムID `SYS` / 対応業務UC `UC` / トリガー / 呼出API `API` / 連携先)+ `## 処理`(正本は SYS §6)+ 備考。複数 SEV が 1 つの業務UCを実現する(SEV→UC は多:1)。画面イベント `EVT` のシステム版。
+
+### API設計(`02_basic_design/02_backend/03_apis/`)
 
 **1 エンドポイント = 1 ファイル(`API-NNN`)**。骨格: `## 項目`(API ID / API名 / 対応業務UC / 対応画面ID / 対応画面イベントID / エンドポイント / HTTPメソッド / 認証 / 認可)/ 処理概要 / リクエスト / レスポンス / バリデーション / エラー(エラーコードセルに `ERR-NNN` 併記)/ 利用テーブル(`TBL-NNN` へリンク)/ 備考。
 
-### DB設計(`02_basic_design/04_database/`)
+### DB設計(`02_basic_design/02_backend/04_database/`)
 
-**1 テーブル = 1 ファイル(`TBL-NNN`)**。物理名に分類接頭辞 `M_`(マスタ)/ `T_`(トランザクション)/ `H_`(履歴)/ `TP_`(ワーク・一時)を残す。骨格: H1 アンカー `# <span id="TBL-NNN"></span><物理名>(<論理名>)` → リード文 → `### 項目`(テーブルID / 物理名 / 論理名 / 概要 / 主キー(PK)/ 論理削除 / 監査項目 / 対応業務UC(逆引き)/ 利用API(逆引き))→ 概要 / カラム定義(PK / FK / UK / index / NULL / DEFAULT / 制約)/ コード値。データモデルの正本は `04_database/index.md` および各 `TBL-*`。
+**1 テーブル = 1 ファイル(`TBL-NNN`)**。物理名に分類接頭辞 `M_`(マスタ)/ `T_`(トランザクション)/ `H_`(履歴)/ `TP_`(ワーク・一時)を残す。骨格: H1 アンカー `# <span id="TBL-NNN"></span><物理名>(<論理名>)` → リード文 → `### 項目`(テーブルID / 物理名 / 論理名 / 概要 / 主キー(PK)/ 論理削除 / 監査項目 / 対応業務UC(逆引き)/ 利用API(逆引き))→ 概要 / カラム定義(PK / FK / UK / index / NULL / DEFAULT / 制約)/ コード値。データモデルの正本は `02_backend/04_database/index.md` および各 `TBL-*`。
 
-### シーケンス設計(`02_basic_design/05_sequences/`)
+### シーケンス設計(`02_basic_design/03_sequences/`)
 
 **UC 単位 1 ファイル(`SEQ-NNN`)**。骨格: `## 項目`(SEQ ID / 対応業務ユースケース `UC` / 業務要件 `BR` / 機能要件 `FR` / 画面イベント `EVT` / 関連画面 `SCR` / 関連 API `API` / 関連テーブル `TBL` / エラー `ERR` / メッセージ `MSG`)+ `## 概要` + `## シーケンス図`(mermaid `sequenceDiagram`)+(必要時のみ)`## 代替フロー` / `## 例外フロー` / `## 詳細設計への移管候補` + `## 備考`。導出できない欄は `要確認`、該当なしは `—`。**冗長な「正常系シーケンス」番号付き本文は置かない**(mermaid を正本とする)。
 
 - **アクターは基本 3 者** `ユーザー / 画面 / サーバー`(`actor U as ユーザー` / `participant Screen as <画面名>` / `participant Server as サーバー`)。**画面アクターは画面設計の具体的な画面名**を用いる(`画面 SCR-NNN` ではなく `participant Screen as ログイン` 等)。複数画面にまたがる場合も画面参加者は起点画面 1 つとし、遷移先画面はメッセージ本文で示す(SCR-ID は `関連画面` 欄でリンク)。図に名称のない画面は `画面名(要確認)`。
 - **API / DB / 認証認可 / 入力検証 / 業務処理 はすべて `サーバー` に集約**する。DB 操作は `Server->>Server: 業務処理・DB更新` のようなサーバー自己メッセージで表し、**テーブル別 `テーブル名(CRUD)` 表記は図に書かず** `関連テーブル` 欄で示す。
-- **システム起点フロー**(バッチ / Webhook / 非同期 / 通知、概ね SEQ-088 以降)は `ユーザー / 画面` を持たず、外部システム・スケジューラ・バッチ等の実体を参加者として残す(`participant R as Resend(外部)` / `participant SCH as スケジューラ` / `participant B as 削除バッチ` 等)。内部の API/DB/処理はその実体または `サーバー` の自己メッセージへ集約する。
+- **システム起点フロー**(バッチ / Webhook / 非同期 / 通知、概ね SEQ-088 以降。SEQ-108..122 はシステム設計 `SYS-001..015` に対応)は `ユーザー / 画面` を持たず、外部システム・スケジューラ・バッチ等の実体を参加者として残す(`participant R as Resend(外部)` / `participant SCH as スケジューラ` / `participant B as 削除バッチ` 等)。内部の API/DB/処理はその実体または `サーバー` の自己メッセージへ集約する。
 - `autonumber` を付け、要求に応答線を対で描く。分岐は `alt/else/opt/loop`。**SQL・クラス / メソッド名・ORM・テーブル CRUD・コンポーネント内部 ID(旧 `API-XXX-NNN` / `IT-` / `EV-` / `E-`)は書かない。** 図中に Markdown リンク・`id=` を書かない(検証スクリプトのため)。行単位処理・冪等性・楽観ロック等の詳細は `## 詳細設計への移管候補` に逃がす。
-- SEQ 図は手保守へ移行済み。`_build/p6a_gen_sequences.py`(旧自動生成器)は**再実行禁止**(再実行すると本書式を旧 5 系統モデルへ巻き戻す)。
+- SEQ 図は手保守へ移行済み。`_build/p6a_gen_sequences.py`(旧自動生成器)は**再実行禁止**(再実行すると本書式を旧 5 系統モデルへ巻き戻す)。**`_build/` の現行正本は `portal_nav.py`(ナビ・README)と `p7_traceability.py`(マトリクス)のみ**。`p9_reorg_links.py`(構造再編リンク張替)/ `p9b_system_index.py`(SYS/SEV 索引・逆引き生成)/ その他 `p*.py` はワンショット履歴(旧パス参照を含むため再実行しない)。
 
 ### 権限 / エラー / メッセージ
 
-- **権限 `PERM-*`**(`06_permissions/`): ロール別操作可否 + 認可判定 + `対応 UC / SCR / EVT / API` 結線 + 由来要件。
-- **エラー `ERR-*`**(`07_errors/`): エラーコード定義(HTTP ステータス・分類・メッセージ)+ `対応 API / EVT` 結線。
-- **メッセージ `MSG-*`**(`08_messages/`): メールテンプレ(メタ・件名・本文・変数)+ `対応画面 / EVT / ERR` 結線。共通基準は各 index が正本。
+- **権限 `PERM-*`**(`04_permissions/`): ロール別操作可否 + 認可判定 + `対応 UC / SCR / EVT / API` 結線 + 由来要件。
+- **エラー `ERR-*`**(`05_errors/`): エラーコード定義(HTTP ステータス・分類・メッセージ)+ `対応 API / EVT` 結線。
+- **メッセージ `MSG-*`**(`06_messages/`): メールテンプレ(メタ・件名・本文・変数)+ `対応画面 / EVT / ERR` 結線。共通基準は各 index が正本。
 
 ### 将来対応(`03_future/FUTxx.md`)
 
@@ -254,11 +273,11 @@ BR / FR / NFR / RULE を**種別フォルダ + カテゴリ別・種別別ファ
 
 ## トレーサビリティ規約
 
-`要件(FR/BR/NFR/RULE) ↔ 業務UC ↔ 画面SCR ↔ 画面イベントEVT ↔ API ↔ テーブルTBL` を**双方向**に結線する。
+`要件(FR/BR/NFR/RULE) ↔ 業務UC ↔ (画面SCR ↔ 画面イベントEVT / システムSYS ↔ システムイベントSEV) ↔ API ↔ テーブルTBL` を**双方向**に結線する。画面起点UCは SCR/EVT、システム起点UCは SYS/SEV で実現する。
 
 - **要件 ↔ UC**: UC 本文の `対応する業務要件ID`(BR)/ `対応する機能要件ID`(FR)/ `関連する業務ルールID`(RULE)を正本とする(要件仕様側は下流リンクを持たない)。
-- **UC ↔ 基本設計**: **UC 本文は画面/画面イベント/API/テーブル/シーケンスへのリンクを持たない。** 結線は基本設計側の逆引き(SCR/EVT/API の `対応業務UC`、TBL の `対応業務UC(逆引き)`、SEQ の `対応業務ユースケース`)を正本とし、複数の SCR/EVT/API/TBL/SEQ が 1 業務UCへ多:1で紐づく。これらを業務UC単位に集計したのが下記マトリクス。
-- **順引き(基本設計内)**: SCR §1 は UC、API は UC/SCR/EVT/TBL、TBL は UC/API へリンク。要件仕様(BR/FR/NFR/RULE)は下流リンクを持たない(`### 関連` を置かない)。
+- **UC ↔ 基本設計**: **UC 本文は画面/画面イベント/システム/システムイベント/API/テーブル/シーケンスへのリンクを持たない。** 結線は基本設計側の逆引き(SCR/EVT/SYS/SEV/API の `対応業務UC`、TBL の `対応業務UC(逆引き)`、SEQ の `対応業務ユースケース`)を正本とし、複数の SCR/EVT/SYS/SEV/API/TBL/SEQ が 1 業務UCへ多:1で紐づく。これらを業務UC単位に集計したのが下記マトリクス。
+- **順引き(基本設計内)**: SCR §1 / SYS §1 は UC、API は UC/SCR/EVT/TBL、TBL は UC/API へリンク。要件仕様(BR/FR/NFR/RULE)は下流リンクを持たない(`### 関連` を置かない)。
 - 結線できない場合は `(該当UCなし=ギャップ)` 等を明記し、放置せず課題管理へ載せる(下記)。
 - **トレーサビリティマトリクス `99_management/02_traceability_matrix.md` が UC↔基本設計の対応の正本**(1 行 = 1 業務UC、設計列は基本設計逆引きの集計)。`python3 _build/p7_traceability.py` で再生成する(UC 本文の要件列 + 基本設計の逆引きから決定論的に生成)。
 
@@ -298,7 +317,7 @@ PY
 ```
 
 > [!IMPORTANT]
-> **壊れリンク・壊れアンカーは 0 / 0 を維持する。** 検証 glob は `01_requirements/**` + `02_basic_design/**` + `03_future/**` + `README.md`。一覧 / 索引ページ(各 `index.md`)は各項目に `<span id>` を付与し、`#FR-*` / `#UC-*` / `#SCR-*` / `#EVT-*` / `#API-*` / `#TBL-*` / `#SEQ-*` / `#PERM-*` / `#ERR-*` / `#MSG-*` の参照が解決すること。編集後は必ず本スクリプトで確認する。
+> **壊れリンク・壊れアンカーは 0 / 0 を維持する。** 検証 glob は `01_requirements/**` + `02_basic_design/**` + `03_future/**` + `README.md`。一覧 / 索引ページ(各 `index.md`)は各項目に `<span id>` を付与し、`#FR-*` / `#UC-*` / `#SCR-*` / `#EVT-*` / `#SYS-*` / `#SEV-*` / `#API-*` / `#TBL-*` / `#SEQ-*` / `#PERM-*` / `#ERR-*` / `#MSG-*` の参照が解決すること。編集後は必ず本スクリプトで確認する。
 
 ---
 
@@ -314,7 +333,7 @@ PY
 
 ## ID・用語
 
-- ID 体系(全フラット連番・3 桁): `BR-###` / `FR-###` / `NFR-###` / `RULE-###`(要件)、`UC-###`(業務UC)、`SCR-###`(画面)、`IT-##` / `EV-##`(画面内連番)、`EVT-###`(画面イベント)、`API-###`(API)、`TBL-###`(テーブル)、`SEQ-###`(シーケンス)、`PERM-###` / `ERR-###` / `MSG-###`、`FUT##`(将来対応)。
+- ID 体系(全フラット連番・3 桁): `BR-###` / `FR-###` / `NFR-###` / `RULE-###`(要件)、`UC-###`(業務UC)、`SCR-###`(画面)、`IT-##` / `EV-##`(画面内連番)、`EVT-###`(画面イベント)、`SYS-###`(システム処理)、`PR-##` / `SE-##`(システム処理内連番)、`SEV-###`(システムイベント)、`API-###`(API)、`TBL-###`(テーブル)、`SEQ-###`(シーケンス)、`PERM-###` / `ERR-###` / `MSG-###`、`FUT##`(将来対応)。
 - 定義箇所は `<span id="ID"></span>`(アンカー)。参照は定義へリンク(同一ページ `#ID`、他ページ `相対パス.md#ID`)。
 - 用語: ログイン可能なアカウント保有者は「アカウント利用者」、ウィジェットのエンドユーザーは「ウィジェット利用者」と区別する。
 
