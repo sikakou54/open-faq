@@ -11,7 +11,7 @@
 | [`SCR-023`](SCR-023.md) | [メンバーアカウント有効化](SCR-023.md) | `/auth/activate` | 認証フロー |
 | [`SCR-024`](SCR-024.md) | [連絡先メール確認完了](SCR-024.md) | `/auth/contact-verify` | 認証フロー |
 | [`SCR-033`](SCR-033.md) | [ダッシュボード](SCR-033.md) | `/owner/dashboard` | 契約ワークスペース |
-| [`SCR-034`](SCR-034.md) | [KPI表示(セットアップ進捗)](SCR-034.md) | `/owner/setup-progress` | 契約ワークスペース |
+| [`SCR-034`](SCR-034.md) | [セットアップ進捗](SCR-034.md) | `/owner/setup-progress` | 契約ワークスペース |
 | [`SCR-021`](SCR-021.md) | [利用状況](SCR-021.md) | `/owner/usage` | 契約ワークスペース |
 | [`SCR-004`](SCR-004.md) | [プロジェクト](SCR-004.md) | `/owner/projects` | 契約ワークスペース |
 | [`SCR-005`](SCR-005.md) | [プロジェクト作成・編集(モーダル)](SCR-005.md) | `/owner/projects/new` | 契約ワークスペース |
