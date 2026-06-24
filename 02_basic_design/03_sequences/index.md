@@ -136,4 +136,4 @@
 | <span id="SEQ-120"></span>[SEQ-120](SEQ-120.md#SEQ-120) | お知らせ閲覧範囲のアカウント利用者限定 | [UC-085](../../01_requirements/04_business_usecases/UC-085.md#UC-085) | — |
 | <span id="SEQ-121"></span>[SEQ-121](SEQ-121.md#SEQ-121) | お知らせ受信箱の利用者別保持と退会時削除 | [UC-086](../../01_requirements/04_business_usecases/UC-086.md#UC-086) | — |
 | <span id="SEQ-122"></span>[SEQ-122](SEQ-122.md#SEQ-122) | 管理ダッシュボード遷移時の未読お知らせ件数取得・更新 | [UC-087](../../01_requirements/04_business_usecases/UC-087.md#UC-087) | — |
-| <span id="SEQ-123"></span>[SEQ-123](SEQ-123.md#SEQ-123) | ダッシュボード初期表示(セットアップ進捗判定と KPI 表示の切替) | [UC-033](../../01_requirements/04_business_usecases/UC-033.md#UC-033) | EVT-235 |
+| <span id="SEQ-123"></span>[SEQ-123](SEQ-123.md#SEQ-123) | ダッシュボード初期表示(セットアップ進捗判定と KPI 表示の切替) | [UC-033](../../01_requirements/04_business_usecases/UC-033.md#UC-033) | EVT-236 |
