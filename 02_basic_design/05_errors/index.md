@@ -8,7 +8,7 @@
 
 API設計 ＞ 本エラー設計 ＞ メッセージ設計。各 API の `## エラー` 表から本 ERR を参照する。
 
-## <span id="list"></span>1. エラーコード一覧(36)
+## <span id="list"></span>1. エラーコード一覧(35)
 
 分類・HTTP ステータス・主エラーコードの索引です。各 ERR の定義は個別ファイルが正本です。
 
@@ -30,26 +30,25 @@ API設計 ＞ 本エラー設計 ＞ メッセージ設計。各 API の `## エ
 | <span id="ERR-014"></span>[ERR-014](ERR-014.md#ERR-014) | 入力検証 | 400 | `CONTACT_EMAIL_NOT_SET` | — | 連絡先メールが未設定 |
 | <span id="ERR-015"></span>[ERR-015](ERR-015.md#ERR-015) | 認証 | 401 | `REAUTH_REQUIRED` | `E-AUTH-REAUTH-REQUIRED` | 再認証トークンが無効または未提示 |
 | <span id="ERR-016"></span>[ERR-016](ERR-016.md#ERR-016) | 入力検証 | 409 | `EMAIL_ALREADY_USED` | — | 入力メールアドレスが既に使用中 |
-| <span id="ERR-017"></span>[ERR-017](ERR-017.md#ERR-017) | 認可 | 403 | `E-AUTHZ-OWNER-ONLY` | `E-AUTHZ-OWNER-ONLY` | オーナー以外は不可 |
+| <span id="ERR-017"></span>[ERR-017](ERR-017.md#ERR-017) | 認可 | 403 | `OWNER_ONLY` | `E-AUTHZ-OWNER-ONLY` | オーナー以外は不可 |
 | <span id="ERR-018"></span>[ERR-018](ERR-018.md#ERR-018) | 入力検証 | 409 | `DUPLICATE_NAME` | — | プロジェクト名重複 |
 | <span id="ERR-019"></span>[ERR-019](ERR-019.md#ERR-019) | 認可 | 404 | `NOT_FOUND` | `E-AUTHZ-OWNER-BOUNDARY` | オーナー境界違反偽装 |
 | <span id="ERR-020"></span>[ERR-020](ERR-020.md#ERR-020) | 入力検証 | 409 | `ALREADY_EXISTS_IN_PROJECT` | — | 既に該当プロジェクトに割当あり |
 | <span id="ERR-021"></span>[ERR-021](ERR-021.md#ERR-021) | 認可 | 403 | `PROJECT_ACCESS_DENIED` | `E-AUTHZ-PROJECT-DENIED` | 当該プロジェクトへの権限なし |
 | <span id="ERR-022"></span>[ERR-022](ERR-022.md#ERR-022) | 入力検証 | 409 | `EMAIL_ALREADY_EXISTS` | — | メールアドレスの重複 |
-| <span id="ERR-023"></span>[ERR-023](ERR-023.md#ERR-023) | 認可 | 403 | `E-AUTHZ-OWNER-PROTECTED` | `E-AUTHZ-OWNER-PROTECTED` | オーナーは解除不可 |
-| <span id="ERR-024"></span>[ERR-024](ERR-024.md#ERR-024) | 認可 | 403 | `E-AUTHZ-SELF-MUTATION` | `E-AUTHZ-SELF-MUTATION` | 自分自身は解除不可 |
+| <span id="ERR-023"></span>[ERR-023](ERR-023.md#ERR-023) | 認可 | 403 | `OWNER_PROTECTED` | `E-AUTHZ-OWNER-PROTECTED` | オーナーは解除不可 |
+| <span id="ERR-024"></span>[ERR-024](ERR-024.md#ERR-024) | 認可 | 403 | `SELF_MUTATION_FORBIDDEN` | `E-AUTHZ-SELF-MUTATION` | 自分自身は解除不可 |
 | <span id="ERR-025"></span>[ERR-025](ERR-025.md#ERR-025) | 入力検証 | 409 | `CONFLICT` | — | 楽観ロック競合(`version` 不一致) |
-| <span id="ERR-026"></span>[ERR-026](ERR-026.md#ERR-026) | 入力検証 | 415 / 400 | `E-INPUT-CSV-INVALID` | `E-INPUT-CSV-INVALID` | CSV 以外 / 不正形式 |
-| <span id="ERR-027"></span>[ERR-027](ERR-027.md#ERR-027) | 入力検証 | (行単位) | `E-INPUT-CSV-FAQID-NOTFOUND` | `E-INPUT-CSV-FAQID-NOTFOUND` | 当該契約に存在しない FAQ ID |
+| <span id="ERR-026"></span>[ERR-026](ERR-026.md#ERR-026) | 入力検証 | 415 / 400 | `CSV_INVALID` | `E-INPUT-CSV-INVALID` | CSV 以外 / 不正形式 |
+| <span id="ERR-027"></span>[ERR-027](ERR-027.md#ERR-027) | 入力検証 | (行単位) | `CSV_FAQ_ID_NOT_FOUND` | `E-INPUT-CSV-FAQID-NOTFOUND` | 当該契約に存在しない FAQ ID |
 | <span id="ERR-028"></span>[ERR-028](ERR-028.md#ERR-028) | 認証 | 401 | `WIDGET_KEY_INVALID` | — | 公開キーが不正 |
 | <span id="ERR-029"></span>[ERR-029](ERR-029.md#ERR-029) | 認可 | 403 | `DOMAIN_NOT_ALLOWED` | — | 許可ドメイン外 |
 | <span id="ERR-030"></span>[ERR-030](ERR-030.md#ERR-030) | 業務(課金) | 402 | `PAYMENT_METHOD_DECLINED` | `E-BILL-PAYMENT-FAILED` | カードが拒否された |
-| <span id="ERR-031"></span>[ERR-031](ERR-031.md#ERR-031) | 業務 | 422 | (未サポート項目) | — | `freeQuota` / `alertEnabled` / `alertFrequency` を指定 |
-| <span id="ERR-032"></span>[ERR-032](ERR-032.md#ERR-032) | 認可 | 403 | `E-AUTHZ-FORBIDDEN` | `E-AUTHZ-FORBIDDEN` | 当該プロジェクトに割当のないユーザー |
-| <span id="ERR-033"></span>[ERR-033](ERR-033.md#ERR-033) | 認可 | 403 | `PERMISSION_DENIED` | — | メンバーは申請不可 |
-| <span id="ERR-034"></span>[ERR-034](ERR-034.md#ERR-034) | 認証 | 401 | `SIGNATURE_INVALID` | — | 署名検証失敗 |
-| <span id="ERR-035"></span>[ERR-035](ERR-035.md#ERR-035) | 業務 | 200 | (冪等) | — | 既存処理結果を返却(冪等性違反) |
-| <span id="ERR-036"></span>[ERR-036](ERR-036.md#ERR-036) | 認証 | 401 | `SESSION_EXPIRED` | `E-AUTH-SESSION-EXPIRED` | セッション期限切れ(再ログインへ) |
+| <span id="ERR-031"></span>[ERR-031](ERR-031.md#ERR-031) | 業務 | 422 | `UNSUPPORTED_FIELD` | — | `freeQuota` / `alertEnabled` / `alertFrequency` を指定 |
+| <span id="ERR-032"></span>[ERR-032](ERR-032.md#ERR-032) | 認可 | 403 | `PERMISSION_DENIED` | `E-AUTHZ-FORBIDDEN` | 当該プロジェクトに割当のないユーザー / メンバーは申請不可 |
+| <span id="ERR-033"></span>[ERR-033](ERR-033.md#ERR-033) | 認証 | 401 | `SIGNATURE_INVALID` | — | 署名検証失敗 |
+| <span id="ERR-034"></span>[ERR-034](ERR-034.md#ERR-034) | 業務 | 200 | `IDEMPOTENT_REPLAY` | — | 既存処理結果を返却(冪等性違反) |
+| <span id="ERR-035"></span>[ERR-035](ERR-035.md#ERR-035) | 認証 | 401 | `SESSION_EXPIRED` | `E-AUTH-SESSION-EXPIRED` | セッション期限切れ(再ログインへ) |
 
 ## <span id="trace"></span>2. EVT / API ↔ エラー 対応表
 
@@ -86,8 +85,8 @@ API設計 ＞ 本エラー設計 ＞ メッセージ設計。各 API の `## エ
 | [API-045](../02_backend/03_apis/API-045.md#API-045) | 支払方法 取得・登録・更新 | EVT-209 EVT-213 | [ERR-001](ERR-001.md#ERR-001) [ERR-017](ERR-017.md#ERR-017) [ERR-030](ERR-030.md#ERR-030) |
 | [API-047](../02_backend/03_apis/API-047.md#API-047) | プロジェクト上限・アラート更新 | EVT-206 | [ERR-031](ERR-031.md#ERR-031) [ERR-032](ERR-032.md#ERR-032) |
 | [API-050](../02_backend/03_apis/API-050.md#API-050) | お知らせ一括既読 | EVT-142 EVT-143 EVT-144 | [ERR-001](ERR-001.md#ERR-001) |
-| [API-056](../02_backend/03_apis/API-056.md#API-056) | 退会申請 | EVT-159 | [ERR-033](ERR-033.md#ERR-033) |
-| [API-059](../02_backend/03_apis/API-059.md#API-059) | 外部 Webhook(Resend) | — | [ERR-034](ERR-034.md#ERR-034) [ERR-035](ERR-035.md#ERR-035) |
+| [API-056](../02_backend/03_apis/API-056.md#API-056) | 退会申請 | EVT-159 | [ERR-032](ERR-032.md#ERR-032) |
+| [API-059](../02_backend/03_apis/API-059.md#API-059) | 外部 Webhook(Resend) | — | [ERR-033](ERR-033.md#ERR-033) [ERR-034](ERR-034.md#ERR-034) |
 
 ## <span id="authz-map"></span>3. 認可ミドルウェア段コード ↔ ERR 対応
 
@@ -95,7 +94,7 @@ API設計 ＞ 本エラー設計 ＞ メッセージ設計。各 API の `## エ
 
 | 認可段コード | 対応 ERR | HTTP | 備考 |
 |----|----|----|----|
-| `E-AUTH-SESSION-EXPIRED` | [ERR-036](ERR-036.md#ERR-036) | 401 | セッション期限切れ。全認証保護 API 共通 |
+| `E-AUTH-SESSION-EXPIRED` | [ERR-035](ERR-035.md#ERR-035) | 401 | セッション期限切れ。全認証保護 API 共通 |
 | `E-AUTH-REAUTH-REQUIRED` | [ERR-015](ERR-015.md#ERR-015) | 401 | 重要操作の再認証要求 |
 | `E-AUTHZ-OWNER-BOUNDARY` | [ERR-019](ERR-019.md#ERR-019) | 404 | オーナー境界違反の 404 偽装 |
 | `E-AUTHZ-PROJECT-DENIED` | [ERR-021](ERR-021.md#ERR-021) | 403 | プロジェクト割当なし |
