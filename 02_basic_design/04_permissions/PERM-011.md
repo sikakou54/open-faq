@@ -22,7 +22,7 @@
 
 | 観点 | 結線 |
 |----|----|
-| 対応業務UC | [UC-057](../../01_requirements/04_business_usecases/UC-057.md#UC-057) |
+| 対応業務UC | [UC-056](../../01_requirements/04_business_usecases/UC-056.md#UC-056) |
 | 対応画面SCR | — |
 | 対応EVT | — |
 | 対応API | [API-021](../02_backend/03_apis/API-021.md#API-021) [API-024](../02_backend/03_apis/API-024.md#API-024) |
