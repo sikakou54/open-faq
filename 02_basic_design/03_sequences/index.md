@@ -2,7 +2,7 @@
 
 > **このセクションは、業務ユースケースに対応するシーケンス図を 1 図 1 ファイル（`SEQ-NNN`）で管理します。**
 
-*版数 v1.0 ・ 更新 2026-06-21 ・ シーケンス 123 ・ ステータス ドラフト*
+*版数 v1.0 ・ 更新 2026-06-24 ・ シーケンス 127 ・ ステータス ドラフト*
 
 ## 1. 読み順
 
@@ -132,8 +132,12 @@
 | <span id="SEQ-116"></span>[SEQ-116](SEQ-116.md#SEQ-116) | 送信品質監視による通知送信抑制 | [UC-069](../../01_requirements/04_business_usecases/UC-069.md#UC-069) | — |
 | <span id="SEQ-117"></span>[SEQ-117](SEQ-117.md#SEQ-117) | 契約単位レート制限の適用 | [UC-075](../../01_requirements/04_business_usecases/UC-075.md#UC-075) | — |
 | <span id="SEQ-118"></span>[SEQ-118](SEQ-118.md#SEQ-118) | 外部露出箇所の入力サニタイズ | [UC-076](../../01_requirements/04_business_usecases/UC-076.md#UC-076) | — |
-| <span id="SEQ-119"></span>[SEQ-119](SEQ-119.md#SEQ-119) | プロジェクト削除に伴うメンバー割当解除 | [UC-078](../../01_requirements/04_business_usecases/UC-078.md#UC-078) | — |
-| <span id="SEQ-120"></span>[SEQ-120](SEQ-120.md#SEQ-120) | お知らせ閲覧範囲のアカウント利用者限定 | [UC-085](../../01_requirements/04_business_usecases/UC-085.md#UC-085) | — |
-| <span id="SEQ-121"></span>[SEQ-121](SEQ-121.md#SEQ-121) | お知らせ受信箱の利用者別保持と退会時削除 | [UC-086](../../01_requirements/04_business_usecases/UC-086.md#UC-086) | — |
-| <span id="SEQ-122"></span>[SEQ-122](SEQ-122.md#SEQ-122) | 管理ダッシュボード遷移時の未読お知らせ件数取得・更新 | [UC-087](../../01_requirements/04_business_usecases/UC-087.md#UC-087) | — |
+| <span id="SEQ-119"></span>[SEQ-119](SEQ-119.md#SEQ-119) | プロジェクト削除に伴うメンバー割当解除 | [UC-077](../../01_requirements/04_business_usecases/UC-077.md#UC-077) | — |
+| <span id="SEQ-120"></span>[SEQ-120](SEQ-120.md#SEQ-120) | お知らせ閲覧範囲のアカウント利用者限定 | [UC-084](../../01_requirements/04_business_usecases/UC-084.md#UC-084) | — |
+| <span id="SEQ-121"></span>[SEQ-121](SEQ-121.md#SEQ-121) | お知らせ受信箱の利用者別保持と退会時削除 | [UC-085](../../01_requirements/04_business_usecases/UC-085.md#UC-085) | — |
+| <span id="SEQ-122"></span>[SEQ-122](SEQ-122.md#SEQ-122) | 管理ダッシュボード遷移時の未読お知らせ件数取得・更新 | [UC-086](../../01_requirements/04_business_usecases/UC-086.md#UC-086) | — |
 | <span id="SEQ-123"></span>[SEQ-123](SEQ-123.md#SEQ-123) | ダッシュボード初期表示(セットアップ進捗判定と KPI 表示の切替) | [UC-033](../../01_requirements/04_business_usecases/UC-033.md#UC-033) | EVT-236 |
+| <span id="SEQ-124"></span>[SEQ-124](SEQ-124.md#SEQ-124) | 自己プロフィール初期表示 | [UC-008](../../01_requirements/04_business_usecases/UC-008.md#UC-008) | [SCR-022](../01_frontend/01_screens/SCR-022.md#SCR-022) |
+| <span id="SEQ-125"></span>[SEQ-125](SEQ-125.md#SEQ-125) | プロジェクト範囲データ概要表示 | [UC-078](../../01_requirements/04_business_usecases/UC-078.md#UC-078) | [SCR-006](../01_frontend/01_screens/SCR-006.md#SCR-006) ・ [SCR-007](../01_frontend/01_screens/SCR-007.md#SCR-007) ・ [SCR-008](../01_frontend/01_screens/SCR-008.md#SCR-008) |
+| <span id="SEQ-126"></span>[SEQ-126](SEQ-126.md#SEQ-126) | プロジェクト削除影響プレビュー | [UC-079](../../01_requirements/04_business_usecases/UC-079.md#UC-079) | [SCR-004](../01_frontend/01_screens/SCR-004.md#SCR-004) ・ [SCR-005](../01_frontend/01_screens/SCR-005.md#SCR-005) |
+| <span id="SEQ-127"></span>[SEQ-127](SEQ-127.md#SEQ-127) | AIしきい値設定 | [UC-080](../../01_requirements/04_business_usecases/UC-080.md#UC-080) | [SCR-011](../01_frontend/01_screens/SCR-011.md#SCR-011) |

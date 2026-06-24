@@ -19,10 +19,10 @@
 | <span id="SYS-009"></span>[`SYS-009`](SYS-009.md#SYS-009) | 送信品質監視による通知送信抑制 | monitor | 通知送信時 + 定期の品質監視 | [TR-069](../../00_traceability/index.md#TR-069) |
 | <span id="SYS-010"></span>[`SYS-010`](SYS-010.md#SYS-010) | 契約単位レート制限の適用 | guard | 機能リクエスト受信時(全 API 横断・ゲートウェイ層) | [TR-075](../../00_traceability/index.md#TR-075) |
 | <span id="SYS-011"></span>[`SYS-011`](SYS-011.md#SYS-011) | 外部露出箇所の入力サニタイズ | guard | ウィジェット利用者の入力を含む通知の生成時 | [TR-076](../../00_traceability/index.md#TR-076) |
-| <span id="SYS-012"></span>[`SYS-012`](SYS-012.md#SYS-012) | プロジェクト削除に伴うメンバー割当解除 | cascade | プロジェクト削除の確定時 | [TR-078](../../00_traceability/index.md#TR-078) |
-| <span id="SYS-013"></span>[`SYS-013`](SYS-013.md#SYS-013) | お知らせ閲覧範囲のアカウント利用者限定 | guard | お知らせ表示のアクセス時 | [TR-085](../../00_traceability/index.md#TR-085) |
-| <span id="SYS-014"></span>[`SYS-014`](SYS-014.md#SYS-014) | お知らせ受信箱の利用者別保持と退会時削除 | cascade | お知らせ受信時 + 退会/無効化の確定時 | [TR-086](../../00_traceability/index.md#TR-086) |
-| <span id="SYS-015"></span>[`SYS-015`](SYS-015.md#SYS-015) | 管理ダッシュボード遷移時の未読お知らせ件数取得・更新 | async | 管理ダッシュボードへの遷移時 + 定期間隔 | [TR-087](../../00_traceability/index.md#TR-087) |
+| <span id="SYS-012"></span>[`SYS-012`](SYS-012.md#SYS-012) | プロジェクト削除に伴うメンバー割当解除 | cascade | プロジェクト削除の確定時 | [TR-077](../../00_traceability/index.md#TR-077) |
+| <span id="SYS-013"></span>[`SYS-013`](SYS-013.md#SYS-013) | お知らせ閲覧範囲のアカウント利用者限定 | guard | お知らせ表示のアクセス時 | [TR-084](../../00_traceability/index.md#TR-084) |
+| <span id="SYS-014"></span>[`SYS-014`](SYS-014.md#SYS-014) | お知らせ受信箱の利用者別保持と退会時削除 | cascade | お知らせ受信時 + 退会/無効化の確定時 | [TR-085](../../00_traceability/index.md#TR-085) |
+| <span id="SYS-015"></span>[`SYS-015`](SYS-015.md#SYS-015) | 管理ダッシュボード遷移時の未読お知らせ件数取得・更新 | async | 管理ダッシュボードへの遷移時 + 定期間隔 | [TR-086](../../00_traceability/index.md#TR-086) |
 | <span id="SYS-016"></span>[`SYS-016`](SYS-016.md#SYS-016) | FAQ一括取り込みジョブ非同期実行 | async | FAQ 一括取り込み依頼の受付による取り込みジョブ起動 | [TR-050](../../00_traceability/index.md#TR-050) |
 | <span id="SYS-017"></span>[`SYS-017`](SYS-017.md#SYS-017) | AIしきい値変更の伝播・フォールバック | cascade | 回答可否しきい値の変更検知 / 質問に伴う推論処理の発生 | [TR-051](../../00_traceability/index.md#TR-051) |
 | <span id="SYS-018"></span>[`SYS-018`](SYS-018.md#SYS-018) | 利用量リアルタイム集計・サマリ反映 | async | ウィジェットへの質問がプロジェクトに到達した時 | [TR-055](../../00_traceability/index.md#TR-055) |
