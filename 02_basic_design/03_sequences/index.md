@@ -136,7 +136,7 @@
 | <span id="SEQ-120"></span>[SEQ-120](SEQ-120.md#SEQ-120) | お知らせ閲覧範囲のアカウント利用者限定 | [UC-084](../../01_requirements/04_business_usecases/UC-084.md#UC-084) | — |
 | <span id="SEQ-121"></span>[SEQ-121](SEQ-121.md#SEQ-121) | お知らせ受信箱の利用者別保持と退会時削除 | [UC-085](../../01_requirements/04_business_usecases/UC-085.md#UC-085) | — |
 | <span id="SEQ-122"></span>[SEQ-122](SEQ-122.md#SEQ-122) | 管理ダッシュボード遷移時の未読お知らせ件数取得・更新 | [UC-086](../../01_requirements/04_business_usecases/UC-086.md#UC-086) | — |
-| <span id="SEQ-123"></span>[SEQ-123](SEQ-123.md#SEQ-123) | ダッシュボード初期表示(セットアップ進捗判定と KPI 表示の切替) | [UC-033](../../01_requirements/04_business_usecases/UC-033.md#UC-033) | EVT-236 |
+| <span id="SEQ-123"></span>[SEQ-123](SEQ-123.md#SEQ-123) | ダッシュボード初期表示(セットアップ進捗判定と KPI 表示の切替) | [UC-033](../../01_requirements/04_business_usecases/UC-033.md#UC-033) | EVT-207 |
 | <span id="SEQ-124"></span>[SEQ-124](SEQ-124.md#SEQ-124) | 自己プロフィール初期表示 | [UC-008](../../01_requirements/04_business_usecases/UC-008.md#UC-008) | [SCR-022](../01_frontend/01_screens/SCR-022.md#SCR-022) |
 | <span id="SEQ-125"></span>[SEQ-125](SEQ-125.md#SEQ-125) | プロジェクト範囲データ概要表示 | [UC-078](../../01_requirements/04_business_usecases/UC-078.md#UC-078) | [SCR-006](../01_frontend/01_screens/SCR-006.md#SCR-006) ・ [SCR-007](../01_frontend/01_screens/SCR-007.md#SCR-007) ・ [SCR-008](../01_frontend/01_screens/SCR-008.md#SCR-008) |
 | <span id="SEQ-126"></span>[SEQ-126](SEQ-126.md#SEQ-126) | プロジェクト削除影響プレビュー | [UC-079](../../01_requirements/04_business_usecases/UC-079.md#UC-079) | [SCR-004](../01_frontend/01_screens/SCR-004.md#SCR-004) ・ [SCR-005](../01_frontend/01_screens/SCR-005.md#SCR-005) |
