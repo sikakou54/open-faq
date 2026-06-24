@@ -17,19 +17,13 @@
 > [!NOTE]
 > **メンバーは 1 オーナー固定** メールは `M_USER` で一意(1 メール = 1 アカウント)。メンバーは 1 オーナー配下に固定し、別オーナーへの重複所属は招待時に拒否します(FR-185)。拒否時は `E-AUTHZ-OWNER-BOUNDARY` / `E-AUTHZ-PROJECT-DENIED` / `E-AUTHZ-FORBIDDEN`。
 
-## <span id="trace"></span>2. 対応 UC / SCR / EVT / API
+## <span id="trace"></span>2. 対応 SCR / EVT / API
 
-本権限が適用される画面・イベント・API・業務ユースケースの結線です。
+本権限が適用される画面・イベント・API の結線です。
 
 | 観点 | 結線 |
 |----|----|
-| 対応業務UC | — |
+| トレーサビリティID | —([トレーサビリティ一覧](../00_traceability/index.md#matrix-main)) |
 | 対応画面SCR | [SCR-013](../01_frontend/01_screens/SCR-013.md#SCR-013) |
 | 対応EVT | — |
 | 対応API | [API-018](../02_backend/03_apis/API-018.md#API-018) [API-021](../02_backend/03_apis/API-021.md#API-021) [API-047](../02_backend/03_apis/API-047.md#API-047) |
-
-## <span id="src"></span>3. 由来要件
-
-| 由来要件 |
-|----|
-| [FR-185](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-185) [FR-189](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-189) |

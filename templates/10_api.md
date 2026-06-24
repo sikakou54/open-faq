@@ -11,7 +11,7 @@
 
 **1 エンドポイント = 1 ファイル(`API-NNN`)**。骨格:
 
-- `## 項目`(API ID / API名 / 対応業務UC / 対応画面ID / 対応画面イベントID / エンドポイント / HTTPメソッド / 認証 / 認可)。対応画面イベントID は画面イベント `EVT-NNN` をプレーンテキストで列挙(EVT は独立ページを持たず SCR §6 のアンカーのためリンクにしない。無ければ `—`)。
+- `## 項目`(API ID / API名 / トレーサビリティID / エンドポイント / HTTPメソッド / 認証 / 認可)。トレーサビリティID は本 API が実現する業務スレッドの `TR-NNN`(複数該当時は ` ・ ` 区切り)。対応する業務UC・画面・画面イベント `EVT` 等は API 本文に列挙せず、トレーサビリティ一覧表 [`00_traceability/index.md`](../../00_traceability/index.md) の当該 TR 行で一元管理する。
 - 処理概要
 - リクエスト(先頭に `#### 認証ヘッダ` を置き、`#### Query Parameters` の上に配置する。当該エンドポイントが要求する認証関連ヘッダ(`Cookie: session` / `Authorization: Bearer <wst_*>` / `X-CSRF-Token` / `Idempotency-Key` / Webhook 署名ヘッダ等)を要否付きの表で示す。公開・トークン・署名検証系は該当ヘッダのみを記す)
 - レスポンス
@@ -41,9 +41,7 @@
 |----|----|
 | API ID | API-001 |
 | API名 | ログイン |
-| 対応業務UC | [UC-001](../../../01_requirements/04_business_usecases/UC-001.md#UC-001) |
-| 対応画面ID | [SCR-001](../../01_frontend/01_screens/SCR-001.md#SCR-001) |
-| 対応画面イベントID | EVT-001 |
+| トレーサビリティID | [TR-001](../../00_traceability/index.md#TR-001) |
 | エンドポイント | … |
 | HTTPメソッド | … |
 | 認証 | … |

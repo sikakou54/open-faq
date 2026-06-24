@@ -19,19 +19,13 @@
 > [!IMPORTANT]
 > **対象範囲は要件で固定** 再認証の対象は上記 5 種に固定します(FR-005 / BR-002)。再認証はセッションの寿命判定(無操作 30 分 / 絶対 12 時間)とは別軸で働きます。
 
-## <span id="trace"></span>2. 対応 UC / SCR / EVT / API
+## <span id="trace"></span>2. 対応 SCR / EVT / API
 
-本権限が適用される画面・イベント・API・業務ユースケースの結線です。
+本権限が適用される画面・イベント・API の結線です。
 
 | 観点 | 結線 |
 |----|----|
-| 対応業務UC | [UC-009](../../01_requirements/04_business_usecases/UC-009.md#UC-009) [UC-010](../../01_requirements/04_business_usecases/UC-010.md#UC-010) [UC-035](../../01_requirements/04_business_usecases/UC-035.md#UC-035) [UC-071](../../01_requirements/04_business_usecases/UC-071.md#UC-071) |
+| トレーサビリティID | [TR-009](../00_traceability/index.md#TR-009) ・ [TR-010](../00_traceability/index.md#TR-010) ・ [TR-035](../00_traceability/index.md#TR-035) ・ [TR-071](../00_traceability/index.md#TR-071) |
 | 対応画面SCR | [SCR-019](../01_frontend/01_screens/SCR-019.md#SCR-019) |
 | 対応EVT | — |
 | 対応API | [API-005](../02_backend/03_apis/API-005.md#API-005) [API-012](../02_backend/03_apis/API-012.md#API-012) [API-013](../02_backend/03_apis/API-013.md#API-013) [API-045](../02_backend/03_apis/API-045.md#API-045) [API-056](../02_backend/03_apis/API-056.md#API-056) |
-
-## <span id="src"></span>3. 由来要件
-
-| 由来要件 |
-|----|
-| [FR-005](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-005) [BR-002](../../01_requirements/01_business_requirement/01_account-br.md#BR-002) |

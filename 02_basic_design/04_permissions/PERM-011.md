@@ -16,19 +16,13 @@
 > [!NOTE]
 > **宛先解決ロジックの正本** 「誰が宛先か」を決める解決ロジックは本ページが正本です。配信契機・件名・本文テンプレートは [メッセージ設計](../06_messages/index.md) が正本です。
 
-## <span id="trace"></span>2. 対応 UC / SCR / EVT / API
+## <span id="trace"></span>2. 対応 SCR / EVT / API
 
-本権限が適用される画面・イベント・API・業務ユースケースの結線です。
+本権限が適用される画面・イベント・API の結線です。
 
 | 観点 | 結線 |
 |----|----|
-| 対応業務UC | [UC-056](../../01_requirements/04_business_usecases/UC-056.md#UC-056) |
+| トレーサビリティID | [TR-056](../00_traceability/index.md#TR-056) |
 | 対応画面SCR | — |
 | 対応EVT | — |
 | 対応API | [API-021](../02_backend/03_apis/API-021.md#API-021) [API-024](../02_backend/03_apis/API-024.md#API-024) |
-
-## <span id="src"></span>3. 由来要件
-
-| 由来要件 |
-|----|
-| [FR-034](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-034) [FR-185](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-185) |

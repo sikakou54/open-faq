@@ -11,19 +11,19 @@
 
 **1 システム処理 = 1 ファイル(フラット `SYS-NNN`)**。システム起点(バッチ / Webhook / 非同期 / 監視 / 通知の無人処理)の業務UCを実現する、画面設計(SCR)の backend 版。**モックは持たない**。6 セクション固定:
 
-1. **処理概要**(処理 ID 表 = システム ID / 処理名 / 種別(`batch`/`cron`/`webhook`/`async`/`monitor`/`guard` 等)/ トリガー・スケジュール / 機能概要 + `関連` 表(FR/BR・RULE・関連システム `SYS`・**`対応業務UC` 行**))
+1. **処理概要**(処理 ID 表 = システム ID / 処理名 / 種別(`batch`/`cron`/`webhook`/`async`/`monitor`/`guard` 等)/ トリガー・スケジュール / 機能概要 + `関連` 表(FR/BR・RULE・関連システム `SYS`・**`トレーサビリティID` 行**(`TR-NNN`)))
 2. **処理フロー図**(mermaid flowchart)
 3. **入出力**(入力ソース / 出力先)
 4. **処理項目定義**(項目 ID `PR-01`…)
 5. **入出力一覧**(テーブル/呼出API/外部IF を CRUD。横断的で結線が無い箇所は `—`)
 6. **システムイベント一覧**(列に **SEV 列**(`<span id="SEV-NNN"></span>SEV-NNN` の非リンクアンカー。SEV は独立ページ・フォルダを持たず、この §6 にアンカーとして保持する)/ イベント ID `SE-01`… / 項目 ID(§4 の `PR-` に対応、無ければ `—`)/ イベント / 処理)
 
-`対応業務UC` 行(§1)が p7 の読取り対象(トレース正本)。
+`トレーサビリティID` 行(§1)が本処理の TR 結線。UC ↔ 設計の対応はトレーサビリティ一覧表 [`00_traceability/index.md`](../../00_traceability/index.md) の当該 TR 行で一元管理する(SYS 本文に `対応業務UC` は持たない)。
 
 ## 記載ルール
 
 - 各 `##`/`###` 直後に 1〜2 文のリード文を置いてから表へ入る(表をいきなり置かない)。
-- システム → API は同グルーピング内の兄弟参照、システム → エラー / UC はグルーピング/グループをまたぐ参照。[共通記載スタイル](00_common-style.md) の相互参照アンカー例に従う(システム → API `[API-060](../03_apis/API-060.md#API-060)` / システム → エラー `[ERR-001](../../05_errors/ERR-001.md#ERR-001)` / システム → 業務UC `[UC-061](../../../01_requirements/04_business_usecases/UC-061.md#UC-061)`)。
+- システム → API は同グルーピング内の兄弟参照、システム → エラー / トレーサビリティ一覧はグルーピング/グループをまたぐ参照。[共通記載スタイル](00_common-style.md) の相互参照アンカー例に従う(システム → API `[API-060](../03_apis/API-060.md#API-060)` / システム → エラー `[ERR-001](../../05_errors/ERR-001.md#ERR-001)` / システム → トレーサビリティ `[TR-075](../../00_traceability/index.md#TR-075)`)。
 
 ## 記載例(セクション骨格)
 
@@ -53,7 +53,7 @@
 | FR/BR | [FR-001](../../../01_requirements/02_functional_requirement/01_account-fr.md#FR-001) |
 | RULE | [RULE-001](../../../01_requirements/01_business_requirement/08_rule.md#RULE-001) |
 | 関連システム | [SYS-002](SYS-002.md#SYS-002) |
-| 対応業務UC | [UC-061](../../../01_requirements/04_business_usecases/UC-061.md#UC-061) |
+| トレーサビリティID | [TR-075](../../00_traceability/index.md#TR-075) |
 
 ## 2. 処理フロー図
 

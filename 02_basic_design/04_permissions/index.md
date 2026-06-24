@@ -44,23 +44,23 @@
 | 10 | 再認証判定 | 重要操作で再認証が「当該操作 1 回 + 15 分以内」を満たすか | `E-AUTH-REAUTH-REQUIRED` |
 | 11 | 利用上限判定 | 認可通過後に上限を確認(レート = 契約単位、上限・無料枠 = プロジェクト単位) | [課金・請求設計書](../05_billing-design.md) |
 
-## <span id="trace"></span>3. UC / 画面 / EVT / API ↔ 権限 対応表
+## <span id="trace"></span>3. 画面 / EVT / API ↔ 権限 対応表(トレーサビリティ付き)
 
-各権限ルールが適用される画面・イベント・API・業務ユースケースの結線一覧です。結線の無い欄は `—` とします。
+各権限ルールのトレーサビリティID(TR)と、適用される画面・イベント・API の結線一覧です。結線の無い欄は `—` とします。関連業務UC は TR から [トレーサビリティ一覧](../00_traceability/index.md) で辿れます。
 
-| PERM ID | 対応業務UC | 対応画面SCR | 対応EVT | 対応API |
+| PERM ID | トレーサビリティID | 対応画面SCR | 対応EVT | 対応API |
 |----|----|----|----|----|
-| [PERM-001](PERM-001.md#PERM-001) | — | [SCR-013](../01_frontend/01_screens/SCR-013.md#SCR-013) | — | [API-002](../02_backend/03_apis/API-002.md#API-002) |
-| [PERM-002](PERM-002.md#PERM-002) | — | — | — | — |
-| [PERM-003](PERM-003.md#PERM-003) | — | [SCR-005](../01_frontend/01_screens/SCR-005.md#SCR-005) [SCR-019](../01_frontend/01_screens/SCR-019.md#SCR-019) [SCR-028](../01_frontend/01_screens/SCR-028.md#SCR-028) | — | [API-014](../02_backend/03_apis/API-014.md#API-014) [API-015](../02_backend/03_apis/API-015.md#API-015) [API-017](../02_backend/03_apis/API-017.md#API-017) [API-018](../02_backend/03_apis/API-018.md#API-018) [API-045](../02_backend/03_apis/API-045.md#API-045) [API-056](../02_backend/03_apis/API-056.md#API-056) |
+| [PERM-001](PERM-001.md#PERM-001) | [TR-065](../00_traceability/index.md#TR-065) | [SCR-013](../01_frontend/01_screens/SCR-013.md#SCR-013) | — | [API-002](../02_backend/03_apis/API-002.md#API-002) |
+| [PERM-002](PERM-002.md#PERM-002) | [TR-008](../00_traceability/index.md#TR-008) | — | — | — |
+| [PERM-003](PERM-003.md#PERM-003) | [TR-077](../00_traceability/index.md#TR-077) | [SCR-005](../01_frontend/01_screens/SCR-005.md#SCR-005) [SCR-019](../01_frontend/01_screens/SCR-019.md#SCR-019) [SCR-028](../01_frontend/01_screens/SCR-028.md#SCR-028) | — | [API-014](../02_backend/03_apis/API-014.md#API-014) [API-015](../02_backend/03_apis/API-015.md#API-015) [API-017](../02_backend/03_apis/API-017.md#API-017) [API-018](../02_backend/03_apis/API-018.md#API-018) [API-045](../02_backend/03_apis/API-045.md#API-045) [API-056](../02_backend/03_apis/API-056.md#API-056) |
 | [PERM-004](PERM-004.md#PERM-004) | — | [SCR-013](../01_frontend/01_screens/SCR-013.md#SCR-013) | — | [API-023](../02_backend/03_apis/API-023.md#API-023) [API-024](../02_backend/03_apis/API-024.md#API-024) |
 | [PERM-005](PERM-005.md#PERM-005) | — | [SCR-013](../01_frontend/01_screens/SCR-013.md#SCR-013) | — | [API-018](../02_backend/03_apis/API-018.md#API-018) [API-021](../02_backend/03_apis/API-021.md#API-021) [API-047](../02_backend/03_apis/API-047.md#API-047) |
-| [PERM-006](PERM-006.md#PERM-006) | — | [SCR-019](../01_frontend/01_screens/SCR-019.md#SCR-019) | — | [API-005](../02_backend/03_apis/API-005.md#API-005) [API-012](../02_backend/03_apis/API-012.md#API-012) [API-013](../02_backend/03_apis/API-013.md#API-013) [API-045](../02_backend/03_apis/API-045.md#API-045) [API-056](../02_backend/03_apis/API-056.md#API-056) |
-| [PERM-007](PERM-007.md#PERM-007) | — | [SCR-001](../01_frontend/01_screens/SCR-001.md#SCR-001) | EVT-004 | [API-002](../02_backend/03_apis/API-002.md#API-002) [API-003](../02_backend/03_apis/API-003.md#API-003) |
-| [PERM-008](PERM-008.md#PERM-008) | — | [SCR-018](../01_frontend/01_screens/SCR-018.md#SCR-018) [SCR-023](../01_frontend/01_screens/SCR-023.md#SCR-023) | EVT-151 EVT-190 | [API-006](../02_backend/03_apis/API-006.md#API-006) [API-008](../02_backend/03_apis/API-008.md#API-008) [API-023](../02_backend/03_apis/API-023.md#API-023) |
-| [PERM-009](PERM-009.md#PERM-009) | — | — | — | [API-002](../02_backend/03_apis/API-002.md#API-002) [API-037](../02_backend/03_apis/API-037.md#API-037) |
-| [PERM-010](PERM-010.md#PERM-010) | — | [SCR-020](../01_frontend/01_screens/SCR-020.md#SCR-020) | EVT-135 EVT-169 | [API-052](../02_backend/03_apis/API-052.md#API-052) [API-054](../02_backend/03_apis/API-054.md#API-054) [API-055](../02_backend/03_apis/API-055.md#API-055) |
-| [PERM-011](PERM-011.md#PERM-011) | — | — | — | [API-021](../02_backend/03_apis/API-021.md#API-021) [API-024](../02_backend/03_apis/API-024.md#API-024) |
+| [PERM-006](PERM-006.md#PERM-006) | [TR-009](../00_traceability/index.md#TR-009) | [SCR-019](../01_frontend/01_screens/SCR-019.md#SCR-019) | — | [API-005](../02_backend/03_apis/API-005.md#API-005) [API-012](../02_backend/03_apis/API-012.md#API-012) [API-013](../02_backend/03_apis/API-013.md#API-013) [API-045](../02_backend/03_apis/API-045.md#API-045) [API-056](../02_backend/03_apis/API-056.md#API-056) |
+| [PERM-007](PERM-007.md#PERM-007) | [TR-001](../00_traceability/index.md#TR-001) | [SCR-001](../01_frontend/01_screens/SCR-001.md#SCR-001) | EVT-004 | [API-002](../02_backend/03_apis/API-002.md#API-002) [API-003](../02_backend/03_apis/API-003.md#API-003) |
+| [PERM-008](PERM-008.md#PERM-008) | [TR-002](../00_traceability/index.md#TR-002) | [SCR-018](../01_frontend/01_screens/SCR-018.md#SCR-018) [SCR-023](../01_frontend/01_screens/SCR-023.md#SCR-023) | EVT-151 EVT-190 | [API-006](../02_backend/03_apis/API-006.md#API-006) [API-008](../02_backend/03_apis/API-008.md#API-008) [API-023](../02_backend/03_apis/API-023.md#API-023) |
+| [PERM-009](PERM-009.md#PERM-009) | [TR-059](../00_traceability/index.md#TR-059) | — | — | [API-002](../02_backend/03_apis/API-002.md#API-002) [API-037](../02_backend/03_apis/API-037.md#API-037) |
+| [PERM-010](PERM-010.md#PERM-010) | [TR-013](../00_traceability/index.md#TR-013) | [SCR-020](../01_frontend/01_screens/SCR-020.md#SCR-020) | EVT-135 EVT-169 | [API-052](../02_backend/03_apis/API-052.md#API-052) [API-054](../02_backend/03_apis/API-054.md#API-054) [API-055](../02_backend/03_apis/API-055.md#API-055) |
+| [PERM-011](PERM-011.md#PERM-011) | [TR-056](../00_traceability/index.md#TR-056) | — | — | [API-021](../02_backend/03_apis/API-021.md#API-021) [API-024](../02_backend/03_apis/API-024.md#API-024) |
 
 ## <span id="flow"></span>4. 認証フロー(参照)
 

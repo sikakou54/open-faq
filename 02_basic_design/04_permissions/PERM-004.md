@@ -17,19 +17,13 @@
 > [!IMPORTANT]
 > **構造的に孤立しない** 1 契約 = 1 オーナーのためオーナーの孤立状態は構造的に発生しません。自身のアカウント削除は常に不可で、他人を経由して自身を削除する経路も設けません。拒否時は `E-AUTHZ-OWNER-PROTECTED` / `E-AUTHZ-SELF-MUTATION`。
 
-## <span id="trace"></span>2. 対応 UC / SCR / EVT / API
+## <span id="trace"></span>2. 対応 SCR / EVT / API
 
-本権限が適用される画面・イベント・API・業務ユースケースの結線です。
+本権限が適用される画面・イベント・API の結線です。
 
 | 観点 | 結線 |
 |----|----|
-| 対応業務UC | — |
+| トレーサビリティID | —([トレーサビリティ一覧](../00_traceability/index.md#matrix-main)) |
 | 対応画面SCR | [SCR-013](../01_frontend/01_screens/SCR-013.md#SCR-013) |
 | 対応EVT | — |
 | 対応API | [API-023](../02_backend/03_apis/API-023.md#API-023) [API-024](../02_backend/03_apis/API-024.md#API-024) |
-
-## <span id="src"></span>3. 由来要件
-
-| 由来要件 |
-|----|
-| [FR-183](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-183) [FR-184](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-184) |
