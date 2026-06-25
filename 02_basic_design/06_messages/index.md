@@ -45,7 +45,7 @@
 | Header From | `open-faq <noreply@<service-domain>>` 固定 |
 | Reply-To | 設定しない(NULL) |
 | List-Unsubscribe | マーケティング系 `low` 通知にのみ設定 |
-| DMARC / DKIM / SPF | 全テンプレートで pass を必須(NFR-905、09 セキュリティ §11.3) |
+| DMARC / DKIM / SPF | 全テンプレートで pass を必須(送信ドメイン認証によるなりすまし対策・到達性確保) |
 
 「このメールに直接返信せず、お問い合わせ画面または各プロジェクトのお問い合わせ先からご返信ください」のフッタ文言を必ず本文末尾に付与する。
 

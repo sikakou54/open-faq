@@ -79,7 +79,7 @@
 | <span id="SEQ-063"></span>[SEQ-063](SEQ-063.md#SEQ-063) | 初期表示 | [UC-045](../../01_requirements/04_business_usecases/UC-045.md#UC-045) | [SCR-017](../01_frontend/01_screens/SCR-017.md#SCR-017) |
 | <span id="SEQ-064"></span>[SEQ-064](SEQ-064.md#SEQ-064) | 初期表示 | [UC-003](../../01_requirements/04_business_usecases/UC-003.md#UC-003) | [SCR-002](../01_frontend/01_screens/SCR-002.md#SCR-002) ・ [SCR-018](../01_frontend/01_screens/SCR-018.md#SCR-018) |
 | <span id="SEQ-065"></span>[SEQ-065](SEQ-065.md#SEQ-065) | 「メールを再送する」を押下 | [UC-003](../../01_requirements/04_business_usecases/UC-003.md#UC-003) | [SCR-018](../01_frontend/01_screens/SCR-018.md#SCR-018) |
-| <span id="SEQ-066"></span>[SEQ-066](SEQ-066.md#SEQ-066) | 確認ダイアログの「OK」を押下 | [UC-023](../../01_requirements/04_business_usecases/UC-023.md#UC-023) | [SCR-019](../01_frontend/01_screens/SCR-019.md#SCR-019) ・ [SCR-022](../01_frontend/01_screens/SCR-022.md#SCR-022) |
+| <span id="SEQ-066"></span>[SEQ-066](SEQ-066.md#SEQ-066) | 確認ダイアログの「退会を確定する」を押下 | [UC-023](../../01_requirements/04_business_usecases/UC-023.md#UC-023) | [SCR-019](../01_frontend/01_screens/SCR-019.md#SCR-019) ・ [SCR-022](../01_frontend/01_screens/SCR-022.md#SCR-022) |
 | <span id="SEQ-067"></span>[SEQ-067](SEQ-067.md#SEQ-067) | 初期表示 | [UC-013](../../01_requirements/04_business_usecases/UC-013.md#UC-013) | [SCR-020](../01_frontend/01_screens/SCR-020.md#SCR-020) |
 | <span id="SEQ-068"></span>[SEQ-068](SEQ-068.md#SEQ-068) | 「同意して続行する」を押下 | [UC-013](../../01_requirements/04_business_usecases/UC-013.md#UC-013) | [SCR-020](../01_frontend/01_screens/SCR-020.md#SCR-020) |
 | <span id="SEQ-069"></span>[SEQ-069](SEQ-069.md#SEQ-069) | 初期表示 | [UC-036](../../01_requirements/04_business_usecases/UC-036.md#UC-036) | [SCR-021](../01_frontend/01_screens/SCR-021.md#SCR-021) |
@@ -105,7 +105,7 @@
 | <span id="SEQ-089"></span>[SEQ-089](SEQ-089.md#SEQ-089) | AI 回答(未解決)を受信 | [UC-043](../../01_requirements/04_business_usecases/UC-043.md#UC-043) | — |
 | <span id="SEQ-090"></span>[SEQ-090](SEQ-090.md#SEQ-090) | 非同期 CSV インポートジョブ | [UC-050](../../01_requirements/04_business_usecases/UC-050.md#UC-050) | [SCR-010](../01_frontend/01_screens/SCR-010.md#SCR-010) |
 | <span id="SEQ-091"></span>[SEQ-091](SEQ-091.md#SEQ-091) | Resend Webhook 受信(配信状態更新) | [UC-062](../../01_requirements/04_business_usecases/UC-062.md#UC-062) | — |
-| <span id="SEQ-092"></span>[SEQ-092](SEQ-092.md#SEQ-092) | 90 日物理削除バッチ | [UC-070](../../01_requirements/04_business_usecases/UC-070.md#UC-070) | — |
+| <span id="SEQ-092"></span>[SEQ-092](SEQ-092.md#SEQ-092) | 退会済み・論理削除データの物理削除バッチ | [UC-070](../../01_requirements/04_business_usecases/UC-070.md#UC-070) | — |
 | <span id="SEQ-093"></span>[SEQ-093](SEQ-093.md#SEQ-093) | 月次請求確定バッチ | [UC-058](../../01_requirements/04_business_usecases/UC-058.md#UC-058) | — |
 | <span id="SEQ-094"></span>[SEQ-094](SEQ-094.md#SEQ-094) | 運営お知らせ配信 | [UC-063](../../01_requirements/04_business_usecases/UC-063.md#UC-063) | — |
 | <span id="SEQ-095"></span>[SEQ-095](SEQ-095.md#SEQ-095) | 運用イベントのシステム通知自動生成 | [UC-064](../../01_requirements/04_business_usecases/UC-064.md#UC-064) | — |

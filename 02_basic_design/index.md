@@ -50,7 +50,7 @@ FAQ AI ウィジェット SaaS / メインシステム(利用者向け)の基本
 | `FR10` | **管理ダッシュボード** | 利用状況 / プロジェクト概要 | SCR-021 / SCR-008 | `GET /dashboard/summary` | `T_USAGE_METER` `H_QUESTION_LOGS` | [利用量と費用を管理する](../01_requirements/04_business_usecases/index.md#act-owner) |
 | `FR11` | **通知** | 通知 / インボックス / メール | SCR-016 / 012 | `GET /me/announcements` | `T_INBOX_MSG` `H_NOTIF_LOGS` | [利用者へ重要連絡を届ける](../01_requirements/04_business_usecases/index.md#act-ops) |
 | `FR12` | **ウィジェット** | ウィジェット配信 + 設定 + 許可ドメイン | SCR-011 / WIDGET | `POST /widget/v1/bootstrap` | `M_PROJECTS` `M_ALLOWED_DOMAINS` `T_PRJ_LEGACY_KEYS` | [FAQ 提供基盤を構築する](../01_requirements/04_business_usecases/index.md#act-owner) / [ウィジェットの応答を最適化する](../01_requirements/04_business_usecases/index.md#act-member) |
-| `FR13` | **プライバシー・データ管理** | プライバシー / データ削除 / 退会 | SCR-015 / 020 / 014 | `POST /withdrawal-requests` | `T_WITHDRAW_REQ` `M_TERMS_VER` | [サービス利用を終了する](../01_requirements/04_business_usecases/index.md#act-owner) |
+| `FR13` | **プライバシー・データ管理** | プライバシー / データ削除 / 退会 | SCR-019 / 015 / 020 | `POST /withdrawals` | `T_WITHDRAW_REQ` `M_TERMS_VER` | [サービス利用を終了する](../01_requirements/04_business_usecases/index.md#act-owner) |
 | `FR14` | **セキュリティ** | 不正利用検知 / 鍵管理 / 監査 | (横断) | — | `H_AUDIT_LOGS` `M_EMAIL_SUPPRESS` | [データ保護と健全性を維持する](../01_requirements/04_business_usecases/index.md#act-ops) |
 | `FR15` | **お知らせ** | お知らせ配信 / 既読 | SCR-016 / 012 | `GET /me/announcements` | `M_SERVICE_ANNOUNCE` `T_ANNOUNCE_RCPT` `M_ANNOUNCE_AUD` | [利用者へ重要連絡を届ける](../01_requirements/04_business_usecases/index.md#act-ops) |
 | `FR16` | **検索・全文検索** | FTS 検索 | SCR-008 | `GET /projects/{id}/faqs/search` | `TP_FAQ_FTS` `M_FAQS` | [FAQ を整備して公開する](../01_requirements/04_business_usecases/index.md#act-member) |

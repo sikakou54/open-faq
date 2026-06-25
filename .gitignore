@@ -5,8 +5,7 @@
 01_メインシステム/pdf/
 02_運営者システム/pdf/
 
-# Claude Code 作業ファイル(ローカル状態)
-.claude/
+# Claude Code 設定・スキル(.claude)はリポジトリで共有・追跡する
 
 # P3 再構成スクリプトの完了マーカ(ローカル状態。コミットしない)
 _build/.p3_scr_renamed

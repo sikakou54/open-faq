@@ -9,11 +9,11 @@
 | カテゴリID | カテゴリ | 件数 | 主な機能グループ |
 |----|----|----|----|
 | <span id="BR-ACCOUNT"></span>BR-ACCOUNT | [アカウント・ユーザー・アクセス制御](01_account-br.md) | 37 | アカウント管理 / ユーザー管理(オーナー + メンバー) / プロジェクト管理 / アクセス制御細部 |
-| <span id="BR-FAQAI"></span>BR-FAQAI | [FAQ・AI 回答・未解決質問・処理エラー](02_faq-ai-br.md) | 36 | FAQ 管理 / AI 回答 / 未解決質問登録 / 未解決質問から FAQ 登録 / 処理エラー / AI 推論動作 |
+| <span id="BR-FAQAI"></span>BR-FAQAI | [FAQ・AI 回答・未解決質問・処理エラー](02_faq-ai-br.md) | 35 | FAQ 管理 / AI 回答 / 未解決質問登録 / 未解決質問から FAQ 登録 / 処理エラー / AI 推論動作 |
 | <span id="BR-USAGE"></span>BR-USAGE | [利用量・課金・ダッシュボード・運用](03_usage-br.md) | 25 | 利用量・課金 / 管理ダッシュボード / UX 細部・データ運用 |
 | <span id="BR-WIDGET"></span>BR-WIDGET | [ウィジェット・検索・入出力](04_widget-br.md) | 15 | ウィジェット / 検索・全文検索 / インポート・エクスポート |
 | <span id="BR-NOTIFICATION"></span>BR-NOTIFICATION | [通知・お知らせ](05_notification-br.md) | 20 | 通知 / お知らせ |
-| <span id="BR-SECURITY"></span>BR-SECURITY | [セキュリティ・プライバシー](06_security-br.md) | 13 | プライバシー・データ管理 / セキュリティ |
+| <span id="BR-SECURITY"></span>BR-SECURITY | [セキュリティ・プライバシー](06_security-br.md) | 10 | プライバシー・データ管理 / セキュリティ |
 
 ## 業務ルール(要件)
 

@@ -1,0 +1,53 @@
+{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(node 画面遷移図_分割生成.js)",
+      "Bash(grep -o \"プロジェクト別利用状況.\\\\{0,520\\\\}\" 画面遷移図_オーナー.html)",
+      "Bash(python3 99_script/build-portal.py)",
+      "Bash(awk '{print $5}')",
+      "Bash(python3 -)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(grep -cE '<h1[ >]' __TRACKED_VAR__/01_画面設計.html)",
+      "Bash(grep -cE '<h2[ >]' __TRACKED_VAR__/01_画面設計.html)",
+      "Bash(grep -oE '>active<' __TRACKED_VAR__/10_課金・請求設計.html)",
+      "Bash(grep -oE '<h3[^>]*>5\\\\.[0-9]+' __TRACKED_VAR__/01_画面設計.html)",
+      "Bash(grep -oE '<h[34][^>]*>4\\\\.[0-9.]+ [^<]{0,20}' __TRACKED_VAR__/11_メール設計.html)",
+      "Bash(grep -E '\\\\.html$')",
+      "Bash(grep -c '\\\\.html$')",
+      "Bash(python3 /tmp/migrate-to-html.py)",
+      "Bash(python3 99_script/build-search-index.py)",
+      "Bash(grep -oE '<h3[^>]*>4\\\\.[0-9]+ TPL-' __TRACKED_VAR__/11_メール設計.html)",
+      "Bash(xargs -0 rm -f)",
+      "Bash(bash 99_script/build_all_pdfs.sh --dry-run)",
+      "Bash(bash -n 99_script/build_all_pdfs.sh)",
+      "Bash(bash -n 99_script/check-spec-sync.sh)",
+      "Bash(python3 99_script/build-rules-page.py)",
+      "Bash(grep -o '保守ルール[^<]\\\\{0,12\\\\}を表化' 共有/共有概念.html)",
+      "Bash(git symbolic-ref *)",
+      "Bash(git ls-remote *)",
+      "Bash(gh repo *)",
+      "Bash(echo \"exit=$?\")",
+      "Bash(git push *)",
+      "Bash(git remote *)",
+      "Bash(python3 _build/gen.py)",
+      "Bash(python3 -c \"import bs4; print\\('bs4', bs4.__version__\\)\")",
+      "Bash(python3 -c \"import html2text; print\\('html2text ok'\\)\")",
+      "Bash(python3 -c \"import markdownify; print\\('markdownify ok'\\)\")",
+      "Bash(git checkout *)",
+      "Bash(pandoc --version)",
+      "Bash(pandoc -f html -t gfm --wrap=none /tmp/fr01_body.html -o /tmp/fr01.md)",
+      "Bash(printf '<a id=\"API-AUTH-001\"></a>\\\\n<h2 id=\"API-AUTH-001\">API-AUTH-001 新規登録</h2>\\\\n<p>x</p>\\\\n')",
+      "Bash(pandoc -f html -t gfm --wrap=none a1.html)",
+      "Bash(cat)",
+      "Bash(pandoc -f html -t gfm --wrap=none a2.html)",
+      "Bash(printf '<table>\\\\n<thead><tr><th>ID</th></tr></thead>\\\\n<tbody>\\\\n<tr><td><span id=\"IT-01\"></span>IT-01</td></tr>\\\\n</tbody>\\\\n</table>\\\\n')",
+      "Bash(awk '/5. 入出力一覧/{f=1} f{print} /6. 画面イベント/{exit}' basic-design_SCR-001.md)",
+      "Bash(awk '/4. 画面項目定義/{f=1} f{print} /5. 入出力一覧/{exit}' basic-design_SCR-001.md)",
+      "Bash(grep -n '```sql\\\\|```json\\\\|```' future_FUT01.md)",
+      "Bash(grep -n '```mermaid' basic-design_03_database-design.md)"
+    ]
+  }
+}
