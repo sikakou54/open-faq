@@ -27,5 +27,5 @@
 |----|----|
 | トレーサビリティID | [TR-002](../00_traceability/index.md#TR-002) ・ [TR-003](../00_traceability/index.md#TR-003) ・ [TR-006](../00_traceability/index.md#TR-006) ・ [TR-019](../00_traceability/index.md#TR-019) ・ [TR-021](../00_traceability/index.md#TR-021) |
 | 対応画面SCR | [SCR-018](../01_frontend/01_screens/SCR-018.md#SCR-018) [SCR-023](../01_frontend/01_screens/SCR-023.md#SCR-023) |
-| 対応EVT | EVT-132 EVT-162 |
+| 対応EVT | EVT-138 EVT-168 |
 | 対応API | [API-006](../02_backend/03_apis/API-006.md#API-006) [API-008](../02_backend/03_apis/API-008.md#API-008) [API-023](../02_backend/03_apis/API-023.md#API-023) |

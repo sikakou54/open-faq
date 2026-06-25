@@ -56,36 +56,36 @@ API設計 ＞ 本エラー設計 ＞ メッセージ設計。各 API の `## エ
 
 | API ID | API名 | 対応EVT | 返しうるエラー |
 |----|----|----|----|
-| [API-001](../02_backend/03_apis/API-001.md#API-001) | 新規登録 | EVT-009 EVT-133 | [ERR-001](ERR-001.md#ERR-001) |
+| [API-001](../02_backend/03_apis/API-001.md#API-001) | 新規登録 | EVT-009 EVT-139 | [ERR-001](ERR-001.md#ERR-001) |
 | [API-002](../02_backend/03_apis/API-002.md#API-002) | ログイン | EVT-002 | [ERR-003](ERR-003.md#ERR-003) [ERR-004](ERR-004.md#ERR-004) [ERR-005](ERR-005.md#ERR-005) [ERR-006](ERR-006.md#ERR-006) |
-| [API-005](../02_backend/03_apis/API-005.md#API-005) | 再認証 | EVT-139 EVT-154 EVT-155 | [ERR-007](ERR-007.md#ERR-007) |
-| [API-006](../02_backend/03_apis/API-006.md#API-006) | メール確認 | EVT-132 | [ERR-008](ERR-008.md#ERR-008) |
-| [API-007](../02_backend/03_apis/API-007.md#API-007) | 招待トークン検証・プレビュー | EVT-158 | [ERR-008](ERR-008.md#ERR-008) [ERR-009](ERR-009.md#ERR-009) [ERR-010](ERR-010.md#ERR-010) |
-| [API-008](../02_backend/03_apis/API-008.md#API-008) | メンバーアカウント有効化 | EVT-162 | [ERR-001](ERR-001.md#ERR-001) [ERR-002](ERR-002.md#ERR-002) [ERR-008](ERR-008.md#ERR-008) [ERR-009](ERR-009.md#ERR-009) |
-| [API-009](../02_backend/03_apis/API-009.md#API-009) | プロジェクト連絡先メール確認 | EVT-166 | [ERR-008](ERR-008.md#ERR-008) [ERR-009](ERR-009.md#ERR-009) [ERR-010](ERR-010.md#ERR-010) |
+| [API-005](../02_backend/03_apis/API-005.md#API-005) | 再認証 | EVT-145 EVT-160 EVT-161 | [ERR-007](ERR-007.md#ERR-007) |
+| [API-006](../02_backend/03_apis/API-006.md#API-006) | メール確認 | EVT-138 | [ERR-008](ERR-008.md#ERR-008) |
+| [API-007](../02_backend/03_apis/API-007.md#API-007) | 招待トークン検証・プレビュー | EVT-164 | [ERR-008](ERR-008.md#ERR-008) [ERR-009](ERR-009.md#ERR-009) [ERR-010](ERR-010.md#ERR-010) |
+| [API-008](../02_backend/03_apis/API-008.md#API-008) | メンバーアカウント有効化 | EVT-168 | [ERR-001](ERR-001.md#ERR-001) [ERR-002](ERR-002.md#ERR-002) [ERR-008](ERR-008.md#ERR-008) [ERR-009](ERR-009.md#ERR-009) |
+| [API-009](../02_backend/03_apis/API-009.md#API-009) | プロジェクト連絡先メール確認 | EVT-172 | [ERR-008](ERR-008.md#ERR-008) [ERR-009](ERR-009.md#ERR-009) [ERR-010](ERR-010.md#ERR-010) |
 | [API-010](../02_backend/03_apis/API-010.md#API-010) | パスワード再設定確定 | EVT-016 | [ERR-001](ERR-001.md#ERR-001) [ERR-008](ERR-008.md#ERR-008) [ERR-009](ERR-009.md#ERR-009) [ERR-010](ERR-010.md#ERR-010) |
 | [API-011](../02_backend/03_apis/API-011.md#API-011) | 連絡先確認メール再送 | EVT-029 | [ERR-011](ERR-011.md#ERR-011) [ERR-012](ERR-012.md#ERR-012) [ERR-013](ERR-013.md#ERR-013) [ERR-014](ERR-014.md#ERR-014) |
-| [API-012](../02_backend/03_apis/API-012.md#API-012) | 自己プロフィール更新 | EVT-154 | [ERR-001](ERR-001.md#ERR-001) [ERR-015](ERR-015.md#ERR-015) [ERR-016](ERR-016.md#ERR-016) |
-| [API-013](../02_backend/03_apis/API-013.md#API-013) | 自己パスワード変更 | EVT-155 | [ERR-001](ERR-001.md#ERR-001) [ERR-015](ERR-015.md#ERR-015) |
-| [API-014](../02_backend/03_apis/API-014.md#API-014) | 契約設定取得 | EVT-186 | [ERR-017](ERR-017.md#ERR-017) |
-| [API-015](../02_backend/03_apis/API-015.md#API-015) | 契約設定更新 | EVT-187 | [ERR-001](ERR-001.md#ERR-001) [ERR-017](ERR-017.md#ERR-017) |
+| [API-012](../02_backend/03_apis/API-012.md#API-012) | 自己プロフィール更新 | EVT-160 | [ERR-001](ERR-001.md#ERR-001) [ERR-015](ERR-015.md#ERR-015) [ERR-016](ERR-016.md#ERR-016) |
+| [API-013](../02_backend/03_apis/API-013.md#API-013) | 自己パスワード変更 | EVT-161 | [ERR-001](ERR-001.md#ERR-001) [ERR-015](ERR-015.md#ERR-015) |
+| [API-014](../02_backend/03_apis/API-014.md#API-014) | 契約設定取得 | EVT-192 | [ERR-017](ERR-017.md#ERR-017) |
+| [API-015](../02_backend/03_apis/API-015.md#API-015) | 契約設定更新 | EVT-193 | [ERR-001](ERR-001.md#ERR-001) [ERR-017](ERR-017.md#ERR-017) |
 | [API-017](../02_backend/03_apis/API-017.md#API-017) | プロジェクト新規作成 | EVT-027 | [ERR-001](ERR-001.md#ERR-001) [ERR-017](ERR-017.md#ERR-017) [ERR-018](ERR-018.md#ERR-018) |
 | [API-018](../02_backend/03_apis/API-018.md#API-018) | プロジェクト更新・削除 | EVT-025 EVT-028 EVT-031 EVT-088 | [ERR-017](ERR-017.md#ERR-017) [ERR-019](ERR-019.md#ERR-019) |
-| [API-021](../02_backend/03_apis/API-021.md#API-021) | メンバー招待 | EVT-107 | [ERR-001](ERR-001.md#ERR-001) [ERR-020](ERR-020.md#ERR-020) [ERR-021](ERR-021.md#ERR-021) |
-| [API-022](../02_backend/03_apis/API-022.md#API-022) | メンバー情報更新 | EVT-109 | [ERR-001](ERR-001.md#ERR-001) [ERR-019](ERR-019.md#ERR-019) [ERR-021](ERR-021.md#ERR-021) [ERR-022](ERR-022.md#ERR-022) |
-| [API-023](../02_backend/03_apis/API-023.md#API-023) | プロジェクト割当解除 | EVT-111 | [ERR-019](ERR-019.md#ERR-019) [ERR-021](ERR-021.md#ERR-021) [ERR-023](ERR-023.md#ERR-023) [ERR-024](ERR-024.md#ERR-024) |
-| [API-024](../02_backend/03_apis/API-024.md#API-024) | 招待メール再送 | EVT-108 | [ERR-019](ERR-019.md#ERR-019) [ERR-023](ERR-023.md#ERR-023) [ERR-024](ERR-024.md#ERR-024) |
+| [API-021](../02_backend/03_apis/API-021.md#API-021) | メンバー招待 | EVT-113 | [ERR-001](ERR-001.md#ERR-001) [ERR-020](ERR-020.md#ERR-020) [ERR-021](ERR-021.md#ERR-021) |
+| [API-022](../02_backend/03_apis/API-022.md#API-022) | メンバー情報更新 | EVT-115 | [ERR-001](ERR-001.md#ERR-001) [ERR-019](ERR-019.md#ERR-019) [ERR-021](ERR-021.md#ERR-021) [ERR-022](ERR-022.md#ERR-022) |
+| [API-023](../02_backend/03_apis/API-023.md#API-023) | プロジェクト割当解除 | EVT-117 | [ERR-019](ERR-019.md#ERR-019) [ERR-021](ERR-021.md#ERR-021) [ERR-023](ERR-023.md#ERR-023) [ERR-024](ERR-024.md#ERR-024) |
+| [API-024](../02_backend/03_apis/API-024.md#API-024) | 招待メール再送 | EVT-114 | [ERR-019](ERR-019.md#ERR-019) [ERR-023](ERR-023.md#ERR-023) [ERR-024](ERR-024.md#ERR-024) |
 | [API-026](../02_backend/03_apis/API-026.md#API-026) | FAQ 作成・更新・削除 | EVT-057 EVT-064 EVT-065 EVT-067 | [ERR-001](ERR-001.md#ERR-001) [ERR-025](ERR-025.md#ERR-025) |
 | [API-027](../02_backend/03_apis/API-027.md#API-027) | FAQ 一括状態変更 | EVT-055 EVT-056 | [ERR-001](ERR-001.md#ERR-001) [ERR-021](ERR-021.md#ERR-021) |
 | [API-028](../02_backend/03_apis/API-028.md#API-028) | FAQ CSV インポート | EVT-076 | [ERR-026](ERR-026.md#ERR-026) [ERR-027](ERR-027.md#ERR-027) |
 | [API-033](../02_backend/03_apis/API-033.md#API-033) | FAQ 個別取得 | EVT-062 | [ERR-019](ERR-019.md#ERR-019) [ERR-021](ERR-021.md#ERR-021) |
-| [API-037](../02_backend/03_apis/API-037.md#API-037) | ウィジェット起動 | EVT-192 EVT-197 | [ERR-006](ERR-006.md#ERR-006) [ERR-028](ERR-028.md#ERR-028) [ERR-029](ERR-029.md#ERR-029) |
-| [API-038](../02_backend/03_apis/API-038.md#API-038) | ウィジェット質問送信 | EVT-194 EVT-195 EVT-196 EVT-197 | [ERR-011](ERR-011.md#ERR-011) [ERR-029](ERR-029.md#ERR-029) |
+| [API-037](../02_backend/03_apis/API-037.md#API-037) | ウィジェット起動 | EVT-198 EVT-203 | [ERR-006](ERR-006.md#ERR-006) [ERR-028](ERR-028.md#ERR-028) [ERR-029](ERR-029.md#ERR-029) |
+| [API-038](../02_backend/03_apis/API-038.md#API-038) | ウィジェット質問送信 | EVT-200 EVT-201 EVT-202 EVT-203 | [ERR-011](ERR-011.md#ERR-011) [ERR-029](ERR-029.md#ERR-029) |
 | [API-040](../02_backend/03_apis/API-040.md#API-040) | ダッシュボードサマリ | EVT-090 EVT-091 | [ERR-001](ERR-001.md#ERR-001) [ERR-021](ERR-021.md#ERR-021) |
-| [API-045](../02_backend/03_apis/API-045.md#API-045) | 支払方法 取得・登録・更新 | EVT-181 EVT-185 | [ERR-001](ERR-001.md#ERR-001) [ERR-017](ERR-017.md#ERR-017) [ERR-030](ERR-030.md#ERR-030) |
-| [API-047](../02_backend/03_apis/API-047.md#API-047) | プロジェクト上限・アラート更新 | EVT-178 | [ERR-031](ERR-031.md#ERR-031) [ERR-032](ERR-032.md#ERR-032) |
-| [API-050](../02_backend/03_apis/API-050.md#API-050) | お知らせ一括既読 | EVT-123 EVT-124 EVT-125 | [ERR-001](ERR-001.md#ERR-001) |
-| [API-056](../02_backend/03_apis/API-056.md#API-056) | 退会申請 | EVT-139 | [ERR-032](ERR-032.md#ERR-032) |
+| [API-045](../02_backend/03_apis/API-045.md#API-045) | 支払方法 取得・登録・更新 | EVT-187 EVT-191 | [ERR-001](ERR-001.md#ERR-001) [ERR-017](ERR-017.md#ERR-017) [ERR-030](ERR-030.md#ERR-030) |
+| [API-047](../02_backend/03_apis/API-047.md#API-047) | プロジェクト上限・アラート更新 | EVT-184 | [ERR-031](ERR-031.md#ERR-031) [ERR-032](ERR-032.md#ERR-032) |
+| [API-050](../02_backend/03_apis/API-050.md#API-050) | お知らせ一括既読 | EVT-129 EVT-130 EVT-131 | [ERR-001](ERR-001.md#ERR-001) |
+| [API-056](../02_backend/03_apis/API-056.md#API-056) | 退会申請 | EVT-145 | [ERR-032](ERR-032.md#ERR-032) |
 | [API-059](../02_backend/03_apis/API-059.md#API-059) | 外部 Webhook(Resend) | — | [ERR-033](ERR-033.md#ERR-033) [ERR-034](ERR-034.md#ERR-034) |
 
 ## <span id="authz-map"></span>3. 認可ミドルウェア段コード ↔ ERR 対応
