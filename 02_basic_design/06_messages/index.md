@@ -19,7 +19,7 @@
 | <span id="MSG-003"></span>[MSG-003](MSG-003.md#MSG-003) | `TPL-ADMIN_USER_REGISTER` | NOTIF-ADMIN_USER_REGISTER | critical | 招待対象 | ◯ | 7d |
 | <span id="MSG-004"></span>[MSG-004](MSG-004.md#MSG-004) | `TPL-PROJECT_CONTACT_VERIFY` | (オーナー操作派生) | critical | プロジェクト連絡先 | ◯ | 24h |
 | <span id="MSG-005"></span>[MSG-005](MSG-005.md#MSG-005) | `TPL-LOCKOUT_NOTIFY` | NOTIF-LOCKOUT_NOTIFY | critical | ロック本人 + オーナー + 全メンバー | ◯ | (リンクなし) |
-| <span id="MSG-006"></span>[MSG-006](MSG-006.md#MSG-006) | `TPL-DELETION_REMINDER` | NOTIF-DELETION_REMINDER | high | オーナー | ◯ | 退会発効日まで |
+| <span id="MSG-006"></span>[MSG-006](MSG-006.md#MSG-006) | `TPL-WITHDRAWAL_COMPLETED` | NOTIF-WITHDRAWAL_COMPLETED | high | オーナー | ◯ | (リンクなし) |
 | <span id="MSG-007"></span>[MSG-007](MSG-007.md#MSG-007) | `TPL-BILLING_INVOICE_ISSUED` | NOTIF-BILLING_INVOICE_ISSUED | high | オーナー | ◯ | 30d(PDF 再 DL) |
 | <span id="MSG-008"></span>[MSG-008](MSG-008.md#MSG-008) | `TPL-BILLING_PAYMENT_FAILED` | NOTIF-BILLING_PAYMENT_FAILED | high | オーナー | ◯ | (再決済リンク) |
 | <span id="MSG-009"></span>[MSG-009](MSG-009.md#MSG-009) | `TPL-BILLING_SUSPENSION` | NOTIF-BILLING_SUSPENSION | critical | オーナー + 全メンバー | ◯ | (リンクなし) |
@@ -120,7 +120,7 @@
 | TPL-ADMIN_USER_REGISTER | 招待時に入力されたメールアドレス(`T_ACCESS_TOKENS.target_email`) |
 | TPL-PROJECT_CONTACT_VERIFY | プロジェクト連絡先メールアドレス |
 | TPL-LOCKOUT_NOTIFY | ロック対象者 + オーナー(`M_CONTRACT` 由来) + 当該スコープの有効メンバー(`M_PRJ_USERS.valid=1`)。正規化メールで重複排除(オーナー + 全メンバーを網羅) |
-| TPL-DELETION_REMINDER / PAYMENT_METHOD_REQUIRED / BILLING_INVOICE_ISSUED / BILLING_PAYMENT_FAILED | 契約のオーナー(`M_CONTRACT` 由来)のみ |
+| TPL-WITHDRAWAL_COMPLETED / PAYMENT_METHOD_REQUIRED / BILLING_INVOICE_ISSUED / BILLING_PAYMENT_FAILED | 契約のオーナー(`M_CONTRACT` 由来)のみ |
 | TPL-BILLING_SUSPENSION / TERMS_REVISION | オーナー(`M_CONTRACT` 由来) + 当該スコープの有効メンバー(`M_PRJ_USERS.valid=1`)。正規化メールで重複排除 |
 | TPL-SERVICE_ANNOUNCEMENT | 配信時に指定する範囲(全契約 / 単一契約 / 特定プロジェクト) |
 | TPL-SYSTEM_NOTICE | `question_limit_threshold_reached` はオーナー + 当該プロジェクトの有効メンバー(`M_PRJ_USERS.valid=1`)。その他はサブ契機ごとに定義 |

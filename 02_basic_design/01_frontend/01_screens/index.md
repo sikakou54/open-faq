@@ -16,7 +16,7 @@
 | [`SCR-005`](SCR-005.md) | [プロジェクト作成・編集(モーダル)](SCR-005.md) | `/owner/projects/new` | 契約ワークスペース |
 | [`SCR-028`](SCR-028.md) | [請求](SCR-028.md) | `/owner/billing` | 契約ワークスペース |
 | [`SCR-029`](SCR-029.md) | [設定](SCR-029.md) | `/owner/settings` | 契約ワークスペース |
-| [`SCR-019`](SCR-019.md) | [退会申請](SCR-019.md) | `/owner/withdraw` | 契約ワークスペース |
+| [`SCR-019`](SCR-019.md) | [退会](SCR-019.md) | `/owner/withdraw` | 契約ワークスペース |
 | [`SCR-020`](SCR-020.md) | [規約再同意割込み](SCR-020.md) | `/owner/terms-reconsent` | 契約ワークスペース |
 | [`SCR-012`](SCR-012.md) | [概要](SCR-012.md) | `/projects/:id/home` | プロジェクトワークスペース |
 | [`SCR-006`](SCR-006.md) | [要対応の質問一覧](SCR-006.md) | `/projects/:id/inquiries` | プロジェクトワークスペース |

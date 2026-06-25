@@ -85,7 +85,7 @@ API設計 ＞ 本エラー設計 ＞ メッセージ設計。各 API の `## エ
 | [API-045](../02_backend/03_apis/API-045.md#API-045) | 支払方法 取得・登録・更新 | EVT-187 EVT-191 | [ERR-001](ERR-001.md#ERR-001) [ERR-017](ERR-017.md#ERR-017) [ERR-030](ERR-030.md#ERR-030) |
 | [API-047](../02_backend/03_apis/API-047.md#API-047) | プロジェクト上限・アラート更新 | EVT-184 | [ERR-031](ERR-031.md#ERR-031) [ERR-032](ERR-032.md#ERR-032) |
 | [API-050](../02_backend/03_apis/API-050.md#API-050) | お知らせ一括既読 | EVT-129 EVT-130 EVT-131 | [ERR-001](ERR-001.md#ERR-001) |
-| [API-056](../02_backend/03_apis/API-056.md#API-056) | 退会申請 | EVT-145 | [ERR-032](ERR-032.md#ERR-032) |
+| [API-056](../02_backend/03_apis/API-056.md#API-056) | 契約退会(即時) | EVT-145 | [ERR-001](ERR-001.md#ERR-001) [ERR-025](ERR-025.md#ERR-025) [ERR-032](ERR-032.md#ERR-032) |
 | [API-059](../02_backend/03_apis/API-059.md#API-059) | 外部 Webhook(Resend) | — | [ERR-033](ERR-033.md#ERR-033) [ERR-034](ERR-034.md#ERR-034) |
 
 ## <span id="authz-map"></span>3. 認可ミドルウェア段コード ↔ ERR 対応

@@ -15,7 +15,7 @@
 | 割当の無いプロジェクトへの直アクセス | 可(isOwner) | 不可(404偽装) | 不可(404偽装) | 不可 | 不可 |
 
 > [!NOTE]
-> **メンバーは 1 オーナー固定** メールは `M_USER` で一意(1 メール = 1 アカウント)。メンバーは 1 オーナー配下に固定し、別オーナーへの重複所属は招待時に拒否します(FR-185)。拒否時は `E-AUTHZ-OWNER-BOUNDARY` / `E-AUTHZ-PROJECT-DENIED` / `E-AUTHZ-FORBIDDEN`。
+> **メンバーは 1 オーナー固定** メールは `M_USER` で一意(1 メール = 1 アカウント)。メンバーは 1 オーナー配下に固定し、別オーナーへの重複所属は招待時に拒否します(FR-182)。拒否時は `E-AUTHZ-OWNER-BOUNDARY` / `E-AUTHZ-PROJECT-DENIED` / `E-AUTHZ-FORBIDDEN`。
 
 ## <span id="trace"></span>2. 対応 SCR / EVT / API
 

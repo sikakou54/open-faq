@@ -13,7 +13,7 @@
 | 1 | セッション検証 | 無操作 30 分 / 絶対 12 時間を満たす有効セッションか | [ERR-035](../05_errors/ERR-035.md#ERR-035)(`E-AUTH-SESSION-EXPIRED`) |
 | 2 | アカウント有効性 | アカウントが利用可能状態か(無効化済みなら再ログインへ誘導) | — |
 | 3 | 規約再同意ゲート | 改定済みで未同意の文書があれば SCR-020 割込みへ | [SCR-020](../01_frontend/01_screens/SCR-020.md#SCR-020) へ誘導(`E-AUTHZ-TERMS`・エラーではなくゲート) |
-| 4 | 契約状態ゲート | `suspended` / `deleted_pending` / `deleted` 時はアクセス制限を適用 | [ERR-006](../05_errors/ERR-006.md#ERR-006) 等 |
+| 4 | 契約状態ゲート | `suspended` / `withdrawn` / `deleted` 時はアクセス制限を適用 | [ERR-006](../05_errors/ERR-006.md#ERR-006) 等 |
 | 5 | オーナー判定(isOwner bypass) | `M_CONTRACT.user_id` 一致で自契約配下を無条件許可 | — |
 | 6 | オーナー境界判定 | 非オーナーは契約境界キー一致を要求。不一致は 404 偽装 | [ERR-019](../05_errors/ERR-019.md#ERR-019)(`E-AUTHZ-OWNER-BOUNDARY`) |
 | 7 | プロジェクト境界判定 | 対象プロジェクトへの割当があること。割当なしは 404 偽装 | [ERR-021](../05_errors/ERR-021.md#ERR-021) / [ERR-032](../05_errors/ERR-032.md#ERR-032) |

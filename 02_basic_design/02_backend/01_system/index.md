@@ -1,8 +1,8 @@
 # システム設計書
 
-> **メインシステムの全システム処理(`SYS-001`〜`SYS-035`)を一覧する独立設計書です。** 無人で動く処理(バッチ / Webhook / 非同期 / 監視 / 通知)を、画面設計の backend 版として 1 処理 = 1 ファイルで管理します。各処理のトレーサビリティID(TR)から関連する業務UC・API・テーブル・[シーケンス](../../03_sequences/index.md)を [トレーサビリティ一覧](../../00_traceability/index.md) で辿れます。
+> **メインシステムの全システム処理(`SYS-001`〜`SYS-036`)を一覧する独立設計書です。** 無人で動く処理(バッチ / Webhook / 非同期 / 監視 / 通知)を、画面設計の backend 版として 1 処理 = 1 ファイルで管理します。各処理のトレーサビリティID(TR)から関連する業務UC・API・テーブル・[シーケンス](../../03_sequences/index.md)を [トレーサビリティ一覧](../../00_traceability/index.md) で辿れます。
 
-*版数 v1.0 ・ 更新 2026-06-23 ・ システム処理 35 ・ ステータス ドラフト*
+*版数 v1.1 ・ 更新 2026-06-25 ・ システム処理 36 ・ ステータス ドラフト*
 
 ## 一覧
 
@@ -36,10 +36,11 @@
 | <span id="SYS-026"></span>[`SYS-026`](SYS-026.md#SYS-026) | メンバー割当変更通知 | async | メンバーのプロジェクト別役割割当の追加 / 変更 / 剥奪を契機に起動 | [TR-065](../../00_traceability/index.md#TR-065) |
 | <span id="SYS-027"></span>[`SYS-027`](SYS-027.md#SYS-027) | 配信失敗通知の再送 | batch | 定期起動の再送処理(失敗分の検出) | [TR-066](../../00_traceability/index.md#TR-066) |
 | <span id="SYS-028"></span>[`SYS-028`](SYS-028.md#SYS-028) | 受信箱お知らせ重複集約 | async | 受信箱お知らせの生成要求(契約 / イベント種別)発生時 | [TR-067](../../00_traceability/index.md#TR-067) |
-| <span id="SYS-029"></span>[`SYS-029`](SYS-029.md#SYS-029) | 90日経過データ物理削除 | batch | 日次の実行スケジュールによる自動起動 | [TR-070](../../00_traceability/index.md#TR-070) |
+| <span id="SYS-029"></span>[`SYS-029`](SYS-029.md#SYS-029) | 退会済み契約・論理削除データの物理削除 | batch | 日次の実行スケジュールによる自動起動 | [TR-070](../../00_traceability/index.md#TR-070) |
 | <span id="SYS-030"></span>[`SYS-030`](SYS-030.md#SYS-030) | セッション失効判定・再認証誘導 | monitor | アカウント利用者の操作リクエスト受付時 / 経過時間の上限を評価する定期的なタイミング | [TR-071](../../00_traceability/index.md#TR-071) |
 | <span id="SYS-031"></span>[`SYS-031`](SYS-031.md#SYS-031) | ログイン失敗ロックアウト・解除 | monitor | ログイン試行の失敗 / ロック期間の経過判定スケジュール / 権限者による手動解除 | [TR-072](../../00_traceability/index.md#TR-072) |
 | <span id="SYS-032"></span>[`SYS-032`](SYS-032.md#SYS-032) | 契約停止時セッション一斉無効化 | cascade | 対象契約が停止(手動停止 / 規約違反停止)状態へ遷移した時 | [TR-073](../../00_traceability/index.md#TR-073) |
 | <span id="SYS-033"></span>[`SYS-033`](SYS-033.md#SYS-033) | 監査ログ整合性検証(日次) | batch | 日次の定期処理(1 日 1 回・スケジューラ起動) | [TR-074](../../00_traceability/index.md#TR-074) |
-| <span id="SYS-034"></span>[`SYS-034`](SYS-034.md#SYS-034) | 保持期間超過データの自動論理削除 | batch | 日次の定期処理 | — |
+| <span id="SYS-034"></span>[`SYS-034`](SYS-034.md#SYS-034) | 保持期間超過データの自動削除 | batch | 日次の定期処理 | [TR-087](../../00_traceability/index.md#TR-087) |
 | <span id="SYS-035"></span>[`SYS-035`](SYS-035.md#SYS-035) | 課金通知 取込失敗の再処理 | batch | 定期スケジュール | [TR-060](../../00_traceability/index.md#TR-060) |
+| <span id="SYS-036"></span>[`SYS-036`](SYS-036.md#SYS-036) | 保持期間経過契約の物理削除 | batch | 日次の実行スケジュールによる自動起動 | [TR-089](../../00_traceability/index.md#TR-089) |
