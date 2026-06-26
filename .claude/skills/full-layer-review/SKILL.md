@@ -1,6 +1,6 @@
 ---
 name: full-layer-review
-description: Run a change-agnostic, WHOLE-CORPUS full-layer quality review of THIS FAQ design-doc repo (要件定義 + 基本設計 + 関連設計 + 将来対応) — not a diff review. Bundles every layer, drives Google NotebookLM as the external reviewer across 6 dimensions (取り違え/整合性/逆参照/粒度/抜け漏れ/総合), runs deterministic link/anchor/numbering/trace checks as the source of truth, grep-verifies every NotebookLM finding, fixes, and re-reviews until convergence. Use when asked for a 全層フルレビュー / 設計書全体のレビュー / "review the whole doc set" (not just the changes). Builds on the global design-doc-review and notebooklm-review skills.
+description: Run a change-agnostic, WHOLE-CORPUS full-layer quality review of THIS FAQ design-doc repo (要件定義 + 基本設計 + 関連設計 + 将来対応) — not a diff review. Bundles every layer, drives Google NotebookLM as the external reviewer across 7 dimensions (取り違え/整合性/逆参照/粒度/画面フォーマット適合/抜け漏れ/総合), runs deterministic link/anchor/numbering/trace + SCR-format(format_check.py) checks as the source of truth, grep-verifies every NotebookLM finding, fixes, and re-reviews until convergence. Use when asked for a 全層フルレビュー / 設計書全体のレビュー / "review the whole doc set" (not just the changes). Builds on the global design-doc-review and notebooklm-review skills.
 ---
 
 # Full-layer review (whole corpus, not a diff)
@@ -26,8 +26,9 @@ NLM=.claude/skills/notebooklm-review/scripts           # nlm_bundle.py / nlm_syn
 Run these before and after every edit. They — not NotebookLM — decide mechanical facts.
 
 ```bash
-python3 $SK/structure_check.py .      # broken links/anchors = 0 ; per-series gaps = [] ; same-file dup anchors = 0
+python3 $SK/structure_check.py .      # broken links/anchors = 0 ; per-series gaps = [] ; same-file dup anchors = 0 (EVT/EM/EV are page-local, excluded from the global series gap check)
 python3 $SK/trace_consistency.py .    # UC<->TR 1:1 ; every TBL reverse-list == matrix DB column ; orphans (TBL-011 future-reserved is the only expected one)
+python3 $SK/format_check.py .         # SCR format conventions (FORMAT VIOLATIONS TOTAL = 0): §4 種類≠div(label) / no out-of-format [!NOTE]・補足 / no stray §4 bullets / EVT page-local EVT-01..N / mermaid fences well-formed / EVT refs screen-qualified (SCR-NNN EVT-MM) / no detail-design granularity (endpoint paths・physical columns・JSON keys) in SCR bodies
 # general coverage per series (defined-but-untraced), via the global skill:
 python3 $DDR/id_coverage.py --prefix UC  --defs '01_requirements/04_business_usecases/UC-*.md'        --refs 02_basic_design/00_traceability/index.md
 # repeat --prefix for SCR/SYS/API/TBL (defs = each layer's *.md, refs = the matrix)
@@ -71,7 +72,7 @@ done
 ```
 (`nlm chat configure --response-length longer` may return NOT_FOUND — skip it; ask for exhaustiveness in the prompt instead.)
 
-## 4. Run the 6 dimensions (scoped per dimension)
+## 4. Run the 7 dimensions (scoped per dimension)
 
 Prompts live in `.claude/skills/design-doc-review/prompts/` (local copy). Recommended scoping (learned):
 
@@ -81,8 +82,11 @@ Prompts live in `.claude/skills/design-doc-review/prompts/` (local copy). Recomm
 | 整合性 | `consistency.md` | (all) |
 | 逆参照・委譲 | `reverse_reference.md` | rules,requirements,usecases |
 | 構成・記載粒度 | `granularity.md` | rules,system,sequences,apis,database |
+| 画面フォーマット適合 | `format_conformance.md` | rules,screens |
 | 抜け漏れ | `gaps.md` | (all) — but trust §1 scripts over this |
 | 総合/再レビュー | `overall.md` | (all) |
+
+**画面フォーマット適合** judges the SCR conventions that need prose judgment (the countable ones are in §1's `format_check.py`): §1 概要 = 箇条書き; §7 = 業務的結果のみ(画面内部で管理する変数・状態や引継ぎ・処理手順を書かない一方で、**呼び出す API は記載する**); フォーマット外記述なし; リード文を勝手に増補しない; データパターンは表(画面項目/表示名/補足); 詳細設計粒度の本文転記なし。`format_check.py` で機械的に拾える違反は再掲しない。
 
 ```bash
 PROMPTS=.claude/skills/design-doc-review/prompts

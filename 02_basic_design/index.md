@@ -79,7 +79,11 @@ flowchart LR
   API -->|計測| MET[(T_USAGE_METER)]
   MET -->|月次集計| ST[Stripe]
   ST -->|Webhook| API
-``` 主要データフロー(詳細は各ユースケースのシーケンス図) <div class="card-grid cols-3" style="margin-top:8px">
+```
+
+主要データフロー(詳細は各ユースケースのシーケンス図)
+
+<div class="card-grid cols-3" style="margin-top:8px">
 <div class="card"><h4>フロントエンド</h4><p>SPA(管理コンソール)+ 公開ウィジェット(エンドユーザー側 JS)</p></div>
 <div class="card"><h4>API / インフラ</h4><p>Cloudflare Workers + REST(<code>/v1</code>)+ Cron + Queues</p></div>
 <div class="card"><h4>データストア</h4><p>D1(SQLite・31 テーブル)+ KV + R2</p></div>

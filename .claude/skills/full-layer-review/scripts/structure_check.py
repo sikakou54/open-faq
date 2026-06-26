@@ -64,6 +64,10 @@ for m in mds:
 # Numbering. Range/gaps use the cross-file SET of numbers per series (an ID anchored
 # in both its canonical file and an index/matrix nav anchor is normal here, not a dup).
 # Same-file duplicates ARE a real defect (ambiguous anchor) -> detect those per file.
+# PAGE_LOCAL series are numbered per-page (restart at 01 in every file), so a global
+# range/gap check is meaningless for them -> excluded from range/gaps (page-local
+# integrity is enforced by format_check.py). SEV stays GLOBAL (system events).
+PAGE_LOCAL = {"EVT", "EM", "EV", "IT", "PR", "SE"}
 nums = defaultdict(set)
 samefile_dups = []  # (series, num, file)
 for m in mds:
@@ -72,7 +76,8 @@ for m in mds:
         sm = series_re.match(mt.group(1))
         if sm:
             s, n = sm.group(1), int(sm.group(2))
-            nums[s].add(n)
+            if s not in PAGE_LOCAL:
+                nums[s].add(n)
             if mt.group(1) in seen:
                 samefile_dups.append((s, n, m))
             seen.add(mt.group(1))

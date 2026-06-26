@@ -23,7 +23,7 @@
 | <span id="MSG-007"></span>[MSG-007](MSG-007.md#MSG-007) | `TPL-BILLING_INVOICE_ISSUED` | NOTIF-BILLING_INVOICE_ISSUED | high | オーナー | ◯ | 30d(PDF 再 DL) |
 | <span id="MSG-008"></span>[MSG-008](MSG-008.md#MSG-008) | `TPL-BILLING_PAYMENT_FAILED` | NOTIF-BILLING_PAYMENT_FAILED | high | オーナー | ◯ | (再決済リンク) |
 | <span id="MSG-009"></span>[MSG-009](MSG-009.md#MSG-009) | `TPL-BILLING_SUSPENSION` | NOTIF-BILLING_SUSPENSION | critical | オーナー + 全メンバー | ◯ | (リンクなし) |
-| <span id="MSG-010"></span>[MSG-010](MSG-010.md#MSG-010) | `TPL-PAYMENT_METHOD_REQUIRED` | NOTIF-PAYMENT_METHOD_REQUIRED | critical | オーナー | ◯ | (課金設定リンク) |
+| <span id="MSG-010"></span>[MSG-010](MSG-010.md#MSG-010) | `TPL-PAYMENT_METHOD_REQUIRED` | NOTIF-PAYMENT_METHOD_REQUIRED | critical | オーナー + 当該PJ有効メンバー | ◯ | (課金設定リンク) |
 | <span id="MSG-011"></span>[MSG-011](MSG-011.md#MSG-011) | `TPL-TERMS_REVISION` | NOTIF-TERMS_REVISION | critical | オーナー + 全メンバー | ◯ | 発効日 + 14d |
 | <span id="MSG-012"></span>[MSG-012](MSG-012.md#MSG-012) | `TPL-SERVICE_ANNOUNCEMENT` | NOTIF-SERVICE_ANNOUNCEMENT | normal/high/critical | 範囲指定可 | 配信時に選択 | 入力 URL |
 | <span id="MSG-013"></span>[MSG-013](MSG-013.md#MSG-013) | `TPL-SYSTEM_NOTICE` | NOTIF-SYSTEM_NOTICE | normal/high | 対象者 | 契機による | (画面内リンク) |
@@ -121,8 +121,8 @@
 | TPL-PROJECT_CONTACT_VERIFY | プロジェクト連絡先メールアドレス |
 | TPL-LOCKOUT_NOTIFY | ロック対象者 + 対象プロジェクトのオーナー(`M_PROJECTS.owner_user_id` 由来) + 当該プロジェクトの有効メンバー(`M_PRJ_USERS.valid=1`)。ユーザーIDと正規化メールで重複排除(オーナー + 全メンバーを網羅) |
 | TPL-WITHDRAWAL_COMPLETED | 退会したアカウント本人 |
-| TPL-PAYMENT_METHOD_REQUIRED / BILLING_INVOICE_ISSUED / BILLING_PAYMENT_FAILED | 対象プロジェクトのオーナー(`M_PROJECTS.owner_user_id` 由来。請求名義は当該オーナーの課金アカウント)のみ |
-| TPL-BILLING_SUSPENSION / TERMS_REVISION | 対象プロジェクトのオーナー(`M_PROJECTS.owner_user_id` 由来) + 当該プロジェクトの有効メンバー(`M_PRJ_USERS.valid=1`)。ユーザーIDと正規化メールで重複排除 |
+| TPL-BILLING_INVOICE_ISSUED / BILLING_PAYMENT_FAILED | 対象プロジェクトのオーナー(`M_PROJECTS.owner_user_id` 由来。請求名義は当該オーナーの課金アカウント)のみ |
+| TPL-PAYMENT_METHOD_REQUIRED / BILLING_SUSPENSION / TERMS_REVISION | 対象プロジェクトのオーナー(`M_PROJECTS.owner_user_id` 由来) + 当該プロジェクトの有効メンバー(`M_PRJ_USERS.valid=1`)。ユーザーIDと正規化メールで重複排除 |
 | TPL-SERVICE_ANNOUNCEMENT | 配信時に指定する範囲(全ユーザー / 単一アカウント / 特定プロジェクト) |
 | TPL-SYSTEM_NOTICE | `question_limit_threshold_reached` はオーナー + 当該プロジェクトの有効メンバー(`M_PRJ_USERS.valid=1`)。その他はサブ契機ごとに定義 |
 

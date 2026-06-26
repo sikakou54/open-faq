@@ -25,7 +25,7 @@
 > **退会済み(withdrawn)は本人の請求閲覧のみ可** 退会済みのアカウントは運用データを削除済みで、アカウント・請求データのみ退会日から 7 年保持します。保持期間中は本人のみログインでき、請求情報の閲覧([API-043](../02_backend/03_apis/API-043.md#API-043) / [API-044](../02_backend/03_apis/API-044.md#API-044))のみ可能です。それ以外の操作・新規書込は 403 で拒否します。7 年の保持期間経過後は `M_BILLING_ACCOUNT.status` が `deleted` へ遷移し、物理削除済みでログインできません。
 
 > [!NOTE]
-> **支払方法ゲートはサスペンションではない** 支払方法未登録 + 無料枠超過によるウィジェット受付停止はサスペンションではありません(`M_BILLING_ACCOUNT.status` は `active` のまま)。本制限の対象外で管理画面は通常どおり利用できます。拒否時は `E-BILL-CONTRACT-SUSPENDED`(停止中・[ERR-004](../05_errors/ERR-004.md#ERR-004)) / `E-BILL-CONTRACT-WITHDRAWN`(退会済み・[ERR-034](../05_errors/ERR-034.md#ERR-034))。課金アカウント状態遷移は [課金・請求設計書](../05_billing-design.md) が正本。
+> **支払方法ゲートはサスペンションではない** 支払方法未登録 + 無料枠超過によるウィジェット受付停止はサスペンションではありません(`M_BILLING_ACCOUNT.status` は `active` のまま)。本制限の対象外で管理画面は通常どおり利用できます。拒否時は `E-BILL-ACCOUNT-SUSPENDED`(停止中・[ERR-004](../05_errors/ERR-004.md#ERR-004)) / `E-BILL-ACCOUNT-WITHDRAWN`(退会済み・[ERR-034](../05_errors/ERR-034.md#ERR-034))。課金アカウント状態遷移は [課金・請求設計書](../05_billing-design.md) が正本。
 
 ## <span id="trace"></span>2. 対応 SCR / EVT / API
 
