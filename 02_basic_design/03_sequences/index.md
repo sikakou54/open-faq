@@ -117,7 +117,7 @@
 | <span id="SEQ-101"></span>[SEQ-101](SEQ-101.md#SEQ-101) | 決済失敗→猶予→サスペンション | [UC-059](../../01_requirements/04_business_usecases/UC-059.md#UC-059) | — |
 | <span id="SEQ-102"></span>[SEQ-102](SEQ-102.md#SEQ-102) | セッション失効・再認証 | [UC-071](../../01_requirements/04_business_usecases/UC-071.md#UC-071) | — |
 | <span id="SEQ-103"></span>[SEQ-103](SEQ-103.md#SEQ-103) | ログイン失敗ロックアウト・解除 | [UC-072](../../01_requirements/04_business_usecases/UC-072.md#UC-072) | — |
-| <span id="SEQ-104"></span>[SEQ-104](SEQ-104.md#SEQ-104) | 契約停止時セッション一斉無効化 | [UC-073](../../01_requirements/04_business_usecases/UC-073.md#UC-073) | — |
+| <span id="SEQ-104"></span>[SEQ-104](SEQ-104.md#SEQ-104) | アカウント停止時セッション一斉無効化 | [UC-073](../../01_requirements/04_business_usecases/UC-073.md#UC-073) | — |
 | <span id="SEQ-105"></span>[SEQ-105](SEQ-105.md#SEQ-105) | AI しきい値変更の伝播・フォールバック | [UC-051](../../01_requirements/04_business_usecases/UC-051.md#UC-051) | — |
 | <span id="SEQ-106"></span>[SEQ-106](SEQ-106.md#SEQ-106) | 受信箱の重複集約 | [UC-067](../../01_requirements/04_business_usecases/UC-067.md#UC-067) | — |
 | <span id="SEQ-107"></span>[SEQ-107](SEQ-107.md#SEQ-107) | 監査ログ整合性検証(日次) | [UC-074](../../01_requirements/04_business_usecases/UC-074.md#UC-074) | — |
@@ -130,7 +130,7 @@
 | <span id="SEQ-114"></span>[SEQ-114](SEQ-114.md#SEQ-114) | 許可ドメイン照合によるウィジェット起動可否判定 | [UC-061](../../01_requirements/04_business_usecases/UC-061.md#UC-061) | — |
 | <span id="SEQ-115"></span>[SEQ-115](SEQ-115.md#SEQ-115) | アカウント認証関連通知のオプトアウト不可送信 | [UC-068](../../01_requirements/04_business_usecases/UC-068.md#UC-068) | — |
 | <span id="SEQ-116"></span>[SEQ-116](SEQ-116.md#SEQ-116) | 送信品質監視による通知送信抑制 | [UC-069](../../01_requirements/04_business_usecases/UC-069.md#UC-069) | — |
-| <span id="SEQ-117"></span>[SEQ-117](SEQ-117.md#SEQ-117) | 契約単位レート制限の適用 | [UC-075](../../01_requirements/04_business_usecases/UC-075.md#UC-075) | — |
+| <span id="SEQ-117"></span>[SEQ-117](SEQ-117.md#SEQ-117) | オーナー単位レート制限の適用 | [UC-075](../../01_requirements/04_business_usecases/UC-075.md#UC-075) | — |
 | <span id="SEQ-118"></span>[SEQ-118](SEQ-118.md#SEQ-118) | 外部露出箇所の入力サニタイズ | [UC-076](../../01_requirements/04_business_usecases/UC-076.md#UC-076) | — |
 | <span id="SEQ-119"></span>[SEQ-119](SEQ-119.md#SEQ-119) | プロジェクト削除に伴うメンバー割当解除 | [UC-077](../../01_requirements/04_business_usecases/UC-077.md#UC-077) | — |
 | <span id="SEQ-120"></span>[SEQ-120](SEQ-120.md#SEQ-120) | お知らせ閲覧範囲のアカウント利用者限定 | [UC-084](../../01_requirements/04_business_usecases/UC-084.md#UC-084) | — |

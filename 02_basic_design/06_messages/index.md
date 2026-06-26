@@ -16,10 +16,10 @@
 |----|----|----|----|----|----|----|
 | <span id="MSG-001"></span>[MSG-001](MSG-001.md#MSG-001) | `TPL-EMAIL_VERIFY` | NOTIF-EMAIL_VERIFY | critical | 本人 | ◯ | 24h |
 | <span id="MSG-002"></span>[MSG-002](MSG-002.md#MSG-002) | `TPL-PASSWORD_RESET` | NOTIF-PASSWORD_RESET | critical | 本人 | ◯ | 1h |
-| <span id="MSG-003"></span>[MSG-003](MSG-003.md#MSG-003) | `TPL-ADMIN_USER_REGISTER` | NOTIF-ADMIN_USER_REGISTER | critical | 招待対象 | ◯ | 7d |
+| <span id="MSG-003"></span>[MSG-003](MSG-003.md#MSG-003) | `TPL-MEMBER_INVITATION` | NOTIF-MEMBER_INVITATION | critical | 招待対象(登録済みユーザー) | ◯ | 7d |
 | <span id="MSG-004"></span>[MSG-004](MSG-004.md#MSG-004) | `TPL-PROJECT_CONTACT_VERIFY` | (オーナー操作派生) | critical | プロジェクト連絡先 | ◯ | 24h |
 | <span id="MSG-005"></span>[MSG-005](MSG-005.md#MSG-005) | `TPL-LOCKOUT_NOTIFY` | NOTIF-LOCKOUT_NOTIFY | critical | ロック本人 + オーナー + 全メンバー | ◯ | (リンクなし) |
-| <span id="MSG-006"></span>[MSG-006](MSG-006.md#MSG-006) | `TPL-WITHDRAWAL_COMPLETED` | NOTIF-WITHDRAWAL_COMPLETED | high | オーナー | ◯ | (リンクなし) |
+| <span id="MSG-006"></span>[MSG-006](MSG-006.md#MSG-006) | `TPL-WITHDRAWAL_COMPLETED` | NOTIF-WITHDRAWAL_COMPLETED | high | 退会したアカウント本人 | ◯ | (リンクなし) |
 | <span id="MSG-007"></span>[MSG-007](MSG-007.md#MSG-007) | `TPL-BILLING_INVOICE_ISSUED` | NOTIF-BILLING_INVOICE_ISSUED | high | オーナー | ◯ | 30d(PDF 再 DL) |
 | <span id="MSG-008"></span>[MSG-008](MSG-008.md#MSG-008) | `TPL-BILLING_PAYMENT_FAILED` | NOTIF-BILLING_PAYMENT_FAILED | high | オーナー | ◯ | (再決済リンク) |
 | <span id="MSG-009"></span>[MSG-009](MSG-009.md#MSG-009) | `TPL-BILLING_SUSPENSION` | NOTIF-BILLING_SUSPENSION | critical | オーナー + 全メンバー | ◯ | (リンクなし) |
@@ -92,7 +92,7 @@
 
 送信失敗・バウンス・苦情時の再送方式の正本所在と、本書で定めるテンプレート単位の例外を示します。配信信頼性の方式そのものは 要件のセキュリティ NFR を正本とし、本書は `critical` 認証メールの再送続行など差分のみを定めます。
 
-再送回数上限(24 時間内に最大 3 回)・バウンス / 苦情検知・全契約横断の送信停止リストといった**配信信頼性の方式は 要件のセキュリティ NFR を正本**とする(FR-114 / FR-115 / FR-120 / FR-124)。本書はテンプレート単位の挙動差のみを以下に定める。
+再送回数上限(24 時間内に最大 3 回)・バウンス / 苦情検知・全ユーザー横断の送信停止リストといった**配信信頼性の方式は 要件のセキュリティ NFR を正本**とする(FR-114 / FR-115 / FR-120 / FR-124)。本書はテンプレート単位の挙動差のみを以下に定める。
 
 - 恒久失敗(hard bounce)で送信停止リストに載った宛先でも、`critical` 重要度の `TPL-LOCKOUT_NOTIFY` のみ再送試行を続行する(認証関連の到達性最優先)。
 
@@ -117,19 +117,20 @@
 | 通知 ID | 配信先解決 |
 |----|----|
 | TPL-EMAIL_VERIFY / PASSWORD_RESET | 操作者本人のメールアドレス(セッションから) |
-| TPL-ADMIN_USER_REGISTER | 招待時に入力されたメールアドレス(`T_ACCESS_TOKENS.target_email`) |
+| TPL-MEMBER_INVITATION | 招待対象(登録済みユーザー)のメールアドレス(`T_ACCESS_TOKENS.target_email`) |
 | TPL-PROJECT_CONTACT_VERIFY | プロジェクト連絡先メールアドレス |
-| TPL-LOCKOUT_NOTIFY | ロック対象者 + オーナー(`M_CONTRACT` 由来) + 当該スコープの有効メンバー(`M_PRJ_USERS.valid=1`)。正規化メールで重複排除(オーナー + 全メンバーを網羅) |
-| TPL-WITHDRAWAL_COMPLETED / PAYMENT_METHOD_REQUIRED / BILLING_INVOICE_ISSUED / BILLING_PAYMENT_FAILED | 契約のオーナー(`M_CONTRACT` 由来)のみ |
-| TPL-BILLING_SUSPENSION / TERMS_REVISION | オーナー(`M_CONTRACT` 由来) + 当該スコープの有効メンバー(`M_PRJ_USERS.valid=1`)。正規化メールで重複排除 |
-| TPL-SERVICE_ANNOUNCEMENT | 配信時に指定する範囲(全契約 / 単一契約 / 特定プロジェクト) |
+| TPL-LOCKOUT_NOTIFY | ロック対象者 + 対象プロジェクトのオーナー(`M_PROJECTS.owner_user_id` 由来) + 当該プロジェクトの有効メンバー(`M_PRJ_USERS.valid=1`)。ユーザーIDと正規化メールで重複排除(オーナー + 全メンバーを網羅) |
+| TPL-WITHDRAWAL_COMPLETED | 退会したアカウント本人 |
+| TPL-PAYMENT_METHOD_REQUIRED / BILLING_INVOICE_ISSUED / BILLING_PAYMENT_FAILED | 対象プロジェクトのオーナー(`M_PROJECTS.owner_user_id` 由来。請求名義は当該オーナーの課金アカウント)のみ |
+| TPL-BILLING_SUSPENSION / TERMS_REVISION | 対象プロジェクトのオーナー(`M_PROJECTS.owner_user_id` 由来) + 当該プロジェクトの有効メンバー(`M_PRJ_USERS.valid=1`)。ユーザーIDと正規化メールで重複排除 |
+| TPL-SERVICE_ANNOUNCEMENT | 配信時に指定する範囲(全ユーザー / 単一アカウント / 特定プロジェクト) |
 | TPL-SYSTEM_NOTICE | `question_limit_threshold_reached` はオーナー + 当該プロジェクトの有効メンバー(`M_PRJ_USERS.valid=1`)。その他はサブ契機ごとに定義 |
 
 ### <span id="32-重要度別の強制送信ルール共有概念正本"></span>3.2 重要度別の強制送信ルール(共有概念正本)
 
-通知重要度 4 値ごとにオプトアウト可否と強制送信の扱いを定めます。次の各項目は `critical` / `high` の強制送信と `normal` / `low` のオプトアウト方式を示し、重要度の正本ルールは [`M_CONTRACT`](../02_backend/04_database/TBL-002.md#TBL-002) に従います。
+通知重要度 4 値ごとにオプトアウト可否と強制送信の扱いを定めます。次の各項目は `critical` / `high` の強制送信と `normal` / `low` のオプトアウト方式を示し、重要度の正本ルールは [`M_BILLING_ACCOUNT`](../02_backend/04_database/TBL-002.md#TBL-002) に従います。
 
-- `critical`: 受信オプトアウト不可、必ずメール送信。`TPL-EMAIL_VERIFY` / `PASSWORD_RESET` / `ADMIN_USER_REGISTER` / `PROJECT_CONTACT_VERIFY` / `LOCKOUT_NOTIFY` / `BILLING_SUSPENSION` / `PAYMENT_METHOD_REQUIRED` / `TERMS_REVISION` / `SERVICE_ANNOUNCEMENT`(`critical` 選択時)
+- `critical`: 受信オプトアウト不可、必ずメール送信。`TPL-EMAIL_VERIFY` / `PASSWORD_RESET` / `MEMBER_INVITATION` / `PROJECT_CONTACT_VERIFY` / `LOCKOUT_NOTIFY` / `BILLING_SUSPENSION` / `PAYMENT_METHOD_REQUIRED` / `TERMS_REVISION` / `SERVICE_ANNOUNCEMENT`(`critical` 選択時)
 - `high`: 強制送信(オプトアウト不可)
 - `normal`: 受信オプトアウト可能(プロジェクト関連通知トグルで一括制御)
 - `low`: 個別オプトアウト + `List-Unsubscribe` ヘッダで RFC 8058 対応
@@ -179,7 +180,7 @@
 
 - 軽微な文言修正(誤字 / 表現変更): 本書 §4 のみ更新 + 変更履歴に記載
 - 件名変更 / 主要 CTA 変更: 本書 §4 + ステージング再送テスト
-- 配信先・重要度変更: 本書 §3.1 / §3.2 + [`M_CONTRACT`](../02_backend/04_database/TBL-002.md#TBL-002) の整合確認
+- 配信先・重要度変更: 本書 §3.1 / §3.2 + [`M_BILLING_ACCOUNT`](../02_backend/04_database/TBL-002.md#TBL-002) の整合確認
 
 ## <span id="screen-msg"></span>5. 画面メッセージ(参照)
 

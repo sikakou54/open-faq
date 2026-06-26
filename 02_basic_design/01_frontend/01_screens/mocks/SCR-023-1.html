@@ -22,34 +22,25 @@ table{border-collapse:collapse}
 </style>
 <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
 </head><body><div id="wrap"><div class="layout-embed">
-<div class="le-cap">メンバーアカウント有効化</div>
+<div class="le-cap">招待受諾(プロジェクト参加)</div>
 <div class="scr-mock"><div class="screen" id="scr-018" role="region" aria-labelledby="scr-018-title">
-<div class="screen-header"><div><span class="scr-name" id="scr-018-title">メンバーアカウント有効化(招待リンク先 / 共通領域)</span></div><div class="scr-user">利用者: 招待トークン保有者(未認証 / `T_ACCESS_TOKENS.purpose='activation'` 有効時のみ到達可能)</div></div>
-<div class="public-form-layout"> <div class="simple-header"><i data-lucide="mail-check"></i>アカウントを有効化 — open-faq</div> <div style="width: 480px;">
-  <!-- (a) 有効状態(トークン検証 OK) -->
+<div class="screen-header"><div><span class="scr-name" id="scr-018-title">招待受諾(プロジェクト参加)</span></div><div class="scr-user">利用者: 招待されたユーザー(本人 / ログイン中)</div></div>
+<div class="public-form-layout"> <div class="simple-header"><i data-lucide="user-plus"></i>プロジェクトへの招待 — open-faq</div> <div style="width: 480px;">
+  <!-- (a) トークン検証成功・本人一致(招待内容の確認) -->
   <div class="auth-card xwide" style="width: auto;">
-    <h3>アカウントを有効化する</h3>
-    <p class="page-description" style="margin: 0 0 12px; font-size: var(--fs-sm); color: var(--text-secondary);">お名前と初回パスワードを設定し、利用規約に同意してアカウントを有効化してください</p>
-    <ol class="timeline" role="list" aria-label="ステップ"><li class="step done" aria-current="false"><span class="marker">●</span><div><div class="step-label">① メールリンクをクリック</div></div></li><li class="step current" aria-current="step"><span class="marker">●</span><div><div class="step-label">② 氏名・パスワード・規約同意を入力</div></div></li><li class="step future"><span class="marker">○</span><div><div class="step-label">③ ログイン</div></div></li></ol>
-    <div class="panel" style="background: var(--info-bg); border-color: var(--info-border);"><div class="panel-title" style="color: var(--info);">招待内容</div><div class="small" style="margin-top: 4px;">プロジェクト: <strong>サポートサイト</strong></div><div class="small">招待元: 山田 一郎</div></div>
-    <div class="field" style="margin-top: 10px;"><label>メールアドレス(変更不可)</label><div>tanaka@example.com</div></div>
-    <div class="field"><label>氏名(表示名)<span class="req">●</span></label><div class="input"><span class="placeholder">例: 山田 太郎</span></div><div class="helper">1〜100 文字 / 招待された方ご本人がお名前を入力してください。お名前は個人設定でいつでも変更できます</div></div>
-    <div class="field"><label>初回パスワード<span class="req">●</span></label><div class="input"><span class="placeholder">12 文字以上、英大文字・小文字・数字・記号のうち 3 種類以上</span></div></div>
-    <div class="field"><label>パスワード(確認)<span class="req">●</span></label><div class="input"><span class="placeholder">もう一度入力</span></div></div>
-    <div class="field"><label class="checkbox"><input type="checkbox">利用規約に同意します <span class="req">●</span> <a class="link">全文を見る →</a></label></div>
-    <div class="field"><label class="checkbox"><input type="checkbox">プライバシーポリシーに同意します <span class="req">●</span> <a class="link">全文を見る →</a></label></div>
-    <button class="btn primary" style="width: 100%; margin-top: 8px;">登録を完了する</button>
+    <h3>プロジェクトへの招待を受諾する</h3>
+    <p class="page-description" style="margin: 0 0 12px; font-size: var(--fs-sm); color: var(--text-secondary);">参加先のプロジェクトをご確認のうえ、参加を受諾してください</p>
+    <ol class="timeline" role="list" aria-label="ステップ"><li class="step done" aria-current="false"><span class="marker">●</span><div><div class="step-label">① 招待メールのリンクをクリック</div></div></li><li class="step current" aria-current="step"><span class="marker">●</span><div><div class="step-label">② 参加先を確認して受諾</div></div></li><li class="step future"><span class="marker">○</span><div><div class="step-label">③ ダッシュボードで利用開始</div></div></li></ol>
+    <div class="panel" style="background: var(--info-bg); border-color: var(--info-border);"><div class="panel-title" style="color: var(--info);">招待内容</div><div class="small" style="margin-top: 4px;">プロジェクト: <strong>サポートサイト</strong></div><div class="small">招待元(オーナー): 山田 一郎</div></div>
+    <div class="field" style="margin-top: 10px;"><label>ログイン中のメールアドレス(変更不可)</label><div>tanaka@example.com</div></div>
+    <div class="field"><div class="helper">受諾すると、このプロジェクトへのあなたの割当が有効になり、メンバーとして利用できるようになります</div></div>
+    <button class="btn primary" style="width: 100%; margin-top: 8px;">参加を受諾する</button>
   </div>
-  <!-- (a-2) 有効状態(入力バリデーションエラー / API 400・入力可能のまま) -->
+  <!-- (a-2) 本人不一致(別アカウントでログイン中) -->
   <div class="auth-card xwide" style="width: auto; margin-top: 12px;">
-    <h3>アカウントを有効化する(入力エラー)</h3>
-    <p class="page-description" style="margin: 0 0 12px; font-size: var(--fs-sm); color: var(--text-secondary);">未入力・形式不正のフィールドにエラーを表示します(API 400 はフィールド単位エラー表示・入力可能のまま)</p>
-    <div class="field"><label>氏名(表示名)<span class="req">●</span></label><div class="input" style="border-color:var(--danger)"><span class="placeholder"> </span></div><div style="color:var(--danger);font-size:11px;margin-top:4px"><i data-lucide="alert-circle"></i> 氏名を入力してください(1〜100 文字)</div></div>
-    <div class="field"><label>初回パスワード<span class="req">●</span></label><div class="input" style="border-color:var(--danger)"><span class="placeholder">●●●●●●</span></div><div style="color:var(--danger);font-size:11px;margin-top:4px"><i data-lucide="alert-circle"></i> 12 文字以上、英大文字・小文字・数字・記号のうち 3 種類以上にしてください</div></div>
-    <div class="field"><label>パスワード(確認)<span class="req">●</span></label><div class="input" style="border-color:var(--danger)"><span class="placeholder">●●●●●●</span></div><div style="color:var(--danger);font-size:11px;margin-top:4px"><i data-lucide="alert-circle"></i> パスワードが一致しません</div></div>
-    <div class="field"><label class="checkbox"><input type="checkbox">利用規約に同意します <span class="req">●</span></label><div style="color:var(--danger);font-size:11px;margin-top:4px"><i data-lucide="alert-circle"></i> 利用規約への同意が必要です</div></div>
-    <div class="field"><label class="checkbox"><input type="checkbox">プライバシーポリシーに同意します <span class="req">●</span></label><div style="color:var(--danger);font-size:11px;margin-top:4px"><i data-lucide="alert-circle"></i> プライバシーポリシーへの同意が必要です</div></div>
-    <button class="btn primary" style="width: 100%; margin-top: 8px;">登録を完了する</button>
+    <h3>別のアカウントでログイン中です</h3>
+    <div class="alert-bar danger" role="alert">この招待は別のメールアドレス宛です。招待先のアカウントでログインし直してください</div>
+    <a class="link" style="display: inline-block; margin-top: 8px;">ログインし直す →</a>
   </div>
   <!-- (b) トークン期限切れ / 無効 -->
   <div class="auth-card xwide" style="width: auto; margin-top: 12px;">
@@ -60,16 +51,16 @@ table{border-collapse:collapse}
   <!-- (c) 既使用 -->
   <div class="auth-card xwide" style="width: auto; margin-top: 12px;">
     <h3>このリンクは既に使用済みです</h3>
-    <div class="alert-bar warn" role="status">このリンクは既に使用済みです。ログイン画面からお進みください</div>
+    <div class="alert-bar warn" role="status">この招待リンクはすでに使用済みです。ログイン画面からお進みください</div>
     <a class="link" style="display: inline-block; margin-top: 8px;">ログイン画面へ →</a>
   </div>
-  <!-- (d) 完了 -->
+  <!-- (d) 受諾完了 -->
   <div class="auth-card xwide" style="width: auto; margin-top: 12px;">
-    <h3>アカウントを有効化しました</h3>
-    <div class="alert-bar success" role="status"><i data-lucide="check-circle"></i> アカウントを有効化しました。ログインしてサービスをご利用ください</div>
-    <button class="btn primary" style="width: 100%; margin-top: 8px;">ログインする</button>
+    <h3>プロジェクトに参加しました</h3>
+    <div class="alert-bar success" role="status"><i data-lucide="check-circle"></i> プロジェクトへの参加を受諾しました。ダッシュボードからご利用ください</div>
+    <button class="btn primary" style="width: 100%; margin-top: 8px;">ダッシュボードへ進む</button>
   </div>
 </div> <div class="simple-footer">FAQ AI ウィジェット SaaS — open-faq</div> </div>
-<div class="note" style="margin-top: 10px;"><strong>備考(v1.6 新規)</strong><ul style="margin: 4px 0 0; padding-left: 18px;"><li>未認証画面(招待トークン認証のみ、Cookie セッションなし)。URL = <code>/auth/activate?token=...</code></li><li>招待メール (TPL-ADMIN_USER_REGISTER / TPL-PROJECT_ADMIN_INVITE) のリンクから到達。両テンプレート共通の着地ページ</li><li>「登録を完了する」押下時は `POST /auth/invitations/{token}/activate` 経由で同一トランザクションで `UPDATE M_PRJ_USERS SET name=?, password_hash=?, status='active'` + `INSERT INTO T_TERMS_AGREE` + `UPDATE M_PRJ_USERS SET valid=1` + `consumeToken('activation')` を実行(FR-016e)</li><li>サイドメニュー除外(未認証画面のため。01_画面設計/index.html §4.4.5)</li></ul></div>
+<div class="note" style="margin-top: 10px;"><strong>備考</strong><ul style="margin: 4px 0 0; padding-left: 18px;"><li>招待は登録済みユーザー限定。本画面はログイン中の本人が利用する(アカウントは独立サインアップで事前作成済み。氏名・パスワード・規約同意の入力は行わない)</li><li>招待メールのリンク(受諾用トークン / 有効期限 7 日)から到達。未ログインの場合はログインへ誘導し、ログイン後に本画面へ戻す</li><li>「参加を受諾する」押下時は招待受諾 API を発行し、同一トランザクションで「招待先メールとログイン本人の一致確認 / 対象プロジェクトへの自分の割当の有効化 / トークン消費 / 監査ログ記録」を実行する</li><li>招待先メールと異なるアカウントでログイン中の場合は受諾できず、本人としてログインし直すよう案内する</li></ul></div>
 </div></div>
 </div></div><script>lucide.createIcons();</script></body></html>

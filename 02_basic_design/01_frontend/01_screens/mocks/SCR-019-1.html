@@ -35,18 +35,18 @@ table{border-collapse:collapse}
     <span>設定</span><span>/</span><span style="color:#3a3f46">退会</span>
   </nav>
 
-  <h1 style="margin:0 0 16px;font-size:20px;font-weight:700;color:#16191d">契約を退会する</h1>
+  <h1 style="margin:0 0 16px;font-size:20px;font-weight:700;color:#16191d">退会する</h1>
 
   <!-- IT-01: 注意事項 -->
   <div style="display:flex;align-items:flex-start;gap:10px;padding:14px 16px;border:1px solid #f5c2bd;background:#fdecea;border-radius:10px;color:#b42318;font-size:12px;line-height:1.7;margin-bottom:20px">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px"><path d="M10.3 4 2.5 18a1.7 1.7 0 0 0 1.5 2.6h16a1.7 1.7 0 0 0 1.5-2.6L13.7 4a1.7 1.7 0 0 0-3 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
     <div>
-      <div style="font-weight:700;margin-bottom:4px">退会前にご確認ください</div>
+      <div style="font-weight:700;margin-bottom:4px">退会前にご確認ください(アカウント単位・即時・取り消し不可)</div>
       <ul style="margin:0;padding-left:16px">
-        <li>当月末でサービスを停止します</li>
-        <li>当月末日 + 30 日に全データを完全削除します(復元不可)</li>
-        <li>当月分の従量課金は通常請求・次月以降の請求はありません</li>
-        <li>全メンバーのアクセス権が当月末で失効し、招待中メンバーは自動キャンセルされます</li>
+        <li>参加中のプロジェクトからは離脱します(割当が外れます)</li>
+        <li>ご自身が作成したプロジェクトは削除され、ウィジェットを含むサービスが即時停止します</li>
+        <li>退会後はログインのうえ請求情報の閲覧のみが可能です(他の機能は利用できません)</li>
+        <li>アカウント・請求情報は物理削除せず、法定保持のため退会時点から 7 年保持します</li>
       </ul>
     </div>
   </div>
@@ -77,14 +77,14 @@ table{border-collapse:collapse}
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b42318" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 4 2.5 18a1.7 1.7 0 0 0 1.5 2.6h16a1.7 1.7 0 0 0 1.5-2.6L13.7 4a1.7 1.7 0 0 0-3 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
       <span style="font-size:15px;font-weight:700;color:#16191d">退会内容の確認</span>
     </div>
-    <p style="font-size:12px;color:#6b7280;margin:0 0 16px;line-height:1.6">退会を確定する前に、以下の内容を確認してください。確認のため契約名の入力と再認証が必要です。</p>
+    <p style="font-size:12px;color:#6b7280;margin:0 0 16px;line-height:1.6">退会を確定する前に、以下の内容を確認してください。確認のため登録メールアドレスの入力と再認証が必要です。</p>
 
-    <!-- IT-05: 契約名確認入力 -->
+    <!-- IT-05: 登録メールアドレス確認入力 -->
     <div style="margin-bottom:14px">
       <label style="display:block;font-size:12px;font-weight:600;color:#3a3f46;margin-bottom:5px">
-        確認のため契約名 <code style="font-family:ui-monospace,Menlo,monospace;color:#b42318;background:#fdecea;padding:1px 5px;border-radius:4px">Acme Inc.</code> を入力
+        確認のため登録メールアドレス <code style="font-family:ui-monospace,Menlo,monospace;color:#b42318;background:#fdecea;padding:1px 5px;border-radius:4px">taro@example.com</code> を入力
       </label>
-      <input type="text" placeholder="契約名を入力" style="width:100%;height:38px;border:1px solid #e6e8eb;border-radius:8px;background:#fff;padding:0 12px;font-size:13px;font-family:inherit;color:#16191d">
+      <input type="text" placeholder="登録メールアドレスを入力" style="width:100%;height:38px;border:1px solid #e6e8eb;border-radius:8px;background:#fff;padding:0 12px;font-size:13px;font-family:inherit;color:#16191d">
     </div>
 
     <!-- IT-06: パスワード再入力 -->

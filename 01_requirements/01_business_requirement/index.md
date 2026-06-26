@@ -8,7 +8,7 @@
 
 | カテゴリID | カテゴリ | 件数 | 主な機能グループ |
 |----|----|----|----|
-| <span id="BR-ACCOUNT"></span>BR-ACCOUNT | [アカウント・ユーザー・アクセス制御](01_account-br.md) | 37 | アカウント管理 / ユーザー管理(オーナー + メンバー) / プロジェクト管理 / アクセス制御細部 |
+| <span id="BR-ACCOUNT"></span>BR-ACCOUNT | [アカウント・ユーザー・アクセス制御](01_account-br.md) | 42 | アカウント管理 / ユーザー管理(オーナー + メンバー) / プロジェクト管理 / 課金・請求 / アクセス制御細部 |
 | <span id="BR-FAQAI"></span>BR-FAQAI | [FAQ・AI 回答・未解決質問・処理エラー](02_faq-ai-br.md) | 35 | FAQ 管理 / AI 回答 / 未解決質問登録 / 未解決質問から FAQ 登録 / 処理エラー / AI 推論動作 |
 | <span id="BR-USAGE"></span>BR-USAGE | [利用量・課金・ダッシュボード・運用](03_usage-br.md) | 25 | 利用量・課金 / 管理ダッシュボード / UX 細部・データ運用 |
 | <span id="BR-WIDGET"></span>BR-WIDGET | [ウィジェット・検索・入出力](04_widget-br.md) | 15 | ウィジェット / 検索・全文検索 / インポート・エクスポート |

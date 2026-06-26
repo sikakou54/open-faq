@@ -125,14 +125,14 @@ MVP側のトークン設計とは分離し、本機能内で定義する。
 // 優先順位:
 //   1. M_PROJECTS.default_assignee_user_id が設定され、かつ当該ユーザーが
 //      当該プロジェクトに有効割当(M_PRJ_USERS.valid=1)を持つ → そのメンバー
-//   2. 上記以外(未設定 / 無効化済 / 当該PJ未割当) → オーナー(M_CONTRACT 由来)
-// オーナーは契約あたり常に 1 名存在し全プロジェクト全権のため、
+//   2. 上記以外(未設定 / 無効化済 / 当該PJ未割当) → オーナー(M_PROJECTS.owner_user_id)
+// オーナーはプロジェクトあたり常に 1 名(作成者)存在し当該プロジェクトの全権を持つため、
 // 必ず担当者を確定でき、未割当の部屋は生成されない(FR-086a)。
 function resolveInitialAssignee(project, defaultAssigneeValid): string {
   if (project.default_assignee_user_id && defaultAssigneeValid) {
     return project.default_assignee_user_id
   }
-  return project.owner_id // オーナーへフォールバック
+  return project.owner_user_id // オーナーへフォールバック
 }
 ```
 
