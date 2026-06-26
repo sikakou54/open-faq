@@ -35,12 +35,12 @@
 | 1 | セッション検証 | 無操作 30 分 / 絶対 12 時間を満たす有効セッションか | [`E-AUTH-SESSION-EXPIRED`](../05_errors/index.md) |
 | 2 | アカウント有効性 | アカウントが利用可能状態か(無効化済みなら再ログインへ誘導) | — |
 | 3 | 規約再同意ゲート | 改定済みで未同意の文書があれば SCR-020 割込みへ | `E-AUTHZ-TERMS` |
-| 4 | 契約状態ゲート | `suspended` / `withdrawn` / `deleted` 時はアクセス制限を適用 | [ERR-006](../05_errors/ERR-006.md#ERR-006) 等 |
+| 4 | 契約状態ゲート | `suspended` / `withdrawn` / `deleted` 時はアクセス制限を適用 | [ERR-004](../05_errors/ERR-004.md#ERR-004) 等 |
 | 5 | オーナー判定(isOwner bypass) | `M_CONTRACT.user_id` 一致で自契約配下を無条件許可 | — |
 | 6 | オーナー境界判定 | 非オーナーは契約境界キー一致を要求。不一致は 404 偽装 | `E-AUTHZ-OWNER-BOUNDARY` |
-| 7 | プロジェクト境界判定 | 対象プロジェクトへの割当があること。割当なしは 404 偽装 | [ERR-021](../05_errors/ERR-021.md#ERR-021) / [ERR-032](../05_errors/ERR-032.md#ERR-032) |
-| 8 | オーナー専有機能判定 | 専有機能を非オーナーが要求した場合は 403 | [ERR-017](../05_errors/ERR-017.md#ERR-017) |
-| 9 | オーナー保護・自己操作禁止 | 不可制約に該当すれば拒否 | [ERR-023](../05_errors/ERR-023.md#ERR-023) / [ERR-024](../05_errors/ERR-024.md#ERR-024) |
+| 7 | プロジェクト境界判定 | 対象プロジェクトへの割当があること。割当なしは 404 偽装 | [ERR-019](../05_errors/ERR-019.md#ERR-019) / [ERR-030](../05_errors/ERR-030.md#ERR-030) |
+| 8 | オーナー専有機能判定 | 専有機能を非オーナーが要求した場合は 403 | [ERR-015](../05_errors/ERR-015.md#ERR-015) |
+| 9 | オーナー保護・自己操作禁止 | 不可制約に該当すれば拒否 | [ERR-021](../05_errors/ERR-021.md#ERR-021) / [ERR-022](../05_errors/ERR-022.md#ERR-022) |
 | 10 | 再認証判定 | 重要操作で再認証が「当該操作 1 回 + 15 分以内」を満たすか | `E-AUTH-REAUTH-REQUIRED` |
 | 11 | 利用上限判定 | 認可通過後に上限を確認(レート = 契約単位、上限・無料枠 = プロジェクト単位) | [課金・請求設計書](../05_billing-design.md) |
 
@@ -57,7 +57,7 @@
 | [PERM-005](PERM-005.md#PERM-005) | — | [SCR-013](../01_frontend/01_screens/SCR-013.md#SCR-013) | — | [API-018](../02_backend/03_apis/API-018.md#API-018) [API-021](../02_backend/03_apis/API-021.md#API-021) [API-047](../02_backend/03_apis/API-047.md#API-047) |
 | [PERM-006](PERM-006.md#PERM-006) | [TR-009](../00_traceability/index.md#TR-009) | [SCR-019](../01_frontend/01_screens/SCR-019.md#SCR-019) | — | [API-005](../02_backend/03_apis/API-005.md#API-005) [API-012](../02_backend/03_apis/API-012.md#API-012) [API-013](../02_backend/03_apis/API-013.md#API-013) [API-045](../02_backend/03_apis/API-045.md#API-045) [API-056](../02_backend/03_apis/API-056.md#API-056) |
 | [PERM-007](PERM-007.md#PERM-007) | [TR-001](../00_traceability/index.md#TR-001) | [SCR-001](../01_frontend/01_screens/SCR-001.md#SCR-001) | EVT-002 | [API-002](../02_backend/03_apis/API-002.md#API-002) [API-003](../02_backend/03_apis/API-003.md#API-003) |
-| [PERM-008](PERM-008.md#PERM-008) | [TR-002](../00_traceability/index.md#TR-002) | [SCR-018](../01_frontend/01_screens/SCR-018.md#SCR-018) [SCR-023](../01_frontend/01_screens/SCR-023.md#SCR-023) | EVT-138 EVT-168 | [API-006](../02_backend/03_apis/API-006.md#API-006) [API-008](../02_backend/03_apis/API-008.md#API-008) [API-023](../02_backend/03_apis/API-023.md#API-023) |
+| [PERM-008](PERM-008.md#PERM-008) | [TR-002](../00_traceability/index.md#TR-002) | [SCR-018](../01_frontend/01_screens/SCR-018.md#SCR-018) [SCR-023](../01_frontend/01_screens/SCR-023.md#SCR-023) | EVT-138 EVT-167 | [API-006](../02_backend/03_apis/API-006.md#API-006) [API-008](../02_backend/03_apis/API-008.md#API-008) [API-023](../02_backend/03_apis/API-023.md#API-023) |
 | [PERM-009](PERM-009.md#PERM-009) | [TR-059](../00_traceability/index.md#TR-059) | — | — | [API-002](../02_backend/03_apis/API-002.md#API-002) [API-037](../02_backend/03_apis/API-037.md#API-037) |
 | [PERM-010](PERM-010.md#PERM-010) | [TR-013](../00_traceability/index.md#TR-013) | [SCR-020](../01_frontend/01_screens/SCR-020.md#SCR-020) | EVT-122 EVT-154 | [API-052](../02_backend/03_apis/API-052.md#API-052) [API-054](../02_backend/03_apis/API-054.md#API-054) [API-055](../02_backend/03_apis/API-055.md#API-055) |
 | [PERM-011](PERM-011.md#PERM-011) | [TR-056](../00_traceability/index.md#TR-056) | — | — | [API-021](../02_backend/03_apis/API-021.md#API-021) [API-024](../02_backend/03_apis/API-024.md#API-024) |

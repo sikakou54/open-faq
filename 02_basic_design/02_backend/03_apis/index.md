@@ -12,10 +12,10 @@
 
 | 条件 | HTTP | エラーコード |
 |---|---|---|
-| 未認証 / セッション失効 | 401 | `SESSION_EXPIRED` → [ERR-035](../../05_errors/ERR-035.md#ERR-035) |
-| 再認証が必要(重要操作) | 401 | `REAUTH_REQUIRED` → [ERR-015](../../05_errors/ERR-015.md#ERR-015) |
-| 認可なし(オーナー専有) | 403 | `OWNER_ONLY` → [ERR-017](../../05_errors/ERR-017.md#ERR-017) |
-| 認可なし(権限不足) | 403 | `PERMISSION_DENIED` → [ERR-032](../../05_errors/ERR-032.md#ERR-032) |
+| 未認証 / セッション失効 | 401 | `SESSION_EXPIRED` → [ERR-033](../../05_errors/ERR-033.md#ERR-033) |
+| 再認証が必要(重要操作) | 401 | `REAUTH_REQUIRED` → [ERR-013](../../05_errors/ERR-013.md#ERR-013) |
+| 認可なし(オーナー専有) | 403 | `OWNER_ONLY` → [ERR-015](../../05_errors/ERR-015.md#ERR-015) |
+| 認可なし(権限不足) | 403 | `PERMISSION_DENIED` → [ERR-030](../../05_errors/ERR-030.md#ERR-030) |
 
 ### <span id="common-paging"></span>0.2 ページング(カーソル方式・共通)
 
@@ -33,11 +33,11 @@
 | 項目 | 規定 |
 |---|---|
 | ヘッダ | `Idempotency-Key: <ULID>`(POST / PATCH / DELETE で任意)。 |
-| 挙動 | 同一キーの再送は初回結果(同一ステータス・ボディ)を再現する。保持期間は 24 時間。キー一致でボディ不一致の場合は 409 `IDEMPOTENT_REPLAY` → [ERR-034](../../05_errors/ERR-034.md#ERR-034)。 |
+| 挙動 | 同一キーの再送は初回結果(同一ステータス・ボディ)を再現する。保持期間は 24 時間。キー一致でボディ不一致の場合は 409 `IDEMPOTENT_REPLAY` → [ERR-032](../../05_errors/ERR-032.md#ERR-032)。 |
 
 ### <span id="common-rate"></span>0.4 レート制限(共通)
 
-契約単位のレート制限(`SYS-010`)を超過した場合は 429 `RATE_LIMITED` → [ERR-011](../../05_errors/ERR-011.md#ERR-011) を返し、`Retry-After` ヘッダで再試行可能時刻を示す。
+契約単位のレート制限(`SYS-010`)を超過した場合は 429 `RATE_LIMITED` → [ERR-009](../../05_errors/ERR-009.md#ERR-009) を返し、`Retry-After` ヘッダで再試行可能時刻を示す。
 
 ## <span id="g-1"></span>認証・セッション
 
