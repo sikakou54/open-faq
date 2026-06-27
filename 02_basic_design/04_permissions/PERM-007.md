@@ -2,6 +2,9 @@
 
 > **このページはセッションの寿命・複数デバイス同時ログイン・失効優先順位と、連続ログイン失敗によるロックアウトを定義します。**
 
+| ID | 権限名 | 業務ユースケースID | イベント(画面ID+イベントID) | API ID |
+|----|----|----|----|----|
+| PERM-007 | セッションとログイン失敗ロックアウト | [UC-001](../../01_requirements/04_business_usecases/UC-001.md#UC-001) ・ [UC-071](../../01_requirements/04_business_usecases/UC-071.md#UC-071) ・ [UC-072](../../01_requirements/04_business_usecases/UC-072.md#UC-072) ・ [UC-073](../../01_requirements/04_business_usecases/UC-073.md#UC-073) | SCR-001 EVT-02 | [API-002](../02_backend/03_apis/API-002.md#API-002) [API-003](../02_backend/03_apis/API-003.md#API-003) |
 *種別 権限定義 ・ ステータス ドラフト*
 
 ## <span id="criteria"></span>1. 判定基準（ビジネスロジック）
@@ -29,7 +32,6 @@
 
 | 観点 | 結線 |
 |----|----|
-| トレーサビリティID | [TR-001](../00_traceability/index.md#TR-001) ・ [TR-071](../00_traceability/index.md#TR-071) ・ [TR-072](../00_traceability/index.md#TR-072) ・ [TR-073](../00_traceability/index.md#TR-073) |
 | 対応画面SCR | [SCR-001](../01_frontend/01_screens/SCR-001.md#SCR-001) |
 | 対応EVT | SCR-001 EVT-02 |
 | 対応API | [API-002](../02_backend/03_apis/API-002.md#API-002) [API-003](../02_backend/03_apis/API-003.md#API-003) |

@@ -2,6 +2,9 @@
 
 > **このページはアカウント状態（有効 / 招待中 / メール未確認 / ロック中 / 無効化）ごとのログイン可否と利用範囲を定義します。**
 
+| ID | 権限名 | 業務ユースケースID | イベント(画面ID+イベントID) | API ID |
+|----|----|----|----|----|
+| PERM-008 | アカウント状態と利用可否 | [UC-002](../../01_requirements/04_business_usecases/UC-002.md#UC-002) ・ [UC-003](../../01_requirements/04_business_usecases/UC-003.md#UC-003) ・ [UC-006](../../01_requirements/04_business_usecases/UC-006.md#UC-006) ・ [UC-019](../../01_requirements/04_business_usecases/UC-019.md#UC-019) ・ [UC-021](../../01_requirements/04_business_usecases/UC-021.md#UC-021) | SCR-018 EVT-01 SCR-023 EVT-04 | [API-006](../02_backend/03_apis/API-006.md#API-006) [API-008](../02_backend/03_apis/API-008.md#API-008) [API-023](../02_backend/03_apis/API-023.md#API-023) |
 *種別 権限定義 ・ ステータス ドラフト*
 
 ## <span id="criteria"></span>1. 判定基準（ビジネスロジック）
@@ -31,7 +34,6 @@
 
 | 観点 | 結線 |
 |----|----|
-| トレーサビリティID | [TR-002](../00_traceability/index.md#TR-002) ・ [TR-003](../00_traceability/index.md#TR-003) ・ [TR-006](../00_traceability/index.md#TR-006) ・ [TR-019](../00_traceability/index.md#TR-019) ・ [TR-021](../00_traceability/index.md#TR-021) |
 | 対応画面SCR | [SCR-018](../01_frontend/01_screens/SCR-018.md#SCR-018) [SCR-023](../01_frontend/01_screens/SCR-023.md#SCR-023) |
 | 対応EVT | SCR-018 EVT-01 SCR-023 EVT-04 |
 | 対応API | [API-006](../02_backend/03_apis/API-006.md#API-006) [API-008](../02_backend/03_apis/API-008.md#API-008) [API-023](../02_backend/03_apis/API-023.md#API-023) |

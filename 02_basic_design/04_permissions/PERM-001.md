@@ -2,6 +2,9 @@
 
 > **このページは認可の起点となるユーザー種別（オーナー / メンバー / ウィジェット利用者）の判定方法と権限の表し方を定義します。**
 
+| ID | 権限名 | 業務ユースケースID | イベント(画面ID+イベントID) | API ID |
+|----|----|----|----|----|
+| PERM-001 | ユーザー種別とオーナー判定 | [UC-018](../../01_requirements/04_business_usecases/UC-018.md#UC-018) | — | [API-002](../02_backend/03_apis/API-002.md#API-002) |
 *種別 権限定義 ・ ステータス ドラフト*
 
 ## <span id="criteria"></span>1. 判定基準（ビジネスロジック）
@@ -39,7 +42,6 @@
 
 | 観点 | 結線 |
 |----|----|
-| トレーサビリティID | [TR-018](../00_traceability/index.md#TR-018) |
 | 対応画面SCR | [SCR-013](../01_frontend/01_screens/SCR-013.md#SCR-013) |
 | 対応EVT | — |
 | 対応API | [API-002](../02_backend/03_apis/API-002.md#API-002) |

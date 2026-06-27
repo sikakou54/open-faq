@@ -2,6 +2,9 @@
 
 > **このページは規約・プライバシーポリシー改定時に、ログイン後の認可フローへ再同意画面を割り込ませる発火条件と段階適用を定義します。**
 
+| ID | 権限名 | 業務ユースケースID | イベント(画面ID+イベントID) | API ID |
+|----|----|----|----|----|
+| PERM-010 | 規約再同意の認可割込み | [UC-013](../../01_requirements/04_business_usecases/UC-013.md#UC-013) | SCR-015 EVT-03 SCR-020 EVT-06 | [API-052](../02_backend/03_apis/API-052.md#API-052) [API-054](../02_backend/03_apis/API-054.md#API-054) [API-055](../02_backend/03_apis/API-055.md#API-055) |
 *種別 権限定義 ・ ステータス ドラフト*
 
 ## <span id="criteria"></span>1. 判定基準（ビジネスロジック）
@@ -27,7 +30,6 @@
 
 | 観点 | 結線 |
 |----|----|
-| トレーサビリティID | [TR-013](../00_traceability/index.md#TR-013) |
 | 対応画面SCR | [SCR-020](../01_frontend/01_screens/SCR-020.md#SCR-020) |
 | 対応EVT | SCR-015 EVT-03 SCR-020 EVT-06 |
 | 対応API | [API-052](../02_backend/03_apis/API-052.md#API-052) [API-054](../02_backend/03_apis/API-054.md#API-054) [API-055](../02_backend/03_apis/API-055.md#API-055) |

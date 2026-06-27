@@ -2,6 +2,9 @@
 
 > **このページは不可逆・高リスクな操作の直前に求める再認証と、対象 5 操作を定義します。**
 
+| ID | 権限名 | 業務ユースケースID | イベント(画面ID+イベントID) | API ID |
+|----|----|----|----|----|
+| PERM-006 | 重要操作の再認証 | [UC-009](../../01_requirements/04_business_usecases/UC-009.md#UC-009) ・ [UC-010](../../01_requirements/04_business_usecases/UC-010.md#UC-010) ・ [UC-035](../../01_requirements/04_business_usecases/UC-035.md#UC-035) ・ [UC-071](../../01_requirements/04_business_usecases/UC-071.md#UC-071) | — | [API-005](../02_backend/03_apis/API-005.md#API-005) [API-012](../02_backend/03_apis/API-012.md#API-012) [API-013](../02_backend/03_apis/API-013.md#API-013) [API-045](../02_backend/03_apis/API-045.md#API-045) [API-056](../02_backend/03_apis/API-056.md#API-056) |
 *種別 権限定義 ・ ステータス ドラフト*
 
 ## <span id="criteria"></span>1. 判定基準（ビジネスロジック）
@@ -30,7 +33,6 @@
 
 | 観点 | 結線 |
 |----|----|
-| トレーサビリティID | [TR-009](../00_traceability/index.md#TR-009) ・ [TR-010](../00_traceability/index.md#TR-010) ・ [TR-035](../00_traceability/index.md#TR-035) ・ [TR-071](../00_traceability/index.md#TR-071) |
 | 対応画面SCR | [SCR-019](../01_frontend/01_screens/SCR-019.md#SCR-019) |
 | 対応EVT | — |
 | 対応API | [API-005](../02_backend/03_apis/API-005.md#API-005) [API-012](../02_backend/03_apis/API-012.md#API-012) [API-013](../02_backend/03_apis/API-013.md#API-013) [API-045](../02_backend/03_apis/API-045.md#API-045) [API-056](../02_backend/03_apis/API-056.md#API-056) |

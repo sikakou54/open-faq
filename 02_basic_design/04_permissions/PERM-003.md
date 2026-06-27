@@ -2,6 +2,9 @@
 
 > **このページは、対象プロジェクトのオーナー（作成者）だけに付与するオーナー専有機能（当該プロジェクトの課金・請求確認・プロジェクト CRUD）と、その判定段を定義します。支払方法・退会・規約再同意はアカウント（本人）単位の操作で、オーナー専有ではありません。**
 
+| ID | 権限名 | 業務ユースケースID | イベント(画面ID+イベントID) | API ID |
+|----|----|----|----|----|
+| PERM-003 | オーナー専有機能 | [UC-013](../../01_requirements/04_business_usecases/UC-013.md#UC-013) ・ [UC-015](../../01_requirements/04_business_usecases/UC-015.md#UC-015) ・ [UC-016](../../01_requirements/04_business_usecases/UC-016.md#UC-016) ・ [UC-017](../../01_requirements/04_business_usecases/UC-017.md#UC-017) ・ [UC-022](../../01_requirements/04_business_usecases/UC-022.md#UC-022) ・ [UC-023](../../01_requirements/04_business_usecases/UC-023.md#UC-023) ・ [UC-036](../../01_requirements/04_business_usecases/UC-036.md#UC-036) ・ [UC-037](../../01_requirements/04_business_usecases/UC-037.md#UC-037) ・ [UC-038](../../01_requirements/04_business_usecases/UC-038.md#UC-038) | — | [API-014](../02_backend/03_apis/API-014.md#API-014) [API-015](../02_backend/03_apis/API-015.md#API-015) [API-017](../02_backend/03_apis/API-017.md#API-017) [API-018](../02_backend/03_apis/API-018.md#API-018) [API-045](../02_backend/03_apis/API-045.md#API-045) [API-056](../02_backend/03_apis/API-056.md#API-056) |
 *種別 権限定義 ・ ステータス ドラフト*
 
 ## <span id="criteria"></span>1. 判定基準（ビジネスロジック）
@@ -33,7 +36,6 @@
 
 | 観点 | 結線 |
 |----|----|
-| トレーサビリティID | [TR-013](../00_traceability/index.md#TR-013) ・ [TR-015](../00_traceability/index.md#TR-015) ・ [TR-016](../00_traceability/index.md#TR-016) ・ [TR-017](../00_traceability/index.md#TR-017) ・ [TR-022](../00_traceability/index.md#TR-022) ・ [TR-023](../00_traceability/index.md#TR-023) ・ [TR-036](../00_traceability/index.md#TR-036) ・ [TR-037](../00_traceability/index.md#TR-037) ・ [TR-038](../00_traceability/index.md#TR-038) |
 | 対応画面SCR | [SCR-005](../01_frontend/01_screens/SCR-005.md#SCR-005) [SCR-019](../01_frontend/01_screens/SCR-019.md#SCR-019) [SCR-028](../01_frontend/01_screens/SCR-028.md#SCR-028) |
 | 対応EVT | — |
 | 対応API | [API-014](../02_backend/03_apis/API-014.md#API-014) [API-015](../02_backend/03_apis/API-015.md#API-015) [API-017](../02_backend/03_apis/API-017.md#API-017) [API-018](../02_backend/03_apis/API-018.md#API-018) [API-045](../02_backend/03_apis/API-045.md#API-045) [API-056](../02_backend/03_apis/API-056.md#API-056) |
