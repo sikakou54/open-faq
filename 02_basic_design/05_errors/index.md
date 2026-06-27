@@ -58,17 +58,17 @@ API設計 ＞ 本エラー設計 ＞ メッセージ設計。各 API の `## エ
 |----|----|----|----|
 | [API-001](../02_backend/03_apis/API-001.md#API-001) | 新規登録 | SCR-002 EVT-05 SCR-018 EVT-02 | [ERR-001](ERR-001.md#ERR-001) [ERR-014](ERR-014.md#ERR-014) |
 | [API-002](../02_backend/03_apis/API-002.md#API-002) | ログイン | SCR-001 EVT-02 | [ERR-002](ERR-002.md#ERR-002) [ERR-003](ERR-003.md#ERR-003) [ERR-004](ERR-004.md#ERR-004) |
-| [API-005](../02_backend/03_apis/API-005.md#API-005) | 再認証 | SCR-019 EVT-03 SCR-022 EVT-03 SCR-022 EVT-04 | [ERR-005](ERR-005.md#ERR-005) |
+| [API-005](../02_backend/03_apis/API-005.md#API-005) | 再認証 | SCR-034 EVT-02 SCR-019 EVT-03 SCR-028 EVT-02 SCR-028 EVT-06 | [ERR-005](ERR-005.md#ERR-005) |
 | [API-006](../02_backend/03_apis/API-006.md#API-006) | メール確認 | SCR-018 EVT-01 | [ERR-006](ERR-006.md#ERR-006) |
 | [API-007](../02_backend/03_apis/API-007.md#API-007) | 招待トークン検証・プレビュー | SCR-023 EVT-01 | [ERR-006](ERR-006.md#ERR-006) [ERR-007](ERR-007.md#ERR-007) [ERR-008](ERR-008.md#ERR-008) |
 | [API-008](../02_backend/03_apis/API-008.md#API-008) | 招待受諾(割当有効化) | SCR-023 EVT-04 | [ERR-006](ERR-006.md#ERR-006) [ERR-007](ERR-007.md#ERR-007) [ERR-030](ERR-030.md#ERR-030) |
 | [API-009](../02_backend/03_apis/API-009.md#API-009) | プロジェクト連絡先メール確認 | SCR-024 EVT-01 | [ERR-006](ERR-006.md#ERR-006) [ERR-007](ERR-007.md#ERR-007) [ERR-008](ERR-008.md#ERR-008) |
 | [API-010](../02_backend/03_apis/API-010.md#API-010) | パスワード再設定確定 | SCR-003 EVT-06 | [ERR-001](ERR-001.md#ERR-001) [ERR-006](ERR-006.md#ERR-006) [ERR-007](ERR-007.md#ERR-007) [ERR-008](ERR-008.md#ERR-008) |
 | [API-011](../02_backend/03_apis/API-011.md#API-011) | 連絡先確認メール再送 | SCR-005 EVT-06 | [ERR-009](ERR-009.md#ERR-009) [ERR-010](ERR-010.md#ERR-010) [ERR-011](ERR-011.md#ERR-011) [ERR-012](ERR-012.md#ERR-012) |
-| [API-012](../02_backend/03_apis/API-012.md#API-012) | 自己プロフィール更新 | SCR-022 EVT-03 | [ERR-001](ERR-001.md#ERR-001) [ERR-013](ERR-013.md#ERR-013) [ERR-014](ERR-014.md#ERR-014) |
+| [API-012](../02_backend/03_apis/API-012.md#API-012) | 自己プロフィール更新 | SCR-022 EVT-03 | [ERR-001](ERR-001.md#ERR-001) |
 | [API-013](../02_backend/03_apis/API-013.md#API-013) | 自己パスワード変更 | SCR-022 EVT-04 | [ERR-001](ERR-001.md#ERR-001) [ERR-013](ERR-013.md#ERR-013) |
 | [API-014](../02_backend/03_apis/API-014.md#API-014) | アカウント設定取得 | SCR-022 EVT-01 | — |
-| [API-015](../02_backend/03_apis/API-015.md#API-015) | プロフィール・セキュリティ設定更新 | SCR-022 EVT-03 | [ERR-001](ERR-001.md#ERR-001) |
+| [API-015](../02_backend/03_apis/API-015.md#API-015) | セキュリティ設定更新 | SCR-022 EVT-03 | [ERR-001](ERR-001.md#ERR-001) [ERR-013](ERR-013.md#ERR-013) [ERR-014](ERR-014.md#ERR-014) |
 | [API-017](../02_backend/03_apis/API-017.md#API-017) | プロジェクト新規作成 | SCR-005 EVT-04 | [ERR-001](ERR-001.md#ERR-001) [ERR-016](ERR-016.md#ERR-016) |
 | [API-018](../02_backend/03_apis/API-018.md#API-018) | プロジェクト更新・削除 | SCR-005 EVT-02 SCR-005 EVT-05 SCR-005 EVT-08 SCR-011 EVT-10 | [ERR-013](ERR-013.md#ERR-013) [ERR-015](ERR-015.md#ERR-015) [ERR-017](ERR-017.md#ERR-017) |
 | [API-019](../02_backend/03_apis/API-019.md#API-019) | ウィジェット鍵ローテーション | SCR-011 EVT-09 | [ERR-013](ERR-013.md#ERR-013) |

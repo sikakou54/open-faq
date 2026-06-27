@@ -4,7 +4,7 @@
 
 | ID | 権限名 | 業務ユースケースID | イベント(画面ID+イベントID) | API ID |
 |----|----|----|----|----|
-| PERM-006 | 重要操作の再認証 | [UC-009](../../01_requirements/04_business_usecases/UC-009.md#UC-009) ・ [UC-010](../../01_requirements/04_business_usecases/UC-010.md#UC-010) ・ [UC-034](../../01_requirements/04_business_usecases/UC-034.md#UC-034) ・ [UC-067](../../01_requirements/04_business_usecases/UC-067.md#UC-067) | — | [API-005](../02_backend/03_apis/API-005.md#API-005) [API-012](../02_backend/03_apis/API-012.md#API-012) [API-013](../02_backend/03_apis/API-013.md#API-013) [API-045](../02_backend/03_apis/API-045.md#API-045) [API-056](../02_backend/03_apis/API-056.md#API-056) |
+| PERM-006 | 重要操作の再認証 | [UC-009](../../01_requirements/04_business_usecases/UC-009.md#UC-009) ・ [UC-010](../../01_requirements/04_business_usecases/UC-010.md#UC-010) ・ [UC-034](../../01_requirements/04_business_usecases/UC-034.md#UC-034) ・ [UC-067](../../01_requirements/04_business_usecases/UC-067.md#UC-067) | — | [API-005](../02_backend/03_apis/API-005.md#API-005) [API-015](../02_backend/03_apis/API-015.md#API-015) [API-013](../02_backend/03_apis/API-013.md#API-013) [API-045](../02_backend/03_apis/API-045.md#API-045) [API-056](../02_backend/03_apis/API-056.md#API-056) |
 *種別 権限定義 ・ ステータス ドラフト*
 
 ## <span id="criteria"></span>1. 判定基準（ビジネスロジック）
@@ -33,6 +33,6 @@
 
 | 観点 | 結線 |
 |----|----|
-| 対応画面SCR | [SCR-019](../01_frontend/01_screens/SCR-019.md#SCR-019) |
-| 対応EVT | — |
-| 対応API | [API-005](../02_backend/03_apis/API-005.md#API-005) [API-012](../02_backend/03_apis/API-012.md#API-012) [API-013](../02_backend/03_apis/API-013.md#API-013) [API-045](../02_backend/03_apis/API-045.md#API-045) [API-056](../02_backend/03_apis/API-056.md#API-056) |
+| 対応画面SCR | [SCR-019](../01_frontend/01_screens/SCR-019.md#SCR-019) [SCR-034](../01_frontend/01_screens/SCR-034.md#SCR-034) |
+| 対応EVT | SCR-034 EVT-02 |
+| 対応API | [API-005](../02_backend/03_apis/API-005.md#API-005) [API-015](../02_backend/03_apis/API-015.md#API-015) [API-013](../02_backend/03_apis/API-013.md#API-013) [API-045](../02_backend/03_apis/API-045.md#API-045) [API-056](../02_backend/03_apis/API-056.md#API-056) |
