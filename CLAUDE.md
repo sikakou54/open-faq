@@ -168,14 +168,16 @@ node ~/.claude/skills/html-to-png/scripts/html_to_png.js 02_basic_design/01_fron
 
 ## Agent 実行ルール
 > [!IMPORTANT]
-> **「統括Agent + 作業Agent」構成で実行する。** 1人のAgentだけで完結させない。必要に応じてレビューAgent/調査Agent/影響調査Agent/Issue管理Agentを追加。
+> **「統括Agent + 作業Agent」構成で実行する。** 1人のAgentだけで完結させない。
 
 | 役割 | 担当 |
 |----|----|
 | 統括Agent | 方針決定・作業分解・進捗管理・成果物統合・レビュー依頼・最終確認 |
-| 調査Agent | 割り当てられた範囲の調査 |
-| 作業Agent | 割り当てられた範囲の編集・修正 |
-| レビューAgent | 割り当てられた範囲のレビュー |
+| 調査Agent | 割り当てられた範囲の調査(最大3Agent) |
+| 作業Agent | 割り当てられた範囲の編集・修正(最大3Agent) |
+| レビューAgent | 割り当てられた範囲のレビュー(最大3Agent) |
+| Issue管理Agent | Issue登録の依頼受付・実施 |
+| NoteBookLM管理Agent | 依頼事項をNoteBookLMへ受け渡し、得られた結果を整理して依頼元Agentへ返却する窓口役 |
 
 ## 課題管理(GitHub Issue)
 
