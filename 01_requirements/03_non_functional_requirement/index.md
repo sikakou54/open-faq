@@ -53,8 +53,6 @@
 - [NFR-075: 監査](07_nfr.md#NFR-075)
 - [NFR-076: 監査](07_nfr.md#NFR-076)
 - [NFR-077: 監査](07_nfr.md#NFR-077)
-- [NFR-078: 監査](07_nfr.md#NFR-078)
-- [NFR-079: 監査](07_nfr.md#NFR-079)
 - [NFR-045: データ保持](07_nfr.md#NFR-045)
 - [NFR-046: データ保持](07_nfr.md#NFR-046)
 - [NFR-049: データ保持](07_nfr.md#NFR-049)
