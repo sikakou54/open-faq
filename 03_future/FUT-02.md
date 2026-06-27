@@ -81,7 +81,7 @@
 
 | 種別 | 影響内容 |
 |----|----|
-| 要件 | FR-165(検索方式)、FR-170 / FR-189(応答方式)、FR-061(矛盾検知)、FR-066(AI 品質テストセット)、FR-067(PII 検出層) |
+| 要件 | FR-164(検索方式)、FR-169 / FR-188(応答方式)、FR-060(矛盾検知)、FR-065(AI 品質テストセット)、FR-066(PII 検出層) |
 | 画面 | ウィジェット応答表示(ストリーミング)、FAQ 画面(矛盾検知結果表示)、利用者の PII 誤検出報告画面 |
 | API | `GET /widget/v1/questions/{id}/stream`、`GET /api/v1/inbox/stream`、`POST /internal/v1/faqs/{id}/embedding-refresh`、`POST /internal/v1/pii/evaluate`、検索 API の `mode=semantic` パラメータ |
 | テーブル | embedding 保管テーブル、PII 検出結果テーブル拡張 |

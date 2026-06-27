@@ -89,7 +89,7 @@ CREATE TABLE plan_entitlements (
 
 | 種別 | 影響内容 |
 |----|----|
-| 要件 | FR-128(ブランド表示)、FR-182(オーナー譲渡 / 担当者ハブ)、課金関連 FR / NFR、プラン別 entitlements の追加 |
+| 要件 | FR-127(ブランド表示)、FR-181(オーナー譲渡 / 担当者ハブ)、課金関連 FR / NFR、プラン別 entitlements の追加 |
 | 画面 | プラン選択 / アップグレード画面、ブランド設定画面(ロゴ / 配色 / カスタムドメイン)、オーナー(参加先)切替 UI、請求書発行画面、オーナー譲渡画面(2 名承認 / 再認証)、メンバー権限プリセット選択 UI |
 | API | `POST /api/v1/settings/brand-assets`、プラン変更 API、オーナー(参加先)切替 API(担当者ハブ)、請求書払い関連 API(Stripe Invoicing 連携)、オーナー譲渡 API |
 | テーブル | `plan_entitlements`、`brand_assets`、`account_memberships`(担当者ハブ用)、`owner_transfer_audit_logs`、`role_presets` 等(Future で具体化) |
