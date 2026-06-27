@@ -1,0 +1,15 @@
+{
+  "notebook": "047ad8fb-70fd-4569-b5cb-4bddf0bd806a",
+  "bundles": {
+    "requirements": [
+      "CLAUDE.md",
+      "README.md",
+      "templates/**/*.md",
+      "01_requirements/**/*.md"
+    ],
+    "design": [
+      "02_basic_design/**/*.md",
+      "03_future/**/*.md"
+    ]
+  }
+}

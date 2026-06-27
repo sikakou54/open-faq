@@ -9,4 +9,5 @@
 
 # P3 再構成スクリプトの完了マーカ(ローカル状態。コミットしない)
 _build/.p3_scr_renamed
+_build/nlm_sync/
 _nlm/

@@ -173,7 +173,9 @@ node ~/.claude/skills/html-to-png/scripts/html_to_png.js 02_basic_design/01_fron
 | 役割 | 担当 |
 |----|----|
 | 統括Agent | 方針決定・作業分解・進捗管理・成果物統合・レビュー依頼・最終確認 |
-| 作業Agent | 割り当てられた範囲の調査・編集・修正・報告 |
+| 調査Agent | 割り当てられた範囲の調査 |
+| 作業Agent | 割り当てられた範囲の編集・修正 |
+| レビューAgent | 割り当てられた範囲のレビュー |
 
 ## 課題管理(GitHub Issue)
 
