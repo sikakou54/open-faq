@@ -18,6 +18,7 @@ FAQ AI ウィジェット SaaS / メインシステム(利用者向け)の基本
 <a class="doc-card" href="02_backend/04_database/index.md"><span class="dc-k">03 ・ 独立</span><h4>データベース設計書</h4><p>33 テーブルを 7 機能ドメインに分類。ER 図・コード値を併記し、各テーブルはトレーサビリティID(TR)で関連設計を参照。</p></a>
 <a class="doc-card" href="../01_requirements/04_business_usecases/index.md"><span class="dc-k">04 ・ 横断</span><h4>ユースケース設計書</h4><p>画面起点(EV 単位 229)・システム起点(18)の全ユースケース一覧と、横断 10 フローのシーケンス図・要件トレーサビリティ。</p></a>
 <a class="doc-card" href="05_billing-design.md"><span class="dc-k">05 ・ 横断</span><h4>課金・請求設計書</h4><p>課金モデル・質問数上限・支払方法ゲート・課金アカウント状態ライフサイクル・利用量集計・Webhook 受信方針。</p></a>
+<a class="doc-card" href="08_state-model.md"><span class="dc-k">08 ・ 横断</span><h4>状態モデル(正本)</h4><p>アカウント・課金アカウント・メンバー割当・FAQ/未解決質問の状態一覧と遷移図を一元管理。各設計書は状態名を本書に統一。</p></a>
 <a class="doc-card" href="04_permissions/index.md"><span class="dc-k">06 ・ 横断</span><h4>権限設計</h4><p>ロール別操作権限(PERM)。ユーザー種別・認可判定の順序・オーナー専有 / 保護・境界判定・再認証・課金/アカウント状態制限・規約再同意割込み・通知宛先解決。</p></a>
 <a class="doc-card" href="05_errors/index.md"><span class="dc-k">07 ・ 横断</span><h4>エラー設計</h4><p>API エラーコード(ERR)。HTTP ステータス・分類・メッセージ・API ↔ エラー 対応表。</p></a>
 <a class="doc-card" href="06_messages/index.md"><span class="dc-k">08 ・ 横断</span><h4>メッセージ設計</h4><p>メールテンプレート(MSG)の件名・本文・送信契機・配信運用と、メール共通基準・画面メッセージ参照。</p></a>

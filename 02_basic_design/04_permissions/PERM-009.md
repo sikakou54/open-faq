@@ -4,7 +4,7 @@
 
 | ID | 権限名 | 業務ユースケースID | イベント(画面ID+イベントID) | API ID |
 |----|----|----|----|----|
-| PERM-009 | アカウント状態によるアクセス制限 | [UC-059](../../01_requirements/04_business_usecases/UC-059.md#UC-059) | — | [API-002](../02_backend/03_apis/API-002.md#API-002) [API-037](../02_backend/03_apis/API-037.md#API-037) [API-043](../02_backend/03_apis/API-043.md#API-043) [API-044](../02_backend/03_apis/API-044.md#API-044) |
+| PERM-009 | アカウント状態によるアクセス制限 | [UC-055](../../01_requirements/04_business_usecases/UC-055.md#UC-055) | — | [API-002](../02_backend/03_apis/API-002.md#API-002) [API-037](../02_backend/03_apis/API-037.md#API-037) [API-043](../02_backend/03_apis/API-043.md#API-043) [API-044](../02_backend/03_apis/API-044.md#API-044) |
 *種別 権限定義 ・ ステータス ドラフト*
 
 ## <span id="criteria"></span>1. 判定基準（ビジネスロジック）

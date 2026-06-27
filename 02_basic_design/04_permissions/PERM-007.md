@@ -4,7 +4,7 @@
 
 | ID | 権限名 | 業務ユースケースID | イベント(画面ID+イベントID) | API ID |
 |----|----|----|----|----|
-| PERM-007 | セッションとログイン失敗ロックアウト | [UC-001](../../01_requirements/04_business_usecases/UC-001.md#UC-001) ・ [UC-071](../../01_requirements/04_business_usecases/UC-071.md#UC-071) ・ [UC-072](../../01_requirements/04_business_usecases/UC-072.md#UC-072) ・ [UC-073](../../01_requirements/04_business_usecases/UC-073.md#UC-073) | SCR-001 EVT-02 | [API-002](../02_backend/03_apis/API-002.md#API-002) [API-003](../02_backend/03_apis/API-003.md#API-003) |
+| PERM-007 | セッションとログイン失敗ロックアウト | [UC-001](../../01_requirements/04_business_usecases/UC-001.md#UC-001) ・ [UC-067](../../01_requirements/04_business_usecases/UC-067.md#UC-067) ・ [UC-068](../../01_requirements/04_business_usecases/UC-068.md#UC-068) ・ [UC-069](../../01_requirements/04_business_usecases/UC-069.md#UC-069) | SCR-001 EVT-02 | [API-002](../02_backend/03_apis/API-002.md#API-002) [API-003](../02_backend/03_apis/API-003.md#API-003) |
 *種別 権限定義 ・ ステータス ドラフト*
 
 ## <span id="criteria"></span>1. 判定基準（ビジネスロジック）

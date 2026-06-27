@@ -151,7 +151,7 @@
 
 - 全送信は `H_NOTIF_LOGS` に行を記録(03 テーブル設計参照)
 - 列: `id` / `user_id` / `template_id` / `subject` / `recipient_email` / `sent_at` / `delivery_status`(`queued` / `sent` / `bounced` / `failed`)/ `provider_message_id` / `error_text`
-- 保持期間: 90 日(NFR-048 一般ログ準拠)
+- 保持期間: 1 年(NFR-049 お知らせ・通知ログ保持準拠。物理削除は SYS-032 が担当)
 
 ### <span id="35-テスト送信"></span>3.5 テスト送信
 

@@ -15,6 +15,7 @@ templates/                         # 各層テンプレート
 01_requirements/                   # 要件定義
 ├── index.md                       #   概要/目的/スコープ/ロール/制約
 ├── 01_business_requirement/       #   BR: カテゴリ別-br.md(HTML表) + 08_rule.md(RULE)
+├── 00_glossary.md                 #   用語集(GLO: 正本・用語の正式名/別名/意味)
 ├── 02_functional_requirement/     #   FR: カテゴリ別-fr.md(節)
 ├── 03_non_functional_requirement/ #   NFR: 07_nfr.md(通し連番)
 └── 04_business_usecases/          #   UC: UC-001..(概要+フロー+TR)
@@ -29,13 +30,22 @@ templates/                         # 各層テンプレート
 ├── 04_permissions/                #   PERM: PERM-001..
 ├── 05_errors/                     #   ERR: ERR-001..
 ├── 06_messages/                   #   MSG: MSG-001..(メールテンプレ)
-└── 05_billing-design.md           #   課金横断設計
+├── 05_billing-design.md           #   課金横断設計
+├── 07_system-spec.md              #   システム仕様書(設計値の正本: しきい値/単価/無料枠/保持期間/AI階層)
+└── 08_state-model.md              #   状態モデル(正本: 状態一覧+遷移図)
 03_future/                         # 将来対応: FUT-01..(FUT-06は-req/-detail親子)
 _build/                            # ツール(配信対象外)
 ```
 
 - ID 1件=1ファイル(原則)。**要件仕様(BR/FR/NFR/RULE)はカテゴリ別・種別別ファイルへ統合**(ID・アンカー・採番不変)。**BR は HTML テーブル行**(`<span id="ID"></span>` を ID セル先頭)、FR/NFR/RULE は節 `## <span id="ID"></span>ID: 名称` で保持。
 - ページ間リンクはすべて `.md`。相互参照は下記「相互参照アンカー」参照。
+
+> [!IMPORTANT]
+> **横断正本(集約ドキュメント)** 次の3つは各層に散在しがちな情報の**単一の真実(正本)**。各設計書は値・状態・用語をここに集約し、本文では参照する(重複定義・本文外委譲・`等`での打ち切りをしない)。
+> - **[システム仕様書](02_basic_design/07_system-spec.md)** — 設計値の正本(しきい値/課金単価/無料枠/タイムアウト/保持期間/AIしきい値の3階層継承)。値は業務的根拠 RULE/FR/NFR を併記。
+> - **[状態モデル](02_basic_design/08_state-model.md)** — 状態の正本(アカウント/課金アカウント/メンバー割当/FAQ・未解決質問の一覧+遷移図)。状態名はここに統一。
+> - **[用語集](01_requirements/00_glossary.md)** — 用語の正本(正式名/別名/意味)。表記揺れはここで吸収。
+> - **enum(列挙値)** は API は §列挙値、TBL は §コード値 に**取りうる値の全集合と意味**を明記。全体共通の状態 enum は状態モデルを参照。
 
 ### 採番ルール(最重要)
 各系列は**フラット連番・ゼロ詰め 3 桁・欠番なし**。`<span id>` 出現順に `001` から採番。
@@ -58,6 +68,7 @@ _build/                            # ツール(配信対象外)
 | 権限 | `PERM-` | |
 | エラー | `ERR-` | |
 | メッセージ | `MSG-` | メールテンプレ |
+| 用語 | `GLO-` | 用語集 `00_glossary.md` の各用語。1用語=1行 |
 | 将来対応 | `FUT-` | 2桁連番(3桁の唯一の例外)。`FUT-06`は-req/-detail親子 |
 
 > [!WARNING]

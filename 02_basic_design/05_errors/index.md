@@ -43,7 +43,7 @@ API設計 ＞ 本エラー設計 ＞ メッセージ設計。各 API の `## エ
 | <span id="ERR-027"></span>[ERR-027](ERR-027.md#ERR-027) | 認可 | 403 | `DOMAIN_NOT_ALLOWED` | — | 許可ドメイン外 |
 | <span id="ERR-028"></span>[ERR-028](ERR-028.md#ERR-028) | 業務(課金) | 402 | `PAYMENT_METHOD_DECLINED` | `E-BILL-PAYMENT-FAILED` | カードが拒否された |
 | <span id="ERR-029"></span>[ERR-029](ERR-029.md#ERR-029) | 業務 | 422 | `UNSUPPORTED_FIELD` | — | `freeQuota` / `alertEnabled` / `alertFrequency` を指定 |
-| <span id="ERR-030"></span>[ERR-030](ERR-030.md#ERR-030) | 認可 | 403 | `PERMISSION_DENIED` | `E-AUTHZ-FORBIDDEN` | 当該プロジェクトに割当のないユーザー / メンバーは申請不可 |
+| <span id="ERR-030"></span>[ERR-030](ERR-030.md#ERR-030) | 認可 | 403 | `PERMISSION_DENIED` | `E-AUTHZ-FORBIDDEN` | 境界通過後の操作権限不足(メンバーが専有操作を要求、本人以外の招待受諾 等)。割当なし・部外者は本エラーではなく 404 偽装 |
 | <span id="ERR-031"></span>[ERR-031](ERR-031.md#ERR-031) | 認証 | 401 | `SIGNATURE_INVALID` | — | 署名検証失敗 |
 | <span id="ERR-032"></span>[ERR-032](ERR-032.md#ERR-032) | 業務 | 200 | `IDEMPOTENT_REPLAY` | — | 既存処理結果を返却(冪等性違反) |
 | <span id="ERR-033"></span>[ERR-033](ERR-033.md#ERR-033) | 認証 | 401 | `SESSION_EXPIRED` | `E-AUTH-SESSION-EXPIRED` | セッション期限切れ(再ログインへ) |
@@ -61,14 +61,14 @@ API設計 ＞ 本エラー設計 ＞ メッセージ設計。各 API の `## エ
 | [API-005](../02_backend/03_apis/API-005.md#API-005) | 再認証 | SCR-019 EVT-03 SCR-022 EVT-03 SCR-022 EVT-04 | [ERR-005](ERR-005.md#ERR-005) |
 | [API-006](../02_backend/03_apis/API-006.md#API-006) | メール確認 | SCR-018 EVT-01 | [ERR-006](ERR-006.md#ERR-006) |
 | [API-007](../02_backend/03_apis/API-007.md#API-007) | 招待トークン検証・プレビュー | SCR-023 EVT-01 | [ERR-006](ERR-006.md#ERR-006) [ERR-007](ERR-007.md#ERR-007) [ERR-008](ERR-008.md#ERR-008) |
-| [API-008](../02_backend/03_apis/API-008.md#API-008) | メンバーアカウント有効化 | SCR-023 EVT-04 | [ERR-001](ERR-001.md#ERR-001) [ERR-006](ERR-006.md#ERR-006) [ERR-007](ERR-007.md#ERR-007) |
+| [API-008](../02_backend/03_apis/API-008.md#API-008) | 招待受諾(割当有効化) | SCR-023 EVT-04 | [ERR-006](ERR-006.md#ERR-006) [ERR-007](ERR-007.md#ERR-007) [ERR-030](ERR-030.md#ERR-030) |
 | [API-009](../02_backend/03_apis/API-009.md#API-009) | プロジェクト連絡先メール確認 | SCR-024 EVT-01 | [ERR-006](ERR-006.md#ERR-006) [ERR-007](ERR-007.md#ERR-007) [ERR-008](ERR-008.md#ERR-008) |
 | [API-010](../02_backend/03_apis/API-010.md#API-010) | パスワード再設定確定 | SCR-003 EVT-06 | [ERR-001](ERR-001.md#ERR-001) [ERR-006](ERR-006.md#ERR-006) [ERR-007](ERR-007.md#ERR-007) [ERR-008](ERR-008.md#ERR-008) |
 | [API-011](../02_backend/03_apis/API-011.md#API-011) | 連絡先確認メール再送 | SCR-005 EVT-06 | [ERR-009](ERR-009.md#ERR-009) [ERR-010](ERR-010.md#ERR-010) [ERR-011](ERR-011.md#ERR-011) [ERR-012](ERR-012.md#ERR-012) |
 | [API-012](../02_backend/03_apis/API-012.md#API-012) | 自己プロフィール更新 | SCR-022 EVT-03 | [ERR-001](ERR-001.md#ERR-001) [ERR-013](ERR-013.md#ERR-013) [ERR-014](ERR-014.md#ERR-014) |
 | [API-013](../02_backend/03_apis/API-013.md#API-013) | 自己パスワード変更 | SCR-022 EVT-04 | [ERR-001](ERR-001.md#ERR-001) [ERR-013](ERR-013.md#ERR-013) |
-| [API-014](../02_backend/03_apis/API-014.md#API-014) | アカウント設定取得 | SCR-029 EVT-01 | — |
-| [API-015](../02_backend/03_apis/API-015.md#API-015) | プロフィール・セキュリティ設定更新 | SCR-029 EVT-02 | [ERR-001](ERR-001.md#ERR-001) |
+| [API-014](../02_backend/03_apis/API-014.md#API-014) | アカウント設定取得 | SCR-022 EVT-01 | — |
+| [API-015](../02_backend/03_apis/API-015.md#API-015) | プロフィール・セキュリティ設定更新 | SCR-022 EVT-03 | [ERR-001](ERR-001.md#ERR-001) |
 | [API-017](../02_backend/03_apis/API-017.md#API-017) | プロジェクト新規作成 | SCR-005 EVT-04 | [ERR-001](ERR-001.md#ERR-001) [ERR-016](ERR-016.md#ERR-016) |
 | [API-018](../02_backend/03_apis/API-018.md#API-018) | プロジェクト更新・削除 | SCR-005 EVT-02 SCR-005 EVT-05 SCR-005 EVT-08 SCR-011 EVT-10 | [ERR-013](ERR-013.md#ERR-013) [ERR-015](ERR-015.md#ERR-015) [ERR-017](ERR-017.md#ERR-017) |
 | [API-019](../02_backend/03_apis/API-019.md#API-019) | ウィジェット鍵ローテーション | SCR-011 EVT-09 | [ERR-013](ERR-013.md#ERR-013) |
@@ -98,5 +98,5 @@ API設計 ＞ 本エラー設計 ＞ メッセージ設計。各 API の `## エ
 | `E-AUTH-SESSION-EXPIRED` | [ERR-033](ERR-033.md#ERR-033) | 401 | セッション期限切れ。全認証保護 API 共通 |
 | `E-AUTH-REAUTH-REQUIRED` | [ERR-013](ERR-013.md#ERR-013) | 401 | 重要操作の再認証要求 |
 | `E-AUTHZ-OWNER-BOUNDARY` | [ERR-017](ERR-017.md#ERR-017) | 404 | オーナー境界違反の 404 偽装 |
-| `E-AUTHZ-PROJECT-DENIED` | [ERR-019](ERR-019.md#ERR-019) | 403 | プロジェクト割当なし |
+| `E-AUTHZ-PROJECT-DENIED` | [ERR-019](ERR-019.md#ERR-019) | 403 | 関係者(割当あり)だが当該操作の権限不足。割当なし・部外者は 404 偽装(段7・ERR-017)で本エラーは用いない |
 | `E-AUTHZ-TERMS` | — | — | エラーではなくゲート。[SCR-020](../01_frontend/01_screens/SCR-020.md#SCR-020) 再同意へ誘導 |

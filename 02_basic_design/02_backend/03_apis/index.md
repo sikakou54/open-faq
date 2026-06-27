@@ -37,7 +37,7 @@
 
 ### <span id="common-rate"></span>0.4 レート制限(共通)
 
-オーナー単位(`owner_user_id`)のレート制限(`SYS-010`)を超過した場合は 429 `RATE_LIMITED` → [ERR-009](../../05_errors/ERR-009.md#ERR-009) を返し、`Retry-After` ヘッダで再試行可能時刻を示す。
+オーナー単位(`owner_user_id`)のレート制限(`SYS-008`)を超過した場合は 429 `RATE_LIMITED` → [ERR-009](../../05_errors/ERR-009.md#ERR-009) を返し、`Retry-After` ヘッダで再試行可能時刻を示す。
 
 ## <span id="g-1"></span>認証・セッション
 
