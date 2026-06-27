@@ -2,9 +2,9 @@
 
 > **このページは、対象プロジェクトのオーナー（作成者）だけに付与するオーナー専有機能（当該プロジェクトの課金・請求確認・プロジェクト CRUD）と、その判定段を定義します。支払方法・退会・規約再同意はアカウント（本人）単位の操作で、オーナー専有ではありません。**
 
-| ID | 権限名 | 業務ユースケースID | イベント(画面ID+イベントID) | API ID |
-|----|----|----|----|----|
-| PERM-003 | オーナー専有機能 | [UC-013](../../01_requirements/04_business_usecases/UC-013.md#UC-013) ・ [UC-015](../../01_requirements/04_business_usecases/UC-015.md#UC-015) ・ [UC-016](../../01_requirements/04_business_usecases/UC-016.md#UC-016) ・ [UC-017](../../01_requirements/04_business_usecases/UC-017.md#UC-017) ・ [UC-022](../../01_requirements/04_business_usecases/UC-022.md#UC-022) ・ [UC-022](../../01_requirements/04_business_usecases/UC-022.md#UC-022) ・ [UC-035](../../01_requirements/04_business_usecases/UC-035.md#UC-035) ・ [UC-036](../../01_requirements/04_business_usecases/UC-036.md#UC-036) ・ [UC-037](../../01_requirements/04_business_usecases/UC-037.md#UC-037) | — | [API-014](../02_backend/03_apis/API-014.md#API-014) [API-015](../02_backend/03_apis/API-015.md#API-015) [API-017](../02_backend/03_apis/API-017.md#API-017) [API-018](../02_backend/03_apis/API-018.md#API-018) [API-045](../02_backend/03_apis/API-045.md#API-045) [API-056](../02_backend/03_apis/API-056.md#API-056) |
+| ID | 業務ユースケースID | イベント(画面ID EVT-NN) | API ID |
+|----|----|----|----|
+| PERM-003 | [UC-013](../../01_requirements/04_business_usecases/UC-013.md#UC-013) ・ [UC-015](../../01_requirements/04_business_usecases/UC-015.md#UC-015) ・ [UC-016](../../01_requirements/04_business_usecases/UC-016.md#UC-016) ・ [UC-017](../../01_requirements/04_business_usecases/UC-017.md#UC-017) ・ [UC-022](../../01_requirements/04_business_usecases/UC-022.md#UC-022) ・ [UC-022](../../01_requirements/04_business_usecases/UC-022.md#UC-022) ・ [UC-035](../../01_requirements/04_business_usecases/UC-035.md#UC-035) ・ [UC-036](../../01_requirements/04_business_usecases/UC-036.md#UC-036) ・ [UC-037](../../01_requirements/04_business_usecases/UC-037.md#UC-037) | — | [API-014](../02_backend/03_apis/API-014.md#API-014) [API-015](../02_backend/03_apis/API-015.md#API-015) [API-017](../02_backend/03_apis/API-017.md#API-017) [API-018](../02_backend/03_apis/API-018.md#API-018) [API-045](../02_backend/03_apis/API-045.md#API-045) [API-056](../02_backend/03_apis/API-056.md#API-056) |
 *種別 権限定義 ・ ステータス ドラフト*
 
 ## <span id="criteria"></span>1. 判定基準（ビジネスロジック）
@@ -32,7 +32,7 @@
 - 非オーナーがオーナー専有機能を要求した場合 → **403**（権限不足）を表示します。
 - 未認証ユーザーが実行を試みた場合 → 認証エラーへ誘導します。
 
-## <span id="trace"></span>4. 関連トレーサビリティ
+## <span id="trace"></span>4. 関連設計
 
 | 観点 | 結線 |
 |----|----|

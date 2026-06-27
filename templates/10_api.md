@@ -11,7 +11,7 @@
 
 **1 エンドポイント = 1 ファイル(`API-NNN`)**。骨格:
 
-- `## 項目`(API ID / API名 / トレーサビリティID / エンドポイント / HTTPメソッド / 認証 / 認可)。トレーサビリティID は本 API が実現する業務スレッドの `TR-NNN`(複数該当時は ` ・ ` 区切り)。対応する業務UC・画面・画面イベント `EVT` 等は API 本文に列挙せず、トレーサビリティ一覧表 [`00_traceability/index.md`](../../00_traceability/index.md) の当該 TR 行で一元管理する。
+- `## 項目`(API ID / 業務ユースケースID / イベント(画面ID EVT-NN) / テーブルID)。エンドポイント / HTTPメソッド / 認証 / 認可は別の定義表で示す。全層の厳密な紐付けはトレーサビリティ一覧表 [`00_traceability/index.md`](../../00_traceability/index.md) に一元管理し、API 本文に `TR-NNN` は記載しない。
 - 処理概要
 - リクエスト(先頭に `#### 認証ヘッダ` を置き、`#### Query Parameters` の上に配置する。当該エンドポイントが要求する認証関連ヘッダ(`Cookie: session` / `Authorization: Bearer <wst_*>` / `X-CSRF-Token` / `Idempotency-Key` / Webhook 署名ヘッダ等)を要否付きの表で示す。公開・トークン・署名検証系は該当ヘッダのみを記す)
 - レスポンス
@@ -42,7 +42,9 @@
 |----|----|
 | API ID | API-001 |
 | API名 | ログイン |
-| トレーサビリティID | [TR-001](../../00_traceability/index.md#TR-001) |
+| 業務ユースケースID | [UC-001](../../../01_requirements/04_business_usecases/UC-001.md#UC-001) |
+| イベント(画面ID EVT-NN) | SCR-001 EVT-02 |
+| テーブルID | [TBL-001](../04_database/TBL-001.md#TBL-001) |
 | エンドポイント | … |
 | HTTPメソッド | … |
 | 認証 | … |

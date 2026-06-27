@@ -43,6 +43,8 @@
 | FAQ 件数 運用想定上限 | 10,000 | 件 / プロジェクト(負荷想定。利用は制限しない) | [RULE-010](../01_requirements/01_business_requirement/08_rule.md#RULE-010) / [NFR-068](../01_requirements/03_non_functional_requirement/07_nfr.md#NFR-068) | — |
 | 利用量サマリ反映遅延 | 5 | 分以内 | [課金・請求設計書](05_billing-design.md) | [`T_USAGE_METER`](02_backend/04_database/TBL-020.md#TBL-020) |
 | 質問数上限 入力ガード(最小/最大) | KV 値 | 件(上限設定の入力検証) | [課金・請求設計書](05_billing-design.md) | KV `usage-limit:min` / `usage-limit:max` |
+| ダッシュボード期間切替 | 30 | 日(当月との切替表示) | [API-062](02_backend/03_apis/API-062.md#API-062) / [SCR-033](01_frontend/01_screens/SCR-033.md#SCR-033) | 定数(ダッシュボード集計) |
+| 日次トレンド表示期間 | 14 | 日 | [API-040](02_backend/03_apis/API-040.md#API-040) | 定数(ダッシュボード表示) |
 
 > [!NOTE]
 > **上限なしの対象** プロジェクト数・メンバー数・FAQ 件数は受付停止の対象とする上限値を持たない(プロジェクト数・メンバー数の目安は §5 を参照)。FAQ 件数は無料枠超過後も受付を止めず従量課金を継続する。
@@ -59,6 +61,10 @@
 | 無操作タイムアウト | 30 | 分(無操作でセッション失効) | [RULE-004](../01_requirements/01_business_requirement/08_rule.md#RULE-004) | 定数(セッション管理) |
 | 絶対タイムアウト | 12 | 時間(ログインから。1 営業日内に再認証) | [RULE-005](../01_requirements/01_business_requirement/08_rule.md#RULE-005) | 定数(セッション管理) |
 | AI 推論タイムアウト | 8 | 秒(超過時は処理エラーとして打ち切り) | [RULE-020](../01_requirements/01_business_requirement/08_rule.md#RULE-020) | 定数(推論呼び出し) |
+| 規約改定予告 | 30 | 日前に対象者へ通知 | [FR-010](../01_requirements/02_functional_requirement/01_account-fr.md#FR-010) | 定数(通知スケジュール) |
+| 規約再同意期限 | 14 | 日(発効日から) | [FR-010](../01_requirements/02_functional_requirement/01_account-fr.md#FR-010) | 定数(規約同意ゲート) |
+| 通知再送回数上限 | 3 | 回 | [NFR-039](../01_requirements/03_non_functional_requirement/07_nfr.md#NFR-039) | 定数(メール再送制御) |
+| 通知再送バックオフ | 5 分 / 30 分 / 2 時間 | 失敗後の次回再送間隔 | [NFR-039](../01_requirements/03_non_functional_requirement/07_nfr.md#NFR-039) | 定数(メール再送制御) |
 
 ## <span id="4-データ保持期間削除猶予"></span>4. データ保持期間・削除猶予
 
@@ -75,6 +81,8 @@
 | 課金通知の受信履歴保持 | 30 | 日(直近の受信履歴) | [RULE-017](../01_requirements/01_business_requirement/08_rule.md#RULE-017) | 定数(Webhook 受信履歴) |
 | 決済失敗の猶予 | 7 | 日(失敗確定通知受信時刻起点。経過でサスペンション) | [RULE-016](../01_requirements/01_business_requirement/08_rule.md#RULE-016) / [課金・請求設計書](05_billing-design.md) | 定数(課金状態管理) |
 | プロジェクト識別子の再利用 | 不可 | 物理削除完了後 | [NFR-051](../01_requirements/03_non_functional_requirement/07_nfr.md#NFR-051) | トムストーン保持 |
+| 冪等性キー保持 | 24 | 時間 | [ERR-032](05_errors/ERR-032.md#ERR-032) | 定数(API冪等性管理) |
+| 請求明細PDFダウンロード有効期限 | 30 | 日 | [MSG-007](06_messages/MSG-007.md#MSG-007) | 定数(請求ファイルURL発行) |
 
 ## <span id="5-レート制限キャパシティ目安"></span>5. レート制限・キャパシティ目安
 

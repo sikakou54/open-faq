@@ -24,7 +24,7 @@
 | <span id="MSG-008"></span>[MSG-008](MSG-008.md#MSG-008) | `TPL-BILLING_PAYMENT_FAILED` | NOTIF-BILLING_PAYMENT_FAILED | high | オーナー | ◯ | (再決済リンク) |
 | <span id="MSG-009"></span>[MSG-009](MSG-009.md#MSG-009) | `TPL-BILLING_SUSPENSION` | NOTIF-BILLING_SUSPENSION | critical | オーナー + 全メンバー | ◯ | (リンクなし) |
 | <span id="MSG-010"></span>[MSG-010](MSG-010.md#MSG-010) | `TPL-PAYMENT_METHOD_REQUIRED` | NOTIF-PAYMENT_METHOD_REQUIRED | critical | オーナー + 当該PJ有効メンバー | ◯ | (課金設定リンク) |
-| <span id="MSG-011"></span>[MSG-011](MSG-011.md#MSG-011) | `TPL-TERMS_REVISION` | NOTIF-TERMS_REVISION | critical | オーナー + 全メンバー | ◯ | 発効日 + 14d |
+| <span id="MSG-011"></span>[MSG-011](MSG-011.md#MSG-011) | `TPL-TERMS_REVISION` | NOTIF-TERMS_REVISION | critical | オーナー + 全メンバー | ◯ | [システム仕様書 §3](../07_system-spec.md#3-タイムアウトセッション認証) の規約再同意期限 |
 | <span id="MSG-012"></span>[MSG-012](MSG-012.md#MSG-012) | `TPL-SERVICE_ANNOUNCEMENT` | NOTIF-SERVICE_ANNOUNCEMENT | normal/high/critical | 範囲指定可 | 配信時に選択 | 入力 URL |
 | <span id="MSG-013"></span>[MSG-013](MSG-013.md#MSG-013) | `TPL-SYSTEM_NOTICE` | NOTIF-SYSTEM_NOTICE | normal/high | 対象者 | 契機による | (画面内リンク) |
 
@@ -92,7 +92,7 @@
 
 送信失敗・バウンス・苦情時の再送方式の正本所在と、本書で定めるテンプレート単位の例外を示します。配信信頼性の方式そのものは 要件のセキュリティ NFR を正本とし、本書は `critical` 認証メールの再送続行など差分のみを定めます。
 
-再送回数上限(24 時間内に最大 3 回)・バウンス / 苦情検知・全ユーザー横断の送信停止リストといった**配信信頼性の方式は 要件のセキュリティ NFR を正本**とする(FR-113 / FR-114 / FR-119 / FR-123)。本書はテンプレート単位の挙動差のみを以下に定める。
+再送回数上限([システム仕様書 §3](../07_system-spec.md#3-タイムアウトセッション認証) の通知再送上限)・バウンス / 苦情検知・全ユーザー横断の送信停止リストといった**配信信頼性の方式は 要件のセキュリティ NFR を正本**とする(FR-113 / FR-114 / FR-119 / FR-123)。本書はテンプレート単位の挙動差のみを以下に定める。
 
 - 恒久失敗(hard bounce)で送信停止リストに載った宛先でも、`critical` 重要度の `TPL-LOCKOUT_NOTIFY` のみ再送試行を続行する(認証関連の到達性最優先)。
 
@@ -151,7 +151,7 @@
 
 - 全送信は `H_NOTIF_LOGS` に行を記録(03 テーブル設計参照)
 - 列: `id` / `user_id` / `template_id` / `subject` / `recipient_email` / `sent_at` / `delivery_status`(`queued` / `sent` / `bounced` / `failed`)/ `provider_message_id` / `error_text`
-- 保持期間: 1 年(NFR-049 お知らせ・通知ログ保持準拠。物理削除は SYS-032 が担当)
+- 保持期間: [システム仕様書 §4](../07_system-spec.md#4-データ保持期間削除猶予)（物理削除は SYS-032 が担当）
 
 ### <span id="35-テスト送信"></span>3.5 テスト送信
 

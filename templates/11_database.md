@@ -17,7 +17,7 @@
 - 概要
 - カラム定義(PK / FK / UK / index / NULL / DEFAULT / 制約)
 - コード値
-- `### <span id="traceability"></span>トレーサビリティ`(本テーブルを利用する業務スレッドの `TR-NNN` を ` ・ ` 区切りで列挙)
+- 全層の厳密な紐付けはトレーサビリティ一覧表に一元管理し、TBL 本文に `TR-NNN` は記載しない。
 
 データモデルの正本は `02_backend/04_database/index.md` および各 `TBL-*`。
 
@@ -25,7 +25,7 @@
 
 - 各 `##`/`###` 直後に 1〜2 文のリード文を置いてから表へ入る(表をいきなり置かない)。
 - DDL 等は ` ```sql ` コードフェンス。
-- 本テーブルが使われる業務UC・画面・API は TBL 本文に列挙せず、末尾 `### トレーサビリティ` 節の `TR-NNN` で結線し、対応はトレーサビリティ一覧表 [`00_traceability/index.md`](../../00_traceability/index.md) の当該 TR 行で一元管理する(TBL 本文に `対応業務UC` / `利用API` は持たない)。[共通記載スタイル](00_common-style.md) の相互参照アンカー例に従う。
+- 本テーブルが使われる業務UC・画面・API はトレーサビリティ一覧表 [`00_traceability/index.md`](../../00_traceability/index.md) に一元管理する。TBL 本文に `TR-NNN` / `対応業務UC` / `利用API` は持たない。[共通記載スタイル](00_common-style.md) の相互参照アンカー例に従う。
 
 ## 記載例(セクション骨格)
 
@@ -62,7 +62,4 @@
 
 …
 
-### <span id="traceability"></span>トレーサビリティ
-
-本テーブルを利用する業務スレッド(TR-ID): [TR-001](../../00_traceability/index.md#TR-001) ・ [TR-015](../../00_traceability/index.md#TR-015)。詳細は [トレーサビリティ一覧](../../00_traceability/index.md#matrix-main) のデータベース列を参照。
 ```

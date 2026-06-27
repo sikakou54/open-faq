@@ -2,9 +2,9 @@
 
 > **このページは critical 通知を「誰に送るか」を決める宛先解決（当該プロジェクトのオーナー + 当該プロジェクトの有効メンバーの 2 系統合算・重複排除）を定義します。**
 
-| ID | 権限名 | 業務ユースケースID | イベント(画面ID+イベントID) | API ID |
-|----|----|----|----|----|
-| PERM-011 | critical 通知の宛先解決 | [UC-052](../../01_requirements/04_business_usecases/UC-052.md#UC-052) | — | [API-021](../02_backend/03_apis/API-021.md#API-021) [API-024](../02_backend/03_apis/API-024.md#API-024) |
+| ID | 業務ユースケースID | イベント(画面ID EVT-NN) | API ID |
+|----|----|----|----|
+| PERM-011 | [UC-052](../../01_requirements/04_business_usecases/UC-052.md#UC-052) | — | [API-021](../02_backend/03_apis/API-021.md#API-021) [API-024](../02_backend/03_apis/API-024.md#API-024) |
 *種別 権限定義 ・ ステータス ドラフト*
 
 ## <span id="criteria"></span>1. 判定基準（ビジネスロジック）
@@ -26,7 +26,7 @@
 
 本権限は「誰に通知を送るか」を決める宛先解決であり、個別ユーザーが操作を要求するものではありません。割当のないユーザーへの通知は宛先から除外されます（拒否ではなく対象外）。
 
-## <span id="trace"></span>4. 関連トレーサビリティ
+## <span id="trace"></span>4. 関連設計
 
 | 観点 | 結線 |
 |----|----|

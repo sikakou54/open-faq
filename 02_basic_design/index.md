@@ -12,10 +12,10 @@ FAQ AI ウィジェット SaaS / メインシステム(利用者向け)の基本
 ## <span id="map"></span>1.設計書マップ
 
 <div class="card-grid cols-2">
-<a class="doc-card" href="00_traceability/index.md"><span class="dc-k">00 ・ 横断</span><h4>トレーサビリティ一覧</h4><p>業務UC × 画面 × システム × API × データベース、および 業務UC × 要件 × シーケンス の対応を一元管理(TR-001〜)。各設計は自身のトレーサビリティID(TR)で本表を参照する。</p></a>
+<a class="doc-card" href="00_traceability/index.md"><span class="dc-k">00 ・ 横断</span><h4>トレーサビリティ一覧</h4><p>業務UC × 画面 × システム × API × データベース、および 業務UC × 要件 × シーケンス の対応を一元管理する。管理用のTR-IDは本表にのみ保持する。</p></a>
 <a class="doc-card" href="01_frontend/01_screens/index.md"><span class="dc-k">01 ・ 独立</span><h4>画面設計書</h4><p>全 32 画面(SCR-001〜032・公開ウィジェット含む)。索引はワークスペース別に 画面ID / 画面名 / URL を一覧。レイアウト・項目・アクション → API → DB は各画面個別ページ(§4)。</p></a>
 <a class="doc-card" href="02_backend/03_apis/index.md"><span class="dc-k">03 ・ 独立</span><h4>API設計書</h4><p>全 61 エンドポイントを 13 機能グループに整理。索引はカテゴリ別に API ID / API名 / METHOD / エンドポイントを一覧。詳細(認証ヘッダ・I/O・エラー・テーブル)は各 API 個別ページ。</p></a>
-<a class="doc-card" href="02_backend/04_database/index.md"><span class="dc-k">03 ・ 独立</span><h4>データベース設計書</h4><p>33 テーブルを 7 機能ドメインに分類。ER 図・コード値を併記し、各テーブルはトレーサビリティID(TR)で関連設計を参照。</p></a>
+<a class="doc-card" href="02_backend/04_database/index.md"><span class="dc-k">03 ・ 独立</span><h4>データベース設計書</h4><p>33 テーブルを 7 機能ドメインに分類。ER 図・コード値を併記し、関連設計との厳密な対応はトレーサビリティ一覧で管理。</p></a>
 <a class="doc-card" href="../01_requirements/04_business_usecases/index.md"><span class="dc-k">04 ・ 横断</span><h4>ユースケース設計書</h4><p>画面起点(EV 単位 229)・システム起点(18)の全ユースケース一覧と、横断 10 フローのシーケンス図・要件トレーサビリティ。</p></a>
 <a class="doc-card" href="05_billing-design.md"><span class="dc-k">05 ・ 横断</span><h4>課金・請求設計書</h4><p>課金モデル・質問数上限・支払方法ゲート・課金アカウント状態ライフサイクル・利用量集計・Webhook 受信方針。</p></a>
 <a class="doc-card" href="08_state-model.md"><span class="dc-k">08 ・ 横断</span><h4>状態モデル(正本)</h4><p>アカウント・課金アカウント・メンバー割当・FAQ/未解決質問の状態一覧と遷移図を一元管理。各設計書は状態名を本書に統一。</p></a>

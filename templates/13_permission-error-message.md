@@ -8,7 +8,7 @@
 
 - **配置先**: `02_basic_design/04_permissions/`
 - **採番**: `PERM-001`〜(1 件 = 1 ファイル・ゼロ詰め 3 桁・欠番なし)
-- **骨格**: ロール別操作可否 + 認可判定 + `対応 SCR / EVT / API` 結線(先頭に `トレーサビリティID` 行(`TR-NNN`)を置く)。UC ↔ 設計の対応・由来要件はトレーサビリティ一覧表 [`00_traceability/index.md`](../00_traceability/index.md) の当該 TR 行で一元管理する(PERM 本文に `対応業務UC` / `由来要件` は持たない)。
+- **骨格**: ロール別操作可否 + 認可判定 + `対応 SCR / EVT / API` 結線。ヘッダーには `PERM ID / 業務ユースケースID / イベント(画面ID EVT-NN) / API ID` を置く。UC ↔ 設計の厳密な紐付け・由来要件はトレーサビリティ一覧表 [`00_traceability/index.md`](../00_traceability/index.md) で一元管理する(PERM 本文に `TR-NNN` / `由来要件` は持たない)。
 
 ```markdown
 # <span id="PERM-001"></span>PERM-001: 名称
@@ -31,7 +31,6 @@
 
 | 観点 | 結線 |
 |----|----|
-| トレーサビリティID | [TR-001](../00_traceability/index.md#TR-001) |
 | 対応画面SCR | [SCR-001](../01_frontend/01_screens/SCR-001.md#SCR-001) |
 | 対応EVT | EVT-001 |
 | 対応API | [API-001](../02_backend/03_apis/API-001.md#API-001) |

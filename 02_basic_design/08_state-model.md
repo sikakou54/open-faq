@@ -1,6 +1,6 @@
 # 状態モデル(正本)
 
-> **このページは、システムが扱う主要な状態(アカウント・課金アカウント・メンバー割当・FAQ/未解決質問)の一覧と遷移を一元管理する正本です。** 各設計書は状態名を本書に統一する。状態値の物理定義(テーブル CHECK 制約)は対応するテーブル設計を正本とし、本書は状態の意味と遷移を示す。
+> **このページは、システムが扱う主要な状態(アカウント・課金アカウント・メンバー割当・プロジェクト・FAQ/未解決質問・ジョブ・課金/配信/Webhook)の一覧と遷移を一元管理する正本です。** 各設計書は状態名を本書に統一する。状態値の物理定義(テーブル CHECK 制約)は対応するテーブル設計を正本とし、本書は状態の意味と遷移を示す。保持期間・猶予期間などの具体値は [システム仕様書 §4](07_system-spec.md#4-データ保持期間削除猶予) を正本とする。
 
 ## <span id="1-アカウント状態"></span>1. アカウント状態(`M_USER.status`)
 
@@ -26,23 +26,23 @@ stateDiagram-v2
 
 ## <span id="2-課金アカウント状態"></span>2. 課金アカウント状態(`M_BILLING_ACCOUNT.status`)
 
-課金アカウントは、有効・サスペンション・退会・削除の 4 状態で表す。決済失敗の猶予は 7 日、退会は即時成立(猶予なし)で退会後のアカウント・請求データは 7 年保持する。物理定義・CHECK 制約は [`M_BILLING_ACCOUNT`](02_backend/04_database/TBL-002.md#TBL-002)、遷移条件は [課金・請求設計 §5](05_billing-design.md#5-課金アカウント状態ライフサイクル) を正本とする。
+課金アカウントは、有効・サスペンション・退会・削除の 4 状態で表す。決済失敗猶予、退会後の保持期間などの具体値は [システム仕様書 §4](07_system-spec.md#4-データ保持期間削除猶予) を正本とする。物理定義・CHECK 制約は [`M_BILLING_ACCOUNT`](02_backend/04_database/TBL-002.md#TBL-002)、遷移条件は [課金・請求設計 §5](05_billing-design.md#5-課金アカウント状態ライフサイクル) を正本とする。
 
 | 状態値 | 意味 | 主な遷移契機 |
 |----|----|----|
 | `active` | 有効。全機能を利用でき、ウィジェットは通常応答する | 課金アカウント開設 / 再決済成功 / 猶予中の決済成功 |
-| `suspended` | サスペンション中。課金・退会のみ操作でき、作成プロジェクトのウィジェットは機能停止応答を返す | 決済失敗の猶予経過(7 日) / 手動停止 |
-| `withdrawn` | 退会済み。本人はログインして請求情報の閲覧のみ行える(請求 7 年保持中) | 本人の退会(即時・猶予なし) |
-| `deleted` | 削除済み。ログインできず、識別子は再利用しない | 退会後 7 年経過の物理削除バッチ |
+| `suspended` | サスペンション中。課金・退会のみ操作でき、作成プロジェクトのウィジェットは機能停止応答を返す | 決済失敗の猶予経過 / 手動停止 |
+| `withdrawn` | 退会済み。本人はログインして請求情報の閲覧のみ行える | 本人の退会 |
+| `deleted` | 削除済み。ログインできず、識別子は再利用しない | 保持期間経過後の物理削除バッチ |
 
 ```mermaid
 stateDiagram-v2
   [*] --> active: 課金アカウント開設
-  active --> suspended: 決済失敗の猶予経過(7 日)/ 手動停止
+  active --> suspended: 決済失敗の猶予経過 / 手動停止
   suspended --> active: 再決済成功 / 解除
   active --> withdrawn: 本人の退会(即時)
   suspended --> withdrawn: 本人の退会(即時)
-  withdrawn --> deleted: 退会後 7 年経過(物理削除バッチ)
+  withdrawn --> deleted: 保持期間経過(物理削除バッチ)
   deleted --> [*]
 ```
 
@@ -104,3 +104,82 @@ stateDiagram-v2
   open --> closed: FAQ 化 / クローズ
   closed --> [*]
 ```
+
+## <span id="5-プロジェクト状態"></span>5. プロジェクト状態(`M_PROJECTS.status`)
+
+プロジェクトは、有効・論理削除の 2 状態で表す。物理定義・CHECK 制約は [`M_PROJECTS`](02_backend/04_database/TBL-004.md#TBL-004) を正本とする。削除猶予・保持期間の具体値は [システム仕様書 §4](07_system-spec.md#4-データ保持期間削除猶予) を参照する。
+
+| 状態値 | 意味 | 主な遷移契機 |
+|----|----|----|
+| `active` | 有効。管理画面・ウィジェットの対象になる | プロジェクト作成 |
+| `deleted` | 論理削除。通常の一覧・操作対象から除外する | プロジェクト削除 / 退会に伴う削除 |
+
+## <span id="6-faq取込ジョブ状態"></span>6. FAQ取込ジョブ状態(`TP_IMPORT_JOBS.status`)
+
+FAQ CSV 取込ジョブは、受付・処理中・完了・失敗の 4 状態で表す。物理定義・CHECK 制約は [`TP_IMPORT_JOBS`](02_backend/04_database/TBL-033.md#TBL-033) を正本とする。
+
+| 状態値 | 意味 | 主な遷移契機 |
+|----|----|----|
+| `queued` | 受付済みで処理開始を待つ | CSV 取込受付 |
+| `processing` | 取込処理中 | ワーカーによる処理開始 |
+| `completed` | 取込完了。全件成功と部分失敗を含む | 全行の処理完了 |
+| `failed` | ジョブ異常終了またはタイムアウト | 処理失敗 / 監視による失敗確定 |
+
+## <span id="7-課金サブスク請求状態"></span>7. 課金サブスクリプション・請求書状態
+
+課金サブスクリプションと請求書の状態意味を示す。物理定義・CHECK 制約は [`T_BILL_SUBS`](02_backend/04_database/TBL-018.md#TBL-018) と [`T_BILL_INVOICES`](02_backend/04_database/TBL-019.md#TBL-019) を正本とする。
+
+### <span id="71-課金サブスクリプション状態"></span>7.1 課金サブスクリプション状態(`T_BILL_SUBS.status`)
+
+| 状態値 | 意味 |
+|----|----|
+| `active` | 有効 |
+| `past_due` | 支払遅延 |
+| `canceled` | 解約済み |
+| `unpaid` | 未払い |
+| `incomplete` | 初回支払未完了 |
+
+### <span id="72-請求書状態"></span>7.2 請求書状態(`T_BILL_INVOICES.status`)
+
+| 状態値 | 意味 |
+|----|----|
+| `draft` | 下書き |
+| `issued` | 発行済み |
+| `paid` | 支払完了 |
+| `past_due` | 支払遅延 |
+| `refunded` | 返金済み |
+| `void` | 無効化 |
+
+## <span id="8-配信通知webhook状態"></span>8. 配信・通知・Webhook状態
+
+配信状態と Webhook 取込状態の意味を示す。物理定義・CHECK 制約は [`T_ANNOUNCE_RCPT`](02_backend/04_database/TBL-021.md#TBL-021)、[`H_NOTIF_LOGS`](02_backend/04_database/TBL-026.md#TBL-026)、[`T_BILLING_WEBHOOK_LOG`](02_backend/04_database/TBL-032.md#TBL-032) を正本とする。
+
+### <span id="81-お知らせ配信状態"></span>8.1 お知らせ配信状態(`T_ANNOUNCE_RCPT.delivery_status`)
+
+| 状態値 | 意味 |
+|----|----|
+| `pending` | 配信待ち |
+| `delivered` | 配信完了 |
+| `failed` | 配信失敗 |
+
+### <span id="82-通知配信状態"></span>8.2 通知配信状態(`H_NOTIF_LOGS.delivery_state`)
+
+| 状態値 | 意味 |
+|----|----|
+| `queued` | キュー投入済み |
+| `sending` | 送信中 |
+| `sent` | 送信成功 |
+| `delivered` | 配信成功 |
+| `failed` | 失敗 |
+| `bounced` | バウンス |
+| `complained` | スパム報告 |
+| `suppressed` | サプレスリスト追加済み |
+
+### <span id="83-webhook取込状態"></span>8.3 Webhook取込状態(`T_BILLING_WEBHOOK_LOG.status`)
+
+| 状態値 | 意味 |
+|----|----|
+| `received` | 受信済み(未取込) |
+| `processed` | 取込完了 |
+| `failed` | 取込失敗(再処理対象) |
+| `skipped` | 重複のため取込スキップ |
