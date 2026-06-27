@@ -23,7 +23,7 @@
 
 | 観点 | 結線 |
 |----|----|
-| トレーサビリティID | [TR-065](../00_traceability/index.md#TR-065) |
+| トレーサビリティID | [TR-018](../00_traceability/index.md#TR-018) |
 | 対応画面SCR | [SCR-013](../01_frontend/01_screens/SCR-013.md#SCR-013) |
 | 対応EVT | — |
 | 対応API | [API-002](../02_backend/03_apis/API-002.md#API-002) |

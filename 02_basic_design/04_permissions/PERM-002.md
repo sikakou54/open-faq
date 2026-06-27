@@ -28,7 +28,7 @@
 
 | 観点 | 結線 |
 |----|----|
-| トレーサビリティID | [TR-008](../00_traceability/index.md#TR-008) |
+| トレーサビリティID | [TR-071](../00_traceability/index.md#TR-071) |
 | 対応画面SCR | — |
 | 対応EVT | — |
 | 対応API | — |

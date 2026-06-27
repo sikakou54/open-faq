@@ -52,7 +52,7 @@
 | <span id="API-005"></span>[`API-005`](API-005.md#API-005) | 再認証 | POST | `/auth/re-auth` |
 | <span id="API-006"></span>[`API-006`](API-006.md#API-006) | メール確認 | POST | `/auth/email-verifications/{token}` |
 | <span id="API-007"></span>[`API-007`](API-007.md#API-007) | 招待トークン検証・プレビュー | POST | `/auth/invitations/{token}/preview` |
-| <span id="API-008"></span>[`API-008`](API-008.md#API-008) | メンバーアカウント有効化 | POST | `/auth/invitations/{token}/activate` |
+| <span id="API-008"></span>[`API-008`](API-008.md#API-008) | 招待受諾(割当有効化) | POST | `/projects/invitations/{token}/accept` |
 | <span id="API-009"></span>[`API-009`](API-009.md#API-009) | プロジェクト連絡先メール確認 | POST | `/auth/contact-verifications/{token}` |
 | <span id="API-010"></span>[`API-010`](API-010.md#API-010) | パスワード再設定確定 | POST | `/auth/password-reset` |
 | <span id="API-011"></span>[`API-011`](API-011.md#API-011) | 連絡先確認メール再送 | POST | `/auth/contact-verifications/resend` |

@@ -66,7 +66,7 @@ def section_span(txt, start_head, end_heads):
 
 scr_files = sorted(glob.glob(os.path.join(SCR_DIR, "*.md")))
 
-scr_type, scr_note, scr_bullet, evt_local, mermaid, evt_ref, scr_grain, scr_apiid = [], [], [], [], [], [], [], []
+scr_type, scr_note, scr_bullet, evt_local, mermaid, evt_ref, scr_grain, scr_apiid, sys_fmt = [], [], [], [], [], [], [], [], []
 apiid_re = re.compile(r'<a href="[^"]*API-(\d+)\.md#API-\1">([^<]*)</a>')
 
 fence_re = re.compile(r"^\s*```(.*)$")
@@ -131,6 +131,12 @@ for f in scr_files:
         if bad:
             evt_local.append(f"{rel(f)}  ids={evts}")
 
+# [SYS-FMT] SYS files must not have a '## 詳細設計への移管候補' section (フォーマット外)
+SYS_DIR = os.path.join(ROOT, "02_basic_design/02_backend/01_system")
+for f in glob.glob(os.path.join(SYS_DIR, "SYS-*.md")):
+    if "## 詳細設計への移管候補" in read(f):
+        sys_fmt.append(rel(f))
+
 # [MERMAID] whole corpus: a fence line with trailing content
 seen = set()
 for g in ALL_GLOBS:
@@ -165,6 +171,7 @@ groups = [
     ("[EVT-REF]   bare EVT ref (need SCR-NNN EVT-MM)", evt_ref),
     ("[SCR-GRAIN] detail-design granularity in SCR body", scr_grain),
     ("[SCR-APIID] API link missing API-ID in text (業務名(API-NNN))", scr_apiid),
+    ("[SYS-FMT]  out-of-format ## 詳細設計への移管候補 in SYS", sys_fmt),
 ]
 total = 0
 for title, items in groups:
