@@ -14,8 +14,8 @@
 
 | MSG ID | テンプレートID | 通知ID | 重要度 | 配信先 | 強制送信 | リンク有効期限 |
 |----|----|----|----|----|----|----|
-| <span id="MSG-001"></span>[MSG-001](MSG-001.md#MSG-001) | `TPL-EMAIL_VERIFY` | NOTIF-EMAIL_VERIFY | critical | 本人 | ◯ | 24h |
-| <span id="MSG-002"></span>[MSG-002](MSG-002.md#MSG-002) | `TPL-PASSWORD_RESET` | NOTIF-PASSWORD_RESET | critical | 本人 | ◯ | 1h |
+| <span id="MSG-001"></span>[MSG-001](MSG-001.md#MSG-001) | `TPL-EMAIL_VERIFY` | NOTIF-EMAIL_VERIFY | critical | 本人 | ◯ | [システム仕様書 §4](../07_system-spec.md#4-データ保持期間削除猶予)参照 |
+| <span id="MSG-002"></span>[MSG-002](MSG-002.md#MSG-002) | `TPL-PASSWORD_RESET` | NOTIF-PASSWORD_RESET | critical | 本人 | ◯ | [システム仕様書 §4](../07_system-spec.md#4-データ保持期間削除猶予)参照 |
 | <span id="MSG-003"></span>[MSG-003](MSG-003.md#MSG-003) | `TPL-MEMBER_INVITATION` | NOTIF-MEMBER_INVITATION | critical | 招待対象(登録済みユーザー) | ◯ | 7d |
 | <span id="MSG-004"></span>[MSG-004](MSG-004.md#MSG-004) | `TPL-PROJECT_CONTACT_VERIFY` | (オーナー操作派生) | critical | プロジェクト連絡先 | ◯ | 24h |
 | <span id="MSG-005"></span>[MSG-005](MSG-005.md#MSG-005) | `TPL-LOCKOUT_NOTIFY` | NOTIF-LOCKOUT_NOTIFY | critical | ロック本人 + オーナー + 全メンバー | ◯ | (リンクなし) |

@@ -78,6 +78,8 @@
 | 退会後 運用データ削除 | 速やかに(猶予 0 日) | 退会成立と同時 | [RULE-022](../01_requirements/01_business_requirement/08_rule.md#RULE-022) / [NFR-047](../01_requirements/03_non_functional_requirement/07_nfr.md#NFR-047) | — |
 | 招待リンク有効期限 | 7 | 日(期限切れ後は再送で新リンク) | [RULE-007](../01_requirements/01_business_requirement/08_rule.md#RULE-007) | 定数(招待トークン) |
 | プロジェクト連絡先確認メール有効期限 | 24 | 時間 | [RULE-009](../01_requirements/01_business_requirement/08_rule.md#RULE-009) | 定数(確認トークン) |
+| アカウントメール確認リンク有効期限 | 24 | 時間 | 設計判断(認証トークン管理) | 定数(メール確認トークン) |
+| パスワード再設定リンク有効期限 | 1 | 時間 | [RULE-003](../01_requirements/01_business_requirement/08_rule.md#RULE-003) | 定数(パスワード再設定トークン) |
 | 公開キーローテーション猶予 | 24 | 時間(旧キーの失効猶予) | [RULE-018](../01_requirements/01_business_requirement/08_rule.md#RULE-018) | 定数(公開キー管理) |
 | 課金通知の受信履歴保持 | 30 | 日(直近の受信履歴) | [RULE-017](../01_requirements/01_business_requirement/08_rule.md#RULE-017) | 定数(Webhook 受信履歴) |
 | 決済失敗の猶予 | 7 | 日(失敗確定通知受信時刻起点。経過でサスペンション) | [RULE-016](../01_requirements/01_business_requirement/08_rule.md#RULE-016) / [課金・請求設計書](05_billing-design.md) | 定数(課金状態管理) |
