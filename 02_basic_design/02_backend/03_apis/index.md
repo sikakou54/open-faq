@@ -59,7 +59,7 @@
 | <span id="API-012"></span>[`API-012`](API-012.md#API-012) | 自己プロフィール更新 | PATCH | `/me/profile` |
 | <span id="API-013"></span>[`API-013`](API-013.md#API-013) | 自己パスワード変更 | PATCH | `/me/password` |
 | <span id="API-064"></span>[`API-064`](API-064.md#API-064) | 自己プロフィール取得 | GET | `/me/profile` |
-| <span id="API-014"></span>[`API-014`](API-014.md#API-014) | オーナー設定取得 | GET | `/owner/settings` |
+| <span id="API-014"></span>[`API-014`](API-014.md#API-014) | アカウント設定取得 | GET | `/owner/settings` |
 | <span id="API-015"></span>[`API-015`](API-015.md#API-015) | セキュリティ設定更新 | PATCH | `/me/settings` |
 
 ## <span id="g-2"></span>プロジェクト

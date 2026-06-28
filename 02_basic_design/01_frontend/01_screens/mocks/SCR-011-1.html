@@ -64,7 +64,7 @@ table{border-collapse:collapse}
           <nav style="display:flex;align-items:center;gap:7px;font-size:12px;color:#9aa0a8"><span>ホーム</span><span>/</span><span style="color:#3a3f46">ウィジェット</span></nav>
           <div>
             <h1 style="margin:0 0 4px;font-size:20px;font-weight:700;color:#16191d;letter-spacing:-.01em">ウィジェット設定</h1>
-            <p style="margin:0;font-size:13px;color:#71767e">サイトに設置する FAQ ウィジェットの外観と文言を設定します</p>
+            <p style="margin:0;font-size:13px;color:#71767e">サイトに設置する FAQ ウィジェットの外観・文言・AI しきい値を設定します</p>
           </div>
           <div style="display:grid;grid-template-columns:1fr 380px;gap:20px;align-items:start">
             <!-- form -->
@@ -72,7 +72,7 @@ table{border-collapse:collapse}
               <!-- 公開キー管理 -->
               <div style="border:1px solid #eef0f2;border-radius:10px;padding:14px 16px;background:#fbfbfc">
                 <div style="font-size:12px;font-weight:700;color:#16191d;margin-bottom:10px;letter-spacing:.01em">公開キー管理</div>
-                <!-- IT-01 スコープ注記 -->
+                <!-- IT-01 対象プロジェクト注記 -->
                 <p style="margin:0 0 12px;font-size:11.5px;color:#71767e;line-height:1.6">この公開キーは本プロジェクト専用です。他プロジェクトのウィジェットとは共有されません。</p>
                 <!-- IT-02 公開キー表示 + コピー -->
                 <div style="margin-bottom:10px">
@@ -119,6 +119,24 @@ table{border-collapse:collapse}
                 <label style="display:block;font-size:12.5px;font-weight:600;color:#3a3f46;margin-bottom:7px">設置コード</label>
                 <div style="border:1px solid #eef0f2;border-radius:8px;background:#16191d;padding:12px 14px;font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:#c9d1d9;line-height:1.6;overflow:auto">&lt;script src="https://cdn.open-faq.io/w.js"<br>&nbsp;&nbsp;data-project="prj_8K2N4Q"&gt;&lt;/script&gt;</div>
                 <button style="margin-top:8px;display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border:1px solid #e6e8eb;border-radius:8px;background:#fff;font-size:12px;font-weight:600;color:#3a3f46;cursor:pointer;font-family:inherit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#71767e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>コードをコピー</button>
+              </div>
+              <div style="border:1px solid #eef0f2;border-radius:10px;padding:14px 16px;background:#fbfbfc">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px">
+                  <div style="font-size:12px;font-weight:700;color:#16191d;letter-spacing:.01em">AI しきい値</div>
+                  <span style="font-size:11px;font-weight:700;color:var(--accent,#5e6ad2);background:color-mix(in srgb,var(--accent,#5e6ad2) 10%,#fff);border:1px solid color-mix(in srgb,var(--accent,#5e6ad2) 25%,#fff);border-radius:999px;padding:3px 8px">プロジェクト設定値</span>
+                </div>
+                <p style="margin:0 0 12px;font-size:11.5px;color:#71767e;line-height:1.6">このプロジェクトの回答可否判定にだけ適用されます。未設定時はグローバル既定値を使用します。</p>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                  <div>
+                    <label style="display:block;font-size:11.5px;font-weight:600;color:#3a3f46;margin-bottom:5px">信頼度しきい値</label>
+                    <div style="height:38px;border:1px solid #e6e8eb;border-radius:8px;background:#fff;display:flex;align-items:center;padding:0 12px;font-size:13px;color:#16191d">0.70</div>
+                  </div>
+                  <div>
+                    <label style="display:block;font-size:11.5px;font-weight:600;color:#3a3f46;margin-bottom:5px">関連度しきい値</label>
+                    <div style="height:38px;border:1px solid #e6e8eb;border-radius:8px;background:#fff;display:flex;align-items:center;padding:0 12px;font-size:13px;color:#16191d">0.60</div>
+                  </div>
+                </div>
+                <button style="margin-top:12px;display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border:1px solid color-mix(in srgb,var(--accent,#5e6ad2) 35%,#fff);border-radius:8px;background:var(--accent,#5e6ad2);font-size:12.5px;font-weight:600;color:#fff;cursor:pointer;font-family:inherit">AI しきい値を保存</button>
               </div>
             </div>
             <!-- preview -->

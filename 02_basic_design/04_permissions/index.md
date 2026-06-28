@@ -85,7 +85,7 @@ graph TD
 | | [UC-030](../../01_requirements/04_business_usecases/UC-030.md#UC-030) 未解決質問詳細確認 | × | ◯ | ◯ | |
 | | [UC-031](../../01_requirements/04_business_usecases/UC-031.md#UC-031) 未解決質問対応状況更新 | × | ◯ | ◯ | |
 | | [UC-074](../../01_requirements/04_business_usecases/UC-074.md#UC-074) プロジェクト範囲の FAQ・質問ログ・未解決操作 | × | ◯ | ◯ | |
-| | [UC-075](../../01_requirements/04_business_usecases/UC-075.md#UC-075) 信頼度・関連度しきい値の 3 階層調整 | × | ◯ | ◯ | |
+| | [UC-075](../../01_requirements/04_business_usecases/UC-075.md#UC-075) プロジェクト単位の信頼度・関連度しきい値調整 | × | ◯ | ◯ | |
 | | [UC-076](../../01_requirements/04_business_usecases/UC-076.md#UC-076) FAQ・質問ログ検索 | × | ◯ | ◯ | |
 | **ダッシュボード・利用量** | [UC-032](../../01_requirements/04_business_usecases/UC-032.md#UC-032) プロジェクト概要ダッシュボード閲覧 | × | ◯ | ◯ | |
 | | [UC-033](../../01_requirements/04_business_usecases/UC-033.md#UC-033) 利用量と上限の閲覧 | × | ◯ | ◯ | |
