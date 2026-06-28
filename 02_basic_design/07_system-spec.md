@@ -65,6 +65,7 @@
 | 規約再同意期限 | 14 | 日(発効日から) | [FR-010](../01_requirements/02_functional_requirement/01_account-fr.md#FR-010) | 定数(規約同意ゲート) |
 | 通知再送回数上限 | 3 | 回 | [NFR-039](../01_requirements/03_non_functional_requirement/07_nfr.md#NFR-039) | 定数(メール再送制御) |
 | 通知再送バックオフ | 5 分 / 30 分 / 2 時間 | 失敗後の次回再送間隔 | [NFR-039](../01_requirements/03_non_functional_requirement/07_nfr.md#NFR-039) | 定数(メール再送制御) |
+| お知らせ集約時間窓 | 60 | 分(同一プロジェクト・同一イベント種別の連続発火を 1 件へ集約) | [FR-160](../01_requirements/02_functional_requirement/05_notification-fr.md#FR-160) | 定数(受信箱お知らせ集約) |
 
 ## <span id="4-データ保持期間削除猶予"></span>4. データ保持期間・削除猶予
 
