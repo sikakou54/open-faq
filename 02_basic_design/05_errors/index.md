@@ -8,7 +8,7 @@
 
 API設計 ＞ 本エラー設計 ＞ メッセージ設計。各 API の `## エラー` 表から本 ERR を参照する。
 
-## <span id="list"></span>1. エラーコード一覧(35)
+## <span id="list"></span>1. エラーコード一覧(36)
 
 分類・HTTP ステータス・主エラーコードの索引です。各 ERR の定義は個別ファイルが正本です。
 
@@ -49,6 +49,7 @@ API設計 ＞ 本エラー設計 ＞ メッセージ設計。各 API の `## エ
 | <span id="ERR-033"></span>[ERR-033](ERR-033.md#ERR-033) | 認証 | 401 | `SESSION_EXPIRED` | `E-AUTH-SESSION-EXPIRED` | セッション期限切れ(再ログインへ) |
 | <span id="ERR-034"></span>[ERR-034](ERR-034.md#ERR-034) | 業務(課金) | 403 | `ACCOUNT_WITHDRAWN` | `E-BILL-ACCOUNT-WITHDRAWN` | 退会済み(請求情報の閲覧のみ可) |
 | <span id="ERR-035"></span>[ERR-035](ERR-035.md#ERR-035) | 業務 | 404 | `INVITE_TARGET_NOT_REGISTERED` | `E-INVITE-TARGET-NOT-REGISTERED` | 招待先メールが未登録(先にアカウント登録が必要) |
+| <span id="ERR-036"></span>[ERR-036](ERR-036.md#ERR-036) | システム | 503 | `AI_UNAVAILABLE` | `E-AI-UNAVAILABLE` | AI 推論タイムアウトまたはプロバイダエラー |
 
 ## <span id="trace"></span>2. EVT / API ↔ エラー 対応表
 
@@ -81,7 +82,7 @@ API設計 ＞ 本エラー設計 ＞ メッセージ設計。各 API の `## エ
 | [API-028](../02_backend/03_apis/API-028.md#API-028) | FAQ CSV インポート | SCR-010 EVT-04 | [ERR-024](ERR-024.md#ERR-024) [ERR-025](ERR-025.md#ERR-025) |
 | [API-033](../02_backend/03_apis/API-033.md#API-033) | FAQ 個別取得 | SCR-009 EVT-01 | [ERR-017](ERR-017.md#ERR-017) [ERR-019](ERR-019.md#ERR-019) |
 | [API-037](../02_backend/03_apis/API-037.md#API-037) | ウィジェット起動 | SCR-030 EVT-02 SCR-030 EVT-07 | [ERR-004](ERR-004.md#ERR-004) [ERR-026](ERR-026.md#ERR-026) [ERR-027](ERR-027.md#ERR-027) |
-| [API-038](../02_backend/03_apis/API-038.md#API-038) | ウィジェット質問送信 | SCR-030 EVT-04 SCR-030 EVT-05 SCR-030 EVT-06 SCR-030 EVT-07 | [ERR-009](ERR-009.md#ERR-009) [ERR-027](ERR-027.md#ERR-027) |
+| [API-038](../02_backend/03_apis/API-038.md#API-038) | ウィジェット質問送信 | SCR-030 EVT-04 SCR-030 EVT-05 SCR-030 EVT-06 SCR-030 EVT-07 | [ERR-009](ERR-009.md#ERR-009) [ERR-027](ERR-027.md#ERR-027) [ERR-036](ERR-036.md#ERR-036) |
 | [API-040](../02_backend/03_apis/API-040.md#API-040) | ダッシュボードサマリ | SCR-012 EVT-01 SCR-012 EVT-02 | [ERR-001](ERR-001.md#ERR-001) [ERR-019](ERR-019.md#ERR-019) |
 | [API-045](../02_backend/03_apis/API-045.md#API-045) | 支払方法 取得・登録・更新 | SCR-028 EVT-02 SCR-028 EVT-06 | [ERR-013](ERR-013.md#ERR-013) [ERR-001](ERR-001.md#ERR-001) [ERR-028](ERR-028.md#ERR-028) |
 | [API-047](../02_backend/03_apis/API-047.md#API-047) | プロジェクト上限・アラート更新 | SCR-027 EVT-05 | [ERR-013](ERR-013.md#ERR-013) [ERR-029](ERR-029.md#ERR-029) [ERR-030](ERR-030.md#ERR-030) |
