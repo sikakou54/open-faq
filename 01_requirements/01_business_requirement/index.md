@@ -30,7 +30,7 @@
 - [RULE-009: プロジェクト連絡先確認メール有効期限](08_rule.md#RULE-009)
 - [RULE-010: FAQ 件数上限](08_rule.md#RULE-010)
 - [RULE-011: FAQ 文字数上限](08_rule.md#RULE-011)
-- [RULE-012: AI しきい値既定値](08_rule.md#RULE-012)
+- [RULE-012: AI しきい値の設定必須化](08_rule.md#RULE-012)
 - [RULE-013: 質問数上限の停止・追加通知](08_rule.md#RULE-013)
 - [RULE-014: 質問数アラート閾値](08_rule.md#RULE-014)
 - [RULE-015: 無料枠](08_rule.md#RULE-015)
