@@ -7,3 +7,4 @@
 | ID | 名称 | 対象 | ステータス |
 |----|----|----|----|
 | [EIF-001](EIF-001.md#EIF-001) | AI 推論 LLM 連携(AnswerProvider) | API-057 / Cloudflare Workers AI | ドラフト |
+| [EIF-002](EIF-002.md#EIF-002) | 課金プロバイダ(Stripe)連携 | API-060 / SYS-004・033 | ドラフト |
