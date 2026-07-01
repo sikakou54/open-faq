@@ -4,7 +4,8 @@
 
 技術前提・記載ルールは [詳細設計トップ](../index.md) と [CLAUDE.md](../../CLAUDE.md) を参照。
 
-| ID | 名称 | 対象 | ステータス |
-|----|----|----|----|
-| [EIF-001](EIF-001.md#EIF-001) | AI 推論 LLM 連携(AnswerProvider) | API-057 / Cloudflare Workers AI | ドラフト |
-| [EIF-002](EIF-002.md#EIF-002) | 課金プロバイダ(Stripe)連携 | API-060 / SYS-004・033 | ドラフト |
+| ID | 名称 | ステータス |
+|----|----|----|
+| [EIF-001](EIF-001.md#EIF-001) | AI 推論 LLM 連携(`AnswerProvider`) | ドラフト |
+| [EIF-002](EIF-002.md#EIF-002) | 課金プロバイダ(Stripe)連携 | ドラフト |
+| [EIF-003](EIF-003.md#EIF-003) | メール配信(Resend)連携 | ドラフト |

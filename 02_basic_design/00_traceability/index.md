@@ -184,3 +184,194 @@
 | TR-081 | [UC-081](../../01_requirements/04_business_usecases/UC-081.md#UC-081) | [BR-095](../../01_requirements/01_business_requirement/06_security-br.md#BR-095) | [FR-139](../../01_requirements/02_functional_requirement/06_security-fr.md#FR-139) | [RULE-022](../../01_requirements/01_business_requirement/08_rule.md#RULE-022) | — |
 | TR-082 | [UC-082](../../01_requirements/04_business_usecases/UC-082.md#UC-082) | [BR-010](../../01_requirements/01_business_requirement/01_account-br.md#BR-010) [BR-131](../../01_requirements/01_business_requirement/01_account-br.md#BR-131) | [FR-016](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-016) [FR-194](../../01_requirements/02_functional_requirement/01_account-fr.md#FR-194) | — | [SEQ-009](../03_sequences/SEQ-009.md#SEQ-009) |
 | TR-083 | [UC-083](../../01_requirements/04_business_usecases/UC-083.md#UC-083) | [BR-148](../../01_requirements/01_business_requirement/02_faq-ai-br.md#BR-148) | [FR-196](../../01_requirements/02_functional_requirement/02_faq-ai-fr.md#FR-196) [FR-197](../../01_requirements/02_functional_requirement/02_faq-ai-fr.md#FR-197) | — | [SEQ-123](../03_sequences/SEQ-123.md#SEQ-123) |
+
+## <span id="matrix-detail"></span>詳細設計 × 業務UC カバレッジ
+
+詳細設計各書が詳細化する業務ユースケース(各書ヘッダーが持つ `UC-NNN`)の網羅一覧。全層の厳密な紐付けは上記マトリクスに一元管理し、本節は詳細設計側のカバレッジを示す(逆引きの `TR-NNN` は個別設計書に記載しない)。各系列の文書一覧は [詳細設計トップ](../../03_detail_design/index.md) を参照。
+
+### STS 状態遷移図(10件)
+
+| ID | 名称 | 業務UC |
+|----|----|----|
+| [STS-001](../../03_detail_design/01_state_transitions/STS-001.md#STS-001) | 未解決質問 状態遷移 | — |
+| [STS-002](../../03_detail_design/01_state_transitions/STS-002.md#STS-002) | アカウント状態遷移 | — |
+| [STS-003](../../03_detail_design/01_state_transitions/STS-003.md#STS-003) | 課金アカウント状態遷移 | — |
+| [STS-004](../../03_detail_design/01_state_transitions/STS-004.md#STS-004) | メンバー割当状態遷移 | — |
+| [STS-005](../../03_detail_design/01_state_transitions/STS-005.md#STS-005) | FAQ状態遷移 | — |
+| [STS-006](../../03_detail_design/01_state_transitions/STS-006.md#STS-006) | FAQ取込ジョブ状態遷移 | — |
+| [STS-007](../../03_detail_design/01_state_transitions/STS-007.md#STS-007) | 課金サブスクリプション状態遷移 | — |
+| [STS-008](../../03_detail_design/01_state_transitions/STS-008.md#STS-008) | 請求書状態遷移 | — |
+| [STS-009](../../03_detail_design/01_state_transitions/STS-009.md#STS-009) | 通知配信状態遷移 | — |
+| [STS-010](../../03_detail_design/01_state_transitions/STS-010.md#STS-010) | 課金Webhook取込状態遷移 | — |
+
+### STR 画面遷移図(8件)
+
+| ID | 名称 | 業務UC |
+|----|----|----|
+| [STR-001](../../03_detail_design/02_screen_flows/STR-001.md#STR-001) | 未認証者 認証フロー 画面遷移 | [UC-001](../../01_requirements/04_business_usecases/UC-001.md#UC-001) [UC-002](../../01_requirements/04_business_usecases/UC-002.md#UC-002) [UC-003](../../01_requirements/04_business_usecases/UC-003.md#UC-003) [UC-004](../../01_requirements/04_business_usecases/UC-004.md#UC-004) [UC-005](../../01_requirements/04_business_usecases/UC-005.md#UC-005) [UC-006](../../01_requirements/04_business_usecases/UC-006.md#UC-006) [UC-007](../../01_requirements/04_business_usecases/UC-007.md#UC-007) |
+| [STR-002](../../03_detail_design/02_screen_flows/STR-002.md#STR-002) | オーナー アカウント・課金管理 画面遷移 | [UC-032](../../01_requirements/04_business_usecases/UC-032.md#UC-032) [UC-035](../../01_requirements/04_business_usecases/UC-035.md#UC-035) [UC-036](../../01_requirements/04_business_usecases/UC-036.md#UC-036) [UC-037](../../01_requirements/04_business_usecases/UC-037.md#UC-037) [UC-013](../../01_requirements/04_business_usecases/UC-013.md#UC-013) [UC-022](../../01_requirements/04_business_usecases/UC-022.md#UC-022) [UC-081](../../01_requirements/04_business_usecases/UC-081.md#UC-081) |
+| [STR-003](../../03_detail_design/02_screen_flows/STR-003.md#STR-003) | オーナー プロジェクト管理 画面遷移 | [UC-014](../../01_requirements/04_business_usecases/UC-014.md#UC-014) [UC-015](../../01_requirements/04_business_usecases/UC-015.md#UC-015) [UC-016](../../01_requirements/04_business_usecases/UC-016.md#UC-016) [UC-017](../../01_requirements/04_business_usecases/UC-017.md#UC-017) |
+| [STR-004](../../03_detail_design/02_screen_flows/STR-004.md#STR-004) | オーナー/メンバー FAQ運用 画面遷移 | [UC-074](../../01_requirements/04_business_usecases/UC-074.md#UC-074) |
+| [STR-005](../../03_detail_design/02_screen_flows/STR-005.md#STR-005) | オーナー ウィジェット・上限設定 画面遷移 | [UC-038](../../01_requirements/04_business_usecases/UC-038.md#UC-038) [UC-039](../../01_requirements/04_business_usecases/UC-039.md#UC-039) [UC-075](../../01_requirements/04_business_usecases/UC-075.md#UC-075) [UC-033](../../01_requirements/04_business_usecases/UC-033.md#UC-033) [UC-034](../../01_requirements/04_business_usecases/UC-034.md#UC-034) [UC-077](../../01_requirements/04_business_usecases/UC-077.md#UC-077) |
+| [STR-006](../../03_detail_design/02_screen_flows/STR-006.md#STR-006) | オーナー・メンバー管理導線 | [UC-018](../../01_requirements/04_business_usecases/UC-018.md#UC-018) [UC-019](../../01_requirements/04_business_usecases/UC-019.md#UC-019) [UC-020](../../01_requirements/04_business_usecases/UC-020.md#UC-020) [UC-021](../../01_requirements/04_business_usecases/UC-021.md#UC-021) |
+| [STR-007](../../03_detail_design/02_screen_flows/STR-007.md#STR-007) | 全ロール共通 個人・通知領域 画面遷移 | [UC-008](../../01_requirements/04_business_usecases/UC-008.md#UC-008) [UC-009](../../01_requirements/04_business_usecases/UC-009.md#UC-009) [UC-010](../../01_requirements/04_business_usecases/UC-010.md#UC-010) [UC-011](../../01_requirements/04_business_usecases/UC-011.md#UC-011) [UC-012](../../01_requirements/04_business_usecases/UC-012.md#UC-012) [UC-013](../../01_requirements/04_business_usecases/UC-013.md#UC-013) [UC-017](../../01_requirements/04_business_usecases/UC-017.md#UC-017) [UC-043](../../01_requirements/04_business_usecases/UC-043.md#UC-043) [UC-044](../../01_requirements/04_business_usecases/UC-044.md#UC-044) [UC-045](../../01_requirements/04_business_usecases/UC-045.md#UC-045) |
+| [STR-008](../../03_detail_design/02_screen_flows/STR-008.md#STR-008) | エンドユーザー 公開ウィジェット 画面遷移 | [UC-040](../../01_requirements/04_business_usecases/UC-040.md#UC-040) [UC-041](../../01_requirements/04_business_usecases/UC-041.md#UC-041) [UC-042](../../01_requirements/04_business_usecases/UC-042.md#UC-042) [UC-051](../../01_requirements/04_business_usecases/UC-051.md#UC-051) [UC-053](../../01_requirements/04_business_usecases/UC-053.md#UC-053) [UC-083](../../01_requirements/04_business_usecases/UC-083.md#UC-083) |
+
+### IO 入出力設計書(35件)
+
+| ID | 名称 | 業務UC |
+|----|----|----|
+| [IO-001](../../03_detail_design/03_io_specs/IO-001.md#IO-001) | ウィジェット質問送信 入出力 | [UC-041](../../01_requirements/04_business_usecases/UC-041.md#UC-041) [UC-042](../../01_requirements/04_business_usecases/UC-042.md#UC-042) [UC-048](../../01_requirements/04_business_usecases/UC-048.md#UC-048) |
+| [IO-002](../../03_detail_design/03_io_specs/IO-002.md#IO-002) | ログイン 入出力 | [UC-001](../../01_requirements/04_business_usecases/UC-001.md#UC-001) |
+| [IO-003](../../03_detail_design/03_io_specs/IO-003.md#IO-003) | アカウント登録 入出力 | [UC-002](../../01_requirements/04_business_usecases/UC-002.md#UC-002) [UC-003](../../01_requirements/04_business_usecases/UC-003.md#UC-003) |
+| [IO-004](../../03_detail_design/03_io_specs/IO-004.md#IO-004) | パスワード再設定 入出力 | [UC-004](../../01_requirements/04_business_usecases/UC-004.md#UC-004) [UC-005](../../01_requirements/04_business_usecases/UC-005.md#UC-005) |
+| [IO-005](../../03_detail_design/03_io_specs/IO-005.md#IO-005) | メール確認 入出力 | [UC-002](../../01_requirements/04_business_usecases/UC-002.md#UC-002) [UC-003](../../01_requirements/04_business_usecases/UC-003.md#UC-003) |
+| [IO-006](../../03_detail_design/03_io_specs/IO-006.md#IO-006) | メンバーアカウント有効化 入出力 | [UC-006](../../01_requirements/04_business_usecases/UC-006.md#UC-006) |
+| [IO-007](../../03_detail_design/03_io_specs/IO-007.md#IO-007) | 連絡先メール確認完了 入出力 | [UC-007](../../01_requirements/04_business_usecases/UC-007.md#UC-007) |
+| [IO-008](../../03_detail_design/03_io_specs/IO-008.md#IO-008) | ダッシュボード 入出力 | [UC-032](../../01_requirements/04_business_usecases/UC-032.md#UC-032) [UC-035](../../01_requirements/04_business_usecases/UC-035.md#UC-035) [UC-082](../../01_requirements/04_business_usecases/UC-082.md#UC-082) |
+| [IO-009](../../03_detail_design/03_io_specs/IO-009.md#IO-009) | 利用状況(オーナー全体) 入出力 | [UC-035](../../01_requirements/04_business_usecases/UC-035.md#UC-035) |
+| [IO-010](../../03_detail_design/03_io_specs/IO-010.md#IO-010) | プロジェクト一覧 入出力 | [UC-014](../../01_requirements/04_business_usecases/UC-014.md#UC-014) [UC-082](../../01_requirements/04_business_usecases/UC-082.md#UC-082) |
+| [IO-011](../../03_detail_design/03_io_specs/IO-011.md#IO-011) | プロジェクト作成・編集 入出力 | [UC-015](../../01_requirements/04_business_usecases/UC-015.md#UC-015) [UC-016](../../01_requirements/04_business_usecases/UC-016.md#UC-016) [UC-017](../../01_requirements/04_business_usecases/UC-017.md#UC-017) [UC-073](../../01_requirements/04_business_usecases/UC-073.md#UC-073) |
+| [IO-012](../../03_detail_design/03_io_specs/IO-012.md#IO-012) | 請求管理 入出力 | [UC-036](../../01_requirements/04_business_usecases/UC-036.md#UC-036) [UC-037](../../01_requirements/04_business_usecases/UC-037.md#UC-037) [UC-081](../../01_requirements/04_business_usecases/UC-081.md#UC-081) |
+| [IO-013](../../03_detail_design/03_io_specs/IO-013.md#IO-013) | 設定(アカウント設定) 入出力 | [UC-009](../../01_requirements/04_business_usecases/UC-009.md#UC-009) |
+| [IO-014](../../03_detail_design/03_io_specs/IO-014.md#IO-014) | 退会 入出力 | [UC-022](../../01_requirements/04_business_usecases/UC-022.md#UC-022) |
+| [IO-015](../../03_detail_design/03_io_specs/IO-015.md#IO-015) | 規約再同意割込み 入出力 | [UC-001](../../01_requirements/04_business_usecases/UC-001.md#UC-001) [UC-013](../../01_requirements/04_business_usecases/UC-013.md#UC-013) |
+| [IO-016](../../03_detail_design/03_io_specs/IO-016.md#IO-016) | 概要(プロジェクトホーム) 入出力 | [UC-001](../../01_requirements/04_business_usecases/UC-001.md#UC-001) [UC-032](../../01_requirements/04_business_usecases/UC-032.md#UC-032) |
+| [IO-017](../../03_detail_design/03_io_specs/IO-017.md#IO-017) | 要対応の質問一覧 入出力 | [UC-029](../../01_requirements/04_business_usecases/UC-029.md#UC-029) |
+| [IO-018](../../03_detail_design/03_io_specs/IO-018.md#IO-018) | 要対応の質問詳細 入出力 | [UC-030](../../01_requirements/04_business_usecases/UC-030.md#UC-030) [UC-031](../../01_requirements/04_business_usecases/UC-031.md#UC-031) |
+| [IO-019](../../03_detail_design/03_io_specs/IO-019.md#IO-019) | FAQ一覧 入出力 | [UC-023](../../01_requirements/04_business_usecases/UC-023.md#UC-023) [UC-026](../../01_requirements/04_business_usecases/UC-026.md#UC-026) [UC-028](../../01_requirements/04_business_usecases/UC-028.md#UC-028) |
+| [IO-020](../../03_detail_design/03_io_specs/IO-020.md#IO-020) | FAQ編集 入出力 | [UC-024](../../01_requirements/04_business_usecases/UC-024.md#UC-024) [UC-025](../../01_requirements/04_business_usecases/UC-025.md#UC-025) |
+| [IO-021](../../03_detail_design/03_io_specs/IO-021.md#IO-021) | FAQ CSVインポート 入出力 | [UC-027](../../01_requirements/04_business_usecases/UC-027.md#UC-027) [UC-046](../../01_requirements/04_business_usecases/UC-046.md#UC-046) |
+| [IO-022](../../03_detail_design/03_io_specs/IO-022.md#IO-022) | ウィジェット設定 入出力 | [UC-038](../../01_requirements/04_business_usecases/UC-038.md#UC-038) [UC-039](../../01_requirements/04_business_usecases/UC-039.md#UC-039) [UC-075](../../01_requirements/04_business_usecases/UC-075.md#UC-075) |
+| [IO-023](../../03_detail_design/03_io_specs/IO-023.md#IO-023) | メンバー 入出力 | [UC-018](../../01_requirements/04_business_usecases/UC-018.md#UC-018) [UC-021](../../01_requirements/04_business_usecases/UC-021.md#UC-021) |
+| [IO-024](../../03_detail_design/03_io_specs/IO-024.md#IO-024) | メンバー招待・編集 入出力 | [UC-019](../../01_requirements/04_business_usecases/UC-019.md#UC-019) [UC-020](../../01_requirements/04_business_usecases/UC-020.md#UC-020) |
+| [IO-025](../../03_detail_design/03_io_specs/IO-025.md#IO-025) | 利用量と上限 入出力 | [UC-033](../../01_requirements/04_business_usecases/UC-033.md#UC-033) |
+| [IO-026](../../03_detail_design/03_io_specs/IO-026.md#IO-026) | 質問数上限設定 入出力 | [UC-034](../../01_requirements/04_business_usecases/UC-034.md#UC-034) |
+| [IO-027](../../03_detail_design/03_io_specs/IO-027.md#IO-027) | 通知配信状態 入出力 | [UC-077](../../01_requirements/04_business_usecases/UC-077.md#UC-077) |
+| [IO-028](../../03_detail_design/03_io_specs/IO-028.md#IO-028) | 質問ログ 入出力 | [UC-076](../../01_requirements/04_business_usecases/UC-076.md#UC-076) |
+| [IO-029](../../03_detail_design/03_io_specs/IO-029.md#IO-029) | 利用規約・プライバシーポリシー閲覧 入出力 | [UC-011](../../01_requirements/04_business_usecases/UC-011.md#UC-011) [UC-012](../../01_requirements/04_business_usecases/UC-012.md#UC-012) |
+| [IO-030](../../03_detail_design/03_io_specs/IO-030.md#IO-030) | お知らせ一覧・詳細 入出力 | [UC-043](../../01_requirements/04_business_usecases/UC-043.md#UC-043) [UC-044](../../01_requirements/04_business_usecases/UC-044.md#UC-044) [UC-045](../../01_requirements/04_business_usecases/UC-045.md#UC-045) |
+| [IO-031](../../03_detail_design/03_io_specs/IO-031.md#IO-031) | 個人設定 入出力 | [UC-008](../../01_requirements/04_business_usecases/UC-008.md#UC-008) [UC-009](../../01_requirements/04_business_usecases/UC-009.md#UC-009) [UC-010](../../01_requirements/04_business_usecases/UC-010.md#UC-010) |
+| [IO-032](../../03_detail_design/03_io_specs/IO-032.md#IO-032) | 再認証ダイアログ 入出力 | [UC-009](../../01_requirements/04_business_usecases/UC-009.md#UC-009) [UC-010](../../01_requirements/04_business_usecases/UC-010.md#UC-010) [UC-017](../../01_requirements/04_business_usecases/UC-017.md#UC-017) |
+| [IO-033](../../03_detail_design/03_io_specs/IO-033.md#IO-033) | ウィジェット起動・埋め込み 入出力 | [UC-040](../../01_requirements/04_business_usecases/UC-040.md#UC-040) [UC-042](../../01_requirements/04_business_usecases/UC-042.md#UC-042) [UC-057](../../01_requirements/04_business_usecases/UC-057.md#UC-057) |
+| [IO-034](../../03_detail_design/03_io_specs/IO-034.md#IO-034) | ウィジェット未解決登録・フィードバック 入出力 | [UC-042](../../01_requirements/04_business_usecases/UC-042.md#UC-042) [UC-083](../../01_requirements/04_business_usecases/UC-083.md#UC-083) |
+| [IO-035](../../03_detail_design/03_io_specs/IO-035.md#IO-035) | 外部連携IF(AI/メール/Webhook) 入出力 | [UC-042](../../01_requirements/04_business_usecases/UC-042.md#UC-042) [UC-058](../../01_requirements/04_business_usecases/UC-058.md#UC-058) [UC-056](../../01_requirements/04_business_usecases/UC-056.md#UC-056) |
+
+### IPO IPO処理機能記述書(16件)
+
+| ID | 名称 | 業務UC |
+|----|----|----|
+| [IPO-001](../../03_detail_design/04_ipo/IPO-001.md#IPO-001) | AI 回答可否判定 | [UC-047](../../01_requirements/04_business_usecases/UC-047.md#UC-047) [UC-041](../../01_requirements/04_business_usecases/UC-041.md#UC-041) [UC-048](../../01_requirements/04_business_usecases/UC-048.md#UC-048) |
+| [IPO-002](../../03_detail_design/04_ipo/IPO-002.md#IPO-002) | 月次請求確定ロジック | [UC-054](../../01_requirements/04_business_usecases/UC-054.md#UC-054) |
+| [IPO-003](../../03_detail_design/04_ipo/IPO-003.md#IPO-003) | 決済失敗猶予・サスペンション判定ロジック | [UC-055](../../01_requirements/04_business_usecases/UC-055.md#UC-055) |
+| [IPO-004](../../03_detail_design/04_ipo/IPO-004.md#IPO-004) | AIしきい値伝播・フォールバック判定ロジック | [UC-047](../../01_requirements/04_business_usecases/UC-047.md#UC-047) [UC-075](../../01_requirements/04_business_usecases/UC-075.md#UC-075) |
+| [IPO-005](../../03_detail_design/04_ipo/IPO-005.md#IPO-005) | 質問数上限アラート判定ロジック | [UC-052](../../01_requirements/04_business_usecases/UC-052.md#UC-052) |
+| [IPO-006](../../03_detail_design/04_ipo/IPO-006.md#IPO-006) | 上限到達受付停止判定ロジック | [UC-053](../../01_requirements/04_business_usecases/UC-053.md#UC-053) |
+| [IPO-007](../../03_detail_design/04_ipo/IPO-007.md#IPO-007) | レート制限判定ロジック | [UC-071](../../01_requirements/04_business_usecases/UC-071.md#UC-071) |
+| [IPO-008](../../03_detail_design/04_ipo/IPO-008.md#IPO-008) | 未読お知らせ集約判定ロジック | [UC-063](../../01_requirements/04_business_usecases/UC-063.md#UC-063) [UC-080](../../01_requirements/04_business_usecases/UC-080.md#UC-080) |
+| [IPO-009](../../03_detail_design/04_ipo/IPO-009.md#IPO-009) | 監査ログ整合性検証ロジック | [UC-070](../../01_requirements/04_business_usecases/UC-070.md#UC-070) |
+| [IPO-010](../../03_detail_design/04_ipo/IPO-010.md#IPO-010) | 保持期間超過削除判定ロジック | [UC-066](../../01_requirements/04_business_usecases/UC-066.md#UC-066) |
+| [IPO-011](../../03_detail_design/04_ipo/IPO-011.md#IPO-011) | 招待受諾・割当有効化判定ロジック | [UC-006](../../01_requirements/04_business_usecases/UC-006.md#UC-006) |
+| [IPO-012](../../03_detail_design/04_ipo/IPO-012.md#IPO-012) | 規約再同意要否判定ロジック | [UC-013](../../01_requirements/04_business_usecases/UC-013.md#UC-013) [UC-001](../../01_requirements/04_business_usecases/UC-001.md#UC-001) |
+| [IPO-013](../../03_detail_design/04_ipo/IPO-013.md#IPO-013) | セッション失効・再認証判定ロジック | [UC-067](../../01_requirements/04_business_usecases/UC-067.md#UC-067) |
+| [IPO-014](../../03_detail_design/04_ipo/IPO-014.md#IPO-014) | ログイン失敗ロックアウト判定ロジック | [UC-068](../../01_requirements/04_business_usecases/UC-068.md#UC-068) |
+| [IPO-015](../../03_detail_design/04_ipo/IPO-015.md#IPO-015) | FAQ CSV取込バリデーションロジック | [UC-046](../../01_requirements/04_business_usecases/UC-046.md#UC-046) [UC-027](../../01_requirements/04_business_usecases/UC-027.md#UC-027) |
+| [IPO-016](../../03_detail_design/04_ipo/IPO-016.md#IPO-016) | 通知送信抑制判定ロジック(品質監視) | [UC-065](../../01_requirements/04_business_usecases/UC-065.md#UC-065) |
+
+### BAT バッチ処理設計書(13件)
+
+| ID | 名称 | 業務UC |
+|----|----|----|
+| [BAT-001](../../03_detail_design/05_batch/BAT-001.md#BAT-001) | 利用量リアルタイム集計 | — |
+| [BAT-002](../../03_detail_design/05_batch/BAT-002.md#BAT-002) | 送信品質監視による通知送信抑制 | — |
+| [BAT-003](../../03_detail_design/05_batch/BAT-003.md#BAT-003) | FAQ一括取り込みジョブ非同期実行 | — |
+| [BAT-004](../../03_detail_design/05_batch/BAT-004.md#BAT-004) | 質問数上限アラート通知 | — |
+| [BAT-005](../../03_detail_design/05_batch/BAT-005.md#BAT-005) | 月次請求確定バッチ | — |
+| [BAT-006](../../03_detail_design/05_batch/BAT-006.md#BAT-006) | 決済失敗猶予・サスペンション移行 | — |
+| [BAT-007](../../03_detail_design/05_batch/BAT-007.md#BAT-007) | 運営お知らせ配信 | — |
+| [BAT-008](../../03_detail_design/05_batch/BAT-008.md#BAT-008) | 配信失敗通知の再送 | — |
+| [BAT-009](../../03_detail_design/05_batch/BAT-009.md#BAT-009) | 退会済み・論理削除データの物理削除 | — |
+| [BAT-010](../../03_detail_design/05_batch/BAT-010.md#BAT-010) | 監査ログ整合性検証(日次) | — |
+| [BAT-011](../../03_detail_design/05_batch/BAT-011.md#BAT-011) | 保持期間超過データの自動削除 | — |
+| [BAT-012](../../03_detail_design/05_batch/BAT-012.md#BAT-012) | 課金通知 取込失敗の再処理 | — |
+| [BAT-013](../../03_detail_design/05_batch/BAT-013.md#BAT-013) | 保持期間経過アカウントの物理削除 | — |
+
+### EIF 外部インターフェース設計図(3件)
+
+| ID | 名称 | 業務UC |
+|----|----|----|
+| [EIF-001](../../03_detail_design/06_external_if/EIF-001.md#EIF-001) | AI 推論 LLM 連携(`AnswerProvider`) | [UC-042](../../01_requirements/04_business_usecases/UC-042.md#UC-042) [UC-047](../../01_requirements/04_business_usecases/UC-047.md#UC-047) |
+| [EIF-002](../../03_detail_design/06_external_if/EIF-002.md#EIF-002) | 課金プロバイダ(Stripe)連携 | [UC-056](../../01_requirements/04_business_usecases/UC-056.md#UC-056) |
+| [EIF-003](../../03_detail_design/06_external_if/EIF-003.md#EIF-003) | メール配信(Resend)連携 | [UC-058](../../01_requirements/04_business_usecases/UC-058.md#UC-058) [UC-062](../../01_requirements/04_business_usecases/UC-062.md#UC-062) [UC-065](../../01_requirements/04_business_usecases/UC-065.md#UC-065) |
+
+### DBP データベース物理設計書(13件)
+
+| ID | 名称 | 業務UC |
+|----|----|----|
+| [DBP-001](../../03_detail_design/07_db_physical/DBP-001.md#DBP-001) | H_QUESTION_LOGS 物理設計(Cloudflare D1) | [UC-041](../../01_requirements/04_business_usecases/UC-041.md#UC-041) [UC-042](../../01_requirements/04_business_usecases/UC-042.md#UC-042) [UC-048](../../01_requirements/04_business_usecases/UC-048.md#UC-048) |
+| [DBP-002](../../03_detail_design/07_db_physical/DBP-002.md#DBP-002) | ユーザー・認証 物理設計 | [UC-001](../../01_requirements/04_business_usecases/UC-001.md#UC-001) [UC-002](../../01_requirements/04_business_usecases/UC-002.md#UC-002) [UC-067](../../01_requirements/04_business_usecases/UC-067.md#UC-067) [UC-068](../../01_requirements/04_business_usecases/UC-068.md#UC-068) |
+| [DBP-003](../../03_detail_design/07_db_physical/DBP-003.md#DBP-003) | 規約・同意 物理設計 | [UC-011](../../01_requirements/04_business_usecases/UC-011.md#UC-011) [UC-013](../../01_requirements/04_business_usecases/UC-013.md#UC-013) |
+| [DBP-004](../../03_detail_design/07_db_physical/DBP-004.md#DBP-004) | 課金アカウント 物理設計 | [UC-022](../../01_requirements/04_business_usecases/UC-022.md#UC-022) [UC-036](../../01_requirements/04_business_usecases/UC-036.md#UC-036) [UC-037](../../01_requirements/04_business_usecases/UC-037.md#UC-037) |
+| [DBP-005](../../03_detail_design/07_db_physical/DBP-005.md#DBP-005) | プロジェクトメンバー割当 物理設計 | [UC-018](../../01_requirements/04_business_usecases/UC-018.md#UC-018) [UC-019](../../01_requirements/04_business_usecases/UC-019.md#UC-019) [UC-020](../../01_requirements/04_business_usecases/UC-020.md#UC-020) [UC-021](../../01_requirements/04_business_usecases/UC-021.md#UC-021) |
+| [DBP-006](../../03_detail_design/07_db_physical/DBP-006.md#DBP-006) | プロジェクト・ウィジェット 物理設計 | [UC-015](../../01_requirements/04_business_usecases/UC-015.md#UC-015) [UC-016](../../01_requirements/04_business_usecases/UC-016.md#UC-016) [UC-017](../../01_requirements/04_business_usecases/UC-017.md#UC-017) [UC-038](../../01_requirements/04_business_usecases/UC-038.md#UC-038) [UC-039](../../01_requirements/04_business_usecases/UC-039.md#UC-039) [UC-040](../../01_requirements/04_business_usecases/UC-040.md#UC-040) |
+| [DBP-007](../../03_detail_design/07_db_physical/DBP-007.md#DBP-007) | FAQ本体・全文検索 物理設計 | [UC-023](../../01_requirements/04_business_usecases/UC-023.md#UC-023) [UC-076](../../01_requirements/04_business_usecases/UC-076.md#UC-076) |
+| [DBP-008](../../03_detail_design/07_db_physical/DBP-008.md#DBP-008) | 未解決質問・FAQ化・取込ジョブ 物理設計 | [UC-046](../../01_requirements/04_business_usecases/UC-046.md#UC-046) [UC-049](../../01_requirements/04_business_usecases/UC-049.md#UC-049) [UC-050](../../01_requirements/04_business_usecases/UC-050.md#UC-050) |
+| [DBP-009](../../03_detail_design/07_db_physical/DBP-009.md#DBP-009) | 質問ログ参照FAQ 物理設計 | [UC-048](../../01_requirements/04_business_usecases/UC-048.md#UC-048) |
+| [DBP-010](../../03_detail_design/07_db_physical/DBP-010.md#DBP-010) | 利用量・上限 物理設計 | [UC-033](../../01_requirements/04_business_usecases/UC-033.md#UC-033) [UC-034](../../01_requirements/04_business_usecases/UC-034.md#UC-034) [UC-051](../../01_requirements/04_business_usecases/UC-051.md#UC-051) [UC-052](../../01_requirements/04_business_usecases/UC-052.md#UC-052) [UC-053](../../01_requirements/04_business_usecases/UC-053.md#UC-053) [UC-054](../../01_requirements/04_business_usecases/UC-054.md#UC-054) [UC-071](../../01_requirements/04_business_usecases/UC-071.md#UC-071) |
+| [DBP-011](../../03_detail_design/07_db_physical/DBP-011.md#DBP-011) | 課金・請求 物理設計 | [UC-036](../../01_requirements/04_business_usecases/UC-036.md#UC-036) [UC-037](../../01_requirements/04_business_usecases/UC-037.md#UC-037) [UC-054](../../01_requirements/04_business_usecases/UC-054.md#UC-054) [UC-055](../../01_requirements/04_business_usecases/UC-055.md#UC-055) [UC-056](../../01_requirements/04_business_usecases/UC-056.md#UC-056) |
+| [DBP-012](../../03_detail_design/07_db_physical/DBP-012.md#DBP-012) | お知らせ配信系 物理設計 | [UC-043](../../01_requirements/04_business_usecases/UC-043.md#UC-043) [UC-045](../../01_requirements/04_business_usecases/UC-045.md#UC-045) [UC-059](../../01_requirements/04_business_usecases/UC-059.md#UC-059) [UC-063](../../01_requirements/04_business_usecases/UC-063.md#UC-063) [UC-077](../../01_requirements/04_business_usecases/UC-077.md#UC-077) [UC-079](../../01_requirements/04_business_usecases/UC-079.md#UC-079) |
+| [DBP-013](../../03_detail_design/07_db_physical/DBP-013.md#DBP-013) | 退会・システム運用ログ 物理設計 | [UC-022](../../01_requirements/04_business_usecases/UC-022.md#UC-022) [UC-047](../../01_requirements/04_business_usecases/UC-047.md#UC-047) [UC-058](../../01_requirements/04_business_usecases/UC-058.md#UC-058) [UC-065](../../01_requirements/04_business_usecases/UC-065.md#UC-065) [UC-070](../../01_requirements/04_business_usecases/UC-070.md#UC-070) [UC-071](../../01_requirements/04_business_usecases/UC-071.md#UC-071) [UC-075](../../01_requirements/04_business_usecases/UC-075.md#UC-075) |
+
+### DSQ 詳細シーケンス図(6件)
+
+| ID | 名称 | 業務UC |
+|----|----|----|
+| [DSQ-001](../../03_detail_design/08_sequences/DSQ-001.md#DSQ-001) | ウィジェット質問→AI回答→未解決登録 詳細シーケンス | — |
+| [DSQ-002](../../03_detail_design/08_sequences/DSQ-002.md#DSQ-002) | 課金プロバイダWebhook受信→検証→取込 詳細シーケンス | — |
+| [DSQ-003](../../03_detail_design/08_sequences/DSQ-003.md#DSQ-003) | 月次請求確定バッチ 詳細シーケンス | — |
+| [DSQ-004](../../03_detail_design/08_sequences/DSQ-004.md#DSQ-004) | FAQ CSV非同期取込 詳細シーケンス | — |
+| [DSQ-005](../../03_detail_design/08_sequences/DSQ-005.md#DSQ-005) | サスペンション移行 詳細シーケンス | — |
+| [DSQ-006](../../03_detail_design/08_sequences/DSQ-006.md#DSQ-006) | アカウント退会→カスケード削除 詳細シーケンス | — |
+
+### ACT アクティビティ図(5件)
+
+| ID | 名称 | 業務UC |
+|----|----|----|
+| [ACT-001](../../03_detail_design/09_activities/ACT-001.md#ACT-001) | アカウント登録〜初回プロジェクト作成 | — |
+| [ACT-002](../../03_detail_design/09_activities/ACT-002.md#ACT-002) | ウィジェット質問受付〜FAQ化 アクティビティ | — |
+| [ACT-003](../../03_detail_design/09_activities/ACT-003.md#ACT-003) | メンバー招待〜有効化 アクティビティ | — |
+| [ACT-004](../../03_detail_design/09_activities/ACT-004.md#ACT-004) | 利用量超過〜上限対応 アクティビティ | — |
+| [ACT-005](../../03_detail_design/09_activities/ACT-005.md#ACT-005) | 退会〜データ削除 アクティビティ | — |
+
+### CLS クラス図(12件)
+
+| ID | 名称 | 業務UC |
+|----|----|----|
+| [CLS-001](../../03_detail_design/10_class/CLS-001.md#CLS-001) | ウィジェット回答機能 クラス図 | [UC-041](../../01_requirements/04_business_usecases/UC-041.md#UC-041) [UC-042](../../01_requirements/04_business_usecases/UC-042.md#UC-042) [UC-047](../../01_requirements/04_business_usecases/UC-047.md#UC-047) [UC-048](../../01_requirements/04_business_usecases/UC-048.md#UC-048) [UC-083](../../01_requirements/04_business_usecases/UC-083.md#UC-083) |
+| [CLS-002](../../03_detail_design/10_class/CLS-002.md#CLS-002) | 認証・セッション クラス図 | [UC-001](../../01_requirements/04_business_usecases/UC-001.md#UC-001) [UC-002](../../01_requirements/04_business_usecases/UC-002.md#UC-002) [UC-003](../../01_requirements/04_business_usecases/UC-003.md#UC-003) [UC-005](../../01_requirements/04_business_usecases/UC-005.md#UC-005) [UC-009](../../01_requirements/04_business_usecases/UC-009.md#UC-009) [UC-010](../../01_requirements/04_business_usecases/UC-010.md#UC-010) [UC-067](../../01_requirements/04_business_usecases/UC-067.md#UC-067) [UC-068](../../01_requirements/04_business_usecases/UC-068.md#UC-068) |
+| [CLS-003](../../03_detail_design/10_class/CLS-003.md#CLS-003) | プロジェクト管理 クラス図 | [UC-014](../../01_requirements/04_business_usecases/UC-014.md#UC-014) [UC-015](../../01_requirements/04_business_usecases/UC-015.md#UC-015) [UC-016](../../01_requirements/04_business_usecases/UC-016.md#UC-016) [UC-017](../../01_requirements/04_business_usecases/UC-017.md#UC-017) [UC-038](../../01_requirements/04_business_usecases/UC-038.md#UC-038) [UC-039](../../01_requirements/04_business_usecases/UC-039.md#UC-039) [UC-073](../../01_requirements/04_business_usecases/UC-073.md#UC-073) [UC-074](../../01_requirements/04_business_usecases/UC-074.md#UC-074) [UC-082](../../01_requirements/04_business_usecases/UC-082.md#UC-082) |
+| [CLS-004](../../03_detail_design/10_class/CLS-004.md#CLS-004) | メンバー招待・割当 クラス図 | [UC-006](../../01_requirements/04_business_usecases/UC-006.md#UC-006) [UC-018](../../01_requirements/04_business_usecases/UC-018.md#UC-018) [UC-019](../../01_requirements/04_business_usecases/UC-019.md#UC-019) [UC-020](../../01_requirements/04_business_usecases/UC-020.md#UC-020) [UC-021](../../01_requirements/04_business_usecases/UC-021.md#UC-021) |
+| [CLS-005](../../03_detail_design/10_class/CLS-005.md#CLS-005) | FAQ管理(CRUD・検索) クラス図 | [UC-023](../../01_requirements/04_business_usecases/UC-023.md#UC-023) [UC-024](../../01_requirements/04_business_usecases/UC-024.md#UC-024) [UC-025](../../01_requirements/04_business_usecases/UC-025.md#UC-025) [UC-026](../../01_requirements/04_business_usecases/UC-026.md#UC-026) |
+| [CLS-006](../../03_detail_design/10_class/CLS-006.md#CLS-006) | FAQ CSV入出力 クラス図 | [UC-027](../../01_requirements/04_business_usecases/UC-027.md#UC-027) [UC-046](../../01_requirements/04_business_usecases/UC-046.md#UC-046) [UC-028](../../01_requirements/04_business_usecases/UC-028.md#UC-028) |
+| [CLS-007](../../03_detail_design/10_class/CLS-007.md#CLS-007) | 未解決質問管理 クラス図 | [UC-029](../../01_requirements/04_business_usecases/UC-029.md#UC-029) [UC-030](../../01_requirements/04_business_usecases/UC-030.md#UC-030) [UC-031](../../01_requirements/04_business_usecases/UC-031.md#UC-031) |
+| [CLS-008](../../03_detail_design/10_class/CLS-008.md#CLS-008) | 質問ログ・AI判定(管理側) クラス図 | [UC-076](../../01_requirements/04_business_usecases/UC-076.md#UC-076) |
+| [CLS-009](../../03_detail_design/10_class/CLS-009.md#CLS-009) | 利用量・上限管理 クラス図 | [UC-032](../../01_requirements/04_business_usecases/UC-032.md#UC-032) [UC-033](../../01_requirements/04_business_usecases/UC-033.md#UC-033) [UC-034](../../01_requirements/04_business_usecases/UC-034.md#UC-034) [UC-035](../../01_requirements/04_business_usecases/UC-035.md#UC-035) [UC-051](../../01_requirements/04_business_usecases/UC-051.md#UC-051) [UC-052](../../01_requirements/04_business_usecases/UC-052.md#UC-052) [UC-053](../../01_requirements/04_business_usecases/UC-053.md#UC-053) |
+| [CLS-010](../../03_detail_design/10_class/CLS-010.md#CLS-010) | 課金・請求 クラス図 | [UC-036](../../01_requirements/04_business_usecases/UC-036.md#UC-036) [UC-037](../../01_requirements/04_business_usecases/UC-037.md#UC-037) [UC-054](../../01_requirements/04_business_usecases/UC-054.md#UC-054) [UC-055](../../01_requirements/04_business_usecases/UC-055.md#UC-055) [UC-056](../../01_requirements/04_business_usecases/UC-056.md#UC-056) [UC-081](../../01_requirements/04_business_usecases/UC-081.md#UC-081) |
+| [CLS-011](../../03_detail_design/10_class/CLS-011.md#CLS-011) | お知らせ・通知配信 クラス図 | [UC-043](../../01_requirements/04_business_usecases/UC-043.md#UC-043) [UC-044](../../01_requirements/04_business_usecases/UC-044.md#UC-044) [UC-045](../../01_requirements/04_business_usecases/UC-045.md#UC-045) [UC-077](../../01_requirements/04_business_usecases/UC-077.md#UC-077) [UC-080](../../01_requirements/04_business_usecases/UC-080.md#UC-080) |
+| [CLS-012](../../03_detail_design/10_class/CLS-012.md#CLS-012) | 規約・退会・監査 クラス図 | [UC-011](../../01_requirements/04_business_usecases/UC-011.md#UC-011) [UC-012](../../01_requirements/04_business_usecases/UC-012.md#UC-012) [UC-013](../../01_requirements/04_business_usecases/UC-013.md#UC-013) [UC-022](../../01_requirements/04_business_usecases/UC-022.md#UC-022) [UC-079](../../01_requirements/04_business_usecases/UC-079.md#UC-079) [UC-008](../../01_requirements/04_business_usecases/UC-008.md#UC-008) [UC-032](../../01_requirements/04_business_usecases/UC-032.md#UC-032) [UC-035](../../01_requirements/04_business_usecases/UC-035.md#UC-035) |
+
+### MOD モジュール構造図(11件)
+
+| ID | 名称 | 業務UC |
+|----|----|----|
+| [MOD-001](../../03_detail_design/11_module/MOD-001.md#MOD-001) | ウィジェット/AI回答 モジュール構造 | [UC-041](../../01_requirements/04_business_usecases/UC-041.md#UC-041) [UC-042](../../01_requirements/04_business_usecases/UC-042.md#UC-042) [UC-048](../../01_requirements/04_business_usecases/UC-048.md#UC-048) [UC-050](../../01_requirements/04_business_usecases/UC-050.md#UC-050) [UC-051](../../01_requirements/04_business_usecases/UC-051.md#UC-051) [UC-053](../../01_requirements/04_business_usecases/UC-053.md#UC-053) [UC-057](../../01_requirements/04_business_usecases/UC-057.md#UC-057) [UC-071](../../01_requirements/04_business_usecases/UC-071.md#UC-071) |
+| [MOD-002](../../03_detail_design/11_module/MOD-002.md#MOD-002) | auth モジュール構造 | [UC-001](../../01_requirements/04_business_usecases/UC-001.md#UC-001) [UC-002](../../01_requirements/04_business_usecases/UC-002.md#UC-002) [UC-003](../../01_requirements/04_business_usecases/UC-003.md#UC-003) [UC-005](../../01_requirements/04_business_usecases/UC-005.md#UC-005) [UC-009](../../01_requirements/04_business_usecases/UC-009.md#UC-009) [UC-010](../../01_requirements/04_business_usecases/UC-010.md#UC-010) [UC-067](../../01_requirements/04_business_usecases/UC-067.md#UC-067) [UC-068](../../01_requirements/04_business_usecases/UC-068.md#UC-068) |
+| [MOD-003](../../03_detail_design/11_module/MOD-003.md#MOD-003) | account モジュール構造 | [UC-008](../../01_requirements/04_business_usecases/UC-008.md#UC-008) [UC-009](../../01_requirements/04_business_usecases/UC-009.md#UC-009) [UC-010](../../01_requirements/04_business_usecases/UC-010.md#UC-010) [UC-012](../../01_requirements/04_business_usecases/UC-012.md#UC-012) [UC-013](../../01_requirements/04_business_usecases/UC-013.md#UC-013) [UC-022](../../01_requirements/04_business_usecases/UC-022.md#UC-022) [UC-079](../../01_requirements/04_business_usecases/UC-079.md#UC-079) |
+| [MOD-004](../../03_detail_design/11_module/MOD-004.md#MOD-004) | project モジュール構造 | [UC-014](../../01_requirements/04_business_usecases/UC-014.md#UC-014) [UC-015](../../01_requirements/04_business_usecases/UC-015.md#UC-015) [UC-016](../../01_requirements/04_business_usecases/UC-016.md#UC-016) [UC-017](../../01_requirements/04_business_usecases/UC-017.md#UC-017) [UC-038](../../01_requirements/04_business_usecases/UC-038.md#UC-038) [UC-039](../../01_requirements/04_business_usecases/UC-039.md#UC-039) [UC-073](../../01_requirements/04_business_usecases/UC-073.md#UC-073) [UC-074](../../01_requirements/04_business_usecases/UC-074.md#UC-074) [UC-082](../../01_requirements/04_business_usecases/UC-082.md#UC-082) |
+| [MOD-005](../../03_detail_design/11_module/MOD-005.md#MOD-005) | member モジュール構造 | [UC-006](../../01_requirements/04_business_usecases/UC-006.md#UC-006) [UC-018](../../01_requirements/04_business_usecases/UC-018.md#UC-018) [UC-019](../../01_requirements/04_business_usecases/UC-019.md#UC-019) [UC-020](../../01_requirements/04_business_usecases/UC-020.md#UC-020) [UC-021](../../01_requirements/04_business_usecases/UC-021.md#UC-021) |
+| [MOD-006](../../03_detail_design/11_module/MOD-006.md#MOD-006) | faq モジュール構造 | [UC-023](../../01_requirements/04_business_usecases/UC-023.md#UC-023) [UC-024](../../01_requirements/04_business_usecases/UC-024.md#UC-024) [UC-025](../../01_requirements/04_business_usecases/UC-025.md#UC-025) [UC-026](../../01_requirements/04_business_usecases/UC-026.md#UC-026) [UC-027](../../01_requirements/04_business_usecases/UC-027.md#UC-027) [UC-028](../../01_requirements/04_business_usecases/UC-028.md#UC-028) [UC-046](../../01_requirements/04_business_usecases/UC-046.md#UC-046) [UC-076](../../01_requirements/04_business_usecases/UC-076.md#UC-076) |
+| [MOD-007](../../03_detail_design/11_module/MOD-007.md#MOD-007) | inquiry モジュール構造 | [UC-029](../../01_requirements/04_business_usecases/UC-029.md#UC-029) [UC-030](../../01_requirements/04_business_usecases/UC-030.md#UC-030) [UC-031](../../01_requirements/04_business_usecases/UC-031.md#UC-031) |
+| [MOD-008](../../03_detail_design/11_module/MOD-008.md#MOD-008) | widget(管理系境界) モジュール構造 | [UC-040](../../01_requirements/04_business_usecases/UC-040.md#UC-040) [UC-042](../../01_requirements/04_business_usecases/UC-042.md#UC-042) [UC-047](../../01_requirements/04_business_usecases/UC-047.md#UC-047) [UC-049](../../01_requirements/04_business_usecases/UC-049.md#UC-049) [UC-050](../../01_requirements/04_business_usecases/UC-050.md#UC-050) [UC-057](../../01_requirements/04_business_usecases/UC-057.md#UC-057) [UC-075](../../01_requirements/04_business_usecases/UC-075.md#UC-075) [UC-083](../../01_requirements/04_business_usecases/UC-083.md#UC-083) |
+| [MOD-009](../../03_detail_design/11_module/MOD-009.md#MOD-009) | usage-billing モジュール構造 | [UC-032](../../01_requirements/04_business_usecases/UC-032.md#UC-032) [UC-033](../../01_requirements/04_business_usecases/UC-033.md#UC-033) [UC-034](../../01_requirements/04_business_usecases/UC-034.md#UC-034) [UC-035](../../01_requirements/04_business_usecases/UC-035.md#UC-035) [UC-036](../../01_requirements/04_business_usecases/UC-036.md#UC-036) [UC-037](../../01_requirements/04_business_usecases/UC-037.md#UC-037) [UC-051](../../01_requirements/04_business_usecases/UC-051.md#UC-051) [UC-052](../../01_requirements/04_business_usecases/UC-052.md#UC-052) [UC-053](../../01_requirements/04_business_usecases/UC-053.md#UC-053) [UC-054](../../01_requirements/04_business_usecases/UC-054.md#UC-054) [UC-055](../../01_requirements/04_business_usecases/UC-055.md#UC-055) [UC-056](../../01_requirements/04_business_usecases/UC-056.md#UC-056) [UC-081](../../01_requirements/04_business_usecases/UC-081.md#UC-081) |
+| [MOD-010](../../03_detail_design/11_module/MOD-010.md#MOD-010) | notification モジュール構造 | [UC-043](../../01_requirements/04_business_usecases/UC-043.md#UC-043) [UC-044](../../01_requirements/04_business_usecases/UC-044.md#UC-044) [UC-045](../../01_requirements/04_business_usecases/UC-045.md#UC-045) [UC-058](../../01_requirements/04_business_usecases/UC-058.md#UC-058) [UC-059](../../01_requirements/04_business_usecases/UC-059.md#UC-059) [UC-062](../../01_requirements/04_business_usecases/UC-062.md#UC-062) [UC-063](../../01_requirements/04_business_usecases/UC-063.md#UC-063) [UC-065](../../01_requirements/04_business_usecases/UC-065.md#UC-065) [UC-077](../../01_requirements/04_business_usecases/UC-077.md#UC-077) [UC-080](../../01_requirements/04_business_usecases/UC-080.md#UC-080) |
+| [MOD-011](../../03_detail_design/11_module/MOD-011.md#MOD-011) | platform(共通基盤) モジュール構造 | [UC-047](../../01_requirements/04_business_usecases/UC-047.md#UC-047) [UC-056](../../01_requirements/04_business_usecases/UC-056.md#UC-056) [UC-058](../../01_requirements/04_business_usecases/UC-058.md#UC-058) [UC-065](../../01_requirements/04_business_usecases/UC-065.md#UC-065) [UC-066](../../01_requirements/04_business_usecases/UC-066.md#UC-066) [UC-070](../../01_requirements/04_business_usecases/UC-070.md#UC-070) |
