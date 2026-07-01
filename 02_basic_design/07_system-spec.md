@@ -18,6 +18,7 @@
 | 信頼度しきい値(グローバル既定) | 0.60 | 0.0〜1.0 | [RULE-012](../01_requirements/01_business_requirement/08_rule.md#RULE-012) | 定数(システム仕様書 / RULE-012) |
 | 関連度しきい値(グローバル既定) | 0.50 | 0.0〜1.0 | [RULE-012](../01_requirements/01_business_requirement/08_rule.md#RULE-012) | 定数(システム仕様書 / RULE-012) |
 | プロジェクト設定値 | 上書き値(未登録可) | 0.0〜1.0、信頼度・関連度を同時に保持 | [RULE-012](../01_requirements/01_business_requirement/08_rule.md#RULE-012) | [`TP_AI_THRESH_CACHE`](02_backend/04_database/TBL-031.md#TBL-031)(`project_id`) |
+| AI 回答 候補 FAQ 件数 | 5 | 件(`published` かつ当該 `project_id` の FAQ を全文検索し一致スコア降順で上位 N=5 件を候補とする) | [FR-198](../01_requirements/02_functional_requirement/02_faq-ai-fr.md#FR-198) | 定数(AI 回答候補選定) |
 
 > [!NOTE]
 > **取得・更新・削除と伝播** プロジェクト設定値の取得・更新・削除は [API-067](02_backend/03_apis/API-067.md#API-067)、変更後の設定状態の AI 推論への伝播・取得失敗時のフォールバックは [SYS-015](02_backend/01_system/SYS-015.md#SYS-015) が担う。対象プロジェクトの設定値が未登録または取得不能の場合は、グローバル既定値で推論を継続する。取得不能時はアラートを上げる。
@@ -101,3 +102,14 @@
 
 > [!IMPORTANT]
 > **目安は上限ではない** プロジェクト数・メンバー数・同時アクティブプロジェクト数・質問ログ件数はキャパシティ設計上の負荷想定であり、超過しても利用を制限しない(プロジェクト数・メンバー数の急増検知や上限は持たない)。レート制限の既定値はオーナー・機能種別ごとに [`M_OWNER_QUOTA_OVR`](02_backend/04_database/TBL-008.md#TBL-008) で上書きできる。
+
+## <span id="6-個人情報piiマスキング"></span>6. 個人情報(PII)マスキング
+
+AI 回答生成後、ウィジェット利用者へ回答を出力する前に、回答文に含まれる個人情報(PII)を検出し、種別ラベル付きの伏字へ置換して出力する。MVP の対象種別・マスキング形式・契機を集約する。氏名・住所は MVP 対象外で、将来対応 [FUT-07](../04_future/FUT-07.md#FUT-07) で扱う。
+
+| 項目 | 値 | 単位/条件 | 根拠 | 格納先 |
+|----|----|----|----|----|
+| 検出対象種別(MVP) | メールアドレス / 電話番号 / クレジットカード番号 | 回答文中の該当箇所を検出 | [RULE-024](../01_requirements/01_business_requirement/08_rule.md#RULE-024) | 定数(マスキング処理) |
+| マスキング形式 | 種別ラベル付き伏字([メールアドレス] / [電話番号] / [カード番号]) | 検出箇所を種別ラベルの伏字へ置換 | [RULE-024](../01_requirements/01_business_requirement/08_rule.md#RULE-024) | 定数(マスキング処理) |
+| 実施契機 | 回答出力前 | AI 回答生成後・応答整形前(AnswerProvider の外=上位) | [RULE-024](../01_requirements/01_business_requirement/08_rule.md#RULE-024) | 定数(マスキング処理) |
+| MVP 対象外種別 | 氏名 / 住所 | 将来対応で AI 判定により高度化 | [FUT-07](../04_future/FUT-07.md#FUT-07) | — |
