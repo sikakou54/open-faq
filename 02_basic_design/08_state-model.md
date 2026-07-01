@@ -95,13 +95,14 @@ stateDiagram-v2
 
 | 状態値 | 意味 | 主な遷移契機 |
 |----|----|----|
-| `open` | 対応必要。FAQ 登録前の未解決質問 | 未解決質問の登録 |
+| `open` | 対応必要。FAQ 登録前の未解決質問 | 未解決質問の登録 / closed からの再オープン |
 | `closed` | 終了。対応を完了した | FAQ 化 / クローズ |
 
 ```mermaid
 stateDiagram-v2
   [*] --> open: 未解決質問の登録
   open --> closed: FAQ 化 / クローズ
+  closed --> open: 対応必要へ再オープン
   closed --> [*]
 ```
 
