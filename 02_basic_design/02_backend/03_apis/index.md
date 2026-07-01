@@ -1,6 +1,6 @@
 # API 設計書
 
-> **このページは、メインシステムが提供する全 68 エンドポイント(`API-001`〜`API-068`)を、機能グループ別に一覧する索引です。** 各行は `API ID` / `API名` / `METHOD` / `エンドポイント` を示し、詳細は各 API 個別ページ(項目 / 処理概要 / リクエスト(認証ヘッダ含む) / レスポンス / バリデーション / エラー / 利用テーブル)を参照します。共通の入出力・エラー規約は次の「§0 共通仕様」を正本とします。
+> **このページは、メインシステムが提供する全 69 エンドポイント(`API-001`〜`API-070`)を、機能グループ別に一覧する索引です。** 各行は `API ID` / `API名` / `METHOD` / `エンドポイント` を示し、詳細は各 API 個別ページ(項目 / 処理概要 / リクエスト(認証ヘッダ含む) / レスポンス / バリデーション / エラー / 利用テーブル)を参照します。共通の入出力・エラー規約は次の「§0 共通仕様」を正本とします。
 
 ## <span id="common"></span>0. 共通仕様(全 API 共通)
 
@@ -86,6 +86,7 @@
 | <span id="API-022"></span>[`API-022`](API-022.md#API-022) | メンバー情報更新 | PATCH | `/projects/{id}/members/{userId}` |
 | <span id="API-023"></span>[`API-023`](API-023.md#API-023) | プロジェクト割当解除 | DELETE | `/projects/{id}/members/{userId}` |
 | <span id="API-024"></span>[`API-024`](API-024.md#API-024) | 招待メール再送 | POST | `/members/{id}/resend-invitation` |
+| <span id="API-070"></span>[`API-070`](API-070.md#API-070) | ログイン失敗ロック解除 | POST | `/projects/{id}/members/{userId}/unlock` |
 
 ## <span id="g-4"></span>FAQ
 

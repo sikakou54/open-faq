@@ -24,6 +24,8 @@ stateDiagram-v2
   deleted --> [*]
 ```
 
+> **`active`⇄`suspended`(管理停止/停止解除)の実行操作(運用管理者によるアカウント停止)は MVP スコープ外・将来対応([FUT-08](../04_future/FUT-08.md#FUT-08))。停止状態は [SYS-030](02_backend/01_system/SYS-030.md#SYS-030)(停止時セッション一斉無効化)が消費するため状態定義は保持する。**
+
 ## <span id="2-課金アカウント状態"></span>2. 課金アカウント状態(`M_BILLING_ACCOUNT.status`)
 
 課金アカウントは、有効・サスペンション・退会・削除の 4 状態で表す。決済失敗猶予、退会後の保持期間などの具体値は [システム仕様書 §4](07_system-spec.md#4-データ保持期間削除猶予) を正本とする。物理定義・CHECK 制約は [`M_BILLING_ACCOUNT`](02_backend/04_database/TBL-002.md#TBL-002)、遷移条件は [課金・請求設計 §5](05_billing-design.md#5-課金アカウント状態ライフサイクル) を正本とする。

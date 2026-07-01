@@ -77,6 +77,7 @@ API設計 ＞ 本エラー設計 ＞ メッセージ設計。各 API の `## エ
 | [API-022](../02_backend/03_apis/API-022.md#API-022) | メンバー情報更新 | SCR-014 EVT-05 | [ERR-013](ERR-013.md#ERR-013) [ERR-001](ERR-001.md#ERR-001) [ERR-017](ERR-017.md#ERR-017) [ERR-019](ERR-019.md#ERR-019) [ERR-020](ERR-020.md#ERR-020) |
 | [API-023](../02_backend/03_apis/API-023.md#API-023) | プロジェクト割当解除 | SCR-014 EVT-07 | [ERR-013](ERR-013.md#ERR-013) [ERR-017](ERR-017.md#ERR-017) [ERR-019](ERR-019.md#ERR-019) [ERR-021](ERR-021.md#ERR-021) [ERR-022](ERR-022.md#ERR-022) |
 | [API-024](../02_backend/03_apis/API-024.md#API-024) | 招待メール再送 | SCR-014 EVT-04 | [ERR-013](ERR-013.md#ERR-013) [ERR-017](ERR-017.md#ERR-017) [ERR-021](ERR-021.md#ERR-021) [ERR-022](ERR-022.md#ERR-022) |
+| [API-070](../02_backend/03_apis/API-070.md#API-070) | ログイン失敗ロック解除 | SCR-014 EVT-10 | [ERR-017](ERR-017.md#ERR-017) [ERR-019](ERR-019.md#ERR-019) |
 | [API-026](../02_backend/03_apis/API-026.md#API-026) | FAQ 作成・更新・削除 | SCR-008 EVT-10 SCR-009 EVT-03 SCR-009 EVT-04 SCR-009 EVT-06 | [ERR-001](ERR-001.md#ERR-001) [ERR-023](ERR-023.md#ERR-023) |
 | [API-027](../02_backend/03_apis/API-027.md#API-027) | FAQ 一括状態変更 | SCR-008 EVT-08 SCR-008 EVT-09 | [ERR-001](ERR-001.md#ERR-001) [ERR-019](ERR-019.md#ERR-019) |
 | [API-028](../02_backend/03_apis/API-028.md#API-028) | FAQ CSV インポート | SCR-010 EVT-04 | [ERR-024](ERR-024.md#ERR-024) [ERR-025](ERR-025.md#ERR-025) |
