@@ -86,7 +86,7 @@
 | <span id="SEQ-070"></span>[SEQ-070](SEQ-070.md#SEQ-070) | 「保存する」を押下(プロフィール) | [UC-009](../../01_requirements/04_business_usecases/UC-009.md#UC-009) | [SCR-018](../01_frontend/01_screens/SCR-018.md#SCR-018) ・ [SCR-022](../01_frontend/01_screens/SCR-022.md#SCR-022) |
 | <span id="SEQ-071"></span>[SEQ-071](SEQ-071.md#SEQ-071) | 「パスワードを変更する」を押下 | [UC-010](../../01_requirements/04_business_usecases/UC-010.md#UC-010) | [SCR-022](../01_frontend/01_screens/SCR-022.md#SCR-022) |
 | <span id="SEQ-072"></span>[SEQ-072](SEQ-072.md#SEQ-072) | 初期表示 | [UC-006](../../01_requirements/04_business_usecases/UC-006.md#UC-006) | [SCR-023](../01_frontend/01_screens/SCR-023.md#SCR-023) |
-| <span id="SEQ-073"></span>[SEQ-073](SEQ-073.md#SEQ-073) | 「登録を完了する」を押下 | [UC-006](../../01_requirements/04_business_usecases/UC-006.md#UC-006) | [SCR-023](../01_frontend/01_screens/SCR-023.md#SCR-023) |
+| <span id="SEQ-073"></span>[SEQ-073](SEQ-073.md#SEQ-073) | 「参加を受諾する」を押下 | [UC-006](../../01_requirements/04_business_usecases/UC-006.md#UC-006) | [SCR-023](../01_frontend/01_screens/SCR-023.md#SCR-023) |
 | <span id="SEQ-074"></span>[SEQ-074](SEQ-074.md#SEQ-074) | 初期表示 | [UC-007](../../01_requirements/04_business_usecases/UC-007.md#UC-007) | [SCR-024](../01_frontend/01_screens/SCR-024.md#SCR-024) |
 | <span id="SEQ-075"></span>[SEQ-075](SEQ-075.md#SEQ-075) | 初期表示 | [UC-012](../../01_requirements/04_business_usecases/UC-012.md#UC-012) | [SCR-025](../01_frontend/01_screens/SCR-025.md#SCR-025) |
 | <span id="SEQ-076"></span>[SEQ-076](SEQ-076.md#SEQ-076) | 初期表示 | [UC-033](../../01_requirements/04_business_usecases/UC-033.md#UC-033) | [SCR-026](../01_frontend/01_screens/SCR-026.md#SCR-026) |

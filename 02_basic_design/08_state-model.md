@@ -152,7 +152,7 @@ stateDiagram-v2
 
 ```mermaid
 stateDiagram-v2
-  [*] --> incomplete
+  [*] --> incomplete: subscription.created
   incomplete --> active: subscription.updated
   incomplete --> past_due: subscription.updated
   incomplete --> unpaid: subscription.updated
@@ -171,6 +171,8 @@ stateDiagram-v2
 
 ### <span id="72-請求書状態"></span>7.2 請求書状態(`T_BILL_INVOICES.status`)
 
+`draft` は決済プロバイダ確定前の内部状態で、MVP では請求確定(`issued`)時に記録する。
+
 | 状態値 | 意味 |
 |----|----|
 | `draft` | 下書き |
@@ -188,7 +190,9 @@ stateDiagram-v2
   past_due --> paid: payment.succeeded / invoice.paid
   issued --> void: invoice.voided
   past_due --> void: invoice.voided
+  paid --> refunded: charge.refunded
   paid --> [*]
+  refunded --> [*]
   void --> [*]
 ```
 
@@ -206,6 +210,8 @@ stateDiagram-v2
 
 ### <span id="82-通知配信状態"></span>8.2 通知配信状態(`H_NOTIF_LOGS.delivery_state`)
 
+`queued`/`sending`/`suppressed` の遷移契機はメール配信IF([API-058](02_backend/03_apis/API-058.md#API-058))。
+
 | 状態値 | 意味 |
 |----|----|
 | `queued` | キュー投入済み |
@@ -219,13 +225,15 @@ stateDiagram-v2
 
 ```mermaid
 stateDiagram-v2
-  [*] --> queued
-  queued --> sent: 配信結果通知(到達)
+  [*] --> queued: 送信IF呼出時
+  [*] --> suppressed: 送信時サプレス確定
+  queued --> sending: 送信IF実行中
+  sending --> sent: 配信結果通知(到達)
   sent --> delivered: 配信結果通知(到達)
-  queued --> failed: 配信結果通知(不達) / 再送上限到達
+  sending --> failed: 配信結果通知(不達) / 再送上限到達
   sent --> failed: 配信結果通知(不達) / 再送上限到達
-  queued --> bounced: 配信結果通知(不達)
-  queued --> complained: 配信結果通知(苦情)
+  sending --> bounced: 配信結果通知(不達)
+  sending --> complained: 配信結果通知(苦情)
   sent --> complained: 配信結果通知(苦情)
   failed --> sent: 再送成功
   failed --> failed: 再送失敗(上限未満は次回再送へ持ち越し)
@@ -233,6 +241,7 @@ stateDiagram-v2
   failed --> [*]
   bounced --> [*]
   complained --> [*]
+  suppressed --> [*]
 ```
 
 ### <span id="83-webhook取込状態"></span>8.3 Webhook取込状態(`T_BILLING_WEBHOOK_LOG.status`)
