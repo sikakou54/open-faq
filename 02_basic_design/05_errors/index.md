@@ -57,10 +57,10 @@ API設計 ＞ 本エラー設計 ＞ メッセージ設計。各 API の `## エ
 
 | API ID | API名 | 対応EVT | 返しうるエラー |
 |----|----|----|----|
-| [API-001](../02_backend/03_apis/API-001.md#API-001) | 新規登録 | SCR-002 EVT-05 SCR-018 EVT-02 | [ERR-001](ERR-001.md#ERR-001) [ERR-014](ERR-014.md#ERR-014) |
+| [API-001](../02_backend/03_apis/API-001.md#API-001) | 新規登録 | SCR-002 EVT-05 SCR-018 EVT-02 | [ERR-001](ERR-001.md#ERR-001) [ERR-009](ERR-009.md#ERR-009) [ERR-014](ERR-014.md#ERR-014) |
 | [API-002](../02_backend/03_apis/API-002.md#API-002) | ログイン | SCR-001 EVT-02 | [ERR-002](ERR-002.md#ERR-002) [ERR-003](ERR-003.md#ERR-003) [ERR-004](ERR-004.md#ERR-004) |
 | [API-005](../02_backend/03_apis/API-005.md#API-005) | 再認証 | SCR-034 EVT-02 SCR-019 EVT-03 SCR-028 EVT-02 SCR-028 EVT-06 | [ERR-005](ERR-005.md#ERR-005) |
-| [API-006](../02_backend/03_apis/API-006.md#API-006) | メール確認 | SCR-018 EVT-01 | [ERR-006](ERR-006.md#ERR-006) |
+| [API-006](../02_backend/03_apis/API-006.md#API-006) | メール確認 | SCR-018 EVT-01 | [ERR-001](ERR-001.md#ERR-001) [ERR-006](ERR-006.md#ERR-006) [ERR-007](ERR-007.md#ERR-007) [ERR-008](ERR-008.md#ERR-008) |
 | [API-007](../02_backend/03_apis/API-007.md#API-007) | 招待トークン検証・プレビュー | SCR-023 EVT-01 | [ERR-006](ERR-006.md#ERR-006) [ERR-007](ERR-007.md#ERR-007) [ERR-008](ERR-008.md#ERR-008) |
 | [API-008](../02_backend/03_apis/API-008.md#API-008) | 招待受諾(割当有効化) | SCR-023 EVT-04 | [ERR-006](ERR-006.md#ERR-006) [ERR-007](ERR-007.md#ERR-007) [ERR-030](ERR-030.md#ERR-030) |
 | [API-009](../02_backend/03_apis/API-009.md#API-009) | プロジェクト連絡先メール確認 | SCR-024 EVT-01 | [ERR-006](ERR-006.md#ERR-006) [ERR-007](ERR-007.md#ERR-007) [ERR-008](ERR-008.md#ERR-008) |
