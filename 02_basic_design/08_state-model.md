@@ -125,6 +125,16 @@ FAQ CSV 取込ジョブは、受付・処理中・完了・失敗の 4 状態で
 | `completed` | 取込完了。全件成功と部分失敗を含む | 全行の処理完了 |
 | `failed` | ジョブ異常終了またはタイムアウト | 処理失敗 / 監視による失敗確定 |
 
+```mermaid
+stateDiagram-v2
+  [*] --> queued: CSV 取込受付
+  queued --> processing: ワーカーによる処理開始
+  processing --> completed: 全行の処理完了
+  processing --> failed: 処理失敗 / 監視による失敗確定
+  completed --> [*]
+  failed --> [*]
+```
+
 ## <span id="7-課金サブスク請求状態"></span>7. 課金サブスクリプション・請求書状態
 
 課金サブスクリプションと請求書の状態意味を示す。物理定義・CHECK 制約は [`T_BILL_SUBS`](02_backend/04_database/TBL-018.md#TBL-018) と [`T_BILL_INVOICES`](02_backend/04_database/TBL-019.md#TBL-019) を正本とする。
@@ -139,6 +149,25 @@ FAQ CSV 取込ジョブは、受付・処理中・完了・失敗の 4 状態で
 | `unpaid` | 未払い |
 | `incomplete` | 初回支払未完了 |
 
+```mermaid
+stateDiagram-v2
+  [*] --> incomplete
+  incomplete --> active: subscription.updated
+  incomplete --> past_due: subscription.updated
+  incomplete --> unpaid: subscription.updated
+  active --> past_due: subscription.updated
+  active --> unpaid: subscription.updated
+  past_due --> active: subscription.updated / payment.succeeded(猶予中の復帰)
+  past_due --> unpaid: subscription.updated
+  unpaid --> active: subscription.updated / payment.succeeded(猶予中の復帰)
+  unpaid --> past_due: subscription.updated
+  active --> canceled: subscription.deleted
+  past_due --> canceled: subscription.deleted
+  unpaid --> canceled: subscription.deleted
+  incomplete --> canceled: subscription.deleted
+  canceled --> [*]
+```
+
 ### <span id="72-請求書状態"></span>7.2 請求書状態(`T_BILL_INVOICES.status`)
 
 | 状態値 | 意味 |
@@ -149,6 +178,18 @@ FAQ CSV 取込ジョブは、受付・処理中・完了・失敗の 4 状態で
 | `past_due` | 支払遅延 |
 | `refunded` | 返金済み |
 | `void` | 無効化 |
+
+```mermaid
+stateDiagram-v2
+  [*] --> issued: 請求確定・記録(月次請求確定) / invoice.created
+  issued --> paid: payment.succeeded / invoice.paid
+  issued --> past_due: payment.failed / invoice.payment_failed
+  past_due --> paid: payment.succeeded / invoice.paid
+  issued --> void: invoice.voided
+  past_due --> void: invoice.voided
+  paid --> [*]
+  void --> [*]
+```
 
 ## <span id="8-配信通知webhook状態"></span>8. 配信・通知・Webhook状態
 
@@ -175,6 +216,24 @@ FAQ CSV 取込ジョブは、受付・処理中・完了・失敗の 4 状態で
 | `complained` | スパム報告 |
 | `suppressed` | サプレスリスト追加済み |
 
+```mermaid
+stateDiagram-v2
+  [*] --> queued
+  queued --> sent: 配信結果通知(到達)
+  sent --> delivered: 配信結果通知(到達)
+  queued --> failed: 配信結果通知(不達) / 再送上限到達
+  sent --> failed: 配信結果通知(不達) / 再送上限到達
+  queued --> bounced: 配信結果通知(不達)
+  queued --> complained: 配信結果通知(苦情)
+  sent --> complained: 配信結果通知(苦情)
+  failed --> sent: 再送成功
+  failed --> failed: 再送失敗(上限未満は次回再送へ持ち越し)
+  delivered --> [*]
+  failed --> [*]
+  bounced --> [*]
+  complained --> [*]
+```
+
 ### <span id="83-webhook取込状態"></span>8.3 Webhook取込状態(`T_BILLING_WEBHOOK_LOG.status`)
 
 | 状態値 | 意味 |
@@ -183,3 +242,16 @@ FAQ CSV 取込ジョブは、受付・処理中・完了・失敗の 4 状態で
 | `processed` | 取込完了 |
 | `failed` | 取込失敗(再処理対象) |
 | `skipped` | 重複のため取込スキップ |
+
+```mermaid
+stateDiagram-v2
+  [*] --> received: 通知受信・受信履歴の記録
+  received --> skipped: 重複受信(冪等にスキップ)
+  received --> processed: 課金アカウント・決済状態への反映に成功
+  received --> failed: 課金アカウント・決済状態への反映に失敗
+  failed --> processed: 再取込・再反映に成功(定期再処理)
+  failed --> failed: 再反映に失敗し上限未到達(次回スケジュールへ持ち越し) / 上限到達エスカレーション
+  skipped --> [*]
+  processed --> [*]
+  failed --> [*]
+```
