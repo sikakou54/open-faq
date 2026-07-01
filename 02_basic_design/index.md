@@ -58,7 +58,7 @@ FAQ AI ウィジェット SaaS / メインシステム(利用者向け)の基本
 | `FG-14` | **セキュリティ** | 不正利用検知 / 鍵管理 / 監査 | (横断) | — | `H_AUDIT_LOGS` `M_EMAIL_SUPPRESS` | [データ保護と健全性を維持する](../01_requirements/04_business_usecases/index.md#act-ops) |
 | `FG-15` | **お知らせ** | お知らせ配信 / 既読 | SCR-016 / 012 | `GET /me/announcements` | `M_SERVICE_ANNOUNCE` `T_ANNOUNCE_RCPT` `M_ANNOUNCE_AUD` | [利用者へ重要連絡を届ける](../01_requirements/04_business_usecases/index.md#act-ops) |
 | `FG-16` | **検索・全文検索** | FTS 検索 | SCR-008 | `GET /projects/{id}/faqs/search` | `TP_FAQ_FTS` `M_FAQS` | [FAQ を整備して公開する](../01_requirements/04_business_usecases/index.md#act-member) |
-| `FG-17` | **インポート・エクスポート** | FAQ の CSV 入出力 / ログ出力 | SCR-008 / 006-002 | `POST /faqs/import` ・ `/faqs/export` | `M_FAQS` | [FAQ を整備して公開する](../01_requirements/04_business_usecases/index.md#act-member) |
+| `FG-17` | **インポート・エクスポート** | FAQ の CSV 入出力 / ログ出力 | SCR-008 / SCR-010 | `POST /faqs/import` ・ `/faqs/export` | `M_FAQS` | [FAQ を整備して公開する](../01_requirements/04_business_usecases/index.md#act-member) |
 | `FG-18` | **UX細部・データ運用** | UX 細部要件 / データ運用要件 | 全画面 | — | (横断) | [FAQ を整備して公開する](../01_requirements/04_business_usecases/index.md#act-member) |
 | `FG-19` | **アクセス制御細部** | アクセス制御細部要件 | (横断) | — | (権限設計) | [データ保護と健全性を維持する](../01_requirements/04_business_usecases/index.md#act-ops) |
 | `FG-20` | **AI推論動作** | AI 推論動作要件 | WIDGET | `POST /widget/v1/ask` | `TP_AI_THRESH_CACHE` | [ウィジェットの応答を最適化する](../01_requirements/04_business_usecases/index.md#act-member) |
