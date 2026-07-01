@@ -27,6 +27,17 @@
 | 12 | [シーケンス設計(SEQ)](12_sequence.md) | シーケンス設計 | `02_basic_design/03_sequences/` |
 | 13 | [権限/エラー/メッセージ(PERM/ERR/MSG)](13_permission-error-message.md) | 権限・エラー・メッセージ | `02_basic_design/04_permissions/` ・ `05_errors/` ・ `06_messages/` |
 | 14 | [将来対応(FUT)](14_future.md) | 将来対応 | `04_future/` |
+| 15 | [状態遷移図(STS)](15_state-transition.md) | 詳細設計 | `03_detail_design/01_state_transitions/` |
+| 16 | [画面遷移図(STR)](16_screen-flow.md) | 詳細設計 | `03_detail_design/02_screen_flows/` |
+| 17 | [入出力設計書(IO)](17_io-spec.md) | 詳細設計 | `03_detail_design/03_io_specs/` |
+| 18 | [IPO処理機能記述書(IPO)](18_ipo.md) | 詳細設計 | `03_detail_design/04_ipo/` |
+| 19 | [バッチ処理設計書(BAT)](19_batch.md) | 詳細設計 | `03_detail_design/05_batch/` |
+| 20 | [外部インターフェース設計図(EIF)](20_external-if.md) | 詳細設計 | `03_detail_design/06_external_if/` |
+| 21 | [データベース物理設計書(DBP)](21_db-physical.md) | 詳細設計 | `03_detail_design/07_db_physical/` |
+| 22 | [詳細シーケンス図(DSQ)](22_sequence-detail.md) | 詳細設計 | `03_detail_design/08_sequences/` |
+| 23 | [アクティビティ図(ACT)](23_activity.md) | 詳細設計 | `03_detail_design/09_activities/` |
+| 24 | [クラス図(CLS)](24_class.md) | 詳細設計 | `03_detail_design/10_class/` |
+| 25 | [モジュール構造図(MOD)](25_module.md) | 詳細設計 | `03_detail_design/11_module/` |
 
 ## 要件仕様(BR / FR / NFR / RULE)の配置・カテゴリ共通説明
 

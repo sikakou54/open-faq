@@ -193,7 +193,7 @@ node ~/.claude/skills/html-to-png/scripts/html_to_png.js 02_basic_design/01_fron
 `mocks/*.html` → 同名 `mocks/*.png` を一括レンダリング(html-to-png グローバルスキル / `puppeteer-core` + ローカル Chromium)。`mermaid` は画像化せず ` ```mermaid ` のまま。
 
 ## テンプレート(各層の雛形)
-新規ページ作成時は [`templates/`](templates/README.md) の該当テンプレートを雛形にする(BR/FR/NFR/RULE/UC/SCR/SYS/API/TBL/SEQ/PERM/ERR/MSG/FUT すべて収録)。
+新規ページ作成時は [`templates/`](templates/README.md) の該当テンプレートを雛形にする(要件・基本設計: BR/FR/NFR/RULE/UC/SCR/SYS/API/TBL/SEQ/PERM/ERR/MSG/FUT、詳細設計: STS/STR/IO/IPO/BAT/EIF/DBP/DSQ/ACT/CLS/MOD すべて収録)。
 
 ## NotebookLM 活用方針
 > [!IMPORTANT]
