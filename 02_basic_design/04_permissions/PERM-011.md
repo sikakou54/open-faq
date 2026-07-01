@@ -4,7 +4,7 @@
 
 | ID | 業務ユースケースID | イベント(画面ID EVT-NN) | API ID |
 |----|----|----|----|
-| PERM-011 | [UC-052](../../01_requirements/04_business_usecases/UC-052.md#UC-052) | — | [API-021](../02_backend/03_apis/API-021.md#API-021) [API-024](../02_backend/03_apis/API-024.md#API-024) |
+| PERM-011 | [UC-052](../../01_requirements/04_business_usecases/UC-052.md#UC-052) | — | — |
 *種別 権限定義 ・ ステータス ドラフト*
 
 ## <span id="criteria"></span>1. 判定基準（ビジネスロジック）
@@ -32,4 +32,4 @@
 |----|----|
 | 対応画面SCR | — |
 | 対応EVT | — |
-| 対応API | [API-021](../02_backend/03_apis/API-021.md#API-021) [API-024](../02_backend/03_apis/API-024.md#API-024) |
+| 対応API | — |

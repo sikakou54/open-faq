@@ -159,7 +159,7 @@ graph TD
 | [PERM-008](PERM-008.md#PERM-008) | [UC-002](../../01_requirements/04_business_usecases/UC-002.md#UC-002) | [SCR-018](../01_frontend/01_screens/SCR-018.md#SCR-018) [SCR-023](../01_frontend/01_screens/SCR-023.md#SCR-023) | SCR-018 EVT-01 SCR-023 EVT-04 | [API-006](../02_backend/03_apis/API-006.md#API-006) [API-008](../02_backend/03_apis/API-008.md#API-008) [API-023](../02_backend/03_apis/API-023.md#API-023) |
 | [PERM-009](PERM-009.md#PERM-009) | [UC-055](../../01_requirements/04_business_usecases/UC-055.md#UC-055) | — | — | [API-002](../02_backend/03_apis/API-002.md#API-002) [API-037](../02_backend/03_apis/API-037.md#API-037) |
 | [PERM-010](PERM-010.md#PERM-010) | [UC-013](../../01_requirements/04_business_usecases/UC-013.md#UC-013) | [SCR-020](../01_frontend/01_screens/SCR-020.md#SCR-020) | SCR-015 EVT-03 SCR-020 EVT-06 | [API-052](../02_backend/03_apis/API-052.md#API-052) [API-054](../02_backend/03_apis/API-054.md#API-054) [API-055](../02_backend/03_apis/API-055.md#API-055) |
-| [PERM-011](PERM-011.md#PERM-011) | [UC-052](../../01_requirements/04_business_usecases/UC-052.md#UC-052) | — | — | [API-021](../02_backend/03_apis/API-021.md#API-021) [API-024](../02_backend/03_apis/API-024.md#API-024) |
+| [PERM-011](PERM-011.md#PERM-011) | [UC-052](../../01_requirements/04_business_usecases/UC-052.md#UC-052) | — | — | — |
 
 ## <span id="auth-ref"></span>5. 認証フロー（参照）
 

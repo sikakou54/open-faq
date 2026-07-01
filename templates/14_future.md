@@ -5,7 +5,7 @@
 運用ルールの正本は [../CLAUDE.md](../CLAUDE.md)。共通記載スタイルは [共通記載スタイル](00_common-style.md) を参照する。
 
 - **配置先**: `04_future/`(`index.md` + `FUT-01.md`〜)。`FUT-06` は `FUT-06.md`(概要)+ `FUT-06-req.md`(要件)+ `FUT-06-detail.md`(詳細設計)の親子構成。
-- **採番**: `FUT-01`〜(ハイフン + 2 桁連番。MVP 後バックログ・カテゴリ別。3 桁フラット連番の例外)。ID は H1 に `# <span id="FUT-0N"></span>FUT-0N: 名称` で保持し、親子は `FUT-06` / `FUT-06-req` / `FUT-06-detail` の各アンカーを持つ。
+- **採番**: `FUT-01`〜(ハイフン + 2 桁連番。MVP 後バックログ・カテゴリ別。3 桁フラット連番の例外)。ID は H1 に `# <span id="FUT-0N"></span>FUT-0N: 名称` で保持し、親子は `FUT-06` / `FUT-06-req` / `FUT-06-detail` の各アンカーを持つ。将来画面に言及する場合は現行 `SCR-` 番号を再利用せず `FUT-SCR-NN`(`04_future` 内通し2桁連番)で表記し MVP の `SCR-NNN` と区別する。
 
 ## 骨格
 

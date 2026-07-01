@@ -82,7 +82,7 @@
 | パスワード再設定リンク有効期限 | 1 | 時間 | [RULE-003](../01_requirements/01_business_requirement/08_rule.md#RULE-003) | 定数(パスワード再設定トークン) |
 | 公開キーローテーション猶予 | 24 | 時間(旧キーの失効猶予。超過後は [SYS-032](02_backend/01_system/SYS-032.md#SYS-032) が物理削除) | [RULE-018](../01_requirements/01_business_requirement/08_rule.md#RULE-018) | 定数(公開キー管理) |
 | 課金通知の受信履歴保持 | 30 | 日(直近の受信履歴) | [RULE-017](../01_requirements/01_business_requirement/08_rule.md#RULE-017) | 定数(Webhook 受信履歴) |
-| 決済失敗の猶予 | 7 | 日(失敗確定通知受信時刻起点。経過でサスペンション) | [RULE-016](../01_requirements/01_business_requirement/08_rule.md#RULE-016) / [課金・請求設計書](05_billing-design.md) | 定数(課金状態管理) |
+| 決済失敗の猶予 | 7 | 日(失敗確定通知受信時刻起点。経過でサスペンション) | [RULE-016](../01_requirements/01_business_requirement/08_rule.md#RULE-016) / [課金・請求設計書](05_billing-design.md) | [TBL-018](02_backend/04_database/TBL-018.md#TBL-018) `grace_started_at` |
 | プロジェクト識別子の再利用 | 不可 | 物理削除完了後 | [NFR-051](../01_requirements/03_non_functional_requirement/07_nfr.md#NFR-051) | トムストーン保持 |
 | 冪等性キー保持 | 24 | 時間 | [ERR-032](05_errors/ERR-032.md#ERR-032) | 定数(API冪等性管理) |
 | 請求明細PDFダウンロード有効期限 | 30 | 日 | [MSG-007](06_messages/MSG-007.md#MSG-007) | 定数(請求ファイルURL発行) |
