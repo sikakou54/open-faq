@@ -6,4 +6,10 @@
 
 | ID | 名称 | 対象 | ステータス |
 |----|----|----|----|
-| [MOD-001](MOD-001.md#MOD-001) | ウィジェット/AI回答 モジュール構造 | frontend / api / service / repository / gateway / batch | ドラフト |
+| [MOD-001](MOD-001.md#MOD-001) | ウィジェット/AI回答 モジュール構造 | frontend / api / service / repository / external-gateway / batch / 共通 | ドラフト |
+| [MOD-002](MOD-002.md#MOD-002) | auth モジュール構造 | frontend / api / service / repository / 共通 | ドラフト |
+| [MOD-003](MOD-003.md#MOD-003) | account モジュール構造 | frontend / api / service / repository / external-gateway / batch / 共通 | ドラフト |
+| [MOD-004](MOD-004.md#MOD-004) | project モジュール構造 | frontend / api / service / repository / 共通 | ドラフト |
+| [MOD-005](MOD-005.md#MOD-005) | member モジュール構造 | frontend / api / service / repository / external-gateway / 共通 | ドラフト |
+| [MOD-006](MOD-006.md#MOD-006) | faq モジュール構造 | frontend / api / service / repository / external-gateway / batch / 共通 | ドラフト |
+| [MOD-007](MOD-007.md#MOD-007) | inquiry モジュール構造 | frontend / api / service / repository / 共通 | ドラフト |
