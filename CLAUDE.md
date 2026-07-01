@@ -6,7 +6,7 @@
 > **読み順(正本)** 要件定義 ＞ 業務UC ＞ 画面設計 ＞ システム設計 ＞ API ＞ DB ＞ シーケンス ＞ 権限/エラー/MSG。`要件↔UC↔(SCR/SYS)↔API↔TBL` のトレーサビリティは [トレーサビリティ一覧](02_basic_design/00_traceability/index.md) に**一元管理**(各設計書には業務的文脈を示すため `UC-NNN` を記載し、全層の厳密な紐付け `TR-NNN` はトレーサビリティ一覧のみに保持する。逆引きは行わない)。画面起点UC→SCR、システム起点(バッチ/Webhook/非同期/監視/通知)UC→SYS。
 
 ## 構成
-ファイル名は英名(ASCII/ID ベース)、タイトル・見出しは日本語。3 グループ(`01_requirements`/`02_basic_design`/`03_future`)。各セクション = `index.md` + 配下個別ページ。
+ファイル名は英名(ASCII/ID ベース)、タイトル・見出しは日本語。4 グループ(`01_requirements`/`02_basic_design`/`03_detail_design`/`04_future`)。各セクション = `index.md` + 配下個別ページ。
 
 ```text
 README.md                          # トップページ(手書き最小)
@@ -33,7 +33,19 @@ templates/                         # 各層テンプレート
 ├── 05_billing-design.md           #   課金横断設計
 ├── 07_system-spec.md              #   システム仕様書(設計値の正本: しきい値/単価/無料枠/保持期間/AIしきい値)
 └── 08_state-model.md              #   状態モデル(正本: 状態一覧+遷移図)
-03_future/                         # 将来対応: FUT-01..(FUT-06は-req/-detail親子)
+03_detail_design/                  # 詳細設計(基本設計を実装可能粒度へ具体化。技術前提: TS+Next.js(App Router)+Repository層 / Cloudflare)
+├── 01_state_transitions/          #   STS: 状態遷移図
+├── 02_screen_flows/               #   STR: 画面遷移図(ロール/業務別)
+├── 03_io_specs/                   #   IO:  入出力設計書(画面/API単位)
+├── 04_ipo/                        #   IPO: 処理機能記述書(主要ロジック)
+├── 05_batch/                      #   BAT: バッチ/非同期/監視処理設計書
+├── 06_external_if/                #   EIF: 外部インターフェース設計図
+├── 07_db_physical/                #   DBP: DB物理設計書(Cloudflare D1)
+├── 08_sequences/                  #   DSQ: 詳細シーケンス図(内部コンポーネント/Tx境界)
+├── 09_activities/                 #   ACT: アクティビティ図
+├── 10_class/                      #   CLS: クラス図
+└── 11_module/                     #   MOD: モジュール構造図
+04_future/                         # 将来対応: FUT-01..(FUT-06は-req/-detail親子)
 _build/                            # ツール(配信対象外)
 ```
 
@@ -68,14 +80,25 @@ _build/                            # ツール(配信対象外)
 | 権限 | `PERM-` | |
 | エラー | `ERR-` | |
 | メッセージ | `MSG-` | メールテンプレ |
+| 状態遷移(詳細) | `STS-` | 詳細設計。STATEFULエンティティ1件=1図。`03_detail_design/01_state_transitions/` |
+| 画面遷移(詳細) | `STR-` | 詳細設計。ロール/業務領域単位。`03_detail_design/02_screen_flows/` |
+| 入出力(詳細) | `IO-` | 詳細設計。画面/API単位。`03_detail_design/03_io_specs/` |
+| IPO(詳細) | `IPO-` | 詳細設計。主要ロジック単位。`03_detail_design/04_ipo/` |
+| バッチ(詳細) | `BAT-` | 詳細設計。SYS(batch/async/monitor)単位。`03_detail_design/05_batch/` |
+| 外部IF(詳細) | `EIF-` | 詳細設計。連携先サービス単位。`03_detail_design/06_external_if/` |
+| DB物理(詳細) | `DBP-` | 詳細設計。テーブル/ドメイン単位。`03_detail_design/07_db_physical/` |
+| 詳細シーケンス | `DSQ-` | 詳細設計。複雑/高リスクフロー単位。`03_detail_design/08_sequences/` |
+| アクティビティ(詳細) | `ACT-` | 詳細設計。業務フロー単位。`03_detail_design/09_activities/` |
+| クラス(詳細) | `CLS-` | 詳細設計。機能/レイヤー単位。`03_detail_design/10_class/` |
+| モジュール(詳細) | `MOD-` | 詳細設計。モジュール単位。`03_detail_design/11_module/` |
 | 用語 | `GLO-` | 用語集 `00_glossary.md` の各用語。1用語=1行 |
-| 将来対応 | `FUT-` | 2桁連番(3桁の唯一の例外)。`FUT-06`は-req/-detail親子 |
+| 将来対応 | `FUT-` | 2桁連番(3桁の唯一の例外)。`FUT-06`は-req/-detail親子。`04_future/` |
 
 > [!WARNING]
 > **欠番を作らない。** 識別子削除時は後続を詰めて再採番し全層参照を 1 パスで一括張替(例 `(?<![A-Za-z0-9])FR-\d+(?![0-9])` を旧→新マッピングで置換)→ 壊れリンク・アンカー **0/0** を確認。
 
 ## ドキュメントの粒度分離ルール
-**上位から下位へ粒度を分離し、層の役割を混在させない。** 業務要件 → 機能要件・非機能要件 → 業務UC → 基本設計
+**上位から下位へ粒度を分離し、層の役割を混在させない。** 業務要件 → 機能要件・非機能要件 → 業務UC → 基本設計 → 詳細設計
 
 | 層 | 書くこと |
 |----|----|
@@ -84,6 +107,7 @@ _build/                            # ツール(配信対象外)
 | NFR | 性能・セキュリティ・可用性・運用性などの品質要件 |
 | UC | 業務目的を達成するための利用者・システムの流れ |
 | 基本設計(SCR/SYS/API/TBL/SEQ ほか) | 要件をシステムとしてどう実現するか |
+| 詳細設計(STS/STR/IO/IPO/BAT/EIF/DBP/DSQ/ACT/CLS/MOD) | 基本設計を実装者が迷わない粒度へ具体化(処理条件・分岐条件・状態変化・入出力・例外処理・成否条件)。技術前提: TS+Next.js(App Router)+Repository層 / Cloudflare。基本設計に無い仕様を推測で足さない(不明点は課題化) |
 
 - **過剰な実装詳細を上位層へ書かない。** 業務要件・UCに 画面ID/API ID/テーブル名/物理名/カラム名/SQL/クラス名等を書かない。業務語へ言い換えるか下位層へ委ねる。
 
@@ -103,10 +127,11 @@ _build/                            # ツール(配信対象外)
 ### 上流変更 → 下流影響調査
 | 変更層 | 影響調査の対象 |
 |----|----|
-| BR | FR/NFR/UC/基本設計 |
-| FR | UC/基本設計 |
-| NFR | 基本設計/運用設計 |
-| UC | 基本設計 |
+| BR | FR/NFR/UC/基本設計/詳細設計 |
+| FR | UC/基本設計/詳細設計 |
+| NFR | 基本設計/詳細設計/運用設計 |
+| UC | 基本設計/詳細設計 |
+| 基本設計(SCR/SYS/API/TBL/SEQ ほか) | 詳細設計(STS/STR/IO/IPO/BAT/EIF/DBP/DSQ/ACT/CLS/MOD) |
 
 ### 下流(基本設計)追加・変更 → 上流・関連への反映
 > [!IMPORTANT]
@@ -214,5 +239,5 @@ node ~/.claude/skills/html-to-png/scripts/html_to_png.js 02_basic_design/01_fron
 ## 注意
 
 - Markdown が正本。本文変更は `.md` を直接編集。README・各 `index.md` は手動保守。
-- 定義行・見出し追加時は `<span id="…"></span>` を必ず付ける。削除・改名識別子は `01_requirements`/`02_basic_design`/`03_future` を検索して取りこぼし修正。
+- 定義行・見出し追加時は `<span id="…"></span>` を必ず付ける。削除・改名識別子は `01_requirements`/`02_basic_design`/`03_detail_design`/`04_future` を検索して取りこぼし修正。
 - 新規ページは [`templates/`](templates/README.md) の該当テンプレートを雛形にする。運用ルールの更新は本書 `CLAUDE.md` を直接編集。

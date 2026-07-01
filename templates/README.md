@@ -26,7 +26,7 @@
 | 11 | [DB設計(TBL)](11_database.md) | DB設計 | `02_basic_design/02_backend/04_database/` |
 | 12 | [シーケンス設計(SEQ)](12_sequence.md) | シーケンス設計 | `02_basic_design/03_sequences/` |
 | 13 | [権限/エラー/メッセージ(PERM/ERR/MSG)](13_permission-error-message.md) | 権限・エラー・メッセージ | `02_basic_design/04_permissions/` ・ `05_errors/` ・ `06_messages/` |
-| 14 | [将来対応(FUT)](14_future.md) | 将来対応 | `03_future/` |
+| 14 | [将来対応(FUT)](14_future.md) | 将来対応 | `04_future/` |
 
 ## 要件仕様(BR / FR / NFR / RULE)の配置・カテゴリ共通説明
 

@@ -9,7 +9,8 @@
     ],
     "design": [
       "02_basic_design/**/*.md",
-      "03_future/**/*.md"
+      "03_detail_design/**/*.md",
+      "04_future/**/*.md"
     ]
   },
   "images": [

@@ -69,7 +69,8 @@ python3 $SK/nlm_bundle.py --root . --out _nlm/bundles \
   --bundle database='02_basic_design/02_backend/04_database/**/*.md' \
   --bundle sequences='02_basic_design/03_sequences/**/*.md' \
   --bundle crosscut='02_basic_design/index.md,02_basic_design/05_billing-design.md,02_basic_design/04_permissions/**/*.md,02_basic_design/05_errors/**/*.md,02_basic_design/06_messages/**/*.md' \
-  --bundle future='03_future/**/*.md'
+  --bundle detail='03_detail_design/**/*.md' \
+  --bundle future='04_future/**/*.md'
 ```
 
 `screens` は `*.md`（トップレベル）で `mocks/*.html` を除外する。`rules`（CLAUDE.md）を必ず含め、NotebookLM が規約に照らして判定できるようにする。
