@@ -50,6 +50,7 @@ API設計 ＞ 本エラー設計 ＞ メッセージ設計。各 API の `## エ
 | <span id="ERR-034"></span>[ERR-034](ERR-034.md#ERR-034) | 業務(課金) | 403 | `ACCOUNT_WITHDRAWN` | `E-BILL-ACCOUNT-WITHDRAWN` | 退会済み(請求情報の閲覧のみ可) |
 | <span id="ERR-035"></span>[ERR-035](ERR-035.md#ERR-035) | 業務 | 404 | `INVITE_TARGET_NOT_REGISTERED` | `E-INVITE-TARGET-NOT-REGISTERED` | 招待先メールが未登録(先にアカウント登録が必要) |
 | <span id="ERR-036"></span>[ERR-036](ERR-036.md#ERR-036) | システム | 503 | `AI_UNAVAILABLE` | `E-AI-UNAVAILABLE` | AI 推論タイムアウトまたはプロバイダエラー |
+| <span id="ERR-037"></span>[ERR-037](ERR-037.md#ERR-037) | 業務 | (ジョブ単位) | `CSV_FAQ_LIMIT_EXCEEDED` | `E-BIZ-FAQ-LIMIT-EXCEEDED` | FAQ 件数上限([RULE-010](../../01_requirements/01_business_requirement/08_rule.md#RULE-010))超過による CSV 取込の全件中止(ジョブ単位・全件ロールバック) |
 
 ## <span id="trace"></span>2. EVT / API ↔ エラー 対応表
 
@@ -77,10 +78,10 @@ API設計 ＞ 本エラー設計 ＞ メッセージ設計。各 API の `## エ
 | [API-022](../02_backend/03_apis/API-022.md#API-022) | メンバー情報更新 | SCR-014 EVT-05 | [ERR-013](ERR-013.md#ERR-013) [ERR-001](ERR-001.md#ERR-001) [ERR-017](ERR-017.md#ERR-017) [ERR-019](ERR-019.md#ERR-019) [ERR-020](ERR-020.md#ERR-020) |
 | [API-023](../02_backend/03_apis/API-023.md#API-023) | プロジェクト割当解除 | SCR-014 EVT-07 | [ERR-013](ERR-013.md#ERR-013) [ERR-017](ERR-017.md#ERR-017) [ERR-019](ERR-019.md#ERR-019) [ERR-021](ERR-021.md#ERR-021) [ERR-022](ERR-022.md#ERR-022) |
 | [API-024](../02_backend/03_apis/API-024.md#API-024) | 招待メール再送 | SCR-014 EVT-04 | [ERR-013](ERR-013.md#ERR-013) [ERR-017](ERR-017.md#ERR-017) [ERR-019](ERR-019.md#ERR-019) [ERR-021](ERR-021.md#ERR-021) [ERR-022](ERR-022.md#ERR-022) |
-| [API-070](../02_backend/03_apis/API-070.md#API-070) | ログイン失敗ロック解除 | SCR-014 EVT-10 | [ERR-017](ERR-017.md#ERR-017) [ERR-019](ERR-019.md#ERR-019) |
+| [API-069](../02_backend/03_apis/API-069.md#API-069) | ログイン失敗ロック解除 | SCR-014 EVT-10 | [ERR-017](ERR-017.md#ERR-017) [ERR-019](ERR-019.md#ERR-019) |
 | [API-026](../02_backend/03_apis/API-026.md#API-026) | FAQ 作成・更新・削除 | SCR-008 EVT-10 SCR-009 EVT-03 SCR-009 EVT-04 SCR-009 EVT-06 | [ERR-001](ERR-001.md#ERR-001) [ERR-023](ERR-023.md#ERR-023) |
 | [API-027](../02_backend/03_apis/API-027.md#API-027) | FAQ 一括状態変更 | SCR-008 EVT-08 SCR-008 EVT-09 | [ERR-001](ERR-001.md#ERR-001) [ERR-019](ERR-019.md#ERR-019) |
-| [API-028](../02_backend/03_apis/API-028.md#API-028) | FAQ CSV インポート | SCR-010 EVT-04 | [ERR-024](ERR-024.md#ERR-024) [ERR-025](ERR-025.md#ERR-025) |
+| [API-028](../02_backend/03_apis/API-028.md#API-028) | FAQ CSV インポート | SCR-010 EVT-04 | [ERR-024](ERR-024.md#ERR-024) [ERR-025](ERR-025.md#ERR-025) [ERR-037](ERR-037.md#ERR-037) |
 | [API-033](../02_backend/03_apis/API-033.md#API-033) | FAQ 個別取得 | SCR-009 EVT-01 | [ERR-017](ERR-017.md#ERR-017) [ERR-019](ERR-019.md#ERR-019) |
 | [API-037](../02_backend/03_apis/API-037.md#API-037) | ウィジェット起動 | SCR-030 EVT-02 SCR-030 EVT-07 | [ERR-004](ERR-004.md#ERR-004) [ERR-026](ERR-026.md#ERR-026) [ERR-027](ERR-027.md#ERR-027) |
 | [API-038](../02_backend/03_apis/API-038.md#API-038) | ウィジェット質問送信 | SCR-030 EVT-04 SCR-030 EVT-05 SCR-030 EVT-06 SCR-030 EVT-07 | [ERR-009](ERR-009.md#ERR-009) [ERR-027](ERR-027.md#ERR-027) [ERR-036](ERR-036.md#ERR-036) |
