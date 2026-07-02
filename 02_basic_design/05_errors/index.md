@@ -8,7 +8,7 @@
 
 API設計 ＞ 本エラー設計 ＞ メッセージ設計。各 API の `## エラー` 表から本 ERR を参照する。
 
-## <span id="list"></span>1. エラーコード一覧(38)
+## <span id="list"></span>1. エラーコード一覧(39)
 
 分類・HTTP ステータス・主エラーコードの索引です。各 ERR の定義は個別ファイルが正本です。
 
@@ -52,6 +52,7 @@ API設計 ＞ 本エラー設計 ＞ メッセージ設計。各 API の `## エ
 | <span id="ERR-036"></span>[ERR-036](ERR-036.md#ERR-036) | システム | 503 | `AI_UNAVAILABLE` | `E-AI-UNAVAILABLE` | AI 推論タイムアウトまたはプロバイダエラー |
 | <span id="ERR-037"></span>[ERR-037](ERR-037.md#ERR-037) | 業務 | (ジョブ単位) | `CSV_FAQ_LIMIT_EXCEEDED` | `E-BIZ-FAQ-LIMIT-EXCEEDED` | FAQ 件数上限([RULE-010](../../01_requirements/01_business_requirement/08_rule.md#RULE-010))超過による CSV 取込の全件中止(ジョブ単位・全件ロールバック) |
 | <span id="ERR-038"></span>[ERR-038](ERR-038.md#ERR-038) | 業務(課金) | 402 | `PAYMENT_METHOD_REQUIRED` | `E-BILL-PAYMENT-METHOD-REQUIRED` | 支払方法未登録のまま利用上限を有効化しようとした(利用上限の設定は支払方法登録が前提) |
+| <span id="ERR-039"></span>[ERR-039](ERR-039.md#ERR-039) | 認証 | 401 | `WIDGET_SESSION_EXPIRED` | `E-AUTH-WIDGET-SESSION-EXPIRED` | ウィジェットセッショントークン(`wst_*`)が無効 / 期限切れ(自動再取得して続行) |
 
 ## <span id="trace"></span>2. EVT / API ↔ エラー 対応表
 
@@ -85,7 +86,8 @@ API設計 ＞ 本エラー設計 ＞ メッセージ設計。各 API の `## エ
 | [API-028](../02_backend/03_apis/API-028.md#API-028) | FAQ CSV インポート | SCR-010 EVT-04 | [ERR-024](ERR-024.md#ERR-024) [ERR-025](ERR-025.md#ERR-025) [ERR-037](ERR-037.md#ERR-037) |
 | [API-033](../02_backend/03_apis/API-033.md#API-033) | FAQ 個別取得 | SCR-009 EVT-01 | [ERR-017](ERR-017.md#ERR-017) [ERR-019](ERR-019.md#ERR-019) |
 | [API-037](../02_backend/03_apis/API-037.md#API-037) | ウィジェット起動 | SCR-030 EVT-02 SCR-030 EVT-07 | [ERR-004](ERR-004.md#ERR-004) [ERR-026](ERR-026.md#ERR-026) [ERR-027](ERR-027.md#ERR-027) |
-| [API-038](../02_backend/03_apis/API-038.md#API-038) | ウィジェット質問送信 | SCR-030 EVT-04 SCR-030 EVT-05 SCR-030 EVT-06 SCR-030 EVT-07 | [ERR-009](ERR-009.md#ERR-009) [ERR-027](ERR-027.md#ERR-027) [ERR-036](ERR-036.md#ERR-036) |
+| [API-038](../02_backend/03_apis/API-038.md#API-038) | ウィジェット質問送信 | SCR-030 EVT-04 SCR-030 EVT-05 SCR-030 EVT-06 SCR-030 EVT-07 | [ERR-009](ERR-009.md#ERR-009) [ERR-027](ERR-027.md#ERR-027) [ERR-036](ERR-036.md#ERR-036) [ERR-039](ERR-039.md#ERR-039) |
+| [API-039](../02_backend/03_apis/API-039.md#API-039) | ウィジェット未解決質問登録 | — | [ERR-039](ERR-039.md#ERR-039) |
 | [API-040](../02_backend/03_apis/API-040.md#API-040) | ダッシュボードサマリ | SCR-012 EVT-01 SCR-012 EVT-02 | [ERR-001](ERR-001.md#ERR-001) [ERR-019](ERR-019.md#ERR-019) |
 | [API-045](../02_backend/03_apis/API-045.md#API-045) | 支払方法 取得・登録・更新 | SCR-028 EVT-02 SCR-028 EVT-06 | [ERR-013](ERR-013.md#ERR-013) [ERR-001](ERR-001.md#ERR-001) [ERR-028](ERR-028.md#ERR-028) |
 | [API-047](../02_backend/03_apis/API-047.md#API-047) | プロジェクト上限・アラート更新 | SCR-027 EVT-05 | [ERR-013](ERR-013.md#ERR-013) [ERR-029](ERR-029.md#ERR-029) [ERR-030](ERR-030.md#ERR-030) [ERR-038](ERR-038.md#ERR-038) |
@@ -99,7 +101,7 @@ API設計 ＞ 本エラー設計 ＞ メッセージ設計。各 API の `## エ
 | [API-065](../02_backend/03_apis/API-065.md#API-065) | プロジェクト範囲データ概要取得 | — | [ERR-011](ERR-011.md#ERR-011) [ERR-019](ERR-019.md#ERR-019) |
 | [API-066](../02_backend/03_apis/API-066.md#API-066) | AIしきい値設定取得・更新 | — | [ERR-001](ERR-001.md#ERR-001) [ERR-011](ERR-011.md#ERR-011) [ERR-019](ERR-019.md#ERR-019) |
 | [API-067](../02_backend/03_apis/API-067.md#API-067) | FAQ取込ジョブ状態取得 | — | [ERR-017](ERR-017.md#ERR-017) [ERR-019](ERR-019.md#ERR-019) |
-| [API-068](../02_backend/03_apis/API-068.md#API-068) | ウィジェット回答フィードバック送信 | SCR-030 EVT-08 | [ERR-001](ERR-001.md#ERR-001) |
+| [API-068](../02_backend/03_apis/API-068.md#API-068) | ウィジェット回答フィードバック送信 | SCR-030 EVT-08 | [ERR-001](ERR-001.md#ERR-001) [ERR-039](ERR-039.md#ERR-039) |
 
 ## <span id="authz-map"></span>3. 認可ミドルウェア段コード ↔ ERR 対応
 
