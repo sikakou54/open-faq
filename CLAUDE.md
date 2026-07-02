@@ -220,7 +220,7 @@ node ~/.claude/skills/html-to-png/scripts/html_to_png.js 02_basic_design/01_fron
 
 ## 課題管理(Obsidian)
 
-作業中の課題は **Obsidian の課題一覧ノート**(`01_Notes/FAQ詳細設計/05_課題一覧.md`)に登録し、解決したら当該エントリを解決済みへ更新する(**記録なしで放置しない**)。GitHub Issue は使わない。
+作業中の課題は **Obsidian の課題一覧ノート**(`01_Notes/faq/FAQ詳細設計/05_課題一覧.md`)に登録し、解決したら当該エントリを解決済みへ更新する(**記録なしで放置しない**)。GitHub Issue は使わない。
 
 ### 登録
 
