@@ -197,7 +197,7 @@ node ~/.claude/skills/html-to-png/scripts/html_to_png.js 02_basic_design/01_fron
 
 ## NotebookLM 活用方針
 > [!IMPORTANT]
-> **ドキュメントを読んで事実確認・仕様確認を行う作業はすべて NotebookLM に依頼する。** レビュー・影響調査・整合性確認いずれも同様。使用は必ずスキル(`full-layer-review`)経由。直接操作しない(`full-layer-review` が全層フルレビュー・`nlm` CLI 操作・判定スクリプトを内包)。
+> **ドキュメントを読んで事実確認・仕様確認を行う作業はすべて NotebookLM に依頼する。** レビュー・影響調査・整合性確認いずれも同様。使用は必ずスキル(`notebooklm-design-review`)経由。直接操作しない(`notebooklm-design-review` が全層フルレビュー・`nlm` CLI 操作・判定スクリプトを内包)。
 > **ドキュメントを更新したら NotebookLM のソースを必ず更新する。** 対象ノート: https://notebooklm.google.com/notebook/047ad8fb-70fd-4569-b5cb-4bddf0bd806a
 
 レビュー観点: 構成・粒度の適切さ / 抜け漏れ / ドキュメント間整合性 / 粒度混在 / 上位変更の下位反映 / 逆参照有無

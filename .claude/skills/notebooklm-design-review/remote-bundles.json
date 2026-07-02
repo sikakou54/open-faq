@@ -1,0 +1,8 @@
+{
+  "comment": "URL-per-bundle mode: each URL is fetched directly and saved as <key>.md",
+  "bundles": {
+    "01_requirements": "https://uithub.com/sikakou54/open-faq/tree/master/01_requirements?maxTokens=10000000&ext=md&accept=text%2Fplain&lines=false",
+    "02_basic_design":  "https://uithub.com/sikakou54/open-faq/tree/master/02_basic_design?maxTokens=10000000&ext=md&accept=text%2Fplain&lines=false",
+    "03_detail_design": "https://uithub.com/sikakou54/open-faq/tree/master/03_detail_design?maxTokens=10000000&ext=md&accept=text%2Fplain&lines=false"
+  }
+}
